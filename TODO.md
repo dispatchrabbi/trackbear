@@ -1,10 +1,10 @@
 # TODO
 
 ## Front-end mockups
-- [ ] Add routing
-- [ ] Account page
-- [ ] Login & OTP page
-- [ ] Password reset page
+- [X] Add routing
+- [X] Account page
+- [X] Login page
+- [X] Password reset page
 
 ## Back-end API
 - [ ] User info and login API
@@ -37,3 +37,4 @@
 ## Future
 - [ ] Sharing
 - [ ] Leaderboards
+- [ ] OTP

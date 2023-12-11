@@ -4,7 +4,7 @@
 <template>
 <VaNavbar>
   <template #left>
-    <VaNavbarItem class="logo text-xl">🐻 TrackBear</VaNavbarItem>
+    <VaNavbarItem class="logo text-xl">🐻 BearTracks</VaNavbarItem>
   </template>
   <template #right>
     <VaNavbarItem>
@@ -16,11 +16,7 @@
     </VaNavbarItem>
     <VaNavbarItem>
       <RouterLink to="/account">
-        <VaButton
-          icon="account_circle"
-          preset="secondary"
-          border-color="primary"
-        >Account</VaButton>
+        <VaAvatar class="mr-4">U</VaAvatar>
       </RouterLink>
       </VaNavbarItem>
   </template>

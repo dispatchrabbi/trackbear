@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import type { Project } from '../lib/project.ts';
 
 import Page from './page/Page.vue';
 
@@ -12,7 +11,6 @@ function returnToProjects() {
   });
 }
 
-// defineProps<{ projects: Project[] }>();
 const projectType = ref(null);
 
 </script>

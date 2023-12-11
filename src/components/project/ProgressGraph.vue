@@ -7,7 +7,14 @@ ChartJS.register(Title, Tooltip, LineController, LineElement, PointElement, Cate
 
 const chartData = {
   labels: Array(12).fill(null).map((_, ix) => `January ${ix + 1}`),
-  datasets: [ { data: [ 0,  1584,  2129, 5977,  6439,  8207, 11105, 11386, 13195, 15354, 17310, 19516 ] } ],
+  datasets: [
+    { label: 'Progress', data: [ 0,  1584,  2129, 5977,  6439,  8207, 11105, 11386, 13195, 15354, 17310, 19516 ] },
+    {
+      label: 'Par',
+      data: Array(12).fill(null).map((_, ix) => ix * 1667),
+      elements: { point: { radius: 0 }, line: { borderDash: [ 3 ] }, },
+    },
+  ],
 };
 
 const chartOptions = {
@@ -15,7 +22,12 @@ const chartOptions = {
     legend: {
       display: false,
     },
+    tooltip: {
+      // only show tooltips for the Progress dataset
+      filter: ctx => ctx.dataset.label === 'Progress',
+    },
   },
+  animation: false,
   responsive: true
 };
 

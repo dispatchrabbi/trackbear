@@ -31,6 +31,7 @@ const chartOptions = {
       enabled: false,
     },
   },
+  animation: false,
   responsive: true
 };
 
