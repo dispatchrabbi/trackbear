@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import type { Project } from '../lib/project.ts';
+
+import Page from './page/Page.vue';
+
+const router = useRouter();
+function returnToProjects() {
+  router.push({
+    name: 'projects',
+  });
+}
 
 // defineProps<{ projects: Project[] }>();
 const projectType = ref(null);
@@ -8,6 +18,7 @@ const projectType = ref(null);
 </script>
 
 <template>
+<Page>
   <h2 class="va-h2 mb-3">New Project</h2>
   <VaCard>
     <VaCardContent>
@@ -38,11 +49,13 @@ const projectType = ref(null);
           <VaButton
             preset="secondary"
             border-color="primary"
+            @click="returnToProjects"
           >Cancel</VaButton>
         </div>
       </VaForm>
     </VaCardContent>
   </VaCard>
+</Page>
 </template>
 
 <style scoped>

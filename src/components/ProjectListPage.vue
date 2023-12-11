@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { Project } from '../lib/project.ts';
-import ProjectTile from './ProjectTile.vue';
+
+import Page from './page/Page.vue';
+import ProjectTile from './project/ProjectTile.vue';
 
 // defineProps<{ projects: Project[] }>();
 const SAMPLE_PROJECTS = [
@@ -15,12 +17,15 @@ const SAMPLE_PROJECTS = [
 </script>
 
 <template>
+<Page>
   <div class="flex items-center mb-3">
     <div class="grow">
       <h2 class="va-h2">Your Projects</h2>
     </div>
     <div class="shrink">
-      <VaButton>New Project</VaButton>
+      <RouterLink to="/projects/new">
+        <VaButton>New Project</VaButton>
+      </RouterLink>
     </div>
   </div>
   <div class="grid grid-cols-2 gap-4">
@@ -33,6 +38,7 @@ const SAMPLE_PROJECTS = [
       ></ProjectTile>
     </div>
   </div>
+</Page>
 </template>
 
 <style scoped>
