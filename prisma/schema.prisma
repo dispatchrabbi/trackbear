@@ -15,8 +15,10 @@ model User {
   uuid String @unique @default(uuid())
 
   email       String
+  username    String @unique
   displayName String
   password    String
+  salt        String
 
   state String
 
@@ -61,4 +63,11 @@ model Update {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
 }

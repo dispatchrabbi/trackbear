@@ -23,6 +23,7 @@ Here are the environment variables you'll have to supply:
 | Variable | Description | Notes |
 | --- | --- | --- |
 | `PORT` | HTTP port for the webapp | Default is `3000`, for development purposes. |
+| `COOKIE_SECRET` | This is the secret used to sign the session ID cookie | Use a random string of characters for this. Changing this will invalidate existing sessions. See https://www.npmjs.com/package/express-session#secret for more details. |
 | `DATABASE_URL` | Database connection string | Default is `"file:../db/db.sqlite"`. Used for Prisma; see https://pris.ly/d/connection-strings for more details. |
 
 ## Developing
