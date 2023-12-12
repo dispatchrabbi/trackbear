@@ -1,91 +1,72 @@
 import { Router } from "express";
-import passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
 
 import dbClient from '../lib/db.ts';
 import { hash, verifyHash } from "../lib/hash.ts";
+import { logIn, logOut } from "../lib/auth.ts";
 
-// configure passport on how to verify a username and password for login
-passport.use(new LocalStrategy(async function verify(username, password, cb) {
+const loginRouter = Router();
+
+loginRouter.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  // TODO: validation, etc.
+
   const user = await dbClient.user.findUnique({ where: { username }});
   if(!user) {
     console.debug(`${username} does not exist!`);
-    return cb(null, false, { message: 'Incorrect username or password '});
+    return res.status(400).send({ message: 'Incorrect username or password '});
   }
 
   const verified = await verifyHash(user.password, password, user.salt);
   if(!verified) {
     console.debug(`${username} had the incorrect password!`);
-    return cb(null, false, { message: 'Incorrect username or password '});
+    return res.status(400).send({ message: 'Incorrect username or password '});
   }
 
-  console.debug(`${username} has just logged in!`);
-  return cb(null, user);
-}));
+  logIn(req, user);
+  console.debug(`Login: ${username}`);
 
-// this extends the Express.User type so it has an `id` property
-// declare global {
-//   /* eslint-disable-next-line @typescript-eslint/no-namespace */
-//   namespace Express {
-//     interface User {
-//       id: number
-//     }
-//   }
-// }
-
-// configure passport session integration
-passport.serializeUser<number>(function(u, cb) {
-  process.nextTick(function() {
-    const user = u as { id: number };
-    cb(null, user.id);
+  const userResponse = {
+    uuid: user.uuid,
+    email: user.email,
+    username: user.username,
+    displayName: user.displayName,
+  };
+  return res.status(200).send({
+    message: 'Logged in',
+    user: userResponse,
   });
 });
 
-passport.deserializeUser(function(id: number, cb) {
-  process.nextTick(async function() {
-    const user = await dbClient.user.findUnique({ where: { id } });
-    cb(null, user); // it's okay to pass a null user
-  });
+loginRouter.post('/logout', (req, res) => {
+  logOut(req);
+  res.status(200).send({ message: 'Logged out' });
 })
 
-const loginRouter = Router();
-
-loginRouter.post('/login', passport.authenticate('local', {
-  successReturnToOrRedirect: '/',
-  failureRedirect: '/login',
-  failureMessage: true,
-}));
-
-loginRouter.post('/logout', (req, res, next) => {
-  req.logOut(function(err) {
-    if(err) { return next(err); }
-    res.redirect('/');
-  });
-})
-
-loginRouter.post('/signup', async (req, res, next) => {
+loginRouter.post('/signup', async (req, res) => {
   const { username, password, email } = req.body;
   // TODO: validation, username uniqueness check, etc.
 
   const { hashedPassword, salt } = await hash(password);
+  const userData = {
+    email: email,
+    username: username,
+    displayName: username,
+    password: hashedPassword,
+    salt: salt,
+    state: 'active',
+  };
 
-  const user = await dbClient.user.create({
-    data: {
-      email: email,
-      username: username,
-      displayName: username,
-      password: hashedPassword,
-      salt: salt,
-      state: 'active',
-    },
-  });
+  try {
+    const user = await dbClient.user.create({ data: userData });
+    console.debug(`New sign-up: ${username}`);
 
-  // TODO: kick off email verification/confirmation afterward
-  req.logIn({ id: user.id }, function(err) {
-    if(err) { return next(err); }
-    console.debug(`${username} has just signed up!`);
-    res.redirect('/');
-  });
+    // TODO: kick off email verification/confirmation afterward
+    logIn(req, user);
+    res.status(201).send({ message: 'Sign-up successful' });
+  } catch(err) {
+    console.error(err);
+    res.status(500).send({ message: 'Sign-up was unsuccessful' });
+  }
 });
 
 export default loginRouter;

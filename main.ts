@@ -14,7 +14,6 @@ import ViteExpress from 'vite-express';
 import dbClient from './server/lib/db.js';
 
 import apiRouter from './server/api/index.js';
-import passport from 'passport';
 // import PATHS from './server/lib/paths.js';
 
 async function main() {
@@ -33,13 +32,14 @@ async function main() {
   app.use(bodyParser.json());
 
   // sessions
+  // Allow multiple signing secrets: see using an array at https://www.npmjs.com/package/express-session#secret
+  const cookieSecret = (process.env.COOKIE_SECRET || '').split(',');
   app.use(session({
     cookie: {
-      name: 'bt.sid',
       maxAge: 7 * 24 * 60 * 60 * 1000, // in ms
       secure: 'auto', // TODO: lock this down when we figure out deployment
     },
-    secret: process.env.COOKIE_SECRET, // TODO: allow multiple signing secrets: see using an array at https://www.npmjs.com/package/express-session#secret
+    secret: cookieSecret,
     resave: true,
     saveUninitialized: true,
     store: new PrismaSessionStore(dbClient, {
@@ -48,8 +48,6 @@ async function main() {
       dbRecordIdFunction: undefined,
     }),
   }));
-
-  app.use(passport.authenticate('session'))
 
   // /api: self-explanatory
   app.use('/api', apiRouter);
