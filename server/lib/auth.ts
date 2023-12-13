@@ -5,7 +5,7 @@ import dbClient from './db.ts';
 type SessionWithAuth = { session: { auth?: null | { id: number } } };
 type RequestWithSessionAuth = Express.Request & SessionWithAuth;
 
-type RequestWithUser = Express.Request & { user?: null | User };
+type RequestWithUser<R> = R & { user: User };
 
 function serializeUser(user: User) {
   return { id: user.id };
