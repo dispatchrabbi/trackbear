@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { Project } from '../lib/project.ts';
+import type { Project } from '../../lib/project.ts';
 
 defineProps<{ project: Project }>()
 
@@ -13,13 +12,15 @@ defineProps<{ project: Project }>()
       <VaForm class="flex flex-col gap-2">
         <VaInput
           label="words written"
-        ></VaInput>
+        />
         <VaDateInput
           label="date"
           manual-input
           clearable
-        ></VaDateInput>
-        <VaButton class="mt-3">Submit</VaButton>
+        />
+        <VaButton class="mt-3">
+          Submit
+        </VaButton>
       </VaForm>
     </VaCardContent>
   </VaCard>

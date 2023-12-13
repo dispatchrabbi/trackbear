@@ -13,7 +13,7 @@ const items = [ 0,  1584,  2129, 5977,  6439,  8207, 11105, 11386, 13195, 15354,
   <VaCard>
     <VaCardTitle>History</VaCardTitle>
     <VaCardContent>
-      <VaDataTable :items="items"></VaDataTable>
+      <VaDataTable :items="items" />
     </VaCardContent>
   </VaCard>
 </template>

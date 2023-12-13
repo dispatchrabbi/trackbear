@@ -5,9 +5,9 @@ import PageFooter from './PageFooter.vue';
 </script>
 
 <template>
-  <PageHeader></PageHeader>
+  <PageHeader />
   <PageBody>
-    <slot></slot>
+    <slot />
   </PageBody>
-  <PageFooter></PageFooter>
+  <PageFooter />
 </template>

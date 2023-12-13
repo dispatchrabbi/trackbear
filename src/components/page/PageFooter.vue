@@ -2,7 +2,9 @@
 </script>
 
 <template>
-<div class="p-8 text-center">Made with 🐻 by @dispatchrabbi.</div>
+  <div class="p-8 text-center">
+    Made with 🐻 by @dispatchrabbi.
+  </div>
 </template>
 
 <style scoped>

@@ -63,6 +63,7 @@ async function main() {
   // });
 
   // baseline server-side error handling
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   app.use((err, req, res, next) => {
     console.error(err)
     res.status(500).send('500 Server error');

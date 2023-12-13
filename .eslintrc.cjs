@@ -7,10 +7,12 @@ module.exports = {
     'plugin:vue/vue3-recommended',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
-  parser: '@typescript-eslint/parser',
-  parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  settings: { react: { version: '18.2' } },
-  plugins: ['react-refresh'],
+  parser: "vue-eslint-parser",
+  "parserOptions": {
+    parser: "@typescript-eslint/parser",
+    ecmaVersion: 'latest',
+    sourceType: 'module'
+  },
   rules: {
 
   },
