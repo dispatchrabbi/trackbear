@@ -1,6 +1,9 @@
 <script setup lang="ts">
-
+import { ref } from 'vue';
 import Page from './page/Page.vue';
+
+const password = ref('');
+const isPasswordVisible = ref(false);
 
 </script>
 
@@ -14,9 +17,21 @@ import Page from './page/Page.vue';
           label="Username"
         ></VaInput>
         <VaInput
-          type="password"
+          v-model="password"
+          :type="isPasswordVisible ? 'text' : 'password'"
           label="Password"
-        ></VaInput>
+          id="current-password"
+          autocomplete="current-password"
+          @click-append-inner="isPasswordVisible = !isPasswordVisible"
+        >
+          <template #appendInner>
+            <VaIcon
+              :name="isPasswordVisible ? 'visibility_off' : 'visibility'"
+              size="small"
+              color="primary"
+            />
+          </template>
+        </VaInput>
         <div class="flex gap-4 mt-4">
           <VaButton>Log In</VaButton>
         </div>
