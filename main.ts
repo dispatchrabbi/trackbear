@@ -4,7 +4,7 @@ dotenv.config();
 
 import express from 'express';
 import morgan from 'morgan';
-import helmet from 'helmet';
+import helmet from './server/lib/middleware/helmet.ts';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
@@ -52,20 +52,20 @@ async function main() {
   // /api: self-explanatory
   app.use('/api', apiRouter);
 
+  const server = app.listen(process.env.PORT, () => {
+    console.log(`Listening! http://localhost:${process.env.PORT}/`);
+  });
+
   // baseline 404 error (though this is probably obviated by the Vite fall-through route above)
   // TODO: figure out that interplay
-  app.use((req, res, next) => {
-    res.status(404).send("404 Not Found");
-  });
+  // app.use((req, res, next) => {
+  //   res.status(404).send("404 Not Found");
+  // });
 
   // baseline server-side error handling
   app.use((err, req, res, next) => {
     console.error(err)
     res.status(500).send('500 Server error');
-  });
-
-  const server = app.listen(process.env.PORT, () => {
-    console.log(`Listening! http://localhost:${process.env.PORT}/`);
   });
 
   // this will bind a fall-through route to the front-end, so anything that isn't otherwise accounted for ends up here
