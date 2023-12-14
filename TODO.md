@@ -7,14 +7,15 @@
 - [X] Password reset page
 
 ## Back-end API
-- [ ] User info and login API
+- [X] User info and login API
 - [ ] Projects API
 - [ ] Logging
 - [ ] Audit events
 
 ## Wire up front-end to back end
 - [ ] Create seed data
-- [ ] Login
+- [X] Login
+- [ ] Signup
 - [ ] Projects page
 - [ ] New project
 - [ ] Project page

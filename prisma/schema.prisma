@@ -40,8 +40,8 @@ model Project {
   state String
 
   goal      Int?
-  startDate DateTime
-  endDate   DateTime?
+  startDate String?
+  endDate   String?
 
   visibility String
   starred    Boolean
@@ -58,7 +58,7 @@ model Update {
   project   Project @relation(fields: [projectId], references: [id])
   projectId Int
 
-  date  DateTime
+  date  String
   value Int
 
   createdAt DateTime @default(now())

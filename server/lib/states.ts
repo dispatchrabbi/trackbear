@@ -14,8 +14,16 @@ const PROJECT_VISIBILITY = {
   PUBLIC:   'public',
 };
 
+const PROJECT_TYPE = {
+  WORDS:    'words',
+  TIME:     'time',
+  PAGES:    'pages',
+  CHAPTERS: 'chapters',
+};
+
 export {
   USER_STATE,
   PROJECT_STATE,
   PROJECT_VISIBILITY,
+  PROJECT_TYPE
 };
