@@ -1,18 +1,16 @@
 <script setup lang="ts">
-type FakeProject = { id: number, title: string };
+import { Line } from 'vue-chartjs';
+import { Chart as ChartJS, Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale, ChartOptions } from 'chart.js';
+ChartJS.register(Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale);
 
-// defineProps<{ project: Project }>();
-defineProps<{ project: FakeProject }>();
+import { ProjectResponse } from '../../../server/api/projects';
+
+defineProps<{ project: ProjectResponse }>();
 
 const last7Days = Array(6).fill(null).map(() => Math.floor(Math.random() * 1200)).reduce((totals, count, ix) => {
   totals.push(count + totals[ix]);
   return totals;
 }, [ 0 ]);
-
-import { Line } from 'vue-chartjs';
-import { Chart as ChartJS, Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale, ChartOptions } from 'chart.js';
-
-ChartJS.register(Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale);
 
 const chartData = {
   labels: [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ],
@@ -29,7 +27,8 @@ const chartOptions: ChartOptions<'line'> = {
     },
   },
   animation: false,
-  responsive: true
+  responsive: true,
+  maintainAspectRatio: false,
 };
 
 </script>
@@ -44,6 +43,7 @@ const chartOptions: ChartOptions<'line'> = {
     <VaCardContent>
       <Line
         :id="`project-tile-chart-${ project.id }`"
+        class="project-tile-chart"
         :options="chartOptions"
         :data="chartData"
       />
@@ -52,4 +52,7 @@ const chartOptions: ChartOptions<'line'> = {
 </template>
 
 <style scoped>
+  .project-tile-chart {
+    min-height: 12rem;
+  }
 </style>

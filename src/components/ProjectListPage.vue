@@ -35,9 +35,11 @@ getProjects()
         v-for="project in projects"
         :key="project.id"
       >
-        <ProjectTile
-          :project="project"
-        />
+        <RouterLink :to="`/projects/${project.id}`">
+          <ProjectTile
+            :project="project"
+          />
+        </RouterLink>
       </div>
     </div>
   </LoggedInAppPage>

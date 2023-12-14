@@ -21,6 +21,7 @@
 - [ ] Project page
 - [ ] Add entry
 - [ ] Determine stats shown for a project
+- [ ] Global error messaging
 
 ## Deploy
 - [ ] Figure out how and where to deploy this

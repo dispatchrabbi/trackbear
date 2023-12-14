@@ -10,7 +10,7 @@ const userStore = useUserStore();
 
 import Page from './layout/AppPage.vue';
 
-const { isValid, validate } = useForm('form')
+const { isValid, validate } = useForm('form');
 
 const loginForm = reactive({
   username: '',
