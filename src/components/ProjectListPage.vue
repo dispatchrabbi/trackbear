@@ -1,14 +1,18 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
+import { getProjects } from '../lib/api/project.ts';
+
 import LoggedInAppPage from './layout/LoggedInAppPage.vue'
 import ProjectTile from './project/ProjectTile.vue';
 
-const SAMPLE_PROJECTS = [
-  { id: 4, title: "Romance a.k.a. Smut" },
-  { id: 2, title: 'An English Prof Has A Mid-Life Crisis'},
-  { id: 3, title: 'Harry/Draco But In Space' },
-  { id: 1, title: 'Great American Novel' },
-  { id: 5, title: "My Poetry Collection" },
-];
+const projects = ref([]);
+const errorMessage = ref('');
+
+getProjects()
+  .then(ps => projects.value = ps)
+  // TODO: global error messaging
+  .catch(msg => errorMessage.value = msg);
 
 </script>
 
@@ -28,7 +32,7 @@ const SAMPLE_PROJECTS = [
     </div>
     <div class="grid grid-cols-2 gap-4">
       <div
-        v-for="project in SAMPLE_PROJECTS"
+        v-for="project in projects"
         :key="project.id"
       >
         <ProjectTile

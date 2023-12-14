@@ -9,6 +9,17 @@ import { Project } from "@prisma/client";
 import { RequestWithUser } from '../lib/auth.ts';
 import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 
+export type CreateProjectPayload = {
+  title: string;
+  type: 'words' | 'time' | 'pages' | 'chapters';
+  goal?: number;
+  startDate?: string;
+  endDate?: string;
+  visibility: 'public' | 'private';
+}
+
+export type ProjectResponse = Project;
+
 const zStrInt = function() {
   return z.string()
     .refine(str => Number.parseInt(str, 10) === +str && Number.isInteger(+str), { message: 'Expected integer string, received non-integer string' })
@@ -67,14 +78,6 @@ projectsRouter.get('/:id',
 });
 
 // PUT /projects - create a new project
-type CreateProjectPayload = {
-  title: string;
-  type: 'words' | 'time' | 'pages' | 'chapters';
-  goal?: number;
-  startDate?: string;
-  endDate?: string;
-  visibility: 'public' | 'private';
-}
 projectsRouter.put('/',
   requireUser,
   validateBody(z.object({
