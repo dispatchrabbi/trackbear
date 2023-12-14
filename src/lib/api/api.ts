@@ -1,4 +1,11 @@
-async function callApi(path: string, method: string = 'GET', payload: object | null = null) {
+type ApiResponse<T> = {
+  success: boolean;
+  status: number;
+  data?: T;
+  error?: string;
+}
+
+async function callApi<T>(path: string, method: string = 'GET', payload: object | null = null): Promise<ApiResponse<T>> {
   const headers = {};
   let body = null;
 
@@ -14,15 +21,14 @@ async function callApi(path: string, method: string = 'GET', payload: object | n
     body,
   });
 
-  // anything that's a 400 or 500, just bail
-  // TODO: standardize API error response payload somehow
-  if(!response.ok) {
-    throw new Error(`API: API responded with status code ${response.status} ${response.statusText}`);
-  }
+  const responsePayload = await response.json();
 
-  // we should always get a JSON response
-  const jsonResponse = await response.json();
-  return jsonResponse;
+  return {
+    success: response.ok,
+    status: response.status,
+    data: response.ok ? responsePayload : null,
+    error: response.ok ? null : responsePayload.message,
+  };
 }
 
 export {

@@ -2,15 +2,33 @@ import { callApi } from "./api";
 import { UserResponse } from '../../../server/api/auth.ts';
 
 async function logIn(username: string, password: string): Promise<UserResponse> {
-  return await callApi('/api/auth/login', 'POST', { username, password });
+  const response = await callApi<UserResponse>('/api/auth/login', 'POST', { username, password });
+
+  if(response.success) {
+    return response.data;
+  } else {
+    throw response.error;
+  }
 }
 
 async function logOut() {
-  return await callApi('/api/auth/logout', 'POST');
+  const response = await callApi('/api/auth/logout', 'POST');
+
+  if(response.success) {
+    return response.data;
+  } else {
+    throw response.error;
+  }
 }
 
 async function getUser(): Promise<UserResponse> {
-  return await callApi('/api/auth/user');
+  const response = await callApi<UserResponse>('/api/auth/user');
+
+  if(response.success) {
+    return response.data;
+  } else {
+    throw response.error;
+  }
 }
 
 export {

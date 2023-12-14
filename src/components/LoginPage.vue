@@ -1,18 +1,35 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import Page from './layout/AppPage.vue';
-import { useUserStore } from '../stores/user';
+import { reactive, ref } from 'vue';
+import { useForm } from 'vuestic-ui';
 
+import { useRouter } from 'vue-router';
 const router = useRouter();
+
+import { useUserStore } from '../stores/user';
 const userStore = useUserStore();
 
-const username = ref('');
-const password = ref('');
+import Page from './layout/AppPage.vue';
+
+const { isValid, validate } = useForm('form')
+
+const loginForm = reactive({
+  username: '',
+  password: '',
+  errorMessage: '',
+});
+
 const isPasswordVisible = ref(false);
 
 async function handleSubmit() {
-  await userStore.logIn(username.value, password.value);
+  loginForm.errorMessage = '';
+
+  try {
+    await userStore.logIn(loginForm.username, loginForm.password);
+  } catch(err) {
+    loginForm.errorMessage = err;
+    return;
+  }
+
   router.push('/projects');
 }
 
@@ -25,16 +42,23 @@ async function handleSubmit() {
     </h2>
     <VaCard>
       <VaCardContent>
-        <VaForm class="flex flex-col gap-4">
+        <VaForm
+          ref="form"
+          class="flex flex-col gap-4"
+          tag="form"
+          @submit.prevent="validate() && handleSubmit()"
+        >
           <VaInput
-            v-model="username"
+            v-model="loginForm.username"
             label="Username"
+            :rules="[v => !!v || 'Please enter your username']"
           />
           <VaInput
             id="current-password"
-            v-model="password"
+            v-model="loginForm.password"
             :type="isPasswordVisible ? 'text' : 'password'"
             label="Password"
+            :rules="[v => !!v || 'Please enter your password']"
             autocomplete="current-password"
             @click-append-inner="isPasswordVisible = !isPasswordVisible"
           >
@@ -46,9 +70,11 @@ async function handleSubmit() {
               />
             </template>
           </VaInput>
+          <p v-if="loginForm.errorMessage">{{ loginForm.errorMessage }}</p>
           <div class="flex gap-4 mt-4">
             <VaButton
-              @click="handleSubmit"
+              :disabled="!isValid"
+              type="submit"
             >
               Log In
             </VaButton>
