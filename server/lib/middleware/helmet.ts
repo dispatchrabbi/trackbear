@@ -6,7 +6,7 @@ function middleware() {
     return helmet({
       contentSecurityPolicy: {
         directives: {
-          "default-src": ["'self'", "ws://localhost:24678"],
+          "default-src": ["'self'", "ws://localhost:24678", "http://localhost:24678"],
           "script-src": ["'self'", "'unsafe-inline'"],
         },
       },
