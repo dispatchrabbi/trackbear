@@ -1,9 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import Page from './page/AppPage.vue';
+import { useRouter } from 'vue-router';
+import Page from './layout/AppPage.vue';
+import { useUserStore } from '../stores/user';
 
+const router = useRouter();
+const userStore = useUserStore();
+
+const username = ref('');
 const password = ref('');
 const isPasswordVisible = ref(false);
+
+async function handleSubmit() {
+  await userStore.logIn(username.value, password.value);
+  router.push('/projects');
+}
 
 </script>
 
@@ -16,6 +27,7 @@ const isPasswordVisible = ref(false);
       <VaCardContent>
         <VaForm class="flex flex-col gap-4">
           <VaInput
+            v-model="username"
             label="Username"
           />
           <VaInput
@@ -35,7 +47,11 @@ const isPasswordVisible = ref(false);
             </template>
           </VaInput>
           <div class="flex gap-4 mt-4">
-            <VaButton>Log In</VaButton>
+            <VaButton
+              @click="handleSubmit"
+            >
+              Log In
+            </VaButton>
           </div>
         </VaForm>
       </VaCardContent>

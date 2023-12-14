@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import './style.css';
 import App from './App.vue';
 
+import { createPinia } from 'pinia';
 import { createRouter, createWebHistory } from 'vue-router';
 import routes from './routes.ts';
 
@@ -10,6 +11,7 @@ import "vuestic-ui/css";
 import "material-design-icons-iconfont/dist/material-design-icons.min.css";
 
 createApp(App)
+  .use(createPinia())
   .use(createRouter({
     history: createWebHistory(),
     routes,

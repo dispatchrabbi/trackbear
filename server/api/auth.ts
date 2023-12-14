@@ -2,13 +2,19 @@ import { Router } from "express";
 
 import dbClient from '../lib/db.ts';
 import { hash, verifyHash } from "../lib/hash.ts";
-import { logIn, logOut } from "../lib/auth.ts";
+import { logIn, logOut, requireUser, RequestWithUser } from "../lib/auth.ts";
 import { USER_STATE } from "../lib/states.ts";
 import { User } from "@prisma/client";
 
-const loginRouter = Router();
+export type UserResponse = {
+  uuid: string;
+  username: string;
+  displayName: string;
+};
 
-loginRouter.post('/login', async (req, res, next) => {
+const authRouter = Router();
+
+authRouter.post('/login', async (req, res, next) => {
   const { username, password } = req.body;
   // TODO: validation, etc.
 
@@ -40,24 +46,31 @@ loginRouter.post('/login', async (req, res, next) => {
   logIn(req, user);
   console.debug(`LOGIN: ${username} successfully logged in`);
 
-  const userResponse = {
+  const userResponse: UserResponse = {
     uuid: user.uuid,
-    email: user.email,
     username: user.username,
     displayName: user.displayName,
   };
-  return res.status(200).send({
-    message: 'Logged in',
-    user: userResponse,
-  });
+  return res.status(200).send(userResponse);
 });
 
-loginRouter.post('/logout', (req, res) => {
-  logOut(req);
-  res.status(200).send({ message: 'Logged out' });
+authRouter.get('/user', requireUser, (req, res) => {
+  const user = (req as RequestWithUser<typeof req>).user;
+  const userResponse: UserResponse = {
+    uuid: user.uuid,
+    username: user.username,
+    displayName: user.displayName,
+  };
+
+  res.status(200).send(userResponse);
 })
 
-loginRouter.post('/signup', async (req, res, next) => {
+authRouter.post('/logout', (req, res) => {
+  logOut(req);
+  res.status(200).send({});
+})
+
+authRouter.post('/signup', async (req, res, next) => {
   const { username, password, email } = req.body;
   // TODO: validation, username uniqueness check, etc.
 
@@ -77,11 +90,9 @@ loginRouter.post('/signup', async (req, res, next) => {
 
   try {
     const user = await dbClient.user.create({ data: userData });
-    console.debug(`SIGNUP: ${username} just signed up`);
+    console.debug(`SIGNUP: ${user.username} just signed up`);
 
     // TODO: kick off email verification/confirmation afterward
-    logIn(req, user);
-    console.debug(`SIGNUP: ${username} successfully logged in`);
     res.status(201).send({ message: 'Sign-up successful' });
   } catch(err) {
     console.error(err);
@@ -89,4 +100,4 @@ loginRouter.post('/signup', async (req, res, next) => {
   }
 });
 
-export default loginRouter;
+export default authRouter;

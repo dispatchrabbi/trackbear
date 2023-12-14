@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SAMPLE_PROJECT from '../fixtures/project.js';
 
-import Page from './page/AppPage.vue';
+import LoggedInAppPage from './layout/LoggedInAppPage.vue';
 import EnterProgress from './project/EnterProgress.vue';
 import ProjectStats from './project/ProjectStats.vue';
 import ProgressGraph from './project/ProgressGraph.vue';
@@ -11,7 +11,7 @@ const project = SAMPLE_PROJECT;
 </script>
 
 <template>
-  <Page>
+  <LoggedInAppPage>
     <h2 class="va-h2 mb-3">
       {{ project.title }}
     </h2>
@@ -33,7 +33,7 @@ const project = SAMPLE_PROJECT;
         </div>
       </div>
     </div>
-  </Page>
+  </LoggedInAppPage>
 </template>
 
 <style scoped>

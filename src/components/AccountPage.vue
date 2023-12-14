@@ -1,11 +1,11 @@
 <script setup lang="ts">
 
-import Page from './page/AppPage.vue';
+import LoggedInAppPage from './layout/LoggedInAppPage.vue';
 
 </script>
 
 <template>
-  <Page>
+  <LoggedInAppPage>
     <h2 class="va-h2 mb-3">
       Account Settings
     </h2>
@@ -57,7 +57,7 @@ import Page from './page/AppPage.vue';
         </VaForm>
       </VaCardContent>
     </VaCard>
-  </Page>
+  </LoggedInAppPage>
 </template>
 
 <style scoped>

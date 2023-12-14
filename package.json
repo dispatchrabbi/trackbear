@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "start": "ts-node --esm ./main.ts",
+    "dev": "NODE_ENV=development ts-node --esm ./main.ts",
     "lint": "eslint --ext .js,.ts,.vue .",
-    "dev": "vite",
-    "build": "vue-tsc && vite build",
-    "preview": "vite preview",
+    "client:dev": "vite",
+    "client:build": "vue-tsc && vite build",
+    "client:preview": "vite preview",
     "db:migrate": "npx prisma migrate dev"
   },
   "dependencies": {
@@ -21,11 +22,13 @@
     "express-session": "^1.17.3",
     "helmet": "^7.1.0",
     "morgan": "^1.10.0",
+    "pinia": "^2.1.7",
     "vite-express": "^0.11.1",
     "vue": "^3.3.8",
     "vue-chartjs": "^5.2.0",
     "vue-router": "^4.2.5",
-    "vuestic-ui": "^1.8.5"
+    "vuestic-ui": "^1.8.5",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/dotenv-safe": "^8.1.5",

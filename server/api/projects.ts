@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { z } from 'zod';
 
 import { requireUser } from '../lib/auth.ts';
 import dbClient from "../lib/db.ts";
@@ -6,6 +7,13 @@ import { PROJECT_STATE } from '../lib/states.ts';
 
 import { Project } from "@prisma/client";
 import { RequestWithUser } from '../lib/auth.ts';
+import { validateParams } from "../lib/middleware/validate.ts";
+
+const zInt = function() {
+  return z.string()
+    .refine(str => Number.parseInt(str, 10) === +str, { message: 'Expected integer, received non-integer' })
+    .transform(str => Number.parseInt(str, 10));
+};
 
 const projectsRouter = Router();
 
@@ -25,9 +33,12 @@ projectsRouter.get('/', requireUser, async (req, res, next) => {
 });
 
 // GET /projects/:id - return a specific project
-projectsRouter.get('/:id', requireUser, async (req, res, next) => {
-  // TODO: validate :id
-  let project: Project | null;
+projectsRouter.get('/:id',
+  requireUser,
+  validateParams(z.object({ id: zInt() })),
+  async (req, res, next) =>
+{
+  let project;
   try {
     project = await dbClient.project.findUnique({
       where: {

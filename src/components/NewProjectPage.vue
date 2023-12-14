@@ -2,13 +2,11 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import Page from './page/AppPage.vue';
+import LoggedInAppPage from './layout/LoggedInAppPage.vue';
 
 const router = useRouter();
 function returnToProjects() {
-  router.push({
-    name: 'projects',
-  });
+  router.push('/projects');
 }
 
 const projectType = ref(null);
@@ -16,7 +14,7 @@ const projectType = ref(null);
 </script>
 
 <template>
-  <Page>
+  <LoggedInAppPage>
     <h2 class="va-h2 mb-3">
       New Project
     </h2>
@@ -57,7 +55,7 @@ const projectType = ref(null);
         </VaForm>
       </VaCardContent>
     </VaCard>
-  </Page>
+  </LoggedInAppPage>
 </template>
 
 <style scoped>

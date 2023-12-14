@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Page from './page/AppPage.vue';
+import LoggedInAppPage from './layout/LoggedInAppPage.vue'
 import ProjectTile from './project/ProjectTile.vue';
 
 const SAMPLE_PROJECTS = [
@@ -13,7 +13,7 @@ const SAMPLE_PROJECTS = [
 </script>
 
 <template>
-  <Page>
+  <LoggedInAppPage>
     <div class="flex items-center mb-3">
       <div class="grow">
         <h2 class="va-h2">
@@ -36,7 +36,7 @@ const SAMPLE_PROJECTS = [
         />
       </div>
     </div>
-  </Page>
+  </LoggedInAppPage>
 </template>
 
 <style scoped>

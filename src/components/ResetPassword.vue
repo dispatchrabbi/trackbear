@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import Page from './page/AppPage.vue';
+import Page from './layout/AppPage.vue';
 
 </script>
 

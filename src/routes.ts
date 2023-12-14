@@ -1,5 +1,6 @@
 import PlaceholderPage from './components/PlaceholderPage.vue';
 import LoginPage from './components/LoginPage.vue';
+import LogoutPage from './components/LogoutPage.vue';
 import ResetPasswordPage from './components/ResetPassword.vue';
 import AccountPage from './components/AccountPage.vue';
 
@@ -8,14 +9,15 @@ import NewProjectPage from './components/NewProjectPage.vue';
 import ProjectPage from './components/ProjectPage.vue';
 
 const routes = [
-  { path: '/', component: PlaceholderPage, props: { title: 'Homepage' } },
-  { path: '/login', component: LoginPage },
-  { path: '/reset-password/:uuid', component: ResetPasswordPage },
-  { path: '/account', component: AccountPage },
+  { path: '/', name: 'home', component: PlaceholderPage, props: { title: 'Homepage' } },
+  { path: '/login', name:'login', component: LoginPage },
+  { path: '/logout', name:'logout', component: LogoutPage },
+  { path: '/reset-password/:uuid', name:'reset-password', component: ResetPasswordPage },
+  { path: '/account', name: 'account', component: AccountPage },
   { path: '/projects', name: 'projects', component: ProjectListPage },
-  { path: '/projects/new', component: NewProjectPage },
-  { path: '/projects/:id', component: ProjectPage },
-  { path: '/:catchAll(.*)', component: PlaceholderPage, props: { title: '404' } },
+  { path: '/projects/new', name:'new-project', component: NewProjectPage },
+  { path: '/projects/:id', name:'project', component: ProjectPage },
+  { path: '/:catchAll(.*)', name:'404', component: PlaceholderPage, props: { title: '404' } },
 ];
 
 export default routes;
