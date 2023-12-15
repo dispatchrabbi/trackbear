@@ -8,7 +8,7 @@
 
 ## Back-end API
 - [X] User info and login API
-- [ ] Projects API
+- [X] Projects API
 - [ ] Logging
 - [ ] Audit events
 
@@ -16,8 +16,8 @@
 - [ ] Create seed data
 - [X] Login
 - [ ] Signup
-- [ ] Projects page
-- [ ] New project
+- [X] Projects page
+- [X] New project
 - [ ] Project page
 - [ ] Add entry
 - [ ] Determine stats shown for a project
