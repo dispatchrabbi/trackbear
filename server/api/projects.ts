@@ -23,7 +23,7 @@ export type CreateUpdatePayload = {
   value: number;
 };
 
-export type ProjectResponse = Project & { updates: [] };
+export type ProjectResponse = Project & { updates: Update[] };
 
 const zStrInt = function() {
   return z.string()
@@ -45,7 +45,7 @@ const projectsRouter = Router();
 
 // GET /projects - return all projects for the user
 projectsRouter.get('/', requireUser, async (req, res, next) => {
-  let projects: Project[];
+  let projects: ProjectResponse[];
   try {
     projects = await dbClient.project.findMany({
       where: {
@@ -67,14 +67,17 @@ projectsRouter.get('/:id',
   validateParams(z.object({ id: zStrInt() })),
   async (req, res, next) =>
 {
-  let project: Project | null;
+  let project: ProjectResponse | null;
   try {
     project = await dbClient.project.findUnique({
       where: {
         id: +req.params.id,
         ownerId: (req as RequestWithUser<typeof req>).user.id,
         state: PROJECT_STATE.ACTIVE,
-      }
+      },
+      include: {
+        updates: true,
+      },
     });
   } catch(err) { return next(err); }
 
@@ -85,8 +88,8 @@ projectsRouter.get('/:id',
   }
 });
 
-// PUT /projects - create a new project
-projectsRouter.put('/',
+// POST /projects - create a new project
+projectsRouter.post('/',
   requireUser,
   validateBody(z.object({
     title: z.string(),
@@ -97,7 +100,7 @@ projectsRouter.put('/',
   })),
   async (req, res, next) =>
 {
-  let project: Project;
+  let project: ProjectResponse;
   try {
     project = await dbClient.project.create({
       data: {
@@ -106,15 +109,18 @@ projectsRouter.put('/',
         visibility: PROJECT_VISIBILITY.PRIVATE,
         starred: false,
         ownerId: (req as RequestWithUser<typeof req>).user.id
-      }
+      },
+      include: {
+        updates: true,
+      },
     })
   } catch(err) { return next(err); }
 
   res.status(201).send(project);
 });
 
-// PUT /projects/:id/update - log an update to a project
-projectsRouter.put('/:id/update',
+// POST /projects/:id/update - log an update to a project
+projectsRouter.post('/:id/update',
   requireUser,
   validateParams(z.object({ id: zStrInt() })),
   validateBody(z.object({ date: zDateStr(), value: zInt() })),
@@ -151,7 +157,7 @@ projectsRouter.put('/:id/update',
   res.status(201).send(update);
 });
 
-// // POST /projects:id - modify the given project
+// // POST /projects/:id - modify the given project
 // projectsRouter.post('/:id', async (req, res) => {
 //   const db = req.app.get('db') as PrismaClient;
 

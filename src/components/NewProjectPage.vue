@@ -7,6 +7,7 @@ const router = useRouter();
 import LoggedInAppPage from './layout/LoggedInAppPage.vue';
 import { createProject } from '../lib/api/project';
 import { CreateProjectPayload } from '../../server/api/projects';
+import { parseDateStringSafe, formatDate } from '../lib/date.ts';
 
 const projectForm = reactive({
   title: '',
@@ -24,28 +25,6 @@ const typeOptions = [
   { text: 'Chapters', value: 'chapters' },
   { text: 'Pages', value: 'pages' },
 ];
-
-const dateFns = {
-  format: (date: Date) => {
-    const year = '' + date.getFullYear();
-
-    let month = '' + (date.getMonth() + 1);
-    if(month.length === 1) { month = '0' + month; }
-
-    let day = '' + date.getDate();
-    if(day.length === 1) { day = '0' + day; }
-
-    return `${year}-${month}-${day}`;
-  },
-  parse: (text: string) => {
-    const parts = text.split('-');
-    if(parts.length !== 3) {
-      return null;
-    }
-
-    return new Date(+parts[0], +parts[1] - 1, +parts[2]);
-  }
-};
 
 // not sure why useForm()'s validate and isValid aren't working but oh well
 function validate() {
@@ -66,8 +45,8 @@ async function handleSubmit() {
     title: projectForm.title,
     type: projectForm.projectType,
     goal: projectForm.goal === '' ? null : +projectForm.goal,
-    startDate: projectForm.startDate === null ? null : dateFns.format(projectForm.startDate),
-    endDate: projectForm.endDate === null ? null : dateFns.format(projectForm.endDate),
+    startDate: projectForm.startDate === null ? null : formatDate(projectForm.startDate),
+    endDate: projectForm.endDate === null ? null : formatDate(projectForm.endDate),
     visibility: 'private',
   } as CreateProjectPayload;
 
@@ -131,17 +110,19 @@ function handleCancel() {
             v-model="projectForm.startDate"
             label="Start Date"
             placeholder="YYYY-MM-DD"
-            :format="dateFns.format"
-            :parse="dateFns.parse"
+            :format="formatDate"
+            :parse="parseDateStringSafe"
             manual-input
+            clearable
           />
           <VaDateInput
             v-model="projectForm.endDate"
             label="End Date"
             placeholder="YYYY-MM-DD"
-            :format="dateFns.format"
-            :parse="dateFns.parse"
+            :format="formatDate"
+            :parse="parseDateStringSafe"
             manual-input
+            clearable
           />
 
           <p v-if="errorMessage">

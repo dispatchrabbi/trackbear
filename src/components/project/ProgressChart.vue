@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { differenceInCalendarDays, subDays } from 'date-fns';
+import { debounce } from 'chart.js/helpers';
 
 import { Line } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js';
 ChartJS.register(Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale);
 
-import { parseDateString } from '../../lib/date.ts';
-import type { Project, Update } from '../../lib/project.ts';
+import { parseDateString, formatTimeProgress } from '../../lib/date.ts';
+import type { Project, Update, TYPE_INFO } from '../../lib/project.ts';
 type NormalizedUpdate = {
   date: string;
   today: number;
@@ -16,13 +17,14 @@ type NormalizedUpdate = {
 
 const props = defineProps<{
   id: string;
-  class: string;
+  class?: string;
   project: Project;
   updates: Update[];
   showPar: boolean;
   showTooltips: boolean;
 }>();
 
+// TODO: fill in sparse datasets
 function normalizeUpdates(updates: Update[]): NormalizedUpdate[] {
   // combine all the updates for a single day
   const consolidated = updates.reduce((obj, update) => {
@@ -92,21 +94,23 @@ const chartData = computed(() => {
     });
   }
 
-  console.log({data});
   return data;
 });
 
 const chartOptions = computed(() => {
   const tooltip = props.showTooltips ?
     // even if showing tooltips, don't show them for Par
-    { filter: ctx => ctx.dataset.label !== 'Par' } :
+    {
+      filter: ctx => ctx.dataset.label !== 'Par',
+      callbacks: props.project.type === 'time' ? { label: ctx => `${ctx.dataset.label}: ${formatTimeProgress(ctx.parsed.y)}` } : undefined,
+    } :
     { enabled: false };
 
   const options = {
     scales: {
       y: {
         min: 0,
-        suggestedMax: 1000,
+        suggestedMax: props.project.goal || TYPE_INFO[props.project.type].defaultChartMax,
       },
     },
     plugins: {
@@ -115,10 +119,27 @@ const chartOptions = computed(() => {
     },
     animation: false,
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
   };
 
   return options;
+});
+
+const chart = ref(null);
+const resizeChart = debounce(() => {
+  if(chart.value && chart.value.chart) {
+    const canvas: HTMLCanvasElement = chart.value.chart.canvas;
+    canvas.style.height = null;
+    canvas.style.width = null;
+  }
+}, 250);
+
+onMounted(() => {
+  window.addEventListener('resize', resizeChart);
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeChart);
 });
 </script>
 
@@ -126,6 +147,7 @@ const chartOptions = computed(() => {
   <div>
     <Line
       :id="props.id"
+      ref="chart"
       :class="['progress-chart', props.class]"
       :options="chartOptions"
       :data="chartData"

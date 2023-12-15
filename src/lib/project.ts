@@ -18,3 +18,10 @@ export type Update = {
   date: string,
   value: number,
 };
+
+export const TYPE_INFO = {
+  words: { count: 'Word Count', defaultChartMax: 1000 },
+  time: { count: 'Time Spent', defaultChartMax: 500 },
+  chapters: { count: 'Chapters', defaultChartMax: 15 },
+  pages: { count: 'Pages', defaultChartMax: 300 },
+};
