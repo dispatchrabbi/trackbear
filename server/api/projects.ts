@@ -5,20 +5,25 @@ import { requireUser } from '../lib/auth.ts';
 import dbClient from "../lib/db.ts";
 import { PROJECT_STATE, PROJECT_VISIBILITY, PROJECT_TYPE } from '../lib/states.ts';
 
-import { Project } from "@prisma/client";
+import { Project, Update } from "@prisma/client";
 import { RequestWithUser } from '../lib/auth.ts';
 import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 
 export type CreateProjectPayload = {
   title: string;
   type: 'words' | 'time' | 'pages' | 'chapters';
-  goal?: number;
-  startDate?: string;
-  endDate?: string;
+  goal: number | null;
+  startDate: string | null;
+  endDate: string | null;
   visibility: 'public' | 'private';
 }
 
-export type ProjectResponse = Project;
+export type CreateUpdatePayload = {
+  date: string;
+  value: number;
+};
+
+export type ProjectResponse = Project & { updates: [] };
 
 const zStrInt = function() {
   return z.string()
@@ -45,8 +50,11 @@ projectsRouter.get('/', requireUser, async (req, res, next) => {
     projects = await dbClient.project.findMany({
       where: {
         ownerId: (req as RequestWithUser<typeof req>).user.id,
-        state: PROJECT_STATE.ACTIVE
-      }
+        state: PROJECT_STATE.ACTIVE,
+      },
+      include: {
+        updates: true,
+      },
     });
   } catch(err) { return next(err); }
 
@@ -59,13 +67,13 @@ projectsRouter.get('/:id',
   validateParams(z.object({ id: zStrInt() })),
   async (req, res, next) =>
 {
-  let project;
+  let project: Project | null;
   try {
     project = await dbClient.project.findUnique({
       where: {
         id: +req.params.id,
         ownerId: (req as RequestWithUser<typeof req>).user.id,
-        state: PROJECT_STATE.ACTIVE
+        state: PROJECT_STATE.ACTIVE,
       }
     });
   } catch(err) { return next(err); }
@@ -73,7 +81,7 @@ projectsRouter.get('/:id',
   if(project) {
     res.status(200).send(project);
   } else {
-    res.status(404).send();
+    res.status(404).send({ message: 'Not found' });
   }
 });
 
@@ -83,13 +91,13 @@ projectsRouter.put('/',
   validateBody(z.object({
     title: z.string(),
     type: z.enum(Object.values(PROJECT_TYPE) as [string, ...string[]]),
-    goal: zInt().optional(),
-    startDate: zDateStr().optional(),
-    endDate: zDateStr().optional()
+    goal: zInt().nullable(),
+    startDate: zDateStr().nullable(),
+    endDate: zDateStr().nullable(),
   })),
   async (req, res, next) =>
 {
-  let project;
+  let project: Project;
   try {
     project = await dbClient.project.create({
       data: {
@@ -102,7 +110,45 @@ projectsRouter.put('/',
     })
   } catch(err) { return next(err); }
 
-  res.status(200).send(project);
+  res.status(201).send(project);
+});
+
+// PUT /projects/:id/update - log an update to a project
+projectsRouter.put('/:id/update',
+  requireUser,
+  validateParams(z.object({ id: zStrInt() })),
+  validateBody(z.object({ date: zDateStr(), value: zInt() })),
+  async (req, res, next) =>
+{
+  // first, make sure the project exists
+  let project: Project | null;
+  try {
+    project = await dbClient.project.findUnique({
+      where: {
+        id: +req.params.id,
+        ownerId: (req as RequestWithUser<typeof req>).user.id,
+        state: PROJECT_STATE.ACTIVE,
+      }
+    });
+  } catch(err) { return next(err); }
+
+  if(!project) {
+    res.status(404).send({ message: 'Not found' });
+    return;
+  }
+
+  // now, add the update
+  let update: Update;
+  try {
+    update = await dbClient.update.create({
+      data: {
+        ...req.body as CreateUpdatePayload,
+        projectId: project.id,
+      },
+    });
+  } catch(err) { return next(err); }
+
+  res.status(201).send(update);
 });
 
 // // POST /projects:id - modify the given project

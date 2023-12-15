@@ -1,9 +1,3 @@
-export type Update = {
-  id: number,
-  date: string,
-  value: number,
-};
-
 export type Project = {
   id: number,
   uuid: string,
@@ -17,4 +11,10 @@ export type Project = {
   visibility: 'hidden' | 'shared',
   starred: boolean,
   updates: Update[],
+};
+
+export type Update = {
+  id: number,
+  date: string,
+  value: number,
 };

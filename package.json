@@ -17,6 +17,7 @@
     "@quixo3/prisma-session-store": "^3.1.13",
     "body-parser": "^1.20.2",
     "chart.js": "^4.4.1",
+    "date-fns": "^2.30.0",
     "dotenv-safe": "^8.2.0",
     "express": "^4.18.2",
     "express-session": "^1.17.3",

@@ -25,7 +25,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Project Project[]
+  projects Project[]
 }
 
 model Project {
@@ -49,7 +49,7 @@ model Project {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Update Update[]
+  updates Update[]
 }
 
 model Update {
