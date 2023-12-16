@@ -19,6 +19,9 @@ lib-cov
 coverage
 *.lcov
 
+# bundle statistics
+stats.*
+
 # node-waf configuration
 .lock-wscript
 

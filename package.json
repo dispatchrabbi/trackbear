@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node --esm ./main.ts",
     "start:dev": "NODE_ENV=development ts-node --esm ./main.ts",
+    "start:prop": "NODE_ENV=production ts-node --esm ./main.ts",
     "lint": "eslint --ext .js,.ts,.vue .",
     "client:dev": "vite",
     "client:build": "vue-tsc && vite build",
@@ -49,6 +50,7 @@
     "material-design-icons-iconfont": "^6.7.0",
     "postcss": "^8.4.32",
     "prisma": "^5.6.0",
+    "rollup-plugin-visualizer": "^5.11.0",
     "tailwindcss": "^3.3.6",
     "ts-node": "^10.9.1",
     "typescript": "^5.3.2",
