@@ -2,6 +2,8 @@ import process from 'node:process';
 import dotenv from 'dotenv-safe';
 dotenv.config();
 
+import logger, { accessLogger } from './server/lib/logger.ts';
+
 import express from 'express';
 import morgan from 'morgan';
 import helmet from './server/lib/middleware/helmet.ts';
@@ -27,7 +29,12 @@ async function main() {
   app.disable('x-powered-by');
 
   // log requests
-  app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+  // always stream to the access logger
+  app.use(morgan('combined', { stream: { write: function(message) { accessLogger.info(message); } } }));
+  // also stream to the console if we're developing
+  if(process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'));
+  }
 
   // rate-limiting
   if(process.env.NODE_ENV !== 'development') {

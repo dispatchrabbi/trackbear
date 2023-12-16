@@ -23,7 +23,7 @@
 
 ## Deploy
 - [ ] Productionalize the service
-  - [ ] Add rate limits
+  - [X] Add rate limits
   - [ ] Logging
   - [ ] Figure out how Vite wants to act in production
 - [ ] Figure out how and where to deploy this

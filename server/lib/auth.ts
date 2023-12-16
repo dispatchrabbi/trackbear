@@ -3,7 +3,7 @@ import { User } from "@prisma/client";
 import dbClient from './db.ts';
 
 type SessionWithAuth = { session: { auth?: null | { id: number } } };
-type RequestWithSessionAuth = Express.Request & SessionWithAuth;
+export type RequestWithSessionAuth = Express.Request & SessionWithAuth;
 
 type RequestWithUser<R> = R & { user: User };
 
