@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { differenceInCalendarDays, subDays } from 'date-fns';
+import { eachDayOfInterval } from 'date-fns';
 import { debounce } from 'chart.js/helpers';
 
 import { Line } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js';
 ChartJS.register(Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale);
 
-import { parseDateString, formatTimeProgress } from '../../lib/date.ts';
-import type { Project, Update, TYPE_INFO } from '../../lib/project.ts';
+import { parseDateString, formatDate, formatTimeProgress, minDateStr, maxDateStr } from '../../lib/date.ts';
+import { Project, Update, TYPE_INFO } from '../../lib/project.ts';
 type NormalizedUpdate = {
   date: string;
   today: number;
@@ -24,7 +24,6 @@ const props = defineProps<{
   showTooltips: boolean;
 }>();
 
-// TODO: fill in sparse datasets
 function normalizeUpdates(updates: Update[]): NormalizedUpdate[] {
   // combine all the updates for a single day
   const consolidated = updates.reduce((obj, update) => {
@@ -50,39 +49,65 @@ function normalizeUpdates(updates: Update[]): NormalizedUpdate[] {
 }
 const updates = computed(() => normalizeUpdates(props.updates));
 
+function eachDayOfProject(updates: NormalizedUpdate[], project: Project) {
+  // if there are no updates and we don't have both a start and end date, we have no interval to work with at all
+  if(updates.length === 0 && !(project.startDate && project.endDate)) {
+    return [];
+  }
 
-function calculatePars(updates: NormalizedUpdate[], project: Project) {
-  const doesParEvenMakeSense = project.goal !== null && project.endDate !== null;
-  if(!doesParEvenMakeSense) {
+  const start = updates.length > 0 ? project.startDate ? minDateStr(project.startDate, updates[0].date) : updates[0].date : project.startDate;
+  const end = updates.length > 0 ? project.endDate ? maxDateStr(project.endDate, updates[updates.length - 1].date) : updates[updates.length - 1].date : project.endDate;
+
+  const eachDay = eachDayOfInterval({ start: parseDateString(start), end: parseDateString(end) });
+  return eachDay;
+}
+const eachDay = computed(() => eachDayOfProject(updates.value, props.project));
+
+function calculatePars(eachDay: Date[], project: Project) {
+  // no way to have par if there's no goal
+  if(project.goal === null) {
     return null;
   }
 
-  if(updates.length < 1) {
+  if(eachDay.length < 1) {
     return null;
   }
 
-  // startDate is day 1, not day 0 - you expect to hit par on day 1. So we need a zeroDate to calculate from
-  const zeroDate = subDays(parseDateString(project.startDate || updates[0].date), 1);
-  const endDate = parseDateString(project.endDate);
-  const projectLengthInDays = differenceInCalendarDays(endDate, zeroDate);
-
-  const parPerDay = project.goal / projectLengthInDays;
-  const pars = updates.map(update => parPerDay * differenceInCalendarDays(parseDateString(update.date), zeroDate));
+  let pars = [];
+  if(project.endDate) {
+    // count up toward the end date
+    const parPerDay = project.goal / eachDay.length;
+    pars = eachDay.map((date, ix) => ({ date: formatDate(date), value: parPerDay * ix }));
+  } else {
+    // just put par at the goal
+    pars = eachDay.map((date) => ({ date: formatDate(date), value: project.goal }));
+  }
 
   return pars;
 }
-const pars = computed(() => props.showPar ? calculatePars(updates.value, props.project) : null);
+const pars = computed(() => props.showPar ? calculatePars(eachDay.value, props.project) : null);
+
+const progressData = computed(() => {
+  const progressPoints = updates.value.map(u => ({ date: u.date, value: u.soFar }));
+
+  if(progressPoints.length > 0 && updates.value[0].date !== formatDate(eachDay.value[0])) {
+    // need to add a zero at the beginning so it's not just floating
+    progressPoints.unshift({ date: formatDate(eachDay.value[0]), value: 0 });
+  }
+
+  return progressPoints;
+});
 
 const chartData = computed(() => {
   const data = {
-    labels: updates.value.map(u => u.date),
+    labels: eachDay.value.map(date => formatDate(date)),
     datasets: [],
   };
 
   // add the updates
   data.datasets.push({
     label: 'Progress',
-    data: updates.value.map(u => u.soFar)
+    data: progressData.value,
   });
 
   // add par?
@@ -107,6 +132,10 @@ const chartOptions = computed(() => {
     { enabled: false };
 
   const options = {
+    parsing: {
+      xAxisKey: 'date',
+      yAxisKey: 'value'
+    },
     scales: {
       y: {
         min: 0,

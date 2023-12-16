@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
-import { useForm } from 'vuestic-ui';
 
 import { parseDateStringSafe, formatDate } from '../../lib/date.ts';
 import { Project, TYPE_INFO } from '../../lib/project.ts';

@@ -39,3 +39,11 @@ export function formatTimeProgress(totalMinutes) {
 
   return `${hours}:${minutes}`;
 }
+
+export function minDateStr(a, b) {
+  return a < b ? a : b;
+}
+
+export function maxDateStr(a, b) {
+  return a > b ? a : b;
+}

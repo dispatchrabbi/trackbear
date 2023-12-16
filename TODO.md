@@ -18,9 +18,8 @@
 - [ ] Signup
 - [X] Projects page
 - [X] New project
-- [ ] Project page
-- [ ] Add entry
-- [ ] Determine stats shown for a project
+- [X] Project page
+- [X] Add entry
 - [ ] Global error messaging
 
 ## Deploy
@@ -38,5 +37,6 @@
 
 ## Future
 - [ ] Sharing
-- [ ] Leaderboards
-- [ ] OTP
+- [ ] Leaderboards (types: same type, goal percentage)
+- [ ] TOTP
+- [ ] Project Stats
