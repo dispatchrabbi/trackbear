@@ -92,14 +92,14 @@ async function handleSubmit() {
           :label="TYPE_INFO[props.project.type].count"
           :rules="[(v) => validateTimeString(v) || 'Please enter a duration in hours and minutes']"
           placeholder="HH:MM"
-          messages="Required"
+          required-mark
         />
         <VaInput
           v-if="props.project.type !== 'time'"
           v-model="progressForm.count"
           :label="TYPE_INFO[props.project.type].count"
           :rules="[v => { return (v === '') || (Number.parseInt(v, 10) === +v) || ('Please enter a number for your progress') }]"
-          messages="Required"
+          required-mark
         />
         <VaDateInput
           v-model="progressForm.date"
@@ -107,7 +107,7 @@ async function handleSubmit() {
           placeholder="YYYY-MM-DD"
           :format="formatDate"
           :parse="parseDateStringSafe"
-          messages="Required"
+          required-mark
           manual-input
           clearable
         />

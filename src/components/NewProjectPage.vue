@@ -92,18 +92,20 @@ function handleCancel() {
           <VaInput
             v-model="projectForm.title"
             label="Title"
-            messages="Required"
             :rules="[v => !!v || 'Please enter a title']"
+            required-mark
           />
           <div>
             <label
               aria-hidden="true"
               class="va-input-label va-input-wrapper__label va-input-wrapper__label--outer"
               style="color: var(--va-primary);"
-            >What to track</label>
+            >
+              What to track
+              <span class="required-mark"> * </span>
+            </label>
             <VaRadio
               v-model="projectForm.projectType"
-              messages="Required"
               :options="typeOptions"
               text-by="text"
               value-by="value"
@@ -114,11 +116,13 @@ function handleCancel() {
             v-model="projectForm.goal"
             :label="projectForm.projectType === 'time' ? 'Goal (in hours)' : 'Goal'"
             :rules="[v => { return (v === '') || (Number.parseInt(v, 10) === +v) || ('Please enter a number for your goal') }]"
+            messages="If you add a goal, the project will track progress toward that goal."
           />
           <VaDateInput
             v-model="projectForm.startDate"
             label="Start Date"
             placeholder="YYYY-MM-DD"
+            messages="If you don't provide a start date, the project will start when you log your first bit of progress."
             :format="formatDate"
             :parse="parseDateStringSafe"
             manual-input
@@ -127,6 +131,7 @@ function handleCancel() {
           <VaDateInput
             v-model="projectForm.endDate"
             label="End Date"
+            messages="If you provide an end date along with your goal, the project will track progress toward your deadline. Combined with a goal, the project will also track you against par."
             placeholder="YYYY-MM-DD"
             :format="formatDate"
             :parse="parseDateStringSafe"
@@ -155,4 +160,11 @@ function handleCancel() {
 </template>
 
 <style scoped>
+.required-mark {
+  transform: translate(0, -2px);
+  color: var(--va-danger);
+  font-size: 18px;
+  font-weight: var(--va-input-container-label-font-weight);
+  vertical-align: middle;
+}
 </style>

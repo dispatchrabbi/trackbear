@@ -19,12 +19,9 @@ import DarkModeToggle from './DarkModeToggle.vue';
         <RouterLink
           :to="userStore.user ? '/projects' : '/'"
         >
-          <div class="flex items-center gap-1 text-2xl">
-            <div>
-              <img
-                class="logo"
-                :src="`/public/${ currentPresetName === 'dark' ? 'polar-bear' : 'brown-bear' }.png`"
-              >
+          <div class="flex items-center gap-1 text-2xl masthead">
+            <div class="logo">
+              <img :src="`/public/${ currentPresetName === 'dark' ? 'polar-bear' : 'brown-bear' }.png`">
             </div>
             <div>TrackBear</div>
           </div>
@@ -83,7 +80,11 @@ import DarkModeToggle from './DarkModeToggle.vue';
 </template>
 
 <style scoped>
-.logo {
+.masthead > .logo {
+  flex: none;
+}
+.logo > img {
   height: 1em;
+  aspect-ratio: 1;
 }
 </style>

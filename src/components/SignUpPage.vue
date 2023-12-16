@@ -10,12 +10,10 @@ import TogglablePasswordInput from './form/TogglablePasswordInput.vue'
 import { signUp } from '../lib/api/auth.ts';
 import type { CreateUserPayload } from '../../server/api/auth.ts';
 
-
 const signupForm = reactive({
   username: '',
   email: '',
   newPassword: '',
-  confirmPassword: '',
 });
 
 const errorMessage = ref('');
@@ -26,7 +24,6 @@ function validate(): boolean {
     username: z.string().min(3),
     email: z.string().email(),
     newPassword: z.string().min(8),
-    confirmPassword: z.string().min(8).refine(val => val === signupForm.newPassword),
   });
 
   const result = schema.safeParse(signupForm);
@@ -81,16 +78,17 @@ async function handleSubmit() {
           <VaInput
             v-model="signupForm.username"
             label="Username"
-            messages="Required. Must be at least 3 characters long."
+            messages="Must be at least 3 characters long."
             :rules="[v => z.string().min(3).safeParse(v).success || 'Please enter a username at least 3 characters long']"
+            required-mark
           />
           <VaInput
             v-model="signupForm.email"
             type="email"
             label="Email"
-            messages="Required"
             placeholder="grizzly@example.com"
             :rules="[v => z.string().email().safeParse(v).success || 'Please enter a valid email']"
+            required-mark
           />
           <TogglablePasswordInput
             id="new-password"
@@ -101,19 +99,8 @@ async function handleSubmit() {
               v => v.length >= 8 || 'Password must be at least 8 characters long'
             ]"
             autocomplete="new-password"
-            messages="Required. Must be at least 8 characters long."
-          />
-          <TogglablePasswordInput
-            id="confirm-password"
-            v-model="signupForm.confirmPassword"
-            label="Confirm Password"
-            :rules="[
-              v => v.length > 0 || 'Please enter a password',
-              v => v.length >= 8 || 'Password must be at least 8 characters long',
-              v => v === signupForm.newPassword || 'Passwords must match'
-            ]"
-            autocomplete="confirm-password"
-            messages="Required. Passwords must match."
+            messages="Must be at least 8 characters long."
+            required-mark
           />
           <div class="flex gap-4 mt-4">
             <VaButton
