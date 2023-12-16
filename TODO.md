@@ -14,7 +14,7 @@
 
 ## Wire up front-end to back end
 - [X] Login
-- [ ] Signup
+- [X] Signup
 - [X] Projects page
 - [X] New project
 - [X] Project page
