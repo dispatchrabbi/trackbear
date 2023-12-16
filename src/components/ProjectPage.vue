@@ -6,7 +6,7 @@ const router = useRouter();
 const route = useRoute();
 
 import { getProject } from '../lib/api/project.ts';
-import type { Update } from '../lib/project';
+import type { Project, Update } from '../lib/project';
 
 import LoggedInAppPage from './layout/LoggedInAppPage.vue';
 import EnterProgress from './project/EnterProgress.vue';
@@ -14,8 +14,8 @@ import ProjectStats from './project/ProjectStats.vue';
 import ProjectHistory from './project/ProjectHistory.vue';
 import ProgressChart from './project/ProgressChart.vue';
 
-const project = ref(null);
-const errorMessage = ref('');
+const project = ref<Project>(null);
+const errorMessage = ref<string>('');
 
 function loadProject() {
   const projectIdStr = route.params.id as string;
@@ -26,7 +26,7 @@ function loadProject() {
 
   const projectId = +projectIdStr;
   getProject(projectId)
-    .then(p => project.value = p)
+    .then(p => project.value = p as Project)
     .catch(({ status, message }) => {
       if(status === 400) {
         errorMessage.value = `Could not find project with ID ${projectId}. How did you get here?`;

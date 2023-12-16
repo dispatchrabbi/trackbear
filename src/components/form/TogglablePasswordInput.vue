@@ -19,7 +19,7 @@ const value = computed({
   },
   set(val) { emit('update:modelValue', val); }
 });
-const isPasswordVisible = ref(false);
+const isPasswordVisible = ref<boolean>(false);
 </script>
 
 <template>

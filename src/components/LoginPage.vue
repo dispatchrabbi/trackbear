@@ -17,7 +17,7 @@ const loginForm = reactive({
   username: '',
   password: '',
 });
-const errorMessage = ref('');
+const errorMessage = ref<string>('');
 
 async function handleSubmit() {
   errorMessage.value = '';

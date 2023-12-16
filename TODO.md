@@ -24,7 +24,7 @@
 ## Deploy
 - [ ] Productionalize the service
   - [X] Add rate limits
-  - [ ] Logging
+  - [X] Logging
   - [ ] Figure out how Vite wants to act in production
 - [ ] Figure out how and where to deploy this
   - [ ] If behind a proxy, set app.set('trust proxy', 1) in Express

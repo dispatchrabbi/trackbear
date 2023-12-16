@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ProjectResponse } from '../../../server/api/projects';
+import type { Project } from '../../lib/project.ts';
 import ProgressChart from './ProgressChart.vue';
 
-defineProps<{ project: ProjectResponse }>();
+defineProps<{ project: Project }>();
 
 </script>
 

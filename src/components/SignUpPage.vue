@@ -16,7 +16,7 @@ const signupForm = reactive({
   newPassword: '',
 });
 
-const errorMessage = ref('');
+const errorMessage = ref<string>('');
 
 // not sure why useForm()'s validate and isValid aren't working but oh well
 function validate(): boolean {

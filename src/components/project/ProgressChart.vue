@@ -151,7 +151,7 @@ const chartOptions = computed(() => {
     maintainAspectRatio: true,
   };
 
-  return options;
+  return options as InstanceType<typeof Line>["$props"]["options"];
 });
 
 const chart = ref(null);

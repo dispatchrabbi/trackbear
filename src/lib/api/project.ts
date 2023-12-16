@@ -1,5 +1,6 @@
 import { callApi } from "./api";
-import { CreateProjectPayload, ProjectResponse, CreateUpdatePayload } from '../../../server/api/projects.ts';
+import type { Project, Update } from "../project.ts";
+import type { CreateProjectPayload, ProjectResponse, CreateUpdatePayload } from '../../../server/api/projects.ts';
 
 async function getProjects() {
   const response = await callApi<ProjectResponse[]>('/api/projects', 'GET');
@@ -35,7 +36,7 @@ async function createProject(project: CreateProjectPayload) {
   }
 }
 
-async function createUpdate(project: Project, update: CreateUpdatePayload) {
+async function createUpdate(project: Project, update: CreateUpdatePayload): Promise<Update> {
   const response = await callApi<Update>(`/api/projects/${project.id}/update`, 'POST', update);
 
   if(response.success) {

@@ -17,7 +17,7 @@ const projectForm = reactive({
   endDate: null,
 });
 
-const errorMessage = ref('');
+const errorMessage = ref<string>('');
 
 const typeOptions = [
   { text: 'Words', value: 'words' },

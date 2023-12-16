@@ -5,7 +5,6 @@ import { parseDateStringSafe, formatDate } from '../../lib/date.ts';
 import { Project, TYPE_INFO } from '../../lib/project.ts';
 import { createUpdate } from '../../lib/api/project';
 import { CreateUpdatePayload } from '../../../server/api/projects';
-import { Update } from '@prisma/client';
 
 const props = defineProps<{ project: Project }>();
 const emit = defineEmits(['newUpdate']);
@@ -15,7 +14,7 @@ const progressForm = reactive({
   count: '',
   time: '',
 });
-const errorMessage = ref('');
+const errorMessage = ref<string>('');
 
 function validateTimeString(timeString: string) {
   const parts = timeString.split(':');
@@ -59,7 +58,7 @@ async function handleSubmit() {
     value,
   } as CreateUpdatePayload;
 
-  let update: Update;
+  let update;
   try {
     update = await createUpdate(props.project, formData);
   } catch(err) {
