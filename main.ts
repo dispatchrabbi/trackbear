@@ -8,6 +8,7 @@ import helmet from './server/lib/middleware/helmet.ts';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
+import rateLimit from './server/lib/middleware/rate-limit.ts';
 
 import ViteExpress from 'vite-express';
 
@@ -27,6 +28,11 @@ async function main() {
 
   // log requests
   app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
+  // rate-limiting
+  if(process.env.NODE_ENV !== 'development') {
+    app.use(rateLimit());
+  }
 
   // parse request bodies using application/json
   app.use(bodyParser.json());
@@ -49,7 +55,7 @@ async function main() {
     }),
   }));
 
-  // /api: self-explanatory
+  // /api: mount the API routes
   app.use('/api', apiRouter);
 
   const server = app.listen(process.env.PORT, () => {

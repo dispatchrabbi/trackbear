@@ -9,7 +9,6 @@
 ## Back-end API
 - [X] User info and login API
 - [X] Projects API
-- [ ] Logging
 - [ ] Audit events
 
 ## Wire up front-end to back end
@@ -23,9 +22,12 @@
 - [ ] Create seed data for testing that everything looks good
 
 ## Deploy
-- [ ] Add rate limits
 - [ ] Productionalize the service
+  - [ ] Add rate limits
+  - [ ] Logging
+  - [ ] Figure out how Vite wants to act in production
 - [ ] Figure out how and where to deploy this
+  - [ ] If behind a proxy, set app.set('trust proxy', 1) in Express
 - [ ] Create domain
 - [ ] Prove out deploy & migrations
 

@@ -21,7 +21,7 @@ import DarkModeToggle from './DarkModeToggle.vue';
         >
           <div class="flex items-center gap-1 text-2xl masthead">
             <div class="logo">
-              <img :src="`/public/${ currentPresetName === 'dark' ? 'polar-bear' : 'brown-bear' }.png`">
+              <img :src="`/images/${ currentPresetName === 'dark' ? 'polar-bear' : 'brown-bear' }.png`">
             </div>
             <div>TrackBear</div>
           </div>
