@@ -30,10 +30,10 @@
 - [ ] Prove out deploy & migrations
 
 ## Polish
-- [ ] Dark mode
 - [ ] Change over client-side validation to Zod
 - [ ] Make API responses consistent and examine return codes
 - [ ] Look at all "null" states
+- [ ] Ensure dark mode is usable
 - [ ] Add landing page
 - [ ] Release to beta testers
 
@@ -41,6 +41,7 @@
 - [ ] Finalize name
 - [ ] Create logo
 - [ ] Set up ko-fi/whatever
+- [ ] Finalize color scheme
 - [ ] Create staging instance too
 - [ ] Document the heck out of this
 - [ ] Sharing

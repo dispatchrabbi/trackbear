@@ -2,8 +2,13 @@
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
+import { useColors } from 'vuestic-ui';
+const { currentPresetName } = useColors();
+
 import { useUserStore } from '../../stores/user.ts';
 const userStore = useUserStore();
+
+import DarkModeToggle from './DarkModeToggle.vue';
 
 </script>
 
@@ -14,11 +19,22 @@ const userStore = useUserStore();
         <RouterLink
           :to="userStore.user ? '/projects' : '/'"
         >
-          🐻 BearTracks
+          <div class="flex items-center gap-1 text-2xl">
+            <div>
+              <img
+                class="logo"
+                :src="`/public/${ currentPresetName === 'dark' ? 'polar-bear' : 'brown-bear' }.png`"
+              >
+            </div>
+            <div>TrackBear</div>
+          </div>
         </RouterLink>
       </VaNavbarItem>
     </template>
     <template #right>
+      <VaNavbarItem>
+        <DarkModeToggle />
+      </VaNavbarItem>
       <template v-if="userStore.user">
         <VaNavbarItem>
           <VaButton
@@ -67,4 +83,7 @@ const userStore = useUserStore();
 </template>
 
 <style scoped>
+.logo {
+  height: 1em;
+}
 </style>
