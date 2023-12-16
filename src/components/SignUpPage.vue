@@ -76,16 +76,24 @@ async function handleSubmit() {
           @submit.prevent="validate() && handleSubmit()"
         >
           <VaInput
+            id="username"
             v-model="signupForm.username"
             label="Username"
+            name="username"
+            input-aria-label="username"
+            autocomplete="username"
             messages="Must be at least 3 characters long."
             :rules="[v => z.string().min(3).safeParse(v).success || 'Please enter a username at least 3 characters long']"
             required-mark
           />
           <VaInput
+            id="email"
             v-model="signupForm.email"
             type="email"
             label="Email"
+            name="email"
+            input-aria-label="email"
+            autocomplete="email"
             placeholder="grizzly@example.com"
             :rules="[v => z.string().email().safeParse(v).success || 'Please enter a valid email']"
             required-mark
@@ -98,6 +106,7 @@ async function handleSubmit() {
               v => v.length > 0 || 'Please enter a password',
               v => v.length >= 8 || 'Password must be at least 8 characters long'
             ]"
+            name="new-password"
             autocomplete="new-password"
             messages="Must be at least 8 characters long."
             required-mark

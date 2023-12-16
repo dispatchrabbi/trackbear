@@ -61,16 +61,21 @@ async function handleSubmit() {
           @submit.prevent="validate() && handleSubmit()"
         >
           <VaInput
+            id="username"
             v-model="loginForm.username"
+            name="username"
+            input-aria-label="username"
+            autocomplete="username"
             label="Username"
             :rules="[v => !!v || 'Please enter your username']"
           />
           <TogglablePasswordInput
             id="current-password"
             v-model="loginForm.password"
+            name="current-password"
+            autocomplete="current-password"
             label="Password"
             :rules="[v => !!v || 'Please enter your password']"
-            autocomplete="current-password"
           />
           <div class="flex gap-4 mt-4">
             <VaButton

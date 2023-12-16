@@ -5,6 +5,7 @@ import type { ValidationRule } from 'vuestic-ui';
 const props = defineProps<{
   modelValue: string;
   id: string;
+  name: string;
   autocomplete: string;
   label?: string;
   rules?: ValidationRule<string>[];
@@ -30,6 +31,8 @@ const isPasswordVisible = ref<boolean>(false);
     :label="props.label"
     :rules="props.rules"
     :messages="props.messages"
+    :name="props.name"
+    :input-aria-label="props.name"
     :autocomplete="props.autocomplete"
     @click-append-inner="isPasswordVisible = !isPasswordVisible"
   >
