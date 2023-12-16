@@ -1,12 +1,11 @@
 import { Router } from "express";
 import { z } from 'zod';
 
-import { requireUser } from '../lib/auth.ts';
+import { requireUser, RequestWithUser } from '../lib/auth.ts';
 import dbClient from "../lib/db.ts";
 import { PROJECT_STATE, PROJECT_VISIBILITY, PROJECT_TYPE } from '../lib/states.ts';
 
-import { Project, Update } from "@prisma/client";
-import { RequestWithUser } from '../lib/auth.ts';
+import type { Project, Update } from "@prisma/client";
 import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 
 export type CreateProjectPayload = {
@@ -37,8 +36,7 @@ const zInt = function() {
 }
 
 const zDateStr = function() {
-  return z.string()
-    .refine(str => /^\d{4}-\d{2}-\d{2}$/.test(str), { message: 'Expected date string (YYYY-MM-DD), received a different format' });
+  return z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Expected date string (YYYY-MM-DD), received a different format' });
 }
 
 const projectsRouter = Router();

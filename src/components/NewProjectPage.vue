@@ -5,8 +5,8 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 import LoggedInAppPage from './layout/LoggedInAppPage.vue';
-import { createProject } from '../lib/api/project';
-import { CreateProjectPayload } from '../../server/api/projects';
+import { createProject } from '../lib/api/project.ts';
+import type { CreateProjectPayload } from '../../server/api/projects.ts';
 import { parseDateStringSafe, formatDate } from '../lib/date.ts';
 
 const projectForm = reactive({

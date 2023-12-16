@@ -13,7 +13,6 @@
 - [ ] Audit events
 
 ## Wire up front-end to back end
-- [ ] Create seed data
 - [X] Login
 - [ ] Signup
 - [X] Projects page
@@ -21,22 +20,31 @@
 - [X] Project page
 - [X] Add entry
 - [ ] Global error messaging
+- [ ] Create seed data for testing that everything looks good
 
 ## Deploy
+- [ ] Add rate limits
+- [ ] Productionalize the service
 - [ ] Figure out how and where to deploy this
-- [ ] Document the heck out of this
+- [ ] Create domain
 - [ ] Prove out deploy & migrations
-- [ ] Create staging instance too
 
 ## Polish
-- [ ] Finalize name
-- [ ] Create logo
+- [ ] Dark mode
+- [ ] Change over client-side validation to Zod
+- [ ] Make API responses consistent and examine return codes
+- [ ] Look at all "null" states
 - [ ] Add landing page
 - [ ] Release to beta testers
-- [ ] Set up ko-fi/whatever
 
 ## Future
+- [ ] Finalize name
+- [ ] Create logo
+- [ ] Set up ko-fi/whatever
+- [ ] Create staging instance too
+- [ ] Document the heck out of this
 - [ ] Sharing
 - [ ] Leaderboards (types: same type, goal percentage)
-- [ ] TOTP
 - [ ] Project Stats
+- [ ] API access
+- [ ] TOTP

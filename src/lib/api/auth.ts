@@ -1,5 +1,11 @@
 import { callApi } from "./api";
-import { UserResponse } from '../../../server/api/auth.ts';
+import { CreateUserPayload, UserResponse } from '../../../server/api/auth.ts';
+
+async function signUp(userInfo: CreateUserPayload): Promise<number> {
+  const response = await callApi('/api/auth/signup', 'POST', userInfo);
+
+  return response.status;
+}
 
 async function logIn(username: string, password: string): Promise<UserResponse> {
   const response = await callApi<UserResponse>('/api/auth/login', 'POST', { username, password });
@@ -11,14 +17,8 @@ async function logIn(username: string, password: string): Promise<UserResponse> 
   }
 }
 
-async function logOut() {
-  const response = await callApi('/api/auth/logout', 'POST');
-
-  if(response.success) {
-    return response.data;
-  } else {
-    throw response.error;
-  }
+async function logOut(): Promise<void> {
+  await callApi('/api/auth/logout', 'POST');
 }
 
 async function getUser(): Promise<UserResponse> {
@@ -32,6 +32,7 @@ async function getUser(): Promise<UserResponse> {
 }
 
 export {
+  signUp,
   logIn,
   logOut,
   getUser,

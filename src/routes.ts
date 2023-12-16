@@ -1,4 +1,5 @@
 import PlaceholderPage from './components/PlaceholderPage.vue';
+import SignUpPage from './components/SignUpPage.vue';
 import LoginPage from './components/LoginPage.vue';
 import LogoutPage from './components/LogoutPage.vue';
 import ResetPasswordPage from './components/ResetPassword.vue';
@@ -10,6 +11,7 @@ import ProjectPage from './components/ProjectPage.vue';
 
 const routes = [
   { path: '/', name: 'home', component: PlaceholderPage, props: { title: 'Homepage' } },
+  { path: '/signup', name:'signup', component: SignUpPage },
   { path: '/login', name:'login', component: LoginPage },
   { path: '/logout', name:'logout', component: LogoutPage },
   { path: '/reset-password/:uuid', name:'reset-password', component: ResetPasswordPage },
