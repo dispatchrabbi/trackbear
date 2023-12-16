@@ -1,7 +1,7 @@
 import { Router } from "express";
 import type { RequestWithSessionAuth } from '../lib/auth.ts';
 
-import logger from "../lib/logger.ts";
+import winston from "winston";
 
 import pingRouter from './ping.ts';
 import authRouter from './auth.ts';
@@ -11,7 +11,7 @@ import projectsRouter from './projects.ts';
 const apiRouter = Router();
 
 apiRouter.use((req, res, next) => {
-  logger.info(`${req.method} ${req.originalUrl}`, { sessionId: req.sessionID, user: (req as RequestWithSessionAuth).session.auth?.id });
+  winston.info(`${req.method} ${req.originalUrl}`, { sessionId: req.sessionID, user: (req as RequestWithSessionAuth).session.auth?.id });
   next();
 });
 

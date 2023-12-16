@@ -1,8 +1,8 @@
-import process from 'node:process';
+import process from 'process';
 import dotenv from 'dotenv-safe';
-dotenv.config();
 
-import logger, { accessLogger } from './server/lib/logger.ts';
+import winston from 'winston';
+import initLoggers from './server/lib/logger.ts';
 
 import express from 'express';
 import morgan from 'morgan';
@@ -17,9 +17,14 @@ import ViteExpress from 'vite-express';
 import dbClient from './server/lib/db.js';
 
 import apiRouter from './server/api/index.js';
-// import PATHS from './server/lib/paths.js';
 
 async function main() {
+  dotenv.config();
+
+  initLoggers(process.env.LOG_DIR);
+  // use `winston` just as the general logger
+  const accessLogger = winston.loggers.get('access');
+
   const app = express();
 
   // add security headers
@@ -66,7 +71,7 @@ async function main() {
   app.use('/api', apiRouter);
 
   const server = app.listen(process.env.PORT, () => {
-    console.log(`Listening! http://localhost:${process.env.PORT}/`);
+    winston.info(`TrackBear is now listening on http://localhost:${process.env.PORT}/`);
   });
 
   // baseline 404 error (though this is probably obviated by the Vite fall-through route above)
