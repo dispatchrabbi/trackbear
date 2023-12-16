@@ -11,7 +11,11 @@ const userStore = useUserStore();
   <VaNavbar>
     <template #left>
       <VaNavbarItem class="logo text-xl">
-        🐻 BearTracks
+        <RouterLink
+          :to="userStore.user ? '/projects' : '/'"
+        >
+          🐻 BearTracks
+        </RouterLink>
       </VaNavbarItem>
     </template>
     <template #right>
@@ -24,14 +28,14 @@ const userStore = useUserStore();
             Projects
           </VaButton>
         </VaNavbarItem>
-        <VaNavbarItem>
+        <!-- <VaNavbarItem>
           <VaButton
             preset="secondary"
             @click="router.push('/account')"
           >
             Account
           </VaButton>
-        </VaNavbarItem>
+        </VaNavbarItem> -->
         <VaNavbarItem>
           <VaButton
             preset="secondary"
@@ -45,7 +49,7 @@ const userStore = useUserStore();
         <VaNavbarItem>
           <VaButton
             preset="secondary"
-            @click="router.push('/sign-up')"
+            @click="router.push('/signup')"
           >
             Sign Up!
           </VaButton>
