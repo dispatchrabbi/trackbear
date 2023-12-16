@@ -74,6 +74,15 @@ function handleCancel() {
     </h2>
     <VaCard>
       <VaCardContent>
+        <VaAlert
+          v-if="errorMessage"
+          class="mb-4"
+          color="danger"
+          border="left"
+          icon="error"
+          closeable
+          :description="errorMessage"
+        />
         <VaForm
           ref="form"
           class="flex flex-col gap-4"
@@ -124,10 +133,6 @@ function handleCancel() {
             manual-input
             clearable
           />
-
-          <p v-if="errorMessage">
-            {{ errorMessage }}
-          </p>
           <div class="flex gap-4 mt-4">
             <VaButton
               :disabled="!isValid"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { ref, reactive } from 'vue';
 import { useForm } from 'vuestic-ui';
 
 import { useRouter } from 'vue-router';
@@ -16,16 +16,20 @@ const { isValid, validate } = useForm('form');
 const loginForm = reactive({
   username: '',
   password: '',
-  errorMessage: '',
 });
+const errorMessage = ref('');
 
 async function handleSubmit() {
-  loginForm.errorMessage = '';
+  errorMessage.value = '';
 
   try {
     await userStore.logIn(loginForm.username, loginForm.password);
   } catch(err) {
-    loginForm.errorMessage = err;
+    if(err === 'Incorrect username or password') {
+      errorMessage.value = 'Incorrect username or password. Please check and try again.';
+    } else {
+      errorMessage.value = err;
+    }
     return;
   }
 
@@ -39,9 +43,17 @@ async function handleSubmit() {
     <h2 class="va-h2 mb-3">
       Log In
     </h2>
-    <p>{{ loginForm }}</p>
     <VaCard>
       <VaCardContent>
+        <VaAlert
+          v-if="errorMessage"
+          class="mb-4"
+          color="danger"
+          border="left"
+          icon="error"
+          closeable
+          :description="errorMessage"
+        />
         <VaForm
           ref="form"
           class="flex flex-col gap-4"
@@ -60,9 +72,6 @@ async function handleSubmit() {
             :rules="[v => !!v || 'Please enter your password']"
             autocomplete="current-password"
           />
-          <p v-if="loginForm.errorMessage">
-            {{ loginForm.errorMessage }}
-          </p>
           <div class="flex gap-4 mt-4">
             <VaButton
               :disabled="!isValid"

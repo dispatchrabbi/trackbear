@@ -19,7 +19,7 @@
 - [X] New project
 - [X] Project page
 - [X] Add entry
-- [ ] Global error messaging
+- [X] Consistent error messaging
 - [ ] Create seed data for testing that everything looks good
 
 ## Deploy
