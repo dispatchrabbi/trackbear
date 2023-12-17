@@ -1,4 +1,5 @@
 import PlaceholderPage from './components/PlaceholderPage.vue';
+import HomePage from './components/HomePage.vue'
 import SignUpPage from './components/SignUpPage.vue';
 import LoginPage from './components/LoginPage.vue';
 import LogoutPage from './components/LogoutPage.vue';
@@ -10,7 +11,7 @@ import NewProjectPage from './components/NewProjectPage.vue';
 import ProjectPage from './components/ProjectPage.vue';
 
 const routes = [
-  { path: '/', name: 'home', component: PlaceholderPage, props: { title: 'Homepage' } },
+  { path: '/', name: 'home', component: HomePage },
   { path: '/signup', name:'signup', component: SignUpPage },
   { path: '/login', name:'login', component: LoginPage },
   { path: '/logout', name:'logout', component: LogoutPage },

@@ -1,17 +1,17 @@
 <script setup lang="ts">
 
-import Page from './layout/AppPage.vue';
+import AppPage from './layout/AppPage.vue';
 
 defineProps<{ title: string }>();
 
 </script>
 
 <template>
-  <Page>
+  <AppPage>
     <h2 class="va-h2 mb-3">
       {{ title || 'Placeholder' }}
     </h2>
-  </Page>
+  </AppPage>
 </template>
 
 <style scoped>
