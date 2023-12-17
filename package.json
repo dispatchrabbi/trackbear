@@ -27,7 +27,6 @@
     "helmet": "^7.1.0",
     "morgan": "^1.10.0",
     "pinia": "^2.1.7",
-    "vite-express": "^0.11.1",
     "vue": "^3.3.8",
     "vue-chartjs": "^5.2.0",
     "vue-router": "^4.2.5",

@@ -28,9 +28,6 @@ import AppPage from './layout/AppPage.vue';
 </template>
 
 <style scoped>
-.hp-card-image {
-
-}
 .danger {
   color: var(--va-danger);
 }

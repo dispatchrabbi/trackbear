@@ -6,6 +6,8 @@ import { checkEnvVars } from './server/lib/env.ts';
 import winston from 'winston';
 import initLoggers from './server/lib/logger.ts';
 
+import dbClient from './server/lib/db.js';
+
 import http from 'http';
 import https from 'https';
 import express from 'express';
@@ -16,11 +18,10 @@ import session from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import rateLimit from './server/lib/middleware/rate-limit.ts';
 
-import ViteExpress from 'vite-express';
-
-import dbClient from './server/lib/db.js';
+// import ViteExpress from 'vite-express';
 
 import apiRouter from './server/api/index.js';
+import { createServer as createViteServer } from 'vite';
 
 async function main() {
   dotenv.config({ allowEmptyValues: true });
@@ -37,6 +38,11 @@ async function main() {
 
   // don't say that we're using Express
   app.disable('x-powered-by');
+
+  // are we behind a proxy?
+  if(process.env.USE_PROXY) {
+    app.set('trust proxy', 1);
+  }
 
   // log requests
   // always stream to the access logger
@@ -75,10 +81,14 @@ async function main() {
     app.use('/api', apiRouter);
   }
 
-  // are we behind a proxy?
-  if(process.env.USE_PROXY) {
-    app.set('trust proxy', 1);
-  }
+  // vite: serve the front end. Assumes everything that reaches this point is part of the front-end
+  const vite = await createViteServer({
+    server: { middlewareMode: true },
+    appType: 'spa',
+  });
+  app.use(vite.middlewares); // vite takes care of serving the front end
+  // NOTE: alternately, it could be appType: custom, and then app.use('*', handleServingHtml)
+  // see https://vitejs.dev/config/server-options.html#server-middlewaremode
 
   // are we doing HTTP or HTTPS?
   let server: https.Server | http.Server;
@@ -100,9 +110,6 @@ async function main() {
     console.error(err)
     res.status(500).send('500 Server error');
   });
-
-  // this will bind a fall-through route to the front-end, so anything that isn't otherwise accounted for ends up here
-  ViteExpress.bind(app, server);
 }
 
 main().catch(e => console.error(e));
