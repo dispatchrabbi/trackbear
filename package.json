@@ -7,6 +7,7 @@
     "start": "ts-node --esm ./main.ts",
     "start:dev": "NODE_ENV=development ts-node --esm ./main.ts",
     "start:prod": "NODE_ENV=production ts-node --esm ./main.ts",
+    "start:argh": "NODE_ENV=production DATABASE_URL=\"file:../../db/trackbear.db\" ts-node --esm ./main.ts",
     "lint": "eslint --ext .js,.ts,.vue .",
     "client:dev": "vite",
     "client:build": "vue-tsc && vite build",
