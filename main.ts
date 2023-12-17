@@ -1,9 +1,13 @@
 import process from 'process';
+import { readFile } from 'fs/promises';
 import dotenv from 'dotenv-safe';
+import { checkEnvVars } from './server/lib/env.ts';
 
 import winston from 'winston';
 import initLoggers from './server/lib/logger.ts';
 
+import http from 'http';
+import https from 'https';
 import express from 'express';
 import morgan from 'morgan';
 import helmet from './server/lib/middleware/helmet.ts';
@@ -19,7 +23,8 @@ import dbClient from './server/lib/db.js';
 import apiRouter from './server/api/index.js';
 
 async function main() {
-  dotenv.config();
+  dotenv.config({ allowEmptyValues: true });
+  checkEnvVars();
 
   initLoggers(process.env.LOG_DIR);
   // use `winston` just as the general logger
@@ -70,15 +75,24 @@ async function main() {
   // /api: mount the API routes
   app.use('/api', apiRouter);
 
-  const server = app.listen(process.env.PORT, () => {
-    winston.info(`TrackBear is now listening on http://localhost:${process.env.PORT}/`);
-  });
+  // are we behind a proxy?
+  if(process.env.USE_PROXY) {
+    app.set('trust proxy', 1);
+  }
 
-  // baseline 404 error (though this is probably obviated by the Vite fall-through route above)
-  // TODO: figure out that interplay
-  // app.use((req, res, next) => {
-  //   res.status(404).send("404 Not Found");
-  // });
+  // are we doing HTTP or HTTPS?
+  let server: https.Server | http.Server;
+  if(process.env.USE_HTTPS) {
+    server = https.createServer({
+      key: await readFile(process.env.TLS_KEY as string),
+      cert: await readFile(process.env.TLS_CERT as string),
+    }, app);
+  } else {
+    server = http.createServer(app);
+  }
+  server.listen(process.env.PORT, () => {
+    winston.info(`TrackBear is now listening on ${process.env.USE_HTTPS ? 'https' : 'http'}://localhost:${process.env.PORT}/`);
+  });
 
   // baseline server-side error handling
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
