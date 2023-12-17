@@ -6,6 +6,6 @@ import { visualizer } from 'rollup-plugin-visualizer';
 export default defineConfig({
   plugins: [ vue(), visualizer() ],
   build: {
-    outDir: 'dist/client',
+    outDir: 'dist',
   },
 });
