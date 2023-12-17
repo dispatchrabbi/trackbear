@@ -23,7 +23,7 @@ import DarkModeToggle from './DarkModeToggle.vue';
             <div class="logo">
               <img :src="`/images/${ currentPresetName === 'dark' ? 'polar-bear' : 'brown-bear' }.png`">
             </div>
-            <div>TrackBear</div>
+            <div>TrackBear <sup class="text-sm">Alpha</sup></div>
           </div>
         </RouterLink>
       </VaNavbarItem>
@@ -86,5 +86,9 @@ import DarkModeToggle from './DarkModeToggle.vue';
 .logo > img {
   height: 1em;
   aspect-ratio: 1;
+}
+
+.masthead sup {
+  color: var(--va-warning);
 }
 </style>
