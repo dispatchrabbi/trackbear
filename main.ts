@@ -46,11 +46,6 @@ async function main() {
     app.use(morgan('dev'));
   }
 
-  // rate-limiting
-  if(process.env.NODE_ENV !== 'development') {
-    app.use(rateLimit());
-  }
-
   // parse request bodies using application/json
   app.use(bodyParser.json());
 
@@ -73,7 +68,12 @@ async function main() {
   }));
 
   // /api: mount the API routes
-  app.use('/api', apiRouter);
+  if(process.env.NODE_ENV !== 'development') {
+    // add rate-limiting for production
+    app.use('/api', rateLimit(), apiRouter);
+  } else {
+    app.use('/api', apiRouter);
+  }
 
   // are we behind a proxy?
   if(process.env.USE_PROXY) {
