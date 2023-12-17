@@ -22,26 +22,37 @@
 - [ ] Create seed data for testing that everything looks good
 
 ## Deploy
-- [ ] Productionalize the service
+- [X] Productionalize the service
   - [X] Add rate limits
   - [X] Logging
-  - [ ] Figure out how Vite wants to act in production
-- [ ] Figure out how and where to deploy this
-  - [ ] If behind a proxy, set app.set('trust proxy', 1) in Express
-- [ ] Create domain
+  - [X] Figure out how Vite wants to act in production
+- [X] Figure out how and where to deploy this
+  - [X] If behind a proxy, set app.set('trust proxy', 1) in Express
+- [X] Create domain
 - [ ] Prove out deploy & migrations
+  - [X] Manual update process
+  - [ ] Create build step for backend AND frontend
+  - [ ] Prove out migrations
+- [ ] ...Dockerize?
 
 ## Polish
 - [ ] Change over client-side validation to Zod
 - [ ] Make API responses consistent and examine return codes
 - [ ] Look at all "null" states
 - [ ] Ensure dark mode is usable
-- [ ] Add landing page
-- [ ] Release to beta testers
+- [ ] Announcement/banner functionality
+- [X] Add landing page
+- [ ] Go over [security practices](https://blog.risingstack.com/node-js-security-checklist/)
+  - [ ] Integrate CSRF protection
+  - [ ] Double-check Helmet settings
+  - [ ] Make rate-limiting better
+  - [ ] Lock-out sign-in attempts
+- [ ] Release to alpha testers
 
 ## Future
 - [ ] Finalize name
 - [ ] Create logo
+- [ ] Buy actual domain
 - [ ] Set up ko-fi/whatever
 - [ ] Finalize color scheme
 - [ ] Create staging instance too
@@ -51,3 +62,4 @@
 - [ ] Project Stats
 - [ ] API access
 - [ ] TOTP
+- [ ] Admin area

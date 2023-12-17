@@ -20,8 +20,8 @@ export type Update = {
 };
 
 export const TYPE_INFO = {
-  words: { count: 'Word Count', defaultChartMax: 1000 },
-  time: { count: 'Time Spent', defaultChartMax: 500 },
-  chapters: { count: 'Chapters', defaultChartMax: 15 },
-  pages: { count: 'Pages', defaultChartMax: 300 },
+  words: { count: 'Word Count', defaultChartMax: 5000 },
+  time: { count: 'Time Spent', defaultChartMax: 250 },
+  chapters: { count: 'Chapters', defaultChartMax: 30 },
+  pages: { count: 'Pages', defaultChartMax: 50 },
 };

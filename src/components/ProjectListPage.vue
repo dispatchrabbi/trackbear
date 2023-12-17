@@ -5,6 +5,7 @@ import { getProjects } from '../lib/api/project.ts';
 
 import LoggedInAppPage from './layout/LoggedInAppPage.vue'
 import ProjectTile from './project/ProjectTile.vue';
+import NewProjectTile from './project/NewProjectTile.vue';
 import { Project } from '../lib/project';
 
 const projects = ref<Project[]>([]);
@@ -27,11 +28,18 @@ getProjects()
       </div>
       <div class="shrink">
         <RouterLink to="/projects/new">
-          <VaButton>New Project</VaButton>
+          <VaButton gradient>
+            New Project
+          </VaButton>
         </RouterLink>
       </div>
     </div>
     <div class="grid grid-cols-2 gap-4">
+      <div v-if="projects.length === 0">
+        <RouterLink to="/projects/new">
+          <NewProjectTile />
+        </RouterLink>
+      </div>
       <div
         v-for="project in projects"
         :key="project.id"
