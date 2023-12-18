@@ -31,7 +31,7 @@
 - [X] Create domain
 - [ ] Prove out deploy & migrations
   - [X] Manual update process
-  - [ ] Create build step for backend AND frontend
+  - [X] Create update script
   - [ ] Prove out migrations
 - [ ] ...Dockerize?
 
