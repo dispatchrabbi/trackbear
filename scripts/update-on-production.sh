@@ -4,4 +4,4 @@ echo "Building the front end..."
 npm run client:build
 
 echo "Restarting the app..."
-pm2 restart ecosystem.config.js
+pm2 restart ecosystem.config.cjs
