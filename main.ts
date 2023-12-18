@@ -81,14 +81,23 @@ async function main() {
     app.use('/api', apiRouter);
   }
 
-  // vite: serve the front end. Assumes everything that reaches this point is part of the front-end
-  const vite = await createViteServer({
-    server: { middlewareMode: true },
-    appType: 'spa',
-  });
-  app.use(vite.middlewares); // vite takes care of serving the front end
-  // NOTE: alternately, it could be appType: custom, and then app.use('*', handleServingHtml)
-  // see https://vitejs.dev/config/server-options.html#server-middlewaremode
+  // Serve the front-end - either statically or out of the vite server, depending
+  if(process.env.NODE_ENV === 'production') {
+    // serve the front-end statically out of dist/
+    winston.debug('Serving the front-end statically out of dist/');
+    app.use(express.static('dist'));
+  } else {
+    // Serve the front end using the schmancy HMR vite server.
+    // This middleware has a catch-all route
+    winston.debug('Serving the front-end dynamically using vite');
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: 'spa',
+    });
+    app.use(vite.middlewares); // vite takes care of serving the front end
+    // NOTE: alternately, it could be appType: custom, and then app.use('*', handleServingHtml)
+    // see https://vitejs.dev/config/server-options.html#server-middlewaremode
+  }
 
   // are we doing HTTP or HTTPS?
   let server: https.Server | http.Server;
