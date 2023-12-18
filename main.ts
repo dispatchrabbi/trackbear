@@ -84,13 +84,14 @@ async function main() {
   // Serve the front-end - either statically or out of the vite server, depending
   if(process.env.NODE_ENV === 'production') {
     // serve the front-end statically out of dist/
-    winston.debug('Serving the front-end statically out of dist/');
-    app.use(express.static('dist'));
+    winston.debug('Serving the front-end statically out of client/');
+    app.use(express.static('./client'));
   } else {
     // Serve the front end using the schmancy HMR vite server.
     // This middleware has a catch-all route
     winston.debug('Serving the front-end dynamically using vite');
     const vite = await createViteServer({
+      root: './client',
       server: { middlewareMode: true },
       appType: 'spa',
     });

@@ -10,7 +10,7 @@ const router = useRouter();
 import AppPage from './layout/AppPage.vue';
 import TogglablePasswordInput from './form/TogglablePasswordInput.vue'
 import { signUp } from '../lib/api/auth.ts';
-import { CreateUserPayload } from '../../server/api/auth';
+import { CreateUserPayload } from '../../../server/api/auth';
 
 const formModel = reactive({
   username: '',

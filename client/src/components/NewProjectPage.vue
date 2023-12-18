@@ -2,7 +2,7 @@
 import { ref, reactive } from 'vue';
 
 import { z } from 'zod';
-import { zStrInt } from '../../server/lib/validators.ts';
+import { zStrInt } from '../../../server/lib/validators.ts';
 import { useValidation } from '../lib/form.ts';
 
 import { useRouter } from 'vue-router';
@@ -11,7 +11,7 @@ const router = useRouter();
 import LoggedInAppPage from './layout/LoggedInAppPage.vue';
 import { TYPE_INFO } from '../lib/project.ts';
 import { createProject } from '../lib/api/project.ts';
-import type { CreateProjectPayload } from '../../server/api/projects.ts';
+import type { CreateProjectPayload } from '../../../server/api/projects.ts';
 import { parseDateStringSafe, formatDate } from '../lib/date.ts';
 
 const formModel = reactive({
