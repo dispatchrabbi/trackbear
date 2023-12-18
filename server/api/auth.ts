@@ -2,12 +2,14 @@ import { Router } from "express";
 import { z } from 'zod';
 
 import { validateBody } from "../lib/middleware/validate.ts";
+import { ApiResponse, success, failure } from './common.ts';
 
 import dbClient from '../lib/db.ts';
 import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut, requireUser, RequestWithUser } from "../lib/auth.ts";
 import { User } from "@prisma/client";
 import { USER_STATE } from "../lib/states.ts";
+import winston from "winston";
 
 export type CreateUserPayload = {
   username: string;
@@ -25,7 +27,7 @@ const authRouter = Router();
 
 authRouter.post('/login',
   validateBody(z.object({ username: z.string(), password: z.string() })),
-  async (req, res, next) =>
+  async (req, res: ApiResponse<UserResponse>, next) =>
 {
   const { username, password } = req.body;
 
@@ -35,13 +37,13 @@ authRouter.post('/login',
   } catch(err) { return next(err); }
 
   if(!user) {
-    console.debug(`LOGIN: ${username} does not exist`);
-    return res.status(400).send({ message: 'Incorrect username or password'});
+    winston.info(`LOGIN: ${username} attempted to log in but does not exist`);
+    return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
 
   if(user.state !== USER_STATE.ACTIVE) {
-    console.debug(`LOGIN: ${username} attempted to log in but account state is ${user.state}`);
-    return res.status(400).send({ message: 'Incorrect username or password'});
+    winston.info(`LOGIN: ${username} attempted to log in but account state is ${user.state}`);
+    return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
 
   let verified: boolean;
@@ -50,22 +52,26 @@ authRouter.post('/login',
   } catch(err) { return next(err); }
 
   if(!verified) {
-    console.debug(`LOGIN: ${username} had the incorrect password`);
-    return res.status(400).send({ message: 'Incorrect username or password'});
+    winston.debug(`LOGIN: ${username} had the incorrect password`);
+    return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
 
   logIn(req, user);
-  console.debug(`LOGIN: ${username} successfully logged in`);
+  // TODO: replace this with audit events
+  winston.debug(`LOGIN: ${username} successfully logged in`);
 
   const userResponse: UserResponse = {
     uuid: user.uuid,
     username: user.username,
     displayName: user.displayName,
   };
-  return res.status(200).send(userResponse);
+  return res.status(200).send(success(userResponse));
 });
 
-authRouter.get('/user', requireUser, (req, res) => {
+authRouter.get('/user',
+  requireUser,
+  (req, res: ApiResponse<UserResponse>) =>
+{
   const user = (req as RequestWithUser<typeof req>).user;
   const userResponse: UserResponse = {
     uuid: user.uuid,
@@ -73,19 +79,20 @@ authRouter.get('/user', requireUser, (req, res) => {
     displayName: user.displayName,
   };
 
-  res.status(200).send(userResponse);
+  res.status(200).send(success(userResponse));
 })
 
 // logout ought to requireUser but since all it does is remove that user,
 // it's okay to just... let anyone log out at any time, even if they're not logged in.
-authRouter.post('/logout', (req, res) => {
+type EmptyObject = Record<string, never>;
+authRouter.post('/logout', (req, res: ApiResponse<EmptyObject>) => {
   logOut(req);
-  res.status(200).send({});
+  res.status(200).send(success({}));
 })
 
 authRouter.post('/signup',
   validateBody(z.object({ username: z.string(), password: z.string(), email: z.string().email() })),
-  async (req, res, next) =>
+  async (req, res: ApiResponse<UserResponse>, next) =>
 {
   const { username, password, email } = req.body as CreateUserPayload;
 
@@ -94,7 +101,7 @@ authRouter.post('/signup',
     where: { username }
   });
   if(existingUserWithThisUsername) {
-    return res.status(409).send({ message: 'A user with that username already exists' });
+    return res.status(409).send(failure('USERNAME_EXISTS', 'A user with that username already exists.'));
   }
 
   let hashedPassword: string, salt: string;
@@ -113,13 +120,16 @@ authRouter.post('/signup',
 
   try {
     const user = await dbClient.user.create({ data: userData });
-    console.debug(`SIGNUP: ${user.username} just signed up`);
+    winston.info(`SIGNUP: ${user.username} just signed up`);
 
     // TODO: kick off email verification/confirmation afterward
-    res.status(201).send({ message: 'Sign-up successful' });
+    res.status(201).send(success({
+      uuid: user.uuid,
+      username: user.username,
+      displayName: user.displayName,
+    }));
   } catch(err) {
-    console.error(err);
-    res.status(500).send({ message: 'Sign-up was unsuccessful' });
+    return next(err);
   }
 });
 

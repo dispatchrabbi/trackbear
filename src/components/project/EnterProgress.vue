@@ -14,6 +14,9 @@ const progressForm = reactive({
   count: '',
   time: '',
 });
+
+const isLoading = ref<boolean>(false);
+const successMessage = ref<string>('');
 const errorMessage = ref<string>('');
 
 function validateTimeString(timeString: string) {
@@ -40,8 +43,11 @@ function validate() {
 }
 const isValid = computed(() => validate());
 
+let timeout = null;
 async function handleSubmit() {
+  successMessage.value = '';
   errorMessage.value = '';
+  isLoading.value = true;
 
   const date = formatDate(progressForm.date);
 
@@ -61,10 +67,16 @@ async function handleSubmit() {
   let update;
   try {
     update = await createUpdate(props.project, formData);
+
+    successMessage.value = 'Progress logged!';
+    // clear the message after 10 seconds
+    if(timeout) { clearTimeout(timeout); }
+    timeout = setTimeout(() => successMessage.value = '', 5 * 1000);
   } catch(err) {
-    // TODO: better error handling here
-    errorMessage.value = err;
+    errorMessage.value = err.message;
     return;
+  } finally {
+    isLoading.value = false;
   }
 
   emit('newUpdate', update);
@@ -85,6 +97,24 @@ async function handleSubmit() {
         tag="form"
         @submit.prevent="validate() && handleSubmit()"
       >
+        <VaAlert
+          v-if="successMessage"
+          class="mb-4 mx-0"
+          color="success"
+          border="left"
+          icon="insights"
+          closeable
+          :description="successMessage"
+        />
+        <VaAlert
+          v-if="errorMessage"
+          class="mb-4 mx-0"
+          color="danger"
+          border="left"
+          icon="error"
+          closeable
+          :description="errorMessage"
+        />
         <VaInput
           v-if="props.project.type === 'time'"
           v-model="progressForm.time"
@@ -112,6 +142,7 @@ async function handleSubmit() {
         />
         <VaButton
           type="submit"
+          :loading="isLoading"
           :disabled="!isValid"
           class="mt-3"
         >

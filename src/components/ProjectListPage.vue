@@ -17,7 +17,7 @@ isLoading.value = true;
 getProjects()
   .then(ps => projects.value = ps as Project[])
   // TODO: add error message display
-  .catch(msg => errorMessage.value = msg)
+  .catch(err => errorMessage.value = err.message)
   .finally(() => isLoading.value = false);
 
 </script>

@@ -37,9 +37,11 @@
 
 ## Polish
 - [X] Change over client-side validation to Zod
+  - [ ] I missed the Enter Progress form
 - [X] Loading status in the forms
-- [ ] Make API responses consistent and examine return codes
-- [ ] Look at all "null" states
+- [X] Make API responses consistent and examine return codes
+  - [ ] Simplify out async handling a la https://stackoverflow.com/questions/43356705/node-js-express-error-handling-middleware-with-router
+- [X] Look at all "null" states
 - [ ] Ensure dark mode is usable
 - [ ] Announcement/banner functionality
 - [X] Add landing page

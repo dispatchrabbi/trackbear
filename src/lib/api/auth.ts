@@ -10,7 +10,7 @@ async function signUp(userInfo: CreateUserPayload): Promise<number> {
 async function logIn(username: string, password: string): Promise<UserResponse> {
   const response = await callApi<UserResponse>('/api/auth/login', 'POST', { username, password });
 
-  if(response.success) {
+  if(response.success === true) {
     return response.data;
   } else {
     throw response.error;
@@ -24,7 +24,7 @@ async function logOut(): Promise<void> {
 async function getUser(): Promise<UserResponse> {
   const response = await callApi<UserResponse>('/api/auth/user');
 
-  if(response.success) {
+  if(response.success === true) {
     return response.data;
   } else {
     throw response.error;

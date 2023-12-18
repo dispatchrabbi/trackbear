@@ -27,11 +27,11 @@ function loadProject() {
   const projectId = +projectIdStr;
   getProject(projectId)
     .then(p => project.value = p as Project)
-    .catch(({ status, message }) => {
-      if(status === 400) {
+    .catch(err => {
+      if(err.code === 'NOT_FOUND') {
         errorMessage.value = `Could not find project with ID ${projectId}. How did you get here?`;
       } else {
-        errorMessage.value = message;
+        errorMessage.value = err.message;
       }
     });
 }

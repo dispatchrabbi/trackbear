@@ -5,7 +5,7 @@ import type { CreateProjectPayload, ProjectResponse, CreateUpdatePayload } from 
 async function getProjects() {
   const response = await callApi<ProjectResponse[]>('/api/projects', 'GET');
 
-  if(response.success) {
+  if(response.success === true) {
     return response.data;
   } else {
     throw response.error;
@@ -15,21 +15,17 @@ async function getProjects() {
 async function getProject(id: number) {
   const response = await callApi<ProjectResponse>(`/api/projects/${id}`, 'GET');
 
-  if(response.success) {
+  if(response.success === true) {
     return response.data;
   } else {
-    // TODO: I really have to standardize on how I'm returning multiple status types here
-    throw {
-      status: response.status,
-      error: response.error,
-    };
+    throw response.error;
   }
 }
 
 async function createProject(project: CreateProjectPayload) {
   const response = await callApi<ProjectResponse>('/api/projects', 'POST', project);
 
-  if(response.success) {
+  if(response.success === true) {
     return response.data;
   } else {
     throw response.error;
@@ -39,7 +35,7 @@ async function createProject(project: CreateProjectPayload) {
 async function createUpdate(project: Project, update: CreateUpdatePayload): Promise<Update> {
   const response = await callApi<Update>(`/api/projects/${project.id}/update`, 'POST', update);
 
-  if(response.success) {
+  if(response.success === true) {
     return response.data;
   } else {
     throw response.error;

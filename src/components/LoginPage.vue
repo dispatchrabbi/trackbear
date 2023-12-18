@@ -36,7 +36,7 @@ async function handleSubmit() {
     const { username, password } = formData();
     await userStore.logIn(username, password);
   } catch(err) {
-    if(err === 'Incorrect username or password') {
+    if(err.code === 'INCORRECT_CREDS') {
       errorMessage.value = 'Incorrect username or password. Please check and try again.';
     } else {
       errorMessage.value = err;

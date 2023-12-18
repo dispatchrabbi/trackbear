@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { ApiResponse, success, failure } from './common.ts';
 
 import { z } from 'zod';
 import { zInt, zStrInt, zDateStr } from '../lib/validators.ts';
@@ -26,12 +27,13 @@ export type CreateUpdatePayload = {
 
 export type ProjectResponse = Project & { updates: Update[] };
 
-
-
 const projectsRouter = Router();
 
 // GET /projects - return all projects for the user
-projectsRouter.get('/', requireUser, async (req, res, next) => {
+projectsRouter.get('/',
+  requireUser,
+  async (req, res: ApiResponse<ProjectResponse[]>, next) =>
+{
   let projects: ProjectResponse[];
   try {
     projects = await dbClient.project.findMany({
@@ -45,14 +47,14 @@ projectsRouter.get('/', requireUser, async (req, res, next) => {
     });
   } catch(err) { return next(err); }
 
-  res.status(200).send(projects);
+  res.status(200).send(success(projects));
 });
 
 // GET /projects/:id - return a specific project
 projectsRouter.get('/:id',
   requireUser,
   validateParams(z.object({ id: zStrInt() })),
-  async (req, res, next) =>
+  async (req, res: ApiResponse<ProjectResponse>, next) =>
 {
   let project: ProjectResponse | null;
   try {
@@ -69,9 +71,9 @@ projectsRouter.get('/:id',
   } catch(err) { return next(err); }
 
   if(project) {
-    res.status(200).send(project);
+    res.status(200).send(success(project));
   } else {
-    res.status(404).send({ message: 'Not found' });
+    res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
   }
 });
 
@@ -85,7 +87,7 @@ projectsRouter.post('/',
     startDate: zDateStr().nullable(),
     endDate: zDateStr().nullable(),
   })),
-  async (req, res, next) =>
+  async (req, res: ApiResponse<ProjectResponse>, next) =>
 {
   let project: ProjectResponse;
   try {
@@ -103,7 +105,7 @@ projectsRouter.post('/',
     })
   } catch(err) { return next(err); }
 
-  res.status(201).send(project);
+  res.status(201).send(success(project));
 });
 
 // POST /projects/:id/update - log an update to a project
@@ -111,7 +113,7 @@ projectsRouter.post('/:id/update',
   requireUser,
   validateParams(z.object({ id: zStrInt() })),
   validateBody(z.object({ date: zDateStr(), value: zInt() })),
-  async (req, res, next) =>
+  async (req, res: ApiResponse<Update>, next) =>
 {
   // first, make sure the project exists
   let project: Project | null;
@@ -126,7 +128,7 @@ projectsRouter.post('/:id/update',
   } catch(err) { return next(err); }
 
   if(!project) {
-    res.status(404).send({ message: 'Not found' });
+    res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
     return;
   }
 
@@ -141,7 +143,7 @@ projectsRouter.post('/:id/update',
     });
   } catch(err) { return next(err); }
 
-  res.status(201).send(update);
+  res.status(201).send(success(update));
 });
 
 // // POST /projects/:id - modify the given project

@@ -1,9 +1,6 @@
-type ApiResponse<T> = {
-  success: boolean;
-  status: number;
-  data?: T;
-  error?: string;
-}
+import type { ApiResponsePayload } from "../../../server/api/common";
+
+type ApiResponse<T> = ApiResponsePayload<T> & { status: number; }
 
 async function callApi<T>(path: string, method: string = 'GET', payload: object | null = null): Promise<ApiResponse<T>> {
   const headers = {};
@@ -21,13 +18,11 @@ async function callApi<T>(path: string, method: string = 'GET', payload: object 
     body,
   });
 
-  const responsePayload = await response.json();
+  const responsePayload: ApiResponsePayload<T> = await response.json();
 
   return {
-    success: response.ok,
+    ...responsePayload,
     status: response.status,
-    data: response.ok ? responsePayload : null,
-    error: response.ok ? null : responsePayload.message,
   };
 }
 
