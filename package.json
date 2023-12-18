@@ -1,7 +1,7 @@
 {
   "name": "writing-tracker",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.4-alpha",
   "type": "module",
   "scripts": {
     "start": "npx ts-node --esm ./main.ts",
