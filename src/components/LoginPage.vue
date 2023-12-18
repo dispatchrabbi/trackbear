@@ -25,10 +25,12 @@ const validations = z.object({
 
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
 
+const isLoading = ref<boolean>(false);
 const errorMessage = ref<string>('');
 
 async function handleSubmit() {
   errorMessage.value = '';
+  isLoading.value = true;
 
   try {
     const { username, password } = formData();
@@ -40,6 +42,8 @@ async function handleSubmit() {
       errorMessage.value = err;
     }
     return;
+  } finally {
+    isLoading.value = false;
   }
 
   router.push('/projects');
@@ -89,6 +93,7 @@ async function handleSubmit() {
           <div class="flex gap-4 mt-4">
             <VaButton
               :disabled="!isValid"
+              :loading="isLoading"
               type="submit"
             >
               Log In

@@ -15,31 +15,37 @@ import { CreateUserPayload } from '../../server/api/auth';
 const formModel = reactive({
   username: '',
   email: '',
-  newPassword: '',
+  password: '',
 });
 
 const validations = z.object({
   username: z.string().min(3, { message: 'Username must be at least 3 characters long.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
-  newPassword: z.string().min(8, { message: 'Password must be at least 8 characters long.'}),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters long.'}),
 });
 
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
 
+const isLoading = ref<boolean>(false);
+const successMessage = ref<string>('');
 const errorMessage = ref<string>('');
 
 async function handleSubmit() {
+  successMessage.value = '';
   errorMessage.value = '';
+  isLoading.value = true;
 
   const status = await signUp(formData() as CreateUserPayload);
   if(status === 201) {
-    errorMessage.value = 'Sign up successful! Redirecting to login...';
+    successMessage.value = 'Sign up successful! Redirecting to login...';
     setTimeout(() => router.push('/login'), 3 * 1000);
   } else if(status === 409) {
     errorMessage.value = 'That username is already taken. Please choose another.';
   } else {
     errorMessage.value = 'Could not sign up; something went wrong server-side.';
   }
+
+  isLoading.value = false;
 }
 
 </script>
@@ -51,6 +57,15 @@ async function handleSubmit() {
     </h2>
     <VaCard>
       <VaCardContent>
+        <VaAlert
+          v-if="successMessage"
+          class="mb-4"
+          color="success"
+          border="left"
+          icon="how_to_reg"
+          closeable
+          :description="successMessage"
+        />
         <VaAlert
           v-if="errorMessage"
           class="mb-4"
@@ -91,7 +106,7 @@ async function handleSubmit() {
           />
           <TogglablePasswordInput
             id="new-password"
-            v-model="formModel.newPassword"
+            v-model="formModel.password"
             label="Password"
             :rules="[ruleFor('password')]"
             name="new-password"
@@ -102,6 +117,7 @@ async function handleSubmit() {
           <div class="flex gap-4 mt-4">
             <VaButton
               :disabled="!isValid"
+              :loading="isLoading"
               type="submit"
             >
               Sign Up

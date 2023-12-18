@@ -16,6 +16,5 @@ userStore.populateUser().catch(() => {
 <template>
   <AppPage>
     <slot v-if="userStore.user" />
-    <VaSkeleton v-else />
   </AppPage>
 </template>
