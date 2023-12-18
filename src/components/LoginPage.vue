@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import { useForm } from 'vuestic-ui';
+
+import { z } from 'zod';
+import { useValidation } from '../lib/form.ts';
 
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -11,19 +13,26 @@ const userStore = useUserStore();
 import Page from './layout/AppPage.vue';
 import TogglablePasswordInput from './form/TogglablePasswordInput.vue'
 
-const { isValid, validate } = useForm('form');
-
-const loginForm = reactive({
+const formModel = reactive({
   username: '',
   password: '',
 });
+
+const validations = z.object({
+  username: z.string().min(1, { message: 'Please enter your username.' }),
+  password: z.string().min(1, { message: 'Please enter your password.' }),
+});
+
+const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
+
 const errorMessage = ref<string>('');
 
 async function handleSubmit() {
   errorMessage.value = '';
 
   try {
-    await userStore.logIn(loginForm.username, loginForm.password);
+    const { username, password } = formData();
+    await userStore.logIn(username, password);
   } catch(err) {
     if(err === 'Incorrect username or password') {
       errorMessage.value = 'Incorrect username or password. Please check and try again.';
@@ -62,20 +71,20 @@ async function handleSubmit() {
         >
           <VaInput
             id="username"
-            v-model="loginForm.username"
+            v-model="formModel.username"
             name="username"
             input-aria-label="username"
             autocomplete="username"
             label="Username"
-            :rules="[v => !!v || 'Please enter your username']"
+            :rules="[ruleFor('username')]"
           />
           <TogglablePasswordInput
             id="current-password"
-            v-model="loginForm.password"
+            v-model="formModel.password"
             name="current-password"
             autocomplete="current-password"
             label="Password"
-            :rules="[v => !!v || 'Please enter your password']"
+            :rules="[ruleFor('password')]"
           />
           <div class="flex gap-4 mt-4">
             <VaButton

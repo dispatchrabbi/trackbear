@@ -1,59 +1,55 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive } from 'vue';
+
+import { z } from 'zod';
+import { zStrInt } from '../../server/lib/validators.ts';
+import { useValidation } from '../lib/form.ts';
 
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
 import LoggedInAppPage from './layout/LoggedInAppPage.vue';
+import { TYPE_INFO } from '../lib/project.ts';
 import { createProject } from '../lib/api/project.ts';
 import type { CreateProjectPayload } from '../../server/api/projects.ts';
 import { parseDateStringSafe, formatDate } from '../lib/date.ts';
 
-const projectForm = reactive({
+const formModel = reactive({
   title: '',
-  projectType: 'words',
+  type: 'words',
   goal: '',
   startDate: null,
   endDate: null,
 });
 
+const validations = z.object({
+  title: z.string().min(1, { message: 'Please choose a name for your project.'}),
+  type: z.enum(Object.keys(TYPE_INFO) as [string, ...string[]]),
+  goal: z.union([
+    zStrInt({ message: 'Goal must be a whole number' }),
+    z.string().length(0).transform(() => null)
+  ]),
+  startDate: z.date().transform(formatDate).nullable(),
+  endDate: z.date().transform(formatDate).nullable(),
+});
+
+const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
+
+const typeOptions = Object.keys(TYPE_INFO).map(type => ({ text: TYPE_INFO[type].count, value: type }));
+
 const errorMessage = ref<string>('');
-
-const typeOptions = [
-  { text: 'Words', value: 'words' },
-  { text: 'Time', value: 'time' },
-  { text: 'Chapters', value: 'chapters' },
-  { text: 'Pages', value: 'pages' },
-];
-
-// not sure why useForm()'s validate and isValid aren't working but oh well
-function validate() {
-  const titleIsValid = projectForm.title?.length > 0;
-  const typeIsValid = typeOptions.map(option => option.value).includes(projectForm.projectType);
-  const goalIsValid = projectForm.goal === '' || Number.isInteger(+projectForm.goal);
-  const startDateIsValid = projectForm.startDate === null || projectForm.startDate instanceof Date;
-  const endDateIsValid = projectForm.endDate === null || projectForm.endDate instanceof Date;
-
-  return titleIsValid && typeIsValid && goalIsValid && startDateIsValid && endDateIsValid;
-}
-const isValid = computed(() => validate());
 
 async function handleSubmit() {
   errorMessage.value = '';
 
-  const formData = {
-    title: projectForm.title,
-    type: projectForm.projectType,
-    goal: projectForm.goal === '' ? null : +projectForm.goal,
-    startDate: projectForm.startDate === null ? null : formatDate(projectForm.startDate),
-    endDate: projectForm.endDate === null ? null : formatDate(projectForm.endDate),
-    visibility: 'private',
+  const payload = {
+    ...formData(),
+    visibility: 'private'
   } as CreateProjectPayload;
 
   try {
-    await createProject(formData);
+    await createProject(payload);
   } catch(err) {
-    // TODO: better error handling here
     errorMessage.value = err;
     return;
   }
@@ -90,9 +86,9 @@ function handleCancel() {
           @submit.prevent="validate() && handleSubmit()"
         >
           <VaInput
-            v-model="projectForm.title"
+            v-model="formModel.title"
             label="Title"
-            :rules="[v => !!v || 'Please enter a title']"
+            :rules="[ ruleFor('title') ]"
             required-mark
           />
           <div>
@@ -105,7 +101,7 @@ function handleCancel() {
               <span class="required-mark"> * </span>
             </label>
             <VaRadio
-              v-model="projectForm.projectType"
+              v-model="formModel.type"
               :options="typeOptions"
               text-by="text"
               value-by="value"
@@ -113,13 +109,13 @@ function handleCancel() {
             />
           </div>
           <VaInput
-            v-model="projectForm.goal"
-            :label="projectForm.projectType === 'time' ? 'Goal (in hours)' : 'Goal'"
-            :rules="[v => { return (v === '') || (Number.parseInt(v, 10) === +v) || ('Please enter a number for your goal') }]"
+            v-model="formModel.goal"
+            :label="formModel.type === 'time' ? 'Goal (in hours)' : 'Goal'"
+            :rules="[ ruleFor('goal') ]"
             messages="If you add a goal, the project will track progress toward that goal."
           />
           <VaDateInput
-            v-model="projectForm.startDate"
+            v-model="formModel.startDate"
             label="Start Date"
             placeholder="YYYY-MM-DD"
             messages="If you don't provide a start date, the project will start when you log your first bit of progress."
@@ -129,7 +125,7 @@ function handleCancel() {
             clearable
           />
           <VaDateInput
-            v-model="projectForm.endDate"
+            v-model="formModel.endDate"
             label="End Date"
             messages="If you provide an end date along with your goal, the project will track progress toward your deadline. Combined with a goal, the project will also track you against par."
             placeholder="YYYY-MM-DD"
@@ -168,3 +164,4 @@ function handleCancel() {
   vertical-align: middle;
 }
 </style>
+../lib/form.ts

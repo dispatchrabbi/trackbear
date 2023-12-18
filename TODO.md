@@ -36,7 +36,8 @@
 - [ ] ...Dockerize?
 
 ## Polish
-- [ ] Change over client-side validation to Zod
+- [X] Change over client-side validation to Zod
+- [ ] Loading status in the forms
 - [ ] Make API responses consistent and examine return codes
 - [ ] Look at all "null" states
 - [ ] Ensure dark mode is usable

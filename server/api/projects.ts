@@ -1,5 +1,7 @@
 import { Router } from "express";
+
 import { z } from 'zod';
+import { zInt, zStrInt, zDateStr } from '../lib/validators.ts';
 
 import { requireUser, RequestWithUser } from '../lib/auth.ts';
 import dbClient from "../lib/db.ts";
@@ -24,20 +26,7 @@ export type CreateUpdatePayload = {
 
 export type ProjectResponse = Project & { updates: Update[] };
 
-const zStrInt = function() {
-  return z.string()
-    .refine(str => Number.parseInt(str, 10) === +str && Number.isInteger(+str), { message: 'Expected integer string, received non-integer string' })
-    .transform(str => Number.parseInt(str, 10));
-};
 
-const zInt = function() {
-  return z.number()
-    .refine(num => Number.isInteger(num), { message: 'Expected integer, received non-integer'});
-}
-
-const zDateStr = function() {
-  return z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Expected date string (YYYY-MM-DD), received a different format' });
-}
 
 const projectsRouter = Router();
 

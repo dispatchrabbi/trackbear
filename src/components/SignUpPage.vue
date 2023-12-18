@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive } from 'vue';
+
 import { z } from 'zod';
+import { useValidation } from '../lib/form.ts';
 
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -8,39 +10,28 @@ const router = useRouter();
 import AppPage from './layout/AppPage.vue';
 import TogglablePasswordInput from './form/TogglablePasswordInput.vue'
 import { signUp } from '../lib/api/auth.ts';
-import type { CreateUserPayload } from '../../server/api/auth.ts';
+import { CreateUserPayload } from '../../server/api/auth';
 
-const signupForm = reactive({
+const formModel = reactive({
   username: '',
   email: '',
   newPassword: '',
 });
 
+const validations = z.object({
+  username: z.string().min(3, { message: 'Username must be at least 3 characters long.' }),
+  email: z.string().email({ message: 'Please enter a valid email address.' }),
+  newPassword: z.string().min(8, { message: 'Password must be at least 8 characters long.'}),
+});
+
+const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
+
 const errorMessage = ref<string>('');
-
-// not sure why useForm()'s validate and isValid aren't working but oh well
-function validate(): boolean {
-  const schema = z.object({
-    username: z.string().min(3),
-    email: z.string().email(),
-    newPassword: z.string().min(8),
-  });
-
-  const result = schema.safeParse(signupForm);
-  return result.success;
-}
-const isValid = computed(() => validate());
 
 async function handleSubmit() {
   errorMessage.value = '';
 
-  const formData = {
-    username: signupForm.username,
-    email: signupForm.email,
-    password: signupForm.newPassword,
-  } as CreateUserPayload;
-
-  const status = await signUp(formData);
+  const status = await signUp(formData() as CreateUserPayload);
   if(status === 201) {
     errorMessage.value = 'Sign up successful! Redirecting to login...';
     setTimeout(() => router.push('/login'), 3 * 1000);
@@ -77,35 +68,32 @@ async function handleSubmit() {
         >
           <VaInput
             id="username"
-            v-model="signupForm.username"
+            v-model="formModel.username"
             label="Username"
             name="username"
             input-aria-label="username"
             autocomplete="username"
             messages="Must be at least 3 characters long."
-            :rules="[v => z.string().min(3).safeParse(v).success || 'Please enter a username at least 3 characters long']"
+            :rules="[ruleFor('username')]"
             required-mark
           />
           <VaInput
             id="email"
-            v-model="signupForm.email"
+            v-model="formModel.email"
             type="email"
             label="Email"
             name="email"
             input-aria-label="email"
             autocomplete="email"
             placeholder="grizzly@example.com"
-            :rules="[v => z.string().email().safeParse(v).success || 'Please enter a valid email']"
+            :rules="[ruleFor('email')]"
             required-mark
           />
           <TogglablePasswordInput
             id="new-password"
-            v-model="signupForm.newPassword"
+            v-model="formModel.newPassword"
             label="Password"
-            :rules="[
-              v => v.length > 0 || 'Please enter a password',
-              v => v.length >= 8 || 'Password must be at least 8 characters long'
-            ]"
+            :rules="[ruleFor('password')]"
             name="new-password"
             autocomplete="new-password"
             messages="Must be at least 8 characters long."
