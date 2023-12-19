@@ -1,10 +1,10 @@
-import { Router } from "express";
+import { Router, Request } from "express";
 import { ApiResponse, success, failure } from './common.ts';
 
 import { z } from 'zod';
 import { zInt, zStrInt, zDateStr } from '../lib/validators.ts';
 
-import { requireUser, RequestWithUser } from '../lib/auth.ts';
+import { requireUser, WithUser } from '../lib/auth.ts';
 import dbClient from "../lib/db.ts";
 import { PROJECT_STATE, PROJECT_VISIBILITY, PROJECT_TYPE } from '../lib/states.ts';
 
@@ -38,7 +38,7 @@ projectsRouter.get('/',
   try {
     projects = await dbClient.project.findMany({
       where: {
-        ownerId: (req as RequestWithUser<typeof req>).user.id,
+        ownerId: (req as WithUser<Request>).user.id,
         state: PROJECT_STATE.ACTIVE,
       },
       include: {
@@ -61,7 +61,7 @@ projectsRouter.get('/:id',
     project = await dbClient.project.findUnique({
       where: {
         id: +req.params.id,
-        ownerId: (req as RequestWithUser<typeof req>).user.id,
+        ownerId: (req as WithUser<Request>).user.id,
         state: PROJECT_STATE.ACTIVE,
       },
       include: {
@@ -97,7 +97,7 @@ projectsRouter.post('/',
         state: PROJECT_STATE.ACTIVE,
         visibility: PROJECT_VISIBILITY.PRIVATE,
         starred: false,
-        ownerId: (req as RequestWithUser<typeof req>).user.id
+        ownerId: (req as WithUser<Request>).user.id
       },
       include: {
         updates: true,
@@ -121,7 +121,7 @@ projectsRouter.post('/:id/update',
     project = await dbClient.project.findUnique({
       where: {
         id: +req.params.id,
-        ownerId: (req as RequestWithUser<typeof req>).user.id,
+        ownerId: (req as WithUser<Request>).user.id,
         state: PROJECT_STATE.ACTIVE,
       }
     });

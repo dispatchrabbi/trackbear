@@ -1,18 +1,15 @@
 {
+  "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "noEmit": true,
-    "jsx": "preserve",
+
+    "moduleResolution": "NodeNext",
+    // "isolatedModules": true,
+    // "composite": true,
+    "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": true,
+    "skipLibCheck": true,
 
     /* Linting */
     // "strict": true,
@@ -20,6 +17,5 @@
     // "noUnusedParameters": true,
     // "noFallthroughCasesInSwitch": true
   },
-  "include": [ "server/**/*.ts" ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [ "main.ts" ],
 }

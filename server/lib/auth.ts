@@ -1,11 +1,15 @@
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
+import type { Request, Response, NextFunction } from "express";
 
-import dbClient from './db.ts';
+import dbClient from './db.js';
 
 type SessionWithAuth = { session: { auth?: null | { id: number } } };
-export type RequestWithSessionAuth = Express.Request & SessionWithAuth;
+// export type RequestWithSessionAuth = Express.Request & SessionWithAuth;
+export type WithSessionAuth<R> = R & SessionWithAuth;
 
-type RequestWithUser<R> = R & { user: User };
+type UserProp = { user: User };
+// export type RequestWithUser = RequestWithSessionAuth & UserProp;
+export type WithUser<R> = R & UserProp;
 
 function serializeUser(user: User) {
   return { id: user.id };
@@ -17,15 +21,15 @@ async function deserializeUser(id: number) {
   return user;
 }
 
-function logIn(req: RequestWithSessionAuth, user: User): void {
+function logIn(req: WithSessionAuth<Request>, user: User): void {
   req.session.auth = serializeUser(user);
 }
 
-function logOut(req: RequestWithSessionAuth): void {
+function logOut(req: WithSessionAuth<Request>): void {
   req.session.auth = null;
 }
 
-async function requireUser(req, res, next) {
+async function requireUser(req: WithSessionAuth<Request>, res: Response, next: NextFunction) {
   if(!req.session.auth) {
     return res.status(403).send({ message: 'Must be logged in' });
   }
@@ -35,7 +39,7 @@ async function requireUser(req, res, next) {
     return res.status(403).send({ message: 'Must be logged in' });
   }
 
-  req.user = user;
+  (req as WithUser<Request>).user = user;
   next();
 }
 
@@ -44,5 +48,3 @@ export {
   logOut,
   requireUser,
 };
-
-export type { RequestWithUser };

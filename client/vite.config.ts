@@ -7,6 +7,6 @@ export default defineConfig({
   plugins: [ vue(), visualizer() ],
   publicDir: '../public',
   build: {
-    outDir: 'dist/client',
+    outDir: '../dist',
   },
 });

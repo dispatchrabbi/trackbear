@@ -2,7 +2,7 @@ import process from 'process';
 import path from 'path';
 import winston, { format, transports } from 'winston';
 
-function initLoggers(logDir) {
+function initLoggers(logDir: string) {
   winston.configure({
     level: 'info',
     format: format.combine(

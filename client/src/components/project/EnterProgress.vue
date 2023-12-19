@@ -4,7 +4,7 @@ import { ref, reactive, computed } from 'vue';
 import { parseDateStringSafe, formatDate } from '../../lib/date.ts';
 import { Project, TYPE_INFO } from '../../lib/project.ts';
 import { createUpdate } from '../../lib/api/project';
-import { CreateUpdatePayload } from '../../../server/api/projects';
+import { CreateUpdatePayload } from '../../../../server/api/projects';
 
 const props = defineProps<{ project: Project }>();
 const emit = defineEmits(['newUpdate']);

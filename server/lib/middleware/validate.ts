@@ -1,7 +1,8 @@
 import { ZodSchema } from 'zod';
+import type { Request, Response, NextFunction } from 'express';
 
 function validateBody(schema: ZodSchema) {
-  return function validate(req, res, next) {
+  return function validate(req: Request, res: Response, next: NextFunction) {
     const parsed = schema.safeParse(req.body);
     if(parsed.success === false) {
       const errorMessages = parsed.error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}.`);
@@ -15,7 +16,7 @@ function validateBody(schema: ZodSchema) {
 }
 
 function validateParams(schema: ZodSchema) {
-  return function validate(req, res, next) {
+  return function validate(req: Request, res: Response, next: NextFunction) {
     const parsed = schema.safeParse(req.params);
     if(parsed.success === false) {
       const errorMessages = parsed.error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}.`);
@@ -28,7 +29,7 @@ function validateParams(schema: ZodSchema) {
 }
 
 function validateQuery(schema: ZodSchema) {
-  return function validate(req, res, next) {
+  return function validate(req: Request, res: Response, next: NextFunction) {
     const parsed = schema.safeParse(req.query);
     if(parsed.success === false) {
       const errorMessages = parsed.error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}.`);

@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request } from "express";
 import { z } from 'zod';
 
 import { validateBody } from "../lib/middleware/validate.ts";
@@ -6,7 +6,7 @@ import { ApiResponse, success, failure } from './common.ts';
 
 import dbClient from '../lib/db.ts';
 import { hash, verifyHash } from "../lib/hash.ts";
-import { logIn, logOut, requireUser, RequestWithUser } from "../lib/auth.ts";
+import { logIn, logOut, requireUser, WithUser } from "../lib/auth.ts";
 import { User } from "@prisma/client";
 import { USER_STATE } from "../lib/states.ts";
 import winston from "winston";
@@ -27,7 +27,7 @@ const authRouter = Router();
 
 authRouter.post('/login',
   validateBody(z.object({ username: z.string(), password: z.string() })),
-  async (req, res: ApiResponse<UserResponse>, next) =>
+  async (req: Request, res: ApiResponse<UserResponse>, next) =>
 {
   const { username, password } = req.body;
 
@@ -70,9 +70,9 @@ authRouter.post('/login',
 
 authRouter.get('/user',
   requireUser,
-  (req, res: ApiResponse<UserResponse>) =>
+  (req: Request, res: ApiResponse<UserResponse>) =>
 {
-  const user = (req as RequestWithUser<typeof req>).user;
+  const user = (req as WithUser<Request>).user;
   const userResponse: UserResponse = {
     uuid: user.uuid,
     username: user.username,

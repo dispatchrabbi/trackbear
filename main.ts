@@ -6,19 +6,17 @@ import { checkEnvVars } from './server/lib/env.ts';
 import winston from 'winston';
 import initLoggers from './server/lib/logger.ts';
 
-import dbClient from './server/lib/db.js';
+import dbClient from './server/lib/db.ts';
 
 import http from 'http';
 import https from 'https';
-import express from 'express';
+import express, { ErrorRequestHandler } from 'express';
 import morgan from 'morgan';
 import helmet from './server/lib/middleware/helmet.ts';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import rateLimit from './server/lib/middleware/rate-limit.ts';
-
-// import ViteExpress from 'vite-express';
 
 import apiRouter from './server/api/index.js';
 import { createServer as createViteServer } from 'vite';
@@ -27,7 +25,7 @@ async function main() {
   dotenv.config({ allowEmptyValues: true });
   checkEnvVars();
 
-  initLoggers(process.env.LOG_DIR);
+  initLoggers(process.env.LOG_DIR as string);
   // use `winston` just as the general logger
   const accessLogger = winston.loggers.get('access');
 
@@ -85,7 +83,7 @@ async function main() {
   if(process.env.NODE_ENV === 'production') {
     // serve the front-end statically out of dist/
     winston.debug('Serving the front-end statically out of client/');
-    app.use(express.static('./client'));
+    app.use(express.static('./dist'));
   } else {
     // Serve the front end using the schmancy HMR vite server.
     // This middleware has a catch-all route
@@ -116,10 +114,11 @@ async function main() {
 
   // baseline server-side error handling
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-  app.use((err, req, res, next) => {
-    console.error(err)
+  const lastChanceErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
+    console.error(err);
     res.status(500).send('500 Server error');
-  });
+  };
+  app.use(lastChanceErrorHandler);
 }
 
 main().catch(e => console.error(e));
