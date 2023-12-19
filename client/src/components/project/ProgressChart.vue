@@ -7,6 +7,8 @@ import { Line } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js';
 ChartJS.register(Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale);
 
+import { useColors } from 'vuestic-ui';
+
 import { parseDateString, formatDate, formatTimeProgress, minDateStr, maxDateStr } from '../../lib/date.ts';
 import { Project, Update, TYPE_INFO } from '../../lib/project.ts';
 type NormalizedUpdate = {
@@ -98,6 +100,7 @@ const progressData = computed(() => {
   return progressPoints;
 });
 
+const { getColor } = useColors();
 const chartData = computed(() => {
   const data = {
     labels: eachDay.value.map(date => formatDate(date)),
@@ -108,6 +111,7 @@ const chartData = computed(() => {
   data.datasets.push({
     label: 'Progress',
     data: progressData.value,
+    borderColor: getColor('primary'),
   });
 
   // add par?

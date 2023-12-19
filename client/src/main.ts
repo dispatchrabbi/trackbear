@@ -16,5 +16,18 @@ createApp(App)
     history: createWebHistory(),
     routes,
   }))
-  .use(createVuestic())
+  .use(createVuestic({
+    config: {
+      colors: {
+        presets: {
+          light: { primary: '#5123a1' },
+          dark: {
+            primary: '#88c0d0',
+            textPrimary: '#2e3440',
+            textInverted: '#eceff4',
+          },
+        }
+      }
+    }
+  }))
   .mount('#app');
