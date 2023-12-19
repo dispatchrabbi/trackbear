@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import './style.css';
+
 import App from './App.vue';
 
 import { createPinia } from 'pinia';
@@ -10,6 +11,8 @@ import { createVuestic } from 'vuestic-ui';
 import "vuestic-ui/css";
 import "material-design-icons-iconfont/dist/material-design-icons.min.css";
 
+import themes from './themes.ts';
+
 createApp(App)
   .use(createPinia())
   .use(createRouter({
@@ -19,14 +22,7 @@ createApp(App)
   .use(createVuestic({
     config: {
       colors: {
-        presets: {
-          light: { primary: '#5123a1' },
-          dark: {
-            primary: '#88c0d0',
-            textPrimary: '#2e3440',
-            textInverted: '#eceff4',
-          },
-        }
+        presets: themes
       }
     }
   }))

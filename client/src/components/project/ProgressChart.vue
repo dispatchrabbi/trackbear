@@ -101,6 +101,7 @@ const progressData = computed(() => {
 });
 
 const { getColor } = useColors();
+
 const chartData = computed(() => {
   const data = {
     labels: eachDay.value.map(date => formatDate(date)),
@@ -127,6 +128,9 @@ const chartData = computed(() => {
 });
 
 const chartOptions = computed(() => {
+  // change axis color
+  ChartJS.defaults.color = getColor('secondary');
+
   const tooltip = props.showTooltips ?
     // even if showing tooltips, don't show them for Par
     {
