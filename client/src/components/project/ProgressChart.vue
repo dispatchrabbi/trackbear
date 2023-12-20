@@ -112,7 +112,7 @@ const chartData = computed(() => {
   data.datasets.push({
     label: 'Progress',
     data: progressData.value,
-    borderColor: getColor('primary'),
+    borderColor: getColor('info'),
   });
 
   // add par?
@@ -130,6 +130,7 @@ const chartData = computed(() => {
 const chartOptions = computed(() => {
   // change axis color
   ChartJS.defaults.color = getColor('secondary');
+  ChartJS.defaults.borderColor = getColor('backgroundBorder');
 
   const tooltip = props.showTooltips ?
     // even if showing tooltips, don't show them for Par

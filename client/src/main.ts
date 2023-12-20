@@ -11,7 +11,7 @@ import { createVuestic } from 'vuestic-ui';
 import "vuestic-ui/css";
 import "material-design-icons-iconfont/dist/material-design-icons.min.css";
 
-import themes from './themes.ts';
+import themes from './themes/index.ts';
 
 createApp(App)
   .use(createPinia())
@@ -22,7 +22,11 @@ createApp(App)
   .use(createVuestic({
     config: {
       colors: {
-        presets: themes
+        presets: {
+          light: themes.light,
+          dark: themes.nordDark,
+          ...themes,
+        }
       }
     }
   }))
