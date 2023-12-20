@@ -1,5 +1,7 @@
 import PlaceholderPage from './components/PlaceholderPage.vue';
-import HomePage from './components/HomePage.vue'
+import HomePage from './components/HomePage.vue';
+import AboutPage from './components/AboutPage.vue';
+import PrivacyPage from './components/PrivacyPage.vue';
 import SignUpPage from './components/SignUpPage.vue';
 import LoginPage from './components/LoginPage.vue';
 import LogoutPage from './components/LogoutPage.vue';
@@ -12,6 +14,8 @@ import ProjectPage from './components/ProjectPage.vue';
 
 const routes = [
   { path: '/', name: 'home', component: HomePage },
+  { path: '/about', name: 'about', component: AboutPage },
+  { path: '/privacy', name: 'privacy', component: PrivacyPage },
   { path: '/signup', name:'signup', component: SignUpPage },
   { path: '/login', name:'login', component: LoginPage },
   { path: '/logout', name:'logout', component: LogoutPage },
