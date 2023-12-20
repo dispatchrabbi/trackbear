@@ -4,12 +4,14 @@ import { ApiResponse, success, failure } from './common.ts';
 import { z } from 'zod';
 import { zInt, zStrInt, zDateStr } from '../lib/validators.ts';
 
-import { requireUser, WithUser } from '../lib/auth.ts';
 import dbClient from "../lib/db.ts";
+import type { Project, Update } from "@prisma/client";
+import { requireUser, WithUser } from '../lib/auth.ts';
 import { PROJECT_STATE, PROJECT_VISIBILITY, PROJECT_TYPE } from '../lib/states.ts';
 
-import type { Project, Update } from "@prisma/client";
+
 import { validateBody, validateParams } from "../lib/middleware/validate.ts";
+import { logAuditEvent } from '../lib/audit-events.ts';
 
 export type CreateProjectPayload = {
   title: string;
@@ -89,6 +91,7 @@ projectsRouter.post('/',
   })),
   async (req, res: ApiResponse<ProjectResponse>, next) =>
 {
+  const user = (req as WithUser<Request>).user;
   let project: ProjectResponse;
   try {
     project = await dbClient.project.create({
@@ -97,12 +100,13 @@ projectsRouter.post('/',
         state: PROJECT_STATE.ACTIVE,
         visibility: PROJECT_VISIBILITY.PRIVATE,
         starred: false,
-        ownerId: (req as WithUser<Request>).user.id
+        ownerId: user.id
       },
       include: {
         updates: true,
       },
-    })
+    });
+    await logAuditEvent('project:create', user.id, project.id);
   } catch(err) { return next(err); }
 
   res.status(201).send(success(project));
@@ -116,12 +120,13 @@ projectsRouter.post('/:id/update',
   async (req, res: ApiResponse<Update>, next) =>
 {
   // first, make sure the project exists
+  const user = (req as WithUser<Request>).user;
   let project: Project | null;
   try {
     project = await dbClient.project.findUnique({
       where: {
         id: +req.params.id,
-        ownerId: (req as WithUser<Request>).user.id,
+        ownerId: user.id,
         state: PROJECT_STATE.ACTIVE,
       }
     });
@@ -141,6 +146,7 @@ projectsRouter.post('/:id/update',
         projectId: project.id,
       },
     });
+    logAuditEvent('update:create', user.id, update.id, project.id);
   } catch(err) { return next(err); }
 
   res.status(201).send(success(update));

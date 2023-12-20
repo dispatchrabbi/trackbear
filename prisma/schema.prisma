@@ -71,3 +71,17 @@ model Session {
   data      String
   expiresAt DateTime
 }
+
+model AuditEvent {
+  id Int @id @default(autoincrement())
+
+  // the lack of relations here is on purpose
+  agentId   Int
+  patientId Int?
+  goalId    Int?
+
+  eventType String
+  auxInfo   String
+
+  createdAt DateTime @default(now())
+}

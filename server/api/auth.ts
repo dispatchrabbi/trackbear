@@ -1,15 +1,17 @@
 import { Router, Request } from "express";
 import { z } from 'zod';
+import winston from "winston";
 
 import { validateBody } from "../lib/middleware/validate.ts";
 import { ApiResponse, success, failure } from './common.ts';
 
 import dbClient from '../lib/db.ts';
+import { User } from "@prisma/client";
 import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut, requireUser, WithUser } from "../lib/auth.ts";
-import { User } from "@prisma/client";
 import { USER_STATE } from "../lib/states.ts";
-import winston from "winston";
+
+import { logAuditEvent } from '../lib/audit-events.ts';
 
 export type CreateUserPayload = {
   username: string;
@@ -120,7 +122,8 @@ authRouter.post('/signup',
 
   try {
     const user = await dbClient.user.create({ data: userData });
-    winston.info(`SIGNUP: ${user.username} just signed up`);
+    await logAuditEvent('signup', user.id);
+    winston.debug(`SIGNUP: ${user.username} just signed up`);
 
     // TODO: kick off email verification/confirmation afterward
     res.status(201).send(success({

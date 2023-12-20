@@ -9,7 +9,7 @@
 ## Back-end API
 - [X] User info and login API
 - [X] Projects API
-- [ ] Audit events
+- [X] Audit events
 
 ## Wire up front-end to back end
 - [X] Login
@@ -42,7 +42,7 @@
 - [X] Make API responses consistent and examine return codes
   - [ ] Simplify out async handling a la https://stackoverflow.com/questions/43356705/node-js-express-error-handling-middleware-with-router
 - [X] Look at all "null" states
-- [ ] Ensure dark mode is usable
+- [X] Ensure dark mode is usable
 - [ ] Announcement/banner functionality
 - [X] Add landing page
 - [ ] Go over [security practices](https://blog.risingstack.com/node-js-security-checklist/)
