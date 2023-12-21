@@ -8,7 +8,7 @@ const route = useRoute();
 import { getProject } from '../lib/api/project.ts';
 import type { Project, Update } from '../lib/project.ts';
 
-import LoggedInAppPage from './layout/LoggedInAppPage.vue';
+import AppPage from './layout/AppPage.vue';
 import EnterProgress from './project/EnterProgress.vue';
 import ProjectStats from './project/ProjectStats.vue';
 import ProjectHistory from './project/ProjectHistory.vue';
@@ -44,7 +44,7 @@ function handleNewUpdate(update: Update) {
 </script>
 
 <template>
-  <LoggedInAppPage>
+  <AppPage require-login>
     <div v-if="project">
       <h2 class="va-h2 mb-3">
         {{ project.title }}
@@ -85,7 +85,7 @@ function handleNewUpdate(update: Update) {
     <div v-else>
       {{ errorMessage }}
     </div>
-  </LoggedInAppPage>
+  </AppPage>
 </template>
 
 <style scoped>

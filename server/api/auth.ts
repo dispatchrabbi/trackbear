@@ -3,7 +3,7 @@ import { z } from 'zod';
 import winston from "winston";
 
 import { validateBody } from "../lib/middleware/validate.ts";
-import { ApiResponse, success, failure } from './common.ts';
+import { ApiResponse, success, failure } from '../lib/api-response.ts';
 
 import dbClient from '../lib/db.ts';
 import { User } from "@prisma/client";

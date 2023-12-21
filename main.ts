@@ -19,6 +19,7 @@ import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import rateLimit from './server/lib/middleware/rate-limit.ts';
 
 import apiRouter from './server/api/index.ts';
+import spaRoutes from './server/lib/middleware/spa-routes.ts';
 import { createServer as createViteServer } from 'vite';
 
 async function main() {
@@ -85,6 +86,7 @@ async function main() {
   if(process.env.NODE_ENV === 'production') {
     // serve the front-end statically out of dist/
     winston.debug('Serving the front-end out of dist/');
+    app.use(spaRoutes(['/assets', '/images']));
     app.use(express.static('./dist'));
   } else {
     // Serve the front end using the schmancy HMR vite server.

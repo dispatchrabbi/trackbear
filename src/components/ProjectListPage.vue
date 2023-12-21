@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 import { getProjects } from '../lib/api/project.ts';
 
-import LoggedInAppPage from './layout/LoggedInAppPage.vue'
+import AppPage from './layout/AppPage.vue'
 import ProjectTile from './project/ProjectTile.vue';
 import NewProjectTile from './project/NewProjectTile.vue';
 import ProjectSkeletonTile from './project/ProjectSkeletonTile.vue';
@@ -23,7 +23,7 @@ getProjects()
 </script>
 
 <template>
-  <LoggedInAppPage>
+  <AppPage require-login>
     <div class="flex items-center mb-3">
       <div class="grow">
         <h2 class="va-h2">
@@ -58,7 +58,7 @@ getProjects()
         </RouterLink>
       </div>
     </div>
-  </LoggedInAppPage>
+  </AppPage>
 </template>
 
 <style scoped>

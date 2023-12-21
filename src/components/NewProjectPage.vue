@@ -8,7 +8,7 @@ import { useValidation } from '../lib/form.ts';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import LoggedInAppPage from './layout/LoggedInAppPage.vue';
+import AppPage from './layout/AppPage.vue';
 import { TYPE_INFO } from '../lib/project.ts';
 import { createProject } from '../lib/api/project.ts';
 import type { CreateProjectPayload } from '../../server/api/projects.ts';
@@ -68,7 +68,7 @@ function handleCancel() {
 </script>
 
 <template>
-  <LoggedInAppPage>
+  <AppPage require-login>
     <h2 class="va-h2 mb-3">
       New Project
     </h2>
@@ -157,7 +157,7 @@ function handleCancel() {
         </VaForm>
       </VaCardContent>
     </VaCard>
-  </LoggedInAppPage>
+  </AppPage>
 </template>
 
 <style scoped>

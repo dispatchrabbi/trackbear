@@ -7,7 +7,7 @@ const router = useRouter();
 import { useUserStore } from '../stores/user.ts';
 const userStore = useUserStore();
 
-import LoggedInAppPage from './layout/LoggedInAppPage.vue';
+import AppPage from './layout/AppPage.vue';
 
 const logOutError = ref(false);
 
@@ -21,7 +21,7 @@ userStore.logOut().then(() => {
 </script>
 
 <template>
-  <LoggedInAppPage>
+  <AppPage require-login>
     <h2 class="va-h2 mb-3">
       Logging Out...
     </h2>
@@ -33,7 +33,7 @@ userStore.logOut().then(() => {
         Click here
       </RouterLink> to go to the homepage.
     </VaAlert>
-  </LoggedInAppPage>
+  </AppPage>
 </template>
 
 <style scoped>

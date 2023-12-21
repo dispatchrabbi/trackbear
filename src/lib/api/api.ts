@@ -1,4 +1,4 @@
-import type { ApiResponsePayload } from "../../../server/api/common.ts";
+import type { ApiResponsePayload } from "../../../server/lib/api-response.ts";
 
 type ApiResponse<T> = ApiResponsePayload<T> & { status: number; }
 

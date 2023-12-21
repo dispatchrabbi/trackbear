@@ -1,5 +1,5 @@
 import { Router, Request } from "express";
-import { ApiResponse, success, failure } from './common.ts';
+import { ApiResponse, success, failure } from '../lib/api-response.ts';
 
 import { z } from 'zod';
 import { zInt, zStrInt, zDateStr } from '../lib/validators.ts';

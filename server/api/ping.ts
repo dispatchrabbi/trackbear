@@ -1,5 +1,5 @@
 import { Response, Router } from "express";
-import { ApiResponsePayload, success } from './common.ts';
+import { ApiResponsePayload, success } from '../lib/api-response.ts';
 
 const pingRouter = Router();
 

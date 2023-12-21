@@ -6,7 +6,7 @@ import winston from "winston";
 import pingRouter from './ping.ts';
 import authRouter from './auth.ts';
 import projectsRouter from './projects.ts';
-import { ApiResponse, failure } from "./common.ts";
+import { ApiResponse, failure } from "../lib/api-response.ts";
 
 const apiRouter = Router();
 

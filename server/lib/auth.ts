@@ -2,6 +2,7 @@ import type { User } from "@prisma/client";
 import type { Request, Response, NextFunction } from "express";
 
 import dbClient from './db.js';
+import { ApiResponse, success, failure } from './api-response.ts';
 
 type SessionWithAuth = { session: { auth?: null | { id: number } } };
 // export type RequestWithSessionAuth = Express.Request & SessionWithAuth;
@@ -31,12 +32,12 @@ function logOut(req: WithSessionAuth<Request>): void {
 
 async function requireUser(req: WithSessionAuth<Request>, res: Response, next: NextFunction) {
   if(!req.session.auth) {
-    return res.status(403).send({ message: 'Must be logged in' });
+    return res.status(403).send(failure('NOT_LOGGED_IN', 'Must be logged in'));
   }
 
   const user = await deserializeUser(req.session.auth.id);
   if(!user) {
-    return res.status(403).send({ message: 'Must be logged in' });
+    return res.status(403).send(failure('NOT_LOGGED_IN', 'Must be logged in'));
   }
 
   (req as WithUser<Request>).user = user;
