@@ -7,7 +7,7 @@ import LoggedInAppPage from './layout/LoggedInAppPage.vue'
 import ProjectTile from './project/ProjectTile.vue';
 import NewProjectTile from './project/NewProjectTile.vue';
 import ProjectSkeletonTile from './project/ProjectSkeletonTile.vue';
-import { Project } from '../lib/project';
+import { Project } from '../lib/project.ts';
 
 const projects = ref<Project[]>([]);
 const isLoading = ref<boolean>(false);

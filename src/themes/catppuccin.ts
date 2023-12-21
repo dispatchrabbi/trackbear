@@ -1,4 +1,4 @@
-import type { Theme } from "../lib/theme";
+import type { Theme } from "../lib/theme.ts";
 
 // catpuccin is from https://github.com/catppuccin/catppuccin
 const latteColors = {

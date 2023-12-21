@@ -7,7 +7,7 @@ import { useValidation } from '../lib/form.ts';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import { useUserStore } from '../stores/user';
+import { useUserStore } from '../stores/user.ts';
 const userStore = useUserStore();
 
 import Page from './layout/AppPage.vue';

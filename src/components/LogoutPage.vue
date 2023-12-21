@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import { useUserStore } from '../stores/user';
+import { useUserStore } from '../stores/user.ts';
 const userStore = useUserStore();
 
 import LoggedInAppPage from './layout/LoggedInAppPage.vue';
@@ -29,7 +29,9 @@ userStore.logOut().then(() => {
       v-if="logOutError"
       color="warning"
     >
-      There was an error logging out. <RouterLink to="/">Click here</RouterLink> to go to the homepage.
+      There was an error logging out. <RouterLink to="/">
+        Click here
+      </RouterLink> to go to the homepage.
     </VaAlert>
   </LoggedInAppPage>
 </template>

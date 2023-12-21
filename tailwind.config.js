@@ -2,8 +2,8 @@
 
 export default {
   content: [
-    './client/src/**/*.{vue,js,ts,jsx,tsx}',
-		'./client/index.html',
+		'./src/**/*.{vue,js,ts,jsx,tsx}',
+		'./index.html',
   ],
 	theme: {
 		extend: {
@@ -32,5 +32,5 @@ export default {
 				xl: '1920px',
 			},
 		},
-	},
+	}
 };

@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import { useUserStore } from '../../stores/user';
+import { useUserStore } from '../../stores/user.ts';
 const userStore = useUserStore();
 
 import AppPage from './AppPage.vue';

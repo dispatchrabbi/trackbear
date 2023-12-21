@@ -18,11 +18,13 @@ import session from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import rateLimit from './server/lib/middleware/rate-limit.ts';
 
-import apiRouter from './server/api/index.js';
+import apiRouter from './server/api/index.ts';
 import { createServer as createViteServer } from 'vite';
 
 async function main() {
-  dotenv.config({ allowEmptyValues: true });
+  dotenv.config({
+    allowEmptyValues: true
+  });
   checkEnvVars();
 
   initLoggers(process.env.LOG_DIR as string);
@@ -82,16 +84,16 @@ async function main() {
   // Serve the front-end - either statically or out of the vite server, depending
   if(process.env.NODE_ENV === 'production') {
     // serve the front-end statically out of dist/
-    winston.debug('Serving the front-end statically out of client/');
+    winston.debug('Serving the front-end out of dist/');
     app.use(express.static('./dist'));
   } else {
     // Serve the front end using the schmancy HMR vite server.
     // This middleware has a catch-all route
     winston.debug('Serving the front-end dynamically using vite');
     const vite = await createViteServer({
-      root: './client',
       server: { middlewareMode: true },
       appType: 'spa',
+      publicDir: './public',
     });
     app.use(vite.middlewares); // vite takes care of serving the front end
     // NOTE: alternately, it could be appType: custom, and then app.use('*', handleServingHtml)

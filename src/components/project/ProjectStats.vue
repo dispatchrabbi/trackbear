@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import type { Project } from '../../lib/project.ts';
 
 const props = defineProps<{ project: Project }>();
@@ -11,7 +10,7 @@ const props = defineProps<{ project: Project }>();
   <VaCard class="h-full">
     <VaCardTitle>Project Stats</VaCardTitle>
     <VaCardContent>
-      <p>No stats for {{ project.title }} yet. Coming soon! 🔜</p>
+      <p>No stats for {{ props.project.title }} yet. Coming soon! 🔜</p>
     </VaCardContent>
   </VaCard>
 </template>

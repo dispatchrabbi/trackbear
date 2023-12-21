@@ -1,6 +1,6 @@
-import { callApi } from "./api";
+import { callApi } from "./api.ts";
 import type { Project, Update } from "../project.ts";
-import type { CreateProjectPayload, ProjectResponse, CreateUpdatePayload } from '../../../../server/api/projects.ts';
+import type { CreateProjectPayload, ProjectResponse, CreateUpdatePayload } from '../../../server/api/projects.ts';
 
 async function getProjects() {
   const response = await callApi<ProjectResponse[]>('/api/projects', 'GET');

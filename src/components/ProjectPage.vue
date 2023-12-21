@@ -6,7 +6,7 @@ const router = useRouter();
 const route = useRoute();
 
 import { getProject } from '../lib/api/project.ts';
-import type { Project, Update } from '../lib/project';
+import type { Project, Update } from '../lib/project.ts';
 
 import LoggedInAppPage from './layout/LoggedInAppPage.vue';
 import EnterProgress from './project/EnterProgress.vue';
