@@ -1,13 +1,25 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
+import { useUserStore } from '../../stores/user.ts';
+const userStore = useUserStore();
+
 import type { Project } from '../../lib/project.ts';
 import ProgressChart from './ProgressChart.vue';
 
 defineProps<{ project: Project }>();
 
+const RIBBITS_USERNAME = 'velvet';
+const shouldRotate = computed(() => {
+  return userStore.user.username === RIBBITS_USERNAME;
+});
+
 </script>
 
 <template>
-  <VaCard>
+  <VaCard
+    :class="shouldRotate ? 'rotated' : ''"
+  >
     <VaCardTitle>
       <h2 class="text-lg">
         {{ project.title }}
@@ -27,5 +39,7 @@ defineProps<{ project: Project }>();
 </template>
 
 <style scoped>
-
+.rotated {
+  transform: rotate(0.5turn);
+}
 </style>

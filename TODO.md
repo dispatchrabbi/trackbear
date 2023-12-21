@@ -19,6 +19,7 @@
 - [ ] Project Stats
 - [ ] Sharing
 - [ ] Leaderboards (types: same type, goal percentage)
+- [ ] Aggregate grand totals across all projects / Aggregate by tag / Exclude projects from grand total
 
 ## Before stable launch
 - [ ] Go over [security practices](https://blog.risingstack.com/node-js-security-checklist/)
