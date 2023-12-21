@@ -31,12 +31,12 @@
           Privacy
         </RouterLink>
       </div>
-      <div>/</div>
+      <!-- <div>/</div>
       <div>
         <RouterLink to="/ko-fi">
           Buy me a coffee
         </RouterLink>
-      </div>
+      </div> -->
     </div>
   </footer>
 </template>

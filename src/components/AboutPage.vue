@@ -29,9 +29,13 @@ import AppPage from './layout/AppPage.vue';
         </p>
         <p>
           I hope TrackBear works for whatever your writerly needs happen to be. If you liked it, or you have feedback,
+          please feel free to drop me a message! You can find me at my username below on Discord.
+        </p>
+        <!-- <p>
+          I hope TrackBear works for whatever your writerly needs happen to be. If you liked it, or you have feedback,
           please feel free to drop me a message! And if it's helped you, please consider supporting the site. Any money
           I collect goes directly toward server costs (and also coffee while I'm writing new features for the site).
-        </p>
+        </p> -->
       </VaCardContent>
     </VaCard>
   </AppPage>
