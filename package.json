@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "start": "npm run start:dev",
-    "start:dev": "NODE_ENV=development npx ts-node --esm ./main.ts",
-    "start:prod": "NODE_ENV=production npx ts-node --esm ./main.ts",
-    "start:argh": "NODE_ENV=production DATABASE_URL=\"file:../../db/trackbear.db\" npx ts-node --esm ./main.ts",
+    "start:dev": "NODE_ENV=development node --import ./ts-node-loader.js ./main.ts",
+    "start:prod": "NODE_ENV=production node --import ./ts-node-loader.js ./main.ts",
+    "start:argh": "NODE_ENV=production DATABASE_URL=\"file:../../db/trackbear.db\" node --import ./ts-node-loader.js ./main.ts",
     "lint": "npx eslint --ext .js,.ts,.vue .",
     "client:dev": "npx vite",
     "client:build": "npx vue-tsc && npx vite build --emptyOutDir",
