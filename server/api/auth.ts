@@ -59,8 +59,8 @@ authRouter.post('/login',
   }
 
   logIn(req, user);
-  // TODO: replace this with audit events
   winston.debug(`LOGIN: ${username} successfully logged in`);
+  logAuditEvent('login', user.id);
 
   const userResponse: UserResponse = {
     uuid: user.uuid,
