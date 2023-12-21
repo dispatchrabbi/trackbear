@@ -19,7 +19,10 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  username: z.string().min(3, { message: 'Username must be at least 3 characters long.' }),
+  username: z
+    .string()
+    .min(3, { message: 'Username must be at least 3 characters long.' })
+    .regex(/^[a-z][a-z0-9_-]+$/i, { message: 'Username must start with a letter and only use letters, numbers, underscores, and dashes.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z.string().min(8, { message: 'Password must be at least 8 characters long.'}),
 });
@@ -35,14 +38,18 @@ async function handleSubmit() {
   errorMessage.value = '';
   isLoading.value = true;
 
-  const status = await signUp(formData() as CreateUserPayload);
-  if(status === 201) {
+  try {
+    await signUp(formData() as CreateUserPayload);
     successMessage.value = 'Sign up successful! Redirecting to login...';
     setTimeout(() => router.push('/login'), 3 * 1000);
-  } else if(status === 409) {
-    errorMessage.value = 'That username is already taken. Please choose another.';
-  } else {
-    errorMessage.value = 'Could not sign up; something went wrong server-side.';
+  } catch(err) {
+    if(err.code === 'INVALID_USERNAME') {
+      errorMessage.value = err.message;
+    } else if(err.code === 'USERNAME_EXISTS') {
+      errorMessage.value = 'That username is already taken. Please choose another.';
+    } else {
+      errorMessage.value = 'Could not sign up; something went wrong server-side.';
+    }
   }
 
   isLoading.value = false;
@@ -88,7 +95,7 @@ async function handleSubmit() {
             name="username"
             input-aria-label="username"
             autocomplete="username"
-            messages="Must be at least 3 characters long."
+            messages="Username must be at least 3 characters long and contain only letters, numbers, underscores, and dashes."
             :rules="[ruleFor('username')]"
             required-mark
           />
@@ -111,7 +118,7 @@ async function handleSubmit() {
             :rules="[ruleFor('password')]"
             name="new-password"
             autocomplete="new-password"
-            messages="Must be at least 8 characters long."
+            messages="Password must be at least 8 characters long."
             required-mark
           />
           <div class="flex gap-4 mt-4">

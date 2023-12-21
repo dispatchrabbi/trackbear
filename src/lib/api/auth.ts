@@ -1,10 +1,14 @@
 import { callApi } from "./api.ts";
 import { CreateUserPayload, UserResponse } from '../../../server/api/auth.ts';
 
-async function signUp(userInfo: CreateUserPayload): Promise<number> {
-  const response = await callApi('/api/auth/signup', 'POST', userInfo);
+async function signUp(userInfo: CreateUserPayload): Promise<UserResponse> {
+  const response = await callApi<UserResponse>('/api/auth/signup', 'POST', userInfo);
 
-  return response.status;
+  if(response.success === true) {
+    return response.data;
+  } else {
+    throw response.error;
+  }
 }
 
 async function logIn(username: string, password: string): Promise<UserResponse> {

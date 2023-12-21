@@ -43,7 +43,6 @@
   - [ ] Simplify out async handling a la https://stackoverflow.com/questions/43356705/node-js-express-error-handling-middleware-with-router
 - [X] Look at all "null" states
 - [X] Ensure dark mode is usable
-- [ ] Announcement/banner functionality
 - [X] Add landing page
 - [ ] Go over [security practices](https://blog.risingstack.com/node-js-security-checklist/)
   - [ ] Integrate CSRF protection
@@ -53,6 +52,12 @@
 - [ ] Release to alpha testers
 
 ## Future
+- [ ] Announcement/banner functionality
+- [ ] Replace the try/catch api call logic in the front-end with something less onerous
+- [ ] Project Stats
+- [ ] Sharing
+- [ ] Leaderboards (types: same type, goal percentage)
+- [ ] In-page username validation (https://ui.vuestic.dev/ui-elements/form#async-validation)
 - [ ] Finalize name
 - [ ] Create logo
 - [ ] Buy actual domain
@@ -60,9 +65,6 @@
 - [ ] Finalize color scheme
 - [ ] Create staging instance too
 - [ ] Document the heck out of this
-- [ ] Sharing
-- [ ] Leaderboards (types: same type, goal percentage)
-- [ ] Project Stats
 - [ ] API access
 - [ ] TOTP
 - [ ] Admin area

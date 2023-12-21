@@ -28,7 +28,7 @@ export type UserResponse = {
 const authRouter = Router();
 
 authRouter.post('/login',
-  validateBody(z.object({ username: z.string(), password: z.string() })),
+  validateBody(z.object({ username: z.string().toLowerCase(), password: z.string() })),
   async (req: Request, res: ApiResponse<UserResponse>, next) =>
 {
   const { username, password } = req.body;
@@ -92,11 +92,18 @@ authRouter.post('/logout', (req, res: ApiResponse<EmptyObject>) => {
   res.status(200).send(success({}));
 })
 
+export const USERNAME_REGEX = /^[a-z][a-z0-9_-]+$/;
 authRouter.post('/signup',
   validateBody(z.object({ username: z.string(), password: z.string(), email: z.string().email() })),
   async (req, res: ApiResponse<UserResponse>, next) =>
 {
-  const { username, password, email } = req.body as CreateUserPayload;
+  const { username: submittedUsername, password, email } = req.body as CreateUserPayload;
+
+  // validate the username: must start with a letter and only contain letters, numbers, and underscore/dash
+  const username = submittedUsername.trim().toLowerCase();
+  if(!USERNAME_REGEX.test(username)) {
+    return res.status(409).send(failure('INVALID_USERNAME', 'Your username must begin with a letter and consist only of letters, numbers, dashes, and underscores.'));
+  }
 
   // check username for uniqueness
   const existingUserWithThisUsername = await dbClient.user.findUnique({
