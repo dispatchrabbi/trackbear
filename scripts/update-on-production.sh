@@ -1,4 +1,8 @@
-#! /bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Enabling nvm..."
+. ~/.nvm/nvm.sh
 
 echo "Switching Node versions..."
 nvm use
