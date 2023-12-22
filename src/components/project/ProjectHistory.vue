@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { Project, Update, TYPE_INFO } from '../../lib/project.ts';
 import { formatTimeProgress } from '../../lib/date.ts';
+import { DataTableColumnSource } from 'vuestic-ui';
 
 const props = defineProps<{ project: Project }>();
 
@@ -23,7 +24,7 @@ const columns = computed(() => {
   return [
     { key: 'date', label: 'Date' },
     { key: 'value', label: TYPE_INFO[props.project.type].description, thAlign: 'right', tdAlign: 'right' },
-  ];
+  ] as DataTableColumnSource[];
 });
 
 </script>

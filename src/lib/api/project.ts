@@ -14,7 +14,6 @@ async function getProjects() {
 
 async function getProject(id: number) {
   const response = await callApi<ProjectResponse>(`/api/projects/${id}`, 'GET');
-  console.log(response);
 
   if(response.success === true) {
     return response.data;
