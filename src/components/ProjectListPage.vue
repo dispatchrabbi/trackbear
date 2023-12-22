@@ -15,7 +15,7 @@ const errorMessage = ref<string>('');
 
 isLoading.value = true;
 getProjects()
-  .then(ps => projects.value = ps as unknown as Project[])
+  .then(ps => projects.value = ps)
   // TODO: add error message display
   .catch(err => errorMessage.value = err.message)
   .finally(() => isLoading.value = false);

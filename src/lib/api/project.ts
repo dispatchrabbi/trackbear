@@ -1,9 +1,9 @@
 import { callApi } from "./api.ts";
 import type { Project, Update } from "../project.ts";
-import type { CreateProjectPayload, ProjectResponse, CreateUpdatePayload } from '../../../server/api/projects.ts';
+import type { CreateProjectPayload, CreateUpdatePayload } from '../../../server/api/projects.ts';
 
 async function getProjects() {
-  const response = await callApi<ProjectResponse[]>('/api/projects', 'GET');
+  const response = await callApi<Project[]>('/api/projects', 'GET');
 
   if(response.success === true) {
     return response.data;
@@ -13,7 +13,7 @@ async function getProjects() {
 }
 
 async function getProject(id: number) {
-  const response = await callApi<ProjectResponse>(`/api/projects/${id}`, 'GET');
+  const response = await callApi<Project>(`/api/projects/${id}`, 'GET');
 
   if(response.success === true) {
     return response.data;
@@ -23,7 +23,7 @@ async function getProject(id: number) {
 }
 
 async function createProject(project: CreateProjectPayload) {
-  const response = await callApi<ProjectResponse>('/api/projects', 'POST', project);
+  const response = await callApi<Project>('/api/projects', 'POST', project);
 
   if(response.success === true) {
     return response.data;
