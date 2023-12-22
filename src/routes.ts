@@ -11,6 +11,7 @@ import AccountPage from './components/AccountPage.vue';
 import ProjectListPage from './components/ProjectListPage.vue';
 import NewProjectPage from './components/NewProjectPage.vue';
 import ProjectPage from './components/ProjectPage.vue';
+import EditProjectPage from './components/EditProjectPage.vue';
 
 const routes = [
   { path: '/', name: 'home', component: HomePage },
@@ -24,6 +25,7 @@ const routes = [
   { path: '/projects', name: 'projects', component: ProjectListPage },
   { path: '/projects/new', name:'new-project', component: NewProjectPage },
   { path: '/projects/:id', name:'project', component: ProjectPage },
+  { path: '/projects/:id/edit', name:'edit-project', component: EditProjectPage },
   { path: '/:catchAll(.*)', name:'404', component: PlaceholderPage, props: { title: '404' } },
 ];
 

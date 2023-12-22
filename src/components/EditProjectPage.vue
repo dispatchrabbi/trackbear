@@ -5,18 +5,20 @@ import { z } from 'zod';
 import { zStrInt } from '../../server/lib/validators.ts';
 import { useValidation } from '../lib/form.ts';
 
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 const router = useRouter();
+const route = useRoute();
+
+import { getProject } from '../lib/api/project.ts';
 
 import AppPage from './layout/AppPage.vue';
-import { TYPE_INFO } from '../lib/project.ts';
-import { createProject } from '../lib/api/project.ts';
-import type { CreateProjectPayload } from '../../server/api/projects.ts';
+import { Project, TYPE_INFO } from '../lib/project.ts';
+import { editProject } from '../lib/api/project.ts';
+import type { EditProjectPayload } from '../../server/api/projects.ts';
 import { parseDateStringSafe, formatDateSafe } from '../lib/date.ts';
 
 const formModel = reactive({
   title: '',
-  type: 'words',
   goal: '',
   startDate: null,
   endDate: null,
@@ -24,7 +26,6 @@ const formModel = reactive({
 
 const validations = z.object({
   title: z.string().min(1, { message: 'Please choose a name for your project.'}),
-  type: z.enum(Object.keys(TYPE_INFO) as [string, ...string[]]),
   goal: z.union([
     zStrInt({ message: 'Goal must be a whole number' }),
     z.string().length(0).transform(() => null)
@@ -40,6 +41,38 @@ const typeOptions = Object.keys(TYPE_INFO).map(type => ({ text: TYPE_INFO[type].
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string>('');
 
+const project = ref<Project>(null);
+function loadProject() {
+  isLoading.value = true;
+
+  const projectIdStr = route.params.id as string;
+  if(Number.parseInt(projectIdStr, 10) !== +projectIdStr) {
+    router.push('/projects');
+    return;
+  }
+
+  const projectId = +projectIdStr;
+  getProject(projectId)
+    .then(p => {
+      formModel.title = p.title;
+      formModel.goal = p.goal === null ? '' : p.goal.toString(10);
+      formModel.startDate = parseDateStringSafe(p.startDate);
+      formModel.endDate = parseDateStringSafe(p.endDate);
+
+      project.value = p;
+    })
+    .catch(err => {
+      if(err.code === 'NOT_FOUND') {
+        errorMessage.value = `Could not find project with ID ${projectId}. How did you get here?`;
+      } else {
+        errorMessage.value = err.message;
+      }
+    }).finally(() => {
+      isLoading.value = false;
+    });
+}
+loadProject();
+
 async function handleSubmit() {
   isLoading.value = true;
   errorMessage.value = '';
@@ -47,10 +80,10 @@ async function handleSubmit() {
   const payload = {
     ...formData(),
     visibility: 'private'
-  } as CreateProjectPayload;
+  } as EditProjectPayload;
 
   try {
-    await createProject(payload);
+    await editProject(project.value.id, payload);
   } catch(err) {
     errorMessage.value = err;
     return;
@@ -58,11 +91,11 @@ async function handleSubmit() {
     isLoading.value = false;
   }
 
-  router.push('/projects');
+  router.push({ name: 'project', params: { id: project.value.id }});
 }
 
 function handleCancel() {
-  router.push('/projects');
+  router.push({ name: 'project', params: { id: project.value.id }});
 }
 
 </script>
@@ -70,10 +103,10 @@ function handleCancel() {
 <template>
   <AppPage require-login>
     <h2 class="va-h2 mb-3">
-      New Project
+      Edit Project
     </h2>
     <VaCard>
-      <VaCardContent>
+      <VaCardContent v-if="project">
         <VaAlert
           v-if="errorMessage"
           class="mb-4"
@@ -102,19 +135,20 @@ function handleCancel() {
               style="color: var(--va-primary);"
             >
               What to track
-              <span class="required-mark"> * </span>
             </label>
             <VaRadio
-              v-model="formModel.type"
-              :options="typeOptions"
+              v-model="project.type"
+              :options="typeOptions.filter(option => option.value === project.type)"
               text-by="text"
               value-by="value"
               vertical
+              readonly
+              disabled
             />
           </div>
           <VaInput
             v-model="formModel.goal"
-            :label="formModel.type === 'time' ? 'Goal (in hours)' : 'Goal'"
+            :label="project.type === 'time' ? 'Goal (in hours)' : 'Goal'"
             :rules="[ ruleFor('goal') ]"
             messages="If you add a goal, the project will track progress toward that goal."
           />
@@ -144,7 +178,7 @@ function handleCancel() {
               :loading="isLoading"
               type="submit"
             >
-              Create
+              Save
             </VaButton>
             <VaButton
               preset="secondary"

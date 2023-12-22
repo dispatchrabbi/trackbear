@@ -20,23 +20,31 @@ export type CreateProjectPayload = {
   startDate: string | null;
   endDate: string | null;
   visibility: 'public' | 'private';
-}
+};
+
+export type EditProjectPayload = {
+  title: string;
+  goal: number | null;
+  startDate: string | null;
+  endDate: string | null;
+  visibility: 'public' | 'private';
+};
 
 export type CreateUpdatePayload = {
   date: string;
   value: number;
 };
 
-export type ProjectResponse = Project & { updates: Update[] };
+export type ProjectWithUpdates = Project & { updates: Update[] };
 
 const projectsRouter = Router();
 
 // GET /projects - return all projects for the user
 projectsRouter.get('/',
   requireUser,
-  async (req, res: ApiResponse<ProjectResponse[]>, next) =>
+  async (req, res: ApiResponse<ProjectWithUpdates[]>, next) =>
 {
-  let projects: ProjectResponse[];
+  let projects: ProjectWithUpdates[];
   try {
     projects = await dbClient.project.findMany({
       where: {
@@ -56,9 +64,9 @@ projectsRouter.get('/',
 projectsRouter.get('/:id',
   requireUser,
   validateParams(z.object({ id: zStrInt() })),
-  async (req, res: ApiResponse<ProjectResponse>, next) =>
+  async (req, res: ApiResponse<ProjectWithUpdates>, next) =>
 {
-  let project: ProjectResponse | null;
+  let project: ProjectWithUpdates | null;
   try {
     project = await dbClient.project.findUnique({
       where: {
@@ -89,10 +97,10 @@ projectsRouter.post('/',
     startDate: zDateStr().nullable(),
     endDate: zDateStr().nullable(),
   })),
-  async (req, res: ApiResponse<ProjectResponse>, next) =>
+  async (req, res: ApiResponse<ProjectWithUpdates>, next) =>
 {
   const user = (req as WithUser<Request>).user;
-  let project: ProjectResponse;
+  let project: ProjectWithUpdates;
   try {
     project = await dbClient.project.create({
       data: {
@@ -110,6 +118,59 @@ projectsRouter.post('/',
   } catch(err) { return next(err); }
 
   res.status(201).send(success(project));
+});
+
+// POST /projects/:id - modify the given project
+projectsRouter.post('/:id',
+  requireUser,
+  validateBody(z.object({
+    title: z.string(),
+    goal: zInt().nullable(),
+    startDate: zDateStr().nullable(),
+    endDate: zDateStr().nullable(),
+  })),
+  async (req, res: ApiResponse<ProjectWithUpdates>, next) =>
+{
+  const user = (req as WithUser<Request>).user;
+
+  // first we have to make sure the project exists
+  let checkProject: Project | null;
+  try {
+    checkProject = await dbClient.project.findUnique({
+      where: {
+        id: +req.params.id,
+        ownerId: user.id,
+        state: PROJECT_STATE.ACTIVE,
+      }
+    });
+  } catch(err) { return next(err); }
+
+  if(!checkProject) {
+    res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
+    return;
+  }
+
+  // now we can edit
+  let project: ProjectWithUpdates;
+  try {
+    project = await dbClient.project.update({
+      data: {
+        // this is safe because our validation removes extra properties
+        ...req.body as EditProjectPayload,
+        visibility: PROJECT_VISIBILITY.PRIVATE,
+      },
+      where: {
+        id: +req.params.id,
+        ownerId: user.id,
+        state: PROJECT_STATE.ACTIVE,
+      },
+      include: {
+        updates: true,
+      },
+    });
+  } catch(err) { return next(err); }
+
+  res.status(200).send(success(project));
 });
 
 // POST /projects/:id/update - log an update to a project
@@ -152,19 +213,7 @@ projectsRouter.post('/:id/update',
   res.status(201).send(success(update));
 });
 
-// // POST /projects/:id - modify the given project
-// projectsRouter.post('/:id', async (req, res) => {
-//   const db = req.app.get('db') as PrismaClient;
 
-//   // this is, for now, terribly unsafe!
-//   // I'll need to do some validation on this before actually deploying it
-//   const project = await db.project.update({
-//     where: { id: +req.params.id },
-//     data: req.body,
-//   });
-
-//   res.json(project);
-// });
 
 // // DELETE /projects/:id - archive a project
 // projectsRouter.delete('/:id', async (req, res) => {

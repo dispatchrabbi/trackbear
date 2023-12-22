@@ -49,6 +49,9 @@ function handleNewUpdate(update: Update) {
     <div v-if="project">
       <h2 class="va-h2 mb-3">
         {{ project.title }}
+        <RouterLink :to="{ name: 'edit-project', params: { id: project.id } }">
+          <VaIcon name="edit" />
+        </RouterLink>
       </h2>
       <div class="grid grid-cols-6 gap-4">
         <div class="col-span-2 flex flex-col justify-start gap-4">
