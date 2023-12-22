@@ -1,10 +1,10 @@
 # TODO
 
 ## Now
-- [ ] Release to alpha testers
+- [X] Release to alpha testers
 
 ## Next
-- [ ] Add project parameters (goal, start date, end date) to Project page
+- [X] Add project parameters (goal, start date, end date) to Project page
 - [ ] Edit and delete for projects and updates
 - [ ] Add edit page for users
 - [ ] Add `lastLoginAt` to User table

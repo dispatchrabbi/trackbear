@@ -118,7 +118,7 @@ async function handleSubmit() {
         <VaInput
           v-if="props.project.type === 'time'"
           v-model="progressForm.time"
-          :label="TYPE_INFO[props.project.type].count"
+          :label="TYPE_INFO[props.project.type].description"
           :rules="[(v) => validateTimeString(v) || 'Please enter a duration in hours and minutes']"
           placeholder="HH:MM"
           required-mark
@@ -126,7 +126,7 @@ async function handleSubmit() {
         <VaInput
           v-if="props.project.type !== 'time'"
           v-model="progressForm.count"
-          :label="TYPE_INFO[props.project.type].count"
+          :label="TYPE_INFO[props.project.type].description"
           :rules="[v => { return (v === '') || (Number.parseInt(v, 10) === +v) || ('Please enter a number for your progress') }]"
           required-mark
         />

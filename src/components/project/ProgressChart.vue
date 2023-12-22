@@ -79,10 +79,16 @@ function calculatePars(eachDay: Date[], project: Project) {
   if(project.endDate) {
     // count up toward the end date
     const parPerDay = project.goal / eachDay.length;
-    pars = eachDay.map((date, ix) => ({ date: formatDate(date), value: parPerDay * ix }));
+    pars = eachDay.map((date, ix) => ({
+      date: formatDate(date),
+      value: props.project.type === 'time' ? parPerDay * ix / 60 : parPerDay * ix,
+    }));
   } else {
     // just put par at the goal
-    pars = eachDay.map((date) => ({ date: formatDate(date), value: project.goal }));
+    pars = eachDay.map((date) => ({
+      date: formatDate(date),
+      value: props.project.type === 'time' ? project.goal / 60 : project.goal,
+    }));
   }
 
   return pars;
@@ -147,12 +153,15 @@ const chartOptions = computed(() => {
   const options = {
     parsing: {
       xAxisKey: 'date',
-      yAxisKey: 'value'
+      yAxisKey: 'raw'
     },
     scales: {
       y: {
         min: 0,
-        suggestedMax: props.project.goal || TYPE_INFO[props.project.type].defaultChartMax,
+        suggestedMax: (props.project.type === 'time' ? Math.ceil(props.project.goal / 60) : props.project.goal) || TYPE_INFO[props.project.type].defaultChartMax,
+        ticks: {
+          callback: props.project.type === 'time' ? value => formatTimeProgress(value)  : undefined,
+        }
       },
     },
     plugins: {

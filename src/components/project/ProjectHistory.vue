@@ -6,7 +6,7 @@ import { formatTimeProgress } from '../../lib/date.ts';
 const props = defineProps<{ project: Project }>();
 
 function makeRows(project: Project) {
-  const countHeader = TYPE_INFO[project.type].count;
+  const countHeader = TYPE_INFO[project.type].description;
 
   const rows = project.updates
     .sort((a: Update, b: Update) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0)

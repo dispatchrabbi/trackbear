@@ -35,7 +35,7 @@ const validations = z.object({
 
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
 
-const typeOptions = Object.keys(TYPE_INFO).map(type => ({ text: TYPE_INFO[type].count, value: type }));
+const typeOptions = Object.keys(TYPE_INFO).map(type => ({ text: TYPE_INFO[type].description, value: type }));
 
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string>('');

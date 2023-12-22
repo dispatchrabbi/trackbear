@@ -10,6 +10,7 @@ import type { Project, Update } from '../lib/project.ts';
 
 import AppPage from './layout/AppPage.vue';
 import EnterProgress from './project/EnterProgress.vue';
+import ProjectGoal from './project/ProjectGoal.vue';
 import ProjectStats from './project/ProjectStats.vue';
 import ProjectHistory from './project/ProjectHistory.vue';
 import ProgressChart from './project/ProgressChart.vue';
@@ -56,6 +57,12 @@ function handleNewUpdate(update: Update) {
               :project="project"
               @new-update="handleNewUpdate"
             />
+          </div>
+          <div
+            v-if="project.goal || project.startDate || project.endDate"
+            class="project-goal shrink"
+          >
+            <ProjectGoal :project="project" />
           </div>
           <div class="project-stats shrink">
             <ProjectStats :project="project" />

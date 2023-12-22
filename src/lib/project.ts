@@ -20,8 +20,25 @@ export type Update = {
 };
 
 export const TYPE_INFO = {
-  words: { count: 'Word Count', defaultChartMax: 5000 },
-  time: { count: 'Time Spent', defaultChartMax: 250 },
-  chapters: { count: 'Chapters', defaultChartMax: 30 },
-  pages: { count: 'Pages', defaultChartMax: 50 },
+  words: {
+    description: 'Word Count',
+    defaultChartMax: 5000,
+    counter: { singular: 'word', plural: 'words' },
+
+  },
+  time: {
+    description: 'Time Spent',
+    defaultChartMax: 250,
+    counter: { singular: 'hour', plural: 'hours' },
+  },
+  chapters: {
+    description: 'Chapters',
+    defaultChartMax: 30,
+    counter: { singular: 'chapter', plural: 'chapters' },
+  },
+  pages: {
+    description: 'Pages',
+    defaultChartMax: 50,
+    counter: { singular: 'page', plural: 'pages' },
+  },
 };
