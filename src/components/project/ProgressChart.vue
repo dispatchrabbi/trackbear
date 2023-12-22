@@ -90,11 +90,15 @@ function calculatePars(eachDay: Date[], project: Project) {
 const pars = computed(() => props.showPar ? calculatePars(eachDay.value, props.project) : null);
 
 const progressData = computed(() => {
-  const progressPoints = updates.value.map(u => ({ date: u.date, value: u.soFar }));
+  const progressPoints = updates.value.map(u => ({
+    date: u.date,
+    value: props.project.type === 'time' ? u.soFar / 60 : u.soFar, // for time projects, show the value in hours, not minutes
+    raw: u.soFar, // use the raw value for formatting
+  }));
 
   if(progressPoints.length > 0 && updates.value[0].date !== formatDate(eachDay.value[0])) {
     // need to add a zero at the beginning so it's not just floating
-    progressPoints.unshift({ date: formatDate(eachDay.value[0]), value: 0 });
+    progressPoints.unshift({ date: formatDate(eachDay.value[0]), value: 0, raw: 0 });
   }
 
   return progressPoints;
@@ -136,7 +140,7 @@ const chartOptions = computed(() => {
     // even if showing tooltips, don't show them for Par
     {
       filter: ctx => ctx.dataset.label !== 'Par',
-      callbacks: props.project.type === 'time' ? { label: ctx => `${ctx.dataset.label}: ${formatTimeProgress(ctx.parsed.y)}` } : undefined,
+      callbacks: props.project.type === 'time' ? { label: ctx => `${ctx.dataset.label}: ${formatTimeProgress(ctx.raw.raw)}` } : undefined,
     } :
     { enabled: false };
 
