@@ -37,8 +37,8 @@ const timeframe = computed(() => {
       v-if="props.project.goal"
       class="text-center text-xl/4"
     >
-      {{ props.project.type === 'time' ? formatDuration({ hours: Math.floor(props.project.goal / 60), minutes: props.project.goal % 60 }) : props.project.goal }}
-      {{ props.project.type === 'time' ? '' : TYPE_INFO[props.project.type].counter[props.project.goal === 1 ? 'singular' : 'plural'] }}
+      {{ props.project.goal }}
+      {{ TYPE_INFO[props.project.type].counter[props.project.goal === 1 ? 'singular' : 'plural'] }}
     </VaCardContent>
     <VaCardTitle v-if="timeframe">
       {{ timeframe.title }}

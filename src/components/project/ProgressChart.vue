@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { eachDayOfInterval } from 'date-fns';
+import { eachDayOfInterval, addDays } from 'date-fns';
 import { debounce } from 'chart.js/helpers';
 
 import { Line } from 'vue-chartjs';
@@ -51,43 +51,65 @@ function normalizeUpdates(updates: Update[]): NormalizedUpdate[] {
 }
 const updates = computed(() => normalizeUpdates(props.updates));
 
-function eachDayOfProject(updates: NormalizedUpdate[], project: Project) {
-  // if there are no updates and we don't have both a start and end date, we have no interval to work with at all
-  if(updates.length === 0 && !(project.startDate && project.endDate)) {
-    return [];
+function determineChartStartDate(firstUpdate?: string, projectStartDate?: string) {
+  if(projectStartDate && firstUpdate) {
+    return minDateStr(projectStartDate, firstUpdate);
+  } else if(projectStartDate) {
+    return projectStartDate;
+  } else if(firstUpdate) {
+    return firstUpdate
+  } else {
+    return formatDate(new Date()); // today
   }
-
-  const start = updates.length > 0 ? project.startDate ? minDateStr(project.startDate, updates[0].date) : updates[0].date : project.startDate;
-  const end = updates.length > 0 ? project.endDate ? maxDateStr(project.endDate, updates[updates.length - 1].date) : updates[updates.length - 1].date : project.endDate;
+}
+function determineChartEndDate(lastUpdate?: string, projectEndDate?: string, projectStartDate?: string) {
+  if(projectEndDate && lastUpdate) {
+    return maxDateStr(projectEndDate, lastUpdate);
+  } else if(projectEndDate) {
+    return projectEndDate;
+  } else if(lastUpdate) {
+    return lastUpdate
+  } else if(projectStartDate) {
+    // display a 7-day chart
+    return maxDateStr(formatDate(addDays(parseDateString(projectStartDate), 6)), formatDate(addDays(new Date(), 6)));
+  } else {
+    // display a 7-day chart
+    return formatDate(addDays(new Date(), 6));
+  }
+}
+function eachDayOfProject(updates: NormalizedUpdate[], project: Project) {
+  const start = determineChartStartDate(updates.length > 0 ? updates[0].date : null, project.startDate);
+  const end = determineChartEndDate(updates.length > 0 ? updates[updates.length - 1].date : null, project.endDate, project.startDate);
 
   const eachDay = eachDayOfInterval({ start: parseDateString(start), end: parseDateString(end) });
   return eachDay;
 }
 const eachDay = computed(() => eachDayOfProject(updates.value, props.project));
 
+// time goals are in hours, so we convert them to minutes
+const normalizedGoal = computed(() => {
+  return props.project.goal === null ? null : (props.project.type === 'time' ? (props.project.goal * 60) : props.project.goal);
+});
+
 function calculatePars(eachDay: Date[], project: Project) {
   // no way to have par if there's no goal
-  if(project.goal === null) {
-    return null;
-  }
-
-  if(eachDay.length < 1) {
+  if(normalizedGoal.value === null) {
     return null;
   }
 
   let pars = [];
   if(project.endDate) {
     // count up toward the end date
-    const parPerDay = project.goal / eachDay.length;
+    const parPerDay = normalizedGoal.value / (eachDay.length - 1);
     pars = eachDay.map((date, ix) => ({
       date: formatDate(date),
-      value: props.project.type === 'time' ? parPerDay * ix / 60 : parPerDay * ix,
+      value: parPerDay * ix,
     }));
   } else {
     // just put par at the goal
     pars = eachDay.map((date) => ({
       date: formatDate(date),
-      value: props.project.type === 'time' ? project.goal / 60 : project.goal,
+      value: normalizedGoal.value,
     }));
   }
 
@@ -98,13 +120,12 @@ const pars = computed(() => props.showPar ? calculatePars(eachDay.value, props.p
 const progressData = computed(() => {
   const progressPoints = updates.value.map(u => ({
     date: u.date,
-    value: props.project.type === 'time' ? u.soFar / 60 : u.soFar, // for time projects, show the value in hours, not minutes
-    raw: u.soFar, // use the raw value for formatting
+    value: u.soFar, // for time projects, show the value in hours, not minutes
   }));
 
   if(progressPoints.length > 0 && updates.value[0].date !== formatDate(eachDay.value[0])) {
     // need to add a zero at the beginning so it's not just floating
-    progressPoints.unshift({ date: formatDate(eachDay.value[0]), value: 0, raw: 0 });
+    progressPoints.unshift({ date: formatDate(eachDay.value[0]), value: 0 });
   }
 
   return progressPoints;
@@ -130,7 +151,8 @@ const chartData = computed(() => {
     data.datasets.push({
       label: 'Par',
       data: pars.value,
-      elements: { point: { radius: 0 }, line: { borderDash: [ 3 ] } } // par line is dashed, no markers
+      borderColor: getColor('success'),
+      elements: { point: { radius: 0 }, line: { borderDash: [ 8 ] } } // par line is dashed, no markers
     });
   }
 
@@ -146,21 +168,23 @@ const chartOptions = computed(() => {
     // even if showing tooltips, don't show them for Par
     {
       filter: ctx => ctx.dataset.label !== 'Par',
-      callbacks: props.project.type === 'time' ? { label: ctx => `${ctx.dataset.label}: ${formatTimeProgress(ctx.raw.raw)}` } : undefined,
+      callbacks: props.project.type === 'time' ? { label: ctx => `${ctx.dataset.label}: ${formatTimeProgress(ctx.raw.value)}` } : undefined,
     } :
     { enabled: false };
 
   const options = {
     parsing: {
       xAxisKey: 'date',
-      yAxisKey: 'raw'
+      yAxisKey: 'value'
     },
     scales: {
       y: {
+        type: 'linear',
         min: 0,
-        suggestedMax: (props.project.type === 'time' ? Math.ceil(props.project.goal / 60) : props.project.goal) || TYPE_INFO[props.project.type].defaultChartMax,
+        suggestedMax: normalizedGoal.value || TYPE_INFO[props.project.type].defaultChartMax,
         ticks: {
           callback: props.project.type === 'time' ? value => formatTimeProgress(value)  : undefined,
+          stepSize: props.project.type === 'time' ? 60 : undefined,
         }
       },
     },

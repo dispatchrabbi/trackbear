@@ -31,7 +31,7 @@ const shouldRotate = computed(() => {
         class="min-h-[12rem]"
         :project="project"
         :updates="project.updates"
-        :show-par="false"
+        :show-par="true"
         :show-tooltips="false"
       />
     </VaCardContent>
