@@ -27,7 +27,7 @@ function loadProject() {
 
   const projectId = +projectIdStr;
   getProject(projectId)
-    .then(p => project.value = p as Project)
+    .then(p => project.value = p as unknown as Project)
     .catch(err => {
       if(err.code === 'NOT_FOUND') {
         errorMessage.value = `Could not find project with ID ${projectId}. How did you get here?`;
