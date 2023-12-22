@@ -14,9 +14,10 @@ export type Project = {
 };
 
 export type Update = {
-  id: number,
-  date: string,
-  value: number,
+  id: number;
+  date: string;
+  value: number;
+  updatedAt: string;
 };
 
 export const TYPE_INFO = {
