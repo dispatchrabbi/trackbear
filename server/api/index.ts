@@ -6,6 +6,7 @@ import winston from "winston";
 import pingRouter from './ping.ts';
 import authRouter from './auth.ts';
 import projectsRouter from './projects.ts';
+import shareRouter from './share.ts';
 import { ApiResponse, failure } from "../lib/api-response.ts";
 
 const apiRouter = Router();
@@ -18,6 +19,7 @@ apiRouter.use((req, res, next) => {
 apiRouter.use('/ping', pingRouter);
 apiRouter.use('/auth', authRouter);
 apiRouter.use('/projects', projectsRouter);
+apiRouter.use('/share', shareRouter);
 
 // handle any API errors
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

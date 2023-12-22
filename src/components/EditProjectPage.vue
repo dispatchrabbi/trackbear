@@ -12,6 +12,7 @@ const route = useRoute();
 import { getProject } from '../lib/api/project.ts';
 
 import AppPage from './layout/AppPage.vue';
+import FormFieldWrapper from './form/FormFieldWrapper.vue';
 import { Project, TYPE_INFO } from '../lib/project.ts';
 import { editProject } from '../lib/api/project.ts';
 import type { EditProjectPayload } from '../../server/api/projects.ts';
@@ -22,6 +23,7 @@ const formModel = reactive({
   goal: '',
   startDate: null,
   endDate: null,
+  visibility: 'private',
 });
 
 const validations = z.object({
@@ -32,6 +34,7 @@ const validations = z.object({
   ]),
   startDate: z.date().nullish().transform(formatDateSafe),
   endDate: z.date().nullish().transform(formatDateSafe),
+  visibility: z.enum(['private', 'public']),
 });
 
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
@@ -58,6 +61,7 @@ function loadProject() {
       formModel.goal = p.goal === null ? '' : p.goal.toString(10);
       formModel.startDate = parseDateStringSafe(p.startDate);
       formModel.endDate = parseDateStringSafe(p.endDate);
+      formModel.visibility = p.visibility;
 
       project.value = p;
     })
@@ -79,7 +83,6 @@ async function handleSubmit() {
 
   const payload = {
     ...formData(),
-    visibility: 'private'
   } as EditProjectPayload;
 
   try {
@@ -128,14 +131,10 @@ function handleCancel() {
             :rules="[ ruleFor('title') ]"
             required-mark
           />
-          <div>
-            <label
-              aria-hidden="true"
-              class="va-input-label va-input-wrapper__label va-input-wrapper__label--outer"
-              style="color: var(--va-primary);"
-            >
-              What to track
-            </label>
+          <FormFieldWrapper
+            label="What to track"
+            required
+          >
             <VaRadio
               v-model="project.type"
               :options="typeOptions.filter(option => option.value === project.type)"
@@ -145,7 +144,7 @@ function handleCancel() {
               readonly
               disabled
             />
-          </div>
+          </FormFieldWrapper>
           <VaInput
             v-model="formModel.goal"
             :label="project.type === 'time' ? 'Goal (in hours)' : 'Goal'"
@@ -172,6 +171,20 @@ function handleCancel() {
             manual-input
             clearable
           />
+          <FormFieldWrapper
+            label="Share this project?"
+            message="Public projects have a shareable link that you can send to your friends. Anyone with the link will be able to see the project."
+          >
+            <VaSwitch
+              v-model="formModel.visibility"
+              false-value="private"
+              false-label="Private"
+              true-value="public"
+              true-label="Public"
+            >
+              {{ formModel.visibility === 'private' ? 'Private' : 'Public' }}
+            </VaSwitch>
+          </FormFieldWrapper>
           <div class="flex gap-4 mt-4">
             <VaButton
               :disabled="!isValid"

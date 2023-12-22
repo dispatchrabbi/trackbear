@@ -5,8 +5,11 @@ import { useRoute, useRouter } from 'vue-router';
 const router = useRouter();
 const route = useRoute();
 
+import { useToast } from 'vuestic-ui';
+const { notify } = useToast();
+
 import { getProject } from '../lib/api/project.ts';
-import type { Project, Update } from '../lib/project.ts';
+import { Project, Update, makeShareUrl } from '../lib/project.ts';
 
 import AppPage from './layout/AppPage.vue';
 import EnterProgress from './project/EnterProgress.vue';
@@ -42,17 +45,54 @@ function handleNewUpdate(update: Update) {
   project.value.updates.push(update);
 }
 
+// TODO: make this a dropdown with the link in text and a separate copy button
+async function handleShareClick() {
+  const shareUrl = makeShareUrl(project.value);
+  try {
+    await navigator.clipboard.writeText(shareUrl.toString());
+    notify({
+      message: 'Link copied!',
+      color: 'success',
+    });
+  } catch(err) {
+    notify({
+      message: "Couldn't copy the link — are you on a weird browser?",
+      color: 'danger',
+    });
+  }
+}
+
 </script>
 
 <template>
   <AppPage require-login>
     <div v-if="project">
-      <h2 class="va-h2 mb-3">
-        {{ project.title }}
-        <RouterLink :to="{ name: 'edit-project', params: { id: project.id } }">
-          <VaIcon name="edit" />
-        </RouterLink>
-      </h2>
+      <div class="flex gap-4 items-center">
+        <h2 class="va-h2 mb-3">
+          {{ project.title }}
+        </h2>
+        <div
+          v-if="project.visibility === 'public'"
+          class="shrink"
+        >
+          <VaIcon
+            name="share"
+            size="large"
+            title="Get a public link to this project"
+            class="cursor-pointer"
+            @click="handleShareClick"
+          />
+        </div>
+        <div class="shrink">
+          <RouterLink :to="{ name: 'edit-project', params: { id: project.id } }">
+            <VaIcon
+              name="edit"
+              size="large"
+              title="Edit project"
+            />
+          </RouterLink>
+        </div>
+      </div>
       <div class="grid grid-cols-6 gap-4">
         <div class="col-span-2 flex flex-col justify-start gap-4">
           <div class="project-enter-progress shrink">
@@ -65,7 +105,10 @@ function handleNewUpdate(update: Update) {
             v-if="project.goal || project.startDate || project.endDate"
             class="project-goal shrink"
           >
-            <ProjectGoal :project="project" />
+            <ProjectGoal
+              :project="project"
+              address-user
+            />
           </div>
           <div class="project-stats shrink">
             <ProjectStats :project="project" />
@@ -87,7 +130,10 @@ function handleNewUpdate(update: Update) {
             </VaCard>
           </div>
           <div class="project-history shrink">
-            <ProjectHistory :project="project" />
+            <ProjectHistory
+              :project="project"
+              show-update-times
+            />
           </div>
         </div>
       </div>

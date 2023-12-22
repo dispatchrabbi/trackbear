@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Project, TYPE_INFO } from '../../lib/project.ts';
-import { formatDuration } from 'date-fns';
+import { SharedProjectWithUpdates } from '../../../server/api/share.ts';
 
-const props = defineProps<{ project: Project }>();
+const props = defineProps<{
+  project: Project | SharedProjectWithUpdates;
+  addressUser?: boolean;
+}>();
 
 const timeframe = computed(() => {
   if(props.project.startDate && props.project.endDate) {
@@ -31,7 +34,7 @@ const timeframe = computed(() => {
 <template>
   <VaCard>
     <VaCardTitle v-if="props.project.goal">
-      Your goal is to hit
+      {{ props.addressUser ? 'Your' : 'The' }} goal is to hit
     </VaCardTitle>
     <VaCardContent
       v-if="props.project.goal"

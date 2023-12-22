@@ -11,6 +11,11 @@ import { useColors } from 'vuestic-ui';
 
 import { parseDateString, formatDate, formatTimeProgress, minDateStr, maxDateStr } from '../../lib/date.ts';
 import { Project, Update, TYPE_INFO } from '../../lib/project.ts';
+import { SharedProjectWithUpdates } from '../../../server/api/share.ts';
+
+// TODO: this isn't the cleanest; now we have two of these types floating around
+type CommonUpdate = Omit<Update, 'id' | 'updatedAt'>;
+
 type NormalizedUpdate = {
   date: string;
   today: number;
@@ -20,13 +25,13 @@ type NormalizedUpdate = {
 const props = defineProps<{
   id: string;
   class?: string;
-  project: Project;
-  updates: Update[];
+  project: Project | SharedProjectWithUpdates;
+  updates: CommonUpdate[]
   showPar: boolean;
   showTooltips: boolean;
 }>();
 
-function normalizeUpdates(updates: Update[]): NormalizedUpdate[] {
+function normalizeUpdates(updates: CommonUpdate[]): NormalizedUpdate[] {
   // combine all the updates for a single day
   const consolidated = updates.reduce((obj, update) => {
     if(!(update.date in obj)) {
@@ -49,7 +54,7 @@ function normalizeUpdates(updates: Update[]): NormalizedUpdate[] {
 
   return normalized;
 }
-const updates = computed(() => normalizeUpdates(props.updates));
+const updates = computed(() => normalizeUpdates(props.project.updates));
 
 function determineChartStartDate(firstUpdate?: string, projectStartDate?: string) {
   if(projectStartDate && firstUpdate) {
@@ -77,7 +82,7 @@ function determineChartEndDate(lastUpdate?: string, projectEndDate?: string, pro
     return formatDate(addDays(new Date(), 6));
   }
 }
-function eachDayOfProject(updates: NormalizedUpdate[], project: Project) {
+function eachDayOfProject(updates: NormalizedUpdate[], project: SharedProjectWithUpdates) {
   const start = determineChartStartDate(updates.length > 0 ? updates[0].date : null, project.startDate);
   const end = determineChartEndDate(updates.length > 0 ? updates[updates.length - 1].date : null, project.endDate, project.startDate);
 
@@ -91,7 +96,7 @@ const normalizedGoal = computed(() => {
   return props.project.goal === null ? null : (props.project.type === 'time' ? (props.project.goal * 60) : props.project.goal);
 });
 
-function calculatePars(eachDay: Date[], project: Project) {
+function calculatePars(eachDay: Date[], project: SharedProjectWithUpdates) {
   // no way to have par if there's no goal
   if(normalizedGoal.value === null) {
     return null;

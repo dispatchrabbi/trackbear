@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { Project } from '../../lib/project.ts';
+import { SharedProjectWithUpdates } from '../../../server/api/share.ts';
 
-const props = defineProps<{ project: Project }>();
+const props = defineProps<{ project: Project | SharedProjectWithUpdates }>();
 </script>
 
 <template>

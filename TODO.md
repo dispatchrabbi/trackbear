@@ -5,8 +5,13 @@
 
 ## Next
 - [X] Add project parameters (goal, start date, end date) to Project page
-- [ ] Edit and delete for projects and updates
-- [ ] Add edit page for users
+- [X] Edit projects
+  - [ ] Make the edit icon nicer
+- [ ] Edit updates
+- [ ] Delete projects
+- [ ] Delete updates
+- [ ] Edit your account
+- [ ] Delete your account
 - [ ] Add `lastLoginAt` to User table
 - [ ] Lock out multiple login attempts
 - [ ] Simplify out async handling a la https://stackoverflow.com/questions/43356705/
@@ -15,9 +20,9 @@
 - [ ] Put TrackBear behind nginx for easier SSL and fail2ban
 
 ## Soon
+- [X] Sharing
 - [ ] Announcement/banner functionality
 - [ ] Project Stats
-- [ ] Sharing
 - [ ] Leaderboards (types: same type, goal percentage)
 - [ ] Aggregate grand totals across all projects / Aggregate by tag / Exclude projects from grand total
 

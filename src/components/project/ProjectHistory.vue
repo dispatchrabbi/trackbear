@@ -1,19 +1,25 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { formatDistanceToNow, parseISO } from 'date-fns';
-import { Project, Update, TYPE_INFO } from '../../lib/project.ts';
-import { formatTimeProgress } from '../../lib/date.ts';
 import { DataTableColumnSource } from 'vuestic-ui';
+import { formatDistanceToNow, parseISO } from 'date-fns';
 
-const props = defineProps<{ project: Project }>();
+import { Project, Update, TYPE_INFO } from '../../lib/project.ts';
+import { SharedProjectWithUpdates } from '../../../server/api/share.ts';
 
-function makeRows(project: Project) {
+import { formatTimeProgress } from '../../lib/date.ts';
+
+const props = defineProps<{
+  project: Project | SharedProjectWithUpdates
+  showUpdateTimes?: boolean
+}>();
+
+function makeRows(project: Project | SharedProjectWithUpdates) {
   const rows = project.updates
     .sort((a: Update, b: Update) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0)
     .map((update: Update) => ({
       date: update.date,
       value: props.project.type === 'time' ? formatTimeProgress(update.value) : update.value,
-      updated: update.updatedAt,
+      updated: props.showUpdateTimes ? update.updatedAt : null,
     }));
 
   return rows;
@@ -41,6 +47,7 @@ const columns = computed(() => {
         <template #cell(date)="{ value, rowData }">
           {{ value }}
           <VaPopover
+            v-if="props.showUpdateTimes"
             placement="top"
             :message="`${formatDistanceToNow(parseISO(rowData.updated))} ago`"
           >

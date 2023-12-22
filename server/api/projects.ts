@@ -9,7 +9,6 @@ import type { Project, Update } from "@prisma/client";
 import { requireUser, WithUser } from '../lib/auth.ts';
 import { PROJECT_STATE, PROJECT_VISIBILITY, PROJECT_TYPE } from '../lib/states.ts';
 
-
 import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 import { logAuditEvent } from '../lib/audit-events.ts';
 
@@ -96,6 +95,7 @@ projectsRouter.post('/',
     goal: zInt().nullable(),
     startDate: zDateStr().nullable(),
     endDate: zDateStr().nullable(),
+    visibility: z.enum(Object.values(PROJECT_VISIBILITY) as [string, ...string[]])
   })),
   async (req, res: ApiResponse<ProjectWithUpdates>, next) =>
 {
@@ -106,7 +106,6 @@ projectsRouter.post('/',
       data: {
         ...req.body as CreateProjectPayload,
         state: PROJECT_STATE.ACTIVE,
-        visibility: PROJECT_VISIBILITY.PRIVATE,
         starred: false,
         ownerId: user.id
       },
@@ -120,7 +119,7 @@ projectsRouter.post('/',
   res.status(201).send(success(project));
 });
 
-// POST /projects/:id - modify the given project
+// POST /projects/:id - edit the given project
 projectsRouter.post('/:id',
   requireUser,
   validateBody(z.object({
@@ -128,6 +127,7 @@ projectsRouter.post('/:id',
     goal: zInt().nullable(),
     startDate: zDateStr().nullable(),
     endDate: zDateStr().nullable(),
+    visibility: z.enum(Object.values(PROJECT_VISIBILITY) as [string, ...string[]])
   })),
   async (req, res: ApiResponse<ProjectWithUpdates>, next) =>
 {
@@ -157,7 +157,6 @@ projectsRouter.post('/:id',
       data: {
         // this is safe because our validation removes extra properties
         ...req.body as EditProjectPayload,
-        visibility: PROJECT_VISIBILITY.PRIVATE,
       },
       where: {
         id: +req.params.id,
@@ -168,6 +167,7 @@ projectsRouter.post('/:id',
         updates: true,
       },
     });
+    await logAuditEvent('project:edit', user.id, project.id);
   } catch(err) { return next(err); }
 
   res.status(200).send(success(project));

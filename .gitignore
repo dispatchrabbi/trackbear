@@ -68,3 +68,4 @@ dist
 dist-ssr
 *.local
 db
+certs

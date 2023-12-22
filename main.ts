@@ -93,7 +93,13 @@ async function main() {
     // This middleware has a catch-all route
     winston.debug('Serving the front-end dynamically using vite');
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        https: process.env.USE_HTTPS ? {
+          key: process.env.TLS_KEY,
+          cert: process.env.TLS_CERT,
+        } : undefined,
+      },
       appType: 'spa',
       publicDir: './public',
     });

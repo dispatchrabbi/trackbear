@@ -8,7 +8,7 @@ export type Project = {
   goal: number | null;
   startDate: string | null;
   endDate: string | null;
-  visibility: 'hidden' | 'shared';
+  visibility: 'private' | 'public';
   starred: boolean;
   updates: Update[];
 };
@@ -43,3 +43,7 @@ export const TYPE_INFO = {
     counter: { singular: 'page', plural: 'pages' },
   },
 };
+
+export function makeShareUrl(project: Project) {
+  return new URL(`/share/projects/${project.uuid}`, window.location.href);
+}
