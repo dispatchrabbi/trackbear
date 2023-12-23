@@ -60,9 +60,12 @@ const columns = computed(() => {
   return cols;
 });
 
-const sorting = reactive({
+const sorting = reactive<{
+  sortBy: string;
+  sortingOrder: 'asc' | 'desc' | null
+}>({
   sortBy: localStorage.getItem('projectHistory:sortBy') || 'date',
-  sortingOrder: localStorage.getItem('projectHistory:sortingOrder') || null,
+  sortingOrder: (localStorage.getItem('projectHistory:sortingOrder') as 'asc' | 'desc') || null,
 });
 watch(() => sorting.sortBy, val => localStorage.setItem('projectHistory:sortBy', val));
 watch(() => sorting.sortingOrder, val => localStorage.setItem('projectHistory:sortingOrder', val));
