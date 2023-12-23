@@ -2,7 +2,7 @@ import { Router, Request } from "express";
 import { ApiResponse, success, failure } from '../lib/api-response.ts';
 
 import { z } from 'zod';
-import { zInt, zStrInt, zDateStr } from '../lib/validators.ts';
+import { zStrInt, zDateStr } from '../lib/validators.ts';
 
 import dbClient from "../lib/db.ts";
 import type { Project, Update } from "@prisma/client";
@@ -56,7 +56,7 @@ projectsRouter.get('/',
     });
   } catch(err) { return next(err); }
 
-  res.status(200).send(success(projects));
+  return res.status(200).send(success(projects));
 });
 
 // GET /projects/:id - return a specific project
@@ -80,9 +80,9 @@ projectsRouter.get('/:id',
   } catch(err) { return next(err); }
 
   if(project) {
-    res.status(200).send(success(project));
+    return res.status(200).send(success(project));
   } else {
-    res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
   }
 });
 
@@ -92,7 +92,7 @@ projectsRouter.post('/',
   validateBody(z.object({
     title: z.string(),
     type: z.enum(Object.values(PROJECT_TYPE) as [string, ...string[]]),
-    goal: zInt().nullable(),
+    goal: z.number().int().nullable(),
     startDate: zDateStr().nullable(),
     endDate: zDateStr().nullable(),
     visibility: z.enum(Object.values(PROJECT_VISIBILITY) as [string, ...string[]])
@@ -116,15 +116,16 @@ projectsRouter.post('/',
     await logAuditEvent('project:create', user.id, project.id);
   } catch(err) { return next(err); }
 
-  res.status(201).send(success(project));
+  return res.status(201).send(success(project));
 });
 
 // POST /projects/:id - edit the given project
 projectsRouter.post('/:id',
   requireUser,
+  validateParams(z.object({ id: zStrInt() })),
   validateBody(z.object({
     title: z.string(),
-    goal: zInt().nullable(),
+    goal: z.number().int().nullable(),
     startDate: zDateStr().nullable(),
     endDate: zDateStr().nullable(),
     visibility: z.enum(Object.values(PROJECT_VISIBILITY) as [string, ...string[]])
@@ -146,8 +147,7 @@ projectsRouter.post('/:id',
   } catch(err) { return next(err); }
 
   if(!checkProject) {
-    res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
-    return;
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
   }
 
   // now we can edit
@@ -170,14 +170,23 @@ projectsRouter.post('/:id',
     await logAuditEvent('project:edit', user.id, project.id);
   } catch(err) { return next(err); }
 
-  res.status(200).send(success(project));
+  return res.status(200).send(success(project));
+});
+
+// DELETE /projects/:id - delete the given project
+projectsRouter.delete('/:id',
+  requireUser,
+  validateParams(z.object({ id: zStrInt() })),
+  async (req, res: ApiResponse<null>, next) =>
+{
+  return res.status(500).send(failure('NOT_IMPLEMENTED', 'Not yet implemented'));
 });
 
 // POST /projects/:id/update - log an update to a project
 projectsRouter.post('/:id/update',
   requireUser,
   validateParams(z.object({ id: zStrInt() })),
-  validateBody(z.object({ date: zDateStr(), value: zInt() })),
+  validateBody(z.object({ date: zDateStr(), value: z.number().int() })),
   async (req: WithUser<Request>, res: ApiResponse<Update>, next) =>
 {
   // first, make sure the project exists
@@ -194,8 +203,7 @@ projectsRouter.post('/:id/update',
   } catch(err) { return next(err); }
 
   if(!project) {
-    res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
-    return;
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
   }
 
   // now, add the update
@@ -210,14 +218,14 @@ projectsRouter.post('/:id/update',
     logAuditEvent('update:create', user.id, update.id, project.id);
   } catch(err) { return next(err); }
 
-  res.status(201).send(success(update));
+  return res.status(201).send(success(update));
 });
 
 // POST /projects/:projectId/update/:updateId
 projectsRouter.post('/:projectId/update/:updateId',
   requireUser,
   validateParams(z.object({ projectId: zStrInt(), updateId: zStrInt() })),
-  validateBody(z.object({ date: zDateStr(), value: zInt() })),
+  validateBody(z.object({ date: zDateStr(), value: z.number().int() })),
   async (req: WithUser<Request>, res: ApiResponse<Update>, next) =>
 {
   // first, make sure the project exists
@@ -234,8 +242,7 @@ projectsRouter.post('/:projectId/update/:updateId',
   } catch(err) { return next(err); }
 
   if(!project) {
-    res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
-    return;
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
   }
 
   let update: Update;
@@ -252,7 +259,7 @@ projectsRouter.post('/:projectId/update/:updateId',
     logAuditEvent('update:edit', user.id, update.id, project.id);
   } catch(err) { return next(err); }
 
-  res.status(200).send(success(update));
+  return res.status(200).send(success(update));
 });
 
 projectsRouter.delete('/:projectId/update/:updateId',
@@ -274,8 +281,7 @@ projectsRouter.delete('/:projectId/update/:updateId',
   } catch(err) { return next(err); }
 
   if(!project) {
-    res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
-    return;
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
   }
 
   let update: Update;
@@ -289,20 +295,7 @@ projectsRouter.delete('/:projectId/update/:updateId',
     logAuditEvent('update:delete', user.id, update.id, project.id);
   } catch(err) { return next(err); }
 
-  res.status(200).send(success(null));
+  return res.status(200).send(success(null));
 });
-
-// // DELETE /projects/:id - archive a project
-// projectsRouter.delete('/:id', async (req, res) => {
-//   const db = req.app.get('db') as PrismaClient;
-
-//   const project = await db.project.update({
-//     where: { id: +req.params.id },
-//     data: { state: 'archived' },
-//     select: { id: true, state: true },
-//   });
-
-//   res.status(200).json({ id: project.id, state: project.state });
-// });
 
 export default projectsRouter;

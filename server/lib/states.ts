@@ -21,9 +21,21 @@ const PROJECT_TYPE = {
   CHAPTERS: 'chapters',
 };
 
+const LEADERBOARD_STATE = {
+  ACTIVE:   'active',
+  DELETED:  'deleted',
+};
+
+const LEADERBOARD_GOAL_TYPE = {
+  ...PROJECT_TYPE,
+  PERCENTAGE: 'percentage',
+};
+
 export {
   USER_STATE,
   PROJECT_STATE,
   PROJECT_VISIBILITY,
-  PROJECT_TYPE
+  PROJECT_TYPE,
+  LEADERBOARD_STATE,
+  LEADERBOARD_GOAL_TYPE,
 };

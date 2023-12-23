@@ -12,7 +12,7 @@
     "client:dev": "npx vite",
     "client:build": "npx vue-tsc && npx vite build --emptyOutDir",
     "client:preview": "npx vite preview",
-    "db:migrate": "npx prisma migrate dev"
+    "db:migrate:dev": "npx prisma migrate dev"
   },
   "dependencies": {
     "@prisma/client": "^5.6.0",
