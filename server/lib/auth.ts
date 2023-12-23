@@ -2,7 +2,7 @@ import type { User } from "@prisma/client";
 import type { Request, Response, NextFunction } from "express";
 
 import dbClient from './db.js';
-import { ApiResponse, success, failure } from './api-response.ts';
+import { failure } from './api-response.ts';
 
 type SessionWithAuth = { session: { auth?: null | { id: number } } };
 // export type RequestWithSessionAuth = Express.Request & SessionWithAuth;

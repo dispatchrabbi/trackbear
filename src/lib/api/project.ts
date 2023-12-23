@@ -52,10 +52,32 @@ async function createUpdate(project: Project, update: CreateUpdatePayload): Prom
   }
 }
 
+async function editUpdate(project: Project, updateId: number, update: CreateUpdatePayload): Promise<Update> {
+  const response = await callApi<Update>(`/api/projects/${project.id}/update/${updateId}`, 'POST', update);
+
+  if(response.success === true) {
+    return response.data;
+  } else {
+    throw response.error;
+  }
+}
+
+async function deleteUpdate(project: Project, updateId: number): Promise<null> {
+  const response = await callApi<null>(`/api/projects/${project.id}/update/${updateId}`, 'DELETE');
+
+  if(response.success === true) {
+    return response.data;
+  } else {
+    throw response.error;
+  }
+}
+
 export {
   getProjects,
   getProject,
   createProject,
   editProject,
   createUpdate,
+  editUpdate,
+  deleteUpdate,
 };

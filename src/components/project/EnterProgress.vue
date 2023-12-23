@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
 
-import { parseDateStringSafe, formatDate } from '../../lib/date.ts';
+import { parseDateStringSafe, formatDate, validateTimeString } from '../../lib/date.ts';
 import { Project, TYPE_INFO } from '../../lib/project.ts';
 import { createUpdate } from '../../lib/api/project.ts';
 import { CreateUpdatePayload } from '../../../server/api/projects.ts';
@@ -18,15 +18,6 @@ const progressForm = reactive({
 const isLoading = ref<boolean>(false);
 const successMessage = ref<string>('');
 const errorMessage = ref<string>('');
-
-function validateTimeString(timeString: string) {
-  const parts = timeString.split(':');
-  const timeIsValid = parts.length === 2 &&
-      parseInt(parts[0], 10) === +parts[0] && Number.isInteger(+parts[0]) &&
-      parseInt(parts[1], 10) === +parts[1] && Number.isInteger(+parts[1]) && +parts[1] < 60;
-
-  return timeIsValid;
-}
 
 function validate() {
   const dateIsValid = progressForm.date instanceof Date;

@@ -63,3 +63,12 @@ export function minDateStr(a, b) {
 export function maxDateStr(a, b) {
   return a > b ? a : b;
 }
+
+export function validateTimeString(timeString: string) {
+  const parts = timeString.split(':');
+  const timeIsValid = parts.length === 2 &&
+      parseInt(parts[0], 10) === +parts[0] && Number.isInteger(+parts[0]) &&
+      parseInt(parts[1], 10) === +parts[1] && Number.isInteger(+parts[1]) && +parts[1] < 60;
+
+  return timeIsValid;
+}

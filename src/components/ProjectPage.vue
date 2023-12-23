@@ -44,6 +44,16 @@ loadProject();
 function handleNewUpdate(update: Update) {
   project.value.updates.push(update);
 }
+function handleEditUpdate(update: Update) {
+  const ix = project.value.updates.findIndex(u => u.id === update.id);
+  project.value.updates[ix] = update;
+}
+function handleDeleteUpdate(updateId: number) {
+  const ix = project.value.updates.findIndex(u => u.id === updateId);
+  if(ix >= 0) {
+    project.value.updates.splice(ix, 1);
+  }
+}
 
 // TODO: make this a dropdown with the link in text and a separate copy button
 async function handleShareClick() {
@@ -133,6 +143,9 @@ async function handleShareClick() {
             <ProjectHistory
               :project="project"
               show-update-times
+              allow-edits
+              @edit-update="handleEditUpdate"
+              @delete-update="handleDeleteUpdate"
             />
           </div>
         </div>

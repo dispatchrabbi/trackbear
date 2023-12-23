@@ -6,10 +6,10 @@
 ## Next
 - [X] Add project parameters (goal, start date, end date) to Project page
 - [X] Edit projects
-  - [ ] Make the edit icon nicer
-- [ ] Edit updates
+  - [X] Make the edit icon nicer
+- [X] Edit updates
 - [ ] Delete projects
-- [ ] Delete updates
+- [X] Delete updates
 - [ ] Edit your account
 - [ ] Delete your account
 - [ ] Add `lastLoginAt` to User table

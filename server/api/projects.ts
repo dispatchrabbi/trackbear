@@ -41,13 +41,13 @@ const projectsRouter = Router();
 // GET /projects - return all projects for the user
 projectsRouter.get('/',
   requireUser,
-  async (req, res: ApiResponse<ProjectWithUpdates[]>, next) =>
+  async (req: WithUser<Request>, res: ApiResponse<ProjectWithUpdates[]>, next) =>
 {
   let projects: ProjectWithUpdates[];
   try {
     projects = await dbClient.project.findMany({
       where: {
-        ownerId: (req as WithUser<Request>).user.id,
+        ownerId: req.user.id,
         state: PROJECT_STATE.ACTIVE,
       },
       include: {
@@ -63,14 +63,14 @@ projectsRouter.get('/',
 projectsRouter.get('/:id',
   requireUser,
   validateParams(z.object({ id: zStrInt() })),
-  async (req, res: ApiResponse<ProjectWithUpdates>, next) =>
+  async (req: WithUser<Request>, res: ApiResponse<ProjectWithUpdates>, next) =>
 {
   let project: ProjectWithUpdates | null;
   try {
     project = await dbClient.project.findUnique({
       where: {
         id: +req.params.id,
-        ownerId: (req as WithUser<Request>).user.id,
+        ownerId: req.user.id,
         state: PROJECT_STATE.ACTIVE,
       },
       include: {
@@ -97,9 +97,9 @@ projectsRouter.post('/',
     endDate: zDateStr().nullable(),
     visibility: z.enum(Object.values(PROJECT_VISIBILITY) as [string, ...string[]])
   })),
-  async (req, res: ApiResponse<ProjectWithUpdates>, next) =>
+  async (req: WithUser<Request>, res: ApiResponse<ProjectWithUpdates>, next) =>
 {
-  const user = (req as WithUser<Request>).user;
+  const user = req.user;
   let project: ProjectWithUpdates;
   try {
     project = await dbClient.project.create({
@@ -129,9 +129,9 @@ projectsRouter.post('/:id',
     endDate: zDateStr().nullable(),
     visibility: z.enum(Object.values(PROJECT_VISIBILITY) as [string, ...string[]])
   })),
-  async (req, res: ApiResponse<ProjectWithUpdates>, next) =>
+  async (req: WithUser<Request>, res: ApiResponse<ProjectWithUpdates>, next) =>
 {
-  const user = (req as WithUser<Request>).user;
+  const user = req.user;
 
   // first we have to make sure the project exists
   let checkProject: Project | null;
@@ -178,10 +178,10 @@ projectsRouter.post('/:id/update',
   requireUser,
   validateParams(z.object({ id: zStrInt() })),
   validateBody(z.object({ date: zDateStr(), value: zInt() })),
-  async (req, res: ApiResponse<Update>, next) =>
+  async (req: WithUser<Request>, res: ApiResponse<Update>, next) =>
 {
   // first, make sure the project exists
-  const user = (req as WithUser<Request>).user;
+  const user = req.user;
   let project: Project | null;
   try {
     project = await dbClient.project.findUnique({
@@ -213,7 +213,84 @@ projectsRouter.post('/:id/update',
   res.status(201).send(success(update));
 });
 
+// POST /projects/:projectId/update/:updateId
+projectsRouter.post('/:projectId/update/:updateId',
+  requireUser,
+  validateParams(z.object({ projectId: zStrInt(), updateId: zStrInt() })),
+  validateBody(z.object({ date: zDateStr(), value: zInt() })),
+  async (req: WithUser<Request>, res: ApiResponse<Update>, next) =>
+{
+  // first, make sure the project exists
+  const user = req.user;
+  let project: Project | null;
+  try {
+    project = await dbClient.project.findUnique({
+      where: {
+        id: +req.params.projectId,
+        ownerId: user.id,
+        state: PROJECT_STATE.ACTIVE,
+      }
+    });
+  } catch(err) { return next(err); }
 
+  if(!project) {
+    res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
+    return;
+  }
+
+  let update: Update;
+  try {
+    update = await dbClient.update.update({
+      data: {
+        ...req.body as CreateUpdatePayload,
+      },
+      where: {
+        id: +req.params.updateId,
+        projectId: project.id,
+      }
+    });
+    logAuditEvent('update:edit', user.id, update.id, project.id);
+  } catch(err) { return next(err); }
+
+  res.status(200).send(success(update));
+});
+
+projectsRouter.delete('/:projectId/update/:updateId',
+  requireUser,
+  validateParams(z.object({ projectId: zStrInt(), updateId: zStrInt() })),
+  async (req: WithUser<Request>, res: ApiResponse<null>, next) =>
+{
+  // first, make sure the project exists
+  const user = req.user;
+  let project: Project | null;
+  try {
+    project = await dbClient.project.findUnique({
+      where: {
+        id: +req.params.projectId,
+        ownerId: user.id,
+        state: PROJECT_STATE.ACTIVE,
+      }
+    });
+  } catch(err) { return next(err); }
+
+  if(!project) {
+    res.status(404).send(failure('NOT_FOUND', `Did not find any project with id ${req.params.id}.`));
+    return;
+  }
+
+  let update: Update;
+  try {
+    update = await dbClient.update.delete({
+      where: {
+        id: +req.params.updateId,
+        projectId: project.id,
+      }
+    });
+    logAuditEvent('update:delete', user.id, update.id, project.id);
+  } catch(err) { return next(err); }
+
+  res.status(200).send(success(null));
+});
 
 // // DELETE /projects/:id - archive a project
 // projectsRouter.delete('/:id', async (req, res) => {

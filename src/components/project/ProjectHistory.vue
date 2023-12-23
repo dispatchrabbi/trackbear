@@ -1,22 +1,27 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import { DataTableColumnSource } from 'vuestic-ui';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 
 import { Project, Update, TYPE_INFO } from '../../lib/project.ts';
 import { SharedProjectWithUpdates } from '../../../server/api/share.ts';
+import { editUpdate, deleteUpdate } from '../../lib/api/project.ts';
+import { CreateUpdatePayload } from '../../../server/api/projects.ts';
 
-import { formatTimeProgress } from '../../lib/date.ts';
+import { formatTimeProgress, parseDateStringSafe, formatDate, validateTimeString } from '../../lib/date.ts';
 
 const props = defineProps<{
   project: Project | SharedProjectWithUpdates
+  allowEdits?: boolean
   showUpdateTimes?: boolean
 }>();
+const emit = defineEmits(['editUpdate', 'deleteUpdate']);
 
 function makeRows(project: Project | SharedProjectWithUpdates) {
   const rows = project.updates
     .sort((a: Update, b: Update) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0)
     .map((update: Update) => ({
+      id: props.allowEdits ? update.id : null,
       date: update.date,
       value: props.project.type === 'time' ? formatTimeProgress(update.value) : update.value,
       updated: props.showUpdateTimes ? update.updatedAt : null,
@@ -27,11 +32,119 @@ function makeRows(project: Project | SharedProjectWithUpdates) {
 const items = computed(() => makeRows(props.project));
 
 const columns = computed(() => {
-  return [
-    { key: 'date', label: 'Date' },
-    { key: 'value', label: TYPE_INFO[props.project.type].description, thAlign: 'right', tdAlign: 'right' },
+  const cols = [
+    {
+      key: 'date',
+      label: 'Date',
+      sortable: true,
+    },
+    {
+      key: 'value',
+      label: TYPE_INFO[props.project.type].description,
+      sortable: true,
+      thAlign: 'right',
+      tdAlign: 'right',
+    },
   ] as DataTableColumnSource[];
+
+  if(props.allowEdits) {
+    cols.push({
+      key: 'actions',
+      label: '',
+      thAlign: 'center',
+      tdAlign: 'center',
+      width: '80px',
+    });
+  }
+
+  return cols;
 });
+
+const isLoading = ref<boolean>(false);
+
+const updateForm = ref<{
+  id: number;
+  date: Date | null;
+  count: string;
+} | null>(null);
+function validateUpdateForm() {
+  if(updateForm.value === null) { return false; }
+
+  const dateIsValid = updateForm.value.date instanceof Date;
+
+  let countIsValid = true;
+  let timeIsValid = true;
+  if(props.project.type === 'time') {
+    timeIsValid = validateTimeString(updateForm.value.count);
+  } else {
+    countIsValid = updateForm.value.count.length > 0 && Number.isInteger(+updateForm.value.count);
+  }
+
+  return dateIsValid && countIsValid && timeIsValid;
+}
+const isUpdateFormValid = computed(() => validateUpdateForm());
+
+function handleEditClick(updateId) {
+  const updateWithThatId = (props.project.updates as Update[]).find(update => update.id === updateId);
+  updateForm.value = {
+    id: updateWithThatId.id,
+    date: parseDateStringSafe(updateWithThatId.date),
+    count: props.project.type === 'time' ? formatTimeProgress(updateWithThatId.value) : updateWithThatId.value.toString(),
+  };
+}
+async function handleSubmitEdit() {
+  isLoading.value = true;
+
+  // assemble formData
+  const date = formatDate(updateForm.value.date);
+
+  let value;
+  if(props.project.type === 'time') {
+    const [ hours, minutes ] = updateForm.value.count.split(':').map(x => +x);
+    value = (hours * 60) + minutes;
+  } else {
+    value = +updateForm.value.count;
+  }
+
+  const formData = {
+    date,
+    value,
+  } as CreateUpdatePayload;
+  const updateId = updateForm.value.id;
+
+  try {
+    const editedUpdate = await editUpdate(props.project as Project, updateId, formData);
+    emit('editUpdate', editedUpdate);
+
+  } catch(err) {
+    // errorMessage.value = err.message;
+    return;
+  } finally {
+    updateForm.value = null;
+    isLoading.value = false;
+  }
+}
+
+const updateIdToDelete = ref<number | null>(null);
+function handleDeleteClick(updateId) {
+  updateIdToDelete.value = updateId;
+}
+async function handleDeleteConfirmClick() {
+  if(updateIdToDelete.value === null) { return; }
+
+  isLoading.value = true;
+  try {
+    await deleteUpdate(props.project as Project, updateIdToDelete.value);
+    emit('deleteUpdate', updateIdToDelete.value);
+
+  } catch(err) {
+    // errorMessage.value = err.message;
+    return;
+  } finally {
+    updateIdToDelete.value = null;
+    isLoading.value = false;
+  }
+}
 
 </script>
 
@@ -58,6 +171,25 @@ const columns = computed(() => {
             />
           </VaPopover>
         </template>
+        <template #cell(actions)="{ rowData }">
+          <div
+            v-if="props.allowEdits"
+            class="flex justify-center gap-2"
+          >
+            <VaButton
+              preset="plain"
+              icon="edit"
+              class="shrink"
+              @click="handleEditClick(rowData.id)"
+            />
+            <VaButton
+              preset="plain"
+              icon="delete"
+              class="shrink"
+              @click="handleDeleteClick(rowData.id)"
+            />
+          </div>
+        </template>
       </VaDataTable>
       <div
         v-else
@@ -67,6 +199,77 @@ const columns = computed(() => {
       </div>
     </VaCardContent>
   </VaCard>
+  <VaModal
+    :model-value="!!updateForm"
+    hide-default-actions
+  >
+    <VaForm
+      ref="form"
+      class="flex flex-col gap-2"
+      tag="form"
+    >
+      <VaInput
+        v-model="updateForm.count"
+        :label="TYPE_INFO[props.project.type].description"
+        :rules="props.project.type === 'time' ?
+          [(v) => validateTimeString(v) || 'Please enter a duration in hours and minutes'] :
+          [v => { return (v === '') || (Number.parseInt(v, 10) === +v) || ('Please enter a number for your progress') }]
+        "
+        :placeholder="props.project.type === 'time' ? 'HH:MM' : null"
+        required-mark
+      />
+      <VaDateInput
+        v-model="updateForm.date"
+        label="date"
+        placeholder="YYYY-MM-DD"
+        :format="formatDate"
+        :parse="parseDateStringSafe"
+        required-mark
+        manual-input
+        clearable
+      />
+    </VaForm>
+    <template #footer>
+      <VaButton
+        class="mr-3"
+        preset="secondary"
+        @click="updateForm = null"
+      >
+        Cancel
+      </VaButton>
+      <VaButton
+        :disabled="!isUpdateFormValid"
+        :loading="isLoading"
+        @click="validateUpdateForm() && handleSubmitEdit()"
+      >
+        Save
+      </VaButton>
+    </template>
+  </VaModal>
+  <VaModal
+    :model-value="!!updateIdToDelete"
+    hide-default-actions
+  >
+    <div>
+      Are you sure you want to delete this update?
+    </div>
+    <template #footer>
+      <VaButton
+        class="mr-3"
+        preset="secondary"
+        @click="updateIdToDelete = null"
+      >
+        Cancel
+      </VaButton>
+      <VaButton
+        color="danger"
+        :loading="isLoading"
+        @click="handleDeleteConfirmClick"
+      >
+        Delete
+      </VaButton>
+    </template>
+  </VaModal>
 </template>
 
 <style scoped>

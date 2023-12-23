@@ -72,9 +72,9 @@ authRouter.post('/login',
 
 authRouter.get('/user',
   requireUser,
-  (req: Request, res: ApiResponse<UserResponse>) =>
+  (req: WithUser<Request>, res: ApiResponse<UserResponse>) =>
 {
-  const user = (req as WithUser<Request>).user;
+  const user = req.user;
   const userResponse: UserResponse = {
     uuid: user.uuid,
     username: user.username,
