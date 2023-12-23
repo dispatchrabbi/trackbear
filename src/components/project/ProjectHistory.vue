@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, reactive, computed, watch } from 'vue';
 import { DataTableColumnSource } from 'vuestic-ui';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 
@@ -59,6 +59,13 @@ const columns = computed(() => {
 
   return cols;
 });
+
+const sorting = reactive({
+  sortBy: localStorage.getItem('projectHistory:sortBy') || 'date',
+  sortingOrder: localStorage.getItem('projectHistory:sortingOrder') || null,
+});
+watch(() => sorting.sortBy, val => localStorage.setItem('projectHistory:sortBy', val));
+watch(() => sorting.sortingOrder, val => localStorage.setItem('projectHistory:sortingOrder', val));
 
 const isLoading = ref<boolean>(false);
 
@@ -154,6 +161,8 @@ async function handleDeleteConfirmClick() {
     <VaCardContent>
       <VaDataTable
         v-if="items.length"
+        v-model:sort-by="sorting.sortBy"
+        v-model:sorting-order="sorting.sortingOrder"
         :items="items"
         :columns="columns"
       >

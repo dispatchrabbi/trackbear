@@ -1,26 +1,19 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import { useColors } from "vuestic-ui";
 
-const { applyPreset, currentPresetName } = useColors();
+const { applyPreset } = useColors();
 
-const themeName = computed({
-  get() { return currentPresetName.value; },
-  set(value) {
-    applyPreset(value);
-    localStorage.setItem('theme', value);
-  }
+const themeName = ref(localStorage.getItem('theme') || 'light');
+watch(themeName, newTheme => {
+  applyPreset(newTheme);
+  localStorage.setItem('theme', newTheme);
 });
 
 const toggleIcons = {
   light: 'light_mode',
   dark: 'dark_mode',
 };
-
-onMounted(() => {
-  const theme = localStorage.getItem('theme') || 'light';
-  themeName.value = theme;
-});
 
 </script>
 
