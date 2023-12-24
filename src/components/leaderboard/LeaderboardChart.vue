@@ -18,6 +18,7 @@ const props = defineProps<{
   leaderboard: CompleteLeaderboard;
   showPar: boolean;
   showTooltips: boolean;
+  showLegend: boolean;
 }>();
 
 type NormalizedUpdate = {
@@ -143,13 +144,15 @@ function calculatePars(eachDay: string[], leaderboard: CompleteLeaderboard) {
     const parPerDay = normalizedGoal.value / (eachDay.length - 1);
     pars = eachDay.map((dateStr, ix) => ({
       date: dateStr,
-      value: parPerDay * ix,
+      value: parPerDay,
+      totalSoFar: parPerDay * ix,
     }));
   } else {
     // just put par at the goal
     pars = eachDay.map((dateStr) => ({
       date: dateStr,
       value: normalizedGoal.value,
+      totalSoFar: normalizedGoal.value,
     }));
   }
 
@@ -228,7 +231,12 @@ const chartOptions = computed(() => {
       },
     },
     plugins: {
-      legend: { display: false },
+      legend: {
+        display: props.showLegend,
+        position: 'bottom',
+        // Don't show an item in the legend for Par
+        labels: { filter: item => item.text !== 'Par' }
+      },
       tooltip: tooltip,
     },
     animation: false,

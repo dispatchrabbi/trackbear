@@ -51,7 +51,7 @@ getLeaderboards()
         v-for="leaderboard in leaderboards"
         :key="leaderboard.id"
       >
-        <RouterLink :to="`/leaderboards/${leaderboard.id}`">
+        <RouterLink :to="`/leaderboards/${leaderboard.uuid}`">
           <LeaderboardTile
             :leaderboard="leaderboard"
           />

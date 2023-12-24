@@ -12,7 +12,8 @@ import { PROJECT_STATE, LEADERBOARD_STATE, LEADERBOARD_GOAL_TYPE } from '../lib/
 import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 import { logAuditEvent } from '../lib/audit-events.ts';
 
-type ProjectWithOwnerAndUpdates = Project & { updates: Update[] } & { owner: { displayName: string; } };
+type ReducedOwner = { uuid: string; displayName: string; };
+type ProjectWithOwnerAndUpdates = Project & { updates: Update[] } & { owner: ReducedOwner };
 export type CompleteLeaderboard = Leaderboard & { projects: ProjectWithOwnerAndUpdates[] };
 
 type CreateLeaderboardPayloadProps = 'title' | 'type' | 'goal' | 'startDate' | 'endDate';
@@ -62,7 +63,10 @@ leaderboardsRouter.get('/',
           include: {
             updates: true,
             owner: {
-              select: { displayName: true }
+              select: {
+                uuid: true,
+                displayName: true,
+              }
             },
           },
         },
@@ -91,7 +95,12 @@ leaderboardsRouter.get('/:uuid',
           where: { state: PROJECT_STATE.ACTIVE },
           include: {
             updates: true,
-            owner: true,
+            owner: {
+              select: {
+                uuid: true,
+                displayName: true,
+              }
+            },
           },
         },
       },
@@ -130,7 +139,12 @@ leaderboardsRouter.post('/',
           where: { state: PROJECT_STATE.ACTIVE },
           include: {
             updates: true,
-            owner: true,
+            owner: {
+              select: {
+                uuid: true,
+                displayName: true,
+              }
+            },
           },
         },
       },
@@ -189,7 +203,12 @@ leaderboardsRouter.post('/:uuid',
           where: { state: PROJECT_STATE.ACTIVE },
           include: {
             updates: true,
-            owner: true,
+            owner: {
+              select: {
+                uuid: true,
+                displayName: true,
+              }
+            },
           },
         },
       },
@@ -315,7 +334,12 @@ leaderboardsRouter.post('/:uuid/projects',
           where: { state: PROJECT_STATE.ACTIVE },
           include: {
             updates: true,
-            owner: true,
+            owner: {
+              select: {
+                uuid: true,
+                displayName: true,
+              }
+            },
           },
         },
       }
@@ -383,7 +407,12 @@ leaderboardsRouter.delete('/:leaderboardUuid/projects/:projectId',
           where: { state: PROJECT_STATE.ACTIVE },
           include: {
             updates: true,
-            owner: true,
+            owner: {
+              select: {
+                uuid: true,
+                displayName: true,
+              }
+            },
           },
         },
       },

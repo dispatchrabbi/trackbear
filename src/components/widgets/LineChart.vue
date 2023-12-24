@@ -6,9 +6,9 @@ import { useColors } from 'vuestic-ui';
 const { getColor } = useColors();
 
 import { Line } from 'vue-chartjs';
-import { Chart as ChartJS, Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale, ChartData } from 'chart.js';
+import { Chart as ChartJS, Title, Tooltip, Legend, LineController, LineElement, PointElement, CategoryScale, LinearScale, ChartData } from 'chart.js';
 
-ChartJS.register(Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale);
+ChartJS.register(Title, Tooltip, LineController, Legend, LineElement, PointElement, CategoryScale, LinearScale);
 // change axis color
 ChartJS.defaults.color = getColor('secondary');
 ChartJS.defaults.borderColor = getColor('backgroundBorder');

@@ -10,11 +10,14 @@ import ResetPasswordPage from './components/ResetPassword.vue';
 import SharedProjectPage from './components/SharedProjectPage.vue';
 
 import AccountPage from './components/AccountPage.vue';
+
 import ProjectListPage from './components/ProjectListPage.vue';
 import NewProjectPage from './components/NewProjectPage.vue';
 import ProjectPage from './components/ProjectPage.vue';
 import EditProjectPage from './components/EditProjectPage.vue';
+
 import LeaderboardListPage from './components/LeaderboardListPage.vue';
+import LeaderboardPage from './components/LeaderboardPage.vue';
 
 const routes = [
   // no login needed
@@ -38,6 +41,7 @@ const routes = [
 
   // leaderboard section
   { path: '/leaderboards', name: 'leaderboards', component: LeaderboardListPage },
+  { path: '/leaderboards/:uuid', name: 'leaderboard', component: LeaderboardPage },
 
   // catch-all
   { path: '/:catchAll(.*)', name:'404', component: PlaceholderPage, props: { title: '404' } },
