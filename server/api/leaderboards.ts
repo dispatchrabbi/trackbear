@@ -5,14 +5,14 @@ import { z } from 'zod';
 import { zStrInt, zDateStr } from '../lib/validators.ts';
 
 import dbClient from "../lib/db.ts";
-import type { Leaderboard, Project, Update, User } from "@prisma/client";
+import type { Leaderboard, Project, Update } from "@prisma/client";
 import { requireUser, WithUser } from '../lib/auth.ts';
 import { PROJECT_STATE, LEADERBOARD_STATE, LEADERBOARD_GOAL_TYPE } from '../lib/states.ts';
 
 import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 import { logAuditEvent } from '../lib/audit-events.ts';
 
-type ProjectWithOwnerAndUpdates = Project & { updates: Update[] } & { owner: User };
+type ProjectWithOwnerAndUpdates = Project & { updates: Update[] } & { owner: { displayName: string; } };
 export type CompleteLeaderboard = Leaderboard & { projects: ProjectWithOwnerAndUpdates[] };
 
 type CreateLeaderboardPayloadProps = 'title' | 'type' | 'goal' | 'startDate' | 'endDate';
@@ -61,7 +61,9 @@ leaderboardsRouter.get('/',
           where: { state: PROJECT_STATE.ACTIVE },
           include: {
             updates: true,
-            owner: true,
+            owner: {
+              select: { displayName: true }
+            },
           },
         },
       },

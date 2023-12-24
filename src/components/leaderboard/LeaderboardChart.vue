@@ -7,6 +7,7 @@ const { getColor } = useColors();
 
 import { parseDateString, formatDate, formatTimeProgress, maxDateStr } from '../../lib/date.ts';
 import { GOAL_TYPE_INFO } from '../../lib/api/leaderboard.ts';
+import { TYPE_INFO } from '../../lib/project.ts';
 import type { CompleteLeaderboard } from '../../../server/api/leaderboards.ts';
 import type { ProjectWithUpdates } from '../../../server/api/projects.ts';
 
@@ -64,7 +65,6 @@ function normalizeProjectUpdates(project: ProjectWithUpdates, leaderboard: Compl
     });
   }
 
-  console.log(leaderboard.title, project.title, normalizedUpdates);
   return normalizedUpdates;
 }
 const normalizedProjects = computed(() => props.leaderboard.projects.map(project => ({
@@ -157,16 +157,26 @@ function calculatePars(eachDay: string[], leaderboard: CompleteLeaderboard) {
 }
 const pars = computed(() => props.showPar ? calculatePars(eachDay.value, props.leaderboard) : null);
 
+const POINT_STYLES = ['circle', 'rect', 'crossRot', 'rectRot', 'triangle', 'star', 'rectRounded', 'cross'];
+const LINE_COLORS = [ getColor('primary'), getColor('danger'), getColor('info'), getColor('warning') ];
+
 const chartData = computed(() => {
   const data = {
     labels: eachDay.value,
     datasets: [],
   };
 
-  for(let project of normalizedProjects.value) {
+  for(let i = 0; i < normalizedProjects.value.length; ++i) {
+    const project = normalizedProjects.value[i];
+
     data.datasets.push({
       label: project.title,
+      owner: project.owner.displayName,
+      counter: TYPE_INFO[project.type].counter,
       data: project.updates,
+      borderColor: LINE_COLORS[i % LINE_COLORS.length],
+      backgroundColor: LINE_COLORS[i % LINE_COLORS.length],
+      pointStyle: POINT_STYLES[Math.floor(i / LINE_COLORS.length)],
     });
   }
 
@@ -182,20 +192,22 @@ const chartData = computed(() => {
   return data;
 });
 
-function makeTooltipFormattingConfig(leaderboardType) {
+function makeTooltipLabelFn(leaderboardType) {
   if(leaderboardType === 'time') {
-    return { label: ctx => `${ctx.dataset.label}: ${formatTimeProgress(ctx.raw.value)}` };
+    return ctx => `${formatTimeProgress(ctx.raw.value)} (${ctx.dataset.owner})`;
   } else if(leaderboardType === 'percentage') {
-    return { label: ctx => `${ctx.dataset.label}: ${Math.round(ctx.raw.value)}%` };
+    return ctx => `${Math.round(ctx.raw.value)}% (${ctx.dataset.owner})`;
   } else {
-    return undefined;
+    return ctx => `${ctx.raw.value} ${(ctx.raw.value === 1 ? ctx.dataset.counter.singular : ctx.dataset.counter.plural)} (${ctx.dataset.owner})`;
   }
 }
 const chartOptions = computed(() => {
   const tooltip = props.showTooltips ?
     {
       filter: ctx => ctx.dataset.label !== 'Par', // even if showing tooltips, don't show them for Par
-      callbacks: makeTooltipFormattingConfig(props.leaderboard.type),
+      callbacks: {
+        label: makeTooltipLabelFn(props.leaderboard.type),
+      },
     } :
     { enabled: false };
 
@@ -216,7 +228,7 @@ const chartOptions = computed(() => {
       },
     },
     plugins: {
-      // legend: { display: false },
+      legend: { display: false },
       tooltip: tooltip,
     },
     animation: false,
