@@ -41,6 +41,14 @@ import DarkModeToggle from './DarkModeToggle.vue';
             Projects
           </VaButton>
         </VaNavbarItem>
+        <VaNavbarItem>
+          <VaButton
+            preset="secondary"
+            @click="router.push('/leaderboards')"
+          >
+            Leaderboards
+          </VaButton>
+        </VaNavbarItem>
         <!-- <VaNavbarItem>
           <VaButton
             preset="secondary"

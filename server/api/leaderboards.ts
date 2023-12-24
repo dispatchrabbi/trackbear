@@ -5,14 +5,15 @@ import { z } from 'zod';
 import { zStrInt, zDateStr } from '../lib/validators.ts';
 
 import dbClient from "../lib/db.ts";
-import type { Leaderboard, Project } from "@prisma/client";
+import type { Leaderboard, Project, Update, User } from "@prisma/client";
 import { requireUser, WithUser } from '../lib/auth.ts';
 import { PROJECT_STATE, LEADERBOARD_STATE, LEADERBOARD_GOAL_TYPE } from '../lib/states.ts';
 
 import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 import { logAuditEvent } from '../lib/audit-events.ts';
 
-export type LeaderboardWithProjects = Leaderboard & { projects: Project[] };
+type ProjectWithOwnerAndUpdates = Project & { updates: Update[] } & { owner: User };
+export type CompleteLeaderboard = Leaderboard & { projects: ProjectWithOwnerAndUpdates[] };
 
 type CreateLeaderboardPayloadProps = 'title' | 'type' | 'goal' | 'startDate' | 'endDate';
 export type CreateLeaderboardPayload  = Pick<Leaderboard, CreateLeaderboardPayloadProps>;
@@ -38,9 +39,9 @@ const leaderboardsRouter = Router();
 // GET /leaderboards - return all leaderboards this user owns or is part of
 leaderboardsRouter.get('/',
   requireUser,
-  async (req, res: ApiResponse<LeaderboardWithProjects[]>, next) =>
+  async (req, res: ApiResponse<CompleteLeaderboard[]>, next) =>
 {
-    let leaderboards: LeaderboardWithProjects[];
+    let leaderboards: CompleteLeaderboard[];
   try {
     leaderboards = await dbClient.leaderboard.findMany({
       where: { OR: [
@@ -56,7 +57,13 @@ leaderboardsRouter.get('/',
         } } },
       ]},
       include: {
-        projects: { where: { state: PROJECT_STATE.ACTIVE } },
+        projects: {
+          where: { state: PROJECT_STATE.ACTIVE },
+          include: {
+            updates: true,
+            owner: true,
+          },
+        },
       },
     });
   } catch(err) { return next(err); }
@@ -68,9 +75,9 @@ leaderboardsRouter.get('/',
 leaderboardsRouter.get('/:uuid',
   requireUser,
   validateParams(z.object({ uuid: z.string().uuid() })),
-  async (req, res: ApiResponse<LeaderboardWithProjects>, next) =>
+  async (req, res: ApiResponse<CompleteLeaderboard>, next) =>
 {
-  let leaderboard: LeaderboardWithProjects | null;
+  let leaderboard: CompleteLeaderboard | null;
   try {
     leaderboard = await dbClient.leaderboard.findUnique({
       where: {
@@ -78,7 +85,13 @@ leaderboardsRouter.get('/:uuid',
         state: LEADERBOARD_STATE.ACTIVE,
       },
       include: {
-        projects: { where: { state: PROJECT_STATE.ACTIVE } },
+        projects: {
+          where: { state: PROJECT_STATE.ACTIVE },
+          include: {
+            updates: true,
+            owner: true,
+          },
+        },
       },
     });
   } catch(err) { return next(err); }
@@ -94,7 +107,7 @@ leaderboardsRouter.get('/:uuid',
 leaderboardsRouter.post('/',
   requireUser,
   validateBody(createLeaderboardPayloadSchema),
-  async (req, res: ApiResponse<LeaderboardWithProjects>, next) =>
+  async (req, res: ApiResponse<CompleteLeaderboard>, next) =>
 {
   // some additional validation
   if(req.body.type === LEADERBOARD_GOAL_TYPE.PERCENTAGE && req.body.goal !== null) {
@@ -102,7 +115,7 @@ leaderboardsRouter.post('/',
   }
 
   const user = (req as WithUser<Request>).user;
-  let leaderboard: LeaderboardWithProjects;
+  let leaderboard: CompleteLeaderboard;
   try {
     leaderboard = await dbClient.leaderboard.create({
       data: {
@@ -111,7 +124,13 @@ leaderboardsRouter.post('/',
         ownerId: user.id
       },
       include: {
-        projects: { where: { state: PROJECT_STATE.ACTIVE } },
+        projects: {
+          where: { state: PROJECT_STATE.ACTIVE },
+          include: {
+            updates: true,
+            owner: true,
+          },
+        },
       },
     });
     await logAuditEvent('leaderboard:create', user.id, leaderboard.id);
@@ -125,7 +144,7 @@ leaderboardsRouter.post('/:uuid',
   requireUser,
   validateParams(z.object({ uuid: z.string().uuid() })),
   validateBody(editLeaderboardPayloadSchema),
-  async (req, res: ApiResponse<LeaderboardWithProjects>, next) =>
+  async (req, res: ApiResponse<CompleteLeaderboard>, next) =>
 {
   const user = (req as WithUser<Request>).user;
 
@@ -151,7 +170,7 @@ leaderboardsRouter.post('/:uuid',
   }
 
   // now we can edit
-  let leaderboard: LeaderboardWithProjects;
+  let leaderboard: CompleteLeaderboard;
   try {
     leaderboard = await dbClient.leaderboard.update({
       data: {
@@ -164,7 +183,13 @@ leaderboardsRouter.post('/:uuid',
         state: PROJECT_STATE.ACTIVE,
       },
       include: {
-        projects: { where: { state: PROJECT_STATE.ACTIVE } },
+        projects: {
+          where: { state: PROJECT_STATE.ACTIVE },
+          include: {
+            updates: true,
+            owner: true,
+          },
+        },
       },
     });
     await logAuditEvent('leaderboard:edit', user.id, leaderboard.id);
@@ -229,11 +254,14 @@ leaderboardsRouter.get('/:uuid/eligible-projects',
 });
 
 // POST /leaderboards/:uuid/projects - add a project to a leaderboard
+// To be honest, I'm nost sure how I feel about using a UUID for one and an ID for the other
+// Or that the add and remove don't mirror each other
+// I probably will change this in the future API rewrite
 leaderboardsRouter.post('/:uuid/projects',
   requireUser,
   validateParams(z.object({ uuid: z.string().uuid() })),
   validateBody(z.object({ projectId: z.number().int() })),
-  async (req, res: ApiResponse<LeaderboardWithProjects>, next) =>
+  async (req, res: ApiResponse<CompleteLeaderboard>, next) =>
 {
   const user = (req as WithUser<Request>).user;
 
@@ -281,7 +309,13 @@ leaderboardsRouter.post('/:uuid/projects',
         },
       },
       include: {
-        projects: { where: { state: PROJECT_STATE.ACTIVE } },
+        projects: {
+          where: { state: PROJECT_STATE.ACTIVE },
+          include: {
+            updates: true,
+            owner: true,
+          },
+        },
       }
     });
     await logAuditEvent('leaderboard:add-project', user.id, leaderboard.id, checkProject.id);
@@ -294,7 +328,7 @@ leaderboardsRouter.post('/:uuid/projects',
 leaderboardsRouter.delete('/:leaderboardUuid/projects/:projectId',
   requireUser,
   validateParams(z.object({ leaderboardUuid: z.string().uuid(), projectId: zStrInt() })),
-  async (req, res: ApiResponse<LeaderboardWithProjects>, next) =>
+  async (req, res: ApiResponse<CompleteLeaderboard>, next) =>
 {
 
   // first we have to make sure the leaderboard exists
@@ -330,7 +364,7 @@ leaderboardsRouter.delete('/:leaderboardUuid/projects/:projectId',
   }
 
   // it's safe to disconnect the project without first checking if it exists; prisma just won't do anything in that case
-  let leaderboard: LeaderboardWithProjects;
+  let leaderboard: CompleteLeaderboard;
   try {
     leaderboard = await dbClient.leaderboard.update({
       where: {
@@ -343,7 +377,13 @@ leaderboardsRouter.delete('/:leaderboardUuid/projects/:projectId',
         },
       },
       include: {
-        projects: { where: { state: PROJECT_STATE.ACTIVE } },
+        projects: {
+          where: { state: PROJECT_STATE.ACTIVE },
+          include: {
+            updates: true,
+            owner: true,
+          },
+        },
       },
     });
     await logAuditEvent('leaderboard:remove-project', user.id, leaderboard.id, checkProject.id);

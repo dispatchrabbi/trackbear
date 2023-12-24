@@ -14,6 +14,7 @@ import ProjectListPage from './components/ProjectListPage.vue';
 import NewProjectPage from './components/NewProjectPage.vue';
 import ProjectPage from './components/ProjectPage.vue';
 import EditProjectPage from './components/EditProjectPage.vue';
+import LeaderboardListPage from './components/LeaderboardListPage.vue';
 
 const routes = [
   // no login needed
@@ -26,12 +27,17 @@ const routes = [
   { path: '/reset-password/:uuid', name:'reset-password', component: ResetPasswordPage },
   { path: '/share/projects/:uuid', name:'share-project', component: SharedProjectPage },
 
-  // login needed
+  // account section
   { path: '/account', name: 'account', component: AccountPage },
+
+  // projects section
   { path: '/projects', name: 'projects', component: ProjectListPage },
   { path: '/projects/new', name:'new-project', component: NewProjectPage },
   { path: '/projects/:id', name:'project', component: ProjectPage },
   { path: '/projects/:id/edit', name:'edit-project', component: EditProjectPage },
+
+  // leaderboard section
+  { path: '/leaderboards', name: 'leaderboards', component: LeaderboardListPage },
 
   // catch-all
   { path: '/:catchAll(.*)', name:'404', component: PlaceholderPage, props: { title: '404' } },
