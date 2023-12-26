@@ -10,6 +10,8 @@ watch(themeName, newTheme => {
   localStorage.setItem('theme', newTheme);
 });
 
+applyPreset(themeName.value);
+
 const toggleIcons = {
   light: 'light_mode',
   dark: 'dark_mode',

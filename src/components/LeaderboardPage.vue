@@ -13,7 +13,7 @@ import { getLeaderboard } from '../lib/api/leaderboard.ts';
 
 import AppPage from './layout/AppPage.vue'
 import LeaderboardGoal from './leaderboard/LeaderboardGoal.vue';
-// import LeaderboardAddProject from './leaderboard/LeaderboardAddProject.vue';
+import LeaderboardAddProject from './leaderboard/LeaderboardAddProject.vue';
 import LeaderboardChart from './leaderboard/LeaderboardChart.vue';
 import LeaderboardProjectSummary from './leaderboard/LeaderboardProjectSummary.vue';
 
@@ -94,7 +94,7 @@ async function handleShareClick() {
               :leaderboard="leaderboard"
             />
           </div>
-          <!-- <div
+          <div
             class="leaderboard-add-project shrink"
           >
             <LeaderboardAddProject
@@ -102,7 +102,7 @@ async function handleShareClick() {
               @add-project="handleProjectChange"
               @remove-project="handleProjectChange"
             />
-          </div> -->
+          </div>
           <!-- <div class="leaderboard-stats shrink">
             <LeaderboardStats :leaderboard="leaderboard" />
           </div> -->

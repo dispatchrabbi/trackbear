@@ -12,7 +12,7 @@ import { PROJECT_STATE, LEADERBOARD_STATE, LEADERBOARD_GOAL_TYPE } from '../lib/
 import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 import { logAuditEvent } from '../lib/audit-events.ts';
 
-type ReducedOwner = { uuid: string; displayName: string; };
+type ReducedOwner = { uuid: string; displayName: string; }
 type ProjectWithOwnerAndUpdates = Project & { updates: Update[] } & { owner: ReducedOwner };
 export type CompleteLeaderboard = Leaderboard & { projects: ProjectWithOwnerAndUpdates[] };
 

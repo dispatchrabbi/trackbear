@@ -17,7 +17,7 @@ function makeRows(leaderboard: CompleteLeaderboard) {
       writer: project.owner.displayName,
       // TODO: make this better (incorporate goal type and leaderboard dates)
       total: project.updates.reduce((total, update) => total + update.value, 0),
-      lastUpdate: project.updates.sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0)[0].date,
+      lastUpdate: project.updates.length > 0 ? project.updates.sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0)[0].date : 'never',
     }));
 
   return rows;
