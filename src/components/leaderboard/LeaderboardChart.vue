@@ -11,8 +11,8 @@ import { TYPE_INFO } from '../../lib/project.ts';
 import type { CompleteLeaderboard } from '../../../server/api/leaderboards.ts';
 import type { ProjectWithUpdates } from '../../../server/api/projects.ts';
 
-import LineChart from '../widgets/LineChart.vue';
-import type { LineChartOptions } from '../widgets/LineChart.vue';
+import LineChart from '../chart/LineChart.vue';
+import type { LineChartOptions } from '../chart/LineChart.vue';
 
 const props = defineProps<{
   leaderboard: CompleteLeaderboard;
@@ -160,8 +160,8 @@ function calculatePars(eachDay: string[], leaderboard: CompleteLeaderboard) {
 }
 const pars = computed(() => props.showPar ? calculatePars(eachDay.value, props.leaderboard) : null);
 
-const POINT_STYLES = ['circle', 'rect', 'crossRot', 'rectRot', 'triangle', 'star', 'rectRounded', 'cross'];
-const LINE_COLORS = [ getColor('primary'), getColor('danger'), getColor('info'), getColor('warning') ];
+// const POINT_STYLES = ['circle', 'rect', 'crossRot', 'rectRot', 'triangle', 'star', 'rectRounded', 'cross'];
+// const LINE_COLORS = [ getColor('primary'), getColor('danger'), getColor('info'), getColor('warning') ];
 
 const chartData = computed(() => {
   const data = {
@@ -177,9 +177,9 @@ const chartData = computed(() => {
       owner: project.owner.displayName,
       counter: TYPE_INFO[project.type].counter,
       data: project.updates,
-      borderColor: LINE_COLORS[i % LINE_COLORS.length],
-      backgroundColor: LINE_COLORS[i % LINE_COLORS.length],
-      pointStyle: POINT_STYLES[Math.floor(i / LINE_COLORS.length)],
+      // borderColor: LINE_COLORS[i % LINE_COLORS.length],
+      // backgroundColor: LINE_COLORS[i % LINE_COLORS.length],
+      // pointStyle: POINT_STYLES[Math.floor(i / LINE_COLORS.length)],
     });
   }
 

@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { useColors } from "vuestic-ui";
 
+import { useColors } from "vuestic-ui";
 const { applyPreset } = useColors();
 
-const themeName = ref(localStorage.getItem('theme') || 'light');
+import { useThemeStore } from '../../stores/theme.ts';
+const themeStore = useThemeStore();
+
+const themeName = ref(themeStore.theme);
 watch(themeName, newTheme => {
+  themeStore.applyTheme(newTheme);
   applyPreset(newTheme);
-  localStorage.setItem('theme', newTheme);
 });
 
-applyPreset(themeName.value);
+applyPreset(themeStore.theme);
 
 const toggleIcons = {
   light: 'light_mode',

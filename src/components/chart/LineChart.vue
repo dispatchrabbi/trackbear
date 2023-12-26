@@ -2,16 +2,24 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { debounce } from 'chart.js/helpers';
 
+import { useThemeStore } from '../../stores/theme.ts';
+const themeStore = useThemeStore();
+
 import { useColors } from 'vuestic-ui';
 const { getColor } = useColors();
 
 import { Line } from 'vue-chartjs';
+import makeTrackbearStylesPlugin from './TrackbearStylesPlugin.ts';
 import { Chart as ChartJS, Title, Tooltip, Legend, LineController, LineElement, PointElement, CategoryScale, LinearScale, ChartData } from 'chart.js';
 
 ChartJS.register(Title, Tooltip, LineController, Legend, LineElement, PointElement, CategoryScale, LinearScale);
-// change axis color
-ChartJS.defaults.color = getColor('secondary');
-ChartJS.defaults.borderColor = getColor('backgroundBorder');
+
+ChartJS.register(makeTrackbearStylesPlugin(getColor));
+// whenever the theme changes, we need to redo the colors
+themeStore.$subscribe(() => {
+  ChartJS.unregister(makeTrackbearStylesPlugin(getColor));
+  ChartJS.register(makeTrackbearStylesPlugin(getColor));
+});
 
 export type LineChartOptions = InstanceType<typeof Line>['$props']['options'];
 

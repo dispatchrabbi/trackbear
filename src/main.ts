@@ -12,6 +12,7 @@ import "vuestic-ui/css";
 import "material-design-icons-iconfont/dist/material-design-icons.min.css";
 
 import themes from './themes/index.ts';
+import { useThemeStore } from './stores/theme.ts';
 
 createApp(App)
   .use(createPinia())
@@ -31,3 +32,6 @@ createApp(App)
     }
   }))
   .mount('#app');
+
+const themeStore = useThemeStore();
+themeStore.applyTheme();
