@@ -14,5 +14,13 @@ export default defineConfig({
   plugins: [ vue(), visualizer() ],
   build: {
     outDir: 'dist',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          chartjs: ['chart.js'],
+          vuestic: ['vuestic-ui'],
+        },
+      },
+    },
   },
 });

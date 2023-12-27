@@ -12,8 +12,13 @@ function middleware() {
       },
     });
   } else {
-    // use default configuration
-    return helmet();
+    return helmet({
+      contentSecurityPolicy: {
+        directives: {
+          "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        },
+      },
+    });
   }
 }
 

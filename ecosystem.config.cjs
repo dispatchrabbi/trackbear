@@ -1,7 +1,11 @@
 module.exports = {
   apps : [{
-    name   : "trackbear",
-    script : "npm run start:argh",
-    cwd: "/home/trackbear/trackbear/writing-tracker"
+    name : "trackbear",
+    interpreter: "node",
+    interpreter_args: "--import ./ts-node-loader.js",
+    script : "./main.ts",
+    env: {
+      NODE_ENV: 'production',
+    },
   }]
 };

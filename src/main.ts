@@ -7,7 +7,17 @@ import { createPinia } from 'pinia';
 import { createRouter, createWebHistory } from 'vue-router';
 import routes from './routes.ts';
 
-import { createVuestic } from 'vuestic-ui';
+// import each component here for tree-shakability
+import {
+  createVuesticEssential,
+  VaNavbar, VaNavbarItem, VaDataTable,
+  VaCard, VaCardContent, VaCardTitle,
+  VaForm, VaDateInput, VaInput, VaRadio, VaSelect, VaSwitch,
+  VaList, VaListItem, VaListItemLabel, VaListItemSection,
+  VaSkeleton, VaSkeletonGroup,
+  VaAlert, VaAvatar, VaButton, VaIcon, VaImage, VaPopover,
+  VaModal, VaModalPlugin,
+} from 'vuestic-ui';
 import "vuestic-ui/css";
 import "material-design-icons-iconfont/dist/material-design-icons.min.css";
 
@@ -20,7 +30,19 @@ createApp(App)
     history: createWebHistory(),
     routes,
   }))
-  .use(createVuestic({
+  .use(createVuesticEssential({
+    components: {
+      VaNavbar, VaNavbarItem, VaDataTable,
+      VaCard, VaCardContent, VaCardTitle,
+      VaForm, VaDateInput, VaInput, VaRadio, VaSelect, VaSwitch,
+      VaList, VaListItem, VaListItemLabel, VaListItemSection,
+      VaSkeleton, VaSkeletonGroup,
+      VaAlert, VaAvatar, VaButton, VaIcon, VaImage, VaPopover,
+      VaModal,
+    },
+    plugins: {
+      VaModalPlugin,
+    },
     config: {
       colors: {
         presets: {

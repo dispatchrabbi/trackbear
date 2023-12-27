@@ -13,6 +13,7 @@ import https from 'https';
 import express, { ErrorRequestHandler } from 'express';
 import morgan from 'morgan';
 import helmet from './server/lib/middleware/helmet.ts';
+import compression from 'compression';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
@@ -36,6 +37,9 @@ async function main() {
 
   // add security headers
   app.use(helmet());
+
+  // compress responses
+  app.use(compression());
 
   // don't say that we're using Express
   app.disable('x-powered-by');

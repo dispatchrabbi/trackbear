@@ -11,18 +11,18 @@
     "start": "npm run start:dev",
     "start:dev": "NODE_ENV=development node --import ./ts-node-loader.js ./main.ts",
     "start:prod": "NODE_ENV=production node --import ./ts-node-loader.js ./main.ts",
-    "start:argh": "NODE_ENV=production DATABASE_URL=\"file:../../db/trackbear.db\" node --import ./ts-node-loader.js ./main.ts",
     "lint": "npx eslint --ext .js,.ts,.vue .",
-    "client:dev": "npx vite",
-    "client:build": "npx vue-tsc && npx vite build --emptyOutDir",
-    "client:preview": "npx vite preview",
-    "db:migrate:dev": "npx prisma migrate dev"
+    "build": "npx prisma generate && npm run build:client",
+    "build:client": "npx vue-tsc && npx vite build --emptyOutDir",
+    "migrate:dev": "npx prisma migrate dev",
+    "migrate:prod": "npx prisma migrate deploy && npx prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.6.0",
     "@quixo3/prisma-session-store": "^3.1.13",
     "body-parser": "^1.20.2",
     "chart.js": "^4.4.1",
+    "compression": "^1.7.4",
     "date-fns": "^2.30.0",
     "dotenv-safe": "^8.2.0",
     "express": "^4.18.2",

@@ -7,12 +7,18 @@ echo "Enabling nvm..."
 echo "Switching Node versions..."
 nvm use
 
-echo "Running migrations..."
-npx prisma migrate deploy
+echo "Installing dependencies..."
+npm install
 
-echo "Building the front end..."
-npx prisma generate
-npm run client:build
+echo "Backing up database..."
+BACKUP_DATE=$(date +%s)
+cp "../db/trackbear.db" "../db/backup-trackbear.${BACKUP_DATE}.db"
+
+echo "Running migrations..."
+npm run migrate:prod
+
+echo "Building the app..."
+npm run build
 
 echo "Restarting the app..."
 pm2 restart ./ecosystem.config.cjs
