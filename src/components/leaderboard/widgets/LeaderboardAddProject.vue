@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 
-import type { Project } from '../../lib/project.ts';
-import type { CompleteLeaderboard } from '../../../server/api/leaderboards.ts';
-import { getEligibleProjects, addProjectToLeaderboard, removeProjectFromLeaderboard } from '../../lib/api/leaderboard.ts';
+import type { Project } from '@prisma/client';
+import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
+import { getEligibleProjects, addProjectToLeaderboard, removeProjectFromLeaderboard } from 'src/lib//api/leaderboard.ts';
 
 const props = defineProps<{
   leaderboard: CompleteLeaderboard;
@@ -88,11 +88,13 @@ async function handleRemoveProjectClick(projectId) {
         >
           <VaListItemSection>
             <VaListItemLabel>
-              <div
-                :title="project.title"
-              >
-                {{ project.title }}
-              </div>
+              <RouterLink :to="`/projects/${project.id}`">
+                <div
+                  :title="project.title"
+                >
+                  {{ project.title }}
+                </div>
+              </RouterLink>
             </VaListItemLabel>
           </VaListItemSection>
           <VaListItemSection icon>
@@ -159,7 +161,5 @@ async function handleRemoveProjectClick(projectId) {
 </template>
 
 <style scoped>
-.va-list-item-label {
-  --va-list-item-label-color: var(--text-primary);
-}
+
 </style>

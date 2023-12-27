@@ -194,7 +194,7 @@ leaderboardsRouter.post('/:uuid',
         ...req.body as EditLeaderboardPayload,
       },
       where: {
-        id: +req.params.id,
+        uuid: req.params.uuid,
         ownerId: user.id,
         state: PROJECT_STATE.ACTIVE,
       },

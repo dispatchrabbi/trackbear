@@ -1,4 +1,4 @@
-import type { Theme } from "../lib/theme.ts";
+import type { Theme } from "src/lib/theme.ts";
 
 // this is the default vuestic light theme
 const light: Theme = {

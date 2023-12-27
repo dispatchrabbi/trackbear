@@ -23,11 +23,17 @@
     // "noUnusedLocals": true,
     // "noUnusedParameters": true,
     // "noFallthroughCasesInSwitch": true
+
+    "paths": {
+      "src/*": ["./src/*"],
+      "server/*": ["./server/*"],
+    },
   },
   "include": [
     "src/**/*.ts", "src/**/*.js", "src/**/*.vue",
+    "server/**/*.ts",
   ],
   "references": [
-    { "path": "./tsconfig.vite.json" }
+    { "path": "./tsconfig.vite.json" },
   ],
 }

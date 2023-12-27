@@ -2,80 +2,44 @@
 import { ref, reactive } from 'vue';
 
 import { z } from 'zod';
-import { zStrInt } from '../../server/lib/validators.ts';
-import { useValidation } from '../lib/form.ts';
+import { zStrInt } from 'server/lib/validators.ts';
+import { useValidation } from 'src/lib/form.ts';
 
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 const router = useRouter();
-const route = useRoute();
 
-import { getProject } from '../lib/api/project.ts';
-
-import AppPage from './layout/AppPage.vue';
-import FormFieldWrapper from './form/FormFieldWrapper.vue';
-import { Project, TYPE_INFO } from '../lib/project.ts';
-import { editProject } from '../lib/api/project.ts';
-import type { EditProjectPayload } from '../../server/api/projects.ts';
-import { parseDateStringSafe, formatDateSafe } from '../lib/date.ts';
+import AppPage from 'src/components/layout/AppPage.vue';
+import FormFieldWrapper from 'src/components/form/FormFieldWrapper.vue';
+import { GOAL_TYPE_INFO } from 'src/lib/api/leaderboard.ts';
+import { createLeaderboard } from 'src/lib/api/leaderboard.ts';
+import type { CreateLeaderboardPayload } from 'server/api/leaderboards.ts';
+import { parseDateStringSafe, formatDateSafe } from 'src/lib/date.ts';
 
 const formModel = reactive({
   title: '',
+  type: 'words',
   goal: '',
   startDate: null,
   endDate: null,
-  visibility: 'private',
 });
 
 const validations = z.object({
   title: z.string().min(1, { message: 'Please choose a name for your project.'}),
+  type: z.enum(Object.keys(GOAL_TYPE_INFO) as [string, ...string[]]),
   goal: z.union([
     zStrInt({ message: 'Goal must be a whole number' }),
     z.string().length(0).transform(() => null)
   ]),
   startDate: z.date().nullish().transform(formatDateSafe),
   endDate: z.date().nullish().transform(formatDateSafe),
-  visibility: z.enum(['private', 'public']),
 });
 
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
 
-const typeOptions = Object.keys(TYPE_INFO).map(type => ({ text: TYPE_INFO[type].description, value: type }));
+const typeOptions = Object.keys(GOAL_TYPE_INFO).map(type => ({ text: GOAL_TYPE_INFO[type].description, value: type }));
 
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string>('');
-
-const project = ref<Project>(null);
-function loadProject() {
-  isLoading.value = true;
-
-  const projectIdStr = route.params.id as string;
-  if(Number.parseInt(projectIdStr, 10) !== +projectIdStr) {
-    router.push('/projects');
-    return;
-  }
-
-  const projectId = +projectIdStr;
-  getProject(projectId)
-    .then(p => {
-      formModel.title = p.title;
-      formModel.goal = p.goal === null ? '' : p.goal.toString(10);
-      formModel.startDate = parseDateStringSafe(p.startDate);
-      formModel.endDate = parseDateStringSafe(p.endDate);
-      formModel.visibility = p.visibility;
-
-      project.value = p;
-    })
-    .catch(err => {
-      if(err.code === 'NOT_FOUND') {
-        errorMessage.value = `Could not find project with ID ${projectId}. How did you get here?`;
-      } else {
-        errorMessage.value = err.message;
-      }
-    }).finally(() => {
-      isLoading.value = false;
-    });
-}
-loadProject();
 
 async function handleSubmit() {
   isLoading.value = true;
@@ -83,10 +47,10 @@ async function handleSubmit() {
 
   const payload = {
     ...formData(),
-  } as EditProjectPayload;
+  } as CreateLeaderboardPayload;
 
   try {
-    await editProject(project.value.id, payload);
+    await createLeaderboard(payload);
   } catch(err) {
     errorMessage.value = err;
     return;
@@ -94,11 +58,11 @@ async function handleSubmit() {
     isLoading.value = false;
   }
 
-  router.push({ name: 'project', params: { id: project.value.id }});
+  router.push('/leaderboards');
 }
 
 function handleCancel() {
-  router.push({ name: 'project', params: { id: project.value.id }});
+  router.push('/leaderboards');
 }
 
 </script>
@@ -106,10 +70,10 @@ function handleCancel() {
 <template>
   <AppPage require-login>
     <h2 class="va-h2 mb-3">
-      Edit Project
+      New Leaderboard
     </h2>
     <VaCard>
-      <VaCardContent v-if="project">
+      <VaCardContent>
         <VaAlert
           v-if="errorMessage"
           class="mb-4"
@@ -133,29 +97,29 @@ function handleCancel() {
           />
           <FormFieldWrapper
             label="What to track"
+            message="Only projects that track the same thing can join the leaderboard. If you pick &quot;Progress Toward Your Goals&quot;, any project with a goal will be eligible."
             required
           >
             <VaRadio
-              v-model="project.type"
-              :options="typeOptions.filter(option => option.value === project.type)"
+              v-model="formModel.type"
+              :options="typeOptions"
               text-by="text"
               value-by="value"
               vertical
-              readonly
-              disabled
             />
           </FormFieldWrapper>
           <VaInput
+            v-if="formModel.type !== 'percentage'"
             v-model="formModel.goal"
-            :label="project.type === 'time' ? 'Goal (in hours)' : 'Goal'"
+            :label="formModel.type === 'time' ? 'Goal (in hours)' : 'Goal'"
             :rules="[ ruleFor('goal') ]"
-            messages="If you add a goal, the project will track progress toward that goal."
+            messages="If you add a goal, the leaderboard will track progress toward that goal."
           />
           <VaDateInput
             v-model="formModel.startDate"
             label="Start Date"
             placeholder="YYYY-MM-DD"
-            messages="If you don't provide a start date, the project will start when you log your first bit of progress."
+            messages="If you don't provide a start date, the leaderboard will show all updates from all projects."
             :format="formatDateSafe"
             :parse="parseDateStringSafe"
             manual-input
@@ -164,34 +128,20 @@ function handleCancel() {
           <VaDateInput
             v-model="formModel.endDate"
             label="End Date"
-            messages="If you provide an end date along with your goal, the project will track progress toward your deadline. Combined with a goal, the project will also track you against par."
+            messages="If you provide an end date along with your goal, the leaderboard will track progress toward your deadline."
             placeholder="YYYY-MM-DD"
             :format="formatDateSafe"
             :parse="parseDateStringSafe"
             manual-input
             clearable
           />
-          <FormFieldWrapper
-            label="Share this project?"
-            message="Public projects have a shareable link that you can send to your friends. Anyone with the link will be able to see the project."
-          >
-            <VaSwitch
-              v-model="formModel.visibility"
-              false-value="private"
-              false-label="Private"
-              true-value="public"
-              true-label="Public"
-            >
-              {{ formModel.visibility === 'private' ? 'Private' : 'Public' }}
-            </VaSwitch>
-          </FormFieldWrapper>
           <div class="flex gap-4 mt-4">
             <VaButton
               :disabled="!isValid"
               :loading="isLoading"
               type="submit"
             >
-              Save
+              Create
             </VaButton>
             <VaButton
               preset="secondary"
@@ -216,4 +166,3 @@ function handleCancel() {
   vertical-align: middle;
 }
 </style>
-../lib/form.ts

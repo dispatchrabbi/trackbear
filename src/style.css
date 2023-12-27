@@ -7,3 +7,8 @@ body.va-screen-xs, body.va-screen-sm, body.va-screen-md, body.va-screen-lg, body
   transition: none;
   background-color: var(--va-background-secondary);
 }
+
+/* override with a sensible style */
+.va-list-item-label {
+  --va-list-item-label-color: var(--text-primary);
+}

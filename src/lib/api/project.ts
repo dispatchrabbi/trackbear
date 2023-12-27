@@ -1,9 +1,9 @@
 import { callApi } from "./api.ts";
-import type { Project, Update } from "../project.ts";
-import type { CreateProjectPayload, CreateUpdatePayload, EditProjectPayload } from '../../../server/api/projects.ts';
+import type { Project, Update } from '@prisma/client';
+import type { CreateProjectPayload, CreateUpdatePayload, EditProjectPayload, ProjectWithUpdatesAndLeaderboards, ProjectWithUpdates } from 'server/api/projects.ts';
 
 async function getProjects() {
-  const response = await callApi<Project[]>('/api/projects', 'GET');
+  const response = await callApi<ProjectWithUpdates[]>('/api/projects', 'GET');
 
   if(response.success === true) {
     return response.data;
@@ -13,7 +13,7 @@ async function getProjects() {
 }
 
 async function getProject(id: number) {
-  const response = await callApi<Project>(`/api/projects/${id}`, 'GET');
+  const response = await callApi<ProjectWithUpdatesAndLeaderboards>(`/api/projects/${id}`, 'GET');
 
   if(response.success === true) {
     return response.data;

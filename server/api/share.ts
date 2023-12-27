@@ -14,7 +14,7 @@ type PrivateProjectKeys = "id" | "ownerId" | "state" | "visibility" | "starred" 
 type SharedProject = Omit<Project, PrivateProjectKeys>;
 
 type PrivateUpdateKeys = "id" | "projectId" | "createdAt" | "updatedAt";
-type SharedUpdate = Omit<Update, PrivateUpdateKeys>;
+export type SharedUpdate = Omit<Update, PrivateUpdateKeys>;
 
 export type SharedProjectWithUpdates = SharedProject & { updates: SharedUpdate[] };
 

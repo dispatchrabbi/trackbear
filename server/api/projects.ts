@@ -34,7 +34,9 @@ export type CreateUpdatePayload = {
   value: number;
 };
 
+type ReducedOwner = { uuid: string; title: string; }
 export type ProjectWithUpdates = Project & { updates: Update[] };
+export type ProjectWithUpdatesAndLeaderboards = ProjectWithUpdates & { leaderboards: ReducedOwner[] };
 
 const projectsRouter = Router();
 
@@ -63,9 +65,9 @@ projectsRouter.get('/',
 projectsRouter.get('/:id',
   requireUser,
   validateParams(z.object({ id: zStrInt() })),
-  async (req: WithUser<Request>, res: ApiResponse<ProjectWithUpdates>, next) =>
+  async (req: WithUser<Request>, res: ApiResponse<ProjectWithUpdatesAndLeaderboards>, next) =>
 {
-  let project: ProjectWithUpdates | null;
+  let project: ProjectWithUpdatesAndLeaderboards | null;
   try {
     project = await dbClient.project.findUnique({
       where: {
@@ -75,6 +77,12 @@ projectsRouter.get('/:id',
       },
       include: {
         updates: true,
+        leaderboards: {
+          select: {
+            uuid: true,
+            title: true,
+          },
+        }
       },
     });
   } catch(err) { return next(err); }

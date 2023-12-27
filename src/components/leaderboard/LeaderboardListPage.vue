@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import type { CompleteLeaderboard } from '../../server/api/leaderboards.ts';
-import { getLeaderboards } from '../lib/api/leaderboard.ts';
+import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
+import { getLeaderboards } from 'src/lib/api/leaderboard.ts';
 
-import AppPage from './layout/AppPage.vue'
-import LeaderboardTile from './leaderboard/LeaderboardTile.vue';
+import AppPage from 'src/components/layout/AppPage.vue'
+import LeaderboardTile from './widgets/LeaderboardTile.vue';
 // import NewProjectTile from './project/NewProjectTile.vue';
 // import ProjectSkeletonTile from './project/ProjectSkeletonTile.vue';
 

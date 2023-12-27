@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Project, TYPE_INFO } from '../../lib/project.ts';
-import { SharedProjectWithUpdates } from '../../../server/api/share.ts';
+import { TYPE_INFO } from 'src/lib/project.ts';
+import { Project } from '@prisma/client';
+import { SharedProjectWithUpdates } from 'server/api/share.ts';
 
 const props = defineProps<{
   project: Project | SharedProjectWithUpdates;

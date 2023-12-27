@@ -11,13 +11,15 @@ import SharedProjectPage from './components/SharedProjectPage.vue';
 
 import AccountPage from './components/AccountPage.vue';
 
-import ProjectListPage from './components/ProjectListPage.vue';
-import NewProjectPage from './components/NewProjectPage.vue';
-import ProjectPage from './components/ProjectPage.vue';
-import EditProjectPage from './components/EditProjectPage.vue';
+import ProjectListPage from './components/project/ProjectListPage.vue';
+import NewProjectPage from './components/project/NewProjectPage.vue';
+import ProjectPage from './components/project/ProjectPage.vue';
+import EditProjectPage from './components/project/EditProjectPage.vue';
 
-import LeaderboardListPage from './components/LeaderboardListPage.vue';
-import LeaderboardPage from './components/LeaderboardPage.vue';
+import LeaderboardListPage from './components/leaderboard/LeaderboardListPage.vue';
+import LeaderboardPage from './components/leaderboard/LeaderboardPage.vue';
+import NewLeaderboardPage from './components/leaderboard/NewLeaderboardPage.vue';
+import EditLeaderboardPage from './components/leaderboard/EditLeaderboardPage.vue';
 
 const routes = [
   // no login needed
@@ -41,7 +43,9 @@ const routes = [
 
   // leaderboard section
   { path: '/leaderboards', name: 'leaderboards', component: LeaderboardListPage },
+  { path: '/leaderboards/new', name:'new-leaderboard', component: NewLeaderboardPage },
   { path: '/leaderboards/:uuid', name: 'leaderboard', component: LeaderboardPage },
+  { path: '/leaderboards/:uuid/edit', name:'edit-leaderboard', component: EditLeaderboardPage },
 
   // catch-all
   { path: '/:catchAll(.*)', name:'404', component: PlaceholderPage, props: { title: '404' } },

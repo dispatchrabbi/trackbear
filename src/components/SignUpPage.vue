@@ -2,15 +2,15 @@
 import { ref, reactive } from 'vue';
 
 import { z } from 'zod';
-import { useValidation } from '../lib/form.ts';
+import { useValidation } from 'src/lib/form.ts';
 
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
 import AppPage from './layout/AppPage.vue';
 import TogglablePasswordInput from './form/TogglablePasswordInput.vue'
-import { signUp } from '../lib/api/auth.ts';
-import { CreateUserPayload } from '../../server/api/auth.ts';
+import { signUp } from 'src/lib/api/auth.ts';
+import { CreateUserPayload } from 'server/api/auth.ts';
 
 const formModel = reactive({
   username: '',

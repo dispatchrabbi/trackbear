@@ -9,12 +9,13 @@ ChartJS.register(Title, Tooltip, LineController, LineElement, PointElement, Cate
 
 import { useColors } from 'vuestic-ui';
 
-import { parseDateString, formatDate, formatTimeProgress, minDateStr, maxDateStr } from '../../lib/date.ts';
-import { Project, Update, TYPE_INFO } from '../../lib/project.ts';
-import { SharedProjectWithUpdates } from '../../../server/api/share.ts';
+import { parseDateString, formatDate, formatTimeProgress, minDateStr, maxDateStr } from 'src/lib/date.ts';
+import type { ProjectWithUpdates } from 'server/api/projects.ts';
+import { TYPE_INFO } from 'src/lib/project.ts';
+import type { SharedProjectWithUpdates, SharedUpdate } from 'server/api/share.ts';
 
 // TODO: this isn't the cleanest; now we have two of these types floating around
-type CommonUpdate = Omit<Update, 'id' | 'updatedAt'>;
+type CommonUpdate = Omit<SharedUpdate, 'id' | 'updatedAt'>;
 
 type NormalizedUpdate = {
   date: string;
@@ -25,7 +26,7 @@ type NormalizedUpdate = {
 const props = defineProps<{
   id: string;
   class?: string;
-  project: Project | SharedProjectWithUpdates;
+  project: ProjectWithUpdates | SharedProjectWithUpdates;
   updates: CommonUpdate[]
   showPar: boolean;
   showTooltips: boolean;

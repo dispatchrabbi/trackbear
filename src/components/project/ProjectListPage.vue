@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { getProjects } from '../lib/api/project.ts';
+import { getProjects } from 'src/lib/api/project.ts';
 
-import AppPage from './layout/AppPage.vue'
-import ProjectTile from './project/ProjectTile.vue';
-import NewProjectTile from './project/NewProjectTile.vue';
-import ProjectSkeletonTile from './project/ProjectSkeletonTile.vue';
-import { Project } from '../lib/project.ts';
+import AppPage from 'src/components/layout/AppPage.vue';
+import ProjectTile from 'src/components/project/widgets/ProjectTile.vue';
+import NewProjectTile from 'src/components/project/widgets/NewProjectTile.vue';
+import ProjectSkeletonTile from 'src/components/project/widgets/ProjectSkeletonTile.vue';
+import type { ProjectWithUpdates } from 'server/api/projects.ts';
 
-const projects = ref<Project[]>([]);
+const projects = ref<ProjectWithUpdates[]>([]);
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string>('');
 

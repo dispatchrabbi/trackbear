@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import type { CompleteLeaderboard } from '../../../server/api/leaderboards.ts';
+import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
 import LeaderboardChart from './LeaderboardChart.vue';
 
 defineProps<{ leaderboard: CompleteLeaderboard }>();
@@ -21,6 +21,7 @@ defineProps<{ leaderboard: CompleteLeaderboard }>();
         :leaderboard="leaderboard"
         :show-par="true"
         :show-tooltips="true"
+        :show-legend="false"
       />
     </VaCardContent>
   </VaCard>

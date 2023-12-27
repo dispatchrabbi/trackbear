@@ -3,28 +3,30 @@ import { ref, reactive, computed, watch } from 'vue';
 import { DataTableColumnSource } from 'vuestic-ui';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 
-import { Project, Update, TYPE_INFO } from '../../lib/project.ts';
-import { SharedProjectWithUpdates } from '../../../server/api/share.ts';
-import { editUpdate, deleteUpdate } from '../../lib/api/project.ts';
-import { CreateUpdatePayload } from '../../../server/api/projects.ts';
+import { TYPE_INFO } from 'src/lib/project.ts';
+import type { Update } from '@prisma/client';
+import type { ProjectWithUpdates } from 'server/api/projects.ts';
+import type { SharedProjectWithUpdates } from 'server/api/share.ts';
+import { editUpdate, deleteUpdate } from 'src/lib/api/project.ts';
+import type { CreateUpdatePayload } from 'server/api/projects.ts';
 
-import { formatTimeProgress, parseDateStringSafe, formatDate, validateTimeString } from '../../lib/date.ts';
+import { formatTimeProgress, parseDateStringSafe, formatDate, validateTimeString } from 'src/lib/date.ts';
 
 const props = defineProps<{
-  project: Project | SharedProjectWithUpdates
+  project: ProjectWithUpdates | SharedProjectWithUpdates
   allowEdits?: boolean
   showUpdateTimes?: boolean
 }>();
 const emit = defineEmits(['editUpdate', 'deleteUpdate']);
 
-function makeRows(project: Project | SharedProjectWithUpdates) {
+function makeRows(project: ProjectWithUpdates | SharedProjectWithUpdates) {
   const rows = project.updates
-    .sort((a: Update, b: Update) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0)
-    .map((update: Update) => ({
-      id: props.allowEdits ? update.id : null,
+    .sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0)
+    .map((update) => ({
+      id: props.allowEdits ? (update as Update).id : null,
       date: update.date,
       value: props.project.type === 'time' ? formatTimeProgress(update.value) : update.value,
-      updated: props.showUpdateTimes ? update.updatedAt : null,
+      updated: props.showUpdateTimes ? (update as Update).updatedAt : null,
     }));
 
   return rows;
@@ -123,7 +125,7 @@ async function handleSubmitEdit() {
   const updateId = updateForm.value.id;
 
   try {
-    const editedUpdate = await editUpdate(props.project as Project, updateId, formData);
+    const editedUpdate = await editUpdate(props.project as ProjectWithUpdates, updateId, formData);
     emit('editUpdate', editedUpdate);
 
   } catch(err) {
@@ -144,7 +146,7 @@ async function handleDeleteConfirmClick() {
 
   isLoading.value = true;
   try {
-    await deleteUpdate(props.project as Project, updateIdToDelete.value);
+    await deleteUpdate(props.project as ProjectWithUpdates, updateIdToDelete.value);
     emit('deleteUpdate', updateIdToDelete.value);
 
   } catch(err) {

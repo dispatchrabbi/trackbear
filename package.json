@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.2.1-alpha",
   "type": "module",
+  "imports": {
+    "src/*": "./src/*",
+    "server/*": "./server/*"
+  },
   "scripts": {
     "start": "npm run start:dev",
     "start:dev": "NODE_ENV=development node --import ./ts-node-loader.js ./main.ts",

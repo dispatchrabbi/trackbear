@@ -8,17 +8,19 @@ const route = useRoute();
 import { useToast } from 'vuestic-ui';
 const { notify } = useToast();
 
-import { getProject } from '../lib/api/project.ts';
-import { Project, Update, makeShareUrl } from '../lib/project.ts';
+import type { Update } from '@prisma/client';
+import type { ProjectWithUpdatesAndLeaderboards } from 'server/api/projects.ts';
+import { getProject } from 'src/lib/api/project.ts';
+import { makeShareUrl } from 'src/lib/project.ts';
 
-import AppPage from './layout/AppPage.vue';
-import EnterProgress from './project/EnterProgress.vue';
-import ProjectGoal from './project/ProjectGoal.vue';
-import ProjectStats from './project/ProjectStats.vue';
-import ProjectHistory from './project/ProjectHistory.vue';
-import ProgressChart from './project/ProgressChart.vue';
+import AppPage from 'src/components/layout/AppPage.vue';
+import EnterProgress from 'src/components/project/widgets/EnterProgress.vue';
+import ProjectGoal from 'src/components/project/widgets/ProjectGoal.vue';
+// import ProjectStats from 'src/components/project/widgets/ProjectStats.vue';
+import ProjectHistory from 'src/components/project/widgets/ProjectHistory.vue';
+import ProgressChart from 'src/components/project/widgets/ProgressChart.vue';
 
-const project = ref<Project>(null);
+const project = ref<ProjectWithUpdatesAndLeaderboards>(null);
 const errorMessage = ref<string>('');
 
 function loadProject() {
@@ -120,9 +122,34 @@ async function handleShareClick() {
               address-user
             />
           </div>
-          <div class="project-stats shrink">
-            <ProjectStats :project="project" />
+          <div class="project-leaderboards shrink">
+            <VaCard>
+              <VaCardTitle>Leaderboards</VaCardTitle>
+              <VaCardContent>
+                <VaList>
+                  <VaListItem
+                    v-for="leaderboard in project.leaderboards"
+                    :key="leaderboard.uuid"
+                  >
+                    <VaListItemSection>
+                      <VaListItemLabel>
+                        <RouterLink :to="`/leaderboards/${leaderboard.uuid}`">
+                          <div
+                            :title="leaderboard.title"
+                          >
+                            {{ leaderboard.title }}
+                          </div>
+                        </RouterLink>
+                      </VaListItemLabel>
+                    </VaListItemSection>
+                  </VaListItem>
+                </VaList>
+              </VaCardContent>
+            </VaCard>
           </div>
+          <!-- <div class="project-stats shrink">
+            <ProjectStats :project="project" />
+          </div> -->
         </div>
         <div class="col-span-4 flex flex-col justify-start gap-4">
           <div class="project-graph shrink">

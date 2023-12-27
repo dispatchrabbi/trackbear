@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
 
-import { parseDateStringSafe, formatDate, validateTimeString } from '../../lib/date.ts';
-import { Project, TYPE_INFO } from '../../lib/project.ts';
-import { createUpdate } from '../../lib/api/project.ts';
-import { CreateUpdatePayload } from '../../../server/api/projects.ts';
+import { parseDateStringSafe, formatDate, validateTimeString } from 'src/lib/date.ts';
+import { TYPE_INFO } from 'src/lib/project.ts';
+import type { Project } from '@prisma/client';
+import { createUpdate } from 'src/lib/api/project.ts';
+import { CreateUpdatePayload } from 'server/api/projects.ts';
 
 const props = defineProps<{ project: Project }>();
 const emit = defineEmits(['newUpdate']);

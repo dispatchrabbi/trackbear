@@ -1,5 +1,5 @@
 import { callApi } from "./api.ts";
-import { CreateUserPayload, UserResponse } from '../../../server/api/auth.ts';
+import { CreateUserPayload, UserResponse } from 'server/api/auth.ts';
 
 async function signUp(userInfo: CreateUserPayload): Promise<UserResponse> {
   const response = await callApi<UserResponse>('/api/auth/signup', 'POST', userInfo);

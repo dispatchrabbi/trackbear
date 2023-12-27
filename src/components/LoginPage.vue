@@ -2,7 +2,7 @@
 import { ref, reactive } from 'vue';
 
 import { z } from 'zod';
-import { useValidation } from '../lib/form.ts';
+import { useValidation } from 'src/lib/form.ts';
 
 import { useRouter } from 'vue-router';
 const router = useRouter();

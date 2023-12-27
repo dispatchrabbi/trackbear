@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { logIn, logOut, getUser } from '../lib/api/auth.ts';
+import { logIn, logOut, getUser } from 'src/lib/api/auth.ts';
 
 export const useUserStore = defineStore('user', {
   state: () => {

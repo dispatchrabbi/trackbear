@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import type { CompleteLeaderboard } from '../../../server/api/leaderboards.ts';
-import { GOAL_TYPE_INFO } from '../../lib/api/leaderboard.ts';
+import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
+import { GOAL_TYPE_INFO } from 'src/lib/api/leaderboard.ts';
 
 const props = defineProps<{
   leaderboard: CompleteLeaderboard;

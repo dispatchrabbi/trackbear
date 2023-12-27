@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { useRoute, useRouter } from 'vue-router';
-const router = useRouter();
+import { useRoute } from 'vue-router';
 const route = useRoute();
 
 import { useToast } from 'vuestic-ui';
 const { notify } = useToast();
 
-import type { CompleteLeaderboard } from '../../server/api/leaderboards.ts';
-import { getLeaderboard } from '../lib/api/leaderboard.ts';
+import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
+import { getLeaderboard } from 'src/lib/api/leaderboard.ts';
 
-import AppPage from './layout/AppPage.vue'
-import LeaderboardGoal from './leaderboard/LeaderboardGoal.vue';
-import LeaderboardAddProject from './leaderboard/LeaderboardAddProject.vue';
-import LeaderboardChart from './leaderboard/LeaderboardChart.vue';
-import LeaderboardProjectSummary from './leaderboard/LeaderboardProjectSummary.vue';
+import AppPage from 'src/components/layout/AppPage.vue'
+import LeaderboardGoal from './widgets/LeaderboardGoal.vue';
+import LeaderboardAddProject from './widgets/LeaderboardAddProject.vue';
+import LeaderboardChart from './widgets/LeaderboardChart.vue';
+import LeaderboardProjectSummary from './widgets/LeaderboardProjectSummary.vue';
 
 const leaderboard = ref<CompleteLeaderboard>(null);
 const errorMessage = ref<string>('');
@@ -75,7 +74,7 @@ async function handleShareClick() {
             @click="handleShareClick"
           />
         </div> -->
-        <!-- <div class="shrink">
+        <div class="shrink">
           <RouterLink :to="{ name: 'edit-leaderboard', params: { uuid: leaderboard.uuid } }">
             <VaIcon
               name="edit"
@@ -83,7 +82,7 @@ async function handleShareClick() {
               title="Edit leaderboard"
             />
           </RouterLink>
-        </div> -->
+        </div>
       </div>
       <div class="grid grid-cols-6 gap-4">
         <div class="col-span-2 flex flex-col justify-start gap-4">

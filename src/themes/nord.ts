@@ -1,4 +1,4 @@
-import type { Theme } from "../lib/theme.ts";
+import type { Theme } from "src/lib/theme.ts";
 
 // Nord is from https://www.nordtheme.com/docs/colors-and-palettes
 // TODO: build from Nord colors

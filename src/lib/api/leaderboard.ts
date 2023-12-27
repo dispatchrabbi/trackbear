@@ -1,6 +1,7 @@
 import { callApi } from "./api.ts";
-import { Project, TYPE_INFO } from "../project.ts";
-import type { CreateLeaderboardPayload, EditLeaderboardPayload, CompleteLeaderboard } from '../../../server/api/leaderboards.ts';
+import { Project } from '@prisma/client';
+import { TYPE_INFO } from "../project.ts";
+import type { CreateLeaderboardPayload, EditLeaderboardPayload, CompleteLeaderboard } from 'server/api/leaderboards.ts';
 
 export async function getLeaderboards() {
   const response = await callApi<CompleteLeaderboard[]>('/api/leaderboards', 'GET');
@@ -32,8 +33,8 @@ export async function createLeaderboard(leaderboard: CreateLeaderboardPayload) {
   }
 }
 
-export async function editLeaderboard(leaderboard: EditLeaderboardPayload) {
-  const response = await callApi<CompleteLeaderboard>(`/api/leaderboards`, 'POST', leaderboard);
+export async function editLeaderboard(leaderboardUuid: string, leaderboard: EditLeaderboardPayload) {
+  const response = await callApi<CompleteLeaderboard>(`/api/leaderboards/${leaderboardUuid}`, 'POST', leaderboard);
 
   if(response.success === true) {
     return response.data;
@@ -75,7 +76,7 @@ export async function removeProjectFromLeaderboard(leaderboardUuid: string, proj
 export const GOAL_TYPE_INFO = {
   ...TYPE_INFO,
   percentage: {
-    description: 'Progress to Individual Goal',
+    description: 'Progress Toward Your Goals',
     defaultChartMax: 100,
     counter: { singular: 'percent', plural: 'percent' },
   }

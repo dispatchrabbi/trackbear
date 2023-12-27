@@ -6,14 +6,14 @@ import { useRoute, useRouter } from 'vue-router';
 const router = useRouter();
 const route = useRoute();
 
-import { getSharedProject } from '../lib/api/share.ts';
-import type { SharedProjectWithUpdates } from '../../server/api/share.ts';
+import { getSharedProject } from 'src/lib/api/share.ts';
+import type { SharedProjectWithUpdates } from 'server/api/share.ts';
 
-import AppPage from './layout/AppPage.vue';
-import ProjectGoal from './project/ProjectGoal.vue';
-import ProjectStats from './project/ProjectStats.vue';
-import ProjectHistory from './project/ProjectHistory.vue';
-import ProgressChart from './project/ProgressChart.vue';
+import AppPage from 'src/components/layout/AppPage.vue';
+import ProjectGoal from 'src/components/project/widgets/ProjectGoal.vue';
+import ProjectStats from 'src/components/project/widgets/ProjectStats.vue';
+import ProjectHistory from 'src/components/project/widgets/ProjectHistory.vue';
+import ProgressChart from 'src/components/project/widgets/ProgressChart.vue';
 
 const project = ref<SharedProjectWithUpdates>(null);
 const errorMessage = ref<string>('');

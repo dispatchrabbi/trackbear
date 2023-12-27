@@ -5,14 +5,14 @@ import { eachDayOfInterval, addDays } from 'date-fns';
 import { useColors } from 'vuestic-ui';
 const { getColor } = useColors();
 
-import { parseDateString, formatDate, formatTimeProgress, maxDateStr } from '../../lib/date.ts';
-import { GOAL_TYPE_INFO } from '../../lib/api/leaderboard.ts';
-import { TYPE_INFO } from '../../lib/project.ts';
-import type { CompleteLeaderboard } from '../../../server/api/leaderboards.ts';
-import type { ProjectWithUpdates } from '../../../server/api/projects.ts';
+import { parseDateString, formatDate, formatTimeProgress, maxDateStr } from 'src/lib//date.ts';
+import { GOAL_TYPE_INFO } from 'src/lib//api/leaderboard.ts';
+import { TYPE_INFO } from 'src/lib//project.ts';
+import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
+import type { ProjectWithUpdates } from 'server/api/projects.ts';
 
-import LineChart from '../chart/LineChart.vue';
-import type { LineChartOptions } from '../chart/LineChart.vue';
+import LineChart from 'src/components/chart/LineChart.vue';
+import type { LineChartOptions } from 'src/components/chart/LineChart.vue';
 
 const props = defineProps<{
   leaderboard: CompleteLeaderboard;
@@ -40,9 +40,7 @@ function normalizeProjectUpdates(project: ProjectWithUpdates, leaderboard: Compl
     obj[update.date] += update.value;
     return obj;
   }, {});
-  let consolidatedDates = leaderboard.type === 'percentage' ?
-    Object.keys(consolidatedObj) :
-    Object.keys(consolidatedObj).filter(date => (!leaderboard.startDate || date >= leaderboard.startDate) && (!leaderboard.endDate || date <= leaderboard.endDate));
+  let consolidatedDates = Object.keys(consolidatedObj);
   const consolidatedUpdates = consolidatedDates.sort().map(date => ({ date, value: consolidatedObj[date] }));
 
   const normalizedUpdates: NormalizedUpdate[] = [];
@@ -52,10 +50,10 @@ function normalizeProjectUpdates(project: ProjectWithUpdates, leaderboard: Compl
     const update = consolidatedUpdates[i];
 
     const rawValue = update.value;
-    const value = leaderboard.type === 'percentage' ? (update.value / project.goal) : rawValue;
+    const value = leaderboard.type === 'percentage' ? (update.value / project.goal) * 100 : rawValue;
     const rawTotalSoFar = (i === 0 ? rawValue : rawValue + normalizedUpdates[i - 1].rawTotalSoFar);
     // calculate this from scratch each time so we don't depend on floating point math to eventually add to 100.0
-    const totalSoFar = leaderboard.type === 'percentage' ? (rawTotalSoFar / project.goal) : rawTotalSoFar;
+    const totalSoFar = leaderboard.type === 'percentage' ? (rawTotalSoFar / project.goal) * 100 : rawTotalSoFar;
 
     normalizedUpdates.push({
       date: update.date,
@@ -160,9 +158,6 @@ function calculatePars(eachDay: string[], leaderboard: CompleteLeaderboard) {
 }
 const pars = computed(() => props.showPar ? calculatePars(eachDay.value, props.leaderboard) : null);
 
-// const POINT_STYLES = ['circle', 'rect', 'crossRot', 'rectRot', 'triangle', 'star', 'rectRounded', 'cross'];
-// const LINE_COLORS = [ getColor('primary'), getColor('danger'), getColor('info'), getColor('warning') ];
-
 const chartData = computed(() => {
   const data = {
     labels: eachDay.value,
@@ -176,10 +171,7 @@ const chartData = computed(() => {
       label: project.title,
       owner: project.owner.displayName,
       counter: TYPE_INFO[project.type].counter,
-      data: project.updates,
-      // borderColor: LINE_COLORS[i % LINE_COLORS.length],
-      // backgroundColor: LINE_COLORS[i % LINE_COLORS.length],
-      // pointStyle: POINT_STYLES[Math.floor(i / LINE_COLORS.length)],
+      data: project.updates.filter(update => eachDay.value.includes(update.date)),
     });
   }
 
@@ -197,11 +189,11 @@ const chartData = computed(() => {
 
 function makeTooltipLabelFn(leaderboardType) {
   if(leaderboardType === 'time') {
-    return ctx => `${formatTimeProgress(ctx.raw.value)} (${ctx.dataset.owner})`;
+    return ctx => `${formatTimeProgress(ctx.raw.totalSoFar)} (${ctx.dataset.owner})`;
   } else if(leaderboardType === 'percentage') {
-    return ctx => `${Math.round(ctx.raw.value)}% (${ctx.dataset.owner})`;
+    return ctx => `${Math.round(ctx.raw.totalSoFar)}% (${ctx.dataset.owner})`;
   } else {
-    return ctx => `${ctx.raw.value} ${(ctx.raw.value === 1 ? ctx.dataset.counter.singular : ctx.dataset.counter.plural)} (${ctx.dataset.owner})`;
+    return ctx => `${ctx.raw.totalSoFar} ${(ctx.raw.totalSoFar === 1 ? ctx.dataset.counter.singular : ctx.dataset.counter.plural)} (${ctx.dataset.owner})`;
   }
 }
 const chartOptions = computed(() => {
