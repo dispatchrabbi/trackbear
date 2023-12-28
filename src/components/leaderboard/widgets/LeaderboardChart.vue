@@ -168,7 +168,8 @@ const chartData = computed(() => {
     const project = normalizedProjects.value[i];
 
     data.datasets.push({
-      label: project.title,
+      label: project.owner.displayName,
+      title: project.title,
       owner: project.owner.displayName,
       counter: TYPE_INFO[project.type].counter,
       data: project.updates.filter(update => eachDay.value.includes(update.date)),

@@ -54,6 +54,9 @@ async function handleShareClick() {
     });
   }
 }
+
+const showGraphModal = ref<boolean>(false);
+
 </script>
 
 <template>
@@ -109,7 +112,22 @@ async function handleShareClick() {
         <div class="col-span-4 flex flex-col justify-start gap-4">
           <div class="leaderboard-chart shrink">
             <VaCard class="h-full">
-              <VaCardTitle>How's everyone doing?</VaCardTitle>
+              <VaCardTitle>
+                <div class="flex gap-4 items-center w-full">
+                  <div class="grow">
+                    How's everyone doing?
+                  </div>
+                  <div class="shrink">
+                    <VaIcon
+                      class="cursor-pointer"
+                      name="zoom_out_map"
+                      size="medium"
+                      title="Fullscreen"
+                      @click="showGraphModal = true"
+                    />
+                  </div>
+                </div>
+              </VaCardTitle>
               <VaCardContent>
                 <LeaderboardChart
                   :id="`leaderboard-chart-${leaderboard.id}`"
@@ -128,6 +146,21 @@ async function handleShareClick() {
           </div>
         </div>
       </div>
+      <VaModal
+        v-model="showGraphModal"
+        class="leaderboard-chart-modal"
+        fullscreen
+        hide-default-actions
+        close-button
+      >
+        <LeaderboardChart
+          :id="`modal-leaderboard-chart-${leaderboard.id}`"
+          :leaderboard="leaderboard"
+          show-par
+          show-tooltips
+          show-legend
+        />
+      </VaModal>
     </div>
     <div v-else>
       {{ errorMessage }}
@@ -136,5 +169,4 @@ async function handleShareClick() {
 </template>
 
 <style scoped>
-
 </style>

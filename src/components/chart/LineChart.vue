@@ -41,6 +41,7 @@ const resizeChart = debounce(() => {
 
 onMounted(() => {
   window.addEventListener('resize', resizeChart);
+  window.dispatchEvent(new Event('resize'));
 })
 
 onUnmounted(() => {
