@@ -1,7 +1,10 @@
 import helmet from "helmet";
+import { getNormalizedEnv } from '../env.ts';
 
-function middleware() {
-  if(process.env.NODE_ENV === 'development') {
+async function middleware() {
+  const env = await getNormalizedEnv();
+
+  if(env.NODE_ENV === 'development') {
     // These allow the Vite server to do HMR
     return helmet({
       contentSecurityPolicy: {

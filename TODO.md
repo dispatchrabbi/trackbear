@@ -1,38 +1,29 @@
 # TODO
 
-## Now
-- [X] Release to alpha testers
-
 ## Next
-- [X] Add project parameters (goal, start date, end date) to Project page
-- [X] Edit projects
-  - [X] Make the edit icon nicer
-- [X] Edit updates
-- [ ] Delete projects
-- [X] Delete updates
 - [ ] Edit your account
 - [ ] Delete your account
-- [ ] Add `lastLoginAt` to User table
-- [ ] Lock out multiple login attempts
-- [ ] Simplify out async handling a la https://stackoverflow.com/questions/43356705/
-- [ ] Replace the try/catch api call logic in the front-end with something less onerous
-- [ ] In-page username validation (https://ui.vuestic.dev/ui-elements/form#async-validation)
-- [ ] Put TrackBear behind nginx for easier SSL and fail2ban
+- [X] Put TrackBear behind nginx reverse proxy for easier SSL
 
 ## Soon
 - [X] Sharing
-- [ ] Announcement/banner functionality
-- [ ] Project Stats
-- [ ] Leaderboards (types: same type, goal percentage)
-- [ ] Aggregate grand totals across all projects / Aggregate by tag / Exclude projects from grand total
+- [ ] Create an admin console
+  - [ ] Announcement/banner functionality
+- [X] Leaderboards (types: same type, goal percentage)
+- [ ] Replace the try/catch api call logic in the front-end with something less onerous
+- [ ] In-page username validation (https://ui.vuestic.dev/ui-elements/form#async-validation)
+
+## Switch to tag-and-tally
+- [ ] Switch over to the tag-and-tally system of updates
+- [ ] Aggregate grand totals / Aggregate by tag / Exclude projects from grand total
 
 ## Before stable launch
 - [ ] Go over [security practices](https://blog.risingstack.com/node-js-security-checklist/)
-  - [ ] Integrate CSRF protection
-  - [ ] Double-check Helmet settings
+  - [X] Integrate CSRF protection (no need, JSON APIs are CORS-locked, see: https://github.com/pillarjs/understanding-csrf#use-only-json-apis)
+  - [X] Double-check Helmet settings
   - [ ] Make rate-limiting better
   - [ ] Lock-out sign-in attempts
-- [ ] Prove out migrations on deploy
+- [X] Prove out migrations on deploy
 - [ ] Finalize name
 - [ ] Create logo
 - [ ] Buy actual domain

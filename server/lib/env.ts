@@ -1,10 +1,30 @@
 import { access, constants } from 'fs/promises';
 
-async function checkEnvVars() {
+type TrackbearCommonEnv = {
+  NODE_ENV: string,
+  PORT: number;
+  LOG_DIR: string;
+  DATABASE_URL: string;
+  COOKIE_SECRET: string;
+  USE_PROXY: boolean;
+};
+
+type TrackbearTlsEnv =
+| { USE_HTTPS: true; TLS_KEY: string; TLS_CERT: string; }
+| { USE_HTTPS: false; TLS_KEY: string | null; TLS_CERT: string | null; }
+
+export type TrackbearEnv = TrackbearCommonEnv & TrackbearTlsEnv;
+
+async function normalizeEnv(): Promise<TrackbearEnv> {
   // some of the env vars are optional/okay to leave empty
   // let's check the ones that aren't, and add defaults where it makes sense
 
+  if(!['', 'development', 'production'].includes(process.env.NODE_ENV)) { throw new Error('NODE_ENV should only be either development or production'); }
   process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
+  if(process.env.PORT !== '' && isNaN(Number.parseInt(process.env.PORT, 10))) {
+    throw new Error('PORT must be a number');
+  }
   process.env.PORT = process.env.PORT || "3000";
 
   process.env.LOG_DIR = process.env.LOG_DIR || './logs';
@@ -12,7 +32,12 @@ async function checkEnvVars() {
 
   if(!process.env.COOKIE_SECRET) { throw new Error('Missing COOKIE_SECRET value in .env'); }
 
-  if(process.env.USE_HTTPS) {
+  if(!['', '0', '1'].includes(process.env.USE_PROXY)) { throw new Error('USE_PROXY should only be either 0 or 1'); }
+
+  if(!['', '0', '1'].includes(process.env.USE_HTTPS)) { throw new Error('USE_HTTPS should only be either 0 or 1'); }
+
+  const useHttps = +process.env.USE_HTTPS;
+  if(useHttps) {
     if(!(process.env.TLS_KEY && process.env.TLS_CERT)) { throw new Error('USE_HTTPS requires both TLS_KEY and TLS_CERT values in .env'); }
 
     try {
@@ -27,8 +52,29 @@ async function checkEnvVars() {
       throw new Error(`Could not read TLS_CERT: ${process.env.TLS_CERT}`);
     }
   }
+
+  return {
+    NODE_ENV:       process.env.NODE_ENV,
+    PORT:          +process.env.PORT,
+    LOG_DIR:        process.env.LOG_DIR,
+    DATABASE_URL:   process.env.DATABASE_URL,
+    COOKIE_SECRET:  process.env.COOKIE_SECRET,
+    USE_PROXY:    !!process.env.USE_PROXY,
+    USE_HTTPS:    !!process.env.USE_HTTPS,
+    TLS_KEY:        process.env.TLS_KEY || null,
+    TLS_CERT:       process.env.TLS_CERT || null,
+  };
+}
+
+let env = null;
+async function getNormalizedEnv(): Promise<TrackbearEnv> {
+  if(env === null) {
+    env = await normalizeEnv();
+  }
+
+  return env;
 }
 
 export {
-  checkEnvVars,
+  getNormalizedEnv,
 };

@@ -1,8 +1,8 @@
-import process from 'process';
 import path from 'path';
 import winston, { format, transports } from 'winston';
+import { getNormalizedEnv } from './env.ts';
 
-function initLoggers(logDir: string) {
+async function initLoggers(logDir: string) {
   winston.configure({
     level: 'info',
     format: format.combine(
@@ -28,7 +28,8 @@ function initLoggers(logDir: string) {
   });
 
   // also log to the console if we're in development mode
-  if (process.env.NODE_ENV !== 'production') {
+  const env = await getNormalizedEnv();
+  if (env.NODE_ENV !== 'production') {
     winston.add(new transports.Console({
       format: format.combine(
         format.colorize(),

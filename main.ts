@@ -1,7 +1,6 @@
-import process from 'process';
 import { readFile } from 'fs/promises';
 import dotenv from 'dotenv-safe';
-import { checkEnvVars } from './server/lib/env.ts';
+import { getNormalizedEnv } from './server/lib/env.ts';
 
 import winston from 'winston';
 import initLoggers from './server/lib/logger.ts';
@@ -27,16 +26,16 @@ async function main() {
   dotenv.config({
     allowEmptyValues: true
   });
-  checkEnvVars();
+  const env = await getNormalizedEnv();
 
-  initLoggers(process.env.LOG_DIR as string);
+  await initLoggers(env.LOG_DIR);
   // use `winston` just as the general logger
   const accessLogger = winston.loggers.get('access');
 
   const app = express();
 
   // add security headers
-  app.use(helmet());
+  app.use(await helmet());
 
   // compress responses
   app.use(compression());
@@ -45,7 +44,7 @@ async function main() {
   app.disable('x-powered-by');
 
   // are we behind a proxy?
-  if(process.env.USE_PROXY) {
+  if(env.USE_PROXY) {
     app.set('trust proxy', 1);
   }
 
@@ -53,7 +52,7 @@ async function main() {
   // always stream to the access logger
   app.use(morgan('combined', { stream: { write: function(message) { accessLogger.info(message); } } }));
   // also stream to the console if we're developing
-  if(process.env.NODE_ENV === 'development') {
+  if(env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
   }
 
@@ -62,7 +61,7 @@ async function main() {
 
   // sessions
   // Allow multiple signing secrets: see using an array at https://www.npmjs.com/package/express-session#secret
-  const cookieSecret = (process.env.COOKIE_SECRET || '').split(',');
+  const cookieSecret = (env.COOKIE_SECRET || '').split(',');
   app.use(session({
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000, // in ms
@@ -79,7 +78,7 @@ async function main() {
   }));
 
   // /api: mount the API routes
-  if(process.env.NODE_ENV !== 'development') {
+  if(env.NODE_ENV !== 'development') {
     // add rate-limiting for production
     app.use('/api', rateLimit(), apiRouter);
   } else {
@@ -87,7 +86,7 @@ async function main() {
   }
 
   // Serve the front-end - either statically or out of the vite server, depending
-  if(process.env.NODE_ENV === 'production') {
+  if(env.NODE_ENV === 'production') {
     // serve the front-end statically out of dist/
     winston.debug('Serving the front-end out of dist/');
     app.use(spaRoutes(['/assets', '/images']));
@@ -99,9 +98,9 @@ async function main() {
     const vite = await createViteServer({
       server: {
         middlewareMode: true,
-        https: process.env.USE_HTTPS ? {
-          key: process.env.TLS_KEY,
-          cert: process.env.TLS_CERT,
+        https:  env.USE_HTTPS ? {
+          key:  env.TLS_KEY,
+          cert: env.TLS_CERT,
         } : undefined,
       },
       appType: 'spa',
@@ -114,16 +113,16 @@ async function main() {
 
   // are we doing HTTP or HTTPS?
   let server: https.Server | http.Server;
-  if(process.env.USE_HTTPS) {
+  if(env.USE_HTTPS) {
     server = https.createServer({
-      key: await readFile(process.env.TLS_KEY as string),
-      cert: await readFile(process.env.TLS_CERT as string),
+      key: await readFile(env.TLS_KEY),
+      cert: await readFile(env.TLS_CERT),
     }, app);
   } else {
     server = http.createServer(app);
   }
-  server.listen(process.env.PORT, () => {
-    winston.info(`TrackBear is now listening on ${process.env.USE_HTTPS ? 'https' : 'http'}://localhost:${process.env.PORT}/`);
+  server.listen(env.PORT, () => {
+    winston.info(`TrackBear is now listening on ${env.USE_HTTPS ? 'https' : 'http'}://localhost:${env.PORT}/`);
   });
 
   // baseline server-side error handling
