@@ -10,6 +10,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
+
+model AuditEvent {
+  id Int @id @default(autoincrement())
+
+  // the lack of relations here is on purpose
+  agentId   Int
+  patientId Int?
+  goalId    Int?
+
+  eventType String
+  auxInfo   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt // this should never differ from createdAt
+}
+
 model User {
   id   Int    @id @default(autoincrement())
   uuid String @unique @default(uuid())
@@ -86,25 +108,4 @@ model Leaderboard {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model Session {
-  id        String   @id
-  sid       String   @unique
-  data      String
-  expiresAt DateTime
-}
-
-model AuditEvent {
-  id Int @id @default(autoincrement())
-
-  // the lack of relations here is on purpose
-  agentId   Int
-  patientId Int?
-  goalId    Int?
-
-  eventType String
-  auxInfo   String
-
-  createdAt DateTime @default(now())
 }
