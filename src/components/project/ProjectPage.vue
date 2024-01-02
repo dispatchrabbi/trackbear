@@ -105,8 +105,8 @@ async function handleShareClick() {
           </RouterLink>
         </div>
       </div>
-      <div class="grid grid-cols-6 gap-4">
-        <div class="col-span-2 flex flex-col justify-start gap-4">
+      <div class="grid md:grid-cols-6 gap-4">
+        <div class="md:col-span-2 flex flex-col justify-start gap-4">
           <div class="project-enter-progress shrink">
             <EnterProgress
               :project="project"
@@ -151,7 +151,7 @@ async function handleShareClick() {
             <ProjectStats :project="project" />
           </div> -->
         </div>
-        <div class="col-span-4 flex flex-col justify-start gap-4">
+        <div class="md:col-span-4 flex flex-col justify-start gap-4">
           <div class="project-graph shrink">
             <VaCard class="h-full">
               <VaCardTitle>Progress So Far</VaCardTitle>

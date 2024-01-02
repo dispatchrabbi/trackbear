@@ -14,8 +14,9 @@ import {
   VaCard, VaCardContent, VaCardTitle,
   VaForm, VaDateInput, VaInput, VaRadio, VaSelect, VaSwitch,
   VaList, VaListItem, VaListItemLabel, VaListItemSection,
+  VaMenu, VaMenuList, VaMenuItem, VaDivider,
   VaSkeleton, VaSkeletonGroup,
-  VaAlert, VaAvatar, VaButton, VaIcon, VaImage, VaPopover,
+  VaAlert, VaAvatar, VaButton, VaButtonDropdown, VaIcon, VaImage, VaPopover,
   VaModal, VaModalPlugin,
 } from 'vuestic-ui';
 import "vuestic-ui/css";
@@ -36,8 +37,9 @@ createApp(App)
       VaCard, VaCardContent, VaCardTitle,
       VaForm, VaDateInput, VaInput, VaRadio, VaSelect, VaSwitch,
       VaList, VaListItem, VaListItemLabel, VaListItemSection,
+      VaMenu, VaMenuList, VaMenuItem, VaDivider,
       VaSkeleton, VaSkeletonGroup,
-      VaAlert, VaAvatar, VaButton, VaIcon, VaImage, VaPopover,
+      VaAlert, VaAvatar, VaButton, VaButtonDropdown, VaIcon, VaImage, VaPopover,
       VaModal,
     },
     plugins: {

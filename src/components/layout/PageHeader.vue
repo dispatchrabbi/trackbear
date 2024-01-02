@@ -33,7 +33,32 @@ import DarkModeToggle from './DarkModeToggle.vue';
         <DarkModeToggle />
       </VaNavbarItem>
       <template v-if="userStore.user">
-        <VaNavbarItem>
+        <VaNavbarItem class="mobile">
+          <VaMenu>
+            <template #anchor>
+              <VaButton icon="menu" />
+            </template>
+            <VaMenuList>
+              <VaMenuItem>
+                <RouterLink to="/projects">
+                  Projects
+                </RouterLink>
+              </VaMenuItem>
+              <VaMenuItem>
+                <RouterLink to="/leaderboards">
+                  Leaderboards
+                </RouterLink>
+              </VaMenuItem>
+              <VaDivider />
+              <VaMenuItem>
+                <RouterLink to="/logout">
+                  Log Out
+                </RouterLink>
+              </VaMenuItem>
+            </VaMenuList>
+          </VaMenu>
+        </VaNavbarItem>
+        <VaNavbarItem class="desktop">
           <VaButton
             preset="secondary"
             @click="router.push('/projects')"
@@ -41,7 +66,7 @@ import DarkModeToggle from './DarkModeToggle.vue';
             Projects
           </VaButton>
         </VaNavbarItem>
-        <VaNavbarItem>
+        <VaNavbarItem class="desktop">
           <VaButton
             preset="secondary"
             @click="router.push('/leaderboards')"
@@ -49,7 +74,7 @@ import DarkModeToggle from './DarkModeToggle.vue';
             Leaderboards
           </VaButton>
         </VaNavbarItem>
-        <!-- <VaNavbarItem>
+        <!-- <VaNavbarItem class="desktop">
           <VaButton
             preset="secondary"
             @click="router.push('/account')"
@@ -57,7 +82,7 @@ import DarkModeToggle from './DarkModeToggle.vue';
             Account
           </VaButton>
         </VaNavbarItem> -->
-        <VaNavbarItem>
+        <VaNavbarItem class="desktop">
           <VaButton
             preset="secondary"
             @click="router.push('/logout')"
@@ -67,7 +92,26 @@ import DarkModeToggle from './DarkModeToggle.vue';
         </VaNavbarItem>
       </template>
       <template v-else>
-        <VaNavbarItem>
+        <VaNavbarItem class="mobile">
+          <VaMenu>
+            <template #anchor>
+              <VaButton icon="menu" />
+            </template>
+            <VaMenuList>
+              <VaMenuItem>
+                <RouterLink to="/signup">
+                  Sign Up
+                </RouterLink>
+              </VaMenuItem>
+              <VaMenuItem>
+                <RouterLink to="/login">
+                  Log In
+                </RouterLink>
+              </VaMenuItem>
+            </VaMenuList>
+          </VaMenu>
+        </VaNavbarItem>
+        <VaNavbarItem class="desktop">
           <VaButton
             preset="secondary"
             @click="router.push('/signup')"
@@ -75,7 +119,7 @@ import DarkModeToggle from './DarkModeToggle.vue';
             Sign Up!
           </VaButton>
         </VaNavbarItem>
-        <VaNavbarItem>
+        <VaNavbarItem class="desktop">
           <VaButton
             @click="router.push('/login')"
           >
@@ -98,5 +142,16 @@ import DarkModeToggle from './DarkModeToggle.vue';
 
 .masthead sup {
   color: var(--va-warning);
+}
+
+.desktop {
+  @apply hidden;
+  @apply sm:block;
+}
+
+.mobile {
+  @apply block;
+  @apply sm:hidden;
+  @apply mr-0;
 }
 </style>

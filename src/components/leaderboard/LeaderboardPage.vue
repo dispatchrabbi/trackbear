@@ -87,8 +87,8 @@ const showGraphModal = ref<boolean>(false);
           </RouterLink>
         </div>
       </div>
-      <div class="grid grid-cols-6 gap-4">
-        <div class="col-span-2 flex flex-col justify-start gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+        <div class="md:col-span-2 flex flex-col justify-start gap-4">
           <div
             class="leaderboard-goal shrink"
           >
@@ -109,7 +109,7 @@ const showGraphModal = ref<boolean>(false);
             <LeaderboardStats :leaderboard="leaderboard" />
           </div> -->
         </div>
-        <div class="col-span-4 flex flex-col justify-start gap-4">
+        <div class="md:col-span-4 flex flex-col justify-start gap-4">
           <div class="leaderboard-chart shrink">
             <VaCard class="h-full">
               <VaCardTitle>

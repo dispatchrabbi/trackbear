@@ -1,6 +1,7 @@
 # TODO
 
 ## Next
+- [X] Basic mobile styles
 - [ ] Edit your account
 - [ ] Delete your account
 - [X] Put TrackBear behind nginx reverse proxy for easier SSL

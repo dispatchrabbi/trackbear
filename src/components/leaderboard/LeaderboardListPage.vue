@@ -27,18 +27,21 @@ getLeaderboards()
     <div class="flex items-center mb-3">
       <div class="grow">
         <h2 class="va-h2">
-          Your Leaderboards
+          Leaderboards
         </h2>
       </div>
       <div class="shrink">
         <RouterLink to="/leaderboards/new">
-          <VaButton gradient>
-            New Leaderboard
+          <VaButton
+            icon="add"
+            gradient
+          >
+            New
           </VaButton>
         </RouterLink>
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div v-if="isLoading">
         <!-- <LeaderboardSkeletonTile /> -->
       </div>
