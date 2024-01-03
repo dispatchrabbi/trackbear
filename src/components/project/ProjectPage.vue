@@ -107,7 +107,7 @@ const showGraphModal = ref<boolean>(false);
           </RouterLink>
         </div>
       </div>
-      <div class="grid md:grid-cols-6 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
         <div class="md:col-span-2 flex flex-col justify-start gap-4">
           <div class="project-enter-progress shrink">
             <EnterProgress
