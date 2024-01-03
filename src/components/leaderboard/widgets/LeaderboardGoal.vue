@@ -11,17 +11,17 @@ const props = defineProps<{
 const timeframe = computed(() => {
   if(props.leaderboard.startDate && props.leaderboard.endDate) {
     return {
-      title: props.leaderboard.goal ? 'between' : 'timeframe',
+      title: (props.leaderboard.goal || props.leaderboard.type === 'percentage') ? 'between' : 'timeframe',
       text: `${props.leaderboard.startDate} and ${props.leaderboard.endDate}`,
     };
   } else if(props.leaderboard.startDate) {
     return {
-      title: props.leaderboard.goal ? 'starting' : 'start date',
+      title: (props.leaderboard.goal || props.leaderboard.type === 'percentage') ? 'starting' : 'start date',
       text: `${props.leaderboard.startDate}`,
     };
   } else if(props.leaderboard.endDate) {
     return {
-      title: props.leaderboard.goal ? 'by' : 'end date',
+      title: (props.leaderboard.goal || props.leaderboard.type === 'percentage') ? 'by' : 'end date',
       text: `${props.leaderboard.endDate}`,
     };
   } else {
@@ -29,20 +29,19 @@ const timeframe = computed(() => {
   }
 });
 
-// TODO: I'm not sure I like this part of the section
-// const counts = computed(() => {
-//   const projects = props.leaderboard.projects.length;
+const counts = computed(() => {
+  const projects = props.leaderboard.projects.length;
 
-//   const participants = props.leaderboard.projects
-//     .map(project => project.owner.uuid)
-//     .reduce((set, uuid) => set.add(uuid), new Set<string>())
-//     .size;
+  const participants = props.leaderboard.projects
+    .map(project => project.owner.uuid)
+    .reduce((set, uuid) => set.add(uuid), new Set<string>())
+    .size;
 
-//   return {
-//     projects,
-//     participants
-//   };
-// });
+  return {
+    projects,
+    participants
+  };
+});
 
 </script>
 
@@ -62,7 +61,7 @@ const timeframe = computed(() => {
       v-if="props.leaderboard.type === 'percentage'"
       class="text-center text-xl/4"
     >
-      100% of your own goal!
+      100% of your own goal
     </VaCardContent>
     <VaCardTitle v-if="timeframe">
       {{ timeframe.title }}
@@ -73,18 +72,18 @@ const timeframe = computed(() => {
     >
       {{ timeframe.text }}
     </VaCardContent>
-    <!-- <VaCardTitle>
-      Number of Participants
+    <VaCardTitle>
+      and there {{ counts.participants === 1 ? 'is' : 'are' }}
     </VaCardTitle>
     <VaCardContent>
       {{ counts.participants }} {{ counts.participants === 1 ? 'person' : 'people' }}
     </VaCardContent>
     <VaCardTitle>
-      Number of Projects
+      participating with
     </VaCardTitle>
     <VaCardContent>
       {{ counts.projects }} {{ counts.projects === 1 ? 'project' : 'projects' }}
-    </VaCardContent> -->
+    </VaCardContent>
   </VaCard>
 </template>
 

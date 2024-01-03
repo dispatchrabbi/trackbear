@@ -4,6 +4,7 @@ import { DataTableColumnSource } from 'vuestic-ui';
 
 import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
 import { GOAL_TYPE_INFO } from 'src/lib/api/leaderboard.ts';
+import { formatTimeProgress } from 'src/lib/date.ts';
 
 const props = defineProps<{
   leaderboard: CompleteLeaderboard
@@ -12,13 +13,26 @@ const props = defineProps<{
 function makeRows(leaderboard: CompleteLeaderboard) {
   const rows = leaderboard.projects
     .sort((a, b) => a.title < b.title ? -1 : a.title > b.title ? 1 : 0)
-    .map(project => ({
-      title: project.title,
-      writer: project.owner.displayName,
-      // TODO: make this better (incorporate goal type and leaderboard dates)
-      total: project.updates.reduce((total, update) => total + update.value, 0),
-      lastUpdate: project.updates.length > 0 ? project.updates.sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0)[0].date : 'never',
-    }));
+    .map(project => {
+      let totalSoFar = project.updates.reduce((total, update) => total + update.value, 0);
+      let totalStr;
+      if(leaderboard.type === 'percentage') {
+        totalStr = Math.round(totalSoFar / (project.type === 'time' ? project.goal * 60 : project.goal) * 100) + '%';
+      } else if(leaderboard.type === 'time') {
+        totalStr = formatTimeProgress(totalSoFar);
+      } else {
+        totalStr = totalSoFar + ' ' + GOAL_TYPE_INFO[project.type].counter[totalSoFar === 1 ? 'singular' : 'plural'];
+      }
+
+      const lastUpdate = project.updates.length > 0 ? project.updates.sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0)[0].date : 'never'
+
+      return {
+        title: project.title,
+        writer: project.owner.displayName,
+        total: totalStr,
+        lastUpdate,
+      };
+    });
 
   return rows;
 }

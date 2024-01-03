@@ -101,7 +101,7 @@ function handleEditClick(updateId) {
   updateForm.value = {
     id: updateWithThatId.id,
     date: parseDateStringSafe(updateWithThatId.date),
-    count: props.project.type === 'time' ? formatTimeProgress(updateWithThatId.value) : updateWithThatId.value.toString(),
+    count: props.project.type === 'time' ? formatTimeProgress(updateWithThatId.value, false, true) : updateWithThatId.value.toString(),
   };
 }
 async function handleSubmitEdit() {

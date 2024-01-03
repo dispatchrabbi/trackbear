@@ -45,7 +45,7 @@ export function formatDateSafe(date: Date | null | undefined): string | null {
   return `${year}-${month}-${day}`;
 }
 
-export function formatTimeProgress(totalMinutes) {
+export function formatTimeProgress(totalMinutes, omitZeroMinutes = false, forceColon = false) {
   const hours = '' + Math.floor(totalMinutes / 60);
 
   let minutes = '' + totalMinutes % 60;
@@ -53,7 +53,15 @@ export function formatTimeProgress(totalMinutes) {
     minutes = '0' + minutes;
   }
 
-  return `${hours}:${minutes}`;
+
+  // TODO: revamp time editing/input to remove dependency on this function
+  if(forceColon) {
+    return `${hours}:${minutes}`;
+  } else if(omitZeroMinutes && minutes == '00') {
+    return `${hours}h`;
+  } else {
+    return `${hours}h ${minutes}m`;
+  }
 }
 
 export function minDateStr(a, b) {

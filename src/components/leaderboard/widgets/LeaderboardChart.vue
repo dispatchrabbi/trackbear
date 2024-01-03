@@ -224,7 +224,7 @@ const chartOptions = computed(() => {
         min: 0,
         suggestedMax: normalizedGoal.value || GOAL_TYPE_INFO[props.leaderboard.type].defaultChartMax,
         ticks: {
-          callback: props.leaderboard.type === 'time' ? value => formatTimeProgress(value)  : undefined,
+          callback: props.leaderboard.type === 'time' ? value => formatTimeProgress(value, true)  : undefined,
           stepSize: props.leaderboard.type === 'time' ? 60 : undefined,
         }
       },
