@@ -19,6 +19,8 @@
 - [ ] Aggregate grand totals / Aggregate by tag / Exclude projects from grand total
 
 ## Before stable launch
+- [ ] Figure out email sending
+- [ ] Make sure sign-ups validate the email address
 - [ ] Go over [security practices](https://blog.risingstack.com/node-js-security-checklist/)
   - [X] Integrate CSRF protection (no need, JSON APIs are CORS-locked, see: https://github.com/pillarjs/understanding-csrf#use-only-json-apis)
   - [X] Double-check Helmet settings

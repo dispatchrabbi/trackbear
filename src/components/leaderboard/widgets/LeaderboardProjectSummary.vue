@@ -4,7 +4,7 @@ import { DataTableColumnSource } from 'vuestic-ui';
 
 import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
 import { GOAL_TYPE_INFO } from 'src/lib/api/leaderboard.ts';
-import { formatTimeProgress } from 'src/lib/date.ts';
+import { formatTimeProgress, formatDateSafe } from 'src/lib/date.ts';
 
 const props = defineProps<{
   leaderboard: CompleteLeaderboard
@@ -14,22 +14,18 @@ function makeRows(leaderboard: CompleteLeaderboard) {
   const rows = leaderboard.projects
     .sort((a, b) => a.title < b.title ? -1 : a.title > b.title ? 1 : 0)
     .map(project => {
-      let totalSoFar = project.updates.reduce((total, update) => total + update.value, 0);
-      let totalStr;
+      let total = project.updates.reduce((total, update) => total + update.value, 0);
       if(leaderboard.type === 'percentage') {
-        totalStr = Math.round(totalSoFar / (project.type === 'time' ? project.goal * 60 : project.goal) * 100) + '%';
-      } else if(leaderboard.type === 'time') {
-        totalStr = formatTimeProgress(totalSoFar);
-      } else {
-        totalStr = totalSoFar + ' ' + GOAL_TYPE_INFO[project.type].counter[totalSoFar === 1 ? 'singular' : 'plural'];
+        total = Math.round(total / (project.type === 'time' ? project.goal * 60 : project.goal) * 100);
       }
 
-      const lastUpdate = project.updates.length > 0 ? project.updates.sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0)[0].date : 'never'
+      const lastUpdate = project.updates.length > 0 ? project.updates.sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : 0)[0].date : null;
 
       return {
         title: project.title,
         writer: project.owner.displayName,
-        total: totalStr,
+        leaderboardType: leaderboard.type,
+        total,
         lastUpdate,
       };
     });
@@ -38,12 +34,32 @@ function makeRows(leaderboard: CompleteLeaderboard) {
 }
 const items = computed(() => makeRows(props.leaderboard));
 
+function formatLastUpdate(lastUpdateDate) {
+  return lastUpdateDate || 'never';
+}
+
+function formatTotal(total, leaderboardType) {
+  if(leaderboardType === 'percentage') {
+    return total + '%';
+  } else if(leaderboardType === 'time') {
+    return formatTimeProgress(total);
+  } else {
+    return total + ' ' + GOAL_TYPE_INFO[leaderboardType].counter[total === 1 ? 'singular' : 'plural'];
+  }
+}
+
 const columns = computed(() => {
   const cols = [
     {
       key: 'lastUpdate',
       label: 'Last Update',
       sortable: true,
+      sortingFn: (a, b) => {
+        if(a === null && b === null) { return 0; }
+        if(a === null || a < b) { return -1; }
+        if(b === null || a > b) { return 1; }
+        return 0;
+      }
     },
     {
       key: 'title',
@@ -59,6 +75,7 @@ const columns = computed(() => {
       key: 'total',
       label: 'Total',
       sortable: true,
+      sortingFn: (a, b) => a < b ? -1 : a > b ? 1 : 0,
       thAlign: 'right',
       tdAlign: 'right',
     },
@@ -89,7 +106,14 @@ watch(() => sorting.sortingOrder, val => localStorage.setItem('leaderboardProjec
         v-model:sorting-order="sorting.sortingOrder"
         :items="items"
         :columns="columns"
-      />
+      >
+        <template #cell(lastUpdate)="{ rowData }">
+          {{ formatLastUpdate(rowData.lastUpdate) }}
+        </template>
+        <template #cell(total)="{ rowData }">
+          {{ formatTotal(rowData.total, leaderboard.type) }}
+        </template>
+      </VaDataTable>
       <div
         v-else
         class="text-center"
