@@ -6,19 +6,23 @@ import { useColors } from 'vuestic-ui';
 const { getColor } = useColors();
 
 import { parseDateString, formatDate, formatTimeProgress, maxDateStr } from 'src/lib//date.ts';
-import { GOAL_TYPE_INFO } from 'src/lib//api/leaderboard.ts';
 import { TYPE_INFO } from 'src/lib//project.ts';
-import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
 import type { ProjectWithUpdates } from 'server/api/projects.ts';
 
 import LineChart from 'src/components/chart/LineChart.vue';
 import type { LineChartOptions } from 'src/components/chart/LineChart.vue';
 
+type ReducedUpdate = { date: string; value: number; };
+type ReducedProjectWithUpdates = Pick<
+  ProjectWithUpdates,
+  'title' | 'type' | 'goal' | 'startDate' | 'endDate'
+> & { updates: ReducedUpdate[] };
+
 const props = defineProps<{
-  leaderboard: CompleteLeaderboard;
-  showPar: boolean;
-  showTooltips: boolean;
-  showLegend: boolean;
+  project: ReducedProjectWithUpdates;
+  showPar?: boolean;
+  showTooltips?: boolean;
+  showLegend?: boolean;
 }>();
 
 type NormalizedUpdate = {
@@ -28,7 +32,7 @@ type NormalizedUpdate = {
   value: number;
   totalSoFar: number;
 };
-function normalizeProjectUpdates(project: ProjectWithUpdates, leaderboard: CompleteLeaderboard): NormalizedUpdate[] {
+function normalizeProjectUpdates(project: ReducedProjectWithUpdates): NormalizedUpdate[] {
   const updates = project.updates;
 
   // first, combine all the updates that happened on the same day
@@ -46,15 +50,14 @@ function normalizeProjectUpdates(project: ProjectWithUpdates, leaderboard: Compl
   const normalizedUpdates: NormalizedUpdate[] = [];
   // we have to use a for loop because .map doesn't update the array as it's going,
   // and we need access to the previous update's running total
-  const normalizedProjectGoal = project.type === 'time' ? project.goal * 60 : project.goal;
   for(let i = 0; i < consolidatedUpdates.length; ++i) {
     const update = consolidatedUpdates[i];
 
     const rawValue = update.value;
-    const value = leaderboard.type === 'percentage' ? (rawValue / normalizedProjectGoal) * 100 : rawValue;
+    const value = rawValue;
     const rawTotalSoFar = (i === 0 ? rawValue : rawValue + normalizedUpdates[i - 1].rawTotalSoFar);
     // calculate this from scratch each time so we don't depend on floating point math to eventually add to 100.0
-    const totalSoFar = leaderboard.type === 'percentage' ? (rawTotalSoFar / normalizedProjectGoal) * 100 : rawTotalSoFar;
+    const totalSoFar = rawTotalSoFar;
 
     normalizedUpdates.push({
       date: update.date,
@@ -67,11 +70,10 @@ function normalizeProjectUpdates(project: ProjectWithUpdates, leaderboard: Compl
 
   return normalizedUpdates;
 }
-const normalizedProjects = computed(() => props.leaderboard.projects.map(project => ({
-  ...project,
-  updates: normalizeProjectUpdates(project, props.leaderboard),
-})));
-
+const normalizedProject = computed(() => ({
+  ...props.project,
+  updates: normalizeProjectUpdates(props.project),
+}));
 
 function determineChartStartDate(firstUpdate?: string, leaderboardStartDate?: string) {
   if(leaderboardStartDate) {
@@ -82,22 +84,22 @@ function determineChartStartDate(firstUpdate?: string, leaderboardStartDate?: st
     return formatDate(new Date()); // today
   }
 }
-function determineChartEndDate(lastUpdate?: string, leaderboardEndDate?: string, leaderboardStartDate?: string) {
-  if(leaderboardEndDate) {
-    return leaderboardEndDate;
+function determineChartEndDate(lastUpdate?: string, projectEndDate?: string, projectStartDate?: string) {
+  if(projectEndDate) {
+    return projectEndDate;
   } else if(lastUpdate) {
     return lastUpdate
-  } else if(leaderboardStartDate) {
+  } else if(projectStartDate) {
     // display a 7-day chart
-    return maxDateStr(formatDate(addDays(parseDateString(leaderboardStartDate), 6)), formatDate(addDays(new Date(), 6)));
+    return maxDateStr(formatDate(addDays(parseDateString(projectStartDate), 6)), formatDate(addDays(new Date(), 6)));
   } else {
     // display a 7-day chart
     return formatDate(addDays(new Date(), 6));
   }
 }
-function eachDayOfProject(leaderboard: CompleteLeaderboard, firstUpdate?: string, lastUpdate?: string ) {
-  const start = determineChartStartDate(firstUpdate, leaderboard.startDate);
-  const end = determineChartEndDate(lastUpdate, leaderboard.endDate, leaderboard.startDate);
+function eachDayOfProject(project: ReducedProjectWithUpdates, firstUpdate?: string, lastUpdate?: string ) {
+  const start = determineChartStartDate(firstUpdate, project.startDate);
+  const end = determineChartEndDate(lastUpdate, project.endDate, project.startDate);
 
   let dates = { start: parseDateString(start), end: parseDateString(end) };
   if(dates.end < dates.start) {
@@ -110,10 +112,8 @@ function eachDayOfProject(leaderboard: CompleteLeaderboard, firstUpdate?: string
 const extremeUpdateDates = computed(() => {
   // use a Set to uniquify the collection of dates across projects
   const dateSet = new Set<string>();
-  for(let project of normalizedProjects.value) {
-    for(let update of project.updates) {
-      dateSet.add(update.date);
-    }
+  for(let update of normalizedProject.value.updates) {
+    dateSet.add(update.date);
   }
 
   const orderedDates = [...dateSet].sort();
@@ -122,28 +122,25 @@ const extremeUpdateDates = computed(() => {
     last: orderedDates.length ? orderedDates[orderedDates.length - 1] : null,
   };
 });
-const eachDay = computed(() => eachDayOfProject(props.leaderboard, extremeUpdateDates.value.first, extremeUpdateDates.value.last));
+const eachDay = computed(() => eachDayOfProject(props.project, extremeUpdateDates.value.first, extremeUpdateDates.value.last));
 
 const normalizedGoal = computed(() => {
-  if(props.leaderboard.type === 'percentage') {
-    // the percentage goal is always 100
-    return 100;
-  } else if(props.leaderboard.type === 'time') {
+  if(props.project.type === 'time') {
     // time goals are in hours, so we convert them to minutes
-    return props.leaderboard.goal === null ? null : (props.leaderboard.goal * 60);
+    return props.project.goal === null ? null : (props.project.goal * 60);
   } else {
-    return props.leaderboard.goal;
+    return props.project.goal;
   }
 });
 
-function calculatePars(eachDay: string[], leaderboard: CompleteLeaderboard) {
+function calculatePars(eachDay: string[], project: ReducedProjectWithUpdates) {
   // no way to have par if there's no goal
   if(normalizedGoal.value === null) {
     return null;
   }
 
   let pars = [];
-  if(leaderboard.endDate) {
+  if(project.endDate) {
     // count up toward the end date
     const parPerDay = normalizedGoal.value / (eachDay.length);
     pars = eachDay.map((dateStr, ix) => ({
@@ -162,7 +159,7 @@ function calculatePars(eachDay: string[], leaderboard: CompleteLeaderboard) {
 
   return pars;
 }
-const pars = computed(() => props.showPar ? calculatePars(eachDay.value, props.leaderboard) : null);
+const pars = computed(() => props.showPar ? calculatePars(eachDay.value, props.project) : null);
 
 const chartData = computed(() => {
   const data = {
@@ -170,17 +167,12 @@ const chartData = computed(() => {
     datasets: [],
   };
 
-  for(let i = 0; i < normalizedProjects.value.length; ++i) {
-    const project = normalizedProjects.value[i];
-
-    data.datasets.push({
-      label: project.owner.displayName,
-      title: project.title,
-      owner: project.owner.displayName,
-      counter: TYPE_INFO[project.type].counter,
-      data: project.updates.filter(update => eachDay.value.includes(update.date)),
-    });
-  }
+  const project = normalizedProject.value;
+  data.datasets.push({
+    label: project.title,
+    counter: TYPE_INFO[project.type].counter,
+    data: project.updates.filter(update => eachDay.value.includes(update.date)),
+  });
 
   if(props.showPar) {
     data.datasets.push({
@@ -194,13 +186,11 @@ const chartData = computed(() => {
   return data;
 });
 
-function makeTooltipLabelFn(leaderboardType) {
-  if(leaderboardType === 'time') {
-    return ctx => `${formatTimeProgress(ctx.raw.totalSoFar)} (${ctx.dataset.owner})`;
-  } else if(leaderboardType === 'percentage') {
-    return ctx => `${Math.round(ctx.raw.totalSoFar)}% (${ctx.dataset.owner})`;
+function makeTooltipLabelFn(projectType) {
+  if(projectType === 'time') {
+    return ctx => `${formatTimeProgress(ctx.raw.totalSoFar)}`;
   } else {
-    return ctx => `${ctx.raw.totalSoFar} ${(ctx.raw.totalSoFar === 1 ? ctx.dataset.counter.singular : ctx.dataset.counter.plural)} (${ctx.dataset.owner})`;
+    return ctx => `${ctx.raw.totalSoFar} ${(ctx.raw.totalSoFar === 1 ? ctx.dataset.counter.singular : ctx.dataset.counter.plural)}`;
   }
 }
 const chartOptions = computed(() => {
@@ -208,7 +198,7 @@ const chartOptions = computed(() => {
     {
       filter: ctx => ctx.dataset.label !== 'Par', // even if showing tooltips, don't show them for Par
       callbacks: {
-        label: makeTooltipLabelFn(props.leaderboard.type),
+        label: makeTooltipLabelFn(props.project.type),
       },
     } :
     { enabled: false };
@@ -222,10 +212,10 @@ const chartOptions = computed(() => {
       y: {
         type: 'linear',
         min: 0,
-        suggestedMax: normalizedGoal.value || GOAL_TYPE_INFO[props.leaderboard.type].defaultChartMax,
+        suggestedMax: normalizedGoal.value || TYPE_INFO[props.project.type].defaultChartMax,
         ticks: {
-          callback: props.leaderboard.type === 'time' ? value => formatTimeProgress(value)  : undefined,
-          stepSize: props.leaderboard.type === 'time' ? 60 : undefined,
+          callback: props.project.type === 'time' ? value => formatTimeProgress(value)  : undefined,
+          stepSize: props.project.type === 'time' ? 60 : undefined,
         }
       },
     },

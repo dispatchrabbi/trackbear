@@ -18,7 +18,7 @@ import EnterProgress from 'src/components/project/widgets/EnterProgress.vue';
 import ProjectGoal from 'src/components/project/widgets/ProjectGoal.vue';
 // import ProjectStats from 'src/components/project/widgets/ProjectStats.vue';
 import ProjectHistory from 'src/components/project/widgets/ProjectHistory.vue';
-import ProgressChart from 'src/components/project/widgets/ProgressChart.vue';
+import ProjectChart from 'src/components/project/widgets/ProjectChart.vue';
 
 const project = ref<ProjectWithUpdatesAndLeaderboards>(null);
 const errorMessage = ref<string>('');
@@ -73,6 +73,8 @@ async function handleShareClick() {
     });
   }
 }
+
+const showGraphModal = ref<boolean>(false);
 
 </script>
 
@@ -154,14 +156,28 @@ async function handleShareClick() {
         <div class="md:col-span-4 flex flex-col justify-start gap-4">
           <div class="project-graph shrink">
             <VaCard class="h-full">
-              <VaCardTitle>Progress So Far</VaCardTitle>
+              <VaCardTitle>
+                <div class="flex gap-4 items-center w-full">
+                  <div class="grow">
+                    Progress So Far
+                  </div>
+                  <div class="shrink">
+                    <VaIcon
+                      class="cursor-pointer"
+                      name="zoom_out_map"
+                      size="medium"
+                      title="Fullscreen"
+                      @click="showGraphModal = true"
+                    />
+                  </div>
+                </div>
+              </VaCardTitle>
               <VaCardContent>
-                <ProgressChart
+                <ProjectChart
                   :id="`project-chart-${project.id}`"
                   :project="project"
-                  :updates="project.updates"
-                  :show-par="true"
-                  :show-tooltips="true"
+                  show-par
+                  show-tooltips
                 />
               </VaCardContent>
             </VaCard>
@@ -177,6 +193,20 @@ async function handleShareClick() {
           </div>
         </div>
       </div>
+      <VaModal
+        v-model="showGraphModal"
+        class="project-chart-modal"
+        fullscreen
+        hide-default-actions
+        close-button
+      >
+        <ProjectChart
+          :id="`modal-project-chart-${project.id}`"
+          :project="project"
+          show-par
+          show-tooltips
+        />
+      </VaModal>
     </div>
     <div v-else>
       {{ errorMessage }}

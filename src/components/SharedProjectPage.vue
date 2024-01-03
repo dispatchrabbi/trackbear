@@ -13,7 +13,7 @@ import AppPage from 'src/components/layout/AppPage.vue';
 import ProjectGoal from 'src/components/project/widgets/ProjectGoal.vue';
 import ProjectStats from 'src/components/project/widgets/ProjectStats.vue';
 import ProjectHistory from 'src/components/project/widgets/ProjectHistory.vue';
-import ProgressChart from 'src/components/project/widgets/ProgressChart.vue';
+import ProjectChart from 'src/components/project/widgets/ProjectChart.vue';
 
 const project = ref<SharedProjectWithUpdates>(null);
 const errorMessage = ref<string>('');
@@ -63,12 +63,11 @@ loadProject();
             <VaCard class="h-full">
               <VaCardTitle>Progress So Far</VaCardTitle>
               <VaCardContent>
-                <ProgressChart
+                <ProjectChart
                   :id="`project-chart-${project.uuid}`"
                   :project="project"
-                  :updates="project.updates"
-                  :show-par="true"
-                  :show-tooltips="true"
+                  show-par
+                  show-tooltips
                 />
               </VaCardContent>
             </VaCard>

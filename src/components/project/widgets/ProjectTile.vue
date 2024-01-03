@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ProjectWithUpdates } from 'server/api/projects.ts';
-import ProgressChart from './ProgressChart.vue';
+import ProjectChart from './ProjectChart.vue';
 
 defineProps<{ project: ProjectWithUpdates }>();
 
@@ -14,13 +14,11 @@ defineProps<{ project: ProjectWithUpdates }>();
       </h2>
     </VaCardTitle>
     <VaCardContent>
-      <ProgressChart
+      <ProjectChart
         :id="`project-tile-chart-${project.id}`"
         class="min-h-[12rem]"
         :project="project"
-        :updates="project.updates"
-        :show-par="true"
-        :show-tooltips="false"
+        show-par
       />
     </VaCardContent>
   </VaCard>
