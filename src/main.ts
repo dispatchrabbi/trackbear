@@ -52,8 +52,8 @@ createApp(App)
           dark: themes.nordDark,
           ...themes,
         }
-      }
-    }
+      },
+    },
   }))
   .mount('#app');
 

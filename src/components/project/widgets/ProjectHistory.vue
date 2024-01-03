@@ -214,6 +214,7 @@ async function handleDeleteConfirmClick() {
     </VaCardContent>
   </VaCard>
   <VaModal
+    class="edit-update-modal"
     :model-value="!!updateForm"
     hide-default-actions
   >
@@ -261,6 +262,7 @@ async function handleDeleteConfirmClick() {
     </template>
   </VaModal>
   <VaModal
+    class="delete-update-modal"
     :model-value="!!updateIdToDelete"
     hide-default-actions
   >

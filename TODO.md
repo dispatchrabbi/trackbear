@@ -2,17 +2,18 @@
 
 ## Next
 - [X] Basic mobile styles
+- [ ] Build/deploy improvements:
+  - [ ] Graceful start (wait-ready) and shutdown: https://pm2.keymetrics.io/docs/usage/signals-clean-restart/
+  - [ ] Pre-push or pre-commit build hook
 - [ ] Edit your account
 - [ ] Delete your account
-- [X] Put TrackBear behind nginx reverse proxy for easier SSL
 
 ## Soon
-- [X] Sharing
 - [ ] Create an admin console
   - [ ] Announcement/banner functionality
-- [X] Leaderboards (types: same type, goal percentage)
 - [ ] Replace the try/catch api call logic in the front-end with something less onerous
 - [ ] In-page username validation (https://ui.vuestic.dev/ui-elements/form#async-validation)
+- [ ] Password reset
 
 ## Switch to tag-and-tally
 - [ ] Switch over to the tag-and-tally system of updates

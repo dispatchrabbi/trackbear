@@ -19,7 +19,7 @@ body.va-screen-xs, body.va-screen-sm, body.va-screen-md, body.va-screen-lg, body
   align-items: stretch;
 }
 
-  :is(.leaderboard-chart-modal, .project-chart-modal) .va-modal__inner {
+:is(.leaderboard-chart-modal, .project-chart-modal) .va-modal__inner {
   justify-content: center;
   max-height: calc(100vh - 4rem);
   max-width: calc(100vw - 4rem);
@@ -27,4 +27,8 @@ body.va-screen-xs, body.va-screen-sm, body.va-screen-md, body.va-screen-lg, body
   margin-top: 2rem;
   margin-bottom: 2rem;
   padding: 0;
+}
+
+:is(.edit-update-modal, .delete-update-modal) .va-modal__inner {
+  min-width: auto;
 }
