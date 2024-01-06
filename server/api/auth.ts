@@ -34,23 +34,19 @@ authRouter.post('/login',
   const { username, password } = req.body;
 
   let user: User | null;
-  // MIGRATION: Uncomment after data is moved to the UserAuth table
-  // let userAuth: UserAuth | null;
+  let userAuth: UserAuth | null;
   try {
     user = await dbClient.user.findUnique({ where: { username } });
-    // MIGRATION: Uncomment after data is moved to the UserAuth table
-    // userAuth = await dbClient.userAuth.findUnique({ where: { userId: user.id } });
+    userAuth = await dbClient.userAuth.findUnique({ where: { userId: user.id } });
   } catch(err) { return next(err); }
 
   if(!user) {
     winston.info(`LOGIN: ${username} attempted to log in but does not exist`);
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
+  } else if(!userAuth) {
+    winston.error(`LOGIN: ${username} attempted to log in but does not have userauth!`);
+    return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
-  // MIGRATION: Uncomment after data is moved to the UserAuth table
-  // else if(!userAuth) {
-  //   winston.error(`LOGIN: ${username} attempted to log in but does not have userauth!`);
-  //   return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
-  // }
 
   if(user.state !== USER_STATE.ACTIVE) {
     winston.info(`LOGIN: ${username} attempted to log in but account state is ${user.state}`);
@@ -59,7 +55,7 @@ authRouter.post('/login',
 
   let verified: boolean;
   try {
-    verified = await verifyHash(user.password, password, user.salt);
+    verified = await verifyHash(userAuth.password, password, userAuth.salt);
   } catch(err) { return next(err); }
 
   if(!verified) {
