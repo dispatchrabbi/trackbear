@@ -56,4 +56,13 @@ async function initLoggers(logDir: string) {
   });
 }
 
-export default initLoggers;
+async function closeLoggers() {
+  return Promise.all(Array.from(winston.loggers.loggers.values()).map(logger => {
+    return new Promise<void>((res/*, rej*/) => {
+      logger.on('finish', () => res());
+      logger.end();
+    });
+  }));
+}
+
+export { initLoggers, closeLoggers };

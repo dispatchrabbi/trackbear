@@ -3,12 +3,13 @@ import dotenv from 'dotenv-safe';
 import { getNormalizedEnv } from './server/lib/env.ts';
 
 import winston from 'winston';
-import initLoggers from './server/lib/logger.ts';
+import { initLoggers, closeLoggers } from './server/lib/logger.ts';
 
 import dbClient from './server/lib/db.ts';
 
 import http from 'http';
 import https from 'https';
+import { promisify } from 'util';
 import express, { ErrorRequestHandler } from 'express';
 import morgan from 'morgan';
 import helmet from './server/lib/middleware/helmet.ts';
@@ -111,6 +112,14 @@ async function main() {
     // see https://vitejs.dev/config/server-options.html#server-middlewaremode
   }
 
+  // baseline server-side error handling
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  const lastChanceErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
+    console.error(err);
+    res.status(500).send('500 Server error');
+  };
+  app.use(lastChanceErrorHandler);
+
   // are we doing HTTP or HTTPS?
   let server: https.Server | http.Server;
   if(env.USE_HTTPS) {
@@ -123,15 +132,29 @@ async function main() {
   }
   server.listen(env.PORT, () => {
     winston.info(`TrackBear is now listening on ${env.USE_HTTPS ? 'https' : 'http'}://localhost:${env.PORT}/`);
+
+    // let pm2 know that the app is ready
+    process.send && process.send('ready');
   });
 
-  // baseline server-side error handling
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-  const lastChanceErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
-    console.error(err);
-    res.status(500).send('500 Server error');
-  };
-  app.use(lastChanceErrorHandler);
+  // handle SIGINT for graceful shutdown
+  process.on('SIGINT', async () => {
+    try {
+      await handleGracefulShutdown('SIGINT', server);
+      process.exit(0);
+    } catch(err) {
+      process.exit(1);
+    }
+  });
+}
+
+async function handleGracefulShutdown(signal: string, server: https.Server | http.Server) {
+  winston.info(`Received ${signal}, shutting down gracefully...`);
+
+  // no need to disconnect Prisma; it does it itself
+  // we only need to close off the server and the logs
+  await promisify(server.close)();
+  await closeLoggers();
 }
 
 main().catch(e => console.error(e));
