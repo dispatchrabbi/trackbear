@@ -1,8 +1,8 @@
-# 🐻 BearTracks
+# 🐻 TrackBear
 
-**BearTracks** is a writing tracker service. If you're writing, editing, or otherwise engaged in some sort of authorial project, you can track that project on BearTracks!
+**TrackBear** is a writing tracker service. If you're writing, editing, or otherwise engaged in some sort of authorial project, you can track that project on TrackBear!
 
-> BearTracks is... not even in beta. It's in super-mega-alpha mode right now. Please don't use it unless you are willing to be testing an alpha build.
+> TrackBear is... not even in beta. It's in super-mega-alpha mode right now. Please don't use it unless you are willing to be testing an alpha build.
 
 ## Installation
 
@@ -67,8 +67,12 @@ No fancy deploying yet, just SSHing onto the server. Pull the version you want (
 ./scripts/update-on-production.sh
 ```
 
+The update script will build the front end, apply migrations, and restart the app in pm2 (see below).
+
+The server uses pm2 to stay up and running. The app config is in `ecosystem.config.cjs`.
+
 ## Acknowledgements
 
 Polar bear photo by <a href="https://unsplash.com/@hansjurgen007?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Hans-Jurgen Mager</a> on <a href="https://unsplash.com/photos/polar-bear-on-snow-covered-ground-during-daytime-qQWV91TTBrE?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>.
 
-Thank you to the Overachievers Discord Chat for alpha-testing this and providing many good suggestions.
+Thank you to the Overachievers Discord Chat for alpha-testing this and providing many good suggestions. See ACKNOWLEDGEMENTS.md for a list!
