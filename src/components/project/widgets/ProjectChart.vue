@@ -212,12 +212,12 @@ const chartOptions = computed(() => {
     scales: {
       y: {
         type: 'linear',
-        min: 0,
+        suggestedMin: 0,
         suggestedMax: normalizedGoal.value || TYPE_INFO[props.project.type].defaultChartMax,
         ticks: {
           callback: props.project.type === 'time' ? value => formatTimeProgress(value, true)  : undefined,
           stepSize: props.project.type === 'time' ? 60 : undefined,
-        }
+        },
       },
     },
     plugins: {

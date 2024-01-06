@@ -29,9 +29,12 @@ function makeTrackbearStylesPlugin(getColor) {
 
       // configure axes and grids
       Object.keys(chart.config.options.scales).forEach(scaleId => {
-        chart.config.options.scales[scaleId].grid.color = getColor('backgroundBorder');
         chart.config.options.scales[scaleId].ticks.color = getColor('secondary');
       });
+
+      chart.config.options.scales['x'].grid.color = getColor('backgroundBorder');
+      chart.config.options.scales['y'].grid.color = ctx => ctx.tick.value === 0 ? getColor('secondary') : getColor('backgroundBorder');
+      chart.config.options.scales['y'].grid.z = 0;
 
       // configure dataset colors and points
       chart.config.data.datasets.forEach((dataset, ix) => {
@@ -39,10 +42,12 @@ function makeTrackbearStylesPlugin(getColor) {
           dataset.borderColor = PAR_COLOR;
           dataset.pointStyle = false;
           dataset.borderDash = PAR_BORDER_DASH;
+          dataset.borderWidth = 1;
         } else {
           dataset.borderColor = LINE_COLORS[ix % LINE_COLORS.length];
           dataset.backgroundColor = LINE_COLORS[ix % LINE_COLORS.length];
           dataset.pointStyle = POINT_STYLES[Math.floor(ix / LINE_COLORS.length)];
+          dataset.borderWidth = 2;
         }
       });
     }

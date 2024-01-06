@@ -222,7 +222,7 @@ const chartOptions = computed(() => {
     scales: {
       y: {
         type: 'linear',
-        min: 0,
+        suggestedMin: 0,
         suggestedMax: normalizedGoal.value || GOAL_TYPE_INFO[props.leaderboard.type].defaultChartMax,
         ticks: {
           callback: props.leaderboard.type === 'time' ? value => formatTimeProgress(value, true)  : undefined,
