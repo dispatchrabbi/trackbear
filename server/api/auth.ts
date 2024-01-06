@@ -6,7 +6,7 @@ import { validateBody } from "../lib/middleware/validate.ts";
 import { ApiResponse, success, failure } from '../lib/api-response.ts';
 
 import dbClient from '../lib/db.ts';
-import { User } from "@prisma/client";
+import { User, UserAuth } from "@prisma/client";
 import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut, requireUser, WithUser } from "../lib/auth.ts";
 import { USER_STATE } from "../lib/states.ts";
@@ -34,14 +34,23 @@ authRouter.post('/login',
   const { username, password } = req.body;
 
   let user: User | null;
+  // MIGRATION: Uncomment after data is moved to the UserAuth table
+  // let userAuth: UserAuth | null;
   try {
-    user = await dbClient.user.findUnique({ where: { username }});
+    user = await dbClient.user.findUnique({ where: { username } });
+    // MIGRATION: Uncomment after data is moved to the UserAuth table
+    // userAuth = await dbClient.userAuth.findUnique({ where: { userId: user.id } });
   } catch(err) { return next(err); }
 
   if(!user) {
     winston.info(`LOGIN: ${username} attempted to log in but does not exist`);
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
+  // MIGRATION: Uncomment after data is moved to the UserAuth table
+  // else if(!userAuth) {
+  //   winston.error(`LOGIN: ${username} attempted to log in but does not have userauth!`);
+  //   return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
+  // }
 
   if(user.state !== USER_STATE.ACTIVE) {
     winston.info(`LOGIN: ${username} attempted to log in but account state is ${user.state}`);
@@ -118,6 +127,7 @@ authRouter.post('/signup',
     ({ hashedPassword, salt } = await hash(password));
   } catch(err) { return next(err); }
 
+  // MIGRATION: After contracting migration, remove password and salt from this
   const userData = {
     email: email,
     username: username,
@@ -127,8 +137,18 @@ authRouter.post('/signup',
     state: USER_STATE.ACTIVE,
   };
 
+  const userAuthData = {
+    password: hashedPassword,
+    salt: salt,
+  };
+
   try {
-    const user = await dbClient.user.create({ data: userData });
+    const user = await dbClient.user.create({
+      data: {
+        ...userData,
+        UserAuth: { create: { ...userAuthData } },
+      }
+    });
     await logAuditEvent('signup', user.id);
     winston.debug(`SIGNUP: ${user.username} just signed up`);
 

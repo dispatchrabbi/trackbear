@@ -47,8 +47,22 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  projects Project[]
+  projects     Project[]
   leaderboards Leaderboard[]
+  UserAuth     UserAuth?
+}
+
+model UserAuth {
+  id Int @id @default(autoincrement())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+
+  password String
+  salt     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Project {
@@ -72,7 +86,7 @@ model Project {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  updates Update[]
+  updates      Update[]
   leaderboards Leaderboard[]
 }
 
