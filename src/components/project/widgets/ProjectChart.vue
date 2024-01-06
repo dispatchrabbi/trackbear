@@ -23,6 +23,7 @@ const props = defineProps<{
   showPar?: boolean;
   showTooltips?: boolean;
   showLegend?: boolean;
+  isFullscreen?: boolean;
 }>();
 
 type NormalizedUpdate = {
@@ -228,9 +229,6 @@ const chartOptions = computed(() => {
       },
       tooltip: tooltip,
     },
-    animation: false,
-    responsive: true,
-    maintainAspectRatio: true,
   };
 
   return options as LineChartOptions;
@@ -240,8 +238,8 @@ const chartOptions = computed(() => {
 
 <template>
   <LineChart
-    class="leaderboard-chart"
     :data="chartData"
     :options="chartOptions"
+    :is-fullscreen="isFullscreen"
   />
 </template>

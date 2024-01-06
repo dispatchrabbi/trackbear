@@ -21,11 +21,8 @@ body.va-screen-xs, body.va-screen-sm, body.va-screen-md, body.va-screen-lg, body
 
 :is(.leaderboard-chart-modal, .project-chart-modal) .va-modal__inner {
   justify-content: center;
-  max-height: calc(100vh - 4rem);
-  max-width: calc(100vw - 4rem);
-  aspect-ratio: 2;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+  max-width: unset;
+  min-width: unset;
   padding: 0;
 }
 

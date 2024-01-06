@@ -205,6 +205,7 @@ const showGraphModal = ref<boolean>(false);
           :project="project"
           show-par
           show-tooltips
+          is-fullscreen
         />
       </VaModal>
     </div>

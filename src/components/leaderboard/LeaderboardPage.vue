@@ -159,6 +159,7 @@ const showGraphModal = ref<boolean>(false);
           show-par
           show-tooltips
           show-legend
+          is-fullscreen
         />
       </VaModal>
     </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { reactive } from 'vue';
 import { debounce } from 'chart.js/helpers';
 
 import { useThemeStore } from '../../stores/theme.ts';
@@ -21,43 +21,50 @@ themeStore.$subscribe(() => {
   ChartJS.register(makeTrackbearStylesPlugin(getColor));
 });
 
+ChartJS.defaults.animation = false;
+ChartJS.defaults.responsive = true;
+ChartJS.defaults.maintainAspectRatio = false;
+
 export type LineChartOptions = InstanceType<typeof Line>['$props']['options'];
 
 const props = defineProps<{
   id?: string;
-  class?: string;
   options?: LineChartOptions;
   data: ChartData<'line'>;
+  isFullscreen?: boolean;
 }>();
-
-const chart = ref(null);
-const resizeChart = debounce(() => {
-  if(chart.value && chart.value.chart) {
-    const canvas: HTMLCanvasElement = chart.value.chart.canvas;
-    canvas.style.height = null;
-    canvas.style.width = null;
-  }
-}, 250);
-
-onMounted(() => {
-  window.addEventListener('resize', resizeChart);
-  window.dispatchEvent(new Event('resize'));
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', resizeChart);
-});
 
 </script>
 
 <template>
-  <div>
+  <div
+    ref="chartContainer"
+    :class="['chart-container', isFullscreen ? 'chart-container-fullscreen' : null]"
+  >
     <Line
       :id="props.id"
       ref="chart"
-      :class="['leaderboard-chart', props.class]"
       :options="props.options"
       :data="props.data"
     />
   </div>
 </template>
+
+<style scoped>
+.chart-container {
+  position: relative;
+  margin: auto;
+
+  /* this is all to keep the chart nicely-sized for desktop and mobile
+     fullscreen is another ball of wax */
+  aspect-ratio: calc(16 / 9);
+  min-height: 12rem;
+  max-height: calc(100vh - 4rem);
+  max-width: 100%;
+}
+
+.chart-container-fullscreen {
+  height: calc(100vh - 4rem);
+  width: calc(100vw - 4rem);
+}
+</style>

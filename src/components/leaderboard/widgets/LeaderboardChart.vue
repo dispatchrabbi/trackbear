@@ -19,6 +19,7 @@ const props = defineProps<{
   showPar: boolean;
   showTooltips: boolean;
   showLegend: boolean;
+  isFullscreen?: boolean;
 }>();
 
 type NormalizedUpdate = {
@@ -250,8 +251,8 @@ const chartOptions = computed(() => {
 
 <template>
   <LineChart
-    class="leaderboard-chart"
     :data="chartData"
     :options="chartOptions"
+    :is-fullscreen="isFullscreen"
   />
 </template>
