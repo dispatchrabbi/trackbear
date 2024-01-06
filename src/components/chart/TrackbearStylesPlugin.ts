@@ -25,6 +25,7 @@ function makeTrackbearStylesPlugin(getColor) {
         return;
       }
 
+      // set text color
       chart.config.options.color = getColor('secondary');
 
       // configure axes and grids
@@ -47,11 +48,14 @@ function makeTrackbearStylesPlugin(getColor) {
           dataset.borderColor = LINE_COLORS[ix % LINE_COLORS.length];
           dataset.backgroundColor = LINE_COLORS[ix % LINE_COLORS.length];
           dataset.pointStyle = POINT_STYLES[Math.floor(ix / LINE_COLORS.length)];
+          dataset.pointRadius = 4;
           dataset.borderWidth = 2;
         }
       });
-    }
 
+      // configure legend styles
+      chart.config.options.plugins.legend.labels.usePointStyle = true;
+    }
   }
 }
 
