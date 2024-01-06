@@ -14,6 +14,7 @@ import { getProject } from 'src/lib/api/project.ts';
 import { makeShareUrl } from 'src/lib/project.ts';
 
 import AppPage from 'src/components/layout/AppPage.vue';
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 import EnterProgress from 'src/components/project/widgets/EnterProgress.vue';
 import ProjectGoal from 'src/components/project/widgets/ProjectGoal.vue';
 // import ProjectStats from 'src/components/project/widgets/ProjectStats.vue';
@@ -81,32 +82,28 @@ const showGraphModal = ref<boolean>(false);
 <template>
   <AppPage require-login>
     <div v-if="project">
-      <div class="flex gap-4 items-center">
-        <h2 class="va-h2 mb-3">
-          {{ project.title }}
-        </h2>
-        <div
-          v-if="project.visibility === 'public'"
-          class="shrink"
-        >
-          <VaIcon
-            name="share"
-            size="large"
-            title="Get a public link to this project"
-            class="cursor-pointer"
-            @click="handleShareClick"
-          />
-        </div>
-        <div class="shrink">
-          <RouterLink :to="{ name: 'edit-project', params: { id: project.id } }">
+      <ContentHeader :title="project.title">
+        <template #actions>
+          <div v-if="project.visibility === 'public'">
             <VaIcon
-              name="edit"
+              name="share"
               size="large"
-              title="Edit project"
+              title="Get a public link to this project"
+              class="cursor-pointer"
+              @click="handleShareClick"
             />
-          </RouterLink>
-        </div>
-      </div>
+          </div>
+          <div>
+            <RouterLink :to="{ name: 'edit-project', params: { id: project.id } }">
+              <VaIcon
+                name="edit"
+                size="large"
+                title="Edit project"
+              />
+            </RouterLink>
+          </div>
+        </template>
+      </ContentHeader>
       <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
         <div class="md:col-span-2 flex flex-col justify-start gap-4">
           <div class="project-enter-progress shrink">

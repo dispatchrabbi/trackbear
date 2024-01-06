@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
-import { debounce } from 'chart.js/helpers';
-
 import { useThemeStore } from '../../stores/theme.ts';
 const themeStore = useThemeStore();
 

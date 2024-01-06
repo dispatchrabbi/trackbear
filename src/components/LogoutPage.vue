@@ -8,6 +8,7 @@ import { useUserStore } from '../stores/user.ts';
 const userStore = useUserStore();
 
 import AppPage from './layout/AppPage.vue';
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 
 const logOutError = ref(false);
 
@@ -22,9 +23,7 @@ userStore.logOut().then(() => {
 
 <template>
   <AppPage require-login>
-    <h2 class="va-h2 mb-3">
-      Logging Out...
-    </h2>
+    <ContentHeader title="Logging out..." />
     <VaAlert
       v-if="logOutError"
       color="warning"

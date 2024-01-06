@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import AppPage from './layout/AppPage.vue';
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 
 defineProps<{ title: string }>();
 
@@ -8,9 +9,7 @@ defineProps<{ title: string }>();
 
 <template>
   <AppPage>
-    <h2 class="va-h2 mb-3">
-      {{ title || 'Placeholder' }}
-    </h2>
+    <ContentHeader :title="title" />
   </AppPage>
 </template>
 

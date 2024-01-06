@@ -10,6 +10,7 @@ import { getSharedProject } from 'src/lib/api/share.ts';
 import type { SharedProjectWithUpdates } from 'server/api/share.ts';
 
 import AppPage from 'src/components/layout/AppPage.vue';
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 import ProjectGoal from 'src/components/project/widgets/ProjectGoal.vue';
 import ProjectStats from 'src/components/project/widgets/ProjectStats.vue';
 import ProjectHistory from 'src/components/project/widgets/ProjectHistory.vue';
@@ -41,11 +42,7 @@ loadProject();
 <template>
   <AppPage>
     <div v-if="project">
-      <div class="flex gap-4 items-center">
-        <h2 class="va-h2 mb-3">
-          {{ project.title }}
-        </h2>
-      </div>
+      <ContentHeader :title="project.title" />
       <div class="grid grid-cols-6 gap-4">
         <div class="col-span-2 flex flex-col justify-start gap-4">
           <div

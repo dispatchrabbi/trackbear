@@ -8,6 +8,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 import AppPage from './layout/AppPage.vue';
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 import TogglablePasswordInput from './form/TogglablePasswordInput.vue'
 import { signUp } from 'src/lib/api/auth.ts';
 import { CreateUserPayload } from 'server/api/auth.ts';
@@ -59,9 +60,7 @@ async function handleSubmit() {
 
 <template>
   <AppPage>
-    <h2 class="va-h2 mb-3">
-      Sign Up
-    </h2>
+    <ContentHeader title="Sign Up" />
     <VaCard>
       <VaCardContent>
         <VaAlert

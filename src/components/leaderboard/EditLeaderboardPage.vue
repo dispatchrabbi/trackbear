@@ -10,6 +10,7 @@ const router = useRouter();
 const route = useRoute();
 
 import AppPage from 'src/components/layout/AppPage.vue';
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 import FormFieldWrapper from 'src/components/form/FormFieldWrapper.vue';
 import type { Leaderboard } from '@prisma/client';
 import { GOAL_TYPE_INFO } from 'src/lib/api/leaderboard.ts';
@@ -95,9 +96,7 @@ function handleCancel() {
 
 <template>
   <AppPage require-login>
-    <h2 class="va-h2 mb-3">
-      Edit Leaderboard
-    </h2>
+    <ContentHeader title="Edit Leaderboard" />
     <VaCard>
       <VaCardContent v-if="leaderboard">
         <VaAlert

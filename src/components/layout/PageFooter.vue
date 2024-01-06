@@ -10,7 +10,10 @@
         TRACKBEAR
       </div>
       <div>
-        is made with 🐻 by <a href="github.com/dispatchrabbi">@dispatchrabbi</a>.
+        is made with 🐻 by <a
+          href="https://github.com/dispatchrabbi"
+          target="_blank"
+        >@dispatchrabbi</a>.
       </div>
     </div>
     <div class="links flex justify-start items-baseline gap-2 container mx-auto max-w-screen-md px-6 text-sm">

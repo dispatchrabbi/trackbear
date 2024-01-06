@@ -1,14 +1,13 @@
 <script setup lang="ts">
 
-import Page from './layout/AppPage.vue';
+import AppPage from './layout/AppPage.vue';
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 
 </script>
 
 <template>
-  <Page>
-    <h2 class="va-h2 mb-3">
-      Reset Password
-    </h2>
+  <AppPage>
+    <ContentHeader title="Reset Password" />
     <VaCard>
       <VaCardContent>
         <VaForm class="flex flex-col gap-4">
@@ -32,7 +31,7 @@ import Page from './layout/AppPage.vue';
         </VaForm>
       </VaCardContent>
     </VaCard>
-  </Page>
+  </AppPage>
 </template>
 
 <style scoped>

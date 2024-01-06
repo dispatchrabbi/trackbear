@@ -9,6 +9,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 import AppPage from 'src/components/layout/AppPage.vue';
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 import FormFieldWrapper from 'src/components/form/FormFieldWrapper.vue';
 import { GOAL_TYPE_INFO } from 'src/lib/api/leaderboard.ts';
 import { createLeaderboard } from 'src/lib/api/leaderboard.ts';
@@ -69,9 +70,7 @@ function handleCancel() {
 
 <template>
   <AppPage require-login>
-    <h2 class="va-h2 mb-3">
-      New Leaderboard
-    </h2>
+    <ContentHeader title="New Leaderboard" />
     <VaCard>
       <VaCardContent>
         <VaAlert

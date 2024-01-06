@@ -5,6 +5,7 @@ import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
 import { getLeaderboards } from 'src/lib/api/leaderboard.ts';
 
 import AppPage from 'src/components/layout/AppPage.vue'
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 import LeaderboardTile from './widgets/LeaderboardTile.vue';
 // import NewProjectTile from './project/NewProjectTile.vue';
 // import ProjectSkeletonTile from './project/ProjectSkeletonTile.vue';
@@ -24,23 +25,20 @@ getLeaderboards()
 
 <template>
   <AppPage require-login>
-    <div class="flex items-center mb-3">
-      <div class="grow">
-        <h2 class="va-h2">
-          Leaderboards
-        </h2>
-      </div>
-      <div class="shrink">
-        <RouterLink to="/leaderboards/new">
-          <VaButton
-            icon="add"
-            gradient
-          >
-            New
-          </VaButton>
-        </RouterLink>
-      </div>
-    </div>
+    <ContentHeader title="Leaderboards">
+      <template #actions>
+        <div>
+          <RouterLink to="/leaderboards/new">
+            <VaButton
+              icon="add"
+              gradient
+            >
+              New
+            </VaButton>
+          </RouterLink>
+        </div>
+      </template>
+    </ContentHeader>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div v-if="isLoading">
         <!-- <LeaderboardSkeletonTile /> -->

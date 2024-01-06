@@ -4,13 +4,11 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 const route = useRoute();
 
-import { useToast } from 'vuestic-ui';
-const { notify } = useToast();
-
 import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
 import { getLeaderboard } from 'src/lib/api/leaderboard.ts';
 
 import AppPage from 'src/components/layout/AppPage.vue'
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 import LeaderboardGoal from './widgets/LeaderboardGoal.vue';
 import LeaderboardAddProject from './widgets/LeaderboardAddProject.vue';
 import LeaderboardChart from './widgets/LeaderboardChart.vue';
@@ -39,21 +37,21 @@ function handleProjectChange() {
 }
 
 // TODO: make this a dropdown with the link in text and a separate copy button
-async function handleShareClick() {
-  const shareUrl = new URL(`/share/leaderboards/${leaderboard.value.uuid}`, window.location.href)
-  try {
-    await navigator.clipboard.writeText(shareUrl.toString());
-    notify({
-      message: 'Link copied!',
-      color: 'success',
-    });
-  } catch(err) {
-    notify({
-      message: "Couldn't copy the link — are you on a weird browser?",
-      color: 'danger',
-    });
-  }
-}
+// async function handleShareClick() {
+//   const shareUrl = new URL(`/share/leaderboards/${leaderboard.value.uuid}`, window.location.href)
+//   try {
+//     await navigator.clipboard.writeText(shareUrl.toString());
+//     notify({
+//       message: 'Link copied!',
+//       color: 'success',
+//     });
+//   } catch(err) {
+//     notify({
+//       message: "Couldn't copy the link — are you on a weird browser?",
+//       color: 'danger',
+//     });
+//   }
+// }
 
 const showGraphModal = ref<boolean>(false);
 
@@ -62,31 +60,28 @@ const showGraphModal = ref<boolean>(false);
 <template>
   <AppPage require-login>
     <div v-if="leaderboard">
-      <div class="flex gap-4 items-center">
-        <h2 class="va-h2 mb-3">
-          {{ leaderboard.title }}
-        </h2>
-        <!-- <div
-          class="shrink"
-        >
-          <VaIcon
-            name="share"
-            size="large"
-            title="Get a public link to this project"
-            class="cursor-pointer"
-            @click="handleShareClick"
-          />
-        </div> -->
-        <div class="shrink">
-          <RouterLink :to="{ name: 'edit-leaderboard', params: { uuid: leaderboard.uuid } }">
+      <ContentHeader :title="leaderboard.title">
+        <template #actions>
+          <!-- <div>
             <VaIcon
-              name="edit"
+              name="share"
               size="large"
-              title="Edit leaderboard"
+              title="Get a public link to this leaderboard"
+              class="cursor-pointer"
+              @click="handleShareClick"
             />
-          </RouterLink>
-        </div>
-      </div>
+          </div> -->
+          <div>
+            <RouterLink :to="{ name: 'edit-leaderboard', params: { uuid: leaderboard.uuid } }">
+              <VaIcon
+                name="edit"
+                size="large"
+                title="Edit leaderboard"
+              />
+            </RouterLink>
+          </div>
+        </template>
+      </ContentHeader>
       <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
         <div class="md:col-span-2 flex flex-col justify-start gap-4">
           <div

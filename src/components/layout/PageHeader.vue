@@ -23,7 +23,7 @@ import DarkModeToggle from './DarkModeToggle.vue';
             <div class="logo">
               <img :src="`/images/${ currentPresetName === 'dark' ? 'polar-bear' : 'brown-bear' }.png`">
             </div>
-            <div>TrackBear <sup class="text-sm">Alpha</sup></div>
+            <div>TrackBear <sup class="text-sm">alpha</sup></div>
           </div>
         </RouterLink>
       </VaNavbarItem>
@@ -141,7 +141,7 @@ import DarkModeToggle from './DarkModeToggle.vue';
 }
 
 .masthead sup {
-  color: var(--va-warning);
+  color: var(--va-danger);
 }
 
 .desktop {

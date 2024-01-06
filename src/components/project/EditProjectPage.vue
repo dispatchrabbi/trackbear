@@ -12,6 +12,7 @@ const route = useRoute();
 import { getProject } from 'src/lib/api/project.ts';
 
 import AppPage from 'src/components/layout/AppPage.vue';
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 import FormFieldWrapper from 'src/components/form/FormFieldWrapper.vue';
 import type { Project } from '@prisma/client';
 import { TYPE_INFO } from 'src/lib/project.ts';
@@ -106,9 +107,7 @@ function handleCancel() {
 
 <template>
   <AppPage require-login>
-    <h2 class="va-h2 mb-3">
-      Edit Project
-    </h2>
+    <ContentHeader title="Edit Project" />
     <VaCard>
       <VaCardContent v-if="project">
         <VaAlert

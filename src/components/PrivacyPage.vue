@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import AppPage from './layout/AppPage.vue';
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 </script>
 
 <template>
   <AppPage>
-    <h2 class="va-h2 mb-3">
-      Privacy Policy
-    </h2>
+    <ContentHeader title="Privacy Policy" />
     <VaCard>
       <VaCardContent>
         <p>

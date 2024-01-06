@@ -9,6 +9,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 import AppPage from 'src/components/layout/AppPage.vue';
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 import FormFieldWrapper from 'src/components/form/FormFieldWrapper.vue';
 import { TYPE_INFO } from 'src/lib/project.ts';
 import { createProject } from 'src/lib/api/project.ts';
@@ -71,9 +72,7 @@ function handleCancel() {
 
 <template>
   <AppPage require-login>
-    <h2 class="va-h2 mb-3">
-      New Project
-    </h2>
+    <ContentHeader title="New Project" />
     <VaCard>
       <VaCardContent>
         <VaAlert

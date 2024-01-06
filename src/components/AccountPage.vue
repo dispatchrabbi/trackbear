@@ -1,14 +1,13 @@
 <script setup lang="ts">
 
 import AppPage from './layout/AppPage.vue';
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 
 </script>
 
 <template>
   <AppPage require-login>
-    <h2 class="va-h2 mb-3">
-      Account Settings
-    </h2>
+    <ContentHeader title="Account Settings" />
     <VaCard>
       <VaCardContent>
         <VaForm class="flex flex-col gap-4">

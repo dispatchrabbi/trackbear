@@ -10,7 +10,8 @@ const router = useRouter();
 import { useUserStore } from '../stores/user.ts';
 const userStore = useUserStore();
 
-import Page from './layout/AppPage.vue';
+import AppPage from './layout/AppPage.vue';
+import ContentHeader from 'src/components/layout/ContentHeader.vue';
 import TogglablePasswordInput from './form/TogglablePasswordInput.vue'
 
 const formModel = reactive({
@@ -52,10 +53,8 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <Page>
-    <h2 class="va-h2 mb-3">
-      Log In
-    </h2>
+  <AppPage>
+    <ContentHeader title="Log In" />
     <VaCard>
       <VaCardContent>
         <VaAlert
@@ -102,7 +101,7 @@ async function handleSubmit() {
         </VaForm>
       </VaCardContent>
     </VaCard>
-  </Page>
+  </AppPage>
 </template>
 
 <style scoped>
