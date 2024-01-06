@@ -39,8 +39,6 @@ model User {
   email       String
   username    String @unique
   displayName String
-  password    String
-  salt        String
 
   state String
 

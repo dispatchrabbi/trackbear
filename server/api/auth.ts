@@ -123,13 +123,10 @@ authRouter.post('/signup',
     ({ hashedPassword, salt } = await hash(password));
   } catch(err) { return next(err); }
 
-  // MIGRATION: After contracting migration, remove password and salt from this
   const userData = {
     email: email,
     username: username,
     displayName: username,
-    password: hashedPassword,
-    salt: salt,
     state: USER_STATE.ACTIVE,
   };
 
