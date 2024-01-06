@@ -36,7 +36,11 @@ const props = defineProps<{
 <template>
   <div
     ref="chartContainer"
-    :class="['chart-container', isFullscreen ? 'chart-container-fullscreen' : null]"
+    :class="[
+      'chart-container',
+      isFullscreen ? 'chart-container-fullscreen' : null,
+      props.options.plugins.legend.display ? 'chart-container-with-legend' : null
+    ]"
   >
     <Line
       :id="props.id"
@@ -58,6 +62,10 @@ const props = defineProps<{
   min-height: 12rem;
   max-height: calc(100vh - 4rem);
   max-width: 100%;
+}
+
+.chart-container-with-legend {
+  min-height: 14rem;
 }
 
 .chart-container-fullscreen {

@@ -16,9 +16,9 @@ import type { LineChartOptions } from 'src/components/chart/LineChart.vue';
 
 const props = defineProps<{
   leaderboard: CompleteLeaderboard;
-  showPar: boolean;
-  showTooltips: boolean;
-  showLegend: boolean;
+  showPar?: boolean;
+  showTooltips?: boolean;
+  showLegend?: boolean;
   isFullscreen?: boolean;
 }>();
 
@@ -238,10 +238,7 @@ const chartOptions = computed(() => {
         labels: { filter: item => item.text !== 'Par' }
       },
       tooltip: tooltip,
-    },
-    animation: false,
-    responsive: true,
-    maintainAspectRatio: true,
+    }
   };
 
   return options as LineChartOptions;

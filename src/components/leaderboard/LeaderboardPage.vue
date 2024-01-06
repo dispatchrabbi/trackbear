@@ -106,7 +106,7 @@ const showGraphModal = ref<boolean>(false);
         </div>
         <div class="md:col-span-4 flex flex-col justify-start gap-4">
           <div class="leaderboard-chart shrink">
-            <VaCard class="h-full">
+            <VaCard>
               <VaCardTitle>
                 <div class="flex gap-4 items-center w-full">
                   <div class="grow">
