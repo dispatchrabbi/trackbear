@@ -1,11 +1,16 @@
 import { access, constants } from 'fs/promises';
 
+import path from 'path';
+const ROOT_DIR = path.resolve(import.meta.url.replace('file://', ''), '../../..');
+
 type TrackbearCommonEnv = {
   NODE_ENV: string,
   PORT: number;
   LOG_DIR: string;
-  DATABASE_URL: string;
+  APP_DB_URL: string;
+  QUEUE_DB_PATH: string;
   COOKIE_SECRET: string;
+  MAILERSEND_API_KEY: string;
   USE_PROXY: boolean;
 };
 
@@ -28,9 +33,11 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   process.env.PORT = process.env.PORT || "3000";
 
   process.env.LOG_DIR = process.env.LOG_DIR || './logs';
-  process.env.DATABASE_URL = process.env.DATABASE_URL || 'file:./db/trackbear.db';
+  process.env.APP_DB_URL = process.env.APP_DB_URL || 'file:./db/app.db';
+  process.env.QUEUE_DB_PATH = path.resolve(ROOT_DIR, process.env.QUEUE_DB_PATH || "./db/queue.db");
 
   if(!process.env.COOKIE_SECRET) { throw new Error('Missing COOKIE_SECRET value in .env'); }
+  if(!process.env.MAILERSEND_API_KEY) { throw new Error('Missing MAILERSEND_API_KEY value in .env'); }
 
   if(!['', '0', '1'].includes(process.env.USE_PROXY)) { throw new Error('USE_PROXY should only be either 0 or 1'); }
 
@@ -54,15 +61,17 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   }
 
   return {
-    NODE_ENV:       process.env.NODE_ENV,
-    PORT:          +process.env.PORT,
-    LOG_DIR:        process.env.LOG_DIR,
-    DATABASE_URL:   process.env.DATABASE_URL,
-    COOKIE_SECRET:  process.env.COOKIE_SECRET,
-    USE_PROXY:    !!process.env.USE_PROXY,
-    USE_HTTPS:    !!process.env.USE_HTTPS,
-    TLS_KEY:        process.env.TLS_KEY || null,
-    TLS_CERT:       process.env.TLS_CERT || null,
+    NODE_ENV:           process.env.NODE_ENV,
+    PORT:              +process.env.PORT,
+    LOG_DIR:            process.env.LOG_DIR,
+    APP_DB_URL:         process.env.APP_DB_URL,
+    QUEUE_DB_PATH:      process.env.QUEUE_DB_PATH,
+    COOKIE_SECRET:      process.env.COOKIE_SECRET,
+    MAILERSEND_API_KEY: process.env.MAILERSEND_API_KEY,
+    USE_PROXY:        !!process.env.USE_PROXY,
+    USE_HTTPS:        !!process.env.USE_HTTPS,
+    TLS_KEY:            process.env.TLS_KEY || null,
+    TLS_CERT:           process.env.TLS_CERT || null,
   };
 }
 

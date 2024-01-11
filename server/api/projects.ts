@@ -223,7 +223,7 @@ projectsRouter.post('/:id/update',
         projectId: project.id,
       },
     });
-    logAuditEvent('update:create', user.id, update.id, project.id);
+    await logAuditEvent('update:create', user.id, update.id, project.id);
   } catch(err) { return next(err); }
 
   return res.status(201).send(success(update));
@@ -264,7 +264,7 @@ projectsRouter.post('/:projectId/update/:updateId',
         projectId: project.id,
       }
     });
-    logAuditEvent('update:edit', user.id, update.id, project.id);
+    await logAuditEvent('update:edit', user.id, update.id, project.id);
   } catch(err) { return next(err); }
 
   return res.status(200).send(success(update));
@@ -300,7 +300,7 @@ projectsRouter.delete('/:projectId/update/:updateId',
         projectId: project.id,
       }
     });
-    logAuditEvent('update:delete', user.id, update.id, project.id);
+    await logAuditEvent('update:delete', user.id, update.id, project.id);
   } catch(err) { return next(err); }
 
   return res.status(200).send(success(null));

@@ -5,14 +5,14 @@ import { z } from 'zod';
 import { zStrInt, zDateStr } from '../lib/validators.ts';
 
 import dbClient from "../lib/db.ts";
-import type { Leaderboard, Project, Update } from "@prisma/client";
+import type { Leaderboard, Project, Update, User } from "@prisma/client";
 import { requireUser, WithUser } from '../lib/auth.ts';
 import { PROJECT_STATE, LEADERBOARD_STATE, LEADERBOARD_GOAL_TYPE } from '../lib/states.ts';
 
 import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 import { logAuditEvent } from '../lib/audit-events.ts';
 
-type ReducedOwner = { uuid: string; displayName: string; }
+type ReducedOwner = Pick<User, 'uuid' | 'displayName'>;
 type ProjectWithOwnerAndUpdates = Project & { updates: Update[] } & { owner: ReducedOwner };
 export type CompleteLeaderboard = Leaderboard & { projects: ProjectWithOwnerAndUpdates[] };
 
@@ -42,7 +42,7 @@ leaderboardsRouter.get('/',
   requireUser,
   async (req, res: ApiResponse<CompleteLeaderboard[]>, next) =>
 {
-    let leaderboards: CompleteLeaderboard[];
+  let leaderboards: CompleteLeaderboard[];
   try {
     leaderboards = await dbClient.leaderboard.findMany({
       where: { OR: [

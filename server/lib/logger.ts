@@ -16,13 +16,13 @@ async function initLoggers(logDir: string) {
     defaultMeta: { service: 'trackbear' },
     transports: [
       new transports.File({ filename: path.join(logDir, 'trackbear.log') }), // log everything
-      new transports.File({ filename: path.join(logDir, 'trackbear-errors.log'), level: 'error' }), // log errors and up
+      new transports.File({ filename: path.join(logDir, 'errors.log'), level: 'error' }), // log errors and up
     ],
     exceptionHandlers: [
-      new transports.File({ filename: path.join(logDir, 'trackbear-exceptions.log') }), // handle uncaught exceptions
+      new transports.File({ filename: path.join(logDir, 'exceptions.log') }), // handle uncaught exceptions
     ],
     rejectionHandlers: [
-      new transports.File({ filename: path.join(logDir, 'trackbear-rejections.log') }), // handle uncaught promise rejections
+      new transports.File({ filename: path.join(logDir, 'rejections.log') }), // handle uncaught promise rejections
     ],
     exitOnError: false,
   });
@@ -50,7 +50,24 @@ async function initLoggers(logDir: string) {
     ),
     defaultMeta: { service: 'trackbear' },
     transports: [
-      new transports.File({ filename: path.join(logDir, 'trackbear-access.log') }), // log everything
+      new transports.File({ filename: path.join(logDir, 'access.log') }), // log everything
+    ],
+    exitOnError: false,
+  });
+
+  winston.loggers.add('queue', {
+    level: 'info',
+    format: format.combine(
+      format.timestamp({
+        format: 'YYYY-MM-DD HH:mm:ss'
+      }),
+      format.errors({ stack: true }),
+      format.splat(),
+      format.json()
+    ),
+    defaultMeta: { service: 'trackbear' },
+    transports: [
+      new transports.File({ filename: path.join(logDir, 'queue.log') }), // log everything
     ],
     exitOnError: false,
   });

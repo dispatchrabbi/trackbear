@@ -16,6 +16,14 @@ body.va-screen-xs, body.va-screen-sm, body.va-screen-md, body.va-screen-lg, body
   --va-list-item-label-color: var(--text-primary);
 }
 
+.va-list-item-label {
+  --va-alert-color: var(--text-primary);
+}
+
+.va-menu-list {
+  --va-menu-padding-y: 2rem;
+}
+
 :is(.leaderboard-chart-modal, .project-chart-modal) .va-modal__dialog {
   display: flex;
   justify-content: stretch;

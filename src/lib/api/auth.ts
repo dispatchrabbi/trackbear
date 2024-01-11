@@ -35,9 +35,21 @@ async function getUser(): Promise<UserResponse> {
   }
 }
 
+type EmptyObject = Record<string, never>;
+async function changePassword(currentPassword: string, newPassword: string): Promise<EmptyObject> {
+  const response = await callApi<EmptyObject>('/api/auth/password', 'POST', { currentPassword, newPassword });
+
+  if(response.success === true) {
+    return response.data;
+  } else {
+    throw response.error;
+  }
+}
+
 export {
   signUp,
   logIn,
   logOut,
   getUser,
+  changePassword,
 }

@@ -44,7 +44,7 @@ async function handleSubmit() {
     successMessage.value = 'Sign up successful! Redirecting to login...';
     setTimeout(() => router.push('/login'), 3 * 1000);
   } catch(err) {
-    if(err.code === 'INVALID_USERNAME') {
+    if(err.code === 'VALIDATION_FAILED') {
       errorMessage.value = err.message;
     } else if(err.code === 'USERNAME_EXISTS') {
       errorMessage.value = 'That username is already taken. Please choose another.';

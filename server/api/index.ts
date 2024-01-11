@@ -8,6 +8,7 @@ import authRouter from './auth.ts';
 import projectsRouter from './projects.ts';
 import leaderboardsRouter from './leaderboards.ts';
 import shareRouter from './share.ts';
+import userRouter from './user.ts';
 import { ApiResponse, failure } from "../lib/api-response.ts";
 
 const apiRouter = Router();
@@ -22,6 +23,7 @@ apiRouter.use('/auth', authRouter);
 apiRouter.use('/projects', projectsRouter);
 apiRouter.use('/leaderboards', leaderboardsRouter);
 apiRouter.use('/share', shareRouter);
+apiRouter.use('/user', userRouter);
 
 // handle any API errors
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

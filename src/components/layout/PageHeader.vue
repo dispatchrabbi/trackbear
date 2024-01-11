@@ -51,6 +51,11 @@ import DarkModeToggle from './DarkModeToggle.vue';
               </VaMenuItem>
               <VaDivider />
               <VaMenuItem>
+                <RouterLink to="/account">
+                  Account
+                </RouterLink>
+              </VaMenuItem>
+              <VaMenuItem>
                 <RouterLink to="/logout">
                   Log Out
                 </RouterLink>
@@ -72,23 +77,22 @@ import DarkModeToggle from './DarkModeToggle.vue';
             </VaButton>
           </RouterLink>
         </VaNavbarItem>
-        <!-- <VaNavbarItem class="desktop">
-          <VaNavbarItem class="desktop">
-            <RouterLink to="/account">
-              <VaButton preset="secondary">
-                Account
-              </VaButton>
-            </RouterLink>
-          </VaNavbarItem>
-        </VaNavbarItem> -->
         <VaNavbarItem class="desktop">
-          <VaNavbarItem class="desktop">
-            <RouterLink to="/logout">
-              <VaButton preset="secondary">
+          <VaMenu>
+            <template #anchor>
+              <VaAvatar>{{ userStore.user.displayName.substring(0, 1).toUpperCase() }}</VaAvatar>
+            </template>
+            <VaMenuItem>
+              <RouterLink to="/account">
+                Account
+              </RouterLink>
+            </VaMenuItem>
+            <VaMenuItem>
+              <RouterLink to="/logout">
                 Log Out
-              </VaButton>
-            </RouterLink>
-          </VaNavbarItem>
+              </RouterLink>
+            </VaMenuItem>
+          </VaMenu>
         </VaNavbarItem>
       </template>
       <template v-else>
@@ -142,6 +146,10 @@ import DarkModeToggle from './DarkModeToggle.vue';
 
 .masthead sup {
   color: var(--va-danger);
+}
+
+:deep(.va-navbar__right) {
+  align-items: center;
 }
 
 .desktop {

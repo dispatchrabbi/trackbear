@@ -11,6 +11,10 @@ import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut, requireUser, WithUser } from "../lib/auth.ts";
 import { USER_STATE } from "../lib/states.ts";
 
+import { pushTask } from "../lib/queue.ts";
+import sendSignupEmailTask from '../lib/tasks/send-signup-email.ts';
+import sendPwchangeEmail from "../lib/tasks/send-pwchange-email.ts";
+
 import { logAuditEvent } from '../lib/audit-events.ts';
 
 export type CreateUserPayload = {
@@ -18,6 +22,25 @@ export type CreateUserPayload = {
   email: string;
   password: string;
 };
+export const USERNAME_REGEX = /^[a-z][a-z0-9_-]+$/;
+const createUserPayloadSchema = z.object({
+  username: z.string().trim().toLowerCase()
+    .min(3, { message: 'Username must be at least 3 characters long.'})
+    .max(24, { message: 'Username may not be longer than 24 characters.'})
+    .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters long.' }),
+  email: z.string().email({ message: 'Please enter a valid email address.' }),
+});
+
+export type ChangePasswordPayload = {
+  currentPassword: string;
+  newPassword: string;
+};
+const changePasswordPayloadSchema = z.object({
+  currentPassword: z.string().min(1, { message: 'Current password is required.' }),
+  newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
+});
+
 
 export type UserResponse = {
   uuid: string;
@@ -65,7 +88,7 @@ authRouter.post('/login',
 
   logIn(req, user);
   winston.debug(`LOGIN: ${username} successfully logged in`);
-  logAuditEvent('login', user.id);
+  await logAuditEvent('user:login', user.id);
 
   const userResponse: UserResponse = {
     uuid: user.uuid,
@@ -97,9 +120,8 @@ authRouter.post('/logout', (req, res: ApiResponse<EmptyObject>) => {
   res.status(200).send(success({}));
 })
 
-export const USERNAME_REGEX = /^[a-z][a-z0-9_-]+$/;
 authRouter.post('/signup',
-  validateBody(z.object({ username: z.string(), password: z.string(), email: z.string().email() })),
+  validateBody(createUserPayloadSchema),
   async (req, res: ApiResponse<UserResponse>, next) =>
 {
   const { username: submittedUsername, password, email } = req.body as CreateUserPayload;
@@ -142,10 +164,11 @@ authRouter.post('/signup',
         UserAuth: { create: { ...userAuthData } },
       }
     });
-    await logAuditEvent('signup', user.id);
+    await logAuditEvent('user:signup', user.id, user.id);
     winston.debug(`SIGNUP: ${user.username} just signed up`);
 
-    // TODO: kick off email verification/confirmation afterward
+    pushTask(sendSignupEmailTask.makeTask(user.id));
+
     res.status(201).send(success({
       uuid: user.uuid,
       username: user.username,
@@ -154,6 +177,60 @@ authRouter.post('/signup',
   } catch(err) {
     return next(err);
   }
+});
+
+authRouter.post('/password',
+  requireUser,
+  validateBody(changePasswordPayloadSchema),
+  async (req: WithUser<Request>, res: ApiResponse<EmptyObject>, next) =>
+{
+  const { currentPassword, newPassword } = req.body;
+
+  // first make sure that we know that the userauth exists
+  let userAuth: UserAuth | null;
+  try {
+    userAuth = await dbClient.userAuth.findUnique({ where: { userId: req.user.id } });
+  } catch(err) { return next(err); }
+
+  if(!userAuth) {
+    winston.error(`LOGIN: ${req.user.username} (${req.user.id}) attempted to change their password but they were not found!`);
+    return res.status(403).send(failure('INVALID_USER', 'Invalid user.'));
+  }
+
+  // then validate the password
+  let verified: boolean;
+  try {
+    verified = await verifyHash(userAuth.password, currentPassword, userAuth.salt);
+  } catch(err) { return next(err); }
+
+  if(!verified) {
+    winston.debug(`LOGIN: ${req.user.username} (${req.user.id}) had the incorrect password`);
+    return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect password.'));
+  }
+
+  // now, change out the password
+  let hashedPassword: string, salt: string;
+  try {
+    ({ hashedPassword, salt } = await hash(newPassword));
+  } catch(err) { return next(err); }
+
+  try {
+    userAuth = await dbClient.userAuth.update({
+      data: {
+        password: hashedPassword,
+        salt: salt,
+      },
+      where: {
+        userId: req.user.id,
+      },
+    });
+  } catch(err) { return next(err); }
+
+  winston.debug(`PASSWORD: ${req.user.username} (${req.user.id}) has changed their password`);
+  await logAuditEvent('user:pwchange', req.user.id, req.user.id);
+  pushTask(sendPwchangeEmail.makeTask(req.user.id));
+
+  return res.status(200).send(success({}));
 });
 
 export default authRouter;

@@ -1,6 +1,7 @@
 import winston from 'winston';
 import dbClient from "../lib/db.ts";
 
+const TRACKBEAR_SYSTEM_ID = -1;
 async function logAuditEvent(eventType: string, agentId: number, patientId?: number, goalId?: number, auxInfo: Record<string, unknown> = {}) {
   try {
     await dbClient.auditEvent.create({
@@ -14,4 +15,5 @@ async function logAuditEvent(eventType: string, agentId: number, patientId?: num
 
 export {
   logAuditEvent,
+  TRACKBEAR_SYSTEM_ID,
 };

@@ -6,6 +6,7 @@ import winston from 'winston';
 import { initLoggers, closeLoggers } from './server/lib/logger.ts';
 
 import dbClient from './server/lib/db.ts';
+import { initQueue } from './server/lib/queue.ts';
 
 import http from 'http';
 import https from 'https';
@@ -33,6 +34,10 @@ async function main() {
   // use `winston` just as the general logger
   const accessLogger = winston.loggers.get('access');
 
+  // initialize the queue
+  initQueue(env.QUEUE_DB_PATH);
+
+  // let's start up the server!
   const app = express();
 
   // add security headers
