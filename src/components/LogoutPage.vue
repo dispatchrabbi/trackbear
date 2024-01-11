@@ -14,8 +14,7 @@ const logOutError = ref(false);
 
 userStore.logOut().then(() => {
   router.push('/');
-}).catch(err => {
-  console.error(err);
+}).catch(() => {
   logOutError.value = true;
 });
 

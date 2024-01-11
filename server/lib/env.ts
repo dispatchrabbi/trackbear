@@ -5,13 +5,14 @@ const ROOT_DIR = path.resolve(import.meta.url.replace('file://', ''), '../../..'
 
 type TrackbearCommonEnv = {
   NODE_ENV: string,
-  PORT: number;
   LOG_DIR: string;
+  COOKIE_SECRET: string;
   APP_DB_URL: string;
   QUEUE_DB_PATH: string;
-  COOKIE_SECRET: string;
-  MAILERSEND_API_KEY: string;
+  PORT: number;
   USE_PROXY: boolean;
+  MAILERSEND_API_KEY: string;
+  ORIGIN: string;
 };
 
 type TrackbearTlsEnv =
@@ -38,6 +39,7 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
 
   if(!process.env.COOKIE_SECRET) { throw new Error('Missing COOKIE_SECRET value in .env'); }
   if(!process.env.MAILERSEND_API_KEY) { throw new Error('Missing MAILERSEND_API_KEY value in .env'); }
+  if(!process.env.ORIGIN) { throw new Error('Missing ORIGIN value in .env'); }
 
   if(!['', '0', '1'].includes(process.env.USE_PROXY)) { throw new Error('USE_PROXY should only be either 0 or 1'); }
 
@@ -62,16 +64,21 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
 
   return {
     NODE_ENV:           process.env.NODE_ENV,
-    PORT:              +process.env.PORT,
+
     LOG_DIR:            process.env.LOG_DIR,
+    COOKIE_SECRET:      process.env.COOKIE_SECRET,
     APP_DB_URL:         process.env.APP_DB_URL,
     QUEUE_DB_PATH:      process.env.QUEUE_DB_PATH,
-    COOKIE_SECRET:      process.env.COOKIE_SECRET,
-    MAILERSEND_API_KEY: process.env.MAILERSEND_API_KEY,
+
+    PORT:              +process.env.PORT,
     USE_PROXY:        !!process.env.USE_PROXY,
     USE_HTTPS:        !!process.env.USE_HTTPS,
     TLS_KEY:            process.env.TLS_KEY || null,
     TLS_CERT:           process.env.TLS_CERT || null,
+
+    MAILERSEND_API_KEY: process.env.MAILERSEND_API_KEY,
+
+    ORIGIN:             process.env.ORIGIN,
   };
 }
 

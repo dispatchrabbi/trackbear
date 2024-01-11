@@ -3,6 +3,7 @@ import SqliteStore from 'better-queue-sqlite';
 
 import sendSignupEmailTask from './tasks/send-signup-email.ts';
 import sendPwchangeEmailTask from './tasks/send-pwchange-email.ts';
+import sendPwresetEmailTask from './tasks/send-pwreset-email.ts';
 
 // use the queue log to log info about the queue
 import winston from 'winston';
@@ -21,8 +22,10 @@ function initQueue(taskDbPath) {
     }),
   });
 
+  // TODO: I don't like this interface/setup. There's gotta be a better way.
   registerTaskType(sendSignupEmailTask);
   registerTaskType(sendPwchangeEmailTask);
+  registerTaskType(sendPwresetEmailTask);
 
   const queueLogger = winston.loggers.get('queue');
   q.on('task_queued', (taskId, task) => queueLogger.info('Task queued', {taskId, ...task}));
@@ -44,7 +47,6 @@ function registerTaskType(taskType) {
 }
 
 async function taskHandler(task) {
-  console.log(task);
   if(!Object.keys(HANDLER_MAP).includes(task.name)) {
     throw new Error(`No handler found for taskname ${task.name} (task id ${task.id})`);
   }

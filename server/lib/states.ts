@@ -4,6 +4,12 @@ const USER_STATE = {
   DELETED:    'deleted',
 };
 
+const PASSWORD_RESET_LINK_STATE = {
+  ACTIVE:   'active',
+  USED:     'used',
+  DELETED:  'deleted',
+};
+
 const PROJECT_STATE = {
   ACTIVE:   'active',
   DELETED:  'deleted',
@@ -33,6 +39,7 @@ const LEADERBOARD_GOAL_TYPE = {
 
 export {
   USER_STATE,
+  PASSWORD_RESET_LINK_STATE,
   PROJECT_STATE,
   PROJECT_VISIBILITY,
   PROJECT_TYPE,

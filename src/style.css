@@ -7,8 +7,8 @@
 }
 
 /* don't do a weird fade-in thing when the page loads */
-body.va-screen-xs, body.va-screen-sm, body.va-screen-md, body.va-screen-lg, body.va-screen-xl {
-  transition: none;
+body, body.va-screen-xs, body.va-screen-sm, body.va-screen-md, body.va-screen-lg, body.va-screen-xl {
+  transition: none !important;
 }
 
 /* override with a sensible style */

@@ -37,7 +37,7 @@ async function sendPasswordChangeEmail(user) {
     .setFrom(sentFrom)
     .setTo(recipients)
     .setReplyTo(sentFrom)
-    .setSubject('Your have changed your login password')
+    .setSubject('You have changed your login password')
     .setText(`
 Hi, ${user.displayName}!
 

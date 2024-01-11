@@ -46,10 +46,32 @@ async function changePassword(currentPassword: string, newPassword: string): Pro
   }
 }
 
+async function requestPasswordReset(username: string): Promise<EmptyObject> {
+  const response = await callApi<EmptyObject>('/api/auth/reset-password', 'POST', { username });
+
+  if(response.success === true) {
+    return response.data;
+  } else {
+    throw response.error;
+  }
+}
+
+async function resetPassword(passwordResetUuid: string, newPassword: string): Promise<EmptyObject> {
+  const response = await callApi<EmptyObject>(`/api/auth/reset-password/${passwordResetUuid}`, 'POST', { newPassword });
+
+  if(response.success === true) {
+    return response.data;
+  } else {
+    throw response.error;
+  }
+}
+
 export {
   signUp,
   logIn,
   logOut,
   getUser,
   changePassword,
-}
+  requestPasswordReset,
+  resetPassword,
+};

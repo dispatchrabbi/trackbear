@@ -1,21 +1,23 @@
 import { Router, Request } from "express";
 import { z } from 'zod';
 import winston from "winston";
+import { addMinutes } from 'date-fns';
 
-import { validateBody } from "../lib/middleware/validate.ts";
+import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 import { ApiResponse, success, failure } from '../lib/api-response.ts';
 
 import dbClient from '../lib/db.ts';
-import { User, UserAuth } from "@prisma/client";
+import { PasswordResetLink, User, UserAuth } from "@prisma/client";
 import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut, requireUser, WithUser } from "../lib/auth.ts";
-import { USER_STATE } from "../lib/states.ts";
+import { PASSWORD_RESET_LINK_STATE, USER_STATE } from "../lib/states.ts";
 
 import { pushTask } from "../lib/queue.ts";
 import sendSignupEmailTask from '../lib/tasks/send-signup-email.ts';
 import sendPwchangeEmail from "../lib/tasks/send-pwchange-email.ts";
 
 import { logAuditEvent } from '../lib/audit-events.ts';
+import sendPwresetEmail from "../lib/tasks/send-pwreset-email.ts";
 
 export type CreateUserPayload = {
   username: string;
@@ -41,6 +43,22 @@ const changePasswordPayloadSchema = z.object({
   newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
 });
 
+export type RequestPasswordResetPayload = {
+  username: string;
+}
+const requestPasswordResetPayloadSchema = z.object({
+  username: z.string().trim().toLowerCase()
+    .min(3, { message: 'Username must be at least 3 characters long.'})
+    .max(24, { message: 'Username may not be longer than 24 characters.'})
+    .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
+});
+
+export type PasswordResetPayload = {
+  newPassword: string;
+}
+const passwordResetPayloadSchema = z.object({
+  newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
+});
 
 export type UserResponse = {
   uuid: string;
@@ -60,7 +78,9 @@ authRouter.post('/login',
   let userAuth: UserAuth | null;
   try {
     user = await dbClient.user.findUnique({ where: { username } });
-    userAuth = await dbClient.userAuth.findUnique({ where: { userId: user.id } });
+    if(user) {
+      userAuth = await dbClient.userAuth.findUnique({ where: { userId: user.id } });
+    }
   } catch(err) { return next(err); }
 
   if(!user) {
@@ -229,6 +249,104 @@ authRouter.post('/password',
   winston.debug(`PASSWORD: ${req.user.username} (${req.user.id}) has changed their password`);
   await logAuditEvent('user:pwchange', req.user.id, req.user.id);
   pushTask(sendPwchangeEmail.makeTask(req.user.id));
+
+  return res.status(200).send(success({}));
+});
+
+authRouter.post('/reset-password',
+  validateBody(requestPasswordResetPayloadSchema),
+  async (req: Request, res: ApiResponse<EmptyObject>, next) =>
+{
+  const username = req.body.username;
+
+  let user: User | null;
+  try {
+    user = await dbClient.user.findUnique({
+      where: {
+        username,
+        state: USER_STATE.ACTIVE,
+      },
+    });
+  } catch(err) { return next(err); }
+
+  if(!user) {
+    // Even though there was no user found, we send back success so that we don't leak which usernames do and don't exist
+    winston.warn(`PWRESET: Attempted reset for nonexistent username ${username}`);
+    return res.status(200).send(success({}));
+  }
+
+  const PW_RESET_LINK_EXPIRATION_MINUTES = 10;
+  let resetLink: PasswordResetLink;
+  try {
+    resetLink = await dbClient.passwordResetLink.create({
+      data: {
+        userId: user.id,
+        state: PASSWORD_RESET_LINK_STATE.ACTIVE,
+        expiresAt: addMinutes(new Date(), PW_RESET_LINK_EXPIRATION_MINUTES + 2), // give 2 extra minutes' grace period
+      }
+    });
+  } catch(err) { return next(err); }
+
+  winston.debug(`PASSWORD: ${user.username} (${user.id}) requested a reset link and got ${resetLink.uuid}`);
+  await logAuditEvent('user:pwresetreq', user.id, null, null, { resetLinkUuid: resetLink.uuid });
+  pushTask(sendPwresetEmail.makeTask(resetLink.uuid));
+
+  return res.status(200).send(success({}));
+});
+
+authRouter.post('/reset-password/:uuid',
+  validateParams(z.object({
+    uuid: z.string().uuid(),
+  })),
+  validateBody(passwordResetPayloadSchema),
+  async (req: Request, res: ApiResponse<EmptyObject>, next) =>
+{
+  const uuid = req.params.uuid;
+  let passwordResetLink: PasswordResetLink | null;
+  try {
+    passwordResetLink = await dbClient.passwordResetLink.findUnique({
+      where: {
+        uuid,
+        state: PASSWORD_RESET_LINK_STATE.ACTIVE
+      }
+    });
+  } catch(err) { return next(err); }
+
+  if(!passwordResetLink) {
+    return res.status(404).send(failure('NOT_FOUND', 'This reset link is either expired or bogus. You should request a new one.'));
+  }
+
+  // now, change out the password
+  const newPassword = req.body.newPassword;
+  let hashedPassword: string, salt: string;
+  try {
+    ({ hashedPassword, salt } = await hash(newPassword));
+  } catch(err) { return next(err); }
+
+  let userAuth: UserAuth & { user: User } | null;
+  try {
+    userAuth = await dbClient.userAuth.update({
+      data: {
+        password: hashedPassword,
+        salt: salt,
+      },
+      where: {
+        userId: passwordResetLink.userId,
+      },
+      include: { user: true },
+    });
+  } catch(err) { return next(err); }
+
+  // this should basically never happen...
+  if(!userAuth) {
+    winston.error(`PASSWORD: User ${passwordResetLink.userId} attempted to reset their password but no UserAuth record was found!`);
+    return res.status(403).send(failure('INVALID_USER', 'Invalid user.'));
+  }
+
+  const user = userAuth.user;
+  winston.debug(`PASSWORD: ${user.username} (${user.id}) has reset their password`);
+  await logAuditEvent('user:pwreset', user.id, user.id);
+  pushTask(sendPwchangeEmail.makeTask(user.id));
 
   return res.status(200).send(success({}));
 });

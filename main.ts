@@ -1,5 +1,5 @@
 import { readFile } from 'fs/promises';
-import dotenv from 'dotenv-safe';
+import dotenv from 'dotenv';
 import { getNormalizedEnv } from './server/lib/env.ts';
 
 import winston from 'winston';
@@ -25,9 +25,7 @@ import spaRoutes from './server/lib/middleware/spa-routes.ts';
 import { createServer as createViteServer } from 'vite';
 
 async function main() {
-  dotenv.config({
-    allowEmptyValues: true
-  });
+  dotenv.config();
   const env = await getNormalizedEnv();
 
   await initLoggers(env.LOG_DIR);

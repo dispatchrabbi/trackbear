@@ -6,6 +6,7 @@ import PrivacyPage from './components/PrivacyPage.vue';
 import SignUpPage from './components/SignUpPage.vue';
 import LoginPage from './components/LoginPage.vue';
 import LogoutPage from './components/LogoutPage.vue';
+import SendResetPasswordPage from './components/SendResetPassword.vue';
 import ResetPasswordPage from './components/ResetPassword.vue';
 import SharedProjectPage from './components/SharedProjectPage.vue';
 
@@ -29,6 +30,7 @@ const routes = [
   { path: '/signup', name:'signup', component: SignUpPage },
   { path: '/login', name:'login', component: LoginPage },
   { path: '/logout', name:'logout', component: LogoutPage },
+  { path: '/reset-password/', name:'send-reset-password', component: SendResetPasswordPage },
   { path: '/reset-password/:uuid', name:'reset-password', component: ResetPasswordPage },
   { path: '/share/projects/:uuid', name:'share-project', component: SharedProjectPage },
 

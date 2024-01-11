@@ -12,7 +12,7 @@ const userStore = useUserStore();
 
 import AppPage from './layout/AppPage.vue';
 import ContentHeader from 'src/components/layout/ContentHeader.vue';
-import TogglablePasswordInput from './form/TogglablePasswordInput.vue'
+import TogglablePasswordInput from './form/TogglablePasswordInput.vue';
 
 const formModel = reactive({
   username: '',
@@ -57,15 +57,6 @@ async function handleSubmit() {
     <ContentHeader title="Log In" />
     <VaCard>
       <VaCardContent>
-        <VaAlert
-          v-if="errorMessage"
-          class="mb-4"
-          color="danger"
-          border="left"
-          icon="error"
-          closeable
-          :description="errorMessage"
-        />
         <VaForm
           ref="form"
           class="flex flex-col gap-4"
@@ -89,7 +80,16 @@ async function handleSubmit() {
             label="Password"
             :rules="[ruleFor('password')]"
           />
-          <div class="flex gap-4 mt-4">
+          <VaAlert
+            v-if="errorMessage"
+            class="w-full"
+            color="danger"
+            border="left"
+            icon="error"
+            closeable
+            :description="errorMessage"
+          />
+          <div class="flex gap-4">
             <VaButton
               :disabled="!isValid"
               :loading="isLoading"
@@ -97,6 +97,11 @@ async function handleSubmit() {
             >
               Log In
             </VaButton>
+          </div>
+          <div class="text-center">
+            <RouterLink to="/reset-password">
+              Forgot your password?
+            </RouterLink>
           </div>
         </VaForm>
       </VaCardContent>

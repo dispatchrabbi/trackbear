@@ -30,7 +30,7 @@
 - [X] Prove out migrations on deploy
 - [ ] Finalize name
 - [ ] Create logo
-- [ ] Buy actual domain
+- [ ] Buy actual ORIGIN
 - [ ] Set up ko-fi/whatever
 - [ ] Finalize color scheme
 - [ ] Create staging instance

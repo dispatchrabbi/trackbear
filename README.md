@@ -22,15 +22,17 @@ Here are the environment variables you'll have to supply:
 
 | Variable | Description | Default | Notes |
 | --- | --- | --- | --- |
-| `PORT` | HTTP port for the webapp | `3000` | |
 | `LOG_DIR` | Directory for the logs | `./logs` | |
 | `COOKIE_SECRET` | This is the secret used to sign the session ID cookie | (not set) | Use a random string of characters for this. Changing this will invalidate existing sessions. See https://www.npmjs.com/package/express-session#secret for more details. |
-| `APP_DB_URL` | Database connection string | `"file:../db/trackbear.db"` | Path is relative to the prisma.schema file, located in prisma/. See https://pris.ly/d/connection-strings for more details. |
+| `APP_DB_URL` | Main database connection string | `"file:../db/trackbear.db"` | Path is relative to the prisma.schema file, located in prisma/. See https://pris.ly/d/connection-strings for more details. |
+| `QUEUE_DB_PATH` | Queue database path | `"./db/queue.db"` | Path is relative to the project root. |
+| `PORT` | HTTP port for the webapp | `3000` | |
 | `USE_PROXY` | Whether Trackbear is behind a proxy | `0` | Use this if Trackbear is behind a proxy like nginx. |
 | `USE_HTTPS` | Whether to serve HTTPS or HTTP | `0` | If set to `1`, `TLS_KEY` and `TLS_CERT` must also be set. |
 | `TLS_KEY` | The private key for TLS serving HTTPS | (not set) | If using Let's Encrypt, this is the `privkey.pem` file. |
 | `TLS_CERT` | The public certificate for TLS serving HTTPS | (not set) | If using Let's Encrypt, this is the `fullchain.pem` file. |
-
+| `MAILERSEND_API_KEY` | A MailerSend API key for sending email | (not set) |  |
+| `ORIGIN` | The origin that Trackbear is accessible via. | `http://localhost:3000` | This is used to construct links in emails. There is no slash at the end. |
 
 ## Developing
 
