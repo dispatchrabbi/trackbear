@@ -336,6 +336,15 @@ authRouter.post('/reset-password/:uuid',
       },
       include: { user: true },
     });
+
+    await dbClient.passwordResetLink.update({
+      data: {
+        state: PASSWORD_RESET_LINK_STATE.USED,
+      },
+      where: {
+        uuid: passwordResetLink.uuid,
+      },
+    });
   } catch(err) { return next(err); }
 
   // this should basically never happen...

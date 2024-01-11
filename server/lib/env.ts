@@ -13,6 +13,7 @@ type TrackbearCommonEnv = {
   USE_PROXY: boolean;
   MAILERSEND_API_KEY: string;
   ORIGIN: string;
+  LOG_LEVEL: string;
 };
 
 type TrackbearTlsEnv =
@@ -40,6 +41,9 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   if(!process.env.COOKIE_SECRET) { throw new Error('Missing COOKIE_SECRET value in .env'); }
   if(!process.env.MAILERSEND_API_KEY) { throw new Error('Missing MAILERSEND_API_KEY value in .env'); }
   if(!process.env.ORIGIN) { throw new Error('Missing ORIGIN value in .env'); }
+
+  process.env.LOG_LEVEL = process.env.LOG_LEVEL || 'info';
+  if(!['debug', 'info', 'warn', 'error', 'critical'].includes(process.env.LOG_LEVEL)) { throw new Error('LOG_LEVEL should be one of: debug, info, warn, error, critical'); }
 
   if(!['', '0', '1'].includes(process.env.USE_PROXY)) { throw new Error('USE_PROXY should only be either 0 or 1'); }
 
@@ -79,6 +83,7 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
     MAILERSEND_API_KEY: process.env.MAILERSEND_API_KEY,
 
     ORIGIN:             process.env.ORIGIN,
+    LOG_LEVEL:          process.env.LOG_LEVEL,
   };
 }
 

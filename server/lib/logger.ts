@@ -3,8 +3,10 @@ import winston, { format, transports } from 'winston';
 import { getNormalizedEnv } from './env.ts';
 
 async function initLoggers(logDir: string) {
+  const env = await getNormalizedEnv();
+
   winston.configure({
-    level: 'info',
+    level: env.LOG_LEVEL,
     format: format.combine(
       format.timestamp({
         format: 'YYYY-MM-DD HH:mm:ss'
@@ -27,19 +29,8 @@ async function initLoggers(logDir: string) {
     exitOnError: false,
   });
 
-  // also log to the console if we're in development mode
-  const env = await getNormalizedEnv();
-  if (env.NODE_ENV !== 'production') {
-    winston.add(new transports.Console({
-      format: format.combine(
-        format.colorize(),
-        format.simple()
-      )
-    }));
-  }
-
   winston.loggers.add('access', {
-    level: 'info',
+    level: 'info', // not affected by LOG_LEVEL because it's just logging requests
     format: format.combine(
       format.timestamp({
         format: 'YYYY-MM-DD HH:mm:ss'
@@ -56,7 +47,7 @@ async function initLoggers(logDir: string) {
   });
 
   winston.loggers.add('queue', {
-    level: 'info',
+    level: env.LOG_LEVEL,
     format: format.combine(
       format.timestamp({
         format: 'YYYY-MM-DD HH:mm:ss'
@@ -65,12 +56,53 @@ async function initLoggers(logDir: string) {
       format.splat(),
       format.json()
     ),
-    defaultMeta: { service: 'trackbear' },
+    defaultMeta: { service: 'queue' },
     transports: [
       new transports.File({ filename: path.join(logDir, 'queue.log') }), // log everything
     ],
     exitOnError: false,
   });
+
+  winston.loggers.add('worker', {
+    level: env.LOG_LEVEL,
+    format: format.combine(
+      format.timestamp({
+        format: 'YYYY-MM-DD HH:mm:ss'
+      }),
+      format.errors({ stack: true }),
+      format.splat(),
+      format.json()
+    ),
+    defaultMeta: { service: 'worker' },
+    transports: [
+      new transports.File({ filename: path.join(logDir, 'worker.log') }), // log everything
+    ],
+    exitOnError: false,
+  });
+
+  // also log to the console if we're in development mode
+  if (env.NODE_ENV !== 'production') {
+    winston.add(new transports.Console({
+      format: format.combine(
+        format.colorize(),
+        format.simple()
+      )
+    }));
+
+    winston.loggers.get('queue').add(new transports.Console({
+      format: format.combine(
+        format.colorize(),
+        format.simple()
+      )
+    }));
+
+    winston.loggers.get('worker').add(new transports.Console({
+      format: format.combine(
+        format.colorize(),
+        format.simple()
+      )
+    }));
+  }
 }
 
 async function closeLoggers() {

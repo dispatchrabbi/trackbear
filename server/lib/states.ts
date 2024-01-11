@@ -7,7 +7,7 @@ const USER_STATE = {
 const PASSWORD_RESET_LINK_STATE = {
   ACTIVE:   'active',
   USED:     'used',
-  DELETED:  'deleted',
+  // no DELETED because we only hard-delete these
 };
 
 const PROJECT_STATE = {

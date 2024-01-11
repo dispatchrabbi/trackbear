@@ -80,7 +80,7 @@ async function handleSubmit() {
             class="w-full"
             color="success"
             border="left"
-            icon="password"
+            icon="lock_reset"
             closeable
             :description="successMessage"
           />

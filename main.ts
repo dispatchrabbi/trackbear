@@ -7,6 +7,7 @@ import { initLoggers, closeLoggers } from './server/lib/logger.ts';
 
 import dbClient from './server/lib/db.ts';
 import { initQueue } from './server/lib/queue.ts';
+import initWorkers from './server/lib/workers.ts';
 
 import http from 'http';
 import https from 'https';
@@ -34,6 +35,9 @@ async function main() {
 
   // initialize the queue
   initQueue(env.QUEUE_DB_PATH);
+
+  // initialize the workers
+  initWorkers();
 
   // let's start up the server!
   const app = express();

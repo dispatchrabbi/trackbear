@@ -33,6 +33,7 @@ Here are the environment variables you'll have to supply:
 | `TLS_CERT` | The public certificate for TLS serving HTTPS | (not set) | If using Let's Encrypt, this is the `fullchain.pem` file. |
 | `MAILERSEND_API_KEY` | A MailerSend API key for sending email | (not set) |  |
 | `ORIGIN` | The origin that Trackbear is accessible via. | `http://localhost:3000` | This is used to construct links in emails. There is no slash at the end. |
+| `LOG_LEVEL` | Minimum log level to put in the logs. | `info` | Available values are: `debug`, `info`, `warn`, `error`, `critical`. Most likely you want this at `info` or `debug`. |
 
 ## Developing
 
