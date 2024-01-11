@@ -65,7 +65,7 @@ async function handleSubmit() {
           @submit.prevent="validate() && handleSubmit()"
         >
           <p class="">
-            To reset your password, enter a new password, then enter it again to confirm. Then hit <b>Reset Password</b>.
+            To reset your password, enter a new password, then hit <b>Reset Password</b>.
           </p>
           <TogglablePasswordInput
             id="new-password"
