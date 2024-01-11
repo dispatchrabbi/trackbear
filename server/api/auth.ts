@@ -307,8 +307,9 @@ authRouter.post('/reset-password/:uuid',
     passwordResetLink = await dbClient.passwordResetLink.findUnique({
       where: {
         uuid,
-        state: PASSWORD_RESET_LINK_STATE.ACTIVE
-      }
+        expiresAt: { gt: new Date() },
+        state: PASSWORD_RESET_LINK_STATE.ACTIVE,
+      },
     });
   } catch(err) { return next(err); }
 
