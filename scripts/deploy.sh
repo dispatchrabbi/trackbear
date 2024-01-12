@@ -21,4 +21,5 @@ echo "Building the app..."
 npm run build
 
 echo "Restarting the app..."
-pm2 restart ./ecosystem.config.cjs
+pm2 delete all
+pm2 start ./ecosystem.config.cjs

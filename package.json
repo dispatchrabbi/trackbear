@@ -15,7 +15,8 @@
     "build": "npx prisma generate && npm run build:client",
     "build:client": "npx vue-tsc && npx vite build --emptyOutDir",
     "migrate:dev": "npx prisma migrate dev",
-    "migrate:prod": "npx prisma migrate deploy && npx prisma generate"
+    "migrate:prod": "npx prisma migrate deploy && npx prisma generate",
+    "deploy": "./scripts/deploy.sh"
   },
   "dependencies": {
     "@prisma/client": "^5.6.0",
