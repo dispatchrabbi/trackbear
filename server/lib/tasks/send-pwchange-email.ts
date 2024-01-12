@@ -18,7 +18,7 @@ async function handler(task) {
   }
 
   await sendPasswordChangeEmail(user);
-  await logAuditEvent('password:send-email', TRACKBEAR_SYSTEM_ID, user.id);
+  await logAuditEvent('email:password-change', TRACKBEAR_SYSTEM_ID, user.id);
 }
 
 async function sendPasswordChangeEmail(user) {
@@ -37,7 +37,7 @@ async function sendPasswordChangeEmail(user) {
     .setFrom(sentFrom)
     .setTo(recipients)
     .setReplyTo(sentFrom)
-    .setSubject('You have changed your login password')
+    .setSubject('Your password has changed')
     .setText(`
 Hi, ${user.displayName}!
 

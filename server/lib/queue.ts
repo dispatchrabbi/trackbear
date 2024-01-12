@@ -4,6 +4,7 @@ import SqliteStore from 'better-queue-sqlite';
 import sendSignupEmailTask from './tasks/send-signup-email.ts';
 import sendPwchangeEmailTask from './tasks/send-pwchange-email.ts';
 import sendPwresetEmailTask from './tasks/send-pwreset-email.ts';
+import sendEmailverificationEmailTask from './tasks/send-emailverification-email.ts';
 
 // use the queue log to log info about the queue
 import winston from 'winston';
@@ -20,12 +21,19 @@ function initQueue(taskDbPath) {
     store: new SqliteStore({
       path: taskDbPath
     }),
+    cancelIfRunning: true,
+    autoResume: true,
+    batchSize: 1,
+    afterProcessDelay: 500, // rate limits on the API limit us to 120 emails/minute = 2 emails/second
+    maxRetries: 3,
+    retryDelay: 1000, // double the rate limit delay just to be cautious
   });
 
   // TODO: I don't like this interface/setup. There's gotta be a better way.
   registerTaskType(sendSignupEmailTask);
   registerTaskType(sendPwchangeEmailTask);
   registerTaskType(sendPwresetEmailTask);
+  registerTaskType(sendEmailverificationEmailTask);
 
   const queueLogger = winston.loggers.get('queue');
   q.on('task_queued', (taskId, task) => queueLogger.info('Task queued', {taskId, ...task}));
@@ -37,6 +45,7 @@ function initQueue(taskDbPath) {
   q.on('task_retry', (taskId, retries) => queueLogger.info('Retrying task', {taskId, retries}));
   q.on('empty', () => queueLogger.debug('Queue is empty (but tasks may be in progress'));
   q.on('drain', () => queueLogger.debug('Queue has been drained'));
+  q.on('error', (err) => queueLogger.error('Queue experienced an error', { err }));
 
   winston.info('Queue has been configured');
 }
@@ -47,17 +56,25 @@ function registerTaskType(taskType) {
 }
 
 async function taskHandler(task) {
-  if(!Object.keys(HANDLER_MAP).includes(task.name)) {
-    throw new Error(`No handler found for taskname ${task.name} (task id ${task.id})`);
-  }
+  const queueLogger = winston.loggers.get('queue');
 
-  return HANDLER_MAP[task.name](task);
+  try {
+    if(!Object.keys(HANDLER_MAP).includes(task.name)) {
+      throw new Error(`No handler found for taskname ${task.name} (task id ${task.id})`);
+    }
+
+    return HANDLER_MAP[task.name](task);
+  } catch(err) {
+    queueLogger.error(err.message);
+    throw err;
+  }
 }
 
 function pushTask(task) {
   if(q === null) { throw new Error('Queue has not been initialized'); }
 
-  q.push(task);
+  const ticket = q.push(task);
+  return ticket;
 }
 
 export {

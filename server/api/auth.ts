@@ -1,7 +1,7 @@
 import { Router, Request } from "express";
 import { z } from 'zod';
 import winston from "winston";
-import { addMinutes } from 'date-fns';
+import { addMinutes, addDays } from 'date-fns';
 
 import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 import { ApiResponse, success, failure } from '../lib/api-response.ts';
@@ -14,6 +14,7 @@ import { PASSWORD_RESET_LINK_STATE, USER_STATE } from "../lib/states.ts";
 
 import { pushTask } from "../lib/queue.ts";
 import sendSignupEmailTask from '../lib/tasks/send-signup-email.ts';
+import sendEmailverificationEmail from "../lib/tasks/send-emailverification-email.ts";
 import sendPwchangeEmail from "../lib/tasks/send-pwchange-email.ts";
 
 import { logAuditEvent } from '../lib/audit-events.ts';
@@ -177,17 +178,30 @@ authRouter.post('/signup',
     salt: salt,
   };
 
+  const pendingEmailVerificationData = {
+    previousEmail: null,
+    expiresAt: addDays(new Date(), 10),
+  };
+
   try {
     const user = await dbClient.user.create({
       data: {
         ...userData,
-        UserAuth: { create: { ...userAuthData } },
-      }
+        UserAuth: { create: userAuthData },
+        PendingEmailVerification: { create: pendingEmailVerificationData },
+      },
+      include: {
+        PendingEmailVerification: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
+      },
     });
     await logAuditEvent('user:signup', user.id, user.id);
     winston.debug(`SIGNUP: ${user.username} just signed up`);
 
     pushTask(sendSignupEmailTask.makeTask(user.id));
+    pushTask(sendEmailverificationEmail.makeTask(user.PendingEmailVerification[0].uuid));
 
     res.status(201).send(success({
       uuid: user.uuid,

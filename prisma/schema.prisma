@@ -33,22 +33,22 @@ model AuditEvent {
 }
 
 model User {
-  id   Int    @id @default(autoincrement())
-  uuid String @unique @default(uuid())
+  id    Int    @id @default(autoincrement())
+  uuid  String @unique @default(uuid())
+  state String
 
-  email       String
   username    String @unique
   displayName String
-
-  state String
+  email       String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  projects          Project[]
-  leaderboards      Leaderboard[]
-  UserAuth          UserAuth?
-  PasswordResetLink PasswordResetLink[]
+  projects                 Project[]
+  leaderboards             Leaderboard[]
+  UserAuth                 UserAuth?
+  PasswordResetLink        PasswordResetLink[]
+  PendingEmailVerification PendingEmailVerification[]
 }
 
 model UserAuth {
@@ -59,6 +59,19 @@ model UserAuth {
 
   password String
   salt     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PendingEmailVerification {
+  uuid String @id @default(uuid())
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+
+  previousEmail String?
+  expiresAt     DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

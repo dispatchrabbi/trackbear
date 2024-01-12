@@ -18,7 +18,7 @@ async function handler(task) {
   }
 
   await sendConfirmationEmail(user);
-  await logAuditEvent('signup:send-email', TRACKBEAR_SYSTEM_ID, user.id);
+  await logAuditEvent('email:signup', TRACKBEAR_SYSTEM_ID, user.id);
 }
 
 async function sendConfirmationEmail(user) {
@@ -37,13 +37,17 @@ async function sendConfirmationEmail(user) {
     .setFrom(sentFrom)
     .setTo(recipients)
     .setReplyTo(sentFrom)
-    .setSubject('Please confirm your email address')
+    .setSubject('Welcome to TrackBear!')
     .setText(`
 Hi, ${user.displayName}!
 
-There isn't actually anything for you to do, because we don't have email confirmation set up yet. Enjoy this email!
+Thank you for signing up to TrackBear! We hope that this will be the start of a wonderful new era of writing productivity for you! (But if it isn't, don't worry, we don't judge.)
 
-Bearly,
+TrackBear is currently in alpha and I'd love to hear your feedback. You can reach out to me on Discord (@dispatchrabbi) or Github (also dispatchrabbi).
+
+Oh, also — you should receive an email soon that asks you to verify your email. Please make sure you do that within 10 days, or your account will be suspended.
+
+Beary sincerely,
 TrackBear
     `.trim());
 

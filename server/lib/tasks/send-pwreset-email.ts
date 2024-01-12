@@ -22,7 +22,7 @@ async function handler(task) {
   }
 
   await sendPasswordResetEmail(resetLink.user, resetLink);
-  await logAuditEvent('password:send-reset', TRACKBEAR_SYSTEM_ID, resetLink.user.id);
+  await logAuditEvent('email:password-reset', TRACKBEAR_SYSTEM_ID, resetLink.user.id);
 }
 
 async function sendPasswordResetEmail(user: User, resetLink: PasswordResetLink) {
@@ -42,7 +42,7 @@ async function sendPasswordResetEmail(user: User, resetLink: PasswordResetLink) 
     .setFrom(sentFrom)
     .setTo(recipients)
     .setReplyTo(sentFrom)
-    .setSubject('Reset Password')
+    .setSubject('Reset your password')
     .setText(`
 Hi, ${user.displayName}!
 
