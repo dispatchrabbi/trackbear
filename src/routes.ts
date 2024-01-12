@@ -3,11 +3,14 @@ import PlaceholderPage from './components/PlaceholderPage.vue';
 import HomePage from './components/HomePage.vue';
 import AboutPage from './components/AboutPage.vue';
 import PrivacyPage from './components/PrivacyPage.vue';
+
 import SignUpPage from './components/SignUpPage.vue';
 import LoginPage from './components/LoginPage.vue';
 import LogoutPage from './components/LogoutPage.vue';
-import SendResetPasswordPage from './components/SendResetPassword.vue';
-import ResetPasswordPage from './components/ResetPassword.vue';
+import VerifyEmailPage from './components/VerifyEmailPage.vue';
+import SendResetPasswordPage from './components/SendResetPasswordPage.vue';
+import ResetPasswordPage from './components/ResetPasswordPage.vue';
+
 import SharedProjectPage from './components/SharedProjectPage.vue';
 
 import AccountPage from './components/AccountPage.vue';
@@ -30,6 +33,7 @@ const routes = [
   { path: '/signup', name:'signup', component: SignUpPage },
   { path: '/login', name:'login', component: LoginPage },
   { path: '/logout', name:'logout', component: LogoutPage },
+  { path: '/verify-email/:uuid', name:'verify-email', component: VerifyEmailPage },
   { path: '/reset-password/', name:'send-reset-password', component: SendResetPasswordPage },
   { path: '/reset-password/:uuid', name:'reset-password', component: ResetPasswordPage },
   { path: '/share/projects/:uuid', name:'share-project', component: SharedProjectPage },

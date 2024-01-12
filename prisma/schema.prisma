@@ -71,6 +71,7 @@ model PendingEmailVerification {
   userId Int
 
   previousEmail String?
+  newEmail      String
   expiresAt     DateTime
 
   createdAt DateTime @default(now())

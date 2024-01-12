@@ -15,7 +15,7 @@ import {
   VaForm, VaDateInput, VaInput, VaRadio, VaSelect, VaSwitch,
   VaList, VaListItem, VaListItemLabel, VaListItemSection,
   VaMenu, VaMenuList, VaMenuItem, VaDivider,
-  VaSkeleton, VaSkeletonGroup,
+  VaSkeleton, VaSkeletonGroup, VaProgressCircle,
   VaAlert, VaAvatar, VaButton, VaButtonDropdown, VaIcon, VaImage, VaPopover,
   VaModal, VaModalPlugin,
 } from 'vuestic-ui';
@@ -38,7 +38,7 @@ createApp(App)
       VaForm, VaDateInput, VaInput, VaRadio, VaSelect, VaSwitch,
       VaList, VaListItem, VaListItemLabel, VaListItemSection,
       VaMenu, VaMenuList, VaMenuItem, VaDivider,
-      VaSkeleton, VaSkeletonGroup,
+      VaSkeleton, VaSkeletonGroup, VaProgressCircle,
       VaAlert, VaAvatar, VaButton, VaButtonDropdown, VaIcon, VaImage, VaPopover,
       VaModal,
     },

@@ -7,7 +7,7 @@ import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 import { ApiResponse, success, failure } from '../lib/api-response.ts';
 
 import dbClient from '../lib/db.ts';
-import { PasswordResetLink, User, UserAuth } from "@prisma/client";
+import { PasswordResetLink, PendingEmailVerification, User, UserAuth } from "@prisma/client";
 import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut, requireUser, WithUser } from "../lib/auth.ts";
 import { PASSWORD_RESET_LINK_STATE, USER_STATE } from "../lib/states.ts";
@@ -180,6 +180,7 @@ authRouter.post('/signup',
 
   const pendingEmailVerificationData = {
     previousEmail: null,
+    newEmail: userData.email,
     expiresAt: addDays(new Date(), 10),
   };
 
@@ -211,6 +212,63 @@ authRouter.post('/signup',
   } catch(err) {
     return next(err);
   }
+});
+
+authRouter.post('/verify-email/:uuid',
+  validateParams(z.object({
+    uuid: z.string().uuid(),
+  })),
+  async (req: Request, res: ApiResponse<EmptyObject>, next) =>
+{
+  const uuid = req.params.uuid;
+  let pendingEmailVerification: PendingEmailVerification | null;
+  try {
+    pendingEmailVerification = await dbClient.pendingEmailVerification.findUnique({
+      where: {
+        uuid,
+        expiresAt: { gt: new Date() },
+      },
+    });
+  } catch(err) { return next(err); }
+
+  if(!pendingEmailVerification) {
+    return res.status(404).send(failure('NOT_FOUND', 'Could not verify your email. This verification link is either expired, already used, or bogus. Check your link and try again.'));
+  }
+
+  let latestValidEmailVerification: PendingEmailVerification | null;
+  try {
+    latestValidEmailVerification = await dbClient.pendingEmailVerification.findFirst({
+      where: {
+        newEmail: pendingEmailVerification.newEmail
+      },
+      orderBy: { updatedAt: 'desc' },
+      take: 1,
+    });
+  } catch(err) { return next(err); }
+
+  if(!latestValidEmailVerification) {
+    // this should really only happen if you're clicking on two verification links at the same time
+    // and the race condition means that the other request has already deleted things
+    // in this case, there's nothing to do and we just... return 200
+    res.status(200).send(success({}));
+  }
+
+  // and now, to complete the verification, we delete all pending verifications up to the last one
+  // that we sent with that email address. This addresses the case where you change your email to a@a.com,
+  // then to b@b.com, then back to a@a.com, and click an email from the first change to a@a.com. It also
+  // addresses the case where you change from a@ to b@ to c@ and verify c@. In both cases, all pending
+  // verifications should be removed. Also in both cases, if the link to b@ was clicked, that will verify,
+  // but you still have pending verifications to click at a@ or c@ respectively. If you don't, your account
+  // will eventually end up suspended. So... don't do that if you're changing your email a lot?
+  try {
+    await dbClient.pendingEmailVerification.deleteMany({
+      where: {
+        createdAt: { lte: latestValidEmailVerification.createdAt },
+      }
+    });
+  } catch(err) { return next(err); }
+
+  res.status(200).send(success({}));
 });
 
 authRouter.post('/password',

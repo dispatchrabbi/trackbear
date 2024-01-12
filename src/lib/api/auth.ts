@@ -1,6 +1,8 @@
 import { callApi } from "./api.ts";
 import { CreateUserPayload, UserResponse } from 'server/api/auth.ts';
 
+type EmptyObject = Record<string, never>;
+
 async function signUp(userInfo: CreateUserPayload): Promise<UserResponse> {
   const response = await callApi<UserResponse>('/api/auth/signup', 'POST', userInfo);
 
@@ -35,7 +37,16 @@ async function getUser(): Promise<UserResponse> {
   }
 }
 
-type EmptyObject = Record<string, never>;
+async function verifyEmail(verifyUuid: string): Promise<EmptyObject> {
+  const response = await callApi<EmptyObject>(`/api/auth/verify-email/${verifyUuid}`, 'POST');
+
+  if(response.success === true) {
+    return response.data;
+  } else {
+    throw response.error;
+  }
+}
+
 async function changePassword(currentPassword: string, newPassword: string): Promise<EmptyObject> {
   const response = await callApi<EmptyObject>('/api/auth/password', 'POST', { currentPassword, newPassword });
 
@@ -71,6 +82,7 @@ export {
   logIn,
   logOut,
   getUser,
+  verifyEmail,
   changePassword,
   requestPasswordReset,
   resetPassword,
