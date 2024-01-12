@@ -34,7 +34,7 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   }
   process.env.PORT = process.env.PORT || "3000";
 
-  process.env.LOG_DIR = process.env.LOG_DIR || './logs';
+  process.env.LOG_DIR = path.resolve(ROOT_DIR, process.env.LOG_DIR || './logs');
   process.env.APP_DB_URL = process.env.APP_DB_URL || 'file:./db/app.db';
   process.env.QUEUE_DB_PATH = path.resolve(ROOT_DIR, process.env.QUEUE_DB_PATH || "./db/queue.db");
 
@@ -53,12 +53,14 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   if(useHttps) {
     if(!(process.env.TLS_KEY && process.env.TLS_CERT)) { throw new Error('USE_HTTPS requires both TLS_KEY and TLS_CERT values in .env'); }
 
+    process.env.TLS_KEY = path.resolve(ROOT_DIR, process.env.TLS_KEY);
     try {
       await access(process.env.TLS_KEY, constants.R_OK);
     } catch(err) {
       throw new Error(`Could not read TLS_KEY: ${process.env.TLS_KEY}`);
     }
 
+    process.env.TLS_CERT = path.resolve(ROOT_DIR, process.env.TLS_CERT);
     try {
       await access(process.env.TLS_CERT, constants.R_OK);
     } catch(err) {
