@@ -30,7 +30,7 @@ async function submitVerification() {
   try {
     await verifyEmail(routeUuidParam);
     successMessage.value = 'Your email has been verified! Redirecting you to the login page...';
-    // setTimeout(() => router.push('/login'), 3 * 1000);
+    setTimeout(() => router.push('/login'), 3 * 1000);
   } catch(err) {
     errorMessage.value = err.message;
   } finally {

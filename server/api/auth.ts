@@ -189,21 +189,21 @@ authRouter.post('/signup',
     const user = await dbClient.user.create({
       data: {
         ...userData,
-        UserAuth: { create: userAuthData },
-        PendingEmailVerification: { create: pendingEmailVerificationData },
+        userAuth: { create: userAuthData },
+        pendingEmailVerifications: { create: pendingEmailVerificationData },
       },
       include: {
-        PendingEmailVerification: {
+        pendingEmailVerifications: {
           orderBy: { createdAt: 'desc' },
           take: 1,
         },
       },
     });
     await logAuditEvent('user:signup', user.id, user.id);
-    winston.debug(`SIGNUP: ${user.username} just signed up`);
+    winston.debug(`SIGNUP: ${user.id} just signed up`);
 
     pushTask(sendSignupEmailTask.makeTask(user.id));
-    pushTask(sendEmailverificationEmail.makeTask(user.PendingEmailVerification[0].uuid));
+    pushTask(sendEmailverificationEmail.makeTask(user.pendingEmailVerifications[0].uuid));
 
     res.status(201).send(success({
       uuid: user.uuid,
@@ -250,14 +250,14 @@ authRouter.post('/verify-email/:uuid',
     await dbClient.user.update({
       data: {
         isEmailVerified: true,
-        PendingEmailVerification: { deleteMany: {} },
+        pendingEmailVerifications: { deleteMany: {} },
       },
       where: { id: user.id },
     });
   } catch(err) { return next(err); }
 
   await logAuditEvent('user:verifyemail', user.id, user.id, null, { verificationUuid: verification.uuid, email: verification.newEmail });
-  winston.debug(`VERIFY: ${user.username} just verified their email`);
+  winston.debug(`VERIFY: ${user.id} just verified their email`);
 
   return res.status(200).send(success({}));
 });
@@ -276,7 +276,7 @@ authRouter.post('/password',
   } catch(err) { return next(err); }
 
   if(!userAuth) {
-    winston.error(`LOGIN: ${req.user.username} (${req.user.id}) attempted to change their password but they were not found!`);
+    winston.error(`LOGIN: ${req.user.id} attempted to change their password but they were not found!`);
     return res.status(403).send(failure('INVALID_USER', 'Invalid user.'));
   }
 
@@ -287,7 +287,7 @@ authRouter.post('/password',
   } catch(err) { return next(err); }
 
   if(!verified) {
-    winston.debug(`LOGIN: ${req.user.username} (${req.user.id}) had the incorrect password`);
+    winston.debug(`LOGIN: ${req.user.id} had the incorrect password`);
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect password.'));
   }
 
@@ -309,7 +309,7 @@ authRouter.post('/password',
     });
   } catch(err) { return next(err); }
 
-  winston.debug(`PASSWORD: ${req.user.username} (${req.user.id}) has changed their password`);
+  winston.debug(`PASSWORD: ${req.user.id} has changed their password`);
   await logAuditEvent('user:pwchange', req.user.id, req.user.id);
   pushTask(sendPwchangeEmail.makeTask(req.user.id));
 
@@ -350,7 +350,7 @@ authRouter.post('/reset-password',
     });
   } catch(err) { return next(err); }
 
-  winston.debug(`PASSWORD: ${user.username} (${user.id}) requested a reset link and got ${resetLink.uuid}`);
+  winston.debug(`PASSWORD: ${user.id} requested a reset link and got ${resetLink.uuid}`);
   await logAuditEvent('user:pwresetreq', user.id, null, null, { resetLinkUuid: resetLink.uuid });
   pushTask(sendPwresetEmail.makeTask(resetLink.uuid));
 
@@ -417,7 +417,7 @@ authRouter.post('/reset-password/:uuid',
   }
 
   const user = userAuth.user;
-  winston.debug(`PASSWORD: ${user.username} (${user.id}) has reset their password`);
+  winston.debug(`PASSWORD: ${user.id} has reset their password`);
   await logAuditEvent('user:pwreset', user.id, user.id);
   pushTask(sendPwchangeEmail.makeTask(user.id));
 

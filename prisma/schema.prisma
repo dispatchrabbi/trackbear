@@ -46,11 +46,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  projects                 Project[]
-  leaderboards             Leaderboard[]
-  UserAuth                 UserAuth?
-  PasswordResetLink        PasswordResetLink[]
-  PendingEmailVerification PendingEmailVerification[]
+  projects                  Project[]
+  leaderboards              Leaderboard[]
+  userAuth                  UserAuth?
+  passwordResetLinks        PasswordResetLink[]
+  pendingEmailVerifications PendingEmailVerification[]
 }
 
 model UserAuth {
