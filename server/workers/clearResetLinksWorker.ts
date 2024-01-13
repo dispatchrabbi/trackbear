@@ -9,8 +9,8 @@ const NAME = 'clearResetLinksWorker';
 const CRONTAB = '8 * * * *';
 
 async function run() {
-  const workerLog = winston.loggers.get('worker');
-  workerLog.debug(`Worker has started`, { service: NAME });
+  const workerLogger = winston.loggers.get('worker');
+  workerLogger.debug(`Worker has started`, { service: NAME });
 
   let deleted: Prisma.BatchPayload | null;
   try {
@@ -23,16 +23,11 @@ async function run() {
       }
     });
   } catch(err) {
-    workerLog.error(`Error while running: ${err.message}`, { service: NAME });
-    return false;
+    workerLogger.error(`Error while deleting password reset links: ${err.message}`, { service: NAME });
+    return;
   }
 
-  // don't clog the logs
-  if(deleted.count > 0) {
-    workerLog.info(`Deleted ${deleted.count} password reset links`, { service: NAME });
-  } else {
-    workerLog.debug(`Deleted ${deleted.count} password reset links`, { service: NAME });
-  }
+  workerLogger.info(`Deleted ${deleted.count} password reset links`, { service: NAME });
 }
 
 export default {
