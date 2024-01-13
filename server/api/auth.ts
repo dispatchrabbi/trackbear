@@ -46,7 +46,7 @@ const changePasswordPayloadSchema = z.object({
 
 export type RequestPasswordResetPayload = {
   username: string;
-}
+};
 const requestPasswordResetPayloadSchema = z.object({
   username: z.string().trim().toLowerCase()
     .min(3, { message: 'Username must be at least 3 characters long.'})
@@ -56,7 +56,7 @@ const requestPasswordResetPayloadSchema = z.object({
 
 export type PasswordResetPayload = {
   newPassword: string;
-}
+};
 const passwordResetPayloadSchema = z.object({
   newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
 });
@@ -131,7 +131,7 @@ authRouter.get('/user',
   };
 
   res.status(200).send(success(userResponse));
-})
+});
 
 // logout ought to requireUser but since all it does is remove that user,
 // it's okay to just... let anyone log out at any time, even if they're not logged in.
@@ -139,7 +139,7 @@ type EmptyObject = Record<string, never>;
 authRouter.post('/logout', (req, res: ApiResponse<EmptyObject>) => {
   logOut(req);
   res.status(200).send(success({}));
-})
+});
 
 authRouter.post('/signup',
   validateBody(createUserPayloadSchema),
@@ -167,10 +167,11 @@ authRouter.post('/signup',
   } catch(err) { return next(err); }
 
   const userData = {
-    email: email,
+    state: USER_STATE.ACTIVE,
     username: username,
     displayName: username,
-    state: USER_STATE.ACTIVE,
+    email: email,
+    isEmailVerified: false,
   };
 
   const userAuthData = {
@@ -221,54 +222,44 @@ authRouter.post('/verify-email/:uuid',
   async (req: Request, res: ApiResponse<EmptyObject>, next) =>
 {
   const uuid = req.params.uuid;
-  let pendingEmailVerification: PendingEmailVerification | null;
+  let verification: PendingEmailVerification & { user: User } | null;
   try {
-    pendingEmailVerification = await dbClient.pendingEmailVerification.findUnique({
+    verification = await dbClient.pendingEmailVerification.findUnique({
       where: {
         uuid,
         expiresAt: { gt: new Date() },
       },
-    });
-  } catch(err) { return next(err); }
-
-  if(!pendingEmailVerification) {
-    return res.status(404).send(failure('NOT_FOUND', 'Could not verify your email. This verification link is either expired, already used, or bogus. Check your link and try again.'));
-  }
-
-  let latestValidEmailVerification: PendingEmailVerification | null;
-  try {
-    latestValidEmailVerification = await dbClient.pendingEmailVerification.findFirst({
-      where: {
-        newEmail: pendingEmailVerification.newEmail
+      include: {
+        user: true,
       },
-      orderBy: { updatedAt: 'desc' },
-      take: 1,
     });
   } catch(err) { return next(err); }
 
-  if(!latestValidEmailVerification) {
-    // this should really only happen if you're clicking on two verification links at the same time
-    // and the race condition means that the other request has already deleted things
-    // in this case, there's nothing to do and we just... return 200
-    res.status(200).send(success({}));
+  const user = verification?.user;
+
+  if(!(
+    verification && // we found a non-expired verification for this uuid
+    verification.newEmail === user.email && // it's for the current email
+    user.isEmailVerified === false // the email hasn't already been verified
+  )) {
+    return res.status(404).send(failure('NOT_FOUND', 'Could not verify your email. This verification link is either expired, already used, or invalid. Check your link and try again.'));
   }
 
-  // and now, to complete the verification, we delete all pending verifications up to the last one
-  // that we sent with that email address. This addresses the case where you change your email to a@a.com,
-  // then to b@b.com, then back to a@a.com, and click an email from the first change to a@a.com. It also
-  // addresses the case where you change from a@ to b@ to c@ and verify c@. In both cases, all pending
-  // verifications should be removed. Also in both cases, if the link to b@ was clicked, that will verify,
-  // but you still have pending verifications to click at a@ or c@ respectively. If you don't, your account
-  // will eventually end up suspended. So... don't do that if you're changing your email a lot?
+  // now we mark the email verified and delete all pending verifications for this email
   try {
-    await dbClient.pendingEmailVerification.deleteMany({
-      where: {
-        createdAt: { lte: latestValidEmailVerification.createdAt },
-      }
+    await dbClient.user.update({
+      data: {
+        isEmailVerified: true,
+        PendingEmailVerification: { deleteMany: {} },
+      },
+      where: { id: user.id },
     });
   } catch(err) { return next(err); }
 
-  res.status(200).send(success({}));
+  await logAuditEvent('user:verifyemail', user.id, user.id, null, { verificationUuid: verification.uuid, email: verification.newEmail });
+  winston.debug(`VERIFY: ${user.username} just verified their email`);
+
+  return res.status(200).send(success({}));
 });
 
 authRouter.post('/password',
