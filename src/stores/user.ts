@@ -20,7 +20,7 @@ export const useUserStore = defineStore('user', {
       this.user = null;
     },
     async populateUser() {
-      if(!this.user) {
+      if(this.user === null) {
         const user = await getUser();
         this.user = user;
       }

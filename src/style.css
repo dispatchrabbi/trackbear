@@ -40,3 +40,8 @@ body, body.va-screen-xs, body.va-screen-sm, body.va-screen-md, body.va-screen-lg
 :is(.edit-update-modal, .delete-update-modal) .va-modal__inner {
   min-width: auto;
 }
+
+/* This can't be done in BannerAnnouncement.vue due to v-html not working with scoped CSS */
+.banner-message a {
+  text-decoration-line: underline;
+}

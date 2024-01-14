@@ -5,6 +5,7 @@ const router = useRouter();
 import { useUserStore } from '../../stores/user.ts';
 const userStore = useUserStore();
 
+import BannerContainer from '../banner/BannerContainer.vue';
 import PageHeader from './PageHeader.vue';
 import PageBody from './PageBody.vue';
 import PageFooter from './PageFooter.vue';
@@ -23,6 +24,7 @@ userStore.populateUser().catch(() => {
 </script>
 
 <template>
+  <BannerContainer v-if="userStore.user" />
   <PageHeader />
   <PageBody>
     <slot />
