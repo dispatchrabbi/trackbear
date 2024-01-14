@@ -9,7 +9,6 @@ import winston from 'winston';
 import { initLoggers } from '../server/lib/logger.ts';
 
 import dbClient from '../server/lib/db.ts';
-import type { Banner } from '@prisma/client';
 import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from '../server/lib/audit-events.ts';
 
 async function main() {

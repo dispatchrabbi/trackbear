@@ -24,8 +24,7 @@ const md = markdownit({
   typographer: true,
 });
 const messageHtml = computed(() => {
-  console.log(md.renderInline(props.message));
-  return md.renderInline(props.message);
+  return md.render(props.message);
 });
 
 </script>
@@ -38,7 +37,7 @@ const messageHtml = computed(() => {
     closeable
   >
     <!-- eslint-disable vue/no-v-html -->
-    <span
+    <div
       class="banner-message"
       v-html="messageHtml"
     />

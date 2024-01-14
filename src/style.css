@@ -45,3 +45,15 @@ body, body.va-screen-xs, body.va-screen-sm, body.va-screen-md, body.va-screen-lg
 .banner-message a {
   text-decoration-line: underline;
 }
+
+.banner-message strong {
+  line-height: inherit;
+}
+
+.banner-message p {
+  margin-top: 1em;
+}
+
+.banner-message p:first-of-type {
+  margin-top: 0;
+}
