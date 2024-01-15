@@ -16,6 +16,8 @@
     "build:client": "npx vue-tsc && npx vite build --emptyOutDir",
     "migrate:dev": "npx prisma migrate dev",
     "migrate:prod": "npx prisma migrate deploy && npx prisma generate",
+    "preversion": "npm run build",
+    "version": "VERSION=$(npm pkg get version --workspaces=false | tr -d \\\"); git add .; git commit -m \"v${VERSION}\"; git tag -a \"v${VERSION}\" -m \"v${VERSION}\"",
     "deploy": "./scripts/deploy.sh"
   },
   "dependencies": {
