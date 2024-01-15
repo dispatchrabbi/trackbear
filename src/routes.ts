@@ -2,6 +2,7 @@ import PlaceholderPage from './components/PlaceholderPage.vue';
 
 import HomePage from './components/HomePage.vue';
 import AboutPage from './components/AboutPage.vue';
+import ChangelogPage from './components/ChangelogPage.vue';
 import PrivacyPage from './components/PrivacyPage.vue';
 
 import SignUpPage from './components/SignUpPage.vue';
@@ -29,6 +30,7 @@ const routes = [
   // no login needed
   { path: '/', name: 'home', component: HomePage },
   { path: '/about', name: 'about', component: AboutPage },
+  { path: '/changelog', name: 'changelog', component: ChangelogPage },
   { path: '/privacy', name: 'privacy', component: PrivacyPage },
   { path: '/signup', name:'signup', component: SignUpPage },
   { path: '/login', name:'login', component: LoginPage },

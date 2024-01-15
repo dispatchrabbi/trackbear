@@ -15,11 +15,9 @@ body, body.va-screen-xs, body.va-screen-sm, body.va-screen-md, body.va-screen-lg
 .va-list-item-label {
   --va-list-item-label-color: var(--text-primary);
 }
-
 .va-list-item-label {
   --va-alert-color: var(--text-primary);
 }
-
 .va-menu-list {
   --va-menu-padding-y: 2rem;
 }

@@ -30,6 +30,12 @@
       </div>
       <div>/</div>
       <div>
+        <RouterLink to="/changelog">
+          Changelog
+        </RouterLink>
+      </div>
+      <div>/</div>
+      <div>
         <RouterLink to="/privacy">
           Privacy
         </RouterLink>

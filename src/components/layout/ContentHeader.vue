@@ -8,7 +8,7 @@ const props = defineProps<{
 
 <template>
   <div class="flex gap-4 items-center">
-    <h3 class="va-h3 mb-3 content-title">
+    <h3 class="va-h3 mb-3 flex-auto content-title">
       {{ props.title }}
     </h3>
     <slot name="actions" />
@@ -18,6 +18,7 @@ const props = defineProps<{
 <style scoped>
 .content-title ~ :deep(*) {
   display: block;
+  /* all top-level elements in the #actions slot should be flex-initial */
   @apply flex-initial;
 }
 </style>
