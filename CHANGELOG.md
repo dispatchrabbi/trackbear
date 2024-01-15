@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## v0.5.2
+
+- NEW: This changelog! Keep an eye out here for recent and upcoming changes to Trackbear.
+
 ## v0.5.0
 
 - NEW: Users will now see in-app announcements in the form of banners across the top of the screen.
