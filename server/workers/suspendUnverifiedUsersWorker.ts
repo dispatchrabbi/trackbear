@@ -6,11 +6,10 @@ import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from "../lib/audit-events.ts";
 
 type UserWithVerifications = User & { pendingEmailVerifications: PendingEmailVerification[] }
 
-const NAME = 'checkUnverifiedUsersWorker';
+const NAME = 'suspendUnverifiedUsersWorker';
 
-// run once a day at 01:13 (hour and minute chosen at random)
-// const CRONTAB = '13 1 * * *';
-const CRONTAB = '15 * * * * *';
+// run once a day at 02:24 (hour and minute chosen at random)
+const CRONTAB = '24 2 * * *';
 
 async function run() {
   const workerLogger = winston.loggers.get('worker');
@@ -39,26 +38,21 @@ async function run() {
 
   const now = new Date();
   const userIdsToSuspend = users
-    .filter(user => user.pendingEmailVerifications.length === 0 || user.pendingEmailVerifications[0].expiresAt <= now)
+    .filter(user => user.pendingEmailVerifications.every(v => v.expiresAt <= now))
     .map(user => user.id);
   workerLogger.info(`About to suspend ${userIdsToSuspend.length} users for unverified emails: ${userIdsToSuspend.join(', ')}`);
 
   try {
-    await dbClient.$transaction([
-      dbClient.user.updateMany({
-        data: {
-          state: USER_STATE.SUSPENDED,
-        },
-        where: {
-          id: { in: userIdsToSuspend },
-        },
-      }),
-      dbClient.pendingEmailVerification.deleteMany({
-        where: { userId: { in: userIdsToSuspend } },
-      }),
-    ]);
+    await dbClient.user.updateMany({
+      data: {
+        state: USER_STATE.SUSPENDED,
+      },
+      where: {
+        id: { in: userIdsToSuspend },
+      },
+    });
 
-    await Promise.all(userIdsToSuspend.map(id => logAuditEvent('user:suspend', TRACKBEAR_SYSTEM_ID, id, null, { reason: `Email was not verified in time (${NAME})` })));
+    await Promise.all(userIdsToSuspend.map(id => logAuditEvent('user:suspend', TRACKBEAR_SYSTEM_ID, id, null, { reason: NAME })));
   } catch(err) {
     workerLogger.error(`Error while suspending users with expired email verifications: ${err.message}`, { service: NAME });
     return;

@@ -1,11 +1,11 @@
 import dbClient from "../lib/db.ts";
 import winston from "winston";
+import { addDays } from "date-fns";
 
 const NAME = 'removeExpiredEmailVerificationsWorker';
 
-// run once a day at 02:24 (hour and minute chosen at random)
-// const CRONTAB = '24 2 * * *';
-const CRONTAB = '45 * * * * *';
+// run once a day at 01:13 (hour and minute chosen at random)
+const CRONTAB = '13 1 * * *';
 
 async function run() {
   const workerLogger = winston.loggers.get('worker');
@@ -15,7 +15,7 @@ async function run() {
     const now = new Date();
     const result = await dbClient.pendingEmailVerification.deleteMany({
       where: {
-        expiresAt: { lt: now },
+        expiresAt: { lt: addDays(now, -7) }, // keep expired verifications an extra 7 days, for troubleshooting
       },
     });
 

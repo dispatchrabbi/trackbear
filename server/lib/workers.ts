@@ -1,13 +1,13 @@
 import { CronJob } from 'cron';
 import winston from 'winston';
 
-import checkUnverifiedUsersWorker from '../workers/checkUnverifiedUsersWorker.ts';
+import suspendUnverifiedUsersWorker from '../workers/suspendUnverifiedUsersWorker.ts';
 import clearResetLinksWorker from '../workers/clearResetLinksWorker.ts';
 import removeExpiredEmailVerificationsWorker from '../workers/removeExpiredEmailVerificationsWorker.ts';
 
 const WORKERS = [
   // TODO: reinstate these after sending out initial verification emails
-  // checkUnverifiedUsersWorker,
+  // suspendUnverifiedUsersWorker,
   clearResetLinksWorker,
   // removeExpiredEmailVerificationsWorker,
 ];
