@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## v0.5.3
+
+- NEW: There is now a "Resend verification link" button on the account page.
+
 ## v0.5.2
 
 - NEW: This changelog! Keep an eye out here for recent and upcoming changes to Trackbear.

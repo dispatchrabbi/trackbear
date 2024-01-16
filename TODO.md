@@ -1,7 +1,6 @@
 # TODO
 
 ## Next
-- [X] Basic mobile styles
 - [ ] Build/deploy improvements:
   - [X] Graceful start (wait-ready) and shutdown: https://pm2.keymetrics.io/docs/usage/signals-clean-restart/
   - [ ] Pre-push or pre-commit build hook
@@ -10,15 +9,22 @@
 
 ## Soon
 - [X] Announcement/banner functionality
-- [ ] Create an admin console
 - [ ] Code quality improvements
   - [ ] Replace the try/catch api call logic in the front-end with something less onerous
+  - [ ] Make an async error handler wrapper for the backend api handlers so the try/catches can be removed
   - [ ] Harmonize the front end and back end naming conventions
   - [ ] Make the worker and queue architectures... better
   - [ ] Do a better job with shared data/functions
   - [ ] Figure out how to make 'server/*' work on back end imports
 - [ ] In-page username validation (https://ui.vuestic.dev/ui-elements/form#async-validation)
 - [X] Password reset
+
+## Admin console
+- [ ] User management
+  - [ ] Suspend/activate account
+  - [ ] Send emails
+  - [ ] Rename user
+  - [ ] Force password reset
 
 ## Switch to tag-and-tally
 - [ ] Database and API entities for tag-and-tally
