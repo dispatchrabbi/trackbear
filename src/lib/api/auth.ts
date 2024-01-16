@@ -37,6 +37,16 @@ async function getUser(): Promise<UserResponse> {
   }
 }
 
+async function resendVerifyEmail(): Promise<EmptyObject> {
+  const response = await callApi<EmptyObject>(`/api/auth/verify-email`, 'POST');
+
+  if(response.success === true) {
+    return response.data;
+  } else {
+    throw response.error;
+  }
+}
+
 async function verifyEmail(verifyUuid: string): Promise<EmptyObject> {
   const response = await callApi<EmptyObject>(`/api/auth/verify-email/${verifyUuid}`, 'POST');
 
@@ -82,6 +92,7 @@ export {
   logIn,
   logOut,
   getUser,
+  resendVerifyEmail,
   verifyEmail,
   changePassword,
   requestPasswordReset,

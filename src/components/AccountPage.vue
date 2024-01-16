@@ -7,7 +7,7 @@ import TogglablePasswordInput from './form/TogglablePasswordInput.vue';
 
 import { User } from '@prisma/client';
 import { getMe } from 'src/lib/api/user.ts';
-import { changePassword } from 'src/lib/api/auth.ts';
+import { resendVerifyEmail, changePassword } from 'src/lib/api/auth.ts';
 
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
@@ -34,11 +34,11 @@ const { formData, validate, isValid, ruleFor } = useValidation(validations, form
 
 const passwordSuccessMessage = ref<string>('');
 const passwordErrorMessage = ref<string>('');
-const isLoading = ref<boolean>(false);
+const passwordIsLoading = ref<boolean>(false);
 async function handleSubmit() {
   passwordSuccessMessage.value = '';
   passwordErrorMessage.value = '';
-  isLoading.value = true;
+  passwordIsLoading.value = true;
 
   try {
     const { currentPassword, newPassword } = formData();
@@ -54,7 +54,25 @@ async function handleSubmit() {
     }
   }
 
-  isLoading.value = false;
+  passwordIsLoading.value = false;
+}
+
+const resendSuccessMessage = ref<string>('');
+const resendErrorMessage = ref<string>('');
+const resendIsLoading = ref<boolean>(false);
+async function handleResendVerififcationEmail() {
+  resendSuccessMessage.value = '';
+  resendErrorMessage.value = '';
+  resendIsLoading.value = true;
+
+  try {
+    await resendVerifyEmail();
+    resendSuccessMessage.value = 'Link sent!';
+  } catch(err) {
+    resendErrorMessage.value = err.message;
+  }
+
+  resendIsLoading.value = false;
 }
 
 const user = ref<User>(null);
@@ -120,6 +138,32 @@ loadUser();
             label="Email Address"
             readonly
           />
+          <div
+            v-if="user && !user.isEmailVerified"
+            class="flex items-center -mt-3 flex-col md:flex-row"
+          >
+            <div class="not-verified-text">
+              <VaIcon
+                class="-mt-[0.25rem]"
+                name="mail_lock"
+                color="danger"
+                size="large"
+              />
+              Your email address is not yet verified.
+            </div>
+            <VaButton
+              size="medium"
+              :preset="(resendErrorMessage || resendSuccessMessage) ? '' : 'secondary'"
+              :border-color="(resendErrorMessage || resendSuccessMessage) ? '' : ''"
+              :color="resendErrorMessage ? 'danger' : resendSuccessMessage ? 'success' : 'primary'"
+              :icon="resendErrorMessage ? 'error' : resendSuccessMessage ? 'done' : ''"
+              class="ml-2"
+              :loading="resendIsLoading"
+              @click="handleResendVerififcationEmail"
+            >
+              {{ resendErrorMessage || resendSuccessMessage || 'Resend verification link' }}
+            </VaButton>
+          </div>
           <p class="mt-4">
             To change your password, enter your current password, and then your new password. Then hit <b>Save</b>.
           </p>
@@ -164,7 +208,7 @@ loadUser();
           <div class="flex gap-4">
             <VaButton
               :disabled="!isValid"
-              :loading="isLoading"
+              :loading="passwordIsLoading"
               type="submit"
             >
               Save
@@ -177,4 +221,7 @@ loadUser();
 </template>
 
 <style scoped>
+.not-verified-text {
+  color: var(--va-danger);
+}
 </style>

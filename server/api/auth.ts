@@ -11,6 +11,7 @@ import { PasswordResetLink, PendingEmailVerification, User, UserAuth } from "@pr
 import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut, requireUser, WithUser } from "../lib/auth.ts";
 import { PASSWORD_RESET_LINK_STATE, USER_STATE } from "../lib/states.ts";
+import CONFIG from '../config.ts';
 
 import { pushTask } from "../lib/queue.ts";
 import sendSignupEmailTask from '../lib/tasks/send-signup-email.ts';
@@ -181,7 +182,7 @@ authRouter.post('/signup',
 
   const pendingEmailVerificationData = {
     newEmail: userData.email,
-    expiresAt: addDays(new Date(), 10),
+    expiresAt: addDays(new Date(), CONFIG.EMAIL_VERIFICATION_TIMEOUT_IN_DAYS),
   };
 
   try {
@@ -209,9 +210,34 @@ authRouter.post('/signup',
       username: user.username,
       displayName: user.displayName,
     }));
-  } catch(err) {
-    return next(err);
+  } catch(err) { return next(err); }
+});
+
+authRouter.post('/verify-email',
+  requireUser,
+  async (req: WithUser<Request>, res: ApiResponse<EmptyObject>, next) =>
+{
+  const user: User = req.user;
+
+  if(user.isEmailVerified) {
+    // if the user is already verified, no-op and send a 200 (instead of 201)
+    return res.status(200).send(success({}));
   }
+
+  const pendingEmailVerificationData = {
+    userId: user.id,
+    newEmail: user.email,
+    expiresAt: addDays(new Date(), CONFIG.EMAIL_VERIFICATION_TIMEOUT_IN_DAYS),
+  };
+
+  try {
+    const pendingEmailVerification = await dbClient.pendingEmailVerification.create({
+      data: pendingEmailVerificationData,
+    });
+    pushTask(sendEmailverificationEmail.makeTask(pendingEmailVerification.uuid));
+  } catch(err) { return next(err); }
+
+  return res.status(201).send(success({}));
 });
 
 authRouter.post('/verify-email/:uuid',
@@ -337,14 +363,13 @@ authRouter.post('/reset-password',
     return res.status(200).send(success({}));
   }
 
-  const PW_RESET_LINK_EXPIRATION_MINUTES = 10;
   let resetLink: PasswordResetLink;
   try {
     resetLink = await dbClient.passwordResetLink.create({
       data: {
         userId: user.id,
         state: PASSWORD_RESET_LINK_STATE.ACTIVE,
-        expiresAt: addMinutes(new Date(), PW_RESET_LINK_EXPIRATION_MINUTES + 2), // give 2 extra minutes' grace period
+        expiresAt: addMinutes(new Date(), CONFIG.PASSWORD_RESET_LINK_TIMEOUT_IN_MINUTES),
       }
     });
   } catch(err) { return next(err); }
@@ -353,7 +378,7 @@ authRouter.post('/reset-password',
   await logAuditEvent('user:pwresetreq', user.id, null, null, { resetLinkUuid: resetLink.uuid });
   pushTask(sendPwresetEmail.makeTask(resetLink.uuid));
 
-  return res.status(200).send(success({}));
+  return res.status(201).send(success({}));
 });
 
 authRouter.post('/reset-password/:uuid',
