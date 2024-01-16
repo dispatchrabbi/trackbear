@@ -50,7 +50,6 @@ async function main() {
       const verification = await dbClient.pendingEmailVerification.create({
         data: {
           userId: user.id,
-          previousEmail: null,
           newEmail: user.email,
           expiresAt: addDays(new Date(), 10),
         },

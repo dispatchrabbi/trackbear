@@ -72,7 +72,6 @@ model PendingEmailVerification {
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 
-  previousEmail String?
   newEmail      String
   expiresAt     DateTime
 

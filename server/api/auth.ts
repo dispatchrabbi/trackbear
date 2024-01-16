@@ -180,7 +180,6 @@ authRouter.post('/signup',
   };
 
   const pendingEmailVerificationData = {
-    previousEmail: null,
     newEmail: userData.email,
     expiresAt: addDays(new Date(), 10),
   };
