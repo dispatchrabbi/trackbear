@@ -2,11 +2,19 @@
 import { computed } from 'vue';
 import { addDays } from 'date-fns';
 
-import type { ProjectWithUpdatesAndLeaderboards } from 'server/api/projects.ts'
 import { parseDateString, formatDate, formatTimeProgress } from 'src/lib/date.ts';
 import { TYPE_INFO } from 'src/lib/project.ts';
 
-const props = defineProps<{ project: ProjectWithUpdatesAndLeaderboards }>();
+// This type is necessary because of the shared project page
+type ProjectForStats = {
+  type: string;
+  updates: {
+    date: string;
+    value: number;
+  }[];
+};
+
+const props = defineProps<{ project: ProjectForStats }>();
 
 function countStreaks(dates: string[]) {
   // uniquify and sort update dates from oldest to newest

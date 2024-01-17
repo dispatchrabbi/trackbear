@@ -45,14 +45,14 @@ loadProject();
       <ContentHeader :title="project.title" />
       <div class="grid grid-cols-6 gap-4">
         <div class="col-span-2 flex flex-col justify-start gap-4">
+          <div class="project-stats shrink">
+            <ProjectStats :project="project" />
+          </div>
           <div
             v-if="project.goal || project.startDate || project.endDate"
             class="project-goal shrink"
           >
             <ProjectGoal :project="project" />
-          </div>
-          <div class="project-stats shrink">
-            <ProjectStats :project="project" />
           </div>
         </div>
         <div class="col-span-4 flex flex-col justify-start gap-4">
