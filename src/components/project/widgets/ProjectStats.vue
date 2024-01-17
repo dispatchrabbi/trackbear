@@ -3,7 +3,8 @@ import { computed } from 'vue';
 import { addDays } from 'date-fns';
 
 import type { ProjectWithUpdatesAndLeaderboards } from 'server/api/projects.ts'
-import { parseDateString, formatDate } from 'src/lib/date.ts';
+import { parseDateString, formatDate, formatTimeProgress } from 'src/lib/date.ts';
+import { TYPE_INFO } from 'src/lib/project.ts';
 
 const props = defineProps<{ project: ProjectWithUpdatesAndLeaderboards }>();
 
@@ -52,17 +53,35 @@ const streakInfo = computed(() => {
   };
 });
 
+const total = computed(() => {
+  const totalSoFar = props.project.updates.reduce((total, update) => total + update.value, 0);
+
+  let totalStr;
+  if(props.project.type === 'time') {
+    totalStr = formatTimeProgress(totalSoFar);
+  } else {
+    totalStr = `${totalSoFar} ${TYPE_INFO[props.project.type].counter[totalSoFar === 1 ? 'singular' : 'plural']}`;
+  }
+
+  return totalStr;
+});
 </script>
 
 <template>
   <VaCard>
-    <VaCardTitle>Current Streak</VaCardTitle>
+    <VaCardTitle>So far you've done</VaCardTitle>
+    <VaCardContent
+      class="text-center text-xl/4"
+    >
+      {{ total }}
+    </VaCardContent>
+    <VaCardTitle>Your current streak is</VaCardTitle>
     <VaCardContent
       class="text-center text-xl/4"
     >
       {{ streakInfo.currentStreak }} {{ streakInfo.currentStreak === 1 ? 'day' : 'days' }}
     </VaCardContent>
-    <VaCardTitle>Longest Streak</VaCardTitle>
+    <VaCardTitle>Your longest streak is</VaCardTitle>
     <VaCardContent
       class="text-center text-xl/4"
     >
