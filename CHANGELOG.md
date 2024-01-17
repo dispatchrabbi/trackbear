@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: Project pages now show your current writing streak and longest writing streak.
+
 ## v0.5.3
 
 - NEW: There is now a "Resend verification link" button on the account page.

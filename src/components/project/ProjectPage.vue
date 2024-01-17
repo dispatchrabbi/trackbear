@@ -17,7 +17,7 @@ import AppPage from 'src/components/layout/AppPage.vue';
 import ContentHeader from 'src/components/layout/ContentHeader.vue';
 import EnterProgress from 'src/components/project/widgets/EnterProgress.vue';
 import ProjectGoal from 'src/components/project/widgets/ProjectGoal.vue';
-// import ProjectStats from 'src/components/project/widgets/ProjectStats.vue';
+import ProjectStats from 'src/components/project/widgets/ProjectStats.vue';
 import ProjectHistory from 'src/components/project/widgets/ProjectHistory.vue';
 import ProjectChart from 'src/components/project/widgets/ProjectChart.vue';
 
@@ -121,7 +121,15 @@ const showGraphModal = ref<boolean>(false);
               address-user
             />
           </div>
-          <div class="project-leaderboards shrink">
+          <div
+            class="project-stats shrink"
+          >
+            <ProjectStats :project="project" />
+          </div>
+          <div
+            v-if="project.leaderboards.length > 0"
+            class="project-leaderboards shrink"
+          >
             <VaCard>
               <VaCardTitle>Leaderboards</VaCardTitle>
               <VaCardContent>
@@ -146,9 +154,6 @@ const showGraphModal = ref<boolean>(false);
               </VaCardContent>
             </VaCard>
           </div>
-          <!-- <div class="project-stats shrink">
-            <ProjectStats :project="project" />
-          </div> -->
         </div>
         <div class="md:col-span-4 flex flex-col justify-start gap-4">
           <div class="project-chart shrink">

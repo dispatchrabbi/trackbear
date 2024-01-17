@@ -5,7 +5,7 @@ import { eachDayOfInterval, addDays } from 'date-fns';
 import { useColors } from 'vuestic-ui';
 const { getColor } = useColors();
 
-import { parseDateString, formatDate, formatTimeProgress, maxDateStr } from 'src/lib//date.ts';
+import { parseDateString, formatDate, formatTimeProgress, maxDateStr } from 'src/lib/date.ts';
 import { TYPE_INFO } from 'src/lib//project.ts';
 import type { ProjectWithUpdates } from 'server/api/projects.ts';
 
