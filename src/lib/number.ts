@@ -15,9 +15,10 @@ function commaify(n: number): string {
 }
 
 function kify(n: number): string {
-  if(n >= 1000000 && (n % 10000 === 0)) {
+  const na = Math.abs(n);
+  if(na >= 1000000 && (na % 10000 === 0)) {
     return (n / 1000000) + 'm';
-  } else if(n >= 1000 && (n % 100 === 0)) {
+  } else if(na >= 1000 && (na % 100 === 0)) {
     return (n / 1000) + 'k';
   } else {
     return n.toString();
