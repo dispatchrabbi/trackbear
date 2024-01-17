@@ -11,11 +11,13 @@ import { Chart as ChartJS, Title, Tooltip, Legend, LineController, LineElement, 
 
 ChartJS.register(Title, Tooltip, LineController, Legend, LineElement, PointElement, CategoryScale, LinearScale);
 
-ChartJS.register(makeTrackbearStylesPlugin(getColor));
+let stylesPlugin = makeTrackbearStylesPlugin(getColor);
+ChartJS.register(stylesPlugin);
 // whenever the theme changes, we need to redo the colors
 themeStore.$subscribe(() => {
-  ChartJS.unregister(makeTrackbearStylesPlugin(getColor));
-  ChartJS.register(makeTrackbearStylesPlugin(getColor));
+  ChartJS.unregister(stylesPlugin);
+  stylesPlugin = makeTrackbearStylesPlugin(getColor);
+  ChartJS.register(stylesPlugin);
 });
 
 ChartJS.defaults.animation = false;

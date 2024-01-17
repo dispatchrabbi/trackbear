@@ -10,6 +10,7 @@ function makeTrackbearStylesPlugin(getColor) {
   const LINE_COLORS = [ getColor('primary'), getColor('danger'), getColor('info'), getColor('warning') ];
 
   const PAR_COLOR = getColor('success');
+  const PAR_POINT_STYLE = 'cross';
   const PAR_BORDER_DASH = [ 8 ];
 
   // This is with heavy copying from https://github.com/chartjs/Chart.js/blob/master/src/plugins/plugin.colors.ts
@@ -41,7 +42,8 @@ function makeTrackbearStylesPlugin(getColor) {
       chart.config.data.datasets.forEach((dataset, ix) => {
         if(!options.ignorePar && dataset.label === 'Par') {
           dataset.borderColor = PAR_COLOR;
-          dataset.pointStyle = false;
+          dataset.backgroundColor = PAR_COLOR;
+          dataset.pointStyle = PAR_POINT_STYLE;
           dataset.borderDash = PAR_BORDER_DASH;
           dataset.borderWidth = 1;
         } else {
@@ -55,6 +57,10 @@ function makeTrackbearStylesPlugin(getColor) {
 
       // configure legend styles
       chart.config.options.plugins.legend.labels.usePointStyle = true;
+
+      // configure tooltip styles
+      chart.config.options.plugins.tooltip.boxPadding = 4;
+      chart.config.options.plugins.tooltip.usePointStyle = true;
     }
   }
 }
