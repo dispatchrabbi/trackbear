@@ -12,7 +12,11 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-- NEW: Project pages now show your current writing streak and longest writing streak.
+## v0.5.4
+
+- NEW: Project pages now show your current writing streak and longest writing streak. (h/t Bäumchen)
+- NEW: Project pages now show your current total. (h/t Kathryn)
+- CHANGED: You can now hover over the green Par line to see where Par is for each day. (h/t cardan)
 
 ## v0.5.3
 
