@@ -113,6 +113,11 @@ const showGraphModal = ref<boolean>(false);
             />
           </div>
           <div
+            class="project-stats shrink"
+          >
+            <ProjectStats :project="project" />
+          </div>
+          <div
             v-if="project.goal || project.startDate || project.endDate"
             class="project-goal shrink"
           >
@@ -120,11 +125,6 @@ const showGraphModal = ref<boolean>(false);
               :project="project"
               address-user
             />
-          </div>
-          <div
-            class="project-stats shrink"
-          >
-            <ProjectStats :project="project" />
           </div>
           <div
             v-if="project.leaderboards.length > 0"
