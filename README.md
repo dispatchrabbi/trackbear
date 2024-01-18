@@ -38,17 +38,25 @@ Here are the environment variables you'll have to supply:
 ## Developing
 
 ```sh
+npm run dev
+```
+
+This starts up the app in a docker container in development mode. It'll do hot module reloading and all the other creature comforts, and it'll start up any dependent services as well (there aren't any currently, but soon there will be a database service, because Prisma and SQLite don't play super nicely when it comes to multiple connections).
+
+If you want to run the app locally (outside of a container), you can:
+
+```sh
 npm run start:dev
 ```
 
-This will start up both the back end and the front end. It'll also give you hot module reloading and all the other wonderful stuff Vite gives you. You probaby don't need anything else.
-
-To preview production, you can:
+Or, to run it like it is on production:
 
 ```sh
 npm run build
 npm run start:prod
 ```
+
+Running the production-mode app in a Docker container is supported (there's a 'prod' layer in the Dockerfile) but there aren't any nice commands for it yet.
 
 ### Migrations
 
@@ -67,7 +75,7 @@ The command is idempotent so it's okay to run it just to make sure your database
 No fancy deploying yet, just SSHing onto the server. Pull the version you want (latest or tag) and:
 
 ```sh
-./scripts/update-on-production.sh
+./scripts/deploy.sh
 ```
 
 The update script will build the front end, apply migrations, and restart the app in pm2 (see below).

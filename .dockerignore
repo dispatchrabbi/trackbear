@@ -1,0 +1,17 @@
+# for development purposes outside the container
+.git
+.husky
+.vscode
+
+# pm2
+*.config.cjs
+
+# generally we don't want these involved in docker commands
+node_modules
+*Dockerfile*
+*docker-compose*
+
+# these should be provided via volume
+certs
+db
+logs

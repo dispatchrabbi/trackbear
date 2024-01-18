@@ -49,7 +49,7 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
 
   if(!['', '0', '1'].includes(process.env.USE_HTTPS)) { throw new Error('USE_HTTPS should only be either 0 or 1'); }
 
-  const useHttps = +process.env.USE_HTTPS;
+  const useHttps = !!+process.env.USE_HTTPS;
   if(useHttps) {
     if(!(process.env.TLS_KEY && process.env.TLS_CERT)) { throw new Error('USE_HTTPS requires both TLS_KEY and TLS_CERT values in .env'); }
 
@@ -77,8 +77,8 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
     QUEUE_DB_PATH:      process.env.QUEUE_DB_PATH,
 
     PORT:              +process.env.PORT,
-    USE_PROXY:        !!process.env.USE_PROXY,
-    USE_HTTPS:        !!process.env.USE_HTTPS,
+    USE_PROXY:       !!+process.env.USE_PROXY,
+    USE_HTTPS:       !!+process.env.USE_HTTPS,
     TLS_KEY:            process.env.TLS_KEY || null,
     TLS_CERT:           process.env.TLS_CERT || null,
 

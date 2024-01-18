@@ -32,9 +32,16 @@ apiRouter.use('/share', shareRouter);
 // handle any API errors
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const lastChanceApiErrorHandler: ErrorRequestHandler = (err, req, res: ApiResponse<never>, next) => {
-  console.error(err);
-  res.status(500).send(failure('SERVER_ERROR', 'An unanticipated server error occurred.'));
+  if(err) {
+    console.error(err);
+    res.status(500).send(failure('SERVER_ERROR', 'An unanticipated server error occurred.'));
+  }
 };
 apiRouter.use(lastChanceApiErrorHandler);
+
+// fall-through 404 for api routes
+apiRouter.all('*', (req, res) => {
+  res.status(404).send(failure('NOT_FOUND', 'Not found'));
+});
 
 export default apiRouter;

@@ -11,6 +11,7 @@
     "start": "npm run start:dev",
     "start:dev": "NODE_ENV=development node --import ./ts-node-loader.js ./main.ts",
     "start:prod": "NODE_ENV=production node --import ./ts-node-loader.js ./main.ts",
+    "dev": "docker compose up",
     "lint": "npx eslint --ext .js,.ts,.vue .",
     "build": "npx prisma generate && npm run build:client",
     "build:client": "npx vue-tsc && npx vite build --emptyOutDir",
@@ -19,7 +20,7 @@
     "preversion": "npm run build",
     "version": "VERSION=$(npm pkg get version --workspaces=false | tr -d \\\"); git add .; git commit -m \"v${VERSION}\"; git tag -a \"v${VERSION}\" -m \"v${VERSION}\"",
     "deploy": "./scripts/deploy.sh",
-    "prepare": "husky install"
+    "hooks": "husky install"
   },
   "dependencies": {
     "@prisma/client": "^5.6.0",

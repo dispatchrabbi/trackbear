@@ -1,0 +1,81 @@
+services:
+  trackbear:
+    build:
+      context: .
+      # build to the dev stage
+      target: dev
+    ports:
+      - "3000:3000"   # http(s)
+      - "24678:24678" # ws for HMR
+    env_file:
+      - ./.env
+      - ./.docker.env
+    volumes:
+      - ./certs:/certs:ro
+      - ./db:/db:rw
+      - ./logs:/logs:rw
+    # TODO: migrate from sqlite to postgres
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
+    develop:
+      watch:
+        # sync scripts so the container has the latest versions
+        - path: ./scripts
+          action: sync
+          target: /app/scripts
+        # sync client-side files (let HMR take care of them)
+        - path: ./src
+          action: sync
+          target: /app/src
+        - path: ./public
+          action: sync
+          target: /app/public
+        - path: ./dist
+          action: sync
+          target: /app/dist
+        # rebuild if server files change
+        - path: ./main.ts
+          action: rebuild
+          target: .
+        - path: ./server
+          action: rebuild
+          target: .
+        - path: ./CHANGELOG.md
+          action: rebuild
+          target: .
+        # specifically DO NOT rebuild if the db schema changes
+        # - path: ./prisma
+        #   action: nothing
+        #   target: .
+        # rebuild if deps change
+        - path: ./package.json
+          action: rebuild
+          target: .
+        - path: ./package-lock.json
+          action: rebuild
+          target: .
+        # rebuild if any vite or TS configs change
+        - path: ./postcss.config.js
+          action: rebuild
+          target: .
+        - path: ./tailwind.config.js
+          action: rebuild
+          target: .
+        - path: ./vite.config.ts
+          action: rebuild
+          target: .
+        - path: ./tsconfig.*
+          action: rebuild
+          target: .
+
+  # db:
+  #   image: postgres:alpine
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #   volumes:
+  #     - ./healthchecks:/healthchecks
+  #   healthcheck:
+  #     test: /healthchecks/postgres-healthcheck
+  #     interval: "5s"
