@@ -3,6 +3,7 @@
 ## Next
 - [ ] Dockerize to prepare for a migration to Postgres
   - [X] Dockerize Trackbear
+  - [ ] Create LOG_TO_CONSOLE env var for better debug & container experience
   - [ ] Change docker-compose files to have a base file + dev and prod overwrites
 - [ ] Edit your account
 - [ ] Delete your account
@@ -58,5 +59,8 @@
 - [ ] Document the heck out of this
 
 # Future
+- [ ] Observability
+  - [ ] Ship logs somewhere
+  - [ ] Ship metrics/telemetry somewhere
 - [ ] API access
 - [ ] TOTP
