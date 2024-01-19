@@ -1,0 +1,31 @@
+services:
+  app:
+    build:
+      context: .
+      # build to the prod stage
+      target: prod
+    restart: unless-stopped
+    ports:
+      - "3000:3000"   # http(s)
+    env_file:
+      - ./.env
+      - ./.docker.env
+    volumes:
+      - ./certs:/certs:ro
+      - ./db:/db:rw
+      - ./logs:/logs:rw
+    # TODO: migrate from sqlite to postgres
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
+
+  # db:
+  #   image: postgres:alpine
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #   volumes:
+  #     - ./healthchecks:/healthchecks
+  #   healthcheck:
+  #     test: /healthchecks/postgres-healthcheck
+  #     interval: "5s"

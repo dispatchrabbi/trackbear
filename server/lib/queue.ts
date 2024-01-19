@@ -41,7 +41,6 @@ function initQueue(taskDbPath) {
   q.on('task_started', (taskId, task) => queueLogger.info('Task started', {taskId, ...task}));
   q.on('task_finish', (taskId, result) => queueLogger.info('Task finished', {taskId, result}));
   q.on('task_failed', (taskId, err) => queueLogger.warning('Task failed', {taskId, err}));
-  // @ts-expect-error For some reason, task_retry isn't recognized as a valid event even though it's definitely in the code
   q.on('task_retry', (taskId, retries) => queueLogger.info('Retrying task', {taskId, retries}));
   q.on('empty', () => queueLogger.debug('Queue is empty (but tasks may be in progress'));
   q.on('drain', () => queueLogger.debug('Queue has been drained'));

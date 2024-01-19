@@ -1,14 +1,13 @@
 # TODO
 
 ## Next
-- [ ] Build/deploy improvements:
-  - [X] Graceful start (wait-ready) and shutdown: https://pm2.keymetrics.io/docs/usage/signals-clean-restart/
-  - [ ] Pre-push or pre-commit build hook
+- [ ] Dockerize to prepare for a migration to Postgres
+  - [X] Dockerize Trackbear
+  - [ ] Change docker-compose files to have a base file + dev and prod overwrites
 - [ ] Edit your account
 - [ ] Delete your account
 
 ## Soon
-- [X] Announcement/banner functionality
 - [ ] Code quality improvements
   - [ ] Replace the try/catch api call logic in the front-end with something less onerous
   - [ ] Make an async error handler wrapper for the backend api handlers so the try/catches can be removed
@@ -17,7 +16,6 @@
   - [ ] Do a better job with shared data/functions
   - [ ] Figure out how to make 'server/*' work on back end imports
 - [ ] In-page username validation (https://ui.vuestic.dev/ui-elements/form#async-validation)
-- [X] Password reset
 
 ## Admin console
 - [ ] User management
@@ -25,6 +23,7 @@
   - [ ] Send emails
   - [ ] Rename user
   - [ ] Force password reset
+  - [ ] View audit events
 
 ## Switch to tag-and-tally
 - [ ] Database and API entities for tag-and-tally

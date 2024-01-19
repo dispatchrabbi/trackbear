@@ -1,12 +1,12 @@
 services:
-  trackbear:
+  app:
     build:
       context: .
       # build to the dev stage
       target: dev
     ports:
-      - "3000:3000"   # http(s)
-      - "24678:24678" # ws for HMR
+      - "${PORT}:${PORT}" # http(s)
+      - "24678:24678"     # ws for HMR
     env_file:
       - ./.env
       - ./.docker.env
