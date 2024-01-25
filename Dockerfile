@@ -26,8 +26,11 @@ WORKDIR /app
 
 # Pull in package.json in prep for dependency installation
 COPY --chown=node:node package.json package-lock.json* ./
+
 # Install only the production dependencies (we'll install dev deps in the dev stage)
-RUN npm ci && npm cache clean --force
+# RUN npm ci --prefer-offline --no-audit --no-fund && npm cache clean --force
+RUN --mount=type=cache,target=~/.npm npm ci --no-audit --no-fund
+
 # Make sure we can run commands from node_modules/.bin
 ENV PATH /app/node_modules/.bin:$PATH
 
@@ -42,14 +45,15 @@ ENV NODE_ENV=development
 EXPOSE 9229 9230
 
 # Install all the dev deps (you can't do just that, so we have to install everything)
-RUN npm install
+RUN --mount=type=cache,target=~/.npm npm install
 
 # Copy the code in
-# TODO: how can we do this and allow HMR as well?
 COPY --chown=node:node . .
 
-# Apply any database migrations
-RUN npm run migrate:dev
+# Regenerate db models
+ARG DB_APP_DB_URL
+ENV DB_APP_DB_URL $DB_APP_DB_URL
+RUN npx prisma generate
 
 # Check every 30s to ensure /api/ping returns HTTP 200
 HEALTHCHECK --interval=30s CMD node ./scripts/healthcheck.js
@@ -64,11 +68,13 @@ FROM base as prod
 # Copy the code in
 COPY --chown=node:node . .
 
-# Apply any database migrations
-RUN npm run migrate:prod
+# Regenerate db models
+ARG DB_APP_DB_URL
+ENV DB_APP_DB_URL $DB_APP_DB_URL
+RUN npx prisma generate
 
 # Build the front-end
-RUN npm run build
+RUN npm run build:client
 
 # Check every 30s to ensure /api/ping returns HTTP 200
 HEALTHCHECK --interval=30s CMD node ./scripts/healthcheck.js

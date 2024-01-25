@@ -5,9 +5,11 @@ import { getNormalizedEnv } from './server/lib/env.ts';
 import winston from 'winston';
 import { initLoggers, closeLoggers } from './server/lib/logger.ts';
 
-import dbClient from './server/lib/db.ts';
+import path from 'path';
 import { initQueue } from './server/lib/queue.ts';
 import initWorkers from './server/lib/workers.ts';
+
+import dbClient from './server/lib/db.ts';
 
 import http from 'http';
 import https from 'https';
@@ -29,12 +31,12 @@ async function main() {
   dotenv.config();
   const env = await getNormalizedEnv();
 
-  await initLoggers(env.LOG_DIR);
+  await initLoggers();
   // use `winston` just as the general logger
   const accessLogger = winston.loggers.get('access');
 
   // initialize the queue
-  initQueue(env.QUEUE_DB_PATH);
+  initQueue(path.resolve(env.DB_PATH, './queue.db'));
 
   // initialize the workers
   initWorkers();
@@ -52,7 +54,7 @@ async function main() {
   app.disable('x-powered-by');
 
   // are we behind a proxy?
-  if(env.USE_PROXY) {
+  if(env.HAS_PROXY) {
     app.set('trust proxy', 1);
   }
 
@@ -106,9 +108,9 @@ async function main() {
     const vite = await createViteServer({
       server: {
         middlewareMode: true,
-        https:  env.USE_HTTPS ? {
-          key:  env.TLS_KEY,
-          cert: env.TLS_CERT,
+        https:  env.ENABLE_TLS ? {
+          key:  env.TLS_KEY_PATH,
+          cert: env.TLS_CERT_PATH,
         } : undefined,
       },
       appType: 'spa',
@@ -129,16 +131,16 @@ async function main() {
 
   // are we doing HTTP or HTTPS?
   let server: https.Server | http.Server;
-  if(env.USE_HTTPS) {
+  if(env.ENABLE_TLS) {
     server = https.createServer({
-      key: await readFile(env.TLS_KEY),
-      cert: await readFile(env.TLS_CERT),
+      key: await readFile(env.TLS_KEY_PATH),
+      cert: await readFile(env.TLS_CERT_PATH),
     }, app);
   } else {
     server = http.createServer(app);
   }
   server.listen(env.PORT, () => {
-    winston.info(`TrackBear is now listening on ${env.USE_HTTPS ? 'https' : 'http'}://localhost:${env.PORT}/`);
+    winston.info(`TrackBear is now listening on ${env.ENABLE_TLS ? 'https' : 'http'}://localhost:${env.PORT}/`);
 
     // let pm2 know that the app is ready
     process.send && process.send('ready');

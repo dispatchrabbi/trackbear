@@ -21,7 +21,7 @@ async function main() {
   dotenv.config();
   const env = await getNormalizedEnv();
 
-  await initLoggers(env.LOG_DIR);
+  await initLoggers(env.LOGS_VOLUME_DIR);
   const scriptLogger = winston.child({ service: 'add-banner.ts' });
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);

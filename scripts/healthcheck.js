@@ -1,15 +1,14 @@
 import process from 'process';
 
 const PORT = process.env.PORT || 3000;
-const USE_HTTPS = !!+(process.env.USE_HTTPS || '0');
+const ENABLE_TLS = !!+(process.env.ENABLE_TLS || '0');
 
-// allow self-signed certs during development
-if(process.env.NODE_ENV === 'development') {
+if(process.env.TLS_ALLOW_SELF_SIGNED === '1') {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 }
 
 async function healthcheck() {
-  const url = `http${USE_HTTPS ? 's' : ''}://localhost:${PORT}/api/ping`;
+  const url = `http${ENABLE_TLS ? 's' : ''}://localhost:${PORT}/api/ping`;
   const result = await fetch(url);
 
   if(result.ok) {

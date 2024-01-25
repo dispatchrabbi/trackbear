@@ -1,9 +1,9 @@
-import { MailerSend, EmailParams, Sender, Recipient } from 'mailersend';
+import { EmailParams, Sender, Recipient } from 'mailersend';
+import { sendEmail } from '../email.ts';
 
 import type { User } from '@prisma/client';
 import dbClient from '../db.ts';
 
-import { getNormalizedEnv } from '../env.ts';
 import { logAuditEvent, TRACKBEAR_SYSTEM_ID } from '../audit-events.ts';
 
 async function handler(task) {
@@ -22,12 +22,6 @@ async function handler(task) {
 }
 
 async function sendPasswordChangeEmail(user) {
-  const env = await getNormalizedEnv();
-
-  const mailerSend = new MailerSend({
-    apiKey: env.MAILERSEND_API_KEY,
-  });
-
   const sentFrom = new Sender('no-reply@trackbear.dispatchrab.bi', 'TrackBear');
   const recipients = [
     new Recipient(user.email, user.displayName),
@@ -47,7 +41,7 @@ Beary sincerely yours,
 TrackBear
     `.trim());
 
-  await mailerSend.email.send(emailParams);
+  sendEmail(emailParams);
 }
 
 const TASK_NAME = 'send-pwchange-email';

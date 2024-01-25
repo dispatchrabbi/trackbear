@@ -4,29 +4,44 @@ import path from 'path';
 const ROOT_DIR = path.resolve(import.meta.url.replace('file://', ''), '../../..');
 
 type TrackbearCommonEnv = {
-  NODE_ENV: string,
-  LOG_DIR: string;
-  COOKIE_SECRET: string;
-  APP_DB_URL: string;
-  QUEUE_DB_PATH: string;
+  NODE_ENV: string;
+
   PORT: number;
-  USE_PROXY: boolean;
-  MAILERSEND_API_KEY: string;
-  ORIGIN: string;
+  HAS_PROXY: boolean;
+
+  ENABLE_TLS: boolean;
+  TLS_ALLOW_SELF_SIGNED: boolean;
+
+  LOG_PATH: string;
   LOG_LEVEL: string;
+
+  DB_PATH: string;
+  COOKIE_SECRET: string;
+
+  ENABLE_EMAIL: boolean;
+  MAILERSEND_API_KEY: string;
+  EMAIL_URL_PREFIX: string;
 };
 
 type TrackbearTlsEnv =
-| { USE_HTTPS: true; TLS_KEY: string; TLS_CERT: string; }
-| { USE_HTTPS: false; TLS_KEY: string | null; TLS_CERT: string | null; }
+| {
+    ENABLE_TLS: true;
+    TLS_KEY_PATH: string;
+    TLS_CERT_PATH: string;
+  }
+| {
+    ENABLE_TLS: false;
+    TLS_KEY_PATH: string | null;
+    TLS_CERT_PATH: string | null;
+  }
+;
 
 export type TrackbearEnv = TrackbearCommonEnv & TrackbearTlsEnv;
 
 async function normalizeEnv(): Promise<TrackbearEnv> {
-  // some of the env vars are optional/okay to leave empty
-  // let's check the ones that aren't, and add defaults where it makes sense
+  // first step is to check for valid values and supply defaults
 
-  if(!['', 'development', 'production'].includes(process.env.NODE_ENV)) { throw new Error('NODE_ENV should only be either development or production'); }
+  if(!['', 'development', 'production'].includes(process.env.NODE_ENV)) { throw new Error('NODE_ENV should only be either `development` or `production`'); }
   process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
   if(process.env.PORT !== '' && isNaN(Number.parseInt(process.env.PORT, 10))) {
@@ -34,58 +49,68 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   }
   process.env.PORT = process.env.PORT || "3000";
 
-  process.env.LOG_DIR = path.resolve(ROOT_DIR, process.env.LOG_DIR || './logs');
-  process.env.APP_DB_URL = process.env.APP_DB_URL || 'file:./db/app.db';
-  process.env.QUEUE_DB_PATH = path.resolve(ROOT_DIR, process.env.QUEUE_DB_PATH || "./db/queue.db");
+  if(!['', '0', '1'].includes(process.env.HAS_PROXY)) { throw new Error('HAS_PROXY should only be either `0` or `1`'); }
+  process.env.HAS_PROXY = process.env.HAS_PROXY || "0";
 
-  if(!process.env.COOKIE_SECRET) { throw new Error('Missing COOKIE_SECRET value in .env'); }
-  if(!process.env.MAILERSEND_API_KEY) { throw new Error('Missing MAILERSEND_API_KEY value in .env'); }
-  if(!process.env.ORIGIN) { throw new Error('Missing ORIGIN value in .env'); }
+  if(!['', '0', '1'].includes(process.env.ENABLE_TLS)) { throw new Error('ENABLE_TLS should only be either `0` or `1`'); }
+  process.env.ENABLE_TLS = process.env.ENABLE_TLS || "0";
 
-  process.env.LOG_LEVEL = process.env.LOG_LEVEL || 'info';
-  if(!['debug', 'info', 'warn', 'error', 'critical'].includes(process.env.LOG_LEVEL)) { throw new Error('LOG_LEVEL should be one of: debug, info, warn, error, critical'); }
+  const enableTls = !!+process.env.ENABLE_TLS;
+  if(enableTls) {
+    if(!(process.env.TLS_KEY_PATH && process.env.TLS_CERT_PATH)) { throw new Error('ENABLE_TLS requires both TLS_KEY_PATH and TLS_CERT_PATH values in .env'); }
 
-  if(!['', '0', '1'].includes(process.env.USE_PROXY)) { throw new Error('USE_PROXY should only be either 0 or 1'); }
 
-  if(!['', '0', '1'].includes(process.env.USE_HTTPS)) { throw new Error('USE_HTTPS should only be either 0 or 1'); }
-
-  const useHttps = !!+process.env.USE_HTTPS;
-  if(useHttps) {
-    if(!(process.env.TLS_KEY && process.env.TLS_CERT)) { throw new Error('USE_HTTPS requires both TLS_KEY and TLS_CERT values in .env'); }
-
-    process.env.TLS_KEY = path.resolve(ROOT_DIR, process.env.TLS_KEY);
+    process.env.TLS_KEY_PATH = path.resolve(ROOT_DIR, process.env.TLS_KEY_PATH);
     try {
-      await access(process.env.TLS_KEY, constants.R_OK);
+      await access(process.env.TLS_KEY_PATH, constants.R_OK);
     } catch(err) {
-      throw new Error(`Could not read TLS_KEY: ${process.env.TLS_KEY}`);
+      throw new Error(`Could not read TLS_KEY_PATH (${process.env.TLS_KEY_PATH}): ${err.message}`, { cause: err });
     }
 
-    process.env.TLS_CERT = path.resolve(ROOT_DIR, process.env.TLS_CERT);
+    process.env.TLS_CERT_PATH = path.resolve(ROOT_DIR, process.env.TLS_CERT_PATH);
     try {
-      await access(process.env.TLS_CERT, constants.R_OK);
+      await access(process.env.TLS_CERT_PATH, constants.R_OK);
     } catch(err) {
-      throw new Error(`Could not read TLS_CERT: ${process.env.TLS_CERT}`);
+      throw new Error(`Could not read TLS_CERT_PATH (${process.env.TLS_CERT_PATH}): ${err.message}`, { cause: err });
     }
   }
 
+  if(!['', '0', '1'].includes(process.env.TLS_ALLOW_SELF_SIGNED)) { throw new Error('TLS_ALLOW_SELF_SIGNED should only be either `0` or `1`'); }
+  process.env.TLS_ALLOW_SELF_SIGNED = process.env.TLS_ALLOW_SELF_SIGNED || "0";
+
+  process.env.LOG_PATH = process.env.LOG_PATH || '/logs';
+
+  if(!['', 'debug', 'info', 'warn', 'error', 'critical'].includes(process.env.LOG_LEVEL)) { throw new Error('LOG_LEVEL should be one of: `debug`, `info`, `warn`, `error`, `critical`'); }
+  process.env.LOG_LEVEL = process.env.LOG_LEVEL || 'info';
+
+  process.env.DB_PATH = process.env.DB_PATH || '/db';
+
+  if(!process.env.COOKIE_SECRET) { throw new Error('Missing COOKIE_SECRET value in .env'); }
+
+  if(!process.env.MAILERSEND_API_KEY) { throw new Error('Missing MAILERSEND_API_KEY value in .env'); }
+  if(!process.env.EMAIL_URL_PREFIX) { throw new Error('Missing EMAIL_URL_PREFIX value in .env'); }
+
+  // second step is to parse the values into more usable types
   return {
-    NODE_ENV:           process.env.NODE_ENV,
+    NODE_ENV:               process.env.NODE_ENV,
 
-    LOG_DIR:            process.env.LOG_DIR,
-    COOKIE_SECRET:      process.env.COOKIE_SECRET,
-    APP_DB_URL:         process.env.APP_DB_URL,
-    QUEUE_DB_PATH:      process.env.QUEUE_DB_PATH,
+    PORT:                  +process.env.PORT,
+    HAS_PROXY:              process.env.HAS_PROXY === '1',
 
-    PORT:              +process.env.PORT,
-    USE_PROXY:       !!+process.env.USE_PROXY,
-    USE_HTTPS:       !!+process.env.USE_HTTPS,
-    TLS_KEY:            process.env.TLS_KEY || null,
-    TLS_CERT:           process.env.TLS_CERT || null,
+    ENABLE_TLS:             process.env.ENABLE_TLS === '1',
+    TLS_KEY_PATH:           enableTls ? process.env.TLS_KEY_PATH : null,
+    TLS_CERT_PATH:          enableTls ? process.env.TLS_CERT_PATH : null,
+    TLS_ALLOW_SELF_SIGNED:  process.env.TLS_ALLOW_SELF_SIGNED === '1',
 
-    MAILERSEND_API_KEY: process.env.MAILERSEND_API_KEY,
+    LOG_PATH:               process.env.LOG_PATH,
+    LOG_LEVEL:              process.env.LOG_LEVEL,
 
-    ORIGIN:             process.env.ORIGIN,
-    LOG_LEVEL:          process.env.LOG_LEVEL,
+    DB_PATH:                process.env.DB_PATH,
+    COOKIE_SECRET:          process.env.COOKIE_SECRET,
+
+    ENABLE_EMAIL:          process.env.ENABLE_EMAIL === '1',
+    MAILERSEND_API_KEY:     process.env.MAILERSEND_API_KEY,
+    EMAIL_URL_PREFIX:       process.env.EMAIL_URL_PREFIX,
   };
 }
 

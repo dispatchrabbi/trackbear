@@ -20,7 +20,7 @@ async function main() {
   dotenv.config();
   const env = await getNormalizedEnv();
 
-  await initLoggers(env.LOG_DIR);
+  await initLoggers(env.LOGS_VOLUME_DIR);
   const scriptLogger = winston.child({ service: 'send-email-verifications-to-all-unverified-users.ts' });
 
   initQueue(env.QUEUE_DB_PATH);

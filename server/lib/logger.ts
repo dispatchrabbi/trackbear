@@ -2,7 +2,7 @@ import path from 'path';
 import winston, { format, transports } from 'winston';
 import { getNormalizedEnv } from './env.ts';
 
-async function initLoggers(logDir: string) {
+async function initLoggers() {
   const env = await getNormalizedEnv();
 
   winston.configure({
@@ -17,14 +17,14 @@ async function initLoggers(logDir: string) {
     ),
     defaultMeta: { service: 'trackbear' },
     transports: [
-      new transports.File({ filename: path.join(logDir, 'trackbear.log') }), // log everything
-      new transports.File({ filename: path.join(logDir, 'errors.log'), level: 'error' }), // log errors and up
+      new transports.File({ filename: path.join(env.LOG_PATH, 'trackbear.log') }), // log everything
+      new transports.File({ filename: path.join(env.LOG_PATH, 'errors.log'), level: 'error' }), // log errors and up
     ],
     exceptionHandlers: [
-      new transports.File({ filename: path.join(logDir, 'exceptions.log') }), // handle uncaught exceptions
+      new transports.File({ filename: path.join(env.LOG_PATH, 'exceptions.log') }), // handle uncaught exceptions
     ],
     rejectionHandlers: [
-      new transports.File({ filename: path.join(logDir, 'rejections.log') }), // handle uncaught promise rejections
+      new transports.File({ filename: path.join(env.LOG_PATH, 'rejections.log') }), // handle uncaught promise rejections
     ],
     exitOnError: false,
   });
@@ -41,7 +41,7 @@ async function initLoggers(logDir: string) {
     ),
     defaultMeta: { service: 'trackbear' },
     transports: [
-      new transports.File({ filename: path.join(logDir, 'access.log') }), // log everything
+      new transports.File({ filename: path.join(env.LOG_PATH, 'access.log') }), // log everything
     ],
     exitOnError: false,
   });
@@ -58,7 +58,7 @@ async function initLoggers(logDir: string) {
     ),
     defaultMeta: { service: 'queue' },
     transports: [
-      new transports.File({ filename: path.join(logDir, 'queue.log') }), // log everything
+      new transports.File({ filename: path.join(env.LOG_PATH, 'queue.log') }), // log everything
     ],
     exitOnError: false,
   });
@@ -75,7 +75,7 @@ async function initLoggers(logDir: string) {
     ),
     defaultMeta: { service: 'worker' },
     transports: [
-      new transports.File({ filename: path.join(logDir, 'worker.log') }), // log everything
+      new transports.File({ filename: path.join(env.LOG_PATH, 'worker.log') }), // log everything
     ],
     exitOnError: false,
   });

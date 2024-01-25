@@ -51,7 +51,7 @@
 - [X] Prove out migrations on deploy
 - [X] Finalize name
 - [ ] Create logo
-- [ ] Buy actual ORIGIN
+- [ ] Buy actual domain
 - [ ] Set up ko-fi/whatever
 - [ ] Finalize color scheme
 - [ ] Create staging instance

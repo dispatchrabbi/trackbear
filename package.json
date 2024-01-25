@@ -9,21 +9,30 @@
   },
   "scripts": {
     "start": "npm run start:dev",
-    "start:dev": "NODE_ENV=development node --import ./ts-node-loader.js ./main.ts",
-    "start:prod": "NODE_ENV=production node --import ./ts-node-loader.js ./main.ts",
-    "dev": "docker compose up",
+
+    "container:dev": "docker compose -f docker-compose.base.yaml -f docker-compose.development.yaml build",
+    "start:dev": "docker compose -f docker-compose.base.yaml -f docker-compose.development.yaml up -d",
+    "watch:dev": "docker compose -f docker-compose.base.yaml -f docker-compose.development.yaml watch",
+
+    "container:prod": "docker compose -f docker-compose.base.yaml -f docker-compose.production.yaml build",
+    "start:prod": "docker compose -f docker-compose.base.yaml -f docker-compose.production.yaml up -d",
+
     "lint": "npx eslint --ext .js,.ts,.vue .",
-    "build": "npx prisma generate && npm run build:client",
+    "build": "npm run build:db && npm run build:client",
+    "build:db": "npx prisma generate",
     "build:client": "npx vue-tsc && npx vite build --emptyOutDir",
-    "migrate:dev": "npx prisma migrate dev",
-    "migrate:prod": "npx prisma migrate deploy && npx prisma generate",
+
+    "hooks": "husky install",
+
     "preversion": "npm run build",
     "version": "VERSION=$(npm pkg get version --workspaces=false | tr -d \\\"); git add .; git commit -m \"v${VERSION}\"; git tag -a \"v${VERSION}\" -m \"v${VERSION}\"",
     "deploy": "./scripts/deploy.sh",
-    "hooks": "husky install"
+
+    "local:start:dev": "NODE_ENV=development node --import ./ts-node-loader.js ./main.ts",
+    "local:start:prod": "NODE_ENV=production node --import ./ts-node-loader.js ./main.ts"
   },
   "dependencies": {
-    "@prisma/client": "^5.6.0",
+    "@prisma/client": "^5.8.1",
     "@quixo3/prisma-session-store": "^3.1.13",
     "@vitejs/plugin-vue": "^4.5.0",
     "autoprefixer": "^10.4.16",
@@ -45,7 +54,7 @@
     "morgan": "^1.10.0",
     "pinia": "^2.1.7",
     "postcss": "^8.4.32",
-    "prisma": "^5.6.0",
+    "prisma": "^5.8.1",
     "tailwindcss": "^3.3.6",
     "ts-node": "^10.9.1",
     "vite": "^5.0.0",

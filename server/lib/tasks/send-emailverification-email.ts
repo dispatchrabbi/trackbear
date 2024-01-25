@@ -1,4 +1,5 @@
-import { MailerSend, EmailParams, Sender, Recipient } from 'mailersend';
+import { EmailParams, Sender, Recipient } from 'mailersend';
+import { sendEmail } from '../email.ts';
 
 import type { User, PendingEmailVerification } from '@prisma/client';
 import dbClient from '../db.ts';
@@ -38,11 +39,7 @@ async function handler(task) {
 
 async function sendEmailVerificationEmail(user: User, pendingEmailVerification: PendingEmailVerification) {
   const env = await getNormalizedEnv();
-  const verifyUrl = env.ORIGIN + '/verify-email/' + pendingEmailVerification.uuid;
-
-  const mailerSend = new MailerSend({
-    apiKey: env.MAILERSEND_API_KEY,
-  });
+  const verifyUrl = env.EMAIL_URL_PREFIX + '/verify-email/' + pendingEmailVerification.uuid;
 
   const sentFrom = new Sender('no-reply@trackbear.dispatchrab.bi', 'TrackBear');
   const recipients = [
@@ -67,7 +64,7 @@ Beary sincerely yours,
 TrackBear
     `.trim());
 
-  await mailerSend.email.send(emailParams);
+  sendEmail(emailParams);
 }
 
 function makeTask(verificationUuid: string) {
