@@ -34,11 +34,33 @@ You can also start up the app in a docker container in production mode:
 npm run start:prod
 ```
 
-You *can* start up the app locally (outside of a container) using `npm run local:start:dev` and `npm run local:start:prod` but these are deprecated and you shouldn't use them.
+You *can* start up the app locally (outside of a container) using `npm run local:start:dev` and `npm run local:start:prod` but **these are deprecated and you shouldn't use them**.
 
 ### Migrations
 
 Building and running the docker containers should take care of any migrations that Prisma can detect. If you need to make a new migration, you can run `npx prisma migrate --create-only`.
+
+### Tagging a new version
+
+To tag a new version, run:
+
+```sh
+npm version [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease]
+```
+
+This will:
+
+- Build the app (to make sure it's green)
+- Change the version in `package.json` and `package-lock.json` to the new version
+- Add and commit any changed files with the commit message `v${VERSION}`
+- Create a tag called `v${VERSION}`
+
+It's up to you to push the commit and tags:
+
+```sh
+git push
+git push --tags
+```
 
 ## Deploying
 
