@@ -6,7 +6,7 @@ import AppPage from './layout/AppPage.vue';
   <AppPage>
     <VaCard>
       <VaImage
-        src="images/hans-jurgen-mager-qQWV91TTBrE-992.jpg"
+        src="images/hans-jurgen-mager_qQWV91TTBrE_polar-bear-waving_992.jpg"
         class="hp-card-image object-cover max-h-96"
         title="Photo by Hans-Jurgen Mager on Unsplash"
         alt="A picture of a polar bear standing on its hind legs with a paw raised as if in greeting"

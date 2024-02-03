@@ -2,7 +2,12 @@
 
 This is a list of the environment variables that Trackbear requires. Any environment variable that has a default value of "(not set)" must be set in the *.env* file before Trackbear will run. All the others will default to the given value if not set once the app is running, in _server/lib/env.ts_.
 
+> **Do not quote any string values in your .env file if you are using regular `docker run`!** The quotes will not be stripped away and will be considered part of the string.
+
 ## Container options
+
+These are only needed for working with the Docker Compose files.
+
 | Variable | Default | Notes |
 | --- | --- | --- |
 | `CERTS_VOLUME_DIR` | (not set) | This directory will be mounted in the container at `/certs`. The app will look for TLS keys and certificates here. |
