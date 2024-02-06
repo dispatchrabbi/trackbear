@@ -1,7 +1,7 @@
 {
   "name": "writing-tracker",
   "private": true,
-  "version": "0.5.4",
+  "version": "0.6.0",
   "type": "module",
   "imports": {
     "src/*": "./src/*",
@@ -15,7 +15,7 @@
     "start:dev": "docker compose up -d",
     "watch:dev": "docker compose watch",
 
-    "container:prod": "docker build -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t latest --target prod .",
+    "container:prod": "docker build -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t dispatchrabbi/trackbear:latest --target prod .",
     "start:prod": "docker compose -f docker-compose.production.yaml up -d",
 
     "lint": "npx eslint --ext .js,.ts,.vue .",
@@ -27,6 +27,7 @@
 
     "preversion": "npm run build",
     "version": "VERSION=$(npm pkg get version --workspaces=false | tr -d \\\"); git add .; git commit -m \"v${VERSION}\"; git tag -a \"v${VERSION}\" -m \"v${VERSION}\"",
+
     "deploy": "./scripts/deploy.sh",
 
     "local:start:dev": "NODE_ENV=development node --import ./ts-node-loader.js ./main.ts",

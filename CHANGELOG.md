@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## v0.6.0
+
+- CHANGED: A bunch of internal infrastructure things. No new functionality on this one!
+
 ## v0.5.4
 
 - NEW: Project pages now show your current writing streak and longest writing streak. (h/t Bäumchen)
