@@ -1,14 +1,21 @@
-# This should always be used alongside docker-compose.base.yaml:
-# docker compose -f docker-compose.base.yaml -f docker-compose.development.yaml ...
-
 services:
   app:
+    build:
+      context: .
+      target: dev
     ports:
-      - "24678:24678"     # add ws for HMR
+      - "${PORT}:${PORT}" # http(s)
+      - 24678:24678 # HMR
     # TODO: migrate from sqlite to postgres
     # depends_on:
     #   db:
     #     condition: service_healthy
+    env_file:
+      - ./.env
+    volumes:
+      - ${CERTS_VOLUME_DIR}:/certs:ro
+      - ${DB_VOLUME_DIR}:/db:rw
+      - ${LOGS_VOLUME_DIR}:/logs:rw
     develop:
       watch:
         # sync scripts so the container has the latest versions

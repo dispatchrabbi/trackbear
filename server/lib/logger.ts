@@ -19,6 +19,7 @@ async function initLoggers() {
     transports: [
       new transports.File({ filename: path.join(env.LOG_PATH, 'trackbear.log') }), // log everything
       new transports.File({ filename: path.join(env.LOG_PATH, 'errors.log'), level: 'error' }), // log errors and up
+      new transports.Console({ format: format.combine(format.colorize(), format.simple()) }), // always log to the console
     ],
     exceptionHandlers: [
       new transports.File({ filename: path.join(env.LOG_PATH, 'exceptions.log') }), // handle uncaught exceptions
@@ -41,7 +42,7 @@ async function initLoggers() {
     ),
     defaultMeta: { service: 'trackbear' },
     transports: [
-      new transports.File({ filename: path.join(env.LOG_PATH, 'access.log') }), // log everything
+      new transports.File({ filename: path.join(env.LOG_PATH, 'access.log') }),
     ],
     exitOnError: false,
   });
@@ -80,15 +81,8 @@ async function initLoggers() {
     exitOnError: false,
   });
 
-  // also log to the console if we're in development mode
+  // also log queue and worker to the console if we're in development mode
   if (env.NODE_ENV !== 'production') {
-    winston.add(new transports.Console({
-      format: format.combine(
-        format.colorize(),
-        format.simple()
-      )
-    }));
-
     winston.loggers.get('queue').add(new transports.Console({
       format: format.combine(
         format.colorize(),

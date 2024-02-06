@@ -41,6 +41,9 @@ FROM base as dev
 # overwrite NODE_ENV to development
 ENV NODE_ENV=development
 
+# Expose port 24678 for HMR
+EXPOSE 24678
+
 # Expose ports 9229 and 9230 (tests) for debug
 EXPOSE 9229 9230
 
@@ -50,15 +53,14 @@ RUN --mount=type=cache,target=~/.npm npm install
 # Copy the code in
 COPY --chown=node:node . .
 
-# Regenerate db models
-ARG DB_APP_DB_URL
+# Regenerate db models (needs an existing but fake DB_APP_DB_URL in the env)
 ENV DB_APP_DB_URL $DB_APP_DB_URL
 RUN npx prisma generate
 
 # Check every 30s to ensure /api/ping returns HTTP 200
 HEALTHCHECK --interval=30s CMD node ./scripts/healthcheck.js
 
-# Don't use npm start because it doesn't pass signals correctly
+# Regenerate DB models right before starting because
 CMD [ "node", "--import", "./ts-node-loader.js", "./main.ts" ]
 
 ###############################################################################
@@ -68,8 +70,7 @@ FROM base as prod
 # Copy the code in
 COPY --chown=node:node . .
 
-# Regenerate db models
-ARG DB_APP_DB_URL
+# Regenerate db models (needs an existing but fake DB_APP_DB_URL in the env)
 ENV DB_APP_DB_URL $DB_APP_DB_URL
 RUN npx prisma generate
 

@@ -40,7 +40,7 @@ These are only needed for working with the Docker Compose files.
 ## Database
 | Variable | Default | Notes |
 | --- | --- | --- |
-| `DB_APP_DB_URL` | `file:/db/trackbear.db` | This URL is used by the Prisma schema (see *prisma/schema.prisma*) to connect to the database. It is set in *docker-compose.base.yaml*, not *.env*. **You should not set or override this unless you are doing something with the database outside of the container.** |
+| `DB_APP_DB_URL` | `file:/db/trackbear.db` | This URL is used by the Prisma schema (see *prisma/schema.prisma*) to connect to the database. |
 | `DB_PATH` | `/db` | The directory to create databases in. Don't set this unless you're running outside a container for some reason. |
 
 ## Session/Cookies

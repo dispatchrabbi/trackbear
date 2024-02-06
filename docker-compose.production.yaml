@@ -1,8 +1,12 @@
-# This should always be used alongside docker-compose.base.yaml:
-# docker compose -f docker-compose.base.yaml -f docker-compose.production.yaml ...
-
 services:
   app:
-    build:
-      target: prod
+    image: dispatchrabbi/trackbear:latest
+    ports:
+      - "${PORT}:${PORT}" # http(s)
     restart: unless-stopped
+    env_file:
+      - ./.env
+    volumes:
+      - ${CERTS_VOLUME_DIR}:/certs:ro
+      - ${DB_VOLUME_DIR}:/db:rw
+      - ${LOGS_VOLUME_DIR}:/logs:rw
