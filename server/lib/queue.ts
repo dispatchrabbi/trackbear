@@ -1,3 +1,7 @@
+import path from 'path';
+import { getNormalizedEnv } from './env.ts';
+
+
 import Queue from 'better-queue';
 import SqliteStore from 'better-queue-sqlite';
 
@@ -12,14 +16,17 @@ import winston from 'winston';
 export type HandlerCallback = (error: Error | null, result: unknown) => void;
 
 let q: Queue | null = null;
-function initQueue(taskDbPath) {
+async function initQueue() {
+  const env = await getNormalizedEnv();
+  const queueDbPath = path.resolve(env.DB_PATH, './queue.db');
+
   q = new Queue(function(task, cb) {
     taskHandler(task)
       .then(result => cb(null, result))
       .catch(err => cb(err));
   }, {
     store: new SqliteStore({
-      path: taskDbPath
+      path: queueDbPath
     }),
     cancelIfRunning: true,
     autoResume: true,

@@ -5,7 +5,6 @@ import { getNormalizedEnv } from './server/lib/env.ts';
 import winston from 'winston';
 import { initLoggers, closeLoggers } from './server/lib/logger.ts';
 
-import path from 'path';
 import { initQueue } from './server/lib/queue.ts';
 import initWorkers from './server/lib/workers.ts';
 
@@ -36,7 +35,7 @@ async function main() {
   const accessLogger = winston.loggers.get('access');
 
   // initialize the queue
-  initQueue(path.resolve(env.DB_PATH, './queue.db'));
+  await initQueue();
 
   // initialize the workers
   initWorkers();

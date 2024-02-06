@@ -6,10 +6,9 @@ import clearResetLinksWorker from '../workers/clearResetLinksWorker.ts';
 import removeExpiredEmailVerificationsWorker from '../workers/removeExpiredEmailVerificationsWorker.ts';
 
 const WORKERS = [
-  // TODO: reinstate these after sending out initial verification emails
-  // suspendUnverifiedUsersWorker,
+  suspendUnverifiedUsersWorker,
   clearResetLinksWorker,
-  // removeExpiredEmailVerificationsWorker,
+  removeExpiredEmailVerificationsWorker,
 ];
 
 function initWorkers() {
