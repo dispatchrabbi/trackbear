@@ -1,7 +1,7 @@
 {
   "name": "writing-tracker",
   "private": true,
-  "version": "0.6.0",
+  "version": "0.6.1",
   "type": "module",
   "imports": {
     "src/*": "./src/*",
@@ -10,26 +10,19 @@
   "scripts": {
     "start": "npm run start:dev",
     "watch": "npm run watch:dev",
-
     "container:dev": "docker build -t dispatchrabbi/trackbear:dev --target dev .",
     "start:dev": "docker compose up -d",
     "watch:dev": "docker compose watch",
-
     "container:prod": "docker build -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t dispatchrabbi/trackbear:latest --target prod .",
     "start:prod": "docker compose -f docker-compose.production.yaml up -d",
-
     "lint": "npx eslint --ext .js,.ts,.vue .",
     "build": "npm run build:db && npm run build:client",
     "build:db": "npx prisma generate",
     "build:client": "npx vue-tsc && npx vite build --emptyOutDir",
-
     "hooks": "husky install",
-
     "preversion": "npm run build",
     "version": "VERSION=$(npm pkg get version --workspaces=false | tr -d \\\"); git add .; git commit -m \"v${VERSION}\"; git tag -a \"v${VERSION}\" -m \"v${VERSION}\"",
-
     "deploy": "./scripts/deploy.sh",
-
     "local:start:dev": "NODE_ENV=development node --import ./ts-node-loader.js ./main.ts",
     "local:start:prod": "NODE_ENV=production node --import ./ts-node-loader.js ./main.ts"
   },
