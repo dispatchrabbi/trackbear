@@ -1,4 +1,4 @@
-name: Build and push docker image from tag
+name: Create and publish a Docker image from a tag
 
 on:
   workflow_dispatch:
@@ -6,25 +6,34 @@ on:
     tags:
       - 'v*'
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
-  docker:
+  build-and-push-image:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
-      -
-        name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
-      -
-        name: Get metadata for images
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: dispatchrabbi/trackbear
-      -
-        name: Build and push
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          image: ghcr.io/dispatchrabbi/trackbear
-          registry: ghcr.io
-          githubOrg: override-org # optional
-          username: ${{ secrets.GHCR_USERNAME }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
