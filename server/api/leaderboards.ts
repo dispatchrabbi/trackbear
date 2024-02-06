@@ -223,6 +223,7 @@ leaderboardsRouter.post('/:uuid',
 leaderboardsRouter.delete('/:uuid',
   requireUser,
   validateParams(z.object({ uuid: z.string().uuid() })),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (req, res: ApiResponse<null>, next) =>
 {
   return res.status(500).send(failure('NOT_IMPLEMENTED', 'Not yet implemented'));

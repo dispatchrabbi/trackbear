@@ -4,7 +4,7 @@ import { DataTableColumnSource } from 'vuestic-ui';
 
 import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
 import { GOAL_TYPE_INFO } from 'src/lib/api/leaderboard.ts';
-import { formatTimeProgress, formatDateSafe } from 'src/lib/date.ts';
+import { formatTimeProgress } from 'src/lib/date.ts';
 
 const props = defineProps<{
   leaderboard: CompleteLeaderboard

@@ -185,6 +185,7 @@ projectsRouter.post('/:id',
 projectsRouter.delete('/:id',
   requireUser,
   validateParams(z.object({ id: zStrInt() })),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (req, res: ApiResponse<null>, next) =>
 {
   return res.status(500).send(failure('NOT_IMPLEMENTED', 'Not yet implemented'));

@@ -1,27 +1,28 @@
 import { Router, Request } from "express";
-import { ApiResponse, failure, success } from '../lib/api-response.ts';
+import { ApiResponse, /*failure,*/ success } from '../lib/api-response.ts';
 
-import { z } from 'zod';
+// import { z } from 'zod';
 
-import dbClient from "../lib/db.ts";
+// import dbClient from "../lib/db.ts";
 import type { User } from "@prisma/client";
 
-import { validateBody } from "../lib/middleware/validate.ts";
-import { logAuditEvent } from '../lib/audit-events.ts';
+// import { validateBody } from "../lib/middleware/validate.ts";
+// import { logAuditEvent } from '../lib/audit-events.ts';
 import { requireUser, WithUser } from "../lib/auth.ts";
 
 export const USERNAME_REGEX = /^[a-z][a-z0-9_-]+$/;
 export type EditUserPayload = Pick<User, 'username' | 'displayName'>;
-const editUserSchema = z.object({
-  username: z.string().min(3).max(24).regex(USERNAME_REGEX),
-  displayName: z.string().min(3).max(24),
-});
+// const editUserSchema = z.object({
+//   username: z.string().min(3).max(24).regex(USERNAME_REGEX),
+//   displayName: z.string().min(3).max(24),
+// });
 
 const userRouter = Router();
 
 // GET /user/me - get your own user information
 userRouter.get('/me',
   requireUser,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (req: WithUser<Request>, res: ApiResponse<User>, next) =>
 {
   return res.status(200).send(success(req.user));
