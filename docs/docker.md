@@ -12,6 +12,8 @@ docker build -t dispatchrabbi/trackbear:dev --target dev .
 Build for production:
 ```sh
 docker build -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \") -t latest --target prod .
+# or
+npm run container:prod
 ```
 
 ## Run
@@ -19,6 +21,8 @@ docker build -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false
 Watching in development:
 ```sh
 docker compose watch
+# or
+npm run watch
 ```
 
 Running in development (HMR won't work):

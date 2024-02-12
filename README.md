@@ -23,16 +23,30 @@ See [the environment variable documentation](./docs/env.md) for more details on 
 ## Developing
 
 ```sh
-npm run start:dev
+# build a dev version of the container
+docker compose build
+
+# start the container in watch mode
+docker compose watch
+# or
+npm run watch
 ```
 
-This starts up the app in a docker container in development mode. It'll do hot module reloading and all the other creature comforts, and it'll start up any dependent services as well (there aren't any currently, but soon there will be a database service, because Prisma and SQLite don't play super nicely when it comes to multiple connections).
+Starting the container in watch mode means that it will either copy in changed files or restart the container (depending on what's needed) as you save files. This enables HMR and other creature comforts.
 
 You can also start up the app in a docker container in production mode:
 
 ```sh
+# build the production version of the container
+npm run container:prod
+
+# start the container
+docker compose -f docker-compose.production.yaml up -d
+# or
 npm run start:prod
 ```
+
+See [the docker documentation](./docs/docker.md) for more details on specific commands.
 
 You *can* start up the app locally (outside of a container) using `npm run local:start:dev` and `npm run local:start:prod` but **these are deprecated and you shouldn't use them**.
 
@@ -64,13 +78,11 @@ git push --tags
 
 ## Deploying
 
-No fancy deploying yet, just SSHing onto the server. Pull the version you want (latest or tag) and:
+The app runs as a container on the server. There's no fancy remote deploy yet, so to update, you'll need to
+SSH into the server, pull the docker container for the tag you want (or latest, I guess), and then stop the
+running container and start the new container with the env file in the appropriate directory.
 
-```sh
-./scripts/deploy-docker.sh
-```
-
-The update script will back up the database, rebuild the container, and restart it in place.
+This should probably be made better at some point, but for now, it works fine.
 
 ## Acknowledgements
 

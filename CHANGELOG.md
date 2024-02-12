@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## v0.6.1
+
+- CHANGED: More behind-the-scenes infrastructure. No new functionality on this one!
+
 ## v0.6.0
 
 - CHANGED: A bunch of internal infrastructure things. No new functionality on this one!
