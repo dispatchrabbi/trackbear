@@ -33,5 +33,15 @@ docker run --env-file ./.env -p 3000:3000 -p 24678:24678 --mount type=bind,sourc
 
 Running for production:
 ```sh
-bash -c 'source ./trackbear.env && docker run --env-file ./trackbear.env -p 3000:3000 --mount type=bind,source="$(pwd)"/$CERTS_VOLUME_DIR,target=/certs,readonly --mount type=bind,source="$(pwd)"/$DB_VOLUME_DIR,target=/db --mount type=bind,source="$(pwd)"/$LOGS_VOLUME_DIR,target=/logs --name trackbear-solo --rm dispatchrabbi/trackbear:0.6.0-alpha.1'
+docker run \
+  --restart=on-failure:3 \
+  -u 1001 \
+  --env-file ./trackbear.env \
+  -p 127.0.0.1:3000:3000 \
+  --mount type=bind,source=/dev/null,target=/certs,readonly \
+  --mount type=bind,source="$(pwd)"/db,target=/db \
+  --mount type=bind,source="$(pwd)"/logs,target=/logs \
+  --name trackbear \
+  -d \
+  ghcr.io/dispatchrabbi/trackbear:latest
 ```

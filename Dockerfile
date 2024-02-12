@@ -8,8 +8,8 @@ FROM node:lts-slim as base
 # Install the latest openssl (maybe we need alpine?)
 RUN apt-get update -y && apt-get install -y openssl curl
 
-# Default NODE_ENV to production; later stages will override this
-ENV NODE_ENV=production
+# Default NODE_ENV to development (the safest); later stages will override this if needed
+ENV NODE_ENV=development
 
 # Default to port 3000 for Node
 ARG PORT=3000
@@ -60,12 +60,15 @@ RUN npx prisma generate
 # Check every 30s to ensure /api/ping returns HTTP 200
 HEALTHCHECK --interval=30s CMD node ./scripts/healthcheck.js
 
-# Regenerate DB models right before starting because
-CMD [ "node", "--import", "./ts-node-loader.js", "./main.ts" ]
+# Start the server (this also runs migrations)
+CMD [ "./entrypoint.sh" ]
 
 ###############################################################################
 # prod stage
 FROM base as prod
+
+# overwrite NODE_ENV to production
+ENV NODE_ENV=production
 
 # Copy the code in
 COPY --chown=node:node . .
@@ -80,5 +83,5 @@ RUN npm run build:client
 # Check every 30s to ensure /api/ping returns HTTP 200
 HEALTHCHECK --interval=30s CMD node ./scripts/healthcheck.js
 
-# Don't use npm start because it doesn't pass signals correctly
-CMD [ "node", "--import", "./ts-node-loader.js", "./main.ts" ]
+# Start the server (this also runs migrations)
+CMD [ "./entrypoint.sh" ]
