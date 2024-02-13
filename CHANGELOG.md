@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## v0.6.3
+
+- CHANGED: Last bit of behind-the-scenes infra changes. This should make deployment and other changes much easier, and set the stage for the new tag-and-tally architecture.
+
 ## v0.6.1
 
 - CHANGED: More behind-the-scenes infrastructure. No new functionality on this one!
