@@ -1,9 +1,7 @@
-import path from 'path';
 import { getNormalizedEnv } from './env.ts';
 
-
 import Queue from 'better-queue';
-import SqliteStore from 'better-queue-sqlite';
+// import SqliteStore from 'better-queue-sqlite';
 
 import sendSignupEmailTask from './tasks/send-signup-email.ts';
 import sendPwchangeEmailTask from './tasks/send-pwchange-email.ts';
@@ -18,16 +16,22 @@ export type HandlerCallback = (error: Error | null, result: unknown) => void;
 let q: Queue | null = null;
 async function initQueue() {
   const env = await getNormalizedEnv();
-  const queueDbPath = path.resolve(env.DB_PATH, './queue.db');
 
   q = new Queue(function(task, cb) {
     taskHandler(task)
       .then(result => cb(null, result))
       .catch(err => cb(err));
   }, {
-    store: new SqliteStore({
-      path: queueDbPath
-    }),
+    store: {
+      type: 'sql',
+      dialect: 'postgres',
+      host: env.DATABASE_HOST,
+      port: 5432,
+      username: env.DATABASE_USER,
+      password: env.DATABASE_PASSWORD,
+      dbname: 'queue',
+      tableName: 'tasks'
+    },
     cancelIfRunning: true,
     autoResume: true,
     batchSize: 1,

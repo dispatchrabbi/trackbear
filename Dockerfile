@@ -5,8 +5,8 @@
 # base stage
 FROM node:lts-slim as base
 
-# Install the latest openssl (maybe we need alpine?)
-RUN apt-get update -y && apt-get install -y openssl curl
+# Install the latest openssl (for HTTPS), curl, and psql (for debugging)
+RUN apt update -y && apt install -y openssl curl postgresql-client
 
 # Default NODE_ENV to development (the safest); later stages will override this if needed
 ENV NODE_ENV=development
@@ -58,7 +58,7 @@ ENV DB_APP_DB_URL $DB_APP_DB_URL
 RUN npx prisma generate
 
 # Check every 30s to ensure /api/ping returns HTTP 200
-HEALTHCHECK --interval=30s CMD node ./scripts/healthcheck.js
+HEALTHCHECK --interval=30s CMD node ./scripts/healthchecks/trackbear.js
 
 # Start the server (this also runs migrations)
 CMD [ "./entrypoint.sh" ]
@@ -81,7 +81,7 @@ RUN npx prisma generate
 RUN npm run build:client
 
 # Check every 30s to ensure /api/ping returns HTTP 200
-HEALTHCHECK --interval=30s CMD node ./scripts/healthcheck.js
+HEALTHCHECK --interval=30s CMD node ./scripts/healthchecks/trackbear.js
 
 # Start the server (this also runs migrations)
 CMD [ "./entrypoint.sh" ]

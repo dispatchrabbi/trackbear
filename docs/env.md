@@ -40,6 +40,10 @@ These are only needed for working with the Docker Compose files.
 ## Database
 | Variable | Default | Notes |
 | --- | --- | --- |
+| `DATABASE_USER` |  | The username to use with the Postgres database |
+| `DATABASE_PASSWORD` |  | The password to use with the Postgres database |
+| `DATABASE_NAME` |  | The database name to use |
+| `DATABASE_HOST` |  | The hostname for the Postgres database |
 | `DB_APP_DB_URL` | `file:/db/trackbear.db` | This URL is used by the Prisma schema (see *prisma/schema.prisma*) to connect to the database. |
 | `DB_PATH` | `/db` | The directory to create databases in. Don't set this unless you're running outside a container for some reason. |
 

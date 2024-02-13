@@ -6,10 +6,9 @@ services:
     ports:
       - "${PORT}:${PORT}" # http(s)
       - 24678:24678 # HMR
-    # TODO: migrate from sqlite to postgres
-    # depends_on:
-    #   db:
-    #     condition: service_healthy
+    depends_on:
+      db:
+        condition: service_healthy
     env_file:
       - ./.env
     volumes:
@@ -67,13 +66,19 @@ services:
           action: rebuild
           target: .
 
-  # db:
-  #   image: postgres:alpine
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #   volumes:
-  #     - ./healthchecks:/healthchecks
-  #   healthcheck:
-  #     test: /healthchecks/postgres-healthcheck
-  #     interval: "5s"
+  db:
+    image: postgres:16-alpine
+    env_file:
+      - ./.env
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_INITDB_ARGS: -E UTF8
+    volumes:
+      - ./scripts/healthchecks:/healthchecks
+      - ${DB_VOLUME_DIR}/postgres:/var/lib/postgresql/data:rw
+      - ${DB_VOLUME_DIR}:/data:rw
+    healthcheck:
+      test: /healthchecks/postgres.sh
+      interval: "5s"

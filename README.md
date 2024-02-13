@@ -4,21 +4,33 @@
 
 > TrackBear is... not even in beta. It's in super-mega-alpha mode right now. Please don't use it unless you are willing to be testing an alpha build.
 
-## Installation
+## Setup
 
 ```sh
 # install dependencies
 npm install
-```
 
-## Setup
-
-```sh
-# copy the .env file
+# copy the .env file and then fill it out
 cp .env.example .env
 ```
 
 See [the environment variable documentation](./docs/env.md) for more details on environment variables.
+
+Then set up the docker stack:
+
+```sh
+# build the container
+docker compose build
+
+# run the docker compose stack
+docker compose up
+```
+
+**The first time you set up your docker stack, you will need to manually create the `queue` database.** This is a limitation of the Postgres docker container. Exec into the container (`docker exec -it /bin/bash trackbear-db-1`) and run:
+
+```sh
+createdb -U $POSTGRES_USER queue
+```
 
 ## Developing
 
@@ -34,6 +46,10 @@ npm run watch
 
 Starting the container in watch mode means that it will either copy in changed files or restart the container (depending on what's needed) as you save files. This enables HMR and other creature comforts.
 
+See [the docker documentation](./docs/docker.md) for more details on specific commands.
+
+### Production mode
+
 You can also start up the app in a docker container in production mode:
 
 ```sh
@@ -46,7 +62,7 @@ docker compose -f docker-compose.production.yaml up -d
 npm run start:prod
 ```
 
-See [the docker documentation](./docs/docker.md) for more details on specific commands.
+### Outside of a container
 
 You *can* start up the app locally (outside of a container) using `npm run local:start:dev` and `npm run local:start:prod` but **these are deprecated and you shouldn't use them**.
 

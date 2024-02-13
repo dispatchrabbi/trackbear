@@ -15,6 +15,11 @@ type TrackbearCommonEnv = {
   LOG_PATH: string;
   LOG_LEVEL: string;
 
+  DATABASE_USER: string;
+  DATABASE_PASSWORD: string;
+  DATABASE_NAME: string;
+  DATABASE_HOST: string;
+
   DB_PATH: string;
   COOKIE_SECRET: string;
 
@@ -83,6 +88,11 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   if(!['', 'debug', 'info', 'warn', 'error', 'critical'].includes(process.env.LOG_LEVEL)) { throw new Error('LOG_LEVEL should be one of: `debug`, `info`, `warn`, `error`, `critical`'); }
   process.env.LOG_LEVEL = process.env.LOG_LEVEL || 'info';
 
+  if(!process.env.DATABASE_USER) { throw new Error('Missing DATABASE_USER value in .env'); }
+  if(!process.env.DATABASE_PASSWORD) { throw new Error('Missing DATABASE_PASSWORD value in .env'); }
+  if(!process.env.DATABASE_NAME) { throw new Error('Missing DATABASE_NAME value in .env'); }
+  if(!process.env.DATABASE_HOST) { throw new Error('Missing DATABASE_HOST value in .env'); }
+
   process.env.DB_PATH = process.env.DB_PATH || '/db';
 
   if(!process.env.COOKIE_SECRET) { throw new Error('Missing COOKIE_SECRET value in .env'); }
@@ -104,6 +114,11 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
 
     LOG_PATH:               process.env.LOG_PATH,
     LOG_LEVEL:              process.env.LOG_LEVEL,
+
+    DATABASE_USER:          process.env.DATABASE_USER,
+    DATABASE_PASSWORD:      process.env.DATABASE_PASSWORD,
+    DATABASE_NAME:          process.env.DATABASE_NAME,
+    DATABASE_HOST:          process.env.DATABASE_HOST,
 
     DB_PATH:                process.env.DB_PATH,
     COOKIE_SECRET:          process.env.COOKIE_SECRET,

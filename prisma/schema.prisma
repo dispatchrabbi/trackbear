@@ -5,16 +5,21 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// datasource db {
+//   provider = "sqlite"
+//   url      = env("DB_APP_DB_URL")
+// }
+
 datasource db {
-  provider = "sqlite"
-  url      = env("DB_APP_DB_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Session {
   id        String   @id
   sid       String   @unique
   data      String
-  expiresAt DateTime
+  expiresAt DateTime  @db.Timestamptz(3)
 }
 
 model AuditEvent {
@@ -28,8 +33,8 @@ model AuditEvent {
   eventType String
   auxInfo   String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt // this should never differ from createdAt
+  createdAt DateTime @db.Timestamptz(3) @default(now())
+  updatedAt DateTime @db.Timestamptz(3) @updatedAt // this should never differ from createdAt
 }
 
 model User {
@@ -43,8 +48,8 @@ model User {
   email           String
   isEmailVerified Boolean @default(false)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @db.Timestamptz(3) @default(now())
+  updatedAt DateTime @db.Timestamptz(3) @updatedAt
 
   projects                  Project[]
   leaderboards              Leaderboard[]
@@ -62,8 +67,8 @@ model UserAuth {
   password String
   salt     String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @db.Timestamptz(3) @default(now())
+  updatedAt DateTime @db.Timestamptz(3) @updatedAt
 }
 
 model PendingEmailVerification {
@@ -73,10 +78,10 @@ model PendingEmailVerification {
   userId Int
 
   newEmail      String
-  expiresAt     DateTime
+  expiresAt     DateTime @db.Timestamptz(3)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @db.Timestamptz(3) @default(now())
+  updatedAt DateTime @db.Timestamptz(3) @updatedAt
 }
 
 model PasswordResetLink {
@@ -86,10 +91,10 @@ model PasswordResetLink {
   userId Int
 
   state     String
-  expiresAt DateTime
+  expiresAt DateTime @db.Timestamptz(3)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @db.Timestamptz(3) @default(now())
+  updatedAt DateTime @db.Timestamptz(3) @updatedAt
 }
 
 model Banner {
@@ -97,14 +102,14 @@ model Banner {
   uuid String @unique @default(uuid())
 
   enabled   Boolean
-  showUntil DateTime
+  showUntil DateTime @db.Timestamptz(3)
 
   message String
   color   String @default("info")
   icon    String @default("campaign")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @db.Timestamptz(3) @default(now())
+  updatedAt DateTime @db.Timestamptz(3) @updatedAt
 }
 
 model Project {
@@ -125,8 +130,8 @@ model Project {
   visibility String
   starred    Boolean
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @db.Timestamptz(3) @default(now())
+  updatedAt DateTime @db.Timestamptz(3) @updatedAt
 
   updates      Update[]
   leaderboards Leaderboard[]
@@ -141,8 +146,8 @@ model Update {
   date  String
   value Int
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @db.Timestamptz(3) @default(now())
+  updatedAt DateTime @db.Timestamptz(3) @updatedAt
 }
 
 model Leaderboard {
@@ -162,6 +167,6 @@ model Leaderboard {
 
   projects Project[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @db.Timestamptz(3) @default(now())
+  updatedAt DateTime @db.Timestamptz(3) @updatedAt
 }
