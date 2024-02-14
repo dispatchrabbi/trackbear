@@ -15,11 +15,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ----------------------------------------------------------------------------
+// These models are for general system functioning
+
 model Session {
   id        String   @id
   sid       String   @unique
   data      String
-  expiresAt DateTime  @db.Timestamptz(3)
+  expiresAt DateTime @db.Timestamptz(3)
 }
 
 model AuditEvent {
@@ -33,8 +36,8 @@ model AuditEvent {
   eventType String
   auxInfo   String
 
-  createdAt DateTime @db.Timestamptz(3) @default(now())
-  updatedAt DateTime @db.Timestamptz(3) @updatedAt // this should never differ from createdAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3) // this should never differ from createdAt
 }
 
 model User {
@@ -48,14 +51,17 @@ model User {
   email           String
   isEmailVerified Boolean @default(false)
 
-  createdAt DateTime @db.Timestamptz(3) @default(now())
-  updatedAt DateTime @db.Timestamptz(3) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
   projects                  Project[]
   leaderboards              Leaderboard[]
   userAuth                  UserAuth?
   passwordResetLinks        PasswordResetLink[]
   pendingEmailVerifications PendingEmailVerification[]
+  Tally                     Tally[]
+  Work                      Work[]
+  Tag                       Tag[]
 }
 
 model UserAuth {
@@ -67,8 +73,8 @@ model UserAuth {
   password String
   salt     String
 
-  createdAt DateTime @db.Timestamptz(3) @default(now())
-  updatedAt DateTime @db.Timestamptz(3) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model PendingEmailVerification {
@@ -77,11 +83,11 @@ model PendingEmailVerification {
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 
-  newEmail      String
-  expiresAt     DateTime @db.Timestamptz(3)
+  newEmail  String
+  expiresAt DateTime @db.Timestamptz(3)
 
-  createdAt DateTime @db.Timestamptz(3) @default(now())
-  updatedAt DateTime @db.Timestamptz(3) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model PasswordResetLink {
@@ -93,12 +99,12 @@ model PasswordResetLink {
   state     String
   expiresAt DateTime @db.Timestamptz(3)
 
-  createdAt DateTime @db.Timestamptz(3) @default(now())
-  updatedAt DateTime @db.Timestamptz(3) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model Banner {
-  id    Int    @id @default(autoincrement())
+  id   Int    @id @default(autoincrement())
   uuid String @unique @default(uuid())
 
   enabled   Boolean
@@ -108,9 +114,107 @@ model Banner {
   color   String @default("info")
   icon    String @default("campaign")
 
-  createdAt DateTime @db.Timestamptz(3) @default(now())
-  updatedAt DateTime @db.Timestamptz(3) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 }
+
+// ----------------------------------------------------------------------------
+// These models are for the tag-and-tally idiom
+
+model Tally {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  state     String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  date    String
+  measure String
+  count   Int
+  note    String
+
+  workId Int?
+  work   Work? @relation(fields: [workId], references: [id], onDelete: Cascade)
+
+  tags Tag[]
+}
+
+model Work {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  state     String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String
+  status      String
+  Tally       Tally[]
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  state     String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  name    String
+  color   String
+  Tally   Tally? @relation(fields: [tallyId], references: [id])
+  tallyId Int?
+}
+
+// Board and Participant are not yet implemented
+// model Board {
+//   id   Int    @id @default(autoincrement())
+//   uuid String @unique @default(uuid())
+//   state String
+//   createdAt DateTime @db.Timestamptz(3) @default(now())
+//   updatedAt DateTime @db.Timestamptz(3) @updatedAt
+
+//   ownerId Int
+//   owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+//   title String
+//   description String
+//   starred Boolean
+//   visibility String
+
+//   parameters Json
+
+//   joinability String
+//   participants Participant[]
+// }
+
+// model Participant {
+//   id   Int    @id @default(autoincrement())
+//   uuid String @unique @default(uuid())
+//   state String
+//   createdAt DateTime @db.Timestamptz(3) @default(now())
+//   updatedAt DateTime @db.Timestamptz(3) @updatedAt
+
+//   userId Int
+//   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   boardId Int
+//   board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+//   role String
+//   parameters Json
+// }
+
+// ----------------------------------------------------------------------------
+// These models are for the LEGACY updates-in-projects idiom
 
 model Project {
   id   Int    @id @default(autoincrement())
@@ -130,8 +234,8 @@ model Project {
   visibility String
   starred    Boolean
 
-  createdAt DateTime @db.Timestamptz(3) @default(now())
-  updatedAt DateTime @db.Timestamptz(3) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
   updates      Update[]
   leaderboards Leaderboard[]
@@ -146,8 +250,8 @@ model Update {
   date  String
   value Int
 
-  createdAt DateTime @db.Timestamptz(3) @default(now())
-  updatedAt DateTime @db.Timestamptz(3) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 }
 
 model Leaderboard {
@@ -167,6 +271,6 @@ model Leaderboard {
 
   projects Project[]
 
-  createdAt DateTime @db.Timestamptz(3) @default(now())
-  updatedAt DateTime @db.Timestamptz(3) @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 }
