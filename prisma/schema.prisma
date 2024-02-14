@@ -155,6 +155,7 @@ model Work {
   title       String
   description String
   status      String
+
   Tally       Tally[]
 }
 
@@ -168,10 +169,10 @@ model Tag {
   ownerId Int
   owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
-  name    String
-  color   String
-  Tally   Tally? @relation(fields: [tallyId], references: [id])
-  tallyId Int?
+  name  String
+  color String
+
+  Tally Tally[]
 }
 
 // Board and Participant are not yet implemented
