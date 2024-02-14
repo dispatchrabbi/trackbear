@@ -12,6 +12,7 @@ export type WithSessionAuth<R> = R & SessionWithAuth;
 type UserProp = { user: User };
 // export type RequestWithUser = RequestWithSessionAuth & UserProp;
 export type WithUser<R> = R & UserProp;
+export type RequestWithUser = Request & UserProp;
 
 function serializeUser(user: User) {
   return { id: user.id };

@@ -1,10 +1,11 @@
-import { Response, Router } from "express";
-import { ApiResponsePayload, success } from 'server/lib/api-response.ts';
+import { Router } from "express";
+import { ApiResponse, success, h } from '../../lib/api-response.ts';
 
 const pingRouter = Router();
-
-pingRouter.get('/', (req, res: Response<ApiResponsePayload<'pong'>>) => {
-  res.send(success('pong'));
-});
-
 export default pingRouter;
+
+pingRouter.get('/',
+  h(async (req, res: ApiResponse<'pong'>) =>
+{
+    return res.status(200).send(success('pong'));
+}));

@@ -1,4 +1,4 @@
-import type { Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 
 export type ApiResponse<T> = Response<ApiResponsePayload<T>>;
 export type ApiResponsePayload<T> = ApiSuccessPayload<T> | ApiFailurePayload;
@@ -28,5 +28,14 @@ export function failure(code: string, message: string): ApiFailurePayload {
   return {
     success: false,
     error: { code, message },
+  };
+}
+
+type ApiHandler<T> = (req: Request, res: Response) => Promise<ApiResponse<T>>;
+export function h<T>(handler: ApiHandler<T>) {
+  return async function handle(req: Request, res: Response, next: NextFunction) {
+    try {
+      await handler(req, res);
+    } catch(err) { return next(err); }
   };
 }
