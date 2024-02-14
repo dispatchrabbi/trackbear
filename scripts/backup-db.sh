@@ -3,4 +3,4 @@ set -euo pipefail
 
 echo "Backing up database..."
 BACKUP_DATE=$(date +%s)
-cp "/db/trackbear.db" "/db/backup-trackbear.${BACKUP_DATE}.db"
+pg_dump --create trackbear > "/db/trackbear-backup.${BACKUP_DATE}.sql"
