@@ -77,8 +77,8 @@ COPY --chown=node:node . .
 ENV DB_APP_DB_URL $DB_APP_DB_URL
 RUN npx prisma generate
 
-# Build the front-end
-RUN npm run build:client
+# Compile the front-end
+RUN npm run compile:client
 
 # Check every 30s to ensure /api/ping returns HTTP 200
 HEALTHCHECK --interval=30s CMD node ./scripts/healthchecks/trackbear.js
