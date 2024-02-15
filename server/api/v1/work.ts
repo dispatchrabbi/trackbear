@@ -4,7 +4,7 @@ import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
 import { requireUser, RequestWithUser } from '../../lib/auth.ts';
 
 import { z } from 'zod';
-import { zIdParam } from '../../lib/validators.ts';
+import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
 import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
@@ -46,7 +46,7 @@ workRouter.get('/:id',
   if(work) {
     return res.status(200).send(success(work));
   } else {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any tag with id ${req.params.id}.`));
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any work with id ${req.params.id}.`));
   }
 }));
 
@@ -58,7 +58,7 @@ export type WorkPayload = {
 const zWorkPayload = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
-  phase: z.enum(Object.values(WORK_PHASE) as [string, ...string[]]),
+  phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<string>),
 });
 
 workRouter.post('/',
