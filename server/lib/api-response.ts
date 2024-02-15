@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
+import winston from "winston";
 
 export type ApiResponse<T> = Response<ApiResponsePayload<T>>;
 export type ApiResponsePayload<T> = ApiSuccessPayload<T> | ApiFailurePayload;
@@ -36,6 +37,17 @@ export function h<T>(handler: ApiHandler<T>) {
   return async function handle(req: Request, res: Response, next: NextFunction) {
     try {
       await handler(req, res);
-    } catch(err) { return next(err); }
+    } catch(err) {
+      console.error(err.code);
+      if(err.code === 'P2025') { // P2025 means we tried to update or delete a db record that doesn't exist
+        const model = err.meta.modelName;
+        const cause = err.meta.cause;
+
+        winston.warn(`Error modifying ${model} model during call to ${req.url}: ${cause}`);
+        return res.status(404).send(failure('NOT_FOUND', `Did not find any ${model.toLowerCase()} with id ${req.params.id || '<unknown>'}`));
+      }
+
+      return next(err);
+    }
   };
 }
