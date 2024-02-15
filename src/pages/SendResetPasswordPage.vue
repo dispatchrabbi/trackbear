@@ -6,7 +6,7 @@ import { useValidation } from 'src/lib/form.ts';
 
 import { requestPasswordReset } from 'src/lib/api/auth.ts';
 
-import AppPage from './layout/AppPage.vue';
+import AppPage from 'src/components/layout/AppPage.vue';
 import ContentHeader from 'src/components/layout/ContentHeader.vue';
 
 const formModel = reactive({

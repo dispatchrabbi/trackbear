@@ -10,9 +10,9 @@ const router = useRouter();
 import { useUserStore } from '../stores/user.ts';
 const userStore = useUserStore();
 
-import AppPage from './layout/AppPage.vue';
+import AppPage from 'src/components/layout/AppPage.vue';
 import ContentHeader from 'src/components/layout/ContentHeader.vue';
-import TogglablePasswordInput from './form/TogglablePasswordInput.vue';
+import TogglablePasswordInput from 'src/components/form/TogglablePasswordInput.vue';
 
 const formModel = reactive({
   username: '',

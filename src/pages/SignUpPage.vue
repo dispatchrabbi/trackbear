@@ -7,9 +7,9 @@ import { useValidation } from 'src/lib/form.ts';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import AppPage from './layout/AppPage.vue';
+import AppPage from 'src/components/layout/AppPage.vue';
 import ContentHeader from 'src/components/layout/ContentHeader.vue';
-import TogglablePasswordInput from './form/TogglablePasswordInput.vue'
+import TogglablePasswordInput from 'src/components/form/TogglablePasswordInput.vue'
 import { signUp } from 'src/lib/api/auth.ts';
 import { CreateUserPayload } from 'server/api/auth.ts';
 

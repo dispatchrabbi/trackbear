@@ -9,7 +9,7 @@ const route = useRoute();
 
 import { verifyEmail } from 'src/lib/api/auth.ts';
 
-import AppPage from './layout/AppPage.vue';
+import AppPage from 'src/components/layout/AppPage.vue';
 import ContentHeader from 'src/components/layout/ContentHeader.vue';
 
 const isLoading = ref<boolean>(false);

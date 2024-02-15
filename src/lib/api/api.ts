@@ -26,6 +26,17 @@ async function callApi<T>(path: string, method: string = 'GET', payload: object 
   };
 }
 
+async function callApiV1<T>(path: string, method: string = 'GET', payload: object | null = null): Promise<T> {
+  const response = await callApi<T>(path, method, payload);
+
+  if(response.success === true) {
+    return response.data;
+  } else {
+    throw response.error;
+  }
+}
+
 export {
-  callApi
+  callApi,
+  callApiV1
 };

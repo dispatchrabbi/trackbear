@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import AppPage from './layout/AppPage.vue';
+import AppPage from 'src/components/layout/AppPage.vue';
 import ContentHeader from 'src/components/layout/ContentHeader.vue';
 
 defineProps<{ title: string }>();
