@@ -154,7 +154,7 @@ model Work {
 
   title       String
   description String
-  status      String
+  phase      String
 
   Tally       Tally[]
 }
