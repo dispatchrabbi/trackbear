@@ -3,7 +3,7 @@ import type { Request, Response, NextFunction } from "express";
 
 import dbClient from './db.js';
 import { failure } from './api-response.ts';
-import { USER_STATE } from "./states.ts";
+import { USER_STATE } from "./entities/user.ts";
 
 type SessionWithAuth = { session: { auth?: null | { id: number } } };
 // export type RequestWithSessionAuth = Express.Request & SessionWithAuth;

@@ -9,7 +9,7 @@ import { initLoggers } from '../../server/lib/logger.ts';
 
 import dbClient from '../../server/lib/db.ts';
 import type { User } from '@prisma/client';
-import { USER_STATE } from '../../server/lib/states.ts';
+import { USER_STATE } from '../../server/lib/entities/user.ts';
 
 import { initQueue, pushTask } from '../../server/lib/queue.ts';
 import sendEmailverificationEmail from '../../server/lib/tasks/send-emailverification-email.ts';

@@ -1,9 +1,3 @@
-const USER_STATE = {
-  ACTIVE:     'active',
-  SUSPENDED:  'suspended',
-  DELETED:    'deleted',
-};
-
 const PASSWORD_RESET_LINK_STATE = {
   ACTIVE:   'active',
   USED:     'used',

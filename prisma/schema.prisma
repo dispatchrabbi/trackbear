@@ -156,7 +156,7 @@ model Work {
   description String
   phase      String
 
-  Tally       Tally[]
+  tallies       Tally[]
 }
 
 model Tag {
@@ -172,7 +172,9 @@ model Tag {
   name  String
   color String
 
-  Tally Tally[]
+  talies Tally[]
+
+  @@unique([ ownerId, name ])
 }
 
 // Board and Participant are not yet implemented

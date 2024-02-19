@@ -1,31 +1,33 @@
-import PlaceholderPage from './components/PlaceholderPage.vue';
+import PlaceholderPage from 'src/pages/PlaceholderPage.vue';
 
-import HomePage from './components/HomePage.vue';
-import MaintenancePage from './components/MaintenancePage.vue';
-import AboutPage from './components/AboutPage.vue';
-import ChangelogPage from './components/ChangelogPage.vue';
-import PrivacyPage from './components/PrivacyPage.vue';
+import HomePage from 'src/pages/HomePage.vue';
+import MaintenancePage from 'src/pages/MaintenancePage.vue';
+import AboutPage from 'src/pages/AboutPage.vue';
+import ChangelogPage from 'src/pages/ChangelogPage.vue';
+import PrivacyPage from 'src/pages/PrivacyPage.vue';
 
-import SignUpPage from './components/SignUpPage.vue';
-import LoginPage from './components/LoginPage.vue';
-import LogoutPage from './components/LogoutPage.vue';
-import VerifyEmailPage from './components/VerifyEmailPage.vue';
-import SendResetPasswordPage from './components/SendResetPasswordPage.vue';
-import ResetPasswordPage from './components/ResetPasswordPage.vue';
+import SignUpPage from 'src/pages/SignUpPage.vue';
+import LoginPage from 'src/pages/LoginPage.vue';
+import LogoutPage from 'src/pages/LogoutPage.vue';
+import VerifyEmailPage from 'src/pages/VerifyEmailPage.vue';
+import SendResetPasswordPage from 'src/pages/SendResetPasswordPage.vue';
+import ResetPasswordPage from 'src/pages/ResetPasswordPage.vue';
 
-import SharedProjectPage from './components/SharedProjectPage.vue';
+import SharedProjectPage from 'src/pages/SharedProjectPage.vue';
 
-import AccountPage from './components/AccountPage.vue';
+import AccountPage from 'src/pages/AccountPage.vue';
 
-import ProjectListPage from './components/project/ProjectListPage.vue';
-import NewProjectPage from './components/project/NewProjectPage.vue';
-import ProjectPage from './components/project/ProjectPage.vue';
-import EditProjectPage from './components/project/EditProjectPage.vue';
+import ProjectListPage from 'src/components/project/ProjectListPage.vue';
+import NewProjectPage from 'src/components/project/NewProjectPage.vue';
+import ProjectPage from 'src/components/project/ProjectPage.vue';
+import EditProjectPage from 'src/components/project/EditProjectPage.vue';
 
-import LeaderboardListPage from './components/leaderboard/LeaderboardListPage.vue';
-import LeaderboardPage from './components/leaderboard/LeaderboardPage.vue';
-import NewLeaderboardPage from './components/leaderboard/NewLeaderboardPage.vue';
-import EditLeaderboardPage from './components/leaderboard/EditLeaderboardPage.vue';
+import LeaderboardListPage from 'src/components/leaderboard/LeaderboardListPage.vue';
+import LeaderboardPage from 'src/components/leaderboard/LeaderboardPage.vue';
+import NewLeaderboardPage from 'src/components/leaderboard/NewLeaderboardPage.vue';
+import EditLeaderboardPage from 'src/components/leaderboard/EditLeaderboardPage.vue';
+
+import DashboardPage from './pages/DashboardPage.vue';
 
 const routes = [
   // no login needed
@@ -41,6 +43,9 @@ const routes = [
   { path: '/reset-password/', name:'send-reset-password', component: SendResetPasswordPage },
   { path: '/reset-password/:uuid', name:'reset-password', component: ResetPasswordPage },
   { path: '/share/projects/:uuid', name:'share-project', component: SharedProjectPage },
+
+  // Tag-and-Tally building
+  { path: '/dashboard', name:'dashboard', component: DashboardPage },
 
   // account section
   { path: '/account', name: 'account', component: AccountPage },

@@ -7,22 +7,20 @@
     "src/*": "./src/*",
     "server/*": "./server/*"
   },
+  "prisma": {
+    "seed": "node --import ./ts-node-loader.js ./prisma/seed/seed.ts"
+  },
   "scripts": {
     "start": "npm run start:dev",
-
     "start:dev": "NODE_ENV=development node --import ./ts-node-loader.js ./main.ts",
     "start:prod": "NODE_ENV=production node --import ./ts-node-loader.js ./main.ts",
-
     "build": "npm run container:prod",
     "build:prod": "docker build -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t dispatchrabbi/trackbear:latest --target prod .",
-
     "lint": "npx eslint --ext .js,.ts,.vue .",
     "compile": "npm run compile:db && npm run compile:client",
     "compile:db": "npx prisma generate",
     "compile:client": "npx vue-tsc && npx vite build --emptyOutDir",
-
     "hooks": "husky install",
-
     "preversion": "npm run compile",
     "version": "VERSION=$(npm pkg get version --workspaces=false | tr -d \\\"); git add .; git commit -m \"v${VERSION}\"; git tag -a \"v${VERSION}\" -m \"v${VERSION}\""
   },
@@ -51,6 +49,8 @@
     "pg": "^8.11.3",
     "pinia": "^2.1.7",
     "postcss": "^8.4.32",
+    "primeicons": "^6.0.1",
+    "primevue": "^3.48.1",
     "prisma": "^5.8.1",
     "tailwindcss": "^3.3.6",
     "ts-node": "^10.9.1",
