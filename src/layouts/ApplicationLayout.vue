@@ -26,7 +26,7 @@ userStore.populateUser().catch(() => {
 
 <template>
   <BannerContainer />
-  <div class="application bg-surface-0 dark:bg-surface-900 text-surface-700 dark:text-surface-0/80">
+  <div class="application">
     <div class="logo self-center">
       <TrackbearMasthead />
     </div>

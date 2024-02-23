@@ -23,57 +23,71 @@
   }
 }
 
-:root {
-  background-color: var(--va-background-secondary);
-  font-family: var(--body-font), sans-serif;
-}
+/* @layer vuestic {
+  :root {
+    background-color: var(--va-background-secondary);
+    font-family: var(--body-font), sans-serif;
+  }
 
-/* don't do a weird fade-in thing when the page loads */
-body, body.va-screen-xs, body.va-screen-sm, body.va-screen-md, body.va-screen-lg, body.va-screen-xl {
-  transition: none !important;
-}
+  /* don't do a weird fade-in thing when the page loads * /
+  body, body.va-screen-xs, body.va-screen-sm, body.va-screen-md, body.va-screen-lg, body.va-screen-xl {
+    transition: none !important;
+  }
 
-/* override with a sensible style */
-.va-list-item-label {
-  --va-list-item-label-color: var(--text-primary);
-}
-.va-list-item-label {
-  --va-alert-color: var(--text-primary);
-}
-.va-menu-list {
-  --va-menu-padding-y: 2rem;
-}
+  /* override with a sensible style * /
+  .va-list-item-label {
+    --va-list-item-label-color: var(--text-primary);
+  }
+  .va-list-item-label {
+    --va-alert-color: var(--text-primary);
+  }
+  .va-menu-list {
+    --va-menu-padding-y: 2rem;
+  }
 
-:is(.leaderboard-chart-modal, .project-chart-modal) .va-modal__dialog {
-  display: flex;
-  justify-content: stretch;
-  align-items: stretch;
-}
+  :is(.leaderboard-chart-modal, .project-chart-modal) .va-modal__dialog {
+    display: flex;
+    justify-content: stretch;
+    align-items: stretch;
+  }
 
-:is(.leaderboard-chart-modal, .project-chart-modal) .va-modal__inner {
-  justify-content: center;
-  max-width: unset;
-  min-width: unset;
-  padding: 0;
-}
+  :is(.leaderboard-chart-modal, .project-chart-modal) .va-modal__inner {
+    justify-content: center;
+    max-width: unset;
+    min-width: unset;
+    padding: 0;
+  }
 
-:is(.edit-update-modal, .delete-update-modal) .va-modal__inner {
-  min-width: auto;
-}
+  :is(.edit-update-modal, .delete-update-modal) .va-modal__inner {
+    min-width: auto;
+  }
+} */
 
-/* This can't be done in BannerAnnouncement.vue due to v-html not working with scoped CSS */
-.banner-message a {
-  text-decoration-line: underline;
-}
+@layer trackbear {
+  :root {
+    background-color: rgb(var(--surface-0));
+    color: rgb(var(--surface-700));
+    @media (prefers-color-scheme: dark) {
+      background-color: rgb(var(--surface-900));
+      color: rgb(var(--surface-0));
+    }
+  }
+  /* bg-surface-0 dark:bg-surface-900 text-surface-700 dark:text-surface-0/80 */
 
-.banner-message strong {
-  line-height: inherit;
-}
+  /* This can't be done in BannerAnnouncement.vue due to v-html not working with scoped CSS */
+  .banner-message a {
+    text-decoration-line: underline;
+  }
 
-.banner-message p {
-  margin-top: 1em;
-}
+  .banner-message strong {
+    line-height: inherit;
+  }
 
-.banner-message p:first-of-type {
-  margin-top: 0;
+  .banner-message p {
+    margin-top: 1em;
+  }
+
+  .banner-message p:first-of-type {
+    margin-top: 0;
+  }
 }

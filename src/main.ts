@@ -20,16 +20,17 @@ import {
 } from 'vuestic-ui';
 
 // import individual stylesheets for tree-shakeability and to be able to remove grid.css
-import "vuestic-ui/styles/reset.css";
-import "vuestic-ui/styles/essential.css";
+// import "vuestic-ui/styles/reset.css";
+// import "vuestic-ui/styles/essential.css";
+// disabled so it doesn't interfere with new styles
 // import "vuestic-ui/styles/typography.css";
 // disabled to remove that pesky flex > * rule (see https://github.com/epicmaxco/vuestic-ui/issues/1927)
 // import "vuestic-ui/styles/grid.css";
-import "material-design-icons-iconfont/dist/material-design-icons.min.css";
+// import "material-design-icons-iconfont/dist/material-design-icons.min.css";
 
 // import our baseline app styles
-import './assets/primevue.css';
 import 'primeicons/primeicons.css';
+import './assets/primevue.css';
 import './style.css';
 
 import themes from './themes/index.ts';
@@ -76,5 +77,5 @@ createApp(App)
   })
   .mount('#app');
 
-// const themeStore = useThemeStore();
-// themeStore.applyTheme();
+const themeStore = useThemeStore();
+themeStore.applyTheme();
