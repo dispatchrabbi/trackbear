@@ -1,9 +1,17 @@
 <script setup lang="ts">
-import DashboardLayout from 'src/layouts/DashboardLayout.vue';
+import type { MenuItem } from 'primevue/menuitem';
+
+import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
+
+const breadcrumbs: MenuItem[] = [
+  { label: 'Dashboard', url: '/dashboard' },
+];
 </script>
 
 <template>
-  <DashboardLayout />
+  <ApplicationLayout
+    :breadcrumbs="breadcrumbs"
+  ></ApplicationLayout>
 </template>
 
 <style scoped>

@@ -2,8 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer fonts {
+  :root {
+    --headings-font: "Josefin Sans";
+    --body-font: "Jost";
+  }
+
+  .font-heading {
+    font-family: var(--headings-font), sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+  }
+
+  .font-body {
+    font-family: var(--body-font), sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+  }
+}
+
 :root {
   background-color: var(--va-background-secondary);
+  font-family: var(--body-font), sans-serif;
 }
 
 /* don't do a weird fade-in thing when the page loads */
