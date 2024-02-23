@@ -74,10 +74,11 @@ async function main() {
   app.use(session({
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000, // in ms
-      secure: 'auto', // TODO: lock this down when we figure out deployment
+      secure: true,
+      sameSite: 'strict',
     },
     secret: cookieSecret,
-    resave: true,
+    resave: false,
     saveUninitialized: true,
     store: new PrismaSessionStore(dbClient, {
       checkPeriod: 2 * 60 * 1000, // in ms, how often to delete expired sessions
