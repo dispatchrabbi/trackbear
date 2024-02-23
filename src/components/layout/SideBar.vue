@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { RouterLink } from 'vue-router';
+
+import { useWorkStore } from 'src/stores/work.ts';
 
 import Menu from 'primevue/menu';
 import { PrimeIcons } from 'primevue/api';
@@ -32,38 +35,62 @@ const menuPassthrough = ref({
   }),
 });
 
-const items = ref([
-  {
-    label: 'Dashboard',
-    icon: PrimeIcons.HOME,
-    section: true,
-    first: true, // oof, wish I didn't have to do this
-  },
-  {
-    label: 'Works',
-    icon: PrimeIcons.FILE_EDIT,
-    section: true,
-  },
-  { label: 'Romantic Disaster' },
-  { label: 'Shadowless' },
-  { label: 'Background Tam Lin' },
-  {
-    label: 'Goals',
-    icon: PrimeIcons.STAR,
-    section: true,
-  },
-  { label: 'January Challenge' },
-  { label: 'Edit Every Day' },
-  { label: 'NaNoWriMo 2024' },
-  {
-    label: 'Boards',
-    icon: PrimeIcons.CHART_BAR,
-    section: true,
-  },
-  { label: 'January Challenge' },
-  { label: 'Overachievers Guild' },
-  { label: 'Progress to 1M' },
-]);
+const sectionClasses = ['section', 'flex', 'items-baseline', 'gap-2', 'font-light', 'text-xl', 'm-0'].join(' ');
+
+const workStore = useWorkStore();
+workStore.populateWorks();
+
+const items = computed(() => {
+  const dashboard = [
+    {
+      label: 'Dashboard',
+      icon: PrimeIcons.HOME,
+      href: '/dashboard',
+      section: true,
+      first: true, // oof, wish I didn't have to do this
+    }
+  ];
+
+  const works = [
+    {
+      label: 'Works',
+      icon: PrimeIcons.FILE_EDIT,
+      href: '/works',
+      section: true,
+    },
+    ...(workStore.works ?? []).map(work => ({
+      label: work.title,
+      href: `/works/${work.id}`,
+    })),
+  ]
+
+  const yetToCome = [
+    {
+      label: 'Goals',
+      icon: PrimeIcons.STAR,
+      href: '/goals',
+      section: true,
+    },
+    { label: 'January Challenge' },
+    { label: 'Edit Every Day' },
+    { label: 'NaNoWriMo 2024' },
+    {
+      label: 'Boards',
+      icon: PrimeIcons.CHART_BAR,
+      href: '/boards',
+      section: true,
+    },
+    { label: 'January Challenge' },
+    { label: 'Overachievers Guild' },
+    { label: 'Progress to 1M' },
+  ]
+
+  return [
+    ...dashboard,
+    ...works,
+    ...yetToCome,
+  ];
+});
 </script>
 
 <template>
@@ -72,7 +99,31 @@ const items = ref([
     :pt="menuPassthrough"
   >
     <template #item="{ item, action }">
+      <RouterLink
+        v-if="item.href"
+        :to="item.href"
+      >
+        <div
+          :class="{ 'flex': true, [sectionClasses]: item.section }"
+        >
+          <span
+            v-if="item.icon"
+            :class="[item.icon, 'submenuheader-icon']"
+          />
+          <span class="flex-auto">{{ item.label }}</span>
+        </div>
+      </RouterLink>
       <div
+        v-else
+        :class="{ 'flex': true, [sectionClasses]: item.section }"
+      >
+        <span
+          v-if="item.icon"
+          :class="[item.icon, 'submenuheader-icon']"
+        />
+        <span class="flex-auto">{{ item.label }}</span>
+      </div>
+      <!-- <div
         v-if="item.section"
         :class="['section', 'flex', 'items-baseline', 'gap-2', 'font-light', 'text-xl', 'm-0']"
       >
@@ -84,7 +135,7 @@ const items = ref([
         class="item"
       >
         {{ item.label }}
-      </div>
+      </div> -->
     </template>
   </Menu>
 </template>
