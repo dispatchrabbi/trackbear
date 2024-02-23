@@ -1,7 +1,6 @@
-#!/usr/bin/env -S node --import ./ts-node-loader.js
+#!/usr/bin/env node --import ./ts-node-loader.js
 
 import dotenv from 'dotenv';
-import { getNormalizedEnv } from '../server/lib/env.ts';
 
 import { addDays } from 'date-fns';
 
@@ -19,9 +18,7 @@ async function main() {
 
   process.env.NODE_ENV = 'production';
   dotenv.config();
-  const env = await getNormalizedEnv();
-
-  await initLoggers(env.LOGS_VOLUME_DIR);
+  await initLoggers();
   const scriptLogger = winston.child({ service: 'add-banner.ts' });
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
