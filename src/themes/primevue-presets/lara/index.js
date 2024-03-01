@@ -25,10 +25,14 @@ import divider from './divider';
 import dock from './dock';
 import dropdown from './dropdown';
 import fieldset from './fieldset';
+import fileupload from './fileupload';
+import floatlabel from './floatlabel';
 import galleria from './galleria';
 import global from './global';
+import iconfield from './iconfield';
 import image from './image';
 import inlinemessage from './inlinemessage';
+import inplace from './inplace';
 import inputgroup from './inputgroup';
 import inputgroupaddon from './inputgroupaddon';
 import inputmask from './inputmask';
@@ -41,6 +45,7 @@ import megamenu from './megamenu';
 import menu from './menu';
 import menubar from './menubar';
 import message from './message';
+import metergroup from './metergroup';
 import multiselect from './multiselect';
 import orderlist from './orderlist';
 import organizationchart from './organizationchart';
@@ -51,6 +56,7 @@ import panelmenu from './panelmenu';
 import password from './password';
 import picklist from './picklist';
 import progressbar from './progressbar';
+import progressspinner from './progressspinner';
 import radiobutton from './radiobutton';
 import rating from './rating';
 import ripple from './ripple';
@@ -62,6 +68,8 @@ import skeleton from './skeleton';
 import slider from './slider';
 import speeddial from './speeddial';
 import splitbutton from './splitbutton';
+import splitter from './splitter';
+import splitterpanel from './splitterpanel';
 import steps from './steps';
 import tabmenu from './tabmenu';
 import tabview from './tabview';
@@ -113,6 +121,8 @@ export default {
     tristatecheckbox,
     textarea,
     password,
+    iconfield,
+    floatlabel,
 
     //buttons
     button,
@@ -140,6 +150,11 @@ export default {
     divider,
     toolbar,
     scrollpanel,
+    splitter,
+    splitterpanel,
+
+    //file
+    fileupload,
 
     //menu
     contextmenu,
@@ -179,5 +194,8 @@ export default {
     skeleton,
     scrolltop,
     terminal,
-    blockui
+    blockui,
+    metergroup,
+    inplace,
+    progressspinner
 };
