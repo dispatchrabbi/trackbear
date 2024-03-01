@@ -12,6 +12,7 @@ import BannerContainer from 'src/components/banner/BannerContainer.vue';
 import TrackbearMasthead from 'src/components/layout/TrackbearMasthead.vue';
 import AppBar from 'src/components/layout/AppBar.vue';
 import SideBar from 'src/components/layout/SideBar.vue';
+import LogProgressButton from 'src/components/tally/LogProgressButton.vue';
 
 const props = defineProps<{
   breadcrumbs: MenuItem[];
@@ -38,9 +39,12 @@ userStore.populateUser().catch(() => {
         :breadcrumbs="props.breadcrumbs"
       />
     </div>
-    <div class="main">
+    <div class="main p-2 pr-4">
       <slot />
     </div>
+  </div>
+  <div class="log-progress-button fixed bottom-8 right-8">
+    <LogProgressButton />
   </div>
 </template>
 

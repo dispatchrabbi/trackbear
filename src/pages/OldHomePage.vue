@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import PorchLayout from 'src/layouts/PorchLayout.vue';
+import AppPage from 'src/components/layout/AppPage.vue';
 </script>
 
 <template>
-  <PorchLayout>
-    <div>It works!</div>
-  </PorchLayout>
-  <!-- <AppPage>
+  <AppPage>
     <VaCard>
       <VaImage
         src="images/hans-jurgen-mager_qQWV91TTBrE_polar-bear-waving_992.jpg"
@@ -27,7 +24,7 @@ import PorchLayout from 'src/layouts/PorchLayout.vue';
         </p>
       </VaCardContent>
     </VaCard>
-  </AppPage> -->
+  </AppPage>
 </template>
 
 <style scoped>

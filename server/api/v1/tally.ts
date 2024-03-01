@@ -67,7 +67,7 @@ export type TallyPayload = {
   count: number;
   note: string;
   workId: number | null;
-  tags: number[];
+  tags: string[];
 };
 const zTallyPayload = z.object({
   date: zDateStr(),

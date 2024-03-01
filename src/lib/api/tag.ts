@@ -3,6 +3,8 @@ import { callApiV1 } from "./api.ts";
 import type { Tag } from "@prisma/client";
 import type { TagPayload } from "server/api/v1/tag.ts";
 
+export type { Tag, TagPayload };
+
 const ENDPOINT = '/api/v1/tag';
 
 export async function getTags() {

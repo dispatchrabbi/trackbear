@@ -14,8 +14,8 @@ export const zIdParam = function() {
   return z.object({ id: zStrInt() });
 }
 
-export const zDateStr = function() {
-  return z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Expected date string (YYYY-MM-DD), received a different format' });
+export const zDateStr = function(params?: { message?: string; }) {
+  return z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: params?.message || 'Expected date string (YYYY-MM-DD), received a different format' });
 }
 
 export type NonEmptyArray<T> = [T, ...T[]];

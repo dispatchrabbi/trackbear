@@ -1,18 +1,18 @@
 import { defineStore } from 'pinia';
-import { getTags } from 'src/lib/api/tag.ts';
+import { getTags, Tag } from 'src/lib/api/tag.ts';
 
 export const useTagStore = defineStore('tag', {
-  state: () => {
+  state: () : { tags: Tag[] | null; } => {
     return { tags: null };
   },
   // getters: {
 
   // },
   actions: {
-    async populateWorks() {
-      if(this.works === null) {
-        const works = await getTags();
-        this.works = works;
+    async populateTags() {
+      if(this.tags === null) {
+        const tags = await getTags();
+        this.tags = tags;
       }
     }
   },

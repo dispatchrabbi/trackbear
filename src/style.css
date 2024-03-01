@@ -6,6 +6,8 @@
   :root {
     --headings-font: "Josefin Sans";
     --body-font: "Jost";
+
+    font-family: var(--body-font), sans-serif;
   }
 
   .font-heading {
@@ -68,7 +70,7 @@
     background-color: rgb(var(--surface-0));
     color: rgb(var(--surface-700));
     @media (prefers-color-scheme: dark) {
-      background-color: rgb(var(--surface-900));
+      background-color: rgb(var(--surface-800));
       color: rgb(var(--surface-0));
     }
   }
