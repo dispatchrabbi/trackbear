@@ -2,30 +2,25 @@
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import Menubar from 'primevue/menubar';
 import Button from 'primevue/button';
 
+import TrackbearMasthead from './TrackbearMasthead.vue';
 // TODO: restore the dark mode toggle
 // import DarkModeToggle from './DarkModeToggle.vue';
 
 </script>
 
 <template>
-  <Menubar>
-    <template #start>
-      <div class="masthead flex gap-1 text-2xl font-heading">
-        <div class="logo flex-none">
-          <img :src="`/images/brown-bear.png`">
-        </div>
-        <div class="app-name">
-          <span class="uppercase">TrackBear</span><span class="disclaimer text-sm text-red-500">alpha</span>
-        </div>
-      </div>
-    </template>
-    <template #end>
-      <Button label="Log in!" />
-    </template>
-  </Menubar>
+  <div class="porch-header flex gap-2 items-center justify-between p-2">
+    <TrackbearMasthead />
+    <div class="porch-header-buttons space-x-2">
+      <Button
+        label="Sign Up"
+        outlined
+      />
+      <Button label="Log In" />
+    </div>
+  </div>
   <!-- <VaNavbar>
     <template #left>
       <VaNavbarItem class="logo text-xl">

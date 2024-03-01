@@ -4,6 +4,7 @@ const router = useRouter();
 
 import BannerContainer from 'src/components/banner/BannerContainer.vue';
 import PorchHeader from 'src/components/layout/PorchHeader.vue';
+import PorchFooter from 'src/components/layout/PorchFooter.vue';
 </script>
 
 <template>
@@ -12,17 +13,17 @@ import PorchHeader from 'src/components/layout/PorchHeader.vue';
     <div class="bar">
       <PorchHeader />
     </div>
-    <div class="main">
+    <div class="main bg-surface-50 dark:bg-surface-900">
       <slot />
     </div>
     <div class="foot">
-
+      <PorchFooter />
     </div>
   </div>
 </template>
 
 <style scoped>
-.application {
+.porch {
   display: grid;
   grid-template:
     "bar"

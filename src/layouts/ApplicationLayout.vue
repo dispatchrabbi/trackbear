@@ -28,7 +28,7 @@ userStore.populateUser().catch(() => {
 <template>
   <BannerContainer />
   <div class="application">
-    <div class="logo self-center">
+    <div class="logo self-center p-2">
       <TrackbearMasthead />
     </div>
     <div class="side">
