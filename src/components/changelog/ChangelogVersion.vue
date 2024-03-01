@@ -1,4 +1,9 @@
 <script setup lang="ts">
+
+import Tag from 'primevue/tag';
+import MIcon from 'src/components/MIcon.vue';
+
+
 import markdownit from 'markdown-it';
 const md = markdownit({
   html: false,
@@ -15,7 +20,7 @@ const CHANGELOG_COLORS = {
   'NEW': 'primary',
   'CHANGED': 'info',
   'FIXED': 'success',
-  'DEPRECATED': 'secondary',
+  'DEPRECATED': 'yellow',
   'REMOVED': 'warning',
   'SECURITY': 'danger',
 };
@@ -46,12 +51,12 @@ const props = defineProps<{
   <div class="mb-8">
     <h2
       :id="props.version"
-      class="text-2xl font-bold"
+      class="text-lg font-bold flex gap-1"
     >
-      {{ props.version }}
+      <div>{{ props.version }}</div>
       <a
         :href="'#' + props.version"
-      ><VaIcon name="link" /></a>
+      ><MIcon icon="link" /></a>
     </h2>
     <div
       v-if="props.changes.length === 0"
@@ -66,12 +71,17 @@ const props = defineProps<{
         class="mt-2"
       >
         <div>
-          <VaChip
-            :color="CHANGELOG_COLORS[change.tag] || 'secondary'"
-            :icon="CHANGELOG_ICONS[change.tag] || 'info'"
+          <Tag
+            :value="change.tag"
+            rounded
+            :severity="CHANGELOG_COLORS[change.tag] || 'primary'"
+            :pt="{ root: ({props}) => ({ class: ['!font-normal', { 'bg-yellow-500 dark:bg-yellow-400': props.severity == 'yellow', }] }), value: { class: 'mx-1' } }"
+            :pt-options="{ mergeSections: true, mergeProps: true }"
           >
-            {{ change.tag }}
-          </VaChip>
+            <template #icon>
+              <span class="mt-[2px] leading-none"><MIcon :icon="CHANGELOG_ICONS[change.tag] || 'info'" /></span>
+            </template>
+          </Tag>
         </div>
         <!-- eslint-disable vue/no-v-html -->
         <div v-html="md.render(combineEntryAndCredit(change.entry, change.credit))" />

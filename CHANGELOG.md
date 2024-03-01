@@ -12,6 +12,11 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: You can now add tags and notes to your progress logs.
+- NEW: A whole new UI! I'm still kicking the tires on this one, including making better mobile support. I know that that's a step backward, so a special apology to those of you who are primarily mobile users. Stay tuned as colors, fonts, and other UI elements and themes will change as more stuff is added.
+- REMOVED: The light/dark theme toggle. The site will now follow the light/dark setting on your device. The new UI makes it harder to create a light/dark theme toggle like the old UI had, so this is how it currently is. Getting the toggle back is on the list.
+- SECURITY: I have changed and clarified some things in the [Privacy Policy](/privacy). The gist is the same, but it's more detailed now.
+
 ## v0.6.3
 
 - CHANGED: Last bit of behind-the-scenes infra changes. This should make deployment and other changes much easier, and set the stage for the new tag-and-tally architecture.
