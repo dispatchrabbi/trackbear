@@ -60,8 +60,6 @@ node_modules/
 .vscode-test
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
 .DS_Store
 
 dist
