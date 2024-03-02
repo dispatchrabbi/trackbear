@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-const router = useRouter();
+import { RouterLink } from 'vue-router';
 
 import Button from 'primevue/button';
 
@@ -14,11 +13,15 @@ import TrackbearMasthead from './TrackbearMasthead.vue';
   <div class="porch-header flex gap-2 items-center justify-between p-2">
     <TrackbearMasthead />
     <div class="porch-header-buttons space-x-2">
-      <Button
-        label="Sign Up"
-        outlined
-      />
-      <Button label="Log In" />
+      <RouterLink to="/signup">
+        <Button
+          label="Sign Up"
+          outlined
+        />
+      </RouterLink>
+      <RouterLink to="/login">
+        <Button label="Log In" />
+      </RouterLink>
     </div>
   </div>
 </template>

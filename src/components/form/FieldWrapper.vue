@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, defineProps } from 'vue';
-import InlineMessage from 'primevue/inlinemessage';
 
 const props = defineProps<{
   label?: string;
@@ -25,7 +24,7 @@ const onUpdate = function(val) {
     <label
       v-if="props.label"
       :for="props.for"
-      class="text-sm"
+      class="text-xs uppercase font-light mb-1"
     >
       {{ props.label }}
       <span
@@ -41,7 +40,7 @@ const onUpdate = function(val) {
       name="message"
       :validation-message="validationMessage"
     >
-      <div class="validation-message text-sm text-red-500">
+      <div class="validation-message mt-1 text-sm text-red-500 dark:text-red-400">
         {{ validationMessage }}
       </div>
     </slot>
@@ -60,9 +59,5 @@ fieldset > label {
 .required-mark {
   transform: translate(0, -2px);
   color: rgb(var(--primary-500));
-}
-
-.validation-message {
-  /* min-height: 1.5em; */
 }
 </style>

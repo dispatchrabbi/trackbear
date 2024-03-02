@@ -1,5 +1,7 @@
 <script setup lang="ts">
 
+import SectionTitle from './SectionTitle.vue';
+
 const props = defineProps<{
   title?: string;
 }>();
@@ -8,12 +10,10 @@ const props = defineProps<{
 
 <template>
   <div class="blurb p-4 max-w-5xl mx-auto mt-4">
-    <h1
+    <SectionTitle
       v-if="props.title"
-      class="blurb-title text-xl font-semibold font-heading uppercase"
-    >
-      {{ props.title }}
-    </h1>
+      :title="props.title"
+    />
     <div class="blurb-text mt-3 space-y-3">
       <slot />
     </div>
