@@ -6,6 +6,7 @@ const props = defineProps<{
   for?: string;
   required?: boolean;
   rule?: (val: unknown) => true | string;
+  help?: string;
 }>();
 
 const validationMessage = ref<string | null>(null);
@@ -39,7 +40,14 @@ const onUpdate = function(val) {
     <slot
       name="message"
       :validation-message="validationMessage"
+      :help="help"
     >
+      <div
+        v-if="!validationMessage"
+        class="help-message mt-1 text-sm"
+      >
+        {{ help }}
+      </div>
       <div class="validation-message mt-1 text-sm text-red-500 dark:text-red-400">
         {{ validationMessage }}
       </div>
