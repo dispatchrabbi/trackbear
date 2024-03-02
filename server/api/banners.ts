@@ -4,15 +4,12 @@ import { ApiResponse, success } from '../lib/api-response.ts';
 import dbClient from "../lib/db.ts";
 import type { Banner as BannerRow } from "@prisma/client";
 
-import { requireUser, WithUser } from "../lib/auth.ts";
-
 export type Banner = Omit<BannerRow, 'id' | 'createdAt' | 'updatedAt'>;
 
 const bannerRouter = Router();
 
 bannerRouter.get('/',
-  requireUser,
-  async (req: WithUser<Request>, res: ApiResponse<Banner[]>, next) =>
+  async (req: Request, res: ApiResponse<Banner[]>, next) =>
 {
   try {
     const now = new Date();
