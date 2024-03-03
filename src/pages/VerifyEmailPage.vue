@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import wait from 'src/lib/wait.ts';
 
 import { z } from 'zod';
 
@@ -9,28 +10,37 @@ const route = useRoute();
 
 import { verifyEmail } from 'src/lib/api/auth.ts';
 
-import AppPage from 'src/components/layout/AppPage.vue';
-import ContentHeader from 'src/components/layout/ContentHeader.vue';
+import Card from 'primevue/card';
+import InlineMessage from 'primevue/inlinemessage';
+import ProgressSpinner from 'primevue/progressspinner';
+import PorchLayout from 'src/layouts/PorchLayout.vue';
+import SectionTitle from 'src/components/layout/SectionTitle.vue';
 
 const isLoading = ref<boolean>(false);
-const successMessage = ref<string>('');
-const errorMessage = ref<string>('');
+const successMessage = ref<string | null>(null);
+const errorMessage = ref<string | null>(null);
+
+function checkUuidParam() {
+  if(!z.string().uuid().safeParse(route.params.uuid).success) {
+    router.push('/');
+    return false;
+  } else {
+    return true;
+  }
+}
 
 async function submitVerification() {
-  successMessage.value = '';
-  errorMessage.value = '';
   isLoading.value = true;
-
-  const routeUuidParam = route.params.uuid as string;
-  if(!z.string().uuid().safeParse(routeUuidParam).success) {
-    router.push('/');
-    return;
-  }
+  successMessage.value = null;
+  errorMessage.value = null;
 
   try {
-    await verifyEmail(routeUuidParam);
+    const uuidParam = typeof route.params.uuid === 'string' ? route.params.uuid : route.params.uuid[0];
+    await verifyEmail(uuidParam);
+
     successMessage.value = 'Your email has been verified! Redirecting you to the login page...';
-    setTimeout(() => router.push('/login'), 3 * 1000);
+    await wait(2 * 1000);
+    router.push('/login');
   } catch(err) {
     errorMessage.value = err.message;
   } finally {
@@ -39,46 +49,40 @@ async function submitVerification() {
 }
 
 onMounted(() => {
-  submitVerification();
+  checkUuidParam() && submitVerification();
 });
 
 </script>
 
 <template>
-  <AppPage>
-    <ContentHeader title="Verify Your Email" />
-    <VaCard>
-      <VaCardContent>
-        <div
-          v-if="isLoading"
-          class="flex justify-center"
-        >
-          <VaProgressCircle
-            indeterminate
-            :thickness="0.15"
+  <PorchLayout>
+    <div class="flex h-full justify-center items-center">
+      <Card
+        class="flex-auto m-2 md:max-w-2xl"
+      >
+        <template #title>
+          <SectionTitle title="Verifying your email..." />
+        </template>
+        <template #content>
+          <ProgressSpinner
+            v-if="isLoading"
           />
-        </div>
-        <VaAlert
-          v-if="successMessage"
-          class="w-full"
-          color="success"
-          border="left"
-          icon="verified"
-          closeable
-          :description="successMessage"
-        />
-        <VaAlert
-          v-if="errorMessage"
-          class="w-full"
-          color="danger"
-          border="left"
-          icon="error"
-          closeable
-          :description="errorMessage"
-        />
-      </VaCardContent>
-    </VaCard>
-  </AppPage>
+          <InlineMessage
+            v-if="successMessage"
+            severity="success"
+          >
+            {{ successMessage }}
+          </InlineMessage>
+          <InlineMessage
+            v-if="errorMessage"
+            severity="error"
+          >
+            {{ errorMessage }}
+          </InlineMessage>
+        </template>
+      </Card>
+    </div>
+  </PorchLayout>
 </template>
 
 <style scoped>

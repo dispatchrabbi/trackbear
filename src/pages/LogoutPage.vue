@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -24,7 +24,9 @@ async function logOut() {
   }
 }
 
-logOut();
+onMounted(() => {
+  logOut();
+});
 
 </script>
 
