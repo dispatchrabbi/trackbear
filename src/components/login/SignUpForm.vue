@@ -75,7 +75,7 @@ async function handleSubmit() {
     @submit="validate() && handleSubmit()"
   >
     <FieldWrapper
-      for="login-form-username"
+      for="signup-form-username"
       label="Username"
       required
       :rule="ruleFor('username')"
@@ -83,7 +83,7 @@ async function handleSubmit() {
     >
       <template #default="{ onUpdate, isFieldValid }">
         <InputText
-          id="login-form-username"
+          id="signup-form-username"
           v-model="formModel.username"
           autocomplete="username"
           :invalid="!isFieldValid"
@@ -92,14 +92,14 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
-      for="login-form-email"
+      for="signup-form-email"
       label="Email"
       required
       :rule="ruleFor('email')"
     >
       <template #default="{ onUpdate, isFieldValid }">
         <InputText
-          id="login-form-email"
+          id="signup-form-email"
           v-model="formModel.email"
           autocomplete="email"
           type="email"
@@ -109,7 +109,7 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
-      for="login-form-new-password"
+      for="signup-form-new-password"
       label="Password"
       required
       :rule="ruleFor('password')"
@@ -117,7 +117,7 @@ async function handleSubmit() {
     >
       <template #default="{ onUpdate, isFieldValid }">
         <Password
-          id="login-form-new-password"
+          id="signup-form-new-password"
           v-model="formModel.password"
           :invalid="!isFieldValid"
           :feedback="false"
