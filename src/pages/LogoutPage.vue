@@ -7,31 +7,52 @@ const router = useRouter();
 import { useUserStore } from '../stores/user.ts';
 const userStore = useUserStore();
 
-import AppPage from 'src/components/layout/AppPage.vue';
-import ContentHeader from 'src/components/layout/ContentHeader.vue';
+import Card from 'primevue/card';
+import InlineMessage from 'primevue/inlinemessage';
+import ProgressSpinner from 'primevue/progressspinner';
+import PorchLayout from 'src/layouts/PorchLayout.vue';
+import SectionTitle from 'src/components/layout/SectionTitle.vue';
 
 const logOutError = ref(false);
 
-userStore.logOut().then(() => {
-  router.push('/');
-}).catch(() => {
-  logOutError.value = true;
-});
+async function logOut() {
+  try {
+    await userStore.logOut();
+    router.push('/');
+  } catch(err) {
+    logOutError.value = true;
+  }
+}
+
+logOut();
 
 </script>
 
 <template>
-  <AppPage require-login>
-    <ContentHeader title="Logging out..." />
-    <VaAlert
-      v-if="logOutError"
-      color="warning"
-    >
-      There was an error logging out. <RouterLink to="/">
-        Click here
-      </RouterLink> to go to the homepage.
-    </VaAlert>
-  </AppPage>
+  <PorchLayout>
+    <div class="flex h-full justify-center items-center">
+      <Card
+        class="flex-auto m-2 md:max-w-2xl"
+      >
+        <template #title>
+          <SectionTitle title="Logging out..." />
+        </template>
+        <template #content>
+          <InlineMessage
+            v-if="logOutError"
+            severity="warn"
+          >
+            There was an error logging out. <RouterLink to="/">
+              Click here
+            </RouterLink> to go to the homepage.
+          </InlineMessage>
+          <ProgressSpinner
+            v-else
+          />
+        </template>
+      </Card>
+    </div>
+  </PorchLayout>
 </template>
 
 <style scoped>
