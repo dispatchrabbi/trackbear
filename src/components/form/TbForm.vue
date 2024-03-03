@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
-import { PrimeIcons } from 'primevue/api';
 
 import Button from 'primevue/button';
 import InlineMessage from 'primevue/inlinemessage';
@@ -34,15 +33,20 @@ const handleSubmit = function() {
         <div class="buttons">
           <!-- TODO: maybe more buttons/button options? -->
           <Button
-            :label="successMessage || loadingMessage || submitMessage"
+            :label="loadingMessage || submitMessage"
             size="large"
             :disabled="!props.isValid"
             :loading="loadingMessage !== null"
-            :icon="successMessage && PrimeIcons.CHECK"
             :pt="{ root: { type: 'submit' } }"
             :pt-options="{ mergeSections: true, mergeProps: true }"
           />
         </div>
+        <InlineMessage
+          v-if="successMessage"
+          severity="success"
+        >
+          {{ successMessage }}
+        </InlineMessage>
         <InlineMessage
           v-if="errorMessage"
           severity="error"

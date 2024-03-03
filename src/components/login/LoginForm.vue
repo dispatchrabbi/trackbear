@@ -28,19 +28,18 @@ const validations = z.object({
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
 
 const isLoading = ref<boolean>(false);
-const isSuccess = ref<boolean>(false);
+const successMessage = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 
 async function handleSubmit() {
   isLoading.value = true;
-  isSuccess.value = false;
+  successMessage.value = null;
   errorMessage.value = null;
 
   try {
     const { username, password } = formData();
     await userStore.logIn(username, password);
-
-    isSuccess.value = true;
+    router.push('/projects');
   } catch(err) {
     if(err.code === 'INCORRECT_CREDS') {
       errorMessage.value = 'Incorrect username or password. Please check and try again.';
@@ -52,8 +51,6 @@ async function handleSubmit() {
   } finally {
     isLoading.value = false;
   }
-
-  router.push('/projects');
 }
 
 </script>
@@ -63,7 +60,7 @@ async function handleSubmit() {
     :is-valid="isValid"
     submit-message="Log in"
     :loading-message="isLoading ? 'Logging in...' : null"
-    :success-message="isSuccess ? 'Logged in!' : null"
+    :success-message="successMessage"
     :error-message="errorMessage"
     @submit="validate() && handleSubmit()"
   >

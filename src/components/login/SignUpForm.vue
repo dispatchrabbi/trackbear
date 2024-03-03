@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
+import wait from 'src/lib/wait.ts';
 
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
@@ -33,16 +34,20 @@ const validations = z.object({
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
 
 const isLoading = ref<boolean>(false);
-const isSuccess = ref<boolean>(false);
+const successMessage = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 
 async function handleSubmit() {
   isLoading.value = true;
-  isSuccess.value = false;
+  successMessage.value = null;
   errorMessage.value = null;
 
   try {
     await signUp(formData() as CreateUserPayload);
+
+    successMessage.value = 'Sign up successful! Redirecting to login...';
+    await wait(1 * 1000);
+    router.push('/login');
   } catch(err) {
     if(err.code === 'VALIDATION_FAILED') {
       errorMessage.value = err.message;
@@ -53,11 +58,9 @@ async function handleSubmit() {
     }
 
     return;
+  } finally {
+    isLoading.value = false;
   }
-
-  isLoading.value = false;
-  isSuccess.value = true;
-  setTimeout(() => router.push('/login'), 1 * 1000);
 }
 
 </script>
@@ -67,7 +70,7 @@ async function handleSubmit() {
     :is-valid="isValid"
     submit-message="Sign up"
     :loading-message="isLoading ? 'Signing up' : null"
-    :success-message="isSuccess ? 'Signed up!' : null"
+    :success-message="successMessage"
     :error-message="errorMessage"
     @submit="validate() && handleSubmit()"
   >
