@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, defineProps } from "vue";
 
+import { useRouter } from "vue-router";
+const router = useRouter();
+
 import { PrimeIcons } from 'primevue/api';
 import Avatar from "primevue/avatar";
 import Button from "primevue/button";
@@ -24,10 +27,10 @@ const toggleSidebar = function() {
   });
 }
 
-const userMenu = ref();
+const userMenu = ref(null);
 const userMenuItems = ref([
-  { label: 'Account Settings' },
-  { label: 'Log Out', command: () => toast.add({ detail: 'Logged out!', life: 2000 }) },
+  { label: 'Account Settings', route: '/account' },
+  { label: 'Log Out', route: '/logout' },
 ]);
 const toggleUserMenu = ev => userMenu.value.toggle(ev);
 
@@ -67,7 +70,24 @@ const toggleUserMenu = ev => userMenu.value.toggle(ev);
       ref="userMenu"
       :model="userMenuItems"
       :popup="true"
-    />
+    >
+      <template #item="{ item, props: itemProps }">
+        <RouterLink
+          v-slot="{ href, navigate }"
+          :to="item.route"
+          custom
+        >
+          <a
+            v-ripple
+            :href="href"
+            v-bind="itemProps.action"
+            @click="navigate"
+          >
+            <span class="leading-6 text-sm font-medium">{{ item.label }}</span>
+          </a>
+        </RouterLink>
+      </template>
+    </Menu>
   </div>
 </template>
 

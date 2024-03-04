@@ -1,4 +1,4 @@
-import { Plugin, createApp } from 'vue';
+import { createApp, Plugin, Directive } from 'vue';
 
 import App from './App.vue';
 
@@ -38,6 +38,7 @@ import { useThemeStore } from './stores/theme.ts';
 
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
+import Ripple from 'primevue/ripple';
 import Wind from 'src/themes/primevue-presets/wind/index.js';
 
 createApp(App)
@@ -72,9 +73,11 @@ createApp(App)
   }))
   .use(ToastService as unknown as Plugin)
   .use(PrimeVue as unknown as Plugin, {
+    ripple: true,
     unstyled: true,
     pt: Wind,
   })
+  .directive('ripple', Ripple as unknown as Directive)
   .mount('#app');
 
 const themeStore = useThemeStore();

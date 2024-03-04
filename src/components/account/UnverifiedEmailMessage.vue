@@ -1,0 +1,67 @@
+<script setup lang="ts">
+import { ref } from 'vue';
+import wait from 'src/lib/wait.ts';
+
+import { resendVerifyEmail } from 'src/lib/api/auth.ts';
+
+import { PrimeIcons } from 'primevue/api';
+import Button from 'primevue/button';
+import Message from 'primevue/message';
+
+import { useToast } from 'primevue/usetoast';
+const toast = useToast();
+
+const isLoading = ref<boolean>(false);
+
+async function handleClick() {
+  isLoading.value = true;
+
+  try {
+    await resendVerifyEmail();
+    await wait(3 * 1000);
+
+    toast.add({
+      severity: 'info',
+      detail: 'A new verification link has been sent to your email address.',
+      life: 3 * 1000,
+    });
+  } catch(err) {
+    toast.add({
+      severity: 'error',
+      detail: 'There was an error sending a new verification link.',
+      life: 3 * 1000,
+    });
+  }
+
+  isLoading.value = false;
+}
+</script>
+
+<template>
+  <Message
+    severity="warn"
+    :closable="false"
+    :icon="PrimeIcons.EXCLAMATION_TRIANGLE"
+    :pt="{
+      root: { class: ['!my-0'] },
+      text: { class: ['flex items-center gap-3 w-full'] }
+    }"
+    :pt-options="{ mergeSections: true, mergeProps: true }"
+  >
+    <div class="flex-auto">
+      Your email address is not yet verified.
+    </div>
+    <div class="whitespace-nowrap">
+      <Button
+        severity="warning"
+        :label="isLoading ? 'Sending...' : 'Resend verification'"
+        :icon="PrimeIcons.SEND"
+        :loading="isLoading"
+        @click="handleClick"
+      />
+    </div>
+  </Message>
+</template>
+
+<style scoped>
+</style>
