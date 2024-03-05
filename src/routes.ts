@@ -27,7 +27,10 @@ import LeaderboardPage from 'src/components/leaderboard/LeaderboardPage.vue';
 import NewLeaderboardPage from 'src/components/leaderboard/NewLeaderboardPage.vue';
 import EditLeaderboardPage from 'src/components/leaderboard/EditLeaderboardPage.vue';
 
-import DashboardPage from './pages/DashboardPage.vue';
+import DashboardPage from 'src/pages/DashboardPage.vue';
+
+import WorksListPage from 'src/pages/works/WorksListPage.vue';
+import WorkDetailPage from './pages/works/WorkDetailPage.vue';
 
 const routes = [
   // no login needed
@@ -46,6 +49,10 @@ const routes = [
 
   // Tag-and-Tally building
   { path: '/dashboard', name:'dashboard', component: DashboardPage },
+
+  // Works section
+  { path: '/works', name: 'works', component: WorksListPage },
+  { path: '/works/:id', name: 'work', component: WorkDetailPage },
 
   // account section
   { path: '/account', name: 'account', component: AccountPage },

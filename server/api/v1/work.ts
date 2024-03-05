@@ -8,23 +8,47 @@ import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
 import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
-import type { Work } from "@prisma/client";
+import type { Work, Tally, Tag } from "@prisma/client";
 import { WORK_PHASE, WORK_STATE } from '../../lib/entities/work.ts';
+import { TALLY_STATE } from "../../lib/entities/tally.ts";
+import { TAG_STATE } from "../../lib/entities/tag.ts";
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
+
+import { omit } from '../../lib/obj.ts';
+
+export type WorkWithTotals = Work & { totals: Record<string, number> };
+
+type TallyWithTags = Tally & { tags: Tag[] };
+export type WorkWithTallies = Work & { tallies: TallyWithTags[] };
 
 const workRouter = Router();
 export default workRouter;
 
 workRouter.get('/',
   requireUser,
-  h(async (req: RequestWithUser, res: ApiResponse<Work[]>) =>
+  h(async (req: RequestWithUser, res: ApiResponse<WorkWithTotals[]>) =>
 {
-  const works = await dbClient.work.findMany({
+  const worksWithTallies = await dbClient.work.findMany({
     where: {
       ownerId: req.user.id,
       state: WORK_STATE.ACTIVE,
+    },
+    include: {
+      tallies: { where: { state: TALLY_STATE.ACTIVE } },
     }
+  });
+
+  const works = worksWithTallies.map(workWithTallies => {
+    const totals: Record<string, number> = workWithTallies.tallies.reduce((totals, tally) => {
+      totals[tally.measure] = (totals[tally.measure] || 0) + tally.count;
+      return totals;
+    }, {});
+
+    return {
+      ...omit(workWithTallies, [ 'tallies' ]),
+      totals,
+    };
   });
 
   return res.status(200).send(success(works));
@@ -33,13 +57,19 @@ workRouter.get('/',
 workRouter.get('/:id',
   requireUser,
   validateParams(zIdParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<Work>) =>
+  h(async (req: RequestWithUser, res: ApiResponse<WorkWithTallies>) =>
 {
   const work = await dbClient.work.findUnique({
     where: {
       id: +req.params.id,
       ownerId: req.user.id,
       state: WORK_STATE.ACTIVE,
+    },
+    include: {
+      tallies: {
+        where: { state: TALLY_STATE.ACTIVE },
+        include: { tags: { where: { state: TAG_STATE.ACTIVE } } },
+      },
     }
   });
 

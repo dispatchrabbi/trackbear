@@ -65,7 +65,6 @@
   }
 } */
 
-@layer trackbear {
   :root {
     background-color: rgb(var(--surface-0));
     color: rgb(var(--surface-700));
@@ -92,4 +91,3 @@
   .banner-message p:first-of-type {
     margin-top: 0;
   }
-}

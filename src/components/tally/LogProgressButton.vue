@@ -29,7 +29,7 @@ const toggleForm = function() {
     modal
   >
     <template #header>
-      <h2 class="header-font font-semibold uppercase">
+      <h2 class="font-heading font-semibold uppercase">
         <span class="pi pi-calendar-plus" />
         Add Progress
       </h2>

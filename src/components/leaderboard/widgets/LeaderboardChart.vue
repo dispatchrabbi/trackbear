@@ -10,9 +10,9 @@ import { GOAL_TYPE_INFO } from 'src/lib//api/leaderboard.ts';
 import { TYPE_INFO } from 'src/lib//project.ts';
 import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
 
-import LineChart from 'src/components/chart/LineChart.vue';
-import type { LineChartOptions } from 'src/components/chart/LineChart.vue';
-import { normalizeUpdates, getEachDayOfChart, calculatePars, makeTooltipLabelFn } from 'src/components/chart/chart-functions.ts';
+import LineChart from 'src/components/chart/LegacyLineChart.vue';
+import type { LineChartOptions } from 'src/components/chart/LegacyLineChart.vue';
+import { normalizeUpdates, getEachDayOfChart, calculatePars, makeTooltipLabelFn } from 'src/components/chart/legacy-chart-functions.ts';
 
 const props = defineProps<{
   leaderboard: CompleteLeaderboard;
@@ -133,4 +133,4 @@ const chartOptions = computed(() => {
     :options="chartOptions"
     :is-fullscreen="isFullscreen"
   />
-</template>
+</template>src/components/chart/legacy-chart-functions

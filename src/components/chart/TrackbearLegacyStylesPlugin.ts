@@ -1,11 +1,11 @@
 import type { Chart } from 'chart.js';
 
-export interface TrackbearStylesPluginOptions {
+export interface TrackbearLegacyStylesPluginOptions {
   enabled?: boolean;
   ignorePar?: boolean;
 }
 
-function makeTrackbearStylesPlugin(getColor) {
+function makeTrackbearLegacyStylesPlugin(getColor) {
   const POINT_STYLES = ['circle', 'rect', 'crossRot', 'rectRot', 'triangle', 'star', 'rectRounded', 'cross'];
   const LINE_COLORS = [ getColor('primary'), getColor('danger'), getColor('info'), getColor('warning') ];
 
@@ -15,13 +15,13 @@ function makeTrackbearStylesPlugin(getColor) {
 
   // This is with heavy copying from https://github.com/chartjs/Chart.js/blob/master/src/plugins/plugin.colors.ts
   return {
-    id: 'trackbear-stypes',
+    id: 'trackbear-legacy-styles',
     defaults: {
       enabled: true,
       ignorePar: false,
-    } as TrackbearStylesPluginOptions,
+    } as TrackbearLegacyStylesPluginOptions,
 
-    beforeLayout(chart: Chart<'line'>, _args, options: TrackbearStylesPluginOptions) {
+    beforeLayout(chart: Chart<'line'>, _args, options: TrackbearLegacyStylesPluginOptions) {
       if(!options.enabled) {
         return;
       }
@@ -65,4 +65,4 @@ function makeTrackbearStylesPlugin(getColor) {
   }
 }
 
-export default makeTrackbearStylesPlugin;
+export default makeTrackbearLegacyStylesPlugin;

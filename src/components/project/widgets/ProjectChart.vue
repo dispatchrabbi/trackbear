@@ -9,9 +9,9 @@ import { formatTimeProgress } from 'src/lib/date.ts';
 import { TYPE_INFO } from 'src/lib//project.ts';
 import type { ProjectWithUpdates } from 'server/api/projects.ts';
 
-import LineChart from 'src/components/chart/LineChart.vue';
-import type { LineChartOptions } from 'src/components/chart/LineChart.vue';
-import { normalizeUpdates, getEachDayOfChart, calculatePars, makeTooltipLabelFn } from 'src/components/chart/chart-functions.ts';
+import LineChart from 'src/components/chart/LegacyLineChart.vue';
+import type { LineChartOptions } from 'src/components/chart/LegacyLineChart.vue';
+import { normalizeUpdates, getEachDayOfChart, calculatePars, makeTooltipLabelFn } from 'src/components/chart/legacy-chart-functions.ts';
 
 type ReducedUpdate = { date: string; value: number; };
 type ReducedProjectWithUpdates = Pick<
@@ -130,4 +130,4 @@ const chartOptions = computed(() => {
     :options="chartOptions"
     :is-fullscreen="isFullscreen"
   />
-</template>
+</template>src/components/chart/legacy-chart-functions

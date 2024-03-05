@@ -1,18 +1,18 @@
 import { callApiV1 } from "./api.ts";
 
 import type { Work } from "@prisma/client";
-import type { WorkPayload } from "server/api/v1/work.ts";
+import type { WorkWithTotals, WorkWithTallies, WorkPayload } from "server/api/v1/work.ts";
 
-export type { Work, WorkPayload };
+export type { Work, WorkWithTotals, WorkWithTallies, WorkPayload };
 
 const ENDPOINT = '/api/v1/work';
 
 export async function getWorks() {
-  return callApiV1<Work[]>(ENDPOINT, 'GET');
+  return callApiV1<WorkWithTotals[]>(ENDPOINT, 'GET');
 }
 
 export async function getWork(id: number) {
-  return callApiV1<Work>(ENDPOINT + `/${id}`, 'GET');
+  return callApiV1<WorkWithTallies>(ENDPOINT + `/${id}`, 'GET');
 }
 
 export async function createWork(data: WorkPayload) {

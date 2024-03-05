@@ -1,29 +1,24 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { useThemeStore } from '../../stores/theme.ts';
+const themeStore = useThemeStore();
 
-import twColors from 'tailwindcss/colors';
-import themeColors from 'src/themes/primevue.ts';
+import { useColors } from 'vuestic-ui';
+const { getColor } = useColors();
 
 import { Line } from 'vue-chartjs';
-import makeTrackbearLineStylesPlugin from './TrackbearLineStylesPlugin.ts';
-import type { TrackbearLineStylesPluginColors } from './TrackbearLineStylesPlugin.ts';
+import makeTrackbearLegacyStylesPlugin from './TrackbearLegacyStylesPlugin.ts';
 import { Chart as ChartJS, Title, Tooltip, Legend, LineController, LineElement, PointElement, CategoryScale, LinearScale, ChartData } from 'chart.js';
 
 ChartJS.register(Title, Tooltip, LineController, Legend, LineElement, PointElement, CategoryScale, LinearScale);
 
-const pluginColors: TrackbearLineStylesPluginColors = {
-  text: themeColors.surface[700],
-  secondaryText: themeColors.surface[400],
-
-  red: twColors.red[500],
-  orange: twColors.orange[500],
-  yellow: twColors.yellow[500],
-  green: twColors.green[500],
-  blue: twColors.blue[500],
-  purple: twColors.purple[500],
-};
-let stylesPlugin = makeTrackbearLineStylesPlugin(pluginColors);
+let stylesPlugin = makeTrackbearLegacyStylesPlugin(getColor);
 ChartJS.register(stylesPlugin);
+// whenever the theme changes, we need to redo the colors
+themeStore.$subscribe(() => {
+  ChartJS.unregister(stylesPlugin);
+  stylesPlugin = makeTrackbearLegacyStylesPlugin(getColor);
+  ChartJS.register(stylesPlugin);
+});
 
 ChartJS.defaults.animation = false;
 ChartJS.defaults.responsive = true;
@@ -37,6 +32,7 @@ const props = defineProps<{
   data: ChartData<'line'>;
   isFullscreen?: boolean;
 }>();
+
 </script>
 
 <template>
