@@ -2,17 +2,24 @@
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
 
+import { useWorkStore } from 'src/stores/work';
+const workStore = useWorkStore();
+
 import { getWorks, WorkWithTotals } from 'src/lib/api/work.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import Button from 'primevue/button';
+import Dialog from 'primevue/dialog';
 import WorkTile from 'src/components/works/WorkTile.vue';
+import CreateWorkForm from 'src/components/works/CreateWorkForm.vue';
 import { PrimeIcons } from 'primevue/api';
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Works', url: '/works' },
 ];
+
+const isCreateFormVisible = ref<boolean>(false);
 
 const works = ref<WorkWithTotals[]>([]);
 const isLoading = ref<boolean>(false);
@@ -31,6 +38,11 @@ const loadWorks = async function() {
   }
 }
 
+const reloadWorks = async function() {
+  workStore.populateWorks(true);
+  loadWorks();
+}
+
 loadWorks();
 
 </script>
@@ -43,6 +55,7 @@ loadWorks();
       <Button
         label="New Work"
         :icon="PrimeIcons.PLUS"
+        @click="isCreateFormVisible = true"
       />
     </div>
     <div
@@ -54,6 +67,21 @@ loadWorks();
         <WorkTile :work="work" />
       </RouterLink>
     </div>
+    <Dialog
+      v-model:visible="isCreateFormVisible"
+      modal
+    >
+      <template #header>
+        <h2 class="font-heading font-semibold uppercase">
+          <span :class="PrimeIcons.PLUS" />
+          Create Work
+        </h2>
+      </template>
+      <CreateWorkForm
+        @work-created="reloadWorks()"
+        @request-close="isCreateFormVisible = false"
+      />
+    </Dialog>
   </ApplicationLayout>
 </template>
 

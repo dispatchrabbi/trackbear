@@ -87,7 +87,7 @@ export type WorkPayload = {
 };
 const zWorkPayload = z.object({
   title: z.string().min(1),
-  description: z.string().min(1),
+  description: z.string(),
   phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<string>),
 });
 

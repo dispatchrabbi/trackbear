@@ -11,9 +11,12 @@ const props = defineProps<{
   loadingMessage: string | null;
   successMessage: string | null;
   errorMessage: string | null;
+
+  submitSeverity?: string;
+  cancelButton?: boolean;
 }>();
 
-const emit = defineEmits(['submit']);
+const emit = defineEmits(['submit', 'cancel']);
 
 const handleSubmit = function() {
   if(!props.isValid) { return; }
@@ -30,15 +33,24 @@ const handleSubmit = function() {
     <slot />
     <slot name="actions">
       <div class="actions flex flex-col-reverse md:flex-row gap-2">
-        <div class="buttons">
-          <!-- TODO: maybe more buttons/button options? -->
+        <div class="buttons flex gap-2">
           <Button
             :label="loadingMessage || submitMessage"
             size="large"
+            :severity="props.submitSeverity || undefined"
             :disabled="!props.isValid"
             :loading="loadingMessage !== null"
             :pt="{ root: { type: 'submit' } }"
             :pt-options="{ mergeSections: true, mergeProps: true }"
+          />
+          <Button
+            v-if="props.cancelButton"
+            :label="'Cancel'"
+            size="large"
+            :disabled="loadingMessage !== null"
+            severity="secondary"
+            outlined
+            @click="emit('cancel')"
           />
         </div>
         <InlineMessage

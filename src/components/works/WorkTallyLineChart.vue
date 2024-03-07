@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { ref, computed, defineProps } from 'vue';
 import type { Work } from 'src/lib/api/work.ts';
 import type { Tally } from 'src/lib/api/tally.ts';
 import type { Tag } from 'src/lib/api/tag.ts';
 
 import { kify } from 'src/lib/number.ts';
 import { formatCount } from 'src/lib/tally.ts';
-import { TALLY_MEASURE } from 'server/lib/entities/tally';
+import { toTitleCase } from 'src/lib/str.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import { normalizeTallies, accumulateTallies } from '../chart/chart-functions';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
 import LineChart from 'src/components/chart/LineChart.vue';
 import type { LineChartOptions } from 'src/components/chart/LineChart.vue';
 
@@ -18,16 +20,22 @@ const props = defineProps<{
   tallies: Array<Tally & { tags: Tag[] }>;
 }>();
 
-// TODO: expand graph beyond words
-const TEMP_GRAPH_TALLIES = computed(() => props.tallies.filter(tally => tally.measure === TALLY_MEASURE.WORD));
+const measuresAvailable = computed(() => {
+  const measuresPresent = new Set(props.tallies.map(tally => tally.measure));
+  return Object.keys(TALLY_MEASURE_INFO).filter(measure => measuresPresent.has(measure));
+});
+const selectedMeasure = ref(measuresAvailable.value[0]);
 
 const chartData = computed(() => {
+  const filteredTallies = props.tallies.filter(tally => tally.measure === selectedMeasure.value);
+  const normalizedTallies = normalizeTallies(filteredTallies);
+
   const data = {
-    labels: TEMP_GRAPH_TALLIES.value.map(tally => tally.date),
+    labels: normalizedTallies.map(tally => tally.date),
     datasets: [{
       label: props.work.title,
-      measure: TALLY_MEASURE.WORD,
-      data:accumulateTallies(normalizeTallies(TEMP_GRAPH_TALLIES.value)),
+      measure: selectedMeasure.value,
+      data: accumulateTallies(normalizedTallies),
     }],
   };
 
@@ -44,7 +52,7 @@ const chartOptions = computed(() => {
     y: {
       type: 'linear',
       suggestedMin: 0,
-      suggestedMax: TALLY_MEASURE_INFO[TALLY_MEASURE.WORD].defaultChartMax,
+      suggestedMax: TALLY_MEASURE_INFO[selectedMeasure.value].defaultChartMax,
       ticks: {
         callback: val => kify(val),
         stepSize: undefined, // leaving this in because we'll want it for time charts
@@ -53,14 +61,13 @@ const chartOptions = computed(() => {
   };
 
   const legend = {
-    // display: chartData.value.datasets.length > 1,
-    display: true,
+    display: chartData.value.datasets.length > 1,
     position: 'bottom',
   }
 
   const tooltip = {
     callbacks: {
-      label: ctx => formatCount(ctx.raw.count, ctx.dataset.measure),
+      label: ctx => formatCount(ctx.raw.value, ctx.dataset.measure),
     },
   };
 
@@ -79,10 +86,21 @@ const chartOptions = computed(() => {
 </script>
 
 <template>
-  <LineChart
-    :data="chartData"
-    :options="chartOptions"
-  />
+  <TabView
+    @update:active-index="index => selectedMeasure = measuresAvailable[index]"
+  >
+    <TabPanel
+      v-for="measure of measuresAvailable"
+      :key="measure"
+      :header="toTitleCase(TALLY_MEASURE_INFO[measure].label.plural)"
+    >
+      <!-- @vue-expect-error chartData won't ever be exactly the right type, due to ChartJS being highly configurable -->
+      <LineChart
+        :data="chartData"
+        :options="chartOptions"
+      />
+    </TabPanel>
+  </TabView>
 </template>
 
 <style scoped>

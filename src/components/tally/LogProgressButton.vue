@@ -35,7 +35,7 @@ const toggleForm = function() {
       </h2>
     </template>
     <TallyForm
-      @success-cleared="isFormVisible = false"
+      @request-close="isFormVisible = false"
     />
   </Dialog>
 </template>

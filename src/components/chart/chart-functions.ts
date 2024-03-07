@@ -37,7 +37,7 @@ export function normalizeTallies(tallies: Tally[]): CountedTallyPoint[] {
 }
 
 export function accumulateTallies(sortedTallies: TallyPoint[], startingTotal = 0): AccumulatedTallyPoint[] {
-  const accumulatedTallies = [];
+  const accumulatedTallies: AccumulatedTallyPoint[] = [];
   let runningTotal = startingTotal;
 
   for(const tally of sortedTallies) {

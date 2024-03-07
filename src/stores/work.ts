@@ -10,8 +10,8 @@ export const useWorkStore = defineStore('work', {
 
   // },
   actions: {
-    async populateWorks() {
-      if(this.works === null) {
+    async populateWorks(force = false) {
+      if(force || this.works === null) {
         const works = await getWorks();
         this.works = works;
       }

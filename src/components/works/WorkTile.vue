@@ -31,8 +31,6 @@ const WORK_PHASE_TAG_COLORS = {
     <template #title>
       <div class="flex gap-2">
         <div>{{ props.work.title }}</div>
-        <!-- TODO: enable when these are implemented -->
-        <!--
         <Tag
           :value="props.work.phase"
           :severity="WORK_PHASE_TAG_COLORS[props.work.phase]"
@@ -40,6 +38,8 @@ const WORK_PHASE_TAG_COLORS = {
           :pt-options="{ mergeSections: true, mergeProps: true }"
         />
         <div class="spacer flex-auto" />
+        <!-- TODO: enable when these are implemented -->
+        <!--
         <Button
           :icon="PrimeIcons.STAR"
           text
@@ -60,6 +60,11 @@ const WORK_PHASE_TAG_COLORS = {
           class="total"
         >
           <span class="font-light"><span class="font-medium">{{ value }}</span> {{ TALLY_MEASURE_INFO[key].counter[Math.abs(value) === 1 ? 'singular' : 'plural'] }}</span>
+        </div>
+        <div
+          v-if="Object.keys(props.work.totals).length < 1"
+        >
+          <span class="font-light">No progress yet!</span>
         </div>
       </div>
     </template>

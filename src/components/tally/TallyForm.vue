@@ -28,7 +28,7 @@ import MultiSelect from 'primevue/multiselect';
 import Textarea from 'primevue/textarea';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 
-const emit = defineEmits(['tallyCreated', 'successCleared']);
+const emit = defineEmits(['tallyCreated', 'requestClose']);
 
 const formModel = reactive({
   date: new Date(), // default to today
@@ -116,7 +116,7 @@ const handleSubmitClick = async function() {
   // return to normal
   setTimeout(() => {
     isSuccess.value = false;
-    emit('successCleared');
+    emit('requestClose');
   }, 1000);
 }
 

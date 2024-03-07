@@ -54,7 +54,7 @@ async function handleSubmit() {
     } else if(err.code === 'USERNAME_EXISTS') {
       errorMessage.value = 'That username is already taken. Please choose another.';
     } else {
-      errorMessage.value = 'Could not sign up; something went wrong server-side.';
+      errorMessage.value = 'Could not sign up: something went wrong server-side.';
     }
 
     return;
