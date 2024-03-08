@@ -5,7 +5,7 @@ import { requireUser, RequestWithUser } from '../../lib/auth.ts';
 
 import { z } from 'zod';
 import { zIdParam, zDateStr, NonEmptyArray } from '../../lib/validators.ts';
-import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
+import { validateBody, validateParams, validateQuery } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
 import type { Tally, Work, Tag } from "@prisma/client";
@@ -19,14 +19,24 @@ export default tallyRouter;
 
 export type TallyWithWorkAndTags = Tally & { work: Work } & { tags: Tag[] };
 
+const getTalliesQuerySchema = z.object({
+  works: z.array(z.coerce.number().int().positive()).optional(),
+  tags: z.array(z.coerce.number().int().positive()).optional(),
+});
+
 tallyRouter.get('/',
   requireUser,
+  validateQuery(getTalliesQuerySchema),
   h(async (req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags[]>) =>
 {
+  const query = req.query as z.infer<typeof getTalliesQuerySchema>;
+
   const tallies = await dbClient.tally.findMany({
     where: {
       ownerId: req.user.id,
       state: TALLY_STATE.ACTIVE,
+      workId: query.works ? { in: query.works } : undefined,
+      tags: query.tags ? { some: { id: { in: query.tags } } } : undefined,
     },
     include: {
       work: true,

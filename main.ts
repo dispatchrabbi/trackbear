@@ -18,6 +18,7 @@ import morgan from 'morgan';
 import helmet from './server/lib/middleware/helmet.ts';
 import compression from 'compression';
 import bodyParser from 'body-parser';
+import qs from 'qs';
 import session from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import rateLimit from './server/lib/middleware/rate-limit.ts';
@@ -42,6 +43,10 @@ async function main() {
 
   // let's start up the server!
   const app = express();
+
+  // allow arrays in query strings with just commas
+  // this must be set before anything else (see https://github.com/expressjs/express/issues/4979)
+  app.set('query parser', str => qs.parse(str, { comma: true }));
 
   // add security headers
   app.use(await helmet());

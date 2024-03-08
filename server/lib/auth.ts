@@ -9,9 +9,10 @@ type SessionWithAuth = { session: { auth?: null | { id: number } } };
 // export type RequestWithSessionAuth = Express.Request & SessionWithAuth;
 export type WithSessionAuth<R> = R & SessionWithAuth;
 
-type UserProp = { user: User };
+interface UserProp { user: User }
 // export type RequestWithUser = RequestWithSessionAuth & UserProp;
-export type WithUser<R> = R & UserProp;
+export type WithUser<R extends Request> = R & UserProp;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RequestWithUser = Request & UserProp;
 
 function serializeUser(user: User) {

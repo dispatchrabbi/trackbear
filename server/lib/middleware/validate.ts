@@ -38,6 +38,7 @@ function validateQuery(schema: ZodSchema) {
       return;
     }
 
+    req.query = parsed.data;
     return next();
   }
 }
