@@ -56,6 +56,10 @@ const reloadWorks = async function() {
   loadWork();
 }
 
+import { useEventBus } from 'src/lib/use-event-bus';
+const eventBus = useEventBus();
+eventBus.on('tallyCreated', reloadWorks);
+
 loadWork();
 
 </script>

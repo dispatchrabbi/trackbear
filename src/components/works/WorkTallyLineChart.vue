@@ -5,6 +5,7 @@ import type { Tally } from 'src/lib/api/tally.ts';
 import type { Tag } from 'src/lib/api/tag.ts';
 
 import { kify } from 'src/lib/number.ts';
+import { formatDuration } from "src/lib/date.ts";
 import { formatCount } from 'src/lib/tally.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
@@ -14,6 +15,7 @@ import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import LineChart from 'src/components/chart/LineChart.vue';
 import type { LineChartOptions } from 'src/components/chart/LineChart.vue';
+import { TALLY_MEASURE } from 'server/lib/entities/tally';
 
 const props = defineProps<{
   work: Work;
@@ -54,8 +56,8 @@ const chartOptions = computed(() => {
       suggestedMin: 0,
       suggestedMax: TALLY_MEASURE_INFO[selectedMeasure.value].defaultChartMax,
       ticks: {
-        callback: val => kify(val),
-        stepSize: undefined, // leaving this in because we'll want it for time charts
+        callback: val => selectedMeasure.value === TALLY_MEASURE.TIME ? formatDuration(val, true) : kify(val),
+        stepSize: selectedMeasure.value === TALLY_MEASURE.TIME ? 60 : undefined,
       }
     }
   };

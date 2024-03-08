@@ -5,7 +5,7 @@ import { useColors } from 'vuestic-ui';
 const { getColor } = useColors();
 
 import { kify } from 'src/lib/number.ts';
-import { formatTimeProgress } from 'src/lib/date.ts';
+import { formatDuration } from 'src/lib/date.ts';
 import { TYPE_INFO } from 'src/lib//project.ts';
 import type { ProjectWithUpdates } from 'server/api/projects.ts';
 
@@ -103,7 +103,7 @@ const chartOptions = computed(() => {
         suggestedMin: 0,
         suggestedMax: normalizedGoal.value || TYPE_INFO[props.project.type].defaultChartMax,
         ticks: {
-          callback: props.project.type === 'time' ? value => formatTimeProgress(value, true) : value => kify(value),
+          callback: props.project.type === 'time' ? value => formatDuration(value, true) : value => kify(value),
           stepSize: props.project.type === 'time' ? 60 : undefined,
         },
       },

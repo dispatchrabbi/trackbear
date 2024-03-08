@@ -1,4 +1,5 @@
 import { TALLY_MEASURE } from 'server/lib/entities/tally.ts';
+import { formatDuration } from "src/lib/date.ts";
 
 export const TALLY_MEASURE_INFO = {
   [TALLY_MEASURE.WORD]: {
@@ -25,5 +26,5 @@ export const TALLY_MEASURE_INFO = {
 };
 
 export function formatCount(count: number, measure: string ) {
-  return `${count} ${TALLY_MEASURE_INFO[measure].counter[Math.abs(count) === 1 ? 'singular' : 'plural']}`;
+  return measure === TALLY_MEASURE.TIME ? formatDuration(count) : `${count} ${TALLY_MEASURE_INFO[measure].counter[Math.abs(count) === 1 ? 'singular' : 'plural']}`;
 }

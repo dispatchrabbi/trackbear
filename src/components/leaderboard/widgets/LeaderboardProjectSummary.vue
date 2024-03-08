@@ -4,7 +4,7 @@ import { DataTableColumnSource } from 'vuestic-ui';
 
 import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
 import { GOAL_TYPE_INFO } from 'src/lib/api/leaderboard.ts';
-import { formatTimeProgress } from 'src/lib/date.ts';
+import { formatDuration } from 'src/lib/date.ts';
 
 const props = defineProps<{
   leaderboard: CompleteLeaderboard
@@ -42,7 +42,7 @@ function formatTotal(total, leaderboardType) {
   if(leaderboardType === 'percentage') {
     return total + '%';
   } else if(leaderboardType === 'time') {
-    return formatTimeProgress(total);
+    return formatDuration(total);
   } else {
     return total + ' ' + GOAL_TYPE_INFO[leaderboardType].counter[total === 1 ? 'singular' : 'plural'];
   }

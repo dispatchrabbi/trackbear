@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { addDays } from 'date-fns';
 
-import { parseDateString, formatDate, formatTimeProgress } from 'src/lib/date.ts';
+import { parseDateString, formatDate, formatDuration } from 'src/lib/date.ts';
 import { TYPE_INFO } from 'src/lib/project.ts';
 
 // This type is necessary because of the shared project page
@@ -66,7 +66,7 @@ const total = computed(() => {
 
   let totalStr;
   if(props.project.type === 'time') {
-    totalStr = formatTimeProgress(totalSoFar);
+    totalStr = formatDuration(totalSoFar);
   } else {
     totalStr = `${totalSoFar} ${TYPE_INFO[props.project.type].counter[totalSoFar === 1 ? 'singular' : 'plural']}`;
   }

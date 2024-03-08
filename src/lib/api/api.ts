@@ -1,8 +1,10 @@
+import qs from 'qs';
+
 import type { ApiResponsePayload } from "server/lib/api-response.ts";
 
 type ApiResponse<T> = ApiResponsePayload<T> & { status: number; }
 
-export async function callApi<T>(path: string, method: string = 'GET', payload: object | null = null): Promise<ApiResponse<T>> {
+export async function callApi<T>(path: string, method: string = 'GET', payload: object | null = null, query: object | null = null): Promise<ApiResponse<T>> {
   const headers = {};
   let body = null;
 
@@ -10,6 +12,10 @@ export async function callApi<T>(path: string, method: string = 'GET', payload: 
   if(payload !== null) {
     body = JSON.stringify(payload);
     headers['Content-Type'] = 'application/json';
+  }
+
+  if(query !== null) {
+    path += '?' + qs.stringify(query, { arrayFormat: 'comma', encode: false });
   }
 
   const response = await fetch(path, {
@@ -26,8 +32,8 @@ export async function callApi<T>(path: string, method: string = 'GET', payload: 
   };
 }
 
-export async function callApiV1<T>(path: string, method: string = 'GET', payload: object | null = null): Promise<T> {
-  const response = await callApi<T>(path, method, payload);
+export async function callApiV1<T>(path: string, method: string = 'GET', payload: object | null = null, query: object | null = null): Promise<T> {
+  const response = await callApi<T>(path, method, payload, query);
 
   if(response.success === true) {
     return response.data;

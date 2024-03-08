@@ -19,17 +19,19 @@ export default tallyRouter;
 
 export type TallyWithWorkAndTags = Tally & { work: Work } & { tags: Tag[] };
 
-const getTalliesQuerySchema = z.object({
+const zTallyQuery = z.object({
   works: z.array(z.coerce.number().int().positive()).optional(),
   tags: z.array(z.coerce.number().int().positive()).optional(),
 });
 
+export type TallyQuery = z.infer<typeof zTallyQuery>;
+
 tallyRouter.get('/',
   requireUser,
-  validateQuery(getTalliesQuerySchema),
+  validateQuery(zTallyQuery),
   h(async (req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags[]>) =>
 {
-  const query = req.query as z.infer<typeof getTalliesQuerySchema>;
+  const query = req.query as TallyQuery;
 
   const tallies = await dbClient.tally.findMany({
     where: {
@@ -110,9 +112,8 @@ tallyRouter.post('/',
       tags: {
         connectOrCreate: req.body.tags.map((tagName: string) => ({
           where: {
-            name: tagName,
             state: TAG_STATE.ACTIVE,
-            ownerId: user.id,
+            ownerId_name: { ownerId: user.id, name: tagName },
           },
           create: {
             name: tagName,

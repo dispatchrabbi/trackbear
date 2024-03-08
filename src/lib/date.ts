@@ -45,7 +45,7 @@ export function formatDateSafe(date: Date | null | undefined): string | null {
   return `${year}-${month}-${day}`;
 }
 
-export function formatTimeProgress(totalMinutes, omitZeroMinutes = false, forceColon = false) {
+export function formatDuration(totalMinutes, omitZeroMinutes = false, forceColon = false) {
   const hours = '' + Math.floor(totalMinutes / 60);
 
   let minutes = '' + totalMinutes % 60;

@@ -5,7 +5,7 @@ import { useColors } from 'vuestic-ui';
 const { getColor } = useColors();
 
 import { kify } from 'src/lib/number.ts';
-import { formatTimeProgress } from 'src/lib//date.ts';
+import { formatDuration } from 'src/lib//date.ts';
 import { GOAL_TYPE_INFO } from 'src/lib//api/leaderboard.ts';
 import { TYPE_INFO } from 'src/lib//project.ts';
 import type { CompleteLeaderboard } from 'server/api/leaderboards.ts';
@@ -106,7 +106,7 @@ const chartOptions = computed(() => {
         suggestedMin: 0,
         suggestedMax: normalizedGoal.value || GOAL_TYPE_INFO[props.leaderboard.type].defaultChartMax,
         ticks: {
-          callback: props.leaderboard.type === 'time' ? value => formatTimeProgress(value, true) : value => kify(value),
+          callback: props.leaderboard.type === 'time' ? value => formatDuration(value, true) : value => kify(value),
           stepSize: props.leaderboard.type === 'time' ? 60 : undefined,
         }
       },

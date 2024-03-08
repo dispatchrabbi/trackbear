@@ -10,7 +10,7 @@ import type { SharedProjectWithUpdates } from 'server/api/share.ts';
 import { editUpdate, deleteUpdate } from 'src/lib/api/project.ts';
 import type { CreateUpdatePayload } from 'server/api/projects.ts';
 
-import { formatTimeProgress, parseDateStringSafe, formatDate, validateTimeString } from 'src/lib/date.ts';
+import { formatDuration, parseDateStringSafe, formatDate, validateTimeString } from 'src/lib/date.ts';
 
 const props = defineProps<{
   project: ProjectWithUpdates | SharedProjectWithUpdates
@@ -25,7 +25,7 @@ function makeRows(project: ProjectWithUpdates | SharedProjectWithUpdates) {
     .map((update) => ({
       id: props.allowEdits ? (update as Update).id : null,
       date: update.date,
-      value: props.project.type === 'time' ? formatTimeProgress(update.value) : update.value,
+      value: props.project.type === 'time' ? formatDuration(update.value) : update.value,
       updated: props.showUpdateTimes ? (update as Update).updatedAt : null,
     }));
 
@@ -101,7 +101,7 @@ function handleEditClick(updateId) {
   updateForm.value = {
     id: updateWithThatId.id,
     date: parseDateStringSafe(updateWithThatId.date),
-    count: props.project.type === 'time' ? formatTimeProgress(updateWithThatId.value, false, true) : updateWithThatId.value.toString(),
+    count: props.project.type === 'time' ? formatDuration(updateWithThatId.value, false, true) : updateWithThatId.value.toString(),
   };
 }
 async function handleSubmitEdit() {

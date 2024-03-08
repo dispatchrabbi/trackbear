@@ -1,5 +1,5 @@
 import { addDays, eachDayOfInterval } from "date-fns";
-import { formatDate, parseDateString, maxDateStr, formatTimeProgress } from "src/lib/date.ts";
+import { formatDate, parseDateString, maxDateStr, formatDuration } from "src/lib/date.ts";
 import { commaify } from "src/lib/number.ts";
 
 export type NormalizedUpdate = {
@@ -123,7 +123,7 @@ function makeTooltipLabelFn(goalType) {
 
     let valueStr;
     if(goalType === 'time') {
-      valueStr = formatTimeProgress(value);
+      valueStr = formatDuration(value);
     } else if(goalType === 'percentage') {
       valueStr = Math.round(value) + '%'
     } else {
