@@ -98,7 +98,7 @@ const items = computed(() => {
     :model="items"
     :pt="menuPassthrough"
   >
-    <template #item="{ item, action }">
+    <template #item="{ item }">
       <RouterLink
         v-if="item.href"
         :to="item.href"

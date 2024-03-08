@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
@@ -21,12 +21,21 @@ import WorkTallyLineChart from 'src/components/works/WorkTallyLineChart.vue';
 import WorkTallyDataTable from 'src/components/works/WorkTallyDataTable.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 
+const workId = ref<number>(+route.params.id);
+watch(
+  () => route.params.id,
+  newId => {
+    workId.value = +newId;
+    reloadWorks(); // this isn't a great pattern - it should get changed
+  }
+);
+
 const work = ref<WorkWithTallies | null>(null);
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
     { label: 'Works', url: '/works' },
-    { label: work.value === null ? 'Loading...' : work.value.title, url: `/works/${route.params.id}` },
+    { label: work.value === null ? 'Loading...' : work.value.title, url: `/works/${workId.value}` },
   ];
   return crumbs;
 });
@@ -41,8 +50,7 @@ const loadWork = async function() {
   errorMessage.value = null;
 
   try {
-    const workId = +route.params.id;
-    work.value = await getWork(workId);
+    work.value = await getWork(+workId.value);
   } catch(err) {
     errorMessage.value = err.message;
     router.push('/works');
