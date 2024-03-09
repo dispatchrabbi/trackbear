@@ -18,7 +18,7 @@ const sortedTallies = computed(() => props.tallies.toSorted((a, b) => {
 // TODO: maybe switch to DataView at some point?
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import Chip from 'primevue/chip';
+import TbTag from '../tag/TbTag.vue';
 
 </script>
 
@@ -30,6 +30,7 @@ import Chip from 'primevue/chip';
     />
     <Column
       header="Progress"
+      class="whitespace-nowrap"
     >
       <template #body="{ data }">
         {{ formatCount(data.count, data.measure) }}
@@ -40,10 +41,10 @@ import Chip from 'primevue/chip';
       header="Tags"
     >
       <template #body="{ data }">
-        <Chip
+        <TbTag
           v-for="tag of data.tags"
           :key="tag.id"
-          :label="tag.name"
+          :tag="tag"
           class="mr-1"
         />
       </template>

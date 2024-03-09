@@ -31,6 +31,7 @@ import MultiSelect from 'primevue/multiselect';
 import Textarea from 'primevue/textarea';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
+import TbTag from 'src/components/tag/TbTag.vue';
 
 const emit = defineEmits(['tally:create', 'requestClose']);
 

@@ -9,7 +9,7 @@ import { useValidation } from 'src/lib/form.ts';
 
 import { createTag, TagPayload } from 'src/lib/api/tag';
 import { TAG_COLORS, TAG_DEFAULT_COLOR } from 'server/lib/entities/tag';
-import { TAG_COLOR_CLASSES } from 'src/lib/tag';
+import { TAG_COLOR_CLASSES } from 'src/components/tag/tag-color-classes.ts';
 
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
@@ -125,3 +125,4 @@ async function handleSubmit() {
 
 <style scoped>
 </style>
+src/components/tag/tag

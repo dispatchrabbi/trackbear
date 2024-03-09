@@ -2,17 +2,16 @@
 import { computed, ref } from 'vue';
 
 import { getTags, Tag } from 'src/lib/api/tag.ts';
-import { TAG_COLOR_CLASSES } from 'src/lib/tag';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import CreateTagForm from 'src/components/tag/CreateTagForm.vue';
 import EditTagForm from 'src/components/tag/EditTagForm.vue';
 import DeleteTagForm from 'src/components/tag/DeleteTagForm.vue';
+import TbTag from 'src/components/tag/TbTag.vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
-import Chip from 'primevue/chip';
 import Dialog from 'primevue/dialog';
 
 import type { MenuItem } from 'primevue/menuitem';
@@ -78,11 +77,8 @@ loadTags();
           field="name"
           header="Name"
         >
-          <template #body="{ data, field }">
-            <Chip
-              :label="'#' + data[field]"
-              :class="[ TAG_COLOR_CLASSES[data.color].background, TAG_COLOR_CLASSES[data.color].text]"
-            />
+          <template #body="{ data }">
+            <TbTag :tag="data" />
           </template>
         </Column>
         <Column
