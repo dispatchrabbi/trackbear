@@ -142,7 +142,21 @@ workRouter.delete('/:id',
 {
   const user = req.user;
 
-  const work = await dbClient.work.delete({
+  // Don't actually delete the work; set the status instead
+  const work = await dbClient.work.update({
+    data: {
+      state: WORK_STATE.DELETED,
+      tallies: {
+        updateMany: {
+          where: {
+            state: TALLY_STATE.ACTIVE
+          },
+          data: {
+            state: TALLY_STATE.DELETED,
+          },
+        },
+      },
+    },
     where: {
       id: +req.params.id,
       ownerId: req.user.id,

@@ -5,23 +5,23 @@ import wait from 'src/lib/wait.ts';
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
-import { deleteWork, Work } from 'src/lib/api/work.ts';
+import { deleteTag, Tag } from 'src/lib/api/tag.ts';
 
 import InputText from 'primevue/inputtext';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 
 const props = defineProps<{
-  work: Work;
+  tag: Tag;
 }>();
-const emit = defineEmits(['workDeleted', 'requestClose']);
+const emit = defineEmits(['tag:delete', 'requestClose']);
 
 const formModel = reactive({
   deleteConfirmation: '',
 });
 
 const validations = z.object({
-  deleteConfirmation: z.string().refine(val => val === props.work.title, { message: 'You must type the title exactly.',  }), // only allow exactly the work title
+  deleteConfirmation: z.string().refine(val => val === props.tag.name, { message: 'You must type the name exactly.',  }), // only allow exactly the work title
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);
@@ -39,14 +39,14 @@ async function handleSubmit() {
   errorMessage.value = null;
 
   try {
-    const deletedWork = await deleteWork(props.work.id);
+    const deletedTag = await deleteTag(props.tag.id);
 
-    emit('workDeleted', { work: deletedWork });
-    successMessage.value = `${deletedWork.title} has been deleted.`;
+    emit('tag:delete', { work: deletedTag });
+    successMessage.value = `${deletedTag.name} has been deleted.`;
     await wait(1 * 1000);
     emit('requestClose');
   } catch(err) {
-    errorMessage.value = 'Could not delete the project: something went wrong server-side.';
+    errorMessage.value = 'Could not delete the tag: something went wrong server-side.';
 
     return;
   } finally {
@@ -67,18 +67,18 @@ async function handleSubmit() {
     @submit="validate() && handleSubmit()"
   >
     <p class="font-bold text-red-500 dark:text-red-400">
-      You are about to delete {{ props.work.title }}. This will also delete all the progress you've logged on this work.
+      You are about to delete {{ props.tag.name }}. There is no way to undo this.
     </p>
-    <p>In order to confirm that you want to delete this work, please type <span class="font-bold">{{ props.work.title }}</span> into the input below and click Delete.</p>
+    <p>In order to confirm that you want to delete this tag, please type <span class="font-bold">{{ props.tag.name }}</span> into the input below and click Delete.</p>
     <FieldWrapper
-      for="work-form-confirmation"
-      label="Type the title to confirm deletion:"
+      for="tag-form-confirmation"
+      label="Type the name to confirm deletion:"
       required
       :rule="ruleFor('deleteConfirmation')"
     >
       <template #default>
         <InputText
-          id="work-form-confirmation"
+          id="tag-form-confirmation"
           v-model="formModel.deleteConfirmation"
           autocomplete="off"
         />

@@ -15,7 +15,8 @@ import ResetPasswordPage from 'src/pages/ResetPasswordPage.vue';
 
 import SharedProjectPage from 'src/pages/SharedProjectPage.vue';
 
-import AccountPage from 'src/pages/AccountPage.vue';
+import AccountPage from 'src/pages/settings/AccountPage.vue';
+import TagsPage from 'src/pages/settings/TagsPage.vue';
 
 import ProjectListPage from 'src/components/project/ProjectListPage.vue';
 import NewProjectPage from 'src/components/project/NewProjectPage.vue';
@@ -55,7 +56,8 @@ const routes = [
   { path: '/works/:id', name: 'work', component: WorkDetailPage },
 
   // account section
-  { path: '/account', name: 'account', component: AccountPage },
+  { path: '/settings/account', name: 'account', component: AccountPage },
+  { path: '/settings/tags', name: 'tags', component: TagsPage },
 
   // projects section
   { path: '/projects', name: 'projects', component: ProjectListPage },

@@ -32,7 +32,7 @@ import Textarea from 'primevue/textarea';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 
-const emit = defineEmits(['tallyCreated', 'requestClose']);
+const emit = defineEmits(['tally:create', 'requestClose']);
 
 const formModel = reactive({
   date: new Date(), // default to today
@@ -103,8 +103,8 @@ async function handleSubmit() {
     const data = formData();
     const createdTally = await createTally(data as TallyPayload);
 
-    eventBus.emit('tallyCreated', { tally: createdTally });
-    emit('tallyCreated', { tally: createdTally });
+    eventBus.emit('tally:create', { tally: createdTally });
+    emit('tally:create', { tally: createdTally });
 
     successMessage.value = `Progress logged!`;
     // clear out the form

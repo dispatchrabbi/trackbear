@@ -65,10 +65,22 @@ tagRouter.post('/',
   h(async (req: RequestWithUser, res: ApiResponse<Tag>) =>
 {
   const user = req.user;
+  const payload = req.body as TagPayload;
+
+  const existingTags = await dbClient.tag.findMany({
+    where: {
+      name: payload.name,
+      ownerId: user.id,
+      state: TAG_STATE.ACTIVE,
+    }
+  });
+  if(existingTags.length > 0) {
+    return res.status(400).send(failure('TAG_EXISTS', `There is already a tag called ${payload.name}`));
+  }
 
   const tag = await dbClient.tag.create({
     data: {
-      ...req.body as TagPayload,
+      ...payload,
       state: TAG_STATE.ACTIVE,
       ownerId: user.id,
     }
@@ -86,6 +98,19 @@ tagRouter.put('/:id',
   h(async (req: RequestWithUser, res: ApiResponse<Tag>) =>
 {
   const user = req.user;
+  const payload = req.body as TagPayload;
+
+  const existingTags = await dbClient.tag.findMany({
+    where: {
+      name: payload.name,
+      ownerId: user.id,
+      state: TAG_STATE.ACTIVE,
+      id: { notIn: [ +req.params.id ] },
+    }
+  });
+  if(existingTags.length > 0) {
+    return res.status(400).send(failure('TAG_EXISTS', `There is already a tag called ${payload.name}`));
+  }
 
   const tag = await dbClient.tag.update({
     where: {
@@ -93,9 +118,7 @@ tagRouter.put('/:id',
       ownerId: req.user.id,
       state: TAG_STATE.ACTIVE,
     },
-    data: {
-      ...req.body as TagPayload,
-    },
+    data: { ...payload },
   });
 
   await logAuditEvent('tag:update', user.id, tag.id);

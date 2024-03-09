@@ -7,39 +7,43 @@ import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { updateWork, Work, WorkPayload } from 'src/lib/api/work.ts';
-import { WORK_PHASE } from 'server/lib/entities/work';
+import { updateTag, Tag, TagPayload } from 'src/lib/api/tag';
+import { TAG_COLORS } from 'server/lib/entities/tag';
+import { TAG_COLOR_CLASSES } from 'src/lib/tag';
 
+import IconField from 'primevue/iconfield';
+import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
+import { PrimeIcons } from 'primevue/api';
 
 const props = defineProps<{
-  work: Work;
+  tag: Tag;
 }>();
-const emit = defineEmits(['workEdited', 'requestClose']);
+const emit = defineEmits(['tag:edit', 'requestClose']);
 
 const formModel = reactive({
-  title: props.work.title,
-  description: props.work.description,
-  phase: props.work.phase,
+  name: props.tag.name,
+  color: props.tag.color,
 });
 
 const validations = z.object({
-  title: z.string().min(1, { message: 'Please enter a title.'}),
-  description: z.string(),
-  phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<typeof WORK_PHASE[keyof typeof WORK_PHASE]>, { required_error: 'Please pick a phase.'}),
+  name: z.string()
+    .min(1, { message: 'Please enter a tag name.' })
+    .regex(/^[^#]/, { message: 'There is no need to type the #.'}),
+  color: z.enum(TAG_COLORS as NonEmptyArray<typeof TAG_COLORS[number]>, { required_error: 'Please pick a color.'}),
 });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
 
-const phaseOptions = computed(() => {
-  return Object.keys(WORK_PHASE).map(key => ({
-    label: toTitleCase(WORK_PHASE[key]),
-    value: WORK_PHASE[key],
+const colorOptions = computed(() => {
+  return TAG_COLORS.map(color => ({
+    label: toTitleCase(color),
+    value: color,
   }));
-});
+})
 
 const isLoading = ref<boolean>(false);
 const successMessage = ref<string | null>(null);
@@ -52,14 +56,18 @@ async function handleSubmit() {
 
   try {
     const data = formData();
-    const updatedWork = await updateWork(props.work.id, data as WorkPayload);
+    const updatedTag = await updateTag(props.tag.id, data as TagPayload);
 
-    emit('workEdited', { work: updatedWork });
-    successMessage.value = `${updatedWork.title} has been edited.`;
+    emit('tag:edit', { tag: updatedTag });
+    successMessage.value = `#${updatedTag.name} has been edited.`;
     await wait(1 * 1000);
     emit('requestClose');
   } catch(err) {
-    errorMessage.value = 'Could not edit the project: something went wrong server-side.';
+    if(err.code === 'TAG_EXISTS') {
+      errorMessage.value = 'Could not edit the tag: a tag with this name already exists.';
+    } else {
+      errorMessage.value = 'Could not edit the tag: something went wrong server-side.';
+    }
 
     return;
   } finally {
@@ -79,46 +87,35 @@ async function handleSubmit() {
     @submit="validate() && handleSubmit()"
   >
     <FieldWrapper
-      for="work-form-title"
-      label="Title"
+      for="tag-form-name"
+      label="Name"
       required
-      :rule="ruleFor('title')"
+      :rule="ruleFor('name')"
     >
       <template #default="{ onUpdate, isFieldValid }">
-        <InputText
-          id="work-form-title"
-          v-model="formModel.title"
-          :invalid="!isFieldValid"
-          @update:model-value="onUpdate"
-        />
+        <IconField icon-position="left">
+          <InputIcon><span :class="PrimeIcons.HASHTAG" /></InputIcon>
+          <InputText
+            id="tag-form-name"
+            v-model="formModel.name"
+            class="w-full"
+            :invalid="!isFieldValid"
+            @update:model-value="onUpdate"
+          />
+        </IconField>
       </template>
     </FieldWrapper>
     <FieldWrapper
-      for="work-form-description"
-      label="Description"
-      :rule="ruleFor('description')"
-    >
-      <template #default="{ onUpdate, isFieldValid }">
-        <InputText
-          id="work-form-description"
-          v-model="formModel.description"
-          :invalid="!isFieldValid"
-          @update:model-value="onUpdate"
-        />
-      </template>
-    </FieldWrapper>
-    <FieldWrapper
-      for="work-form-phase"
-      label="Phase"
+      for="tag-form-color"
+      label="Color"
       required
-      :rule="ruleFor('phase')"
-      help="This doesn't do anything yet. You can still set it though!"
+      :rule="ruleFor('color')"
     >
       <template #default="{ onUpdate, isFieldValid }">
         <Dropdown
-          id="work-form-phase"
-          v-model="formModel.phase"
-          :options="phaseOptions"
+          id="tag-form-color"
+          v-model="formModel.color"
+          :options="colorOptions"
           option-label="label"
           option-value="value"
           :invalid="!isFieldValid"

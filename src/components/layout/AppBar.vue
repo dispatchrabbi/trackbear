@@ -16,7 +16,6 @@ const toast = useToast();
 
 const props = defineProps<{
   breadcrumbs: MenuItem[];
-
 }>();
 
 const toggleSidebar = function() {
@@ -29,7 +28,8 @@ const toggleSidebar = function() {
 
 const userMenu = ref(null);
 const userMenuItems = ref([
-  { label: 'Account Settings', route: '/account' },
+  { label: 'Account Settings', route: '/settings/account' },
+  { label: 'Tags', route: '/settings/tags' },
   { label: 'Log Out', route: '/logout' },
 ]);
 const toggleUserMenu = ev => userMenu.value.toggle(ev);

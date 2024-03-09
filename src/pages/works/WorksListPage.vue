@@ -11,8 +11,8 @@ import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
-import WorkTile from 'src/components/works/WorkTile.vue';
-import CreateWorkForm from 'src/components/works/CreateWorkForm.vue';
+import WorkTile from 'src/components/work/WorkTile.vue';
+import CreateWorkForm from 'src/components/work/CreateWorkForm.vue';
 import { PrimeIcons } from 'primevue/api';
 
 const breadcrumbs: MenuItem[] = [
@@ -78,7 +78,7 @@ loadWorks();
         </h2>
       </template>
       <CreateWorkForm
-        @work-created="reloadWorks()"
+        @work:create="reloadWorks()"
         @request-close="isCreateFormVisible = false"
       />
     </Dialog>

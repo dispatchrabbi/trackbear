@@ -15,7 +15,7 @@ import Dropdown from 'primevue/dropdown';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 
-const emit = defineEmits(['workCreated', 'requestClose']);
+const emit = defineEmits(['work:create', 'requestClose']);
 
 const formModel = reactive({
   title: '',
@@ -51,7 +51,7 @@ async function handleSubmit() {
     const data = formData();
     const createdWork = await createWork(data as WorkPayload);
 
-    emit('workCreated', { work: createdWork });
+    emit('work:create', { work: createdWork });
     successMessage.value = `${createdWork.title} has been created.`;
     await wait(1 * 1000);
     emit('requestClose');

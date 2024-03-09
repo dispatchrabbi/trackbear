@@ -15,10 +15,10 @@ import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
-import EditWorkForm from 'src/components/works/EditWorkForm.vue';
-import DeleteWorkForm from 'src/components/works/DeleteWorkForm.vue';
-import WorkTallyLineChart from 'src/components/works/WorkTallyLineChart.vue';
-import WorkTallyDataTable from 'src/components/works/WorkTallyDataTable.vue';
+import EditWorkForm from 'src/components/work/EditWorkForm.vue';
+import DeleteWorkForm from 'src/components/work/DeleteWorkForm.vue';
+import WorkTallyLineChart from 'src/components/work/WorkTallyLineChart.vue';
+import WorkTallyDataTable from 'src/components/work/WorkTallyDataTable.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 
 const workId = ref<number>(+route.params.id);
@@ -66,7 +66,7 @@ const reloadWorks = async function() {
 
 import { useEventBus } from 'src/lib/use-event-bus';
 const eventBus = useEventBus();
-eventBus.on('tallyCreated', reloadWorks);
+eventBus.on('tally:create', reloadWorks);
 
 loadWork();
 
@@ -124,7 +124,7 @@ loadWork();
         </template>
         <EditWorkForm
           :work="work"
-          @work-edited="reloadWorks()"
+          @work:edit="reloadWorks()"
           @request-close="isEditFormVisible = false"
         />
       </Dialog>
@@ -140,7 +140,7 @@ loadWork();
         </template>
         <DeleteWorkForm
           :work="work"
-          @work-deleted="workStore.populateWorks(true)"
+          @work:delete="workStore.populateWorks(true)"
           @request-close="router.push('/works')"
         />
       </Dialog>

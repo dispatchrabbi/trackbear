@@ -16,7 +16,8 @@ import { getMe } from 'src/lib/api/user.ts';
 
 import type { MenuItem } from 'primevue/menuitem';
 const breadcrumbs: MenuItem[] = [
-  { label: 'Account Settings', url: '/account' },
+  { label: 'Settings' },
+  { label: 'Account', url: '/settings/account' },
 ];
 
 const user = ref<User>(null);
