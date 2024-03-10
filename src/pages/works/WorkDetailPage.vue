@@ -17,6 +17,7 @@ import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import EditWorkForm from 'src/components/work/EditWorkForm.vue';
 import DeleteWorkForm from 'src/components/work/DeleteWorkForm.vue';
+import WorkTallyStreakChart from 'src/components/work/WorkTallyStreakChart.vue';
 import WorkTallyLineChart from 'src/components/work/WorkTallyLineChart.vue';
 import WorkTallyDataTable from 'src/components/work/WorkTallyDataTable.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
@@ -100,6 +101,12 @@ loadWork();
         </h2>
       </header>
       <div class="flex flex-wrap gap-2">
+        <div class="w-full max-w-screen-md">
+          <WorkTallyStreakChart
+            :work="work"
+            :tallies="work.tallies"
+          />
+        </div>
         <div class="w-full max-w-screen-md">
           <WorkTallyLineChart
             :work="work"

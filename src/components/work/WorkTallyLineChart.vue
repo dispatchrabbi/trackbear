@@ -10,7 +10,7 @@ import { formatCount } from 'src/lib/tally.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
-import { normalizeTallies, accumulateTallies } from '../chart/chart-functions';
+import { normalizeTallies, accumulateTallies, listEachDayOfData } from '../chart/chart-functions';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import LineChart from 'src/components/chart/LineChart.vue';
@@ -33,7 +33,7 @@ const chartData = computed(() => {
   const normalizedTallies = normalizeTallies(filteredTallies);
 
   const data = {
-    labels: normalizedTallies.map(tally => tally.date),
+    labels: listEachDayOfData(null, null, normalizedTallies[0].date, normalizedTallies[normalizedTallies.length - 1].date),
     datasets: [{
       label: props.work.title,
       measure: selectedMeasure.value,
@@ -65,7 +65,7 @@ const chartOptions = computed(() => {
   const legend = {
     display: chartData.value.datasets.length > 1,
     position: 'bottom',
-  }
+  };
 
   const tooltip = {
     callbacks: {

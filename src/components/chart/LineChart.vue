@@ -1,64 +1,65 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
-
-import twColors from 'tailwindcss/colors';
-import themeColors from 'src/themes/primevue.ts';
+import { computed, toValue, defineProps } from 'vue';
 
 import { Line } from 'vue-chartjs';
-import makeTrackbearLineStylesPlugin from './TrackbearLineStylesPlugin.ts';
-import type { TrackbearLineStylesPluginColors } from './TrackbearLineStylesPlugin.ts';
-import { Chart as ChartJS, Title, Tooltip, Legend, LineController, LineElement, PointElement, CategoryScale, LinearScale, ChartData } from 'chart.js';
+import { Chart as ChartJS, Title, Tooltip, Legend, LineController, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js';
+import type { ChartData, ChartOptions } from 'chart.js';
+import { provideLineChartDataDefaults, provideLineChartOptionsDefaults } from './line-chart-defaults';
 
-ChartJS.register(Title, Tooltip, LineController, Legend, LineElement, PointElement, CategoryScale, LinearScale);
-
-const pluginColors: TrackbearLineStylesPluginColors = {
-  text: themeColors.surface[700],
-  secondaryText: themeColors.surface[400],
-
-  red: twColors.red[500],
-  orange: twColors.orange[500],
-  yellow: twColors.yellow[500],
-  green: twColors.green[500],
-  blue: twColors.blue[500],
-  purple: twColors.purple[500],
-};
-let stylesPlugin = makeTrackbearLineStylesPlugin(pluginColors);
-ChartJS.register(stylesPlugin);
-
-ChartJS.defaults.animation = false;
-ChartJS.defaults.responsive = true;
-ChartJS.defaults.maintainAspectRatio = false;
-
-export type LineChartOptions = InstanceType<typeof Line>['$props']['options'];
+export type LineChartOptions = ChartOptions<'line'>;
+export type LineChartData = ChartData<'line'>;
 
 const props = defineProps<{
   id?: string;
   options?: LineChartOptions;
-  data: ChartData<'line'>;
+  data: LineChartData;
+
+  noDefaults?: boolean;
   isFullscreen?: boolean;
 }>();
+
+ChartJS.register(Title, Tooltip, LineController, Legend, LineElement, PointElement, CategoryScale, LinearScale);
+
+const options = computed(() => {
+  const propsOptions = toValue(props.options ?? { });
+
+  if(props.noDefaults) {
+    return propsOptions;
+  } else {
+    return provideLineChartOptionsDefaults(propsOptions);
+  }
+});
+
+const data = computed(() => {
+  const propsData = toValue(props.data);
+
+  if(props.noDefaults) {
+    return propsData;
+  } else {
+    return provideLineChartDataDefaults(propsData);
+  }
+});
+
 </script>
 
 <template>
   <div
-    ref="chartContainer"
     :class="[
-      'chart-container',
-      isFullscreen ? 'chart-container-fullscreen' : null,
-      props.options.plugins.legend.display ? 'chart-container-with-legend' : null
+      'line-chart-container',
+      isFullscreen ? 'line-chart-container-fullscreen' : null,
+      options.plugins?.legend?.display ? 'line-chart-container-with-legend' : null
     ]"
   >
     <Line
       :id="props.id"
-      ref="chart"
-      :options="props.options"
-      :data="props.data"
+      :options="options"
+      :data="data"
     />
   </div>
 </template>
 
 <style scoped>
-.chart-container {
+.line-chart-container {
   position: relative;
   margin: auto;
 
@@ -70,12 +71,12 @@ const props = defineProps<{
   max-width: 100%;
 }
 
-.chart-container-with-legend {
+.line-chart-container-with-legend {
   min-height: 14rem;
 }
 
-.chart-container-fullscreen {
+.line-chart-container-fullscreen {
   height: calc(100vh - 4rem);
   width: calc(100vw - 4rem);
 }
-</style>
+</style>./line-chart-defaults
