@@ -59,10 +59,10 @@ model User {
   userAuth                  UserAuth?
   passwordResetLinks        PasswordResetLink[]
   pendingEmailVerifications PendingEmailVerification[]
-  tallies                     Tally[]
-  works                      Work[]
-  tags                       Tag[]
-  goals                      Goal[]
+  tallies                   Tally[]
+  works                     Work[]
+  tags                      Tag[]
+  goals                     Goal[]
 }
 
 model UserAuth {
@@ -155,10 +155,10 @@ model Work {
 
   title       String
   description String
-  phase      String
+  phase       String
 
-  tallies       Tally[]
-  goals         Goal[]
+  tallies Tally[]
+  goals   Goal[]
 }
 
 model Tag {
@@ -177,7 +177,7 @@ model Tag {
   tallies Tally[]
   goals   Goal[]
 
-  @@unique([ ownerId, name ])
+  @@unique([ownerId, name])
 }
 
 model Goal {
@@ -195,8 +195,8 @@ model Goal {
   type        String
   parameters  Json
 
-  worksIncluded   Work[]
-  tagsIncluded    Tag[]
+  worksIncluded Work[]
+  tagsIncluded  Tag[]
 }
 
 // Board and Participant are not yet implemented
