@@ -31,8 +31,14 @@ async function handler(task) {
   }
 
   taskLogger.debug(`Sending email verification email for uuid ${task.verificationUuid}`);
-  await sendEmailVerificationEmail(pendingEmailVerification.user, pendingEmailVerification);
-  await logAuditEvent('email:verify-email', TRACKBEAR_SYSTEM_ID, pendingEmailVerification.user.id);
+  const response = await sendEmailVerificationEmail(pendingEmailVerification.user, pendingEmailVerification);
+
+  if(response.statusCode === 200) {
+    taskLogger.info(`Sending email succeeded with status code ${response.statusCode}: ${JSON.stringify(response.body)}`);
+    await logAuditEvent('email:verify-email', TRACKBEAR_SYSTEM_ID, pendingEmailVerification.user.id);
+  } else {
+    taskLogger.error(`Sending email failed with status code ${response.statusCode}: ${JSON.stringify(response.body)}`);
+  }
 
   taskLogger.debug(`Task has been finished`);
 }
@@ -64,7 +70,7 @@ Beary sincerely yours,
 TrackBear
     `.trim());
 
-  sendEmail(emailParams);
+  return sendEmail(emailParams);
 }
 
 function makeTask(verificationUuid: string) {
