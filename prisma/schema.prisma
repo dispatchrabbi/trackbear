@@ -59,9 +59,10 @@ model User {
   userAuth                  UserAuth?
   passwordResetLinks        PasswordResetLink[]
   pendingEmailVerifications PendingEmailVerification[]
-  Tally                     Tally[]
-  Work                      Work[]
-  Tag                       Tag[]
+  tallies                     Tally[]
+  works                      Work[]
+  tags                       Tag[]
+  goals                      Goal[]
 }
 
 model UserAuth {
@@ -157,6 +158,7 @@ model Work {
   phase      String
 
   tallies       Tally[]
+  goals         Goal[]
 }
 
 model Tag {
@@ -172,9 +174,29 @@ model Tag {
   name  String
   color String
 
-  talies Tally[]
+  tallies Tally[]
+  goals   Goal[]
 
   @@unique([ ownerId, name ])
+}
+
+model Goal {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  state     String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String
+  type        String
+  parameters  Json
+
+  worksIncluded   Work[]
+  tagsIncluded    Tag[]
 }
 
 // Board and Participant are not yet implemented
