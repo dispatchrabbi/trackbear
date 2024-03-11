@@ -7,6 +7,7 @@ import sendSignupEmailTask from './tasks/send-signup-email.ts';
 import sendPwchangeEmailTask from './tasks/send-pwchange-email.ts';
 import sendPwresetEmailTask from './tasks/send-pwreset-email.ts';
 import sendEmailverificationEmailTask from './tasks/send-emailverification-email.ts';
+import sendTestEmail from './tasks/send-test-email.ts';
 
 // use the queue log to log info about the queue
 import winston from 'winston';
@@ -45,13 +46,14 @@ async function initQueue() {
   registerTaskType(sendPwchangeEmailTask);
   registerTaskType(sendPwresetEmailTask);
   registerTaskType(sendEmailverificationEmailTask);
+  registerTaskType(sendTestEmail);
 
   const queueLogger = winston.loggers.get('queue');
   q.on('task_queued', (taskId, task) => queueLogger.info('Task queued', {taskId, ...task}));
   q.on('task_accepted', (taskId, task) => queueLogger.debug('Task accepted', {taskId, ...task}));
   q.on('task_started', (taskId, task) => queueLogger.info('Task started', {taskId, ...task}));
   q.on('task_finish', (taskId, result) => queueLogger.info('Task finished', {taskId, result}));
-  q.on('task_failed', (taskId, err) => queueLogger.warning('Task failed', {taskId, err}));
+  q.on('task_failed', (taskId, err) => queueLogger.warn('Task failed', {taskId, err}));
   q.on('task_retry', (taskId, retries) => queueLogger.info('Retrying task', {taskId, retries}));
   q.on('empty', () => queueLogger.debug('Queue is empty (but tasks may be in progress'));
   q.on('drain', () => queueLogger.debug('Queue has been drained'));
