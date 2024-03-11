@@ -47,10 +47,15 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   // first step is to check for valid values and supply defaults
 
   if(!['', 'development', 'production'].includes(process.env.NODE_ENV)) { throw new Error('NODE_ENV should only be either `development` or `production`'); }
+  if(process.env.NODE_ENV === '') {
+    console.info('No NODE_ENV provided; defaulting to `development`');
+  }
   process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
   if(process.env.PORT !== '' && isNaN(Number.parseInt(process.env.PORT, 10))) {
     throw new Error('PORT must be a number');
+  } else if(process.env.PORT === '') {
+    console.info('No PORT provided; defaulting to 3000');
   }
   process.env.PORT = process.env.PORT || "3000";
 
@@ -88,17 +93,28 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   if(!['', 'debug', 'info', 'warn', 'error', 'critical'].includes(process.env.LOG_LEVEL)) { throw new Error('LOG_LEVEL should be one of: `debug`, `info`, `warn`, `error`, `critical`'); }
   process.env.LOG_LEVEL = process.env.LOG_LEVEL || 'info';
 
-  if(!process.env.DATABASE_USER) { throw new Error('Missing DATABASE_USER value in .env'); }
+  if(!process.env.DATABASE_USER) {throw new Error('Missing DATABASE_USER value in .env'); }
+  if(process.env.DATABASE_USER.startsWith('"') && process.env.DATABASE_USER.endsWith('"')) { console.warn('DATABASE_USER value is quoted; it probably should not be.'); }
+
   if(!process.env.DATABASE_PASSWORD) { throw new Error('Missing DATABASE_PASSWORD value in .env'); }
+  if(process.env.DATABASE_PASSWORD.startsWith('"') && process.env.DATABASE_PASSWORD.endsWith('"')) { console.warn('DATABASE_PASSWORD value is quoted; it probably should not be.'); }
+
   if(!process.env.DATABASE_NAME) { throw new Error('Missing DATABASE_NAME value in .env'); }
+  if(process.env.DATABASE_NAME.startsWith('"') && process.env.DATABASE_NAME.endsWith('"')) { console.warn('DATABASE_NAME value is quoted; it probably should not be.'); }
+
   if(!process.env.DATABASE_HOST) { throw new Error('Missing DATABASE_HOST value in .env'); }
+  if(process.env.DATABASE_HOST.startsWith('"') && process.env.DATABASE_HOST.endsWith('"')) { console.warn('DATABASE_HOST value is quoted; it probably should not be.'); }
 
   process.env.DB_PATH = process.env.DB_PATH || '/db';
 
   if(!process.env.COOKIE_SECRET) { throw new Error('Missing COOKIE_SECRET value in .env'); }
+  if(process.env.COOKIE_SECRET.startsWith('"') && process.env.COOKIE_SECRET.endsWith('"')) { console.warn('COOKIE_SECRET value is quoted; it probably should not be.'); }
 
   if(!process.env.MAILERSEND_API_KEY) { throw new Error('Missing MAILERSEND_API_KEY value in .env'); }
+  if(process.env.MAILERSEND_API_KEY.startsWith('"') && process.env.MAILERSEND_API_KEY.endsWith('"')) { console.warn('MAILERSEND_API_KEY value is quoted; it probably should not be.'); }
+
   if(!process.env.EMAIL_URL_PREFIX) { throw new Error('Missing EMAIL_URL_PREFIX value in .env'); }
+  if(process.env.EMAIL_URL_PREFIX.startsWith('"') && process.env.EMAIL_URL_PREFIX.endsWith('"')) { console.warn('EMAIL_URL_PREFIX value is quoted; it probably should not be.'); }
 
   // second step is to parse the values into more usable types
   return {
@@ -123,7 +139,7 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
     DB_PATH:                process.env.DB_PATH,
     COOKIE_SECRET:          process.env.COOKIE_SECRET,
 
-    ENABLE_EMAIL:          process.env.ENABLE_EMAIL === '1',
+    ENABLE_EMAIL:           process.env.ENABLE_EMAIL === '1',
     MAILERSEND_API_KEY:     process.env.MAILERSEND_API_KEY,
     EMAIL_URL_PREFIX:       process.env.EMAIL_URL_PREFIX,
   };
