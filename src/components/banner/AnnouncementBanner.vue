@@ -2,8 +2,8 @@
 import { computed } from 'vue';
 import markdownit from 'markdown-it';
 
-import { PrimeIcons } from 'primevue/api';
 import Message from 'primevue/message';
+import MIcon from '../MIcon.vue';
 
 const pt = {
   root: ({ props }) => ({
@@ -55,16 +55,21 @@ const messageHtml = computed(() => {
 
 <template>
   <Message
-    :icon="props.icon ? `pi ${props.icon}` : PrimeIcons.EXCLAMATION_TRIANGLE"
     :severity="props.color || 'info'"
     :closable="true"
     :sticky="true"
     :pt="pt"
     @close="onBannerClose"
   >
+    <template #messageicon>
+      <MIcon
+        :icon="props.icon || 'campaign'"
+        class="text-2xl"
+      />
+    </template>
     <!-- eslint-disable vue/no-v-html -->
     <div
-      class="banner-message"
+      class="banner-message mx-2"
       v-html="messageHtml"
     />
     <!-- eslint-enable vue/no-v-html -->
@@ -72,8 +77,4 @@ const messageHtml = computed(() => {
 </template>
 
 <style scoped>
-.va-alert {
-  --va-alert-margin-y: 0;
-  --va-alert-border-radius: 0;
-}
 </style>
