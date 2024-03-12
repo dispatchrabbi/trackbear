@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
+import { useEventBus } from '@vueuse/core';
 
 import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
-import { useWorkStore } from 'src/stores/work';
+import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
 
 import { getWork, WorkWithTallies } from 'src/lib/api/work.ts';
+import { Tally } from 'src/lib/api/tally.ts';
 
 import { PrimeIcons } from 'primevue/api';
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
@@ -65,9 +67,8 @@ const reloadWorks = async function() {
   loadWork();
 }
 
-import { useEventBus } from 'src/lib/use-event-bus';
-const eventBus = useEventBus();
-eventBus.on('tally:create', reloadWorks);
+const tallyEventBus = useEventBus<{ tally: Tally }>('tally:create');
+tallyEventBus.on(reloadWorks);
 
 loadWork();
 

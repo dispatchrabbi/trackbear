@@ -1,6 +1,6 @@
 import { MatrixChartOptions, MatrixChartData } from './CalendarMatrixChart.vue';
 
-import twColors from 'tailwindcss/colors';
+import twColors from 'tailwindcss/colors.js';
 import themeColors from 'src/themes/primevue.ts';
 import Color from 'color';
 import { usePreferredColorScheme } from '@vueuse/core';

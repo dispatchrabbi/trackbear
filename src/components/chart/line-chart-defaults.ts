@@ -1,6 +1,6 @@
 import { LineChartOptions, LineChartData } from './LineChart.vue';
 
-import twColors from 'tailwindcss/colors';
+import twColors from 'tailwindcss/colors.js';
 import themeColors from 'src/themes/primevue.ts';
 
 import { deepMergeWithDefaults } from 'src/lib/obj.ts';

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref, reactive, computed, defineProps, defineEmits } from 'vue';
 import wait from 'src/lib/wait.ts';
-import { toTitleCase } from 'src/lib/str';
+import { toTitleCase } from 'src/lib/str.ts';
 
 import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { updateTag, Tag, TagPayload } from 'src/lib/api/tag';
-import { TAG_COLORS } from 'server/lib/entities/tag';
+import { updateTag, Tag, TagPayload } from 'src/lib/api/tag.ts';
+import { TAG_COLORS } from 'server/lib/entities/tag.ts';
 import { TAG_COLOR_CLASSES } from 'src/components/tag/tag-color-classes.ts';
 
 import IconField from 'primevue/iconfield';

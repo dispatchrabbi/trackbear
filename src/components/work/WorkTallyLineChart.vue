@@ -10,12 +10,12 @@ import { formatCount } from 'src/lib/tally.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
-import { normalizeTallies, accumulateTallies, listEachDayOfData } from '../chart/chart-functions';
+import { normalizeTallies, accumulateTallies, listEachDayOfData } from '../chart/chart-functions.ts';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import LineChart from 'src/components/chart/LineChart.vue';
 import type { LineChartOptions } from 'src/components/chart/LineChart.vue';
-import { TALLY_MEASURE } from 'server/lib/entities/tally';
+import { TALLY_MEASURE } from 'server/lib/entities/tally.ts';
 
 const props = defineProps<{
   work: Work;

@@ -4,7 +4,7 @@ import { computed, toValue, defineProps } from 'vue';
 import { Line } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, LineController, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js';
 import type { ChartData, ChartOptions } from 'chart.js';
-import { provideLineChartDataDefaults, provideLineChartOptionsDefaults } from './line-chart-defaults';
+import { provideLineChartDataDefaults, provideLineChartOptionsDefaults } from './line-chart-defaults.ts';
 
 export type LineChartOptions = ChartOptions<'line'>;
 export type LineChartData = ChartData<'line'>;

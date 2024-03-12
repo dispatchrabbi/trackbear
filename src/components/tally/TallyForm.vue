@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, defineEmits } from 'vue';
-
-import { useEventBus } from 'src/lib/use-event-bus';
-const eventBus = useEventBus();
+import { useEventBus } from '@vueuse/core';
 
 import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
@@ -17,8 +15,8 @@ import { NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { TallyPayload } from 'server/api/v1/tally';
-import { createTally } from 'src/lib/api/tally';
+import { TallyPayload } from 'server/api/v1/tally.ts';
+import { createTally, Tally } from 'src/lib/api/tally.ts';
 import { TALLY_MEASURE } from 'server/lib/entities/tally.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
@@ -104,8 +102,8 @@ async function handleSubmit() {
     const data = formData();
     const createdTally = await createTally(data as TallyPayload);
 
-    eventBus.emit('tally:create', { tally: createdTally });
-    emit('tally:create', { tally: createdTally });
+    const tallyEventBus = useEventBus<{ tally: Tally }>('tally:create');
+    tallyEventBus.emit({ tally: createdTally });
 
     successMessage.value = `Progress logged!`;
     // clear out the form

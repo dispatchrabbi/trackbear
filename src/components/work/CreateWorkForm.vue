@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref, reactive, computed, defineEmits } from 'vue';
 import wait from 'src/lib/wait.ts';
-import { toTitleCase } from 'src/lib/str';
+import { toTitleCase } from 'src/lib/str.ts';
 
 import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createWork, WorkPayload } from 'src/lib/api/work.ts';
-import { WORK_PHASE } from 'server/lib/entities/work';
+import { WORK_PHASE } from 'server/lib/entities/work.ts';
 
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';

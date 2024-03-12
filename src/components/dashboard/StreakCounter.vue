@@ -2,7 +2,7 @@
 import { computed, defineProps } from 'vue';
 
 import type { Tally } from 'src/lib/api/tally.ts';
-import { getStreakInfo } from 'src/lib/streak';
+import { getStreakInfo } from 'src/lib/streak.ts';
 
 import Card from 'primevue/card';
 import { PrimeIcons } from 'primevue/api';

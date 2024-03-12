@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
 
-import { useWorkStore } from 'src/stores/work';
+import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
 
 import { getWorks, WorkWithTotals } from 'src/lib/api/work.ts';

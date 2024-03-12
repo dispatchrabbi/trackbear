@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import type { WorkWithTotals } from 'src/lib/api/work.ts';
-import { WORK_PHASE } from 'server/lib/entities/work';
-import { TALLY_MEASURE_INFO } from 'src/lib/tally';
+import { WORK_PHASE } from 'server/lib/entities/work.ts';
+import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 const props = defineProps<{
   work: WorkWithTotals;

@@ -6,12 +6,12 @@ import { getISODay, addDays } from 'date-fns';
 import { parseDateString, formatDate } from 'src/lib/date.ts';
 
 import Color from 'color';
-import twColors from 'tailwindcss/colors';
-import { DEFAULT_MATRIX_COLORS } from '../chart/calendar-matrix-chart-defaults';
+import twColors from 'tailwindcss/colors.js';
+import { DEFAULT_MATRIX_COLORS } from '../chart/calendar-matrix-chart-defaults.ts';
 import { usePreferredColorScheme } from '@vueuse/core';
 const colorScheme = usePreferredColorScheme();
 
-import { normalizeTallies, densifyTallies, listEachDayOfData } from '../chart/chart-functions';
+import { normalizeTallies, densifyTallies, listEachDayOfData } from '../chart/chart-functions.ts';
 import CalendarMatrixChart from '../chart/CalendarMatrixChart.vue';
 import { MatrixChartData } from '../chart/CalendarMatrixChart.vue';
 

@@ -7,7 +7,7 @@ import type { Tag } from 'src/lib/api/tag.ts';
 import { getISODay, addDays } from 'date-fns';
 import { parseDateString, formatDate } from 'src/lib/date.ts';
 
-import { normalizeTallies, densifyTallies, listEachDayOfData } from '../chart/chart-functions';
+import { normalizeTallies, densifyTallies, listEachDayOfData } from '../chart/chart-functions.ts';
 import CalendarMatrixChart from '../chart/CalendarMatrixChart.vue';
 import { MatrixChartData } from '../chart/CalendarMatrixChart.vue';
 
