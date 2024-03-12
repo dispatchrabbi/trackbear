@@ -5,8 +5,8 @@
 # base stage
 FROM node:lts-slim as base
 
-# Install the latest openssl (for HTTPS), curl, and psql (for debugging)
-RUN apt update -y && apt install -y openssl curl postgresql-client
+# Install the latest openssl (for HTTPS), and some other tools (for debugging)
+RUN apt update -y && apt install -y openssl curl postgresql-client nano
 
 # Default NODE_ENV to development (the safest); later stages will override this if needed
 ENV NODE_ENV=development
