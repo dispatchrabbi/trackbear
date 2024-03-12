@@ -192,8 +192,12 @@ model Goal {
 
   title       String
   description String
+
   type        String
   parameters  Json
+
+  startDate   String?
+  endDate     String?
 
   worksIncluded Work[]
   tagsIncluded  Tag[]
@@ -258,6 +262,8 @@ model Project {
 
   visibility String
   starred    Boolean
+
+  transitionedId  Int?
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)

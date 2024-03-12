@@ -2,7 +2,11 @@ import path from 'path';
 import winston, { format, transports } from 'winston';
 import { getNormalizedEnv } from './env.ts';
 
-async function initLoggers() {
+export type LoggerInitOpts = {
+  forceConsoles?: boolean
+};
+
+async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
   const env = await getNormalizedEnv();
 
   winston.configure({
@@ -82,7 +86,7 @@ async function initLoggers() {
   });
 
   // also log queue and worker to the console if we're in development mode
-  if (env.NODE_ENV !== 'production') {
+  if (forceConsoles || env.NODE_ENV !== 'production') {
     winston.loggers.get('queue').add(new transports.Console({
       format: format.combine(
         format.colorize(),
