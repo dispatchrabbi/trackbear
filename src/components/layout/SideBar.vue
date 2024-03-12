@@ -57,7 +57,7 @@ const items = computed(() => {
 
   const works = [
     {
-      label: 'Works',
+      label: 'Projects',
       icon: PrimeIcons.FILE_EDIT,
       href: '/works',
       section: true,

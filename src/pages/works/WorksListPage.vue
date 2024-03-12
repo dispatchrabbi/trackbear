@@ -67,6 +67,9 @@ loadWorks();
         <WorkTile :work="work" />
       </RouterLink>
     </div>
+    <div v-if="works.length === 0">
+      You haven't made any projects yet. Click the <span class="font-bold">New Work</span> button to get started!
+    </div>
     <Dialog
       v-model:visible="isCreateFormVisible"
       modal

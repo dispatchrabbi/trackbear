@@ -18,7 +18,9 @@ const props = defineProps<{
 
 const chartData = computed(() => {
   const normalizedTallies = normalizeTallies(props.tallies);
-  const eachDay = listEachDayOfData(null, formatDate(addDays(parseDateString(normalizedTallies[0].date), 365)), normalizedTallies[0].date, normalizedTallies[normalizedTallies.length - 1].date);
+  const firstDate = normalizedTallies.length > 0 ? parseDateString(normalizedTallies[0].date) : new Date();
+  const lastDate = normalizedTallies.length > 0 ? normalizedTallies[normalizedTallies.length - 1].date : null;
+  const eachDay = listEachDayOfData(null, formatDate(addDays(firstDate, 365)), formatDate(firstDate), lastDate);
 
   const data = {
     datasets: [{

@@ -100,7 +100,10 @@ loadWork();
           {{ work.description }}
         </h2>
       </header>
-      <div class="flex flex-wrap gap-2">
+      <div
+        v-if="work.tallies.length > 0"
+        class="flex flex-wrap gap-2"
+      >
         <div class="w-full max-w-screen-md">
           <WorkTallyStreakChart
             :work="work"
@@ -118,6 +121,9 @@ loadWork();
             :tallies="work.tallies"
           />
         </div>
+      </div>
+      <div v-else>
+        You haven't logged any progress on this project. You want the cool graphs? Get writing!
       </div>
       <Dialog
         v-model:visible="isEditFormVisible"
