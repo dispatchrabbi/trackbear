@@ -18,6 +18,8 @@ Types of changes include:
 - CHANGED: Mobile support in the UI has, unfortunately, changed for the worse. I will be working on making this better.
 - REMOVED: The light/dark theme toggle. The site will now follow the light/dark setting on your device. The new UI system makes it harder to create a light/dark theme toggle like the old UI had, so this is how it currently is. Don't worry — adding the toggle back is on the roadmap.
 - REMOVED: Goals from projects. I wanted to implement goals before releasing this UI and backend, but some personal stuff is rushing the timing. Goals are next on my list.
+- REMOVED: Shared leaderboards. These will come back eventually, but the joining method needs to be thought out better.
+- REMOVED: Shared projects. The ability to share will return eventually, but needs to be thought out better.
 - SECURITY: I have changed and clarified some things in the [Privacy Policy](/privacy). The gist is the same, but it's more detailed now.
 
 ## v0.6.3
