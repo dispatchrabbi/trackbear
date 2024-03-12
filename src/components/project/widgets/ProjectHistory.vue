@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue';
 import { DataTableColumnSource } from 'vuestic-ui';
-import { formatDistanceToNow, parseISO } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 
 import { TYPE_INFO } from 'src/lib/project.ts';
 import type { Update } from '@prisma/client';
@@ -176,7 +176,7 @@ async function handleDeleteConfirmClick() {
           <VaPopover
             v-if="props.showUpdateTimes"
             placement="top"
-            :message="`${formatDistanceToNow(parseISO(rowData.updated))} ago`"
+            :message="`${formatDistanceToNow(rowData.updated)} ago`"
           >
             <VaIcon
               name="history"
