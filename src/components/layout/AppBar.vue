@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, defineProps } from "vue";
+import { ref, defineProps, defineEmits } from "vue";
 
-import { useRouter } from "vue-router";
-const router = useRouter();
+import { RouterLink } from "vue-router";
 
 import { PrimeIcons } from 'primevue/api';
 import Avatar from "primevue/avatar";
@@ -11,26 +10,21 @@ import Menu from "primevue/menu";
 import Breadcrumb from "primevue/breadcrumb";
 import type { MenuItem } from 'primevue/menuitem';
 
-import { useToast } from 'primevue/usetoast';
-const toast = useToast();
-
 const props = defineProps<{
   breadcrumbs: MenuItem[];
 }>();
 
+const emit = defineEmits([ 'sidebar:toggle' ]);
+
 const toggleSidebar = function() {
-  toast.add({
-    severity: 'info',
-    detail: 'Boop!',
-    life: 2000,
-  });
+  emit('sidebar:toggle');
 }
 
 const userMenu = ref(null);
-const userMenuItems = ref([
-  { label: 'Account Settings', route: '/settings/account' },
-  { label: 'Tags', route: '/settings/tags' },
-  { label: 'Log Out', route: '/logout' },
+const userMenuItems = ref<MenuItem[]>([
+  { label: 'Account Settings', url: '/settings/account' },
+  { label: 'Tags', url: '/settings/tags' },
+  { label: 'Log Out', url: '/logout' },
 ]);
 const toggleUserMenu = ev => userMenu.value.toggle(ev);
 
@@ -47,7 +41,26 @@ const toggleUserMenu = ev => userMenu.value.toggle(ev);
     />
     <Breadcrumb
       :model="props.breadcrumbs"
-    />
+    >
+      <template #item="{ item, props: itemProps }">
+        <RouterLink
+          v-if="item.url"
+          :to="item.url"
+          v-bind="itemProps.action"
+        >
+          <span :class="[item.icon, 'text-color']" />
+          <span class="text-primary font-semibold">{{ item.label }}</span>
+        </RouterLink>
+        <a
+          v-else
+          :href="item.url"
+          :target="item.target"
+          v-bind="itemProps.action"
+        >
+          <span class="text-color">{{ item.label }}</span>
+        </a>
+      </template>
+    </Breadcrumb>
     <div class="spacer flex-auto" />
     <Avatar
       label="🐻"
@@ -73,18 +86,10 @@ const toggleUserMenu = ev => userMenu.value.toggle(ev);
     >
       <template #item="{ item, props: itemProps }">
         <RouterLink
-          v-slot="{ href, navigate }"
-          :to="item.route"
-          custom
+          :to="item.url"
+          v-bind="itemProps.action"
         >
-          <a
-            v-ripple
-            :href="href"
-            v-bind="itemProps.action"
-            @click="navigate"
-          >
-            <span class="leading-6 text-sm font-medium">{{ item.label }}</span>
-          </a>
+          <span class="leading-6 text-sm font-medium">{{ item.label }}</span>
         </RouterLink>
       </template>
     </Menu>

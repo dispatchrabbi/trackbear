@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
+import { useLocalStorage } from '@vueuse/core';
+
 import type { MenuItem } from 'primevue/menuitem';
 
 import { useRouter } from 'vue-router';
@@ -18,6 +20,8 @@ const props = defineProps<{
   breadcrumbs: MenuItem[];
 }>();
 
+const collapsed = useLocalStorage('sidebarCollapsed', false);
+
 // attempt to populate the user, but only care about failing
 userStore.populateUser().catch(() => {
   router.push('/login');
@@ -26,17 +30,22 @@ userStore.populateUser().catch(() => {
 </script>
 
 <template>
-  <BannerContainer />
-  <div class="application">
+  <div
+    :class="[ 'application', collapsed ? 'sidebar-collapsed' : null ]"
+  >
+    <div class="banner">
+      <BannerContainer />
+    </div>
     <div class="logo self-center p-2">
-      <TrackbearMasthead />
+      <TrackbearMasthead :collapsed="collapsed" />
     </div>
     <div class="side">
-      <SideBar />
+      <SideBar :collapsed="collapsed" />
     </div>
     <div class="bar">
       <AppBar
         :breadcrumbs="props.breadcrumbs"
+        @sidebar:toggle="collapsed = !collapsed"
       />
     </div>
     <div class="main p-2 pr-4">
@@ -52,13 +61,30 @@ userStore.populateUser().catch(() => {
 .application {
   display: grid;
   grid-template:
+    "banner banner"
     "logo bar"
     "side main" 1fr
     / 16rem 1fr
   ;
 
-  height: 100vh;
+  transition-property: grid-template-columns;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
 
+  height: 100vh;
+}
+
+.application.sidebar-collapsed {
+  grid-template:
+    "banner banner"
+    "logo bar"
+    "side main" 1fr
+    / 4rem 1fr
+  ;
+}
+
+.banner {
+  grid-area: banner;
 }
 
 .logo {

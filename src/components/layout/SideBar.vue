@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, defineProps } from 'vue';
 import { RouterLink } from 'vue-router';
+
+const props = defineProps<{
+  collapsed?: boolean;
+}>();
 
 import { useWorkStore } from 'src/stores/work.ts';
 
@@ -83,18 +87,25 @@ const items = computed(() => {
     { label: 'January Challenge' },
     { label: 'Overachievers Guild' },
     { label: 'Progress to 1M' },
-  ]
+  ];
 
-  return [
+  const items: { label: string; href?: string; icon?: string; section?: boolean; first?: boolean; }[] = [
     ...dashboard,
     ...works,
-    ...yetToCome,
+    // ...yetToCome,
   ];
+
+  if(props.collapsed) {
+    return items.filter(item => item.section === true)
+  } else {
+    return items;
+  }
 });
 </script>
 
 <template>
   <Menu
+    v-if="!props.collapsed"
     :model="items"
     :pt="menuPassthrough"
   >
@@ -123,19 +134,27 @@ const items = computed(() => {
         />
         <span class="flex-auto">{{ item.label }}</span>
       </div>
-      <!-- <div
-        v-if="item.section"
-        :class="['section', 'flex', 'items-baseline', 'gap-2', 'font-light', 'text-xl', 'm-0']"
+    </template>
+  </Menu>
+  <Menu
+    v-if="props.collapsed"
+    :model="items"
+    :pt="menuPassthrough"
+  >
+    <template #item="{ item }">
+      <RouterLink
+        v-if="item.href"
+        :to="item.href"
       >
-        <span :class="[item.icon, 'submenuheader-icon']" />
-        <span class="flex-auto">{{ item.label }}</span>
-      </div>
-      <div
-        v-else
-        class="item"
-      >
-        {{ item.label }}
-      </div> -->
+        <div
+          :class="{ 'flex': true, [sectionClasses]: item.section }"
+        >
+          <span
+            v-if="item.icon"
+            :class="item.icon"
+          />
+        </div>
+      </RouterLink>
     </template>
   </Menu>
 </template>
