@@ -43,22 +43,27 @@ const chartData = computed(() => {
       data: tallyData,
       backgroundColor: function(ctx) {
         const value = ctx.dataset.data[ctx.dataIndex].value;
+        const alpha = maxValue === 0 ? 0 : value / maxValue;
+
         if(ctx.dataset.data[ctx.dataIndex].date > today) {
           return 'rgba(0, 0, 0, 0)';
         } else if(ctx.dataset.data[ctx.dataIndex].date === today) {
-          return Color(todayColor).alpha(value / maxValue).rgb().string();
+          return Color(todayColor).alpha(alpha).rgb().string();
         } else {
-          return Color(baseColor).alpha(value / maxValue).rgb().string();
+          return Color(baseColor).alpha(alpha).rgb().string();
         }
       },
       borderColor: function(ctx) {
         const value = ctx.dataset.data[ctx.dataIndex].value;
+
         if(ctx.dataset.data[ctx.dataIndex].date > today) {
           return 'rgba(0, 0, 0, 0)';
         } else if(ctx.dataset.data[ctx.dataIndex].date === today) {
-          return Color(todayColor).alpha(Math.max(value / maxValue, 0.1)).darken(0.3).rgb().string();
+          const alpha = maxValue === 0 ? 1 : Math.max(value / maxValue, 0.1);
+          return Color(todayColor).alpha(alpha).darken(0.3).rgb().string();
         } else {
-          return Color(baseColor).alpha(Math.max(value / maxValue, 0.1)).darken(0.3).rgb().string();
+          const alpha = maxValue === 0 ? 0.1 : Math.max(value / maxValue, 0.1);
+          return Color(baseColor).alpha(alpha).darken(0.3).rgb().string();
         }
       }
     }],

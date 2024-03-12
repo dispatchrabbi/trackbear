@@ -51,7 +51,7 @@ import DarkModeToggle from './DarkModeToggle.vue';
               </VaMenuItem>
               <VaDivider />
               <VaMenuItem>
-                <RouterLink to="/account">
+                <RouterLink to="/settings/account">
                   Account
                 </RouterLink>
               </VaMenuItem>
@@ -83,7 +83,7 @@ import DarkModeToggle from './DarkModeToggle.vue';
               <VaAvatar>{{ userStore.user.displayName.substring(0, 1).toUpperCase() }}</VaAvatar>
             </template>
             <VaMenuItem>
-              <RouterLink to="/account">
+              <RouterLink to="/settings/account">
                 Account
               </RouterLink>
             </VaMenuItem>
