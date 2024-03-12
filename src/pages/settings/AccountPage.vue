@@ -40,7 +40,10 @@ loadUser();
       v-if="user"
       class="flex flex-col justify-center"
     >
-      <div class="m-2 md:max-w-2xl">
+      <div
+        v-if="!user.isEmailVerified"
+        class="m-2 md:max-w-2xl"
+      >
         <UnverifiedEmailMessage />
       </div>
       <Card

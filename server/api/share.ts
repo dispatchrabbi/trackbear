@@ -47,6 +47,7 @@ shareRouter.get('/projects/:uuid',
       goal: fullProject.goal,
       startDate: fullProject.startDate,
       endDate: fullProject.endDate,
+      transitionedId: fullProject.transitionedId,
       updates: fullProject.updates.map(update => ({
         date: update.date,
         value: update.value,
