@@ -23,10 +23,14 @@ import TbTag from '../tag/TbTag.vue';
 </script>
 
 <template>
-  <DataTable :value="sortedTallies">
+  <DataTable
+    :value="sortedTallies"
+    sort-field="date"
+  >
     <Column
       field="date"
       header="Date"
+      sortable
     />
     <Column
       header="Progress"

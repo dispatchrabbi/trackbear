@@ -3,6 +3,7 @@ import { MatrixChartOptions, MatrixChartData } from './CalendarMatrixChart.vue';
 import twColors from 'tailwindcss/colors';
 import themeColors from 'src/themes/primevue.ts';
 import Color from 'color';
+import { usePreferredColorScheme } from '@vueuse/core';
 
 import { deepMergeWithDefaults } from 'src/lib/obj.ts';
 import { parseDateString, formatDate } from 'src/lib/date.ts';
@@ -17,11 +18,14 @@ declare module 'chart.js' {
 }
 
 export const DEFAULT_MATRIX_COLORS = {
-  text: themeColors.surface[700],
-  secondaryText: themeColors.surface[400],
+  text: { light: themeColors.surface[900], dark: themeColors.surface[50] },
+  secondaryText: { light: themeColors.surface[700], dark: themeColors.surface[400] },
 
-  primary: themeColors.primary[500],
-  cycle: [twColors.red[500], twColors.orange[500], twColors.yellow[500], twColors.green[500], twColors.blue[500], twColors.purple[500] ],
+  primary: { light: themeColors.primary[500], dark: themeColors.primary[400] },
+  cycle: {
+    light: [twColors.red[500], twColors.orange[500], twColors.yellow[500], twColors.green[500], twColors.blue[500], twColors.purple[500] ],
+    dark: [twColors.red[400], twColors.orange[400], twColors.yellow[400], twColors.green[400], twColors.blue[400], twColors.purple[400] ],
+  },
 };
 
 export const DEFAULT_MATRIX_CHART_OPTIONS: MatrixChartOptions = {
@@ -105,9 +109,13 @@ export function provideMatrixChartOptionsDefaults(options: MatrixChartOptions): 
 
 export function provideMatrixChartDataDefaults(data: MatrixChartData): MatrixChartData {
   // if there's only one dataset (which there probably is) use the primary theme color
-  const colorCycle = data.datasets.length > 1 ? DEFAULT_MATRIX_COLORS.cycle : [ DEFAULT_MATRIX_COLORS.primary ];
+  const colorCycle = data.datasets.length > 1 ?
+    DEFAULT_MATRIX_COLORS.cycle :
+    { light: [ DEFAULT_MATRIX_COLORS.primary.light ], dark: [ DEFAULT_MATRIX_COLORS.primary.dark ] };
+
   data.datasets.forEach((dataset, ix) => {
-    const baseColor = colorCycle[ix % colorCycle.length];
+    const colorScheme = usePreferredColorScheme().value;
+    const baseColor = colorCycle[colorScheme][ix % colorCycle[colorScheme].length];
 
     let maxValue = dataset.data.reduce((max, datapoint) => Math.max(max, datapoint.value), 0);
     if(maxValue === 0) { maxValue = 1; } // don't divide by zero later on
@@ -136,6 +144,5 @@ export function provideMatrixChartDataDefaults(data: MatrixChartData): MatrixCha
     }
   });
 
-  console.log({data});
   return data;
 }

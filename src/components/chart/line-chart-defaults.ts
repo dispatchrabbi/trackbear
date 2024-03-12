@@ -9,7 +9,7 @@ export const LINE_COLORS = {
   text: themeColors.surface[700],
   secondaryText: themeColors.surface[400],
 
-  cycle: [twColors.red[500], twColors.orange[500], twColors.yellow[500], twColors.green[500], twColors.blue[500], twColors.purple[500] ],
+  cycle: [ themeColors.primary[500], twColors.red[500], twColors.orange[500], twColors.yellow[500], twColors.green[500], twColors.blue[500], twColors.purple[500] ],
 };
 
 export const LINE_POINT_STYLES = ['circle', 'rect', 'crossRot', 'rectRot', 'triangle', 'star', 'rectRounded', 'cross'];
