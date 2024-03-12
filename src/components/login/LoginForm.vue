@@ -39,7 +39,7 @@ async function handleSubmit() {
   try {
     const { username, password } = formData();
     await userStore.logIn(username, password);
-    router.push('/dashboard');
+    router.push('/projects');
   } catch(err) {
     if(err.code === 'INCORRECT_CREDS') {
       errorMessage.value = 'Incorrect username or password. Please check and try again.';
