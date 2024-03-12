@@ -12,9 +12,12 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: A whole new UI and backend! The new backend is much more flexible and makes it easier for me to add several requested features like tagging, streak counters, goals that span multiple projects, and habit tracking. The new UI is also much more powerful, though I'm still kicking the tires a bit. I know that there are a number of UI changes that are a step backward here, so a special apology to those of you who are primarily mobile and/or dark mode users. Stay tuned: missing functionality will come back (better than ever) and
 - NEW: You can now add tags and notes to your progress logs.
-- NEW: A whole new UI! I'm still kicking the tires on this one, including making better mobile support. I know that that's a step backward, so a special apology to those of you who are primarily mobile users. Stay tuned as colors, fonts, and other UI elements and themes will change as more stuff is added.
-- REMOVED: The light/dark theme toggle. The site will now follow the light/dark setting on your device. The new UI makes it harder to create a light/dark theme toggle like the old UI had, so this is how it currently is. Getting the toggle back is on the list.
+- NEW: A Dashboard page that shows your streaks and yearly activity.
+- CHANGED: Mobile support in the UI has, unfortunately, changed for the worse. I will be working on making this better.
+- REMOVED: The light/dark theme toggle. The site will now follow the light/dark setting on your device. The new UI system makes it harder to create a light/dark theme toggle like the old UI had, so this is how it currently is. Don't worry — adding the toggle back is on the roadmap.
+- REMOVED: Goals from projects. I wanted to implement goals before releasing this UI and backend, but some personal stuff is rushing the timing. Goals are next on my list.
 - SECURITY: I have changed and clarified some things in the [Privacy Policy](/privacy). The gist is the same, but it's more detailed now.
 
 ## v0.6.3
