@@ -7,7 +7,7 @@ const props = defineProps<{
 }>();
 
 import { useWorkStore } from 'src/stores/work.ts';
-import { WORK_PHASE_ORDER } from 'server/lib/entities/work';
+import { WORK_PHASE_ORDER } from 'server/lib/entities/work.ts';
 
 import Menu from 'primevue/menu';
 import { PrimeIcons } from 'primevue/api';
