@@ -12,6 +12,14 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.7.2
+
+- NEW: You can now edit and delete progress entries. (h/t Robot, Kathryn)
+- NEW: You can now filter the projects list by title or description, to make finding projects in a long list easier. (h/t Athena)
+- CHANGED: The project list page and sidebar now sort projects by phase.
+- CHANGED: If you're on a project's page, that project will automatically populate the Enter Progress form.
+- FIXED: Scrollbars no longer show up in Chrome on Windows unless they're needed. (h/t Robot)
+
 ## v0.7.0
 
 - NEW: A whole new UI and backend! The new backend is much more flexible and makes it easier for me to add several requested features like tagging, streak counters, goals that span multiple projects, and habit tracking. The new UI is also much more powerful, though I'm still kicking the tires a bit. I know that there are a number of UI changes that are a step backward here, so a special apology to those of you who are primarily mobile and/or dark mode users. Stay tuned: missing functionality will come back (better than ever) and
