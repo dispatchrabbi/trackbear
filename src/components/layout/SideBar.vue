@@ -7,6 +7,7 @@ const props = defineProps<{
 }>();
 
 import { useWorkStore } from 'src/stores/work.ts';
+import { WORK_PHASE_ORDER } from 'server/lib/entities/work';
 
 import Menu from 'primevue/menu';
 import { PrimeIcons } from 'primevue/api';
@@ -62,7 +63,7 @@ const items = computed(() => {
       href: '/works',
       section: true,
     },
-    ...(workStore.works ?? []).map(work => ({
+    ...(workStore.works ?? []).toSorted((a, b) => WORK_PHASE_ORDER.indexOf(a.phase) - WORK_PHASE_ORDER.indexOf(b.phase)).map(work => ({
       label: work.title,
       href: `/works/${work.id}`,
     })),
