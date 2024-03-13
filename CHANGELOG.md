@@ -14,11 +14,11 @@ Types of changes include:
 
 ## 0.7.2
 
-- NEW: You can now edit and delete progress entries. (h/t Robot, Kathryn)
+- NEW: You can now edit and delete progress entries. (h/t Robot)
 - NEW: You can now filter the projects list by title or description, to make finding projects in a long list easier. (h/t Athena)
 - CHANGED: The project list page and sidebar now sort projects by phase.
 - CHANGED: If you're on a project's page, that project will automatically populate the Enter Progress form.
-- FIXED: Scrollbars no longer show up in Chrome on Windows unless they're needed. (h/t Robot)
+- FIXED: Scrollbars no longer show up in Chrome on Windows unless they're needed. (h/t Robot, Kathryn)
 
 ## v0.7.0
 
