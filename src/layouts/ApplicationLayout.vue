@@ -93,8 +93,7 @@ userStore.populateUser().catch(() => {
 
 .side {
   grid-area: side;
-
-  overflow: scroll;
+  overflow: auto;
 }
 
 .logo, .side {
@@ -107,7 +106,7 @@ userStore.populateUser().catch(() => {
 
 .main {
   grid-area: main;
-  overflow: scroll;
+  overflow: auto;
 }
 
 </style>

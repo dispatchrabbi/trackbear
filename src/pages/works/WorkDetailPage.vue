@@ -103,21 +103,21 @@ loadWork();
       </header>
       <div
         v-if="work.tallies.length > 0"
-        class="flex flex-wrap gap-2"
+        class="flex flex-col gap-2 max-w-screen-md"
       >
-        <div class="w-full max-w-screen-md">
+        <div class="w-full">
           <WorkTallyStreakChart
             :work="work"
             :tallies="work.tallies"
           />
         </div>
-        <div class="w-full max-w-screen-md">
+        <div class="w-full">
           <WorkTallyLineChart
             :work="work"
             :tallies="work.tallies"
           />
         </div>
-        <div class="w-full max-w-screen-md">
+        <div class="w-full">
           <WorkTallyDataTable
             :tallies="work.tallies"
           />
