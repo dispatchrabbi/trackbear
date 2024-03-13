@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, defineProps, defineEmits } from 'vue';
 import wait from 'src/lib/wait.ts';
+import { useEventBus } from '@vueuse/core';
 
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';

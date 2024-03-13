@@ -143,6 +143,23 @@ tallyRouter.put('/:id',
 {
   const user = req.user;
 
+  const existingTally = await dbClient.tally.findUnique({
+    where: {
+      id: +req.params.id,
+      ownerId: user.id,
+      state: TALLY_STATE.ACTIVE,
+    },
+    include: {
+      tags: true,
+    },
+  });
+  if(!existingTally) {
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any tally with id ${req.params.id}.`));
+  }
+
+  const tagNamesToConnectOrCreate = req.body.tags.filter(incomingTag => !existingTally.tags.includes(incomingTag));
+  const tagsToDisconnect = existingTally.tags.filter(existingTag => !req.body.tags.includes(existingTag.name));
+
   const tally = await dbClient.tally.update({
     where: {
       id: +req.params.id,
@@ -158,11 +175,10 @@ tallyRouter.put('/:id',
       workId: req.body.workId, // could be null
 
       tags: {
-        connectOrCreate: req.body.tags.map((tagName: string) => ({
+        connectOrCreate: tagNamesToConnectOrCreate.map((tagName: string) => ({
           where: {
-            name: tagName,
             state: TAG_STATE.ACTIVE,
-            ownerId: user.id,
+            ownerId_name: { ownerId: user.id, name: tagName },
           },
           create: {
             name: tagName,
@@ -171,6 +187,7 @@ tallyRouter.put('/:id',
             ownerId: user.id,
           },
         })),
+        disconnect: tagsToDisconnect.map(tag => ({ id: tag.id })),
       },
     },
     include: {

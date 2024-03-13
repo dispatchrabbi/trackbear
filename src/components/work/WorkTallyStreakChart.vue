@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 import type { Work } from 'src/lib/api/work.ts';
-import type { Tally } from 'src/lib/api/tally.ts';
-import type { Tag } from 'src/lib/api/tag.ts';
+import type { TallyWithTags } from 'src/lib/api/tally.ts';
 
 import { getISODay, addDays } from 'date-fns';
 import { parseDateString, formatDate } from 'src/lib/date.ts';
@@ -13,7 +12,7 @@ import { MatrixChartData } from '../chart/CalendarMatrixChart.vue';
 
 const props = defineProps<{
   work: Work;
-  tallies: Array<Tally & { tags: Tag[] }>;
+  tallies: Array<TallyWithTags>;
 }>();
 
 const chartData = computed(() => {

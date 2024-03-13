@@ -14,7 +14,7 @@ const relevantWorkId = computed(() => {
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 
-import TallyForm from 'src/components/tally/TallyForm.vue';
+import CreateTallyForm from 'src/components/tally/CreateTallyForm.vue';
 
 const isFormVisible = ref<boolean>(false);
 const toggleForm = function() {
@@ -44,7 +44,7 @@ const toggleForm = function() {
         Add Progress
       </h2>
     </template>
-    <TallyForm
+    <CreateTallyForm
       :initial-work-id="relevantWorkId"
       @request-close="isFormVisible = false"
     />

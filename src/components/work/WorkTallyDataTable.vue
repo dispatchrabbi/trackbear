@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
-import type { Tally } from 'src/lib/api/tally.ts';
-import type { Tag } from 'src/lib/api/tag.ts';
+import { ref, computed, defineProps } from 'vue';
+
+import { PrimeIcons } from 'primevue/api';
+import Button from 'primevue/button';
+import Dialog from 'primevue/dialog';
+import EditTallyForm from '../tally/EditTallyForm.vue';
+import DeleteTallyForm from '../tally/DeleteTallyForm.vue';
+
+import type { TallyWithTags } from 'src/lib/api/tally.ts';
 
 import { formatCount } from 'src/lib/tally.ts';
 
 const props = defineProps<{
-  tallies: Array<Tally & { tags: Tag[] }>
+  tallies: Array<TallyWithTags>
 }>();
 
 const sortedTallies = computed(() => props.tallies.toSorted((a, b) => {
@@ -19,6 +25,18 @@ const sortedTallies = computed(() => props.tallies.toSorted((a, b) => {
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import TbTag from '../tag/TbTag.vue';
+
+const currentlyEditingTally = ref<TallyWithTags>(null);
+const isEditFormVisible = computed({
+  get: () => currentlyEditingTally.value !== null,
+  set: () => currentlyEditingTally.value = null, // nothing sensible to set it to unless it's null
+});
+
+const currentlyDeletingTally = ref<TallyWithTags>(null);
+const isDeleteFormVisible = computed({
+  get: () => currentlyDeletingTally.value !== null,
+  set: () => currentlyDeletingTally.value = null, // nothing sensible to set it to unless it's null
+});
 
 </script>
 
@@ -57,7 +75,60 @@ import TbTag from '../tag/TbTag.vue';
       field="note"
       header="Note"
     />
+    <Column
+      header=""
+      class="w-0 text-center"
+    >
+      <template #body="{ data }: { data: TallyWithTags }">
+        <div class="flex gap-1">
+          <Button
+            :icon="PrimeIcons.PENCIL"
+            severity="secondary"
+            text
+            rounded
+            @click="currentlyEditingTally = data"
+          />
+          <Button
+            :icon="PrimeIcons.TRASH"
+            severity="danger"
+            text
+            rounded
+            @click="currentlyDeletingTally = data"
+          />
+        </div>
+      </template>
+    </Column>
   </DataTable>
+  <Dialog
+    v-model:visible="isEditFormVisible"
+    modal
+  >
+    <template #header>
+      <h2 class="font-heading font-semibold uppercase">
+        <span :class="PrimeIcons.PENCIL" />
+        Edit Progress Entry
+      </h2>
+    </template>
+    <EditTallyForm
+      :tally="currentlyEditingTally"
+      @request-close="currentlyEditingTally = null"
+    />
+  </Dialog>
+  <Dialog
+    v-model:visible="isDeleteFormVisible"
+    modal
+  >
+    <template #header>
+      <h2 class="font-heading font-semibold uppercase">
+        <span :class="PrimeIcons.TRASH" />
+        Delete Progress Entry
+      </h2>
+    </template>
+    <DeleteTallyForm
+      :tally="currentlyDeletingTally"
+      @request-close="currentlyDeletingTally = null"
+    />
+  </Dialog>
 </template>
 
 <style scoped>

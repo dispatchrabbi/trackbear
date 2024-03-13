@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, defineProps } from 'vue';
 import type { Work } from 'src/lib/api/work.ts';
-import type { Tally } from 'src/lib/api/tally.ts';
-import type { Tag } from 'src/lib/api/tag.ts';
+import type { TallyWithTags } from 'src/lib/api/tally.ts';
 
 import { kify } from 'src/lib/number.ts';
 import { formatDuration } from "src/lib/date.ts";
@@ -19,7 +18,7 @@ import { TALLY_MEASURE } from 'server/lib/entities/tally.ts';
 
 const props = defineProps<{
   work: Work;
-  tallies: Array<Tally & { tags: Tag[] }>;
+  tallies: Array<TallyWithTags>;
 }>();
 
 const measuresAvailable = computed(() => {

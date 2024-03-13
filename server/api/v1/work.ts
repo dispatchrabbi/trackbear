@@ -19,7 +19,7 @@ import { omit } from '../../lib/obj.ts';
 
 export type WorkWithTotals = Work & { totals: Record<string, number> };
 
-type TallyWithTags = Tally & { tags: Tag[] };
+export type TallyWithTags = Tally & { tags: Tag[] };
 export type WorkWithTallies = Work & { tallies: TallyWithTags[] };
 
 const workRouter = Router();

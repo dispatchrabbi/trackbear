@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useEventBus } from '@vueuse/core';
 
 import { useRoute, useRouter } from 'vue-router';
@@ -67,10 +67,13 @@ const reloadWorks = async function() {
   loadWork();
 }
 
-const tallyEventBus = useEventBus<{ tally: Tally }>('tally:create');
-tallyEventBus.on(reloadWorks);
+onMounted(() => {
+  useEventBus<{ tally: Tally }>('tally:create').on(reloadWorks);
+  useEventBus<{ tally: Tally }>('tally:edit').on(reloadWorks);
+  useEventBus<{ tally: Tally }>('tally:delete').on(reloadWorks);
 
-loadWork();
+  loadWork();
+});
 
 </script>
 

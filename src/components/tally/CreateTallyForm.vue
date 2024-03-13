@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch, defineProps, defineEmits } from 'vue';
+import wait from 'src/lib/wait.ts';
 import { useEventBus } from '@vueuse/core';
 
 const props = defineProps<{
@@ -87,10 +88,6 @@ const onMeasureChange = function() {
   formModel.count = null;
   timeCountModel.hours = null;
   timeCountModel.minutes = null;
-}
-
-const wait = function(ms) {
-  return new Promise(res => setTimeout(res, ms));
 }
 
 const isLoading = ref<boolean>(false);
