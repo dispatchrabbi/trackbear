@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch, defineEmits } from 'vue';
+import { ref, reactive, computed, watch, defineProps, defineEmits } from 'vue';
 import { useEventBus } from '@vueuse/core';
+
+const props = defineProps<{
+  initialWorkId?: number;
+}>();
 
 import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
@@ -35,7 +39,7 @@ const emit = defineEmits(['tally:create', 'requestClose']);
 
 const formModel = reactive({
   date: new Date(), // default to today
-  workId: null, // TODO: default to the current project, if we're in a project (using props)
+  workId: props.initialWorkId ?? null, // TODO: default to the current project, if we're in a project (using props)
   tags: [],
   count: null,
   measure: TALLY_MEASURE.WORD, // TODO: default to the last measure used

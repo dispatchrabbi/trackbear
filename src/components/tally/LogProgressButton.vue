@@ -1,5 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+
+import { useRoute } from 'vue-router';
+const route = useRoute();
+const relevantWorkId = computed(() => {
+  if(route.name === 'work') {
+    return +route.params.id;
+  } else {
+    return null;
+  }
+});
 
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
@@ -35,6 +45,7 @@ const toggleForm = function() {
       </h2>
     </template>
     <TallyForm
+      :initial-work-id="relevantWorkId"
       @request-close="isFormVisible = false"
     />
   </Dialog>
