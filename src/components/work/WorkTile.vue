@@ -12,6 +12,8 @@ import Card from 'primevue/card';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import { PrimeIcons } from 'primevue/api';
+import { formatDuration } from 'src/lib/date';
+import { TALLY_MEASURE } from 'server/lib/entities/tally';
 
 const WORK_PHASE_TAG_COLORS = {
   [WORK_PHASE.DRAFTING]: 'primary',
@@ -55,11 +57,18 @@ const WORK_PHASE_TAG_COLORS = {
           {{ work.description }}
         </div>
         <div
-          v-for="(value, key) in props.work.totals"
-          :key="key"
+          v-for="(total, measure) in props.work.totals"
+          :key="measure"
           class="total"
         >
-          <span class="font-light"><span class="font-medium">{{ value }}</span> {{ TALLY_MEASURE_INFO[key].counter[Math.abs(value) === 1 ? 'singular' : 'plural'] }}</span>
+          <span
+            v-if="measure === TALLY_MEASURE.TIME"
+            class="font-medium"
+          >{{ formatDuration(total) }}</span>
+          <span
+            v-else
+            class="font-light"
+          ><span class="font-medium">{{ total }}</span> {{ TALLY_MEASURE_INFO[measure].counter[Math.abs(total) === 1 ? 'singular' : 'plural'] }}</span>
         </div>
         <div
           v-if="Object.keys(props.work.totals).length < 1"
