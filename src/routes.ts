@@ -1,22 +1,22 @@
-import PlaceholderPage from 'src/pages/PlaceholderPage.vue';
+import PlaceholderPage from 'src/components/pages/PlaceholderPage.vue';
 
-import HomePage from 'src/pages/HomePage.vue';
-import MaintenancePage from 'src/pages/MaintenancePage.vue';
-import AboutPage from 'src/pages/AboutPage.vue';
-import ChangelogPage from 'src/pages/ChangelogPage.vue';
-import PrivacyPage from 'src/pages/PrivacyPage.vue';
+import HomePage from 'src/components/pages/HomePage.vue';
+import MaintenancePage from 'src/components/pages/MaintenancePage.vue';
+import AboutPage from 'src/components/pages/AboutPage.vue';
+import ChangelogPage from 'src/components/pages/ChangelogPage.vue';
+import PrivacyPage from 'src/components/pages/PrivacyPage.vue';
 
-import SignUpPage from 'src/pages/SignUpPage.vue';
-import LoginPage from 'src/pages/LoginPage.vue';
-import LogoutPage from 'src/pages/LogoutPage.vue';
-import VerifyEmailPage from 'src/pages/VerifyEmailPage.vue';
-import SendResetPasswordPage from 'src/pages/SendResetPasswordPage.vue';
-import ResetPasswordPage from 'src/pages/ResetPasswordPage.vue';
+import SignUpPage from 'src/components/pages/SignUpPage.vue';
+import LoginPage from 'src/components/pages/LoginPage.vue';
+import LogoutPage from 'src/components/pages/LogoutPage.vue';
+import VerifyEmailPage from 'src/components/pages/VerifyEmailPage.vue';
+import SendResetPasswordPage from 'src/components/pages/SendResetPasswordPage.vue';
+import ResetPasswordPage from 'src/components/pages/ResetPasswordPage.vue';
 
-import SharedProjectPage from 'src/pages/SharedProjectPage.vue';
+import SharedProjectPage from 'src/components/pages/SharedProjectPage.vue';
 
-import AccountPage from 'src/pages/settings/AccountPage.vue';
-import TagsPage from 'src/pages/settings/TagsPage.vue';
+import AccountPage from 'src/components/pages/settings/AccountPage.vue';
+import TagsPage from 'src/components/pages/settings/TagsPage.vue';
 
 import ProjectListPage from 'src/components/project/ProjectListPage.vue';
 import NewProjectPage from 'src/components/project/NewProjectPage.vue';
@@ -28,10 +28,10 @@ import LeaderboardPage from 'src/components/leaderboard/LeaderboardPage.vue';
 import NewLeaderboardPage from 'src/components/leaderboard/NewLeaderboardPage.vue';
 import EditLeaderboardPage from 'src/components/leaderboard/EditLeaderboardPage.vue';
 
-import DashboardPage from 'src/pages/DashboardPage.vue';
+import DashboardPage from 'src/components/pages/DashboardPage.vue';
 
-import WorksListPage from 'src/pages/works/WorksListPage.vue';
-import WorkDetailPage from './pages/works/WorkDetailPage.vue';
+import WorksListPage from 'src/components/pages/works/WorksListPage.vue';
+import WorkDetailPage from 'src/components/pages/works/WorkDetailPage.vue';
 
 const routes = [
   // no login needed
