@@ -1,10 +1,10 @@
 import { callApiV1 } from "./api.ts";
 
 import type { Tally } from "@prisma/client";
-import type { TallyQuery, TallyPayload } from "server/api/v1/tally.ts";
+import type { TallyQuery, TallyPayload, TallyWithWorkAndTags } from "server/api/v1/tally.ts";
 import type { Tag } from "src/lib/api/tag.ts";
 
-export type { Tally };
+export type { Tally, TallyWithWorkAndTags };
 export type TallyWithTags = Tally & { tags: Tag[] };
 
 const ENDPOINT = '/api/v1/tally';

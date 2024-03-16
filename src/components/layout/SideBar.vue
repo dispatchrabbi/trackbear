@@ -53,6 +53,7 @@ goalStore.populateGoals();
 const items = computed(() => {
   const dashboard = [
     {
+      key: 'dashboard',
       label: 'Dashboard',
       icon: PrimeIcons.HOME,
       href: '/dashboard',
@@ -63,12 +64,14 @@ const items = computed(() => {
 
   const works = [
     {
+      key: 'projects',
       label: 'Projects',
       icon: PrimeIcons.FILE_EDIT,
       href: '/works',
       section: true,
     },
     ...(workStore.works ?? []).toSorted((a, b) => WORK_PHASE_ORDER.indexOf(a.phase) - WORK_PHASE_ORDER.indexOf(b.phase)).map(work => ({
+      key: `work-${work.id}`,
       label: work.title,
       href: `/works/${work.id}`,
     })),
@@ -76,31 +79,31 @@ const items = computed(() => {
 
   const goals = [
     {
+      key: 'goals',
       label: 'Goals',
       icon: PrimeIcons.STAR,
       href: '/goals',
       section: true,
     },
     ...(goalStore.goals ?? []).toSorted((a, b) => a.title < b.title ? -1 : a.title > b.title ? 1 : 0).map(goal => ({
+      key: `goal-${goal.id}`,
       label: goal.title,
       href: `/goals/${goal.id}`,
     })),
-    { label: 'January Challenge' },
-    { label: 'Edit Every Day' },
-    { label: 'NaNoWriMo 2024' },
   ]
 
-  const yetToCome = [
-    {
-      label: 'Boards',
-      icon: PrimeIcons.CHART_BAR,
-      href: '/boards',
-      section: true,
-    },
-    { label: 'January Challenge' },
-    { label: 'Overachievers Guild' },
-    { label: 'Progress to 1M' },
-  ];
+  // const yetToCome = [
+  //   {
+  //     label: 'Boards',
+  //     key: 'boards',
+  //     icon: PrimeIcons.CHART_BAR,
+  //     href: '/boards',
+  //     section: true,
+  //   },
+  //   { label: 'January Challenge' },
+  //   { label: 'Overachievers Guild' },
+  //   { label: 'Progress to 1M' },
+  // ];
 
   const items: { label: string; href?: string; icon?: string; section?: boolean; first?: boolean; }[] = [
     ...dashboard,

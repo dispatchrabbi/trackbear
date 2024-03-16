@@ -8,9 +8,10 @@ import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
 import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
-import type { Goal, Tally } from "@prisma/client";
+import type { Goal } from "@prisma/client";
 import { GOAL_STATE, GOAL_TYPE, GOAL_CADENCE_UNIT, getTalliesForGoal } from "../../lib/models/goal.ts";
 import type { GoalParameters, GoalWithWorksAndTags } from "../../lib/models/goal.ts"
+import { TallyWithWorkAndTags } from "./tally.ts";
 import { WORK_STATE } from '../../lib/models/work.ts';
 import { TALLY_MEASURE } from "../../lib/models/tally.ts";
 import { TAG_STATE } from "../../lib/models/tag.ts";
@@ -22,7 +23,7 @@ import { omit } from '../../lib/obj.ts';
 export type { GoalWithWorksAndTags, GoalParameters };
 export type GoalAndTallies = {
   goal: GoalWithWorksAndTags;
-  tallies: Tally[]
+  tallies: TallyWithWorkAndTags[]
 };
 
 const goalRouter = Router();
@@ -90,7 +91,7 @@ const zCommonGoalPayload = {
   works: z.array(z.number().int()),
   tags: z.array(z.number().int()),
 };
-const zGaolPayload = z.discriminatedUnion('type', [
+const zGoalPayload = z.discriminatedUnion('type', [
   z.object({
     type: z.literal(GOAL_TYPE.TARGET),
     parameters: z.object({
@@ -107,6 +108,7 @@ const zGaolPayload = z.discriminatedUnion('type', [
       cadence: z.object({
         unit: z.enum(Object.values(GOAL_CADENCE_UNIT) as NonEmptyArray<string>),
         period: z.number().int(),
+        times: z.number().int(),
       }),
       threshold: z.object({
         measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
@@ -119,7 +121,7 @@ const zGaolPayload = z.discriminatedUnion('type', [
 
 goalRouter.post('/',
   requireUser,
-  validateBody(zGaolPayload),
+  validateBody(zGoalPayload),
   h(async (req: RequestWithUser, res: ApiResponse<GoalAndTallies>) =>
 {
   const user = req.user;
@@ -155,29 +157,46 @@ goalRouter.post('/',
   return res.status(201).send(success({ goal, tallies }));
 }));
 
-// workRouter.put('/:id',
-//   requireUser,
-//   validateParams(zIdParam()),
-//   validateBody(zWorkPayload),
-//   h(async (req: RequestWithUser, res: ApiResponse<Work>) =>
-// {
-//   const user = req.user;
+goalRouter.put('/:id',
+  requireUser,
+  validateParams(zIdParam()),
+  validateBody(zGoalPayload),
+  h(async (req: RequestWithUser, res: ApiResponse<GoalAndTallies>) =>
+{
+  const user = req.user;
+  const payload = req.body as GoalPayload;
 
-//   const work = await dbClient.work.update({
-//     where: {
-//       id: +req.params.id,
-//       ownerId: req.user.id,
-//       state: WORK_STATE.ACTIVE,
-//     },
-//     data: {
-//       ...req.body as WorkPayload,
-//     },
-//   });
+  const goal = await dbClient.goal.update({
+    where: {
+      id: +req.params.id,
+      ownerId: req.user.id,
+      state: WORK_STATE.ACTIVE,
+    },
+    data: {
+      ...omit(payload, ['works', 'tags']),
+      worksIncluded: { connect: payload.works.map(workId => ({
+        id: workId,
+        ownerId: user.id,
+        state: WORK_STATE.ACTIVE,
+      })) },
+      tagsIncluded: { connect: payload.tags.map(workId => ({
+        id: workId,
+        ownerId: user.id,
+        state: TAG_STATE.ACTIVE,
+      })) },
+    },
+    include: {
+      worksIncluded: { where: { ownerId: req.user.id, state: WORK_STATE.ACTIVE } },
+      tagsIncluded: { where: { ownerId: req.user.id, state: TAG_STATE.ACTIVE } },
+    },
+  });
 
-//   await logAuditEvent('work:update', user.id, work.id);
+  await logAuditEvent('goal:update', user.id, goal.id);
 
-//   return res.status(200).send(success(work));
-// }));
+  const tallies = await getTalliesForGoal(goal);
+
+  return res.status(200).send(success({ goal, tallies }));
+}));
 
 goalRouter.delete('/:id',
   requireUser,

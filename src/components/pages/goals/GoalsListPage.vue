@@ -81,7 +81,7 @@ loadGoals();
       :key="goal.id"
       class="mb-2"
     >
-      <RouterLink :to="`/goals/${goal.id}`">
+      <RouterLink :to="{ name: 'goal', params: { id: goal.id } }">
         <GoalTile :goal="goal" />
       </RouterLink>
     </div>
@@ -95,7 +95,4 @@ loadGoals();
 </template>
 
 <style scoped>
-#add-progress-panel {
-  max-width: 33%;
-}
 </style>

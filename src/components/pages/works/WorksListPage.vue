@@ -88,7 +88,7 @@ loadWorks();
       :key="work.id"
       class="mb-2"
     >
-      <RouterLink :to="`/works/${work.id}`">
+      <RouterLink :to="{ name: 'work', params: { id: work.id } }">
         <WorkTile :work="work" />
       </RouterLink>
     </div>
@@ -117,8 +117,4 @@ loadWorks();
 </template>
 
 <style scoped>
-#add-progress-panel {
-  max-width: 33%;
-}
 </style>
-server/lib/models/work

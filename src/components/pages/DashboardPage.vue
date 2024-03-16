@@ -57,7 +57,4 @@ onMounted(() => {
 </template>
 
 <style scoped>
-#add-progress-panel {
-  max-width: 33%;
-}
 </style>

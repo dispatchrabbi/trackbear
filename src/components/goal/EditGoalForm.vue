@@ -13,10 +13,10 @@ tagStore.populateTags();
 
 import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
-import { formatDateSafe } from 'src/lib/date.ts';
+import { formatDateSafe, parseDateStringSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { createGoal, GoalPayload } from 'src/lib/api/goal.ts';
+import { updateGoal, GoalPayload, GoalWithWorksAndTags } from 'src/lib/api/goal.ts';
 import { GOAL_TYPE, GOAL_CADENCE_UNIT, GoalParameters } from 'server/lib/models/goal.ts';
 import { GOAL_CADENCE_UNIT_INFO } from 'src/lib/goal.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
@@ -33,24 +33,27 @@ import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import TbTag from 'src/components/tag/TbTag.vue';
 
-const emit = defineEmits(['goal:create', 'formSuccess', 'formCancel']);
+const props = defineProps<{
+  goal: GoalWithWorksAndTags;
+}>();
+const emit = defineEmits(['goal:edit', 'formSuccess', 'formCancel']);
 
 const formModel = reactive({
-  title: '',
-  description: '',
+  title: props.goal.title,
+  description: props.goal.description,
 
-  type: GOAL_TYPE.TARGET,
-  measure: TALLY_MEASURE.WORD,
-  count: null,
-  unit: GOAL_CADENCE_UNIT.DAY,
-  period: null,
-  times: 1,
+  type: props.goal.type,
+  measure: (props.goal.parameters as GoalParameters).threshold?.measure ?? TALLY_MEASURE.WORD,
+  count: (props.goal.parameters as GoalParameters).threshold?.count ?? null,
+  unit: (props.goal.parameters as GoalParameters).cadence?.unit ?? GOAL_CADENCE_UNIT.DAY,
+  period: (props.goal.parameters as GoalParameters).cadence?.period ?? null,
+  times: (props.goal.parameters as GoalParameters).cadence?.times ?? null,
 
-  startDate: null,
-  endDate: null,
+  startDate: parseDateStringSafe(props.goal.startDate),
+  endDate: parseDateStringSafe(props.goal.endDate),
 
-  works: [],
-  tags: [],
+  works: props.goal.worksIncluded.map(work => work.id),
+  tags: props.goal.tagsIncluded.map(tag => tag.id),
 });
 
 const validations = z
@@ -111,8 +114,8 @@ const unitOptions = computed(() => {
 });
 
 const timeCountModel = reactive({
-  hours: null,
-  minutes: null,
+  hours: (props.goal.parameters as GoalParameters).threshold?.measure === TALLY_MEASURE.TIME ? Math.floor((props.goal.parameters as GoalParameters).threshold.count / 60) : null,
+  minutes: (props.goal.parameters as GoalParameters).threshold?.measure === TALLY_MEASURE.TIME ? ((props.goal.parameters as GoalParameters).threshold.count % 60) : null,
 });
 
 const timeValidations = z.object({
@@ -129,7 +132,7 @@ const onMeasureChange = function() {
   formModel.count = null;
   timeCountModel.hours = null;
   timeCountModel.minutes = null;
-};
+}
 
 const savedParams = reactive({
   period: null,
@@ -223,14 +226,14 @@ async function handleSubmit() {
       tags: rawData.tags,
     };
 
-    const createdGoal = await createGoal(data);
+    const updatedGoal = await updateGoal(props.goal.id, data);
 
-    emit('goal:create', { goal: createdGoal.goal });
-    successMessage.value = `${createdGoal.goal.title} has been created.`;
+    emit('goal:edit', { goal: updatedGoal.goal });
+    successMessage.value = `${updatedGoal.goal.title} has been updated.`;
     await wait(1 * 1000);
     emit('formSuccess');
   } catch(err) {
-    errorMessage.value = 'Could not create the goal: something went wrong server-side.';
+    errorMessage.value = 'Could not update the goal: something went wrong server-side.';
 
     return;
   } finally {
@@ -244,7 +247,7 @@ async function handleSubmit() {
   <TbForm
     :is-valid="isValid"
     submit-message="Submit"
-    :loading-message="isLoading ? 'Creating...' : null"
+    :loading-message="isLoading ? 'Updating...' : null"
     :success-message="successMessage"
     :error-message="errorMessage"
     cancel-button

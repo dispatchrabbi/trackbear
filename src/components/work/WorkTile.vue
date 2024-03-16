@@ -12,8 +12,8 @@ import Card from 'primevue/card';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import { PrimeIcons } from 'primevue/api';
-import { formatDuration } from 'src/lib/date';
-import { TALLY_MEASURE } from 'server/lib/models/tally';
+import { formatDuration } from 'src/lib/date.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 
 const WORK_PHASE_TAG_COLORS = {
   [WORK_PHASE.DRAFTING]: 'primary',

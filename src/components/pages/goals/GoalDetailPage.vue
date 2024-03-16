@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useEventBus } from '@vueuse/core';
 
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter, RouterLink } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
@@ -10,7 +10,7 @@ import { useGoalStore } from 'src/stores/goal.ts';
 const goalStore = useGoalStore();
 
 import { getGoal, GoalWithWorksAndTags } from 'src/lib/api/goal.ts';
-import { Tally } from 'src/lib/api/tally.ts';
+import { Tally, TallyWithWorkAndTags } from 'src/lib/api/tally.ts';
 
 import { PrimeIcons } from 'primevue/api';
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
@@ -18,18 +18,17 @@ import type { MenuItem } from 'primevue/menuitem';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
+import GoalTallyDataTable from 'src/components/goal/GoalTallyDataTable.vue';
+import DeleteGoalForm from 'src/components/goal/DeleteGoalForm.vue';
 
 const goalId = ref<number>(+route.params.id);
-watch(
-  () => route.params.id,
-  newId => {
-    goalId.value = +newId;
-    reloadGoals(); // this isn't a great pattern - it should get changed
-  }
-);
+watch(() => route.params.id, newId => {
+  goalId.value = +newId;
+  reloadGoals(); // this isn't a great pattern - it should get changed
+});
 
 const goal = ref<GoalWithWorksAndTags | null>(null);
-const tallies = ref<Tally[] | null>(null);
+const tallies = ref<TallyWithWorkAndTags[] | null>(null);
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
@@ -39,7 +38,6 @@ const breadcrumbs = computed(() => {
   return crumbs;
 });
 
-const isEditFormVisible = ref<boolean>(false);
 const isDeleteFormVisible = ref<boolean>(false);
 
 const isLoading = ref<boolean>(false);
@@ -86,11 +84,12 @@ onMounted(() => {
             :title="goal.title"
           />
           <div class="spacer grow" />
-          <Button
-            label="Edit"
-            :icon="PrimeIcons.PENCIL"
-            @click="isEditFormVisible = true"
-          />
+          <RouterLink :to="{ name: 'edit-goal', params: { id: goal.id } }">
+            <Button
+              label="Edit"
+              :icon="PrimeIcons.PENCIL"
+            />
+          </RouterLink>
           <Button
             severity="danger"
             label="Delete"
@@ -102,20 +101,10 @@ onMounted(() => {
           {{ goal.description }}
         </h2>
       </header>
-      <div class="max-w-screen-md">
-        <h3>goal</h3>
-        <div>{{ JSON.stringify(goal) }}</div>
-        <h3>tallies</h3>
-        <div>{{ JSON.stringify(tallies) }}</div>
-      </div>
-      <div v-if="tallies === null">
-        Loading...
-      </div>
       <div
-        v-else-if="tallies.length > 0"
+        v-if="tallies.length > 0"
         class="flex flex-col gap-2 max-w-screen-md"
       >
-        Loaded
         <!-- <div class="w-full">
           <WorkTallyStreakChart
             :work="goal"
@@ -127,32 +116,16 @@ onMounted(() => {
             :work="goal"
             :tallies="tallies"
           />
-        </div>
+        </div> -->
         <div class="w-full">
-          <WorkTallyDataTable
+          <GoalTallyDataTable
             :tallies="tallies"
           />
-        </div> -->
+        </div>
       </div>
       <div v-else>
         You haven't logged any progress on this goal. You want the cool graphs? Get writing!
       </div>
-      <!-- <Dialog
-        v-model:visible="isEditFormVisible"
-        modal
-      >
-        <template #header>
-          <h2 class="font-heading font-semibold uppercase">
-            <span :class="PrimeIcons.PENCIL" />
-            Edit Goal
-          </h2>
-        </template>
-        <EditGoalForm
-          :goal="goal"
-          @goal:edit="reloadGoals()"
-          @form-success="isEditFormVisible = false"
-        />
-      </Dialog>
       <Dialog
         v-model:visible="isDeleteFormVisible"
         modal
@@ -168,13 +141,10 @@ onMounted(() => {
           @goal:delete="goalStore.populateGoals(true)"
           @form-success="router.push('/goals')"
         />
-      </Dialog> -->
+      </Dialog>
     </div>
   </ApplicationLayout>
 </template>
 
 <style scoped>
-#add-progress-panel {
-  max-width: 33%;
-}
 </style>

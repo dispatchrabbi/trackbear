@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import type { Goal } from 'src/lib/api/goal.ts';
-import { GOAL_TYPE, GOAL_CADENCE_UNIT } from 'server/lib/models/goal';
-import { TALLY_MEASURE } from 'server/lib/models/tally';
+import { GOAL_TYPE, GOAL_CADENCE_UNIT } from 'server/lib/models/goal.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 
 const props = defineProps<{
   goal: Goal;
@@ -12,7 +12,7 @@ import Card from 'primevue/card';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import { PrimeIcons } from 'primevue/api';
-import { formatDuration } from 'src/lib/date';
+import { formatDuration } from 'src/lib/date.ts';
 
 const GOAL_TYPE_TAG_COLORS = {
   [GOAL_TYPE.TARGET]: 'warning',

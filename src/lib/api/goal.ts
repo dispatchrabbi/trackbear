@@ -19,9 +19,9 @@ export async function createGoal(data: GoalPayload) {
   return callApiV1<GoalAndTallies>(ENDPOINT, 'POST', data);
 }
 
-// export async function updateGoal(id: number, data: GoalPayload) {
-//   return callApiV1<GoalAndTallies>(ENDPOINT + `/${id}`, 'PUT', data);
-// }
+export async function updateGoal(id: number, data: GoalPayload) {
+  return callApiV1<GoalAndTallies>(ENDPOINT + `/${id}`, 'PUT', data);
+}
 
 export async function deleteGoal(id: number) {
   return callApiV1<Goal>(ENDPOINT + `/${id}`, 'DELETE');

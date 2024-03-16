@@ -1,7 +1,8 @@
-import type { Goal, Work, Tally, Tag } from "@prisma/client";
+import type { Goal, Work, Tag } from "@prisma/client";
 import dbClient from "../db.ts";
 
 import { TALLY_MEASURE, TALLY_STATE } from "./tally.ts";
+import type { TallyWithWorkAndTags } from "../../api/v1/tally.ts";
 
 export const GOAL_STATE = {
   ACTIVE:   'active',
@@ -24,23 +25,24 @@ export const GOAL_CADENCE_UNIT = {
 
 type GoalThreshold = {
   measure: typeof TALLY_MEASURE[keyof typeof TALLY_MEASURE];
-    count: number;
+  count: number;
 };
 
 type GoalCadence = {
+  times: number;
   period: number;
   unit: typeof GOAL_CADENCE_UNIT[keyof typeof GOAL_CADENCE_UNIT];
 };
 
 export type GoalTargetParameters = {
   threshold: GoalThreshold;
+  cadence?: null;
 };
 
-// TODO: currently this can't model "three times a week"
 export type GoalHabitParameters = {
   cadence: GoalCadence;
   threshold: GoalThreshold | null;
-}
+};
 
 export type GoalParameters = GoalTargetParameters | GoalHabitParameters;
 
@@ -48,7 +50,7 @@ export type GoalWithWorksAndTags = Goal & {
   worksIncluded: Work[];
   tagsIncluded: Tag[]
 };
-export async function getTalliesForGoal(goal: GoalWithWorksAndTags):Promise<Tally[]> {
+export async function getTalliesForGoal(goal: GoalWithWorksAndTags): Promise<TallyWithWorkAndTags[]> {
   return dbClient.tally.findMany({
     where: {
       ownerId: goal.ownerId,
@@ -63,6 +65,10 @@ export async function getTalliesForGoal(goal: GoalWithWorksAndTags):Promise<Tall
         gte: goal.startDate || undefined,
         lte: goal.endDate || undefined,
       },
+    },
+    include: {
+      work: true,
+      tags: true,
     },
   });
 }
