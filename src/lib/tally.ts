@@ -1,4 +1,4 @@
-import { TALLY_MEASURE } from 'server/lib/entities/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 import { formatDuration } from "src/lib/date.ts";
 
 export const TALLY_MEASURE_INFO = {

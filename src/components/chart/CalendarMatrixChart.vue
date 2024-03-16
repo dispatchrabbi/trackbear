@@ -86,4 +86,4 @@ const data = computed(() => {
   height: calc(100vh - 4rem);
   width: calc(100vw - 4rem);
 }
-</style>./matrix-chart-defaults.ts
+</style>

@@ -22,7 +22,7 @@ import { useValidation } from 'src/lib/form.ts';
 
 import { TallyPayload } from 'server/api/v1/tally.ts';
 import { createTally, Tally } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE } from 'server/lib/entities/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import Calendar from 'primevue/calendar';
@@ -36,11 +36,11 @@ import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import TbTag from 'src/components/tag/TbTag.vue';
 
-const emit = defineEmits(['tally:create', 'requestClose']);
+const emit = defineEmits(['tally:create', 'formSuccess']);
 
 const formModel = reactive({
   date: new Date(), // default to today
-  workId: props.initialWorkId ?? null, // TODO: default to the current project, if we're in a project (using props)
+  workId: props.initialWorkId ?? null,
   tags: [],
   count: null,
   measure: TALLY_MEASURE.WORD, // TODO: default to the last measure used
@@ -116,7 +116,7 @@ async function handleSubmit() {
     timeCountModel.minutes = null;
 
     await wait(1 * 1000);
-    emit('requestClose');
+    emit('formSuccess');
   } catch(err) {
     errorMessage.value = 'Could not log your progress: something went wrong server-side.'
 
@@ -323,3 +323,4 @@ async function handleSubmit() {
 } */
 
 </style>
+server/lib/models/tally

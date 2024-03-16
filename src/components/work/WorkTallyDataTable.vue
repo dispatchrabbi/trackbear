@@ -111,7 +111,7 @@ const isDeleteFormVisible = computed({
     </template>
     <EditTallyForm
       :tally="currentlyEditingTally"
-      @request-close="currentlyEditingTally = null"
+      @form-success="currentlyEditingTally = null"
     />
   </Dialog>
   <Dialog
@@ -126,7 +126,7 @@ const isDeleteFormVisible = computed({
     </template>
     <DeleteTallyForm
       :tally="currentlyDeletingTally"
-      @request-close="currentlyDeletingTally = null"
+      @form-success="currentlyDeletingTally = null"
     />
   </Dialog>
 </template>

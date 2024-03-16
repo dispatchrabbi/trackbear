@@ -11,7 +11,7 @@ import TbForm from 'src/components/form/TbForm.vue';
 const props = defineProps<{
   tally: Tally;
 }>();
-const emit = defineEmits(['tally:delete', 'requestClose']);
+const emit = defineEmits(['tally:delete', 'formSuccess']);
 
 const isLoading = ref<boolean>(false);
 const successMessage = ref<string | null>(null);
@@ -31,7 +31,7 @@ async function handleSubmit() {
 
     successMessage.value = `Your progress entry has been deleted.`;
     await wait(1 * 1000);
-    emit('requestClose');
+    emit('formSuccess');
   } catch(err) {
     errorMessage.value = 'Could not delete progress entry: something went wrong server-side.';
 

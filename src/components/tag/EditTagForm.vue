@@ -8,7 +8,7 @@ import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { updateTag, Tag, TagPayload } from 'src/lib/api/tag.ts';
-import { TAG_COLORS } from 'server/lib/entities/tag.ts';
+import { TAG_COLORS } from 'server/lib/models/tag.ts';
 import { TAG_COLOR_CLASSES } from 'src/components/tag/tag-color-classes.ts';
 
 import IconField from 'primevue/iconfield';
@@ -22,7 +22,7 @@ import { PrimeIcons } from 'primevue/api';
 const props = defineProps<{
   tag: Tag;
 }>();
-const emit = defineEmits(['tag:edit', 'requestClose']);
+const emit = defineEmits(['tag:edit', 'formSuccess']);
 
 const formModel = reactive({
   name: props.tag.name,
@@ -61,7 +61,7 @@ async function handleSubmit() {
     emit('tag:edit', { tag: updatedTag });
     successMessage.value = `#${updatedTag.name} has been edited.`;
     await wait(1 * 1000);
-    emit('requestClose');
+    emit('formSuccess');
   } catch(err) {
     if(err.code === 'TAG_EXISTS') {
       errorMessage.value = 'Could not edit the tag: a tag with this name already exists.';
@@ -129,3 +129,4 @@ async function handleSubmit() {
 <style scoped>
 </style>
 src/components/tag/tag
+server/lib/models/tag

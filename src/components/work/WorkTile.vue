@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import type { WorkWithTotals } from 'src/lib/api/work.ts';
-import { WORK_PHASE } from 'server/lib/entities/work.ts';
+import { WORK_PHASE } from 'server/lib/models/work.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 const props = defineProps<{
@@ -13,7 +13,7 @@ import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import { PrimeIcons } from 'primevue/api';
 import { formatDuration } from 'src/lib/date';
-import { TALLY_MEASURE } from 'server/lib/entities/tally';
+import { TALLY_MEASURE } from 'server/lib/models/tally';
 
 const WORK_PHASE_TAG_COLORS = {
   [WORK_PHASE.DRAFTING]: 'primary',

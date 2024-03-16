@@ -1,7 +1,7 @@
 import { computed } from 'vue';
 import { ZodObject, ZodRawShape } from "zod";
 
-export function useValidation<T>(schema: ZodObject<ZodRawShape>, model: T) {
+export function useValidation<T extends object, V extends ZodObject<ZodRawShape> = ZodObject<ZodRawShape>>(schema: V, model: T) {
   const ruleFor = function(field: string) {
     if(!(field in schema.shape)) {
       throw new Error(`Cannot make a rule for ${field}, no matching field found in schema`);

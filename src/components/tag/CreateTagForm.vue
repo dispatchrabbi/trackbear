@@ -8,7 +8,7 @@ import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createTag, TagPayload } from 'src/lib/api/tag.ts';
-import { TAG_COLORS, TAG_DEFAULT_COLOR } from 'server/lib/entities/tag.ts';
+import { TAG_COLORS, TAG_DEFAULT_COLOR } from 'server/lib/models/tag.ts';
 import { TAG_COLOR_CLASSES } from 'src/components/tag/tag-color-classes.ts';
 
 import IconField from 'primevue/iconfield';
@@ -19,7 +19,7 @@ import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import { PrimeIcons } from 'primevue/api';
 
-const emit = defineEmits(['tag:create', 'requestClose']);
+const emit = defineEmits(['tag:create', 'formSuccess']);
 
 const formModel = reactive({
   name: '',
@@ -58,7 +58,7 @@ async function handleSubmit() {
     emit('tag:create', { tag: updatedTag });
     successMessage.value = `#${updatedTag.name} has been created.`;
     await wait(1 * 1000);
-    emit('requestClose');
+    emit('formSuccess');
   } catch(err) {
     if(err.code === 'TAG_EXISTS') {
       errorMessage.value = 'Could not create the tag: a tag with this name already exists.';
@@ -126,3 +126,4 @@ async function handleSubmit() {
 <style scoped>
 </style>
 src/components/tag/tag
+server/lib/models/tag

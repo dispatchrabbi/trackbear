@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ref, defineProps } from 'vue';
 
+import { PrimeIcons } from 'primevue/api';
+
 const props = defineProps<{
   label?: string;
   for?: string;
   required?: boolean;
   rule?: (val: unknown) => true | string;
   help?: string;
+  info?: string;
 }>();
 
 const validationMessage = ref<string | null>(null);
@@ -32,6 +35,11 @@ const onUpdate = function(val) {
         v-if="props.required"
         class="required-mark"
       > * </span>
+      <span
+        v-if="props.info"
+        v-tooltip="props.info"
+        :class="PrimeIcons.QUESTION_CIRCLE"
+      />
     </label>
     <slot
       :on-update="onUpdate"

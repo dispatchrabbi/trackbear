@@ -14,7 +14,7 @@ import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 const props = defineProps<{
   tag: Tag;
 }>();
-const emit = defineEmits(['tag:delete', 'requestClose']);
+const emit = defineEmits(['tag:delete', 'formSuccess']);
 
 const formModel = reactive({
   deleteConfirmation: '',
@@ -44,7 +44,7 @@ async function handleSubmit() {
     emit('tag:delete', { work: deletedTag });
     successMessage.value = `${deletedTag.name} has been deleted.`;
     await wait(1 * 1000);
-    emit('requestClose');
+    emit('formSuccess');
   } catch(err) {
     errorMessage.value = 'Could not delete the tag: something went wrong server-side.';
 

@@ -6,10 +6,10 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
-import { useWorkStore } from 'src/stores/work.ts';
-const workStore = useWorkStore();
+import { useGoalStore } from 'src/stores/goal.ts';
+const goalStore = useGoalStore();
 
-import { getWork, WorkWithTallies } from 'src/lib/api/work.ts';
+import { getGoal, GoalWithWorksAndTags } from 'src/lib/api/goal.ts';
 import { Tally } from 'src/lib/api/tally.ts';
 
 import { PrimeIcons } from 'primevue/api';
@@ -17,28 +17,24 @@ import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
-import EditWorkForm from 'src/components/work/EditWorkForm.vue';
-import DeleteWorkForm from 'src/components/work/DeleteWorkForm.vue';
-import WorkTallyStreakChart from 'src/components/work/WorkTallyStreakChart.vue';
-import WorkTallyLineChart from 'src/components/work/WorkTallyLineChart.vue';
-import WorkTallyDataTable from 'src/components/work/WorkTallyDataTable.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 
-const workId = ref<number>(+route.params.id);
+const goalId = ref<number>(+route.params.id);
 watch(
   () => route.params.id,
   newId => {
-    workId.value = +newId;
-    reloadWorks(); // this isn't a great pattern - it should get changed
+    goalId.value = +newId;
+    reloadGoals(); // this isn't a great pattern - it should get changed
   }
 );
 
-const work = ref<WorkWithTallies | null>(null);
+const goal = ref<GoalWithWorksAndTags | null>(null);
+const tallies = ref<Tally[] | null>(null);
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
-    { label: 'Works', url: '/works' },
-    { label: work.value === null ? 'Loading...' : work.value.title, url: `/works/${workId.value}` },
+    { label: 'Goals', url: '/goals' },
+    { label: goal.value === null ? 'Loading...' : goal.value.title, url: `/goals/${goalId.value}` },
   ];
   return crumbs;
 });
@@ -48,31 +44,33 @@ const isDeleteFormVisible = ref<boolean>(false);
 
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string | null>(null);
-const loadWork = async function() {
+const loadGoal = async function() {
   isLoading.value = true;
   errorMessage.value = null;
 
   try {
-    work.value = await getWork(+workId.value);
+    const result = await getGoal(+goalId.value);
+    goal.value = result.goal;
+    tallies.value = result.tallies;
   } catch(err) {
     errorMessage.value = err.message;
-    router.push('/works');
+    router.push('/goals');
   } finally {
     isLoading.value = false;
   }
 }
 
-const reloadWorks = async function() {
-  workStore.populateWorks(true);
-  loadWork();
+const reloadGoals = async function() {
+  goalStore.populateGoals(true);
+  loadGoal();
 }
 
 onMounted(() => {
-  useEventBus<{ tally: Tally }>('tally:create').on(reloadWorks);
-  useEventBus<{ tally: Tally }>('tally:edit').on(reloadWorks);
-  useEventBus<{ tally: Tally }>('tally:delete').on(reloadWorks);
+  useEventBus<{ tally: Tally }>('tally:create').on(reloadGoals);
+  useEventBus<{ tally: Tally }>('tally:edit').on(reloadGoals);
+  useEventBus<{ tally: Tally }>('tally:delete').on(reloadGoals);
 
-  loadWork();
+  loadGoal();
 });
 
 </script>
@@ -81,11 +79,11 @@ onMounted(() => {
   <ApplicationLayout
     :breadcrumbs="breadcrumbs"
   >
-    <div v-if="work">
+    <div v-if="goal">
       <header class="mb-4">
         <div class="actions flex gap-2">
           <SectionTitle
-            :title="work.title"
+            :title="goal.title"
           />
           <div class="spacer grow" />
           <Button
@@ -101,47 +99,57 @@ onMounted(() => {
           />
         </div>
         <h2 class="description font-heading italic font-light">
-          {{ work.description }}
+          {{ goal.description }}
         </h2>
       </header>
+      <div class="max-w-screen-md">
+        <h3>goal</h3>
+        <div>{{ JSON.stringify(goal) }}</div>
+        <h3>tallies</h3>
+        <div>{{ JSON.stringify(tallies) }}</div>
+      </div>
+      <div v-if="tallies === null">
+        Loading...
+      </div>
       <div
-        v-if="work.tallies.length > 0"
+        v-else-if="tallies.length > 0"
         class="flex flex-col gap-2 max-w-screen-md"
       >
-        <div class="w-full">
+        Loaded
+        <!-- <div class="w-full">
           <WorkTallyStreakChart
-            :work="work"
-            :tallies="work.tallies"
+            :work="goal"
+            :tallies="tallies"
           />
         </div>
         <div class="w-full">
           <WorkTallyLineChart
-            :work="work"
-            :tallies="work.tallies"
+            :work="goal"
+            :tallies="tallies"
           />
         </div>
         <div class="w-full">
           <WorkTallyDataTable
-            :tallies="work.tallies"
+            :tallies="tallies"
           />
-        </div>
+        </div> -->
       </div>
       <div v-else>
-        You haven't logged any progress on this project. You want the cool graphs? Get writing!
+        You haven't logged any progress on this goal. You want the cool graphs? Get writing!
       </div>
-      <Dialog
+      <!-- <Dialog
         v-model:visible="isEditFormVisible"
         modal
       >
         <template #header>
           <h2 class="font-heading font-semibold uppercase">
             <span :class="PrimeIcons.PENCIL" />
-            Edit Work
+            Edit Goal
           </h2>
         </template>
-        <EditWorkForm
-          :work="work"
-          @work:edit="reloadWorks()"
+        <EditGoalForm
+          :goal="goal"
+          @goal:edit="reloadGoals()"
           @form-success="isEditFormVisible = false"
         />
       </Dialog>
@@ -152,15 +160,15 @@ onMounted(() => {
         <template #header>
           <h2 class="font-heading font-semibold uppercase">
             <span :class="PrimeIcons.TRASH" />
-            Delete Work
+            Delete Goal
           </h2>
         </template>
-        <DeleteWorkForm
-          :work="work"
-          @work:delete="workStore.populateWorks(true)"
-          @form-success="router.push('/works')"
+        <DeleteGoalForm
+          :goal="goal"
+          @goal:delete="goalStore.populateGoals(true)"
+          @form-success="router.push('/goals')"
         />
-      </Dialog>
+      </Dialog> -->
     </div>
   </ApplicationLayout>
 </template>

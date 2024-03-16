@@ -9,7 +9,7 @@ import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
 import type { Tag } from "@prisma/client";
-import { TAG_STATE } from '../../lib/entities/tag.ts';
+import { TAG_STATE } from '../../lib/models/tag.ts';
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
 

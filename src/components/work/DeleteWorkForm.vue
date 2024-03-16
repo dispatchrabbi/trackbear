@@ -15,7 +15,7 @@ import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 const props = defineProps<{
   work: Work;
 }>();
-const emit = defineEmits(['work:delete', 'requestClose']);
+const emit = defineEmits(['work:delete', 'formSuccess']);
 
 const formModel = reactive({
   deleteConfirmation: '',
@@ -45,7 +45,7 @@ async function handleSubmit() {
     emit('work:delete', { work: deletedWork });
     successMessage.value = `${deletedWork.title} has been deleted.`;
     await wait(1 * 1000);
-    emit('requestClose');
+    emit('formSuccess');
   } catch(err) {
     errorMessage.value = 'Could not delete the project: something went wrong server-side.';
 

@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
 
 import { hash } from '../../server/lib/hash.ts';
-import { USER_STATE } from "../../server/lib/entities/user.ts";
+import { USER_STATE } from "../../server/lib/models/user.ts";
 
 type SeedUser = {
   username: string;

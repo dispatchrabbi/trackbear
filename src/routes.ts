@@ -33,6 +33,10 @@ import DashboardPage from 'src/components/pages/DashboardPage.vue';
 import WorksListPage from 'src/components/pages/works/WorksListPage.vue';
 import WorkDetailPage from 'src/components/pages/works/WorkDetailPage.vue';
 
+import GoalsListPage from './components/pages/goals/GoalsListPage.vue';
+import NewGoalPage from './components/pages/goals/NewGoalPage.vue';
+import GoalDetailPage from './components/pages/goals/GoalDetailPage.vue';
+
 const routes = [
   // no login needed
   { path: '/', name: 'home', component: HomePage },
@@ -54,6 +58,11 @@ const routes = [
   // Works section
   { path: '/works', name: 'works', component: WorksListPage },
   { path: '/works/:id', name: 'work', component: WorkDetailPage },
+
+  // Goals section
+  { path: '/goals', name: 'goals', component: GoalsListPage },
+  { path: '/goals/new', name: 'new-goal', component: NewGoalPage },
+  { path: '/goals/:id', name: 'goal', component: GoalDetailPage },
 
   // account section
   { path: '/settings/account', name: 'account', component: AccountPage },

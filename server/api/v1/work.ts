@@ -9,9 +9,9 @@ import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
 import type { Work, Tally, Tag } from "@prisma/client";
-import { WORK_PHASE, WORK_STATE } from '../../lib/entities/work.ts';
-import { TALLY_STATE } from "../../lib/entities/tally.ts";
-import { TAG_STATE } from "../../lib/entities/tag.ts";
+import { WORK_PHASE, WORK_STATE } from '../../lib/models/work.ts';
+import { TALLY_STATE } from "../../lib/models/tally.ts";
+import { TAG_STATE } from "../../lib/models/tag.ts";
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
 

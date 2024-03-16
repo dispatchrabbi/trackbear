@@ -8,14 +8,14 @@ import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createWork, WorkPayload } from 'src/lib/api/work.ts';
-import { WORK_PHASE } from 'server/lib/entities/work.ts';
+import { WORK_PHASE } from 'server/lib/models/work.ts';
 
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 
-const emit = defineEmits(['work:create', 'requestClose']);
+const emit = defineEmits(['work:create', 'formSuccess']);
 
 const formModel = reactive({
   title: '',
@@ -54,7 +54,7 @@ async function handleSubmit() {
     emit('work:create', { work: createdWork });
     successMessage.value = `${createdWork.title} has been created.`;
     await wait(1 * 1000);
-    emit('requestClose');
+    emit('formSuccess');
   } catch(err) {
     errorMessage.value = 'Could not create the project: something went wrong server-side.';
 
@@ -128,3 +128,4 @@ async function handleSubmit() {
 
 <style scoped>
 </style>
+server/lib/models/work

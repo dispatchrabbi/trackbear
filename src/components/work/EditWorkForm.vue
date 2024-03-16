@@ -8,7 +8,7 @@ import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { updateWork, Work, WorkPayload } from 'src/lib/api/work.ts';
-import { WORK_PHASE } from 'server/lib/entities/work.ts';
+import { WORK_PHASE } from 'server/lib/models/work.ts';
 
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
@@ -18,7 +18,7 @@ import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 const props = defineProps<{
   work: Work;
 }>();
-const emit = defineEmits(['work:edit', 'requestClose']);
+const emit = defineEmits(['work:edit', 'formSuccess']);
 
 const formModel = reactive({
   title: props.work.title,
@@ -57,7 +57,7 @@ async function handleSubmit() {
     emit('work:edit', { work: updatedWork });
     successMessage.value = `${updatedWork.title} has been edited.`;
     await wait(1 * 1000);
-    emit('requestClose');
+    emit('formSuccess');
   } catch(err) {
     errorMessage.value = 'Could not edit the project: something went wrong server-side.';
 
@@ -131,3 +131,4 @@ async function handleSubmit() {
 
 <style scoped>
 </style>
+server/lib/models/work

@@ -6,7 +6,7 @@ import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
 
 import { getWorks, WorkWithTotals } from 'src/lib/api/work.ts';
-import { WORK_PHASE_ORDER } from 'server/lib/entities/work.ts';
+import { WORK_PHASE_ORDER } from 'server/lib/models/work.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
@@ -110,7 +110,7 @@ loadWorks();
       </template>
       <CreateWorkForm
         @work:create="reloadWorks()"
-        @request-close="isCreateFormVisible = false"
+        @form-success="isCreateFormVisible = false"
       />
     </Dialog>
   </ApplicationLayout>
@@ -121,3 +121,4 @@ loadWorks();
   max-width: 33%;
 }
 </style>
+server/lib/models/work

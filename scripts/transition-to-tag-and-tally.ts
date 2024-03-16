@@ -9,9 +9,9 @@ import { initLoggers } from '../server/lib/logger.ts';
 import dbClient from '../server/lib/db.ts';
 import type { User, Project, Update, Work, Goal } from '@prisma/client';
 import { PROJECT_STATE, PROJECT_TYPE } from '../server/lib/states.ts';
-import { WORK_STATE, WORK_PHASE } from '../server/lib/entities/work.ts';
-import { TALLY_STATE, TALLY_MEASURE } from '../server/lib/entities/tally.ts';
-import { GOAL_STATE, GOAL_TYPE, GoalParameters } from '../server/lib/entities/goal.ts';
+import { WORK_STATE, WORK_PHASE } from '../server/lib/models/work.ts';
+import { TALLY_STATE, TALLY_MEASURE } from '../server/lib/models/tally.ts';
+import { GOAL_STATE, GOAL_TYPE, GoalParameters } from '../server/lib/models/goal.ts';
 
 const MEASURE_CONVERSION = {
   [PROJECT_TYPE.WORDS]: TALLY_MEASURE.WORD,

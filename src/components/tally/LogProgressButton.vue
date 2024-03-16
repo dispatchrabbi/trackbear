@@ -46,7 +46,7 @@ const toggleForm = function() {
     </template>
     <CreateTallyForm
       :initial-work-id="relevantWorkId"
-      @request-close="isFormVisible = false"
+      @form-success="isFormVisible = false"
     />
   </Dialog>
 </template>

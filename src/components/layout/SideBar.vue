@@ -7,7 +7,9 @@ const props = defineProps<{
 }>();
 
 import { useWorkStore } from 'src/stores/work.ts';
-import { WORK_PHASE_ORDER } from 'server/lib/entities/work.ts';
+import { WORK_PHASE_ORDER } from 'server/lib/models/work.ts';
+
+import { useGoalStore } from 'src/stores/goal.ts';
 
 import Menu from 'primevue/menu';
 import { PrimeIcons } from 'primevue/api';
@@ -45,6 +47,9 @@ const sectionClasses = ['section', 'flex', 'items-baseline', 'gap-2', 'font-ligh
 const workStore = useWorkStore();
 workStore.populateWorks();
 
+const goalStore = useGoalStore();
+goalStore.populateGoals();
+
 const items = computed(() => {
   const dashboard = [
     {
@@ -67,18 +72,25 @@ const items = computed(() => {
       label: work.title,
       href: `/works/${work.id}`,
     })),
-  ]
+  ];
 
-  const yetToCome = [
+  const goals = [
     {
       label: 'Goals',
       icon: PrimeIcons.STAR,
       href: '/goals',
       section: true,
     },
+    ...(goalStore.goals ?? []).toSorted((a, b) => a.title < b.title ? -1 : a.title > b.title ? 1 : 0).map(goal => ({
+      label: goal.title,
+      href: `/goals/${goal.id}`,
+    })),
     { label: 'January Challenge' },
     { label: 'Edit Every Day' },
     { label: 'NaNoWriMo 2024' },
+  ]
+
+  const yetToCome = [
     {
       label: 'Boards',
       icon: PrimeIcons.CHART_BAR,
@@ -93,6 +105,7 @@ const items = computed(() => {
   const items: { label: string; href?: string; icon?: string; section?: boolean; first?: boolean; }[] = [
     ...dashboard,
     ...works,
+    ...goals,
     // ...yetToCome,
   ];
 
@@ -169,3 +182,4 @@ const items = computed(() => {
   font-size: 1rem;
 }
 </style>
+server/lib/models/work

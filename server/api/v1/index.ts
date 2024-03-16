@@ -13,4 +13,7 @@ v1Router.use('/tally', tallyRouter);
 import workRouter from './work.ts';
 v1Router.use('/work', workRouter);
 
+import goalRouter from './goal.ts';
+v1Router.use('/goal', goalRouter);
+
 export default v1Router;

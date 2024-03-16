@@ -11,7 +11,7 @@ import { PasswordResetLink, PendingEmailVerification, User, UserAuth } from "@pr
 import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut, requireUser, WithUser } from "../lib/auth.ts";
 import { PASSWORD_RESET_LINK_STATE } from "../lib/states.ts";
-import { USER_STATE } from "../lib/entities/user.ts";
+import { USER_STATE } from "../lib/models/user.ts";
 import CONFIG from '../config.ts';
 
 import { pushTask } from "../lib/queue.ts";

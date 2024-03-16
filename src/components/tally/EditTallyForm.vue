@@ -18,7 +18,7 @@ import { useValidation } from 'src/lib/form.ts';
 
 import { TallyPayload } from 'server/api/v1/tally.ts';
 import { updateTally, Tally, TallyWithTags } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE } from 'server/lib/entities/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 const props = defineProps<{
@@ -36,7 +36,7 @@ import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import TbTag from 'src/components/tag/TbTag.vue';
 
-const emit = defineEmits(['tally:edit', 'requestClose']);
+const emit = defineEmits(['tally:edit', 'formSuccess']);
 
 const formModel = reactive({
   date: parseDateStringSafe(props.tally.date),
@@ -110,7 +110,7 @@ async function handleSubmit() {
     successMessage.value = `Progress saved!`;
 
     await wait(1 * 1000);
-    emit('requestClose');
+    emit('formSuccess');
   } catch(err) {
     errorMessage.value = 'Could not update your progress: something went wrong server-side.'
 
@@ -317,3 +317,4 @@ async function handleSubmit() {
 } */
 
 </style>
+server/lib/models/tally

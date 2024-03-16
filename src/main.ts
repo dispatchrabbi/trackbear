@@ -38,6 +38,7 @@ import { useThemeStore } from './stores/theme.ts';
 
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
+import Tooltip from 'primevue/tooltip';
 import Ripple from 'primevue/ripple';
 import Wind from 'src/themes/primevue-presets/wind/index.js';
 
@@ -77,6 +78,7 @@ createApp(App)
     unstyled: true,
     pt: Wind,
   })
+  .directive('tooltip', Tooltip as unknown as Directive)
   .directive('ripple', Ripple as unknown as Directive)
   .mount('#app');
 

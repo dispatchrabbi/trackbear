@@ -2,10 +2,10 @@ import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
 
 import { hash } from '../../server/lib/hash.ts';
-import { USER_STATE } from "../../server/lib/entities/user.ts";
-import { WORK_STATE, WORK_PHASE } from "../../server/lib/entities/work.ts";
-import { TALLY_STATE, TALLY_MEASURE } from "../../server/lib/entities/tally.ts";
-import { TAG_STATE, TAG_DEFAULT_COLOR } from "../../server/lib/entities/tag.ts";
+import { USER_STATE } from "../../server/lib/models/user.ts";
+import { WORK_STATE, WORK_PHASE } from "../../server/lib/models/work.ts";
+import { TALLY_STATE, TALLY_MEASURE } from "../../server/lib/models/tally.ts";
+import { TAG_STATE, TAG_DEFAULT_COLOR } from "../../server/lib/models/tag.ts";
 
 import { main as legacyMain } from './seed-legacy.ts';
 
@@ -130,7 +130,7 @@ async function main() {
   // console.log('Seeding legacy users and projects...');
   // await legacyMain();
 
-  console.log('Seeding tag-and-tally users and entities...');
+  console.log('Seeding tag-and-tally users and models...');
   for(const user of SEED_USERS) {
     const { hashedPassword, salt } = await hash(user.password);
 

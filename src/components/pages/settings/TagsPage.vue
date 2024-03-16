@@ -125,7 +125,7 @@ loadTags();
         </template>
         <CreateTagForm
           @tag:create="loadTags()"
-          @request-close="isCreateFormVisible = false"
+          @form-success="isCreateFormVisible = false"
         />
       </Dialog>
       <Dialog
@@ -141,7 +141,7 @@ loadTags();
         <EditTagForm
           :tag="currentlyEditingTag"
           @tag:edit="loadTags()"
-          @request-close="currentlyEditingTag = null"
+          @form-success="currentlyEditingTag = null"
         />
       </Dialog>
       <Dialog
@@ -157,7 +157,7 @@ loadTags();
         <DeleteTagForm
           :tag="currentlyDeletingTag"
           @tag:delete="loadTags()"
-          @request-close="currentlyDeletingTag = null"
+          @form-success="currentlyDeletingTag = null"
         />
       </Dialog>
     </div>

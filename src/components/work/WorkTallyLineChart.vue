@@ -14,7 +14,7 @@ import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import LineChart from 'src/components/chart/LineChart.vue';
 import type { LineChartOptions } from 'src/components/chart/LineChart.vue';
-import { TALLY_MEASURE } from 'server/lib/entities/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 
 const props = defineProps<{
   work: Work;
@@ -106,3 +106,4 @@ const chartOptions = computed(() => {
 
 <style scoped>
 </style>
+server/lib/models/tally.ts
