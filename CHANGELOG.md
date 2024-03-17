@@ -12,6 +12,11 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.8.0
+
+- NEW: Goals! Set a progress target for a project or set of tags, or build a writing habit and see how long you can keep the streak going. Click on "Goals" on the sidebar to try them out.
+- FIXED: Time-based projects now correctly show the total number of hours on the project list page. (h/t AngelDreamer)
+
 ## 0.7.2
 
 - NEW: You can now edit and delete progress entries. (h/t Robot)
