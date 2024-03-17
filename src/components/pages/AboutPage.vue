@@ -8,6 +8,7 @@ import TextBlurb from 'src/components/layout/TextBlurb.vue';
     <TextBlurb
       title="About TrackBear"
     >
+      <!-- eslint-disable vue/html-indent vue/max-attributes-per-line-->
       <p>
         It all started with a spreadsheet. My partner wondered aloud if there was some way she could track her
         yearly writing goal in a spreadsheet, with nice graphs and stats and things. Then, frustration vented, she
@@ -28,13 +29,17 @@ import TextBlurb from 'src/components/layout/TextBlurb.vue';
       </p>
       <p>
         I hope TrackBear works for whatever your writerly needs happen to be. If you liked it, or you have feedback,
-        please feel free to drop me a message! You can find me at my username below on Discord.
+        please feel free to drop me a message! You can find me at my username below on Discord or you can email me at
+        <a class="underline text-primary-500 dark:text-primary-400" href="mailto:trackbearapp@gmail.com">trackbearapp@gmail.com</a>.
       </p>
-      <!-- <p>
+      <p>
         I hope TrackBear works for whatever your writerly needs happen to be. If you liked it, or you have feedback,
-        please feel free to drop me a message! And if it's helped you, please consider supporting the site. Any money
-        I collect goes directly toward server costs (and also coffee while I'm writing new features for the site).
-      </p> -->
+        please feel free to drop me a message! And if it's helped you,
+        <a class="underline text-primary-500 dark:text-primary-400" href="https://ko-fi.com/trackbear">please
+        consider supporting the site</a>. Any money I collect goes directly toward server costs (and also coffee for
+        while I'm writing new features for the site).
+      </p>
+      <!-- eslint-enable vue/html-indent vue/max-attributes-per-line-->
     </TextBlurb>
   </PorchLayout>
 </template>

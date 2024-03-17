@@ -5,6 +5,7 @@ import MaintenancePage from 'src/components/pages/MaintenancePage.vue';
 import AboutPage from 'src/components/pages/AboutPage.vue';
 import ChangelogPage from 'src/components/pages/ChangelogPage.vue';
 import PrivacyPage from 'src/components/pages/PrivacyPage.vue';
+import ContactPage from 'src/components/pages/ContactPage.vue';
 
 import SignUpPage from 'src/components/pages/SignUpPage.vue';
 import LoginPage from 'src/components/pages/LoginPage.vue';
@@ -45,6 +46,8 @@ const routes = [
   { path: '/about', name: 'about', component: AboutPage },
   { path: '/changelog', name: 'changelog', component: ChangelogPage },
   { path: '/privacy', name: 'privacy', component: PrivacyPage },
+  { path: '/contact', name: 'contact', component: ContactPage },
+
   { path: '/signup', name:'signup', component: SignUpPage },
   { path: '/login', name:'login', component: LoginPage },
   { path: '/logout', name:'logout', component: LogoutPage },

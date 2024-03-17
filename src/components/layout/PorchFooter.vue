@@ -7,7 +7,10 @@ import TrackbearMasthead from './TrackbearMasthead.vue';
     class="pt-6 pb-6 px-2 flex flex-col"
   >
     <div class="links flex justify-start items-center md:items-baseline gap-2 text-sm">
-      <TrackbearMasthead hide-logo hide-stage />
+      <TrackbearMasthead
+        hide-logo
+        hide-stage
+      />
       <div>
         is made with 🐻 by <a
           href="https://github.com/dispatchrabbi"
@@ -39,12 +42,21 @@ import TrackbearMasthead from './TrackbearMasthead.vue';
           Privacy
         </RouterLink>
       </div>
-      <!-- <div>/</div>
+      <div>/</div>
       <div>
-        <RouterLink to="/ko-fi">
-          Buy me a coffee
+        <RouterLink to="/contact">
+          Contact
         </RouterLink>
-      </div> -->
+      </div>
+      <div>/</div>
+      <div>
+        <a
+          href="https://ko-fi.com/trackbear"
+          target="_blank"
+        >
+          Buy me a coffee!
+        </a>
+      </div>
     </div>
   </footer>
 </template>

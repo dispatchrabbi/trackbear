@@ -23,8 +23,8 @@ const props = defineProps<{
     >
       <span class="uppercase">TrackBear</span><span
         v-if="!props.hideStage"
-        class="disclaimer text-sm font-light text-red-500"
-      >alpha</span>
+        class="disclaimer text-sm font-light text-indigo-500 dark:text-indigo-400"
+      >beta</span>
     </div>
   </div>
 </template>

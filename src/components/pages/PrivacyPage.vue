@@ -25,7 +25,7 @@ import TextBlurb from 'src/components/layout/TextBlurb.vue';
       </p>
       <p>
         As far as the information in the database goes and other technical security things with regards to the backend,
-        I will do my best to safeguard TrackBear using current best practices. If you have a specific question thaat I
+        I will do my best to safeguard TrackBear using current best practices. If you have a specific question that I
         did not cover here, please feel free to get in touch — but please remember that I'm just some guy, doing a
         thing on the internet.
       </p>

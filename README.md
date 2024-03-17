@@ -2,7 +2,21 @@
 
 **TrackBear** is a writing tracker service. If you're writing, editing, or otherwise engaged in some sort of authorial project, you can track that project on TrackBear!
 
-> TrackBear is... not even in beta. It's in super-mega-alpha mode right now. Please don't use it unless you are willing to be testing an alpha build.
+> TrackBear is very much in beta and a bit rough around the edges UX-wise. Pleaes treat it with kindness!
+
+## Prerequisites
+
+You'll need a Postgres database to back TrackBear up. The easiest way to make this work is by using the included docker-compose.yaml file.
+
+```sh
+docker compose up
+```
+
+**The first time you set up your docker stack, you will need to manually create the `queue` database.** This is a limitation of the Postgres docker container. Exec into the container (`docker exec -it /bin/bash trackbear-db-1`) and run:
+
+```sh
+createdb -U $POSTGRES_USER queue
+```
 
 ## Setup
 
@@ -16,55 +30,23 @@ cp .env.example .env
 
 See [the environment variable documentation](./docs/env.md) for more details on environment variables.
 
-Then set up the docker stack:
-
-```sh
-# build the container
-docker compose build
-
-# run the docker compose stack
-docker compose up
-```
-
-**The first time you set up your docker stack, you will need to manually create the `queue` database.** This is a limitation of the Postgres docker container. Exec into the container (`docker exec -it /bin/bash trackbear-db-1`) and run:
-
-```sh
-createdb -U $POSTGRES_USER queue
-```
-
 ## Developing
 
-```sh
-# build a dev version of the container
-docker compose build
+To start TrackBear in development mode:
 
-# start the container in watch mode
-docker compose watch
-# or
-npm run watch
+```sh
+npm run start
 ```
 
-Starting the container in watch mode means that it will either copy in changed files or restart the container (depending on what's needed) as you save files. This enables HMR and other creature comforts.
-
-See [the docker documentation](./docs/docker.md) for more details on specific commands.
-
-### Production mode
-
-You can also start up the app in a docker container in production mode:
+You can also start TrackBear in production mode:
 
 ```sh
-# build the production version of the container
-npm run container:prod
+# compile the app first
+npm run compile
 
-# start the container
-docker compose -f docker-compose.production.yaml up -d
-# or
+# then start it up
 npm run start:prod
 ```
-
-### Outside of a container
-
-You *can* start up the app locally (outside of a container) using `npm run local:start:dev` and `npm run local:start:prod` but **these are deprecated and you shouldn't use them**.
 
 ### Migrations
 
@@ -80,7 +62,7 @@ npm version [<newversion> | major | minor | patch | premajor | preminor | prepat
 
 This will:
 
-- Build the app (to make sure it's green)
+- Build the app and container (to make sure it's green)
 - Change the version in `package.json` and `package-lock.json` to the new version
 - Add and commit any changed files with the commit message `v${VERSION}`
 - Create a tag called `v${VERSION}`
@@ -92,11 +74,12 @@ git push
 git push --tags
 ```
 
+Once you do this, a Github Action will build a production-ready container and upload it to ghcr.io.
+
 ## Deploying
 
 The app runs as a container on the server. There's no fancy remote deploy yet, so to update, you'll need to
-SSH into the server, pull the docker container for the tag you want (or latest, I guess), and then stop the
-running container and start the new container with the env file in the appropriate directory.
+SSH into the server, change the container restart script to the latest version, and run it.
 
 This should probably be made better at some point, but for now, it works fine.
 

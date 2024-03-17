@@ -4,48 +4,28 @@ For now, this docs page is just documenting a bunch of commands I'm running for 
 
 ## Build
 
-Build for development:
+In order to build the container:
 ```sh
-docker build -t dispatchrabbi/trackbear:dev --target dev .
+npm run build
 ```
 
-Build for production:
-```sh
-docker build -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \") -t latest --target prod .
-# or
-npm run container:prod
-```
+A container is automatically built by Github Actions on the pushing of a new version tag.
 
 ## Run
 
-Watching in development:
-```sh
-docker compose watch
-# or
-npm run watch
-```
-
-Running in development (HMR won't work):
-```sh
-docker compose up -d
-```
-
-Running for development (without docker compose):
-```sh
-docker run --env-file ./.env -p 3000:3000 -p 24678:24678 --mount type=bind,source="$(pwd)"/../trackbear/certs,target=/certs,readonly --mount type=bind,source="$(pwd)"/../trackbear/db,target=/db --mount type=bind,source="$(pwd)"/logs,target=/logs --name trackbear-dev --rm dispatchrabbi/trackbear:dev
-```
-
-Running for production:
+Running the container on production:
 ```sh
 docker run \
   --restart=on-failure:3 \
-  -u 1001 \
   --env-file ./trackbear.env \
   -p 127.0.0.1:3000:3000 \
   --mount type=bind,source=/dev/null,target=/certs,readonly \
   --mount type=bind,source="$(pwd)"/db,target=/db \
   --mount type=bind,source="$(pwd)"/logs,target=/logs \
+  --add-host host.docker.internal:host-gateway \
   --name trackbear \
   -d \
   ghcr.io/dispatchrabbi/trackbear:latest
 ```
+
+In practice, a version number is always substituted for `latest` on production.

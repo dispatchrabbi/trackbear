@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-const router = useRouter();
-
 import BannerContainer from 'src/components/banner/BannerContainer.vue';
 import PorchHeader from 'src/components/layout/PorchHeader.vue';
 import PorchFooter from 'src/components/layout/PorchFooter.vue';
