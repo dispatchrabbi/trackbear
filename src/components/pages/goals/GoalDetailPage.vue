@@ -19,7 +19,9 @@ import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import GoalTallyDataTable from 'src/components/goal/GoalTallyDataTable.vue';
+import HabitDataTable from 'src/components/goal/HabitDataTable.vue';
 import DeleteGoalForm from 'src/components/goal/DeleteGoalForm.vue';
+import { GOAL_TYPE } from 'server/lib/models/goal';
 
 const goalId = ref<number>(+route.params.id);
 watch(() => route.params.id, newId => {
@@ -105,6 +107,11 @@ onMounted(() => {
         v-if="tallies.length > 0"
         class="flex flex-col gap-2 max-w-screen-md"
       >
+        <HabitDataTable
+          v-if="goal.type === GOAL_TYPE.HABIT"
+          :tallies="tallies"
+          :goal="goal"
+        />
         <!-- <div class="w-full">
           <WorkTallyStreakChart
             :work="goal"
@@ -117,11 +124,11 @@ onMounted(() => {
             :tallies="tallies"
           />
         </div> -->
-        <div class="w-full">
+        <!-- <div class="w-full">
           <GoalTallyDataTable
             :tallies="tallies"
           />
-        </div>
+        </div> -->
       </div>
       <div v-else>
         You haven't logged any progress on this goal. You want the cool graphs? Get writing!

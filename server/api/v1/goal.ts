@@ -108,7 +108,6 @@ const zGoalPayload = z.discriminatedUnion('type', [
       cadence: z.object({
         unit: z.enum(Object.values(GOAL_CADENCE_UNIT) as NonEmptyArray<string>),
         period: z.number().int(),
-        times: z.number().int(),
       }),
       threshold: z.object({
         measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),

@@ -29,7 +29,7 @@ type GoalThreshold = {
 };
 
 type GoalCadence = {
-  times: number;
+  times?: number | null; // actually, this property is on hiatus until I want to start using it again
   period: number;
   unit: typeof GOAL_CADENCE_UNIT[keyof typeof GOAL_CADENCE_UNIT];
 };

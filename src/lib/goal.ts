@@ -1,16 +1,110 @@
-import { GOAL_CADENCE_UNIT } from 'server/lib/models/goal.ts';
+import {
+  startOfDay, addDays, endOfDay,
+  startOfWeek, addWeeks,
+  startOfMonth, addMonths,
+  startOfYear, addYears,
+} from 'date-fns';
+import { formatDate, parseDateString } from './date.ts';
+
+import { Tally } from 'src/lib/api/tally.ts';
+import { Goal } from 'src/lib/api/goal.ts';
+import { GOAL_CADENCE_UNIT, GoalHabitParameters } from 'server/lib/models/goal.ts';
 
 export const GOAL_CADENCE_UNIT_INFO = {
   [GOAL_CADENCE_UNIT.DAY]: {
     label: { singular: 'day', plural: 'days' },
+    fns: { startOf: startOfDay, add: addDays },
   },
   [GOAL_CADENCE_UNIT.WEEK]: {
     label: { singular: 'week', plural: 'weeks' },
+    fns: { startOf: startOfWeek, add: addWeeks },
   },
   [GOAL_CADENCE_UNIT.MONTH]: {
     label: { singular: 'month', plural: 'months' },
+    fns: { startOf: startOfMonth, add: addMonths },
   },
   [GOAL_CADENCE_UNIT.YEAR]: {
     label: { singular: 'year', plural: 'years' },
+    fns: { startOf: startOfYear, add: addYears },
   },
 };
+
+export type HabitRange = {
+  startDate: string;
+  endDate: string;
+  tallies: Tally[];
+  total: number;
+  isSuccess: boolean;
+};
+
+export function analyzeHabitTallies(tallies: Tally[], goal: Goal): { ranges: HabitRange[], streaks: { longest: number; current: number; } } {
+  const threshold = (goal.parameters as GoalHabitParameters).threshold;
+  const cadence = (goal.parameters as GoalHabitParameters).cadence;
+
+  const filteredTalles = threshold === null ? tallies : tallies.filter(tally => tally.measure === threshold.measure);
+  const sortedTallies = filteredTalles.toSorted((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
+
+  if(sortedTallies.length === 0) {
+    return { ranges: [], streaks: { longest: 0, current: 0} };
+  }
+
+  const startDate = goal.startDate ?? sortedTallies[0].date;
+  const endDate = goal.endDate ?? sortedTallies[sortedTallies.length - 1].date;
+
+  // first, get all the possible date ranges for the habit
+  const dateRanges = createDateRanges(cadence.period, cadence.unit, startDate, endDate);
+
+  // then check each range to see which tallies are there, how many hits they have, and if that's enough
+  // keep a streak counter going as well
+  const streaks = [0];
+  const ranges = [];
+  for(const dateRange of dateRanges) {
+    const talliesInRange = sortedTallies.filter(tally => (tally.date >= dateRange.start && tally.date <= dateRange.end));
+    const total = threshold === null ? talliesInRange.length : talliesInRange.reduce((total, tally) => total + tally.count, 0);
+
+    const range: HabitRange = {
+      startDate: dateRange.start,
+      endDate: dateRange.end,
+      tallies: talliesInRange,
+      total: total,
+      isSuccess: threshold === null ? total > 0 : total > threshold.count
+    };
+    ranges.push(range);
+
+    if(range.isSuccess) {
+      streaks[streaks.length - 1] += 1;
+    } else if(streaks[streaks.length - 1] !== 0) {
+      streaks.push(0);
+    } // else we already have a zero streak recorded
+  }
+
+  return {
+    ranges,
+    streaks: {
+      longest: streaks.reduce((max, streak) => Math.max(max, streak), 0),
+      current: streaks[streaks.length - 1],
+    },
+  };
+}
+
+function createDateRanges(period: number, unit: string, startDate: string, endDate: string) {
+  const fns = GOAL_CADENCE_UNIT_INFO[unit].fns;
+  const start = fns.startOf(parseDateString(startDate));
+  const end = endOfDay(parseDateString(endDate));
+
+  const ranges: { start: string; end: string }[] = [];
+
+  let startOfRange = start;
+  while(startOfRange < end) {
+    const nextStartOfRange = fns.add(startOfRange, period);
+    const endOfRange = endOfDay(addDays(nextStartOfRange, -1));
+    ranges.push({
+      start: formatDate(startOfRange),
+      end: formatDate(endOfRange)
+    });
+
+    startOfRange = nextStartOfRange;
+  }
+
+  return ranges;
+}

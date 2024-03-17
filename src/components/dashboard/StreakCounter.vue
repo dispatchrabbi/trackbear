@@ -20,7 +20,7 @@ const streakInfo = computed(() => {
   <div class="flex gap-2">
     <Card>
       <template #title>
-        <span :class="PrimeIcons.STAR_FILL" /> Current Streak
+        <span :class="PrimeIcons.FORWARD" /> Current Streak
       </template>
       <template #content>
         <p class="text-2xl">

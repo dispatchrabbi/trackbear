@@ -47,7 +47,6 @@ const formModel = reactive({
   count: (props.goal.parameters as GoalParameters).threshold?.count ?? null,
   unit: (props.goal.parameters as GoalParameters).cadence?.unit ?? GOAL_CADENCE_UNIT.DAY,
   period: (props.goal.parameters as GoalParameters).cadence?.period ?? null,
-  times: (props.goal.parameters as GoalParameters).cadence?.times ?? null,
 
   startDate: parseDateStringSafe(props.goal.startDate),
   endDate: parseDateStringSafe(props.goal.endDate),
@@ -70,9 +69,6 @@ const validations = z
     period: z
       .number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }).positive({ message: 'Please enter a positive number.' }).nullable()
       .refine(v => formModel.type === GOAL_TYPE.HABIT ? v !== null : true, { message: 'A time period is required for habits.'}),
-    times: z
-      .number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }).positive({ message: 'Please enter a positive number.' }).nullable()
-      .refine(v => formModel.type === GOAL_TYPE.HABIT ? v !== null : true, { message: 'Number of times is required for habits.'}),
 
     startDate: z
       .date({ invalid_type_error:'Please select a valid start date or clear the field.' }).nullable()
@@ -136,7 +132,6 @@ const onMeasureChange = function() {
 
 const savedParams = reactive({
   period: null,
-  times: null,
   unit: GOAL_CADENCE_UNIT.DAY,
 
   count: null,
@@ -148,7 +143,6 @@ const onTypeChange = function() {
   // record the current params
   const currentParams = {
     period: formModel.period,
-    times: formModel.times,
     unit: formModel.unit,
 
     count: formModel.count,
@@ -159,7 +153,6 @@ const onTypeChange = function() {
 
   // restore the saved params
   formModel.period = savedParams.period;
-  formModel.times = savedParams.times;
   formModel.unit = savedParams.unit;
 
   formModel.count = savedParams.count;
@@ -169,7 +162,6 @@ const onTypeChange = function() {
 
   // overwrite the saved params with the current params
   savedParams.period = currentParams.period;
-  savedParams.times = currentParams.times;
   savedParams.unit = currentParams.unit;
 
   savedParams.count = currentParams.count;
@@ -203,7 +195,6 @@ async function handleSubmit() {
         cadence: {
           unit: rawData.unit,
           period: rawData.period,
-          times: rawData.times,
         },
         threshold: rawData.count === null ? null : {
           count: rawData.count,
@@ -313,15 +304,7 @@ async function handleSubmit() {
         <div class="period-fieldset-container flex gap-2">
           <div class="period-fieldset-period flex-auto">
             <InputGroup>
-              <InputNumber
-                id="goal-form-times"
-                v-model="formModel.times"
-                :pt="{ input: { root: { class: 'w-0 grow'} } }"
-                :pt-options="{ mergeSections: true, mergeProps: true }"
-                :invalid="!isFieldValid"
-                @update:model-value="onUpdate"
-              />
-              <InputGroupAddon>{{ formModel.times === 1 ? 'time' : 'times' }} every</InputGroupAddon>
+              <InputGroupAddon>Every</InputGroupAddon>
               <InputNumber
                 id="goal-form-period"
                 v-model="formModel.period"
