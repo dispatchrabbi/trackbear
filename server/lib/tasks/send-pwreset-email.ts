@@ -30,7 +30,7 @@ async function sendPasswordResetEmail(user: User, resetLink: PasswordResetLink) 
   const env = await getNormalizedEnv();
   const resetUrl = env.EMAIL_URL_PREFIX + '/reset-password/' + resetLink.uuid;
 
-  const sentFrom = new Sender('no-reply@trackbear.dispatchrab.bi', 'TrackBear');
+  const sentFrom = new Sender('no-reply@trackbear.app', 'TrackBear');
   const recipients = [
     new Recipient(user.email, user.displayName),
   ];

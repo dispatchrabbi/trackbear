@@ -22,7 +22,7 @@ async function handler(task) {
 }
 
 async function sendPasswordChangeEmail(user) {
-  const sentFrom = new Sender('no-reply@trackbear.dispatchrab.bi', 'TrackBear');
+  const sentFrom = new Sender('no-reply@trackbear.app', 'TrackBear');
   const recipients = [
     new Recipient(user.email, user.displayName),
   ];

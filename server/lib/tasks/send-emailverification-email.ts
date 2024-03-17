@@ -47,7 +47,7 @@ async function sendEmailVerificationEmail(user: User, pendingEmailVerification: 
   const env = await getNormalizedEnv();
   const verifyUrl = env.EMAIL_URL_PREFIX + '/verify-email/' + pendingEmailVerification.uuid;
 
-  const sentFrom = new Sender('no-reply@trackbear.dispatchrab.bi', 'TrackBear');
+  const sentFrom = new Sender('no-reply@trackbear.app', 'TrackBear');
   const recipients = [
     new Recipient(user.email, user.displayName),
   ];
