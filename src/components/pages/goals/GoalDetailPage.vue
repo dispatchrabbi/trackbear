@@ -18,10 +18,10 @@ import type { MenuItem } from 'primevue/menuitem';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
-import GoalTallyDataTable from 'src/components/goal/GoalTallyDataTable.vue';
+import TargetLineChart from 'src/components/goal/TargetLineChart.vue';
 import HabitDataTable from 'src/components/goal/HabitDataTable.vue';
 import DeleteGoalForm from 'src/components/goal/DeleteGoalForm.vue';
-import { GOAL_TYPE } from 'server/lib/models/goal';
+import { GOAL_TYPE } from 'server/lib/models/goal.ts';
 
 const goalId = ref<number>(+route.params.id);
 watch(() => route.params.id, newId => {
@@ -107,11 +107,24 @@ onMounted(() => {
         v-if="tallies.length > 0"
         class="flex flex-col gap-2 max-w-screen-md"
       >
-        <HabitDataTable
+        <div
+          v-if="goal.type === GOAL_TYPE.TARGET"
+          class="w-full"
+        >
+          <TargetLineChart
+            :tallies="tallies"
+            :goal="goal"
+          />
+        </div>
+        <div
           v-if="goal.type === GOAL_TYPE.HABIT"
-          :tallies="tallies"
-          :goal="goal"
-        />
+          class="w-full"
+        >
+          <HabitDataTable
+            :tallies="tallies"
+            :goal="goal"
+          />
+        </div>
         <!-- <div class="w-full">
           <WorkTallyStreakChart
             :work="goal"

@@ -8,7 +8,8 @@ import { formatDate, parseDateString } from './date.ts';
 
 import { Tally } from 'src/lib/api/tally.ts';
 import { Goal } from 'src/lib/api/goal.ts';
-import { GOAL_CADENCE_UNIT, GoalHabitParameters } from 'server/lib/models/goal.ts';
+import { GOAL_CADENCE_UNIT, GOAL_TYPE, GoalHabitParameters, GoalTargetParameters } from 'server/lib/models/goal.ts';
+import { formatCount } from './tally.ts';
 
 export const GOAL_CADENCE_UNIT_INFO = {
   [GOAL_CADENCE_UNIT.DAY]: {
@@ -36,6 +37,29 @@ export type HabitRange = {
   total: number;
   isSuccess: boolean;
 };
+
+export function describeGoal(goal: Goal) {
+  if(goal.type === GOAL_TYPE.TARGET) {
+    const params = goal.parameters as GoalTargetParameters;
+
+    let description = `Reach ${formatCount(params.threshold.count, params.threshold.measure)}`;
+    if(goal.endDate) {
+      description += ` by ${goal.endDate}`;
+    }
+
+    return description;
+  } else if(goal.type === GOAL_TYPE.HABIT) {
+    const params = goal.parameters as GoalHabitParameters;
+
+    const threshold = params.threshold ? formatCount(params.threshold.count, params.threshold.measure) : 'something';
+    const cadence = params.cadence.period === 1 ? GOAL_CADENCE_UNIT_INFO[params.cadence.unit].label.singular : `${params.cadence.period} ${GOAL_CADENCE_UNIT_INFO[params.cadence.unit].label.plural}`;
+    const description = `Log ${threshold} every ${cadence}`;
+
+    return description;
+  } else {
+    return 'Mystery goal!';
+  }
+}
 
 export function analyzeHabitTallies(tallies: Tally[], goal: Goal): { ranges: HabitRange[], streaks: { longest: number; current: number; } } {
   const threshold = (goal.parameters as GoalHabitParameters).threshold;

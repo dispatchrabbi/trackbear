@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { ref, computed, defineProps } from 'vue';
 
 import { Tally } from 'src/lib/api/tally.ts';
 import { Goal } from 'src/lib/api/goal.ts';
@@ -7,10 +7,11 @@ import { analyzeHabitTallies } from 'src/lib/goal.ts';
 import { formatCount } from 'src/lib/tally.ts';
 
 import Card from 'primevue/card';
+import InputSwitch from 'primevue/inputswitch';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { PrimeIcons } from 'primevue/api';
-import { GoalHabitParameters } from 'server/lib/models/goal';
+import { GoalHabitParameters } from 'server/lib/models/goal.ts';
 
 const props = defineProps<{
   tallies: Tally[];
@@ -19,6 +20,11 @@ const props = defineProps<{
 
 const habitStats = computed(() => {
   return analyzeHabitTallies(props.tallies, props.goal);
+});
+
+const onlyShowHits = ref<boolean>(false);
+const filteredRanges = computed(() => {
+  return onlyShowHits.value ? habitStats.value.ranges.filter(range => range.isSuccess) : habitStats.value.ranges;
 });
 
 function formatTallyDateCount(tallies: Tally[]) {
@@ -59,8 +65,12 @@ function formatTallySum(tallies: Tally[]) {
     </Card>
   </div>
   <div>
+    <div class="flex gap-2 justify-end items-center">
+      <InputSwitch v-model="onlyShowHits" />
+      <div>Show only ⭐️</div>
+    </div>
     <DataTable
-      :value="habitStats.ranges"
+      :value="filteredRanges"
     >
       <Column header="⭐️">
         <template #body="slotProps">
