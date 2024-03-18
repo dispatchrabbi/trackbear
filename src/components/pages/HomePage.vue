@@ -16,13 +16,11 @@ import TextBlurb from 'src/components/layout/TextBlurb.vue';
       </div>
       <TextBlurb title="Welcome to TrackBear!">
         <p>
-          Thank you for being part of the alpha test! Even though it could get a bit grizzly, I'm de-panda-ing on your feedback to help me get this writing tracker to a high koala-ty state.
+          TrackBear is an app that helps you track your writing. You can track word count, time spent, and chapters
+          and pages written. You can also set writing progress goals and track writing habit streaks!
         </p>
         <p>
-          Start by signing up for an account by clicking <b>Sign Up</b> in the upper right-hand corner.
-        </p>
-        <p>
-          <b class="text-red-500">IMPORTANT NOTE!</b> This is untested software and, while I will do my best to keep everything intact, I cannot guarantee that your data will not get lost. If you can't bear to lose your progress, track it somewhere else as well.
+          To get started, click <b>Sign Up</b>!
         </p>
       </TextBlurb>
     </div>
