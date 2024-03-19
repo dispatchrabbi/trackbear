@@ -25,12 +25,18 @@ const props = defineProps<{
 }>();
 
 const collapsed = useLocalStorage('sidebarCollapsed', false);
-function handleMenuItemClick(href?: string) {
+
+type MenuItemClickOptions = { openInNewTab?: boolean };
+function handleMenuItemClick(href?: string, options?: MenuItemClickOptions) {
   if(breakpoints.smaller('md').value) {
     collapsed.value = true;
   }
   if(href) {
-    router.push(href);
+    if(options?.openInNewTab) {
+      window.open(href);
+    } else {
+      router.push(href);
+    }
   }
 }
 
@@ -68,9 +74,11 @@ userStore.populateUser().catch(() => {
           @click="collapsed = true"
         />
       </div>
-      <SideBar
-        @menu-item-click="handleMenuItemClick"
-      />
+      <div class="mb-4">
+        <SideBar
+          @menu-item-click="handleMenuItemClick"
+        />
+      </div>
     </div>
     <div class="main flex-auto h-screen overflow-y-auto overscroll-contain flex flex-col">
       <div class="bar sticky top-0 z-10 bg-surface-0 dark:bg-surface-800 box-border border-solid border-b-[1px] border-primary-500 dark:border-primary-400">

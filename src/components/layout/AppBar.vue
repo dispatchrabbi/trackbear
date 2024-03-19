@@ -25,7 +25,7 @@ const toggleSidebar = function() {
 const userMenu = ref(null);
 const userMenuItems = ref<MenuItem[]>([
   { label: 'Account Settings', url: '/settings/account' },
-  { label: 'Tags', url: '/settings/tags' },
+  { label: 'Manage Tags', url: '/settings/tags' },
   { label: 'Log Out', url: '/logout' },
 ]);
 const toggleUserMenu = ev => userMenu.value.toggle(ev);

@@ -93,7 +93,48 @@ const items = computed(() => {
       command: () => emit('menuItemClick', `/goals/${goal.id}`),
       href: `/goals/${goal.id}`,
     })),
-  ]
+  ];
+
+  const trackbear = [
+    {
+      key: 'trackbear',
+      label: 'Trackbear',
+      icon: PrimeIcons.HEART,
+      command: () => emit('menuItemClick', '/about'),
+      href: '/about',
+      section: true,
+    },
+    {
+      key: 'trackbear-about',
+      label: 'About',
+      command: () => emit('menuItemClick', '/about'),
+      href: '/about',
+    },
+    {
+      key: 'trackbear-changelog',
+      label: 'Changelog',
+      command: () => emit('menuItemClick', '/changelog'),
+      href: '/changelog',
+    },
+    {
+      key: 'trackbear-privacy',
+      label: 'Privacy',
+      command: () => emit('menuItemClick', '/privacy'),
+      href: '/privacy',
+    },
+    {
+      key: 'trackbear-contact',
+      label: 'Contact',
+      command: () => emit('menuItemClick', '/contact'),
+      href: '/contact',
+    },
+    {
+      key: 'trackbear-support',
+      label: 'Support Trackbear!',
+      command: () => emit('menuItemClick', '/ko-fi', { openInNewTab: true }),
+      href: '/ko-fi',
+    },
+  ];
 
   // const yetToCome = [
   //   {
@@ -112,6 +153,7 @@ const items = computed(() => {
     ...dashboard,
     ...works,
     ...goals,
+    ...trackbear,
     // ...yetToCome,
   ];
 

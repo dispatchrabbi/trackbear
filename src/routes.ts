@@ -6,6 +6,7 @@ import AboutPage from 'src/components/pages/AboutPage.vue';
 import ChangelogPage from 'src/components/pages/ChangelogPage.vue';
 import PrivacyPage from 'src/components/pages/PrivacyPage.vue';
 import ContactPage from 'src/components/pages/ContactPage.vue';
+import KoFiRedirectPage from 'src/components/pages/KoFiRedirectPage.vue';
 
 import SignUpPage from 'src/components/pages/SignUpPage.vue';
 import LoginPage from 'src/components/pages/LoginPage.vue';
@@ -47,6 +48,7 @@ const routes = [
   { path: '/changelog', name: 'changelog', component: ChangelogPage },
   { path: '/privacy', name: 'privacy', component: PrivacyPage },
   { path: '/contact', name: 'contact', component: ContactPage },
+  { path: '/ko-fi', name: 'ko-fi', component: KoFiRedirectPage },
 
   { path: '/signup', name:'signup', component: SignUpPage },
   { path: '/login', name:'login', component: LoginPage },
