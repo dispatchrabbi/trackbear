@@ -57,7 +57,7 @@ userStore.populateUser().catch(() => {
   >
     <div
       :class="[
-        'side h-screen overflow-y-auto overscroll-contain flex-none flex flex-col bg-surface-0 shadow-md',
+        'side h-screen overflow-y-auto overscroll-contain flex-none flex flex-col bg-surface-0 dark:bg-surface-800 shadow-md',
         { 'w-0 md:w-0': collapsed },
         { 'w-screen md:w-64': !collapsed },
         'z-50 md:z-auto fixed md:static',
