@@ -12,7 +12,7 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-## 0.8.1
+## 0.8.3
 
 - NEW: We're now officially in beta! The interface and features are stable enough that (I hope) most things won't change underneath users in major ways.
 - CHANGED: New theme color for a new era of TrackBear. This may not be the final color (and in fact I want to have multiple themes) but for now, enjoy the indigo.
