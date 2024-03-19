@@ -12,6 +12,12 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.8.1
+
+- NEW: We're now officially in beta! The interface and features are stable enough that (I hope) most things won't change underneath users in major ways.
+- CHANGED: New theme color for a new era of TrackBear. This may not be the final color (and in fact I want to have multiple themes) but for now, enjoy the indigo.
+- FIXED: Mobile styles are back! Now it should be a lot nicer to work with TrackBear on your phone.
+
 ## 0.8.0
 
 - NEW: Goals! Set a progress target for a project or set of tags, or build a writing habit and see how long you can keep the streak going. Click on "Goals" on the sidebar to try them out.
