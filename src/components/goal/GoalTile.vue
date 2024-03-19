@@ -26,7 +26,7 @@ const GOAL_TYPE_TAG_COLORS = {
     :pt-options="{ mergeSections: true, mergeProps: true }"
   >
     <template #title>
-      <div class="flex gap-2">
+      <div class="flex gap-2 items-start">
         <!-- TODO: enable when these are implemented -->
         <!-- <Button
           :icon="PrimeIcons.STAR"
@@ -45,7 +45,7 @@ const GOAL_TYPE_TAG_COLORS = {
       </div>
     </template>
     <template #content>
-      <div class="flex gap-2">
+      <div class="flex flex-col md:flex-row gap-2">
         <div class="font-light italic grow">
           {{ props.goal.description }}
         </div>

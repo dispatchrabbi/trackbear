@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import { useLocalStorage } from '@vueuse/core';
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+const breakpoints = useBreakpoints(breakpointsTailwind);
 
 import type { MenuItem } from 'primevue/menuitem';
 
@@ -12,15 +14,25 @@ const userStore = useUserStore();
 
 import BannerContainer from 'src/components/banner/BannerContainer.vue';
 import TrackbearMasthead from 'src/components/layout/TrackbearMasthead.vue';
+import Button from 'primevue/button';
 import AppBar from 'src/components/layout/AppBar.vue';
 import SideBar from 'src/components/layout/SideBar.vue';
 import LogProgressButton from 'src/components/tally/LogProgressButton.vue';
+import { PrimeIcons } from 'primevue/api';
 
 const props = defineProps<{
   breadcrumbs: MenuItem[];
 }>();
 
 const collapsed = useLocalStorage('sidebarCollapsed', false);
+function handleMenuItemClick(href?: string) {
+  if(breakpoints.smaller('md').value) {
+    collapsed.value = true;
+  }
+  if(href) {
+    router.push(href);
+  }
+}
 
 // attempt to populate the user, but only care about failing
 userStore.populateUser().catch(() => {
@@ -30,26 +42,47 @@ userStore.populateUser().catch(() => {
 </script>
 
 <template>
+  <div class="banner">
+    <BannerContainer />
+  </div>
   <div
-    :class="[ 'application', collapsed ? 'sidebar-collapsed' : null ]"
+    v-if="userStore.user"
+    :class="[ 'application flex', collapsed ? 'sidebar-collapsed' : null ]"
   >
-    <div class="banner">
-      <BannerContainer />
-    </div>
-    <div class="logo self-center p-2">
-      <TrackbearMasthead :collapsed="collapsed" />
-    </div>
-    <div class="side">
-      <SideBar :collapsed="collapsed" />
-    </div>
-    <div class="bar">
-      <AppBar
-        :breadcrumbs="props.breadcrumbs"
-        @sidebar:toggle="collapsed = !collapsed"
+    <div
+      :class="[
+        'side h-screen overflow-y-auto overscroll-contain flex-none flex flex-col bg-surface-0 shadow-md',
+        { 'w-0 md:w-0': collapsed },
+        { 'w-screen md:w-64': !collapsed },
+        'z-50 md:z-auto fixed md:static',
+      ]"
+    >
+      <div class="p-4 flex justify-between">
+        <TrackbearMasthead
+          link-to="dashboard"
+        />
+        <Button
+          class="md:hidden"
+          :icon="PrimeIcons.CHEVRON_LEFT"
+          text
+          @click="collapsed = true"
+        />
+      </div>
+      <SideBar
+        @menu-item-click="handleMenuItemClick"
       />
     </div>
-    <div class="main p-2 pr-4">
-      <slot />
+    <div class="main flex-auto h-screen overflow-y-auto overscroll-contain flex flex-col">
+      <div class="bar sticky top-0 z-10 bg-surface-0 dark:bg-surface-800 box-border border-solid border-b-[1px] border-primary-500 dark:border-primary-400">
+        <AppBar
+          :breadcrumbs="props.breadcrumbs"
+          :collapsed="collapsed"
+          @sidebar:toggle="collapsed = !collapsed"
+        />
+      </div>
+      <div class="content px-4 pt-4 pb-24">
+        <slot />
+      </div>
     </div>
   </div>
   <div class="log-progress-button fixed bottom-8 right-8">
@@ -58,55 +91,10 @@ userStore.populateUser().catch(() => {
 </template>
 
 <style scoped>
-.application {
-  display: grid;
-  grid-template:
-    "banner banner"
-    "logo bar"
-    "side main" 1fr
-    / 16rem 1fr
-  ;
-
-  transition-property: grid-template-columns;
-  transition-duration: 200ms;
+.application > .side {
+  transition-property: width;
+  transition-duration: 250ms;
   transition-timing-function: ease-in-out;
-
-  height: 100vh;
-}
-
-.application.sidebar-collapsed {
-  grid-template:
-    "banner banner"
-    "logo bar"
-    "side main" 1fr
-    / 4rem 1fr
-  ;
-}
-
-.banner {
-  grid-area: banner;
-}
-
-.logo {
-  grid-area: logo;
-}
-
-.side {
-  grid-area: side;
-  overflow: auto;
-}
-
-.logo, .side {
-  /* border-right: 1px solid black; */
-}
-
-.bar {
-  grid-area: bar;
-}
-
-.main {
-  grid-area: main;
-  overflow: auto;
 }
 
 </style>

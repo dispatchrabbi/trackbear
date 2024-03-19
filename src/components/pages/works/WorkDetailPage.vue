@@ -83,26 +83,26 @@ onMounted(() => {
   >
     <div v-if="work">
       <header class="mb-4">
-        <div class="actions flex gap-2">
+        <div class="actions flex gap-2 items-start">
           <SectionTitle
             :title="work.title"
+            :subtitle="work.description"
           />
           <div class="spacer grow" />
-          <Button
-            label="Edit"
-            :icon="PrimeIcons.PENCIL"
-            @click="isEditFormVisible = true"
-          />
-          <Button
-            severity="danger"
-            label="Delete"
-            :icon="PrimeIcons.TRASH"
-            @click="isDeleteFormVisible = true"
-          />
+          <div class="flex flex-col md:flex-row gap-2">
+            <Button
+              label="Edit"
+              :icon="PrimeIcons.PENCIL"
+              @click="isEditFormVisible = true"
+            />
+            <Button
+              severity="danger"
+              label="Delete"
+              :icon="PrimeIcons.TRASH"
+              @click="isDeleteFormVisible = true"
+            />
+          </div>
         </div>
-        <h2 class="description font-heading italic font-light">
-          {{ work.description }}
-        </h2>
       </header>
       <div
         v-if="work.tallies.length > 0"

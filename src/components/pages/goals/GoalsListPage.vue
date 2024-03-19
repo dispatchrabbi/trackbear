@@ -70,7 +70,7 @@ loadGoals();
       <div>
         <RouterLink to="/goals/new">
           <Button
-            label="New Goal"
+            label="New"
             :icon="PrimeIcons.PLUS"
           />
         </RouterLink>

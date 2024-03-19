@@ -65,14 +65,14 @@
   }
 } */
 
-  :root {
+  /* :root {
     background-color: rgb(var(--surface-0));
     color: rgb(var(--surface-700));
     @media (prefers-color-scheme: dark) {
       background-color: rgb(var(--surface-800));
       color: rgb(var(--surface-0));
     }
-  }
+  } */
   /* bg-surface-0 dark:bg-surface-900 text-surface-700 dark:text-surface-0/80 */
 
   /* This can't be done in BannerAnnouncement.vue due to v-html not working with scoped CSS */

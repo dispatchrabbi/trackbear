@@ -1,32 +1,32 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
+import { RouterLink } from 'vue-router';
 
 const props = defineProps<{
   hideLogo?: boolean;
   hideStage?: boolean;
-  collapsed?: boolean;
+  linkTo?: string;
 }>();
 
 </script>
 
 <template>
-  <div :class="['masthead flex gap-1 items-center text-2xl leading-1 font-heading font-black', props.collapsed ? 'justify-center' : null ]">
-    <div
-      v-if="!props.hideLogo"
-      class="logo flex-none"
-    >
-      <img :src="`/images/brown-bear.png`">
+  <RouterLink :to="{ name: linkTo ?? 'home' }">
+    <div :class="['masthead flex gap-1 items-center text-2xl leading-1 font-heading font-black']">
+      <div
+        v-if="!props.hideLogo"
+        class="logo flex-none"
+      >
+        <img :src="`/images/brown-bear.png`">
+      </div>
+      <div class="app-name mt-1">
+        <span class="uppercase">TrackBear</span><span
+          v-if="!props.hideStage"
+          class="disclaimer text-sm text-indigo-500 dark:text-indigo-400"
+        >BETA</span>
+      </div>
     </div>
-    <div
-      v-if="!props.collapsed"
-      class="app-name mt-1"
-    >
-      <span class="uppercase">TrackBear</span><span
-        v-if="!props.hideStage"
-        class="disclaimer text-sm text-indigo-500 dark:text-indigo-400"
-      >BETA</span>
-    </div>
-  </div>
+  </RouterLink>
 </template>
 
 <style scoped>

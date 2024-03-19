@@ -77,7 +77,7 @@ loadWorks();
       </div>
       <div>
         <Button
-          label="New Work"
+          label="New"
           :icon="PrimeIcons.PLUS"
           @click="isCreateFormVisible = true"
         />

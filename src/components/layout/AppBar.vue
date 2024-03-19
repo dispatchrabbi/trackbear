@@ -9,9 +9,11 @@ import Button from "primevue/button";
 import Menu from "primevue/menu";
 import Breadcrumb from "primevue/breadcrumb";
 import type { MenuItem } from 'primevue/menuitem';
+import TrackbearMasthead from "./TrackbearMasthead.vue";
 
 const props = defineProps<{
   breadcrumbs: MenuItem[];
+  collapsed: boolean;
 }>();
 
 const emit = defineEmits([ 'sidebar:toggle' ]);
@@ -31,7 +33,7 @@ const toggleUserMenu = ev => userMenu.value.toggle(ev);
 </script>
 
 <template>
-  <div class="appbar flex items-center gap-2 py-2">
+  <div class="appbar flex items-center gap-2 px-4 py-2">
     <Button
       :icon="PrimeIcons.BARS"
       size="large"
@@ -39,7 +41,12 @@ const toggleUserMenu = ev => userMenu.value.toggle(ev);
       text
       @click="toggleSidebar"
     />
+    <TrackbearMasthead
+      v-if="props.collapsed"
+      :hide-logo="true"
+    />
     <Breadcrumb
+      class="hidden md:block"
       :model="props.breadcrumbs"
     >
       <template #item="{ item, props: itemProps }">
@@ -62,22 +69,16 @@ const toggleUserMenu = ev => userMenu.value.toggle(ev);
       </template>
     </Breadcrumb>
     <div class="spacer flex-auto" />
-    <Avatar
-      label="🐻"
-      shape="circle"
-      size="large"
-    />
-    <Button
-      class="mr-2"
-      type="button"
-      :icon="PrimeIcons.CARET_DOWN"
-      size="large"
-      severity="secondary"
-      text
-      aria-haspopup="true"
-      aria-controls="user-menu"
-      @click="toggleUserMenu"
-    />
+    <div class="mr-2">
+      <Avatar
+        label="🐻"
+        shape="circle"
+        size="large"
+        aria-haspopup="true"
+        aria-controls="user-menu"
+        @click="toggleUserMenu"
+      />
+    </div>
     <Menu
       id="user-menu"
       ref="userMenu"

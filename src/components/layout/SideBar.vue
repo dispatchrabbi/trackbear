@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, defineProps } from 'vue';
-import { RouterLink } from 'vue-router';
+import { ref, computed, defineEmits } from 'vue';
 
-const props = defineProps<{
-  collapsed?: boolean;
-}>();
+const emit = defineEmits(['menuItemClick']);
 
 import { useWorkStore } from 'src/stores/work.ts';
 import { WORK_PHASE_ORDER } from 'server/lib/models/work.ts';
@@ -17,7 +14,7 @@ import { PrimeIcons } from 'primevue/api';
 const menuPassthrough = ref({
   root: {
     class: [
-      'px-4',
+      'pl-4 pr-4',
     ],
   },
   content: ({ context }) => ({
@@ -50,6 +47,7 @@ workStore.populateWorks();
 const goalStore = useGoalStore();
 goalStore.populateGoals();
 
+// TODO: this menu is a mess, it really needs to get fixed
 const items = computed(() => {
   const dashboard = [
     {
@@ -57,6 +55,7 @@ const items = computed(() => {
       label: 'Dashboard',
       icon: PrimeIcons.HOME,
       href: '/dashboard',
+      command: () => emit('menuItemClick', '/dashboard'),
       section: true,
       first: true, // oof, wish I didn't have to do this
     }
@@ -67,12 +66,14 @@ const items = computed(() => {
       key: 'projects',
       label: 'Projects',
       icon: PrimeIcons.FILE_EDIT,
+      command: () => emit('menuItemClick', '/works'),
       href: '/works',
       section: true,
     },
     ...(workStore.works ?? []).toSorted((a, b) => WORK_PHASE_ORDER.indexOf(a.phase) - WORK_PHASE_ORDER.indexOf(b.phase)).map(work => ({
       key: `work-${work.id}`,
       label: work.title,
+      command: () => emit('menuItemClick', `/works/${work.id}`),
       href: `/works/${work.id}`,
     })),
   ];
@@ -82,12 +83,14 @@ const items = computed(() => {
       key: 'goals',
       label: 'Goals',
       icon: PrimeIcons.STAR,
+      command: () => emit('menuItemClick', '/goals'),
       href: '/goals',
       section: true,
     },
     ...(goalStore.goals ?? []).toSorted((a, b) => a.title < b.title ? -1 : a.title > b.title ? 1 : 0).map(goal => ({
       key: `goal-${goal.id}`,
       label: goal.title,
+      command: () => emit('menuItemClick', `/goals/${goal.id}`),
       href: `/goals/${goal.id}`,
     })),
   ]
@@ -105,45 +108,25 @@ const items = computed(() => {
   //   { label: 'Progress to 1M' },
   // ];
 
-  const items: { label: string; href?: string; icon?: string; section?: boolean; first?: boolean; }[] = [
+  const items: { label: string; href?: string; command?: () => void; icon?: string; section?: boolean; first?: boolean; }[] = [
     ...dashboard,
     ...works,
     ...goals,
     // ...yetToCome,
   ];
 
-  if(props.collapsed) {
-    return items.filter(item => item.section === true)
-  } else {
-    return items;
-  }
+  return items;
 });
 </script>
 
 <template>
   <Menu
-    v-if="!props.collapsed"
     :model="items"
     :pt="menuPassthrough"
   >
     <template #item="{ item }">
-      <RouterLink
-        v-if="item.href"
-        :to="item.href"
-      >
-        <div
-          :class="{ 'flex': true, [sectionClasses]: item.section }"
-        >
-          <span
-            v-if="item.icon"
-            :class="[item.icon, 'submenuheader-icon']"
-          />
-          <span class="flex-auto">{{ item.label }}</span>
-        </div>
-      </RouterLink>
       <div
-        v-else
-        :class="{ 'flex': true, [sectionClasses]: item.section }"
+        :class="{ 'flex cursor-pointer': true, [sectionClasses]: item.section }"
       >
         <span
           v-if="item.icon"
@@ -151,27 +134,6 @@ const items = computed(() => {
         />
         <span class="flex-auto">{{ item.label }}</span>
       </div>
-    </template>
-  </Menu>
-  <Menu
-    v-if="props.collapsed"
-    :model="items"
-    :pt="menuPassthrough"
-  >
-    <template #item="{ item }">
-      <RouterLink
-        v-if="item.href"
-        :to="item.href"
-      >
-        <div
-          :class="{ 'flex': true, [sectionClasses]: item.section }"
-        >
-          <span
-            v-if="item.icon"
-            :class="item.icon"
-          />
-        </div>
-      </RouterLink>
     </template>
   </Menu>
 </template>

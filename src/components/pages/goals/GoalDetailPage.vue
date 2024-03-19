@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useEventBus } from '@vueuse/core';
 
-import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
@@ -84,24 +84,23 @@ onMounted(() => {
         <div class="actions flex gap-2">
           <SectionTitle
             :title="goal.title"
+            :subtitle="goal.description"
           />
           <div class="spacer grow" />
-          <RouterLink :to="{ name: 'edit-goal', params: { id: goal.id } }">
+          <div class="flex flex-col md:flex-row gap-2">
             <Button
               label="Edit"
               :icon="PrimeIcons.PENCIL"
+              @click="router.push({ name: 'edit-goal', params: { id: goal.id } })"
             />
-          </RouterLink>
-          <Button
-            severity="danger"
-            label="Delete"
-            :icon="PrimeIcons.TRASH"
-            @click="isDeleteFormVisible = true"
-          />
+            <Button
+              severity="danger"
+              label="Delete"
+              :icon="PrimeIcons.TRASH"
+              @click="isDeleteFormVisible = true"
+            />
+          </div>
         </div>
-        <h2 class="description font-heading italic font-light">
-          {{ goal.description }}
-        </h2>
       </header>
       <div
         v-if="tallies.length > 0"

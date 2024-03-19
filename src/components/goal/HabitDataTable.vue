@@ -65,7 +65,7 @@ function formatTallySum(tallies: Tally[]) {
     </Card>
   </div>
   <div>
-    <div class="flex gap-2 justify-end items-center">
+    <div class="flex gap-2 justify-end items-cente mt-4">
       <InputSwitch v-model="onlyShowHits" />
       <div>Show only ⭐️</div>
     </div>
