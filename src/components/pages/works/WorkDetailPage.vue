@@ -37,7 +37,7 @@ const work = ref<WorkWithTallies | null>(null);
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
-    { label: 'Works', url: '/works' },
+    { label: 'Projects', url: '/works' },
     { label: work.value === null ? 'Loading...' : work.value.title, url: `/works/${workId.value}` },
   ];
   return crumbs;

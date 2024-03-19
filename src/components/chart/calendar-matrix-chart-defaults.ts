@@ -127,7 +127,13 @@ export function provideMatrixChartDataDefaults(data: MatrixChartData): MatrixCha
 
     dataset.borderColor = dataset.borderColor ?? function(ctx) {
       const value = ctx.dataset.data[ctx.dataIndex].value;
-      return Color(baseColor).alpha(Math.max(value / maxValue, 0.1)).darken(0.3).rgb().string();
+      const valueColor = Color(baseColor).alpha(Math.max(value / maxValue, 0.1));
+      const tintFn = colorScheme === 'dark' ? 'lighten' : 'darken';
+      if(value > 0) {
+        return valueColor.rgb().string(); // otherwise it's too different
+      } else {
+        return valueColor[tintFn](0.3).rgb().string();
+      }
     };
 
     dataset.borderWidth = dataset.borderWidth ?? 1;

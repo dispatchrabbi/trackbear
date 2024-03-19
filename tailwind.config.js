@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
-import colors from 'tailwindcss/colors';
-// import { primary, surface } from './src/themes/primevue.ts';
+// import colors from 'tailwindcss/colors';
+import { primary, surface } from './src/themes/primevue.ts';
 
 // const VUESTIC_EXTEND = {
 // 	colors: {
@@ -34,9 +34,9 @@ const PRIMEVUE_EXTEND = {
 	colors: {
 		transparent: 'transparent',
 		current: 'currentColor',
-		primary: colors.indigo,
+		primary,
 		'surface-0': '#ffffff',
-		surface: colors.stone,
+		surface,
 	},
 	fontFamily: {
 		sans: ['Jost', 'sans-serif'],

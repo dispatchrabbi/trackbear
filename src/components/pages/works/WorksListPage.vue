@@ -20,7 +20,7 @@ import CreateWorkForm from 'src/components/work/CreateWorkForm.vue';
 import { PrimeIcons } from 'primevue/api';
 
 const breadcrumbs: MenuItem[] = [
-  { label: 'Works', url: '/works' },
+  { label: 'Projects', url: '/works' },
 ];
 
 const isCreateFormVisible = ref<boolean>(false);
