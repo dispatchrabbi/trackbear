@@ -31,7 +31,7 @@ const breadcrumbs: MenuItem[] = [
       </template>
       <template #content>
         <CreateGoalForm
-          @goal:create="goalStore.populateGoals(true)"
+          @goal:create="goalStore.populate(true)"
           @form-success="router.push('/goals')"
         />
       </template>

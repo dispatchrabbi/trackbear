@@ -63,7 +63,7 @@ const loadWork = async function() {
 }
 
 const reloadWorks = async function() {
-  workStore.populateWorks(true);
+  workStore.populate(true);
   loadWork();
 }
 
@@ -157,7 +157,7 @@ onMounted(() => {
         </template>
         <DeleteWorkForm
           :work="work"
-          @work:delete="workStore.populateWorks(true)"
+          @work:delete="workStore.populate(true)"
           @form-success="router.push('/works')"
         />
       </Dialog>

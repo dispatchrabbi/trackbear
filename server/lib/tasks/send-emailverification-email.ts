@@ -33,7 +33,7 @@ async function handler(task) {
   taskLogger.debug(`Sending email verification email for uuid ${task.verificationUuid}`);
   const response = await sendEmailVerificationEmail(pendingEmailVerification.user, pendingEmailVerification);
 
-  if(response.statusCode === 200) {
+  if(response.statusCode >= 200 && response.statusCode < 300) {
     taskLogger.info(`Sending email succeeded with status code ${response.statusCode}: ${JSON.stringify(response.body)}`);
     await logAuditEvent('email:verify-email', TRACKBEAR_SYSTEM_ID, pendingEmailVerification.user.id);
   } else {

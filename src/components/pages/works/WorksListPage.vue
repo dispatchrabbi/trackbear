@@ -43,7 +43,7 @@ const loadWorks = async function() {
 }
 
 const reloadWorks = async function() {
-  workStore.populateWorks(true);
+  workStore.populate(true);
   loadWorks();
 }
 

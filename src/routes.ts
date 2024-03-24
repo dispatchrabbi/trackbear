@@ -20,6 +20,8 @@ import SharedProjectPage from 'src/components/pages/SharedProjectPage.vue';
 import AccountPage from 'src/components/pages/settings/AccountPage.vue';
 import TagsPage from 'src/components/pages/settings/TagsPage.vue';
 
+import AdminHomePage from './components/pages/admin/AdminHomePage.vue';
+
 import ProjectListPage from 'src/components/project/ProjectListPage.vue';
 import NewProjectPage from 'src/components/project/NewProjectPage.vue';
 import ProjectPage from 'src/components/project/ProjectPage.vue';
@@ -71,9 +73,12 @@ const routes = [
   { path: '/goals/:id', name: 'goal', component: GoalDetailPage },
   { path: '/goals/:id/edit', name: 'edit-goal', component: EditGoalPage },
 
-  // account section
+  // Account section
   { path: '/settings/account', name: 'account', component: AccountPage },
   { path: '/settings/tags', name: 'tags', component: TagsPage },
+
+  // Admin section
+  { path: '/admin', name: 'admin', component: AdminHomePage },
 
   // projects section
   { path: '/projects', name: 'projects', component: ProjectListPage },

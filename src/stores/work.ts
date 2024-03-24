@@ -6,11 +6,8 @@ export const useWorkStore = defineStore('work', {
   state: () : { works: Work[] | null; } => {
     return { works: null };
   },
-  // getters: {
-
-  // },
   actions: {
-    async populateWorks(force = false) {
+    async populate(force = false) {
       if(force || this.works === null) {
         const works = await getWorks();
         this.works = works;

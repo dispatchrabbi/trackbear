@@ -1,0 +1,113 @@
+import { Router } from "express";
+import { ApiResponse, success, h } from '../../lib/api-response.ts';
+
+import { requireAdminUser, RequestWithUser } from '../../lib/auth.ts';
+
+import { z } from 'zod';
+import { zIdParam } from '../../lib/validators.ts';
+import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
+import { addDays } from 'date-fns';
+
+import dbClient from "../../lib/db.ts";
+import type { Banner } from "@prisma/client";
+
+import { logAuditEvent } from '../../lib/audit-events.ts';
+
+const bannerRouter = Router();
+
+bannerRouter.get('/',
+  requireAdminUser,
+  h(async (req: RequestWithUser, res: ApiResponse<Banner[]>) =>
+{
+  const banners = await dbClient.banner.findMany({
+    orderBy: { updatedAt: 'asc' },
+  });
+
+  return res.status(200).send(success(banners));
+}));
+
+export type BannerPayload = {
+  message: string;
+  icon?: string;
+  color?: string;
+  showUntil?: string;
+};
+const zBannerPayload = z.object({
+  message: z.string().min(1),
+  icon: z.string().min(1).nullable(),
+  color: z.enum(['info', 'success', 'warn', 'error']).nullable(),
+  showUntil: z.coerce.date().nullable(),
+});
+
+bannerRouter.post('/',
+  requireAdminUser,
+  validateBody(zBannerPayload),
+  h(async (req: RequestWithUser, res: ApiResponse<Banner>) =>
+{
+  const user = req.user;
+  const payload = req.body as BannerPayload;
+
+  const banner = await dbClient.banner.create({
+    data: {
+      enabled: true,
+      message: payload.message,
+      icon: payload.icon ?? 'campaign',
+      color: payload.color ?? 'info',
+      showUntil: payload.showUntil ?? addDays(new Date(), 7),
+    }
+  });
+
+  await logAuditEvent('banner:create', user.id, banner.id);
+
+  return res.status(201).send(success(banner));
+}));
+
+bannerRouter.put('/:id',
+  requireAdminUser,
+  validateParams(zIdParam()),
+  validateBody(zBannerPayload),
+  h(async (req: RequestWithUser, res: ApiResponse<Banner>) =>
+{
+  const user = req.user;
+  const payload = req.body as BannerPayload;
+
+  const banner = await dbClient.banner.update({
+    where: {
+      id: +req.params.id,
+    },
+    data: {
+      enabled: true,
+      message: payload.message,
+      icon: payload.icon ?? 'campaign',
+      color: payload.color ?? 'info',
+      showUntil: payload.showUntil ?? undefined,
+    }
+  });
+
+  await logAuditEvent('banner:update', user.id, banner.id);
+
+  return res.status(200).send(success(banner));
+}));
+
+bannerRouter.delete('/:id',
+  requireAdminUser,
+  validateParams(zIdParam()),
+  h(async (req: RequestWithUser, res: ApiResponse<Banner>) =>
+{
+  const user = req.user;
+
+  const banner = await dbClient.banner.update({
+    data: {
+      enabled: false,
+    },
+    where: {
+      id: +req.params.id,
+    },
+  });
+
+  await logAuditEvent('banner:disable', user.id, banner.id);
+
+  return res.status(200).send(success(banner));
+}));
+
+export default bannerRouter;

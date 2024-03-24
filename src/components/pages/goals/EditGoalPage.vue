@@ -69,7 +69,7 @@ onMounted(() => loadGoal());
       <template #content>
         <EditGoalForm
           :goal="goal"
-          @goal:edit="goalStore.populateGoals(true)"
+          @goal:edit="goalStore.populate(true)"
           @form-success="router.push(`/goals/${goal.id}`)"
           @form-cancel="router.push(`/goals/${goal.id}`)"
         />

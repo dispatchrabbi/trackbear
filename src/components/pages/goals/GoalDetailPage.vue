@@ -61,7 +61,7 @@ const loadGoal = async function() {
 }
 
 const reloadGoals = async function() {
-  goalStore.populateGoals(true);
+  goalStore.populate(true);
   loadGoal();
 }
 
@@ -157,7 +157,7 @@ onMounted(() => {
         </template>
         <DeleteGoalForm
           :goal="goal"
-          @goal:delete="goalStore.populateGoals(true)"
+          @goal:delete="goalStore.populate(true)"
           @form-success="router.push('/goals')"
         />
       </Dialog>

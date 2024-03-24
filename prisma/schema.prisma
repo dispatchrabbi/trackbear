@@ -54,15 +54,18 @@ model User {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
+  userAuth UserAuth?
+
   projects                  Project[]
   leaderboards              Leaderboard[]
-  userAuth                  UserAuth?
   passwordResetLinks        PasswordResetLink[]
   pendingEmailVerifications PendingEmailVerification[]
   tallies                   Tally[]
   works                     Work[]
   tags                      Tag[]
   goals                     Goal[]
+
+  adminPerms AdminPerms?
 }
 
 model UserAuth {
@@ -73,6 +76,18 @@ model UserAuth {
 
   password String
   salt     String
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+}
+
+model AdminPerms {
+  id Int @id @default(autoincrement())
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int  @unique
+
+  isAdmin Boolean
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
@@ -193,11 +208,11 @@ model Goal {
   title       String
   description String
 
-  type        String
-  parameters  Json
+  type       String
+  parameters Json
 
-  startDate   String?
-  endDate     String?
+  startDate String?
+  endDate   String?
 
   worksIncluded Work[]
   tagsIncluded  Tag[]
@@ -263,7 +278,7 @@ model Project {
   visibility String
   starred    Boolean
 
-  transitionedId  Int?
+  transitionedId Int?
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)

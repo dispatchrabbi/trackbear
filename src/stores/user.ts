@@ -31,7 +31,7 @@ export const useUserStore = defineStore('user', {
       const tagStore = useTagStore();
       tagStore.$reset();
     },
-    async populateUser() {
+    async populate() {
       if(this.user === null) {
         const user = await getUser();
         this.user = user;

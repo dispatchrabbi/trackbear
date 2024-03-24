@@ -22,7 +22,7 @@ export const useBannerStore = defineStore('banner', {
     }
   },
   actions: {
-    async populateBanners() {
+    async populate() {
       if(this.currentBanners === null) {
         const currentBanners = await getBanners();
         this.currentBanners = currentBanners;

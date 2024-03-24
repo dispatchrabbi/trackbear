@@ -7,7 +7,7 @@ export const useGoalStore = defineStore('goal', {
     return { goals: null };
   },
   actions: {
-    async populateGoals(force = false) {
+    async populate(force = false) {
       if(force || this.goals === null) {
         const goals = await getGoals();
         this.goals = goals;

@@ -13,6 +13,7 @@ import projectsRouter from './projects.ts';
 import leaderboardsRouter from './leaderboards.ts';
 import shareRouter from './share.ts';
 
+import adminRouter from './admin/index.ts';
 import v1Router from "./v1/index.ts";
 
 const apiRouter = Router();
@@ -31,6 +32,7 @@ apiRouter.use('/projects', projectsRouter);
 apiRouter.use('/leaderboards', leaderboardsRouter);
 apiRouter.use('/share', shareRouter);
 
+apiRouter.use('/admin', adminRouter);
 apiRouter.use('/v1', v1Router);
 
 // handle any API errors

@@ -8,7 +8,7 @@ function handleClose(uuid) {
   bannerStore.closeBanner(uuid);
 }
 
-bannerStore.populateBanners();
+bannerStore.populate();
 </script>
 
 <template>

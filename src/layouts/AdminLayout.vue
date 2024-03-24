@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { provide, defineProps, onMounted } from 'vue';
 import { useLocalStorage } from '@vueuse/core';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -11,6 +11,9 @@ const router = useRouter();
 
 import { useUserStore } from 'src/stores/user.ts';
 const userStore = useUserStore();
+
+import { useAdminUserStore } from 'src/stores/admin-user';
+const adminUserStore = useAdminUserStore();
 
 import BannerContainer from 'src/components/banner/BannerContainer.vue';
 import TrackbearMasthead from 'src/components/layout/TrackbearMasthead.vue';
@@ -40,9 +43,22 @@ function handleMenuItemClick(href?: string, options?: MenuItemClickOptions) {
   }
 }
 
-// attempt to populate the user, but only care about failing
-userStore.populate().catch(() => {
-  router.push('/login');
+onMounted(async () => {
+  // attempt to populate the user, but only care about failing
+  await userStore.populate().catch(() => {
+    router.push({ name: 'login' });
+  });
+
+  // grab admin user permissions and we're going to want to check them too
+  await adminUserStore.populate()
+    .then(() => {
+      if(!adminUserStore.perms.isAdmin) {
+        router.push({ name: 'dashboard' });
+      }
+    })
+    .catch(() => {
+      router.push({ name: 'dashboard' });
+    });
 });
 
 </script>
@@ -52,7 +68,7 @@ userStore.populate().catch(() => {
     <BannerContainer />
   </div>
   <div
-    v-if="userStore.user"
+    v-if="userStore.user && adminUserStore.perms"
     :class="[ 'application flex', collapsed ? 'sidebar-collapsed' : null ]"
   >
     <div
@@ -75,9 +91,13 @@ userStore.populate().catch(() => {
         />
       </div>
       <div class="mb-4">
-        <SideBar
+        <div>Admin</div>
+        <div>sidebar</div>
+        <div>goes</div>
+        <div>here</div>
+        <!-- <SideBar
           @menu-item-click="handleMenuItemClick"
-        />
+        /> -->
       </div>
     </div>
     <div class="main flex-auto h-screen overflow-y-auto overscroll-contain flex flex-col">
@@ -92,9 +112,6 @@ userStore.populate().catch(() => {
         <slot />
       </div>
     </div>
-  </div>
-  <div class="log-progress-button fixed bottom-8 right-8">
-    <LogProgressButton />
   </div>
 </template>
 

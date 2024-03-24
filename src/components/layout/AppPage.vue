@@ -15,7 +15,7 @@ const props = defineProps<{
 }>();
 
 // attempt to populate the user, but only care about failing if we require being logged in
-userStore.populateUser().catch(() => {
+userStore.populate().catch(() => {
   if(props.requireLogin) {
     router.push('/login');
   }

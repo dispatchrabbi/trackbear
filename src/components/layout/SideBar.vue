@@ -42,10 +42,10 @@ const menuPassthrough = ref({
 const sectionClasses = ['section', 'flex', 'items-baseline', 'gap-2', 'font-light', 'text-xl', 'm-0'].join(' ');
 
 const workStore = useWorkStore();
-workStore.populateWorks();
+workStore.populate();
 
 const goalStore = useGoalStore();
-goalStore.populateGoals();
+goalStore.populate();
 
 // TODO: this menu is a mess, it really needs to get fixed
 const items = computed(() => {

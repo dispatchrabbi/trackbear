@@ -5,11 +5,11 @@ import { useEventBus } from '@vueuse/core';
 
 import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
-workStore.populateWorks();
+workStore.populate();
 
 import { useTagStore } from 'src/stores/tag.ts';
 const tagStore = useTagStore();
-tagStore.populateTags();
+tagStore.populate();
 
 import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
