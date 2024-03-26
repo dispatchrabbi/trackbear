@@ -33,7 +33,7 @@ Types of changes include:
 
 ## v0.7.0
 
-- NEW: A whole new UI and backend! The new backend is much more flexible and makes it easier for me to add several requested features like tagging, streak counters, goals that span multiple projects, and habit tracking. The new UI is also much more powerful, though I'm still kicking the tires a bit. I know that there are a number of UI changes that are a step backward here, so a special apology to those of you who are primarily mobile and/or dark mode users. Stay tuned: missing functionality will come back (better than ever) and
+- NEW: A whole new UI and backend! The new backend is much more flexible and makes it easier for me to add several requested features like tagging, streak counters, goals that span multiple projects, and habit tracking. The new UI is also much more powerful, though I'm still kicking the tires a bit. I know that there are a number of UI changes that are a step backward here, so a special apology to those of you who are primarily mobile and/or dark mode users. Stay tuned: missing functionality will come back better than ever!
 - NEW: You can now add tags and notes to your progress logs.
 - NEW: A Dashboard page that shows your streaks and yearly activity.
 - CHANGED: Mobile support in the UI has, unfortunately, changed for the worse. I will be working on making this better.

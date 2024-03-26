@@ -27,15 +27,17 @@ bannerRouter.get('/',
 }));
 
 export type BannerPayload = {
+  enabled?: boolean;
   message: string;
   icon?: string;
   color?: string;
   showUntil?: string;
 };
 const zBannerPayload = z.object({
+  enabled: z.boolean().nullable(),
   message: z.string().min(1),
   icon: z.string().min(1).nullable(),
-  color: z.enum(['info', 'success', 'warn', 'error']).nullable(),
+  color: z.enum(['info', 'success', 'warning', 'error']).nullable(),
   showUntil: z.coerce.date().nullable(),
 });
 
@@ -49,7 +51,7 @@ bannerRouter.post('/',
 
   const banner = await dbClient.banner.create({
     data: {
-      enabled: true,
+      enabled: payload.enabled || false,
       message: payload.message,
       icon: payload.icon ?? 'campaign',
       color: payload.color ?? 'info',
@@ -76,7 +78,7 @@ bannerRouter.put('/:id',
       id: +req.params.id,
     },
     data: {
-      enabled: true,
+      enabled: payload.enabled || false,
       message: payload.message,
       icon: payload.icon ?? 'campaign',
       color: payload.color ?? 'info',
@@ -96,16 +98,13 @@ bannerRouter.delete('/:id',
 {
   const user = req.user;
 
-  const banner = await dbClient.banner.update({
-    data: {
-      enabled: false,
-    },
+  const banner = await dbClient.banner.delete({
     where: {
       id: +req.params.id,
-    },
+    }
   });
 
-  await logAuditEvent('banner:disable', user.id, banner.id);
+  await logAuditEvent('banner:delete', user.id, banner.id);
 
   return res.status(200).send(success(banner));
 }));

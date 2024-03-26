@@ -21,6 +21,7 @@ import AccountPage from 'src/components/pages/settings/AccountPage.vue';
 import TagsPage from 'src/components/pages/settings/TagsPage.vue';
 
 import AdminHomePage from './components/pages/admin/AdminHomePage.vue';
+import AdminBannersListPage from './components/pages/admin/BannersListPage.vue';
 
 import ProjectListPage from 'src/components/project/ProjectListPage.vue';
 import NewProjectPage from 'src/components/project/NewProjectPage.vue';
@@ -79,6 +80,7 @@ const routes = [
 
   // Admin section
   { path: '/admin', name: 'admin', component: AdminHomePage },
+  { path: '/admin/banners', name: 'admin-banners', component: AdminBannersListPage },
 
   // projects section
   { path: '/projects', name: 'projects', component: ProjectListPage },

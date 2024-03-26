@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, defineProps, defineEmits } from 'vue';
 import markdownit from 'markdown-it';
+
+const props = defineProps<{
+  message: string;
+  color?: string;
+  icon?: string;
+}>();
 
 import Message from 'primevue/message';
 import MIcon from '../MIcon.vue';
@@ -29,13 +35,18 @@ const pt = {
     }),
 };
 
-const props = defineProps<{
-  message: string;
-  color?: string;
-  icon?: string;
-}>();
-
 const emit = defineEmits(['close']);
+
+const severity = computed(() => {
+  // special-case warning -> warn due to older versions
+  if(props.color === 'warning') {
+    return 'warn';
+  } else if(['info', 'success', 'warn', 'error'].includes(props.color)) {
+    return props.color;
+  } else {
+    return 'info';
+  }
+});
 
 const onBannerClose = function() {
   emit('close');
@@ -55,14 +66,19 @@ const messageHtml = computed(() => {
 
 <template>
   <Message
-    :severity="props.color || 'info'"
-    :closable="true"
-    :sticky="true"
+    :severity="severity"
+    closable
+    sticky
     :pt="pt"
     @close="onBannerClose"
   >
     <template #messageicon>
+      <span
+        v-if="props.icon.startsWith('pi-')"
+        :class="[ 'pi', props.icon ]"
+      />
       <MIcon
+        v-else
         :icon="props.icon || 'campaign'"
         class="text-2xl"
       />

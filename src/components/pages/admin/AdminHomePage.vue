@@ -8,7 +8,7 @@ import AdminLayout from 'src/layouts/AdminLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
 
 const breadcrumbs: MenuItem[] = [
-  { label: 'Admin Home', url: '/admin' },
+  { label: 'Admin', url: '/admin' },
 ];
 
 // const tallies = ref<Tally[]>([]);
