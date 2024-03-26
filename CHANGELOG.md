@@ -12,6 +12,11 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.9.0
+
+- NEW: A number of behind-the-scenes features to help me manage TrackBear
+- REMOVED: All vestiges of the previous UI that were secretly hiding out
+
 ## 0.8.3
 
 - NEW: We're now officially in beta! The interface and features are stable enough that (I hope) most things won't change underneath users in major ways.
