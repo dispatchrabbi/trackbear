@@ -56,8 +56,6 @@ model User {
 
   userAuth UserAuth?
 
-  projects                  Project[]
-  leaderboards              Leaderboard[]
   passwordResetLinks        PasswordResetLink[]
   pendingEmailVerifications PendingEmailVerification[]
   tallies                   Tally[]
@@ -256,67 +254,3 @@ model Goal {
 //   role String
 //   parameters Json
 // }
-
-// ----------------------------------------------------------------------------
-// These models are for the LEGACY updates-in-projects idiom
-
-model Project {
-  id   Int    @id @default(autoincrement())
-  uuid String @unique @default(uuid())
-
-  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId Int
-
-  title String
-  type  String
-  state String
-
-  goal      Int?
-  startDate String?
-  endDate   String?
-
-  visibility String
-  starred    Boolean
-
-  transitionedId Int?
-
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
-
-  updates      Update[]
-  leaderboards Leaderboard[]
-}
-
-model Update {
-  id Int @id @default(autoincrement())
-
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId Int
-
-  date  String
-  value Int
-
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
-}
-
-model Leaderboard {
-  id   Int    @id @default(autoincrement())
-  uuid String @unique @default(uuid())
-
-  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId Int
-
-  title String
-  type  String
-  state String
-
-  goal      Int?
-  startDate String?
-  endDate   String?
-
-  projects Project[]
-
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @updatedAt @db.Timestamptz(3)
-}
