@@ -12,7 +12,7 @@ const router = useRouter();
 import { useUserStore } from 'src/stores/user.ts';
 const userStore = useUserStore();
 
-import { useAdminUserStore } from 'src/stores/admin-user';
+import { useAdminUserStore } from 'src/stores/admin-user.ts';
 const adminUserStore = useAdminUserStore();
 
 import BannerContainer from 'src/components/banner/BannerContainer.vue';

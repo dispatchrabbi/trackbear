@@ -7,8 +7,6 @@ import { WORK_STATE, WORK_PHASE } from "../../server/lib/models/work.ts";
 import { TALLY_STATE, TALLY_MEASURE } from "../../server/lib/models/tally.ts";
 import { TAG_STATE, TAG_DEFAULT_COLOR } from "../../server/lib/models/tag.ts";
 
-import { main as legacyMain } from './seed-legacy.ts';
-
 type SeedUser = {
   username: string;
   password: string;
@@ -126,9 +124,6 @@ const SEED_USERS: SeedUser[] = [
 
 async function main() {
   // TODO: blow it all away first
-
-  // console.log('Seeding legacy users and projects...');
-  // await legacyMain();
 
   console.log('Seeding tag-and-tally users and models...');
   for(const user of SEED_USERS) {

@@ -5,7 +5,9 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 const CHUNKS_MAP = {
   'chart.js': 'node_modules/chart.js',
-  'vuestic-ui': 'node_modules/vuestic-ui',
+  'markdown-it': 'node_modules/markdown-it',
+  'primevue-calendar': 'node_modules/primevue/calendar',
+  'primevue-datatable': 'node_modules/primevue/datatable',
   'primevue': 'node_modules/primevue',
   'themes': 'src/themes',
 };

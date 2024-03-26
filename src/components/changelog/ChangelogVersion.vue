@@ -47,7 +47,6 @@ const props = defineProps<{
 </script>
 
 <template>
-  <VaDivider v-if="!props.hideDivider" />
   <div class="mb-8">
     <h2
       :id="props.version"
