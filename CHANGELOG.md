@@ -14,8 +14,8 @@ Types of changes include:
 
 ## 0.9.0
 
-- NEW: A number of behind-the-scenes features to help me manage TrackBear
-- REMOVED: All vestiges of the previous UI that were secretly hiding out
+- NEW: A number of behind-the-scenes features to help me manage TrackBear.
+- REMOVED: All vestiges of the previous UI that were secretly hiding out.
 
 ## 0.8.3
 
