@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, defineProps, onMounted } from 'vue';
+import { defineProps, onMounted } from 'vue';
 import { useLocalStorage } from '@vueuse/core';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -19,8 +19,7 @@ import BannerContainer from 'src/components/banner/BannerContainer.vue';
 import TrackbearMasthead from 'src/components/layout/TrackbearMasthead.vue';
 import Button from 'primevue/button';
 import AppBar from 'src/components/layout/AppBar.vue';
-import SideBar from 'src/components/layout/SideBar.vue';
-import LogProgressButton from 'src/components/tally/LogProgressButton.vue';
+import AdminSideBar from 'src/components/layout/AdminSideBar.vue';
 import { PrimeIcons } from 'primevue/api';
 
 const props = defineProps<{
@@ -91,13 +90,9 @@ onMounted(async () => {
         />
       </div>
       <div class="mb-4">
-        <div>Admin</div>
-        <div>sidebar</div>
-        <div>goes</div>
-        <div>here</div>
-        <!-- <SideBar
+        <AdminSideBar
           @menu-item-click="handleMenuItemClick"
-        /> -->
+        />
       </div>
     </div>
     <div class="main flex-auto h-screen overflow-y-auto overscroll-contain flex flex-col">

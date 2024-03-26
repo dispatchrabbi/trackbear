@@ -189,4 +189,3 @@ const items = computed(() => {
   font-size: 1rem;
 }
 </style>
-server/lib/models/work
