@@ -1,7 +1,6 @@
 import { getNormalizedEnv } from './env.ts';
 
 import Queue from 'better-queue';
-// import SqliteStore from 'better-queue-sqlite';
 
 import sendSignupEmailTask from './tasks/send-signup-email.ts';
 import sendPwchangeEmailTask from './tasks/send-pwchange-email.ts';

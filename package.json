@@ -32,7 +32,6 @@
     "autoprefixer": "^10.4.16",
     "better-queue": "^3.8.12",
     "better-queue-sql": "^1.0.6",
-    "better-queue-sqlite": "^1.0.7",
     "body-parser": "^1.20.2",
     "chart.js": "^4.4.1",
     "chartjs-adapter-date-fns": "^3.0.0",
