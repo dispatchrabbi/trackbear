@@ -9,9 +9,6 @@ import infoRouter from './info.ts';
 import authRouter from './auth.ts';
 import userRouter from './user.ts';
 import bannersRouter from './banners.ts';
-import projectsRouter from './projects.ts';
-import leaderboardsRouter from './leaderboards.ts';
-import shareRouter from './share.ts';
 
 import adminRouter from './admin/index.ts';
 import v1Router from "./v1/index.ts";
@@ -28,9 +25,6 @@ apiRouter.use('/info', infoRouter);
 apiRouter.use('/auth', authRouter);
 apiRouter.use('/user', userRouter);
 apiRouter.use('/banners', bannersRouter);
-apiRouter.use('/projects', projectsRouter);
-apiRouter.use('/leaderboards', leaderboardsRouter);
-apiRouter.use('/share', shareRouter);
 
 apiRouter.use('/admin', adminRouter);
 apiRouter.use('/v1', v1Router);
