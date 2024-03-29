@@ -1,4 +1,4 @@
-#!/usr/bin/env node --import ./ts-node-loader.js
+#!/usr/bin/env -S node --import ./ts-node-loader.js
 
 import dotenv from 'dotenv';
 
