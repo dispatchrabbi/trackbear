@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.9.1
+
+- CHANGED: The heatmaps on the Dashboard and Project pages are now easier to read and more informative.
+
 ## 0.9.0
 
 - NEW: A number of behind-the-scenes features to help me manage TrackBear.
