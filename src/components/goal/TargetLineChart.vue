@@ -51,7 +51,6 @@ const chartData = computed(() => {
     ],
   };
 
-  console.log(data);
   return data;
 });
 

@@ -19,7 +19,7 @@ import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import EditWorkForm from 'src/components/work/EditWorkForm.vue';
 import DeleteWorkForm from 'src/components/work/DeleteWorkForm.vue';
-import WorkTallyStreakChart from 'src/components/work/WorkTallyStreakChart.vue';
+import WorkActivityHeatmap from 'src/components/work/WorkActivityHeatmap.vue';
 import WorkTallyLineChart from 'src/components/work/WorkTallyLineChart.vue';
 import WorkTallyDataTable from 'src/components/work/WorkTallyDataTable.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
@@ -109,8 +109,7 @@ onMounted(() => {
         class="flex flex-col gap-2 max-w-screen-md"
       >
         <div class="w-full">
-          <WorkTallyStreakChart
-            :work="work"
+          <WorkActivityHeatmap
             :tallies="work.tallies"
           />
         </div>

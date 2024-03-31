@@ -19,6 +19,7 @@ const props = defineProps<{
 }>();
 
 ChartJS.register(Title, Tooltip, LineController, Legend, LineElement, PointElement, CategoryScale, LinearScale);
+ChartJS.defaults.font.family = 'Jost, sans-serif';
 
 const options = computed(() => {
   const propsOptions = toValue(props.options ?? { });

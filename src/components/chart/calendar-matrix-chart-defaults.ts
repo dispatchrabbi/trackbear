@@ -6,8 +6,8 @@ import Color from 'color';
 import { usePreferredColorScheme } from '@vueuse/core';
 
 import { deepMergeWithDefaults } from 'src/lib/obj.ts';
-import { parseDateString, formatDate } from 'src/lib/date.ts';
-import { startOfWeek } from 'date-fns';
+import { formatDate, parseDateString } from 'src/lib/date.ts';
+import { differenceInCalendarWeeks } from 'date-fns';
 
 declare module 'chart.js' {
   interface MatrixDataPoint {
@@ -17,14 +17,24 @@ declare module 'chart.js' {
   }
 }
 
-export const DEFAULT_MATRIX_COLORS = {
-  text: { light: themeColors.surface[900], dark: themeColors.surface[50] },
-  secondaryText: { light: themeColors.surface[700], dark: themeColors.surface[400] },
-
-  primary: { light: themeColors.primary[500], dark: themeColors.primary[400] },
-  cycle: {
-    light: [twColors.red[500], twColors.orange[500], twColors.yellow[500], twColors.green[500], twColors.blue[500], twColors.purple[500] ],
-    dark: [twColors.red[400], twColors.orange[400], twColors.yellow[400], twColors.green[400], twColors.blue[400], twColors.purple[400] ],
+export const MATRIX_COLORS = {
+  light: {
+    text: themeColors.surface[900],
+    background: themeColors.surface[100],
+    zero: themeColors.primary[100],
+    primary: themeColors.primary[500],
+    zeroStripe: twColors.sky[100],
+    primaryStripe: twColors.sky[500],
+    today: twColors.amber[500],
+  },
+  dark: {
+    text: themeColors.surface[50],
+    background: themeColors.surface[900],
+    zero: themeColors.primary[950],
+    primary: themeColors.primary[400],
+    zeroStripe: twColors.sky[950],
+    primaryStripe: twColors.sky[400],
+    today: twColors.amber[300],
   },
 };
 
@@ -35,16 +45,18 @@ export const DEFAULT_MATRIX_CHART_OPTIONS: MatrixChartOptions = {
       position: 'bottom',
       offset: true,
       time: {
-        unit: 'week',
+        unit: 'month',
         round: 'week',
         isoWeekday: 1,
         displayFormats: {
-          week: 'MMM dd'
+          week: 'MMM'
         },
       },
       ticks: {
         maxRotation: 0,
         autoSkip: false,
+        align: 'start',
+        labelOffset: -6,
       },
       grid: {
         display: false,
@@ -90,10 +102,14 @@ export const DEFAULT_MATRIX_CHART_OPTIONS: MatrixChartOptions = {
       enabled: true,
       displayColors: false,
       callbacks: {
-        title: () => '',
+        title: ctx => {
+          // TODO: this may need to change if there are multiple datasets
+          const datum = ctx[0].dataset.data[ctx[0].dataIndex];
+          return datum.x;
+        },
         label: ctx => {
           const datum = ctx.dataset.data[ctx.dataIndex];
-          return [ '' + datum.x, '' + datum.value ];
+          return '' + datum.value;
         },
       }
     },
@@ -107,48 +123,104 @@ export function provideMatrixChartOptionsDefaults(options: MatrixChartOptions): 
   return deepMergeWithDefaults(DEFAULT_MATRIX_CHART_OPTIONS, options);
 }
 
-export function provideMatrixChartDataDefaults(data: MatrixChartData): MatrixChartData {
-  // if there's only one dataset (which there probably is) use the primary theme color
-  const colorCycle = data.datasets.length > 1 ?
-    DEFAULT_MATRIX_COLORS.cycle :
-    { light: [ DEFAULT_MATRIX_COLORS.primary.light ], dark: [ DEFAULT_MATRIX_COLORS.primary.dark ] };
+export type ProvideMatrixChartDataDefaultsOptions = {
+  highlightToday?: boolean;
+};
+export function provideMatrixChartDataDefaults(data: MatrixChartData, options: ProvideMatrixChartDataDefaultsOptions): MatrixChartData {
+  options = {
+    highlightToday: options.highlightToday || false,
+  };
 
-  data.datasets.forEach((dataset, ix) => {
+  const todayDate = formatDate(new Date());
+
+  // TODO: this doesn't quite work for multiple datasets
+  data.datasets.forEach((dataset) => {
     const colorScheme = usePreferredColorScheme().value;
-    const baseColor = colorCycle[colorScheme][ix % colorCycle[colorScheme].length];
+    const primaryColor = MATRIX_COLORS[colorScheme].primary;
+    const zeroColor = MATRIX_COLORS[colorScheme].zero;
+    const primaryStripeColor = MATRIX_COLORS[colorScheme].primaryStripe;
+    const zeroStripeColor = MATRIX_COLORS[colorScheme].zeroStripe;
+    const todayColor = MATRIX_COLORS[colorScheme].today;
+    const backgroundColor = MATRIX_COLORS[colorScheme].background;
 
     let maxValue = dataset.data.reduce((max, datapoint) => Math.max(max, datapoint.value), 0);
     if(maxValue === 0) { maxValue = 1; } // don't divide by zero later on
 
+    // there are a few different scenarios we have to deal with here:
+    // - data = null (usually for future dates): normal background, no border
+    // - data = 0: secondary background, secondary border
+    // - data > 0: primary background, primary border
+    // - today: normal or primary background, accent border
+
     dataset.backgroundColor = dataset.backgroundColor ?? function(ctx) {
+      const date = ctx.dataset.data[ctx.dataIndex].x;
       const value = ctx.dataset.data[ctx.dataIndex].value;
-      return Color(baseColor).alpha(value / maxValue).rgb().string();
+
+      let color = null;
+      if(value === null) {
+        color = Color(backgroundColor).alpha(0.3).rgb().string();
+      } else if(value === 0) {
+        color = Color(getMonth(date) % 2 ? zeroStripeColor : zeroColor).alpha(1).rgb().string();
+      } else {
+        color = Color(getMonth(date) % 2 ? primaryStripeColor : primaryColor).alpha(value / maxValue).rgb().string();
+      }
+
+      return color;
     };
 
     dataset.borderColor = dataset.borderColor ?? function(ctx) {
+      const date = ctx.dataset.data[ctx.dataIndex].x;
       const value = ctx.dataset.data[ctx.dataIndex].value;
-      const valueColor = Color(baseColor).alpha(Math.max(value / maxValue, 0.1));
-      const tintFn = colorScheme === 'dark' ? 'lighten' : 'darken';
-      if(value > 0) {
-        return valueColor.rgb().string(); // otherwise it's too different
+
+      let color = null;
+      if(options.highlightToday && date == todayDate) {
+        color = Color(todayColor).alpha(1).rgb().string();
+      } else if(value === null) {
+        color = Color(backgroundColor).alpha(0).rgb().string();
+      } else if(value === 0) {
+        color = Color(getMonth(date) % 2 ? zeroStripeColor : zeroColor).alpha(1).rgb().string();
       } else {
-        return valueColor[tintFn](0.3).rgb().string();
+        color = Color(getMonth(date) % 2 ? primaryStripeColor : primaryColor).alpha(value / maxValue).rgb().string();
       }
+
+      return color;
     };
 
     dataset.borderWidth = dataset.borderWidth ?? 1;
 
-    const numberOfWeeksInDataset = (new Set(dataset.data.map(datum => formatDate(startOfWeek(parseDateString(datum.x), { weekStartsOn: 1 }))))).size;
-    dataset.width = dataset.width ?? function(ctx) {
-      const area = ctx.chart.chartArea || { left: 0, right: 0};
-      return ((area.right - area.left) / numberOfWeeksInDataset) - 1; // 53 columns: years usually start mid-week; 1 just for some space
-    }
 
-    dataset.height = dataset.height ?? function(ctx) {
-      const area = ctx.chart.chartArea || { top: 0, bottom: 0 };
-      return ((area.bottom - area.top) / 7) - 1; // 7 days in a week; ; 1 just for some space
-    }
+    // make sure we render in good-size squares
+    dataset.width = dataset.width ?? 16;
+    dataset.height = dataset.height ?? 16;
   });
 
   return data;
+}
+
+export function calculateChartWidth(chartData: MatrixChartData, sideLength = 16, spacing = 2) {
+  const allDatesSorted = Array.from(new Set(chartData.datasets.flatMap(dataset => dataset.data.map(datum => datum.x)))).sort();
+
+  const startDate = parseDateString(allDatesSorted[0]);
+  const endDate = parseDateString(allDatesSorted[allDatesSorted.length - 1]);
+  const weekSpan = differenceInCalendarWeeks(endDate, startDate, { weekStartsOn: 1 });
+
+  const chartWidth =
+    (sideLength * weekSpan) + // height of the squares
+    (spacing * (weekSpan - 1)) + // height of the spacing
+    78 // account for the axis + padding
+  ;
+  return chartWidth;
+}
+
+export function calculateChartHeight(numberOfDays = 7, sideLength = 16, spacing = 2) {
+  const chartHeight =
+    (sideLength * numberOfDays) + // width of the squares
+    (spacing * (numberOfDays - 1)) + // width of the spacing
+    20 // account for the axis + padding
+  ;
+  return chartHeight;
+}
+
+function getMonth(dateString: string) {
+  return +dateString.substring(5, 7);
 }

@@ -6,7 +6,7 @@ import { getTallies, Tally } from 'src/lib/api/tally.ts';
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
-import StreakChart from 'src/components/dashboard/StreakChart.vue';
+import ActivityHeatmap from 'src/components/dashboard/ActivityHeatmap.vue';
 import StreakCounter from 'src/components/dashboard/StreakCounter.vue';
 
 const breadcrumbs: MenuItem[] = [
@@ -42,7 +42,7 @@ onMounted(() => {
     <div class="max-w-screen-lg">
       <div class="">
         <SectionTitle title="Activity" />
-        <StreakChart
+        <ActivityHeatmap
           :tallies="tallies"
         />
       </div>
