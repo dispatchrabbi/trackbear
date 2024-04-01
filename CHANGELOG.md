@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.9.2
+
+- FIXED: An extra paragraph on the About page has been removed. (h/t murphy)
+
 ## 0.9.1
 
 - CHANGED: The heatmaps on the Dashboard and Project pages are now easier to read and more informative.
