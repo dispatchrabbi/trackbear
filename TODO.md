@@ -1,6 +1,7 @@
 # TODO
 
 ## Next
+- [ ] Add totals to project and goal pages
 - [ ] Admin user management
   - [ ] Suspend/activate account
   - [ ] Send emails
@@ -11,8 +12,9 @@
 - [ ] Implement project tags
 
 ## Soon
-- [ ] Boards: create, edit, view, delete (?)
+- [ ] Boards: create, edit, view, delete
 - [ ] Multiplayer boards: add, remove, share
+  - [ ] Teams for multiplayer boards
 - [ ] Grand total page
   - [ ] Overall total
   - [ ] Totals by tag
