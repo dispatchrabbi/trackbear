@@ -208,7 +208,7 @@ async function handleSubmit() {
                   :invalid="timeRuleFor('hours')(timeCountModel.hours) !== true"
                   @update:model-value="() => onUpdate(timeCountModel)"
                 />
-                <InputGroupAddon class="min-w-0">
+                <InputGroupAddon class="!min-w-0">
                   h
                 </InputGroupAddon>
                 <InputNumber
@@ -219,7 +219,7 @@ async function handleSubmit() {
                   :invalid="timeRuleFor('minutes')(timeCountModel.minutes) !== true"
                   @update:model-value="() => onUpdate(timeCountModel)"
                 />
-                <InputGroupAddon class="min-w-0">
+                <InputGroupAddon class="!min-w-0">
                   m
                 </InputGroupAddon>
               </template>

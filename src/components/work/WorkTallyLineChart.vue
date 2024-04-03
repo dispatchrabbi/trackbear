@@ -35,7 +35,6 @@ const chartData = computed(() => {
   const filteredTallies = props.tallies.filter(tally => tally.measure === selectedMeasure.value);
   const normalizedTallies = normalizeTallies(filteredTallies);
 
-  console.log(measuresAvailable.value, selectedMeasure.value, normalizedTallies.length);
   const data = {
     labels: listEachDayOfData(null, null, normalizedTallies[0].date, normalizedTallies[normalizedTallies.length - 1].date),
     datasets: [{

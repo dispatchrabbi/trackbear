@@ -15,6 +15,7 @@ Types of changes include:
 - NEW: Target-based goals now show fun stats about your progress and encouragment. (h/t einhornlasagne)
 - CHANGED: The links for the About, Privacy, Changelog, and Support pages are now located under the user icon in the top right.
 - FIXED: When navigating from project to project, project graphs would sometimes not display. That's now fixed.
+- FIXED: There is now enough room to log hours and minutes even on very small screens (such as the Pixel 6a). (h/t einhornlasagne)
 
 ## 0.9.2
 
