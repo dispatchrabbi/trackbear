@@ -24,9 +24,24 @@ const toggleSidebar = function() {
 
 const userMenu = ref(null);
 const userMenuItems = ref<MenuItem[]>([
-  { label: 'Account Settings', url: '/settings/account' },
-  { label: 'Manage Tags', url: '/settings/tags' },
-  { label: 'Log Out', url: '/logout' },
+  {
+    label: 'Settings',
+    items: [
+      { icon: PrimeIcons.COG, label: 'Account Settings', url: '/settings/account' },
+      { icon: PrimeIcons.TAG, label: 'Manage Tags', url: '/settings/tags' },
+    ] ,
+  },
+  {
+    label: 'TrackBear',
+    items: [
+      { icon: PrimeIcons.INFO_CIRCLE, label: 'About', url: '/about' },
+      { icon: PrimeIcons.WRENCH, label: 'Changelog', url: '/changelog' },
+      { icon: PrimeIcons.SHIELD, label: 'Privacy', url: '/privacy' },
+      { icon: PrimeIcons.HEART_FILL, label: 'Support the Dev', url: '/ko-fi', iconColor: 'text-primary-500 dark:text-primary-400' },
+    ]
+  },
+  { separator: true },
+  { icon: PrimeIcons.SIGN_OUT, label: 'Log Out', url: '/logout' },
 ]);
 const toggleUserMenu = ev => userMenu.value.toggle(ev);
 
@@ -84,13 +99,16 @@ const toggleUserMenu = ev => userMenu.value.toggle(ev);
       ref="userMenu"
       :model="userMenuItems"
       :popup="true"
+      :pt="{ separator: { class: 'border-t border-surface-200 dark:border-surface-600 my-1' } }"
+      :pt-options="{ mergeSections: true, mergeProps: true, }"
     >
       <template #item="{ item, props: itemProps }">
         <RouterLink
           :to="item.url"
           v-bind="itemProps.action"
         >
-          <span class="leading-6 text-sm font-medium">{{ item.label }}</span>
+          <span :class="[item.icon, item.iconColor]" />
+          <span class="leading-6 text-sm font-medium ml-2">{{ item.label }}</span>
         </RouterLink>
       </template>
     </Menu>
