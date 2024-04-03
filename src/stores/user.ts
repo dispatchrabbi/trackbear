@@ -3,6 +3,7 @@ import { logIn, logOut, getUser } from 'src/lib/api/auth.ts';
 
 import { useWorkStore } from 'src/stores/work.ts';
 import { useTagStore } from 'src/stores/tag.ts';
+import { useGoalStore } from 'src/stores/goal.ts';
 
 export const useUserStore = defineStore('user', {
   state: () => {
@@ -20,6 +21,9 @@ export const useUserStore = defineStore('user', {
 
       const tagStore = useTagStore();
       tagStore.$reset();
+
+      const goalStore = useGoalStore();
+      goalStore.$reset();
     },
     async logOut() {
       await logOut();
@@ -30,6 +34,9 @@ export const useUserStore = defineStore('user', {
 
       const tagStore = useTagStore();
       tagStore.$reset();
+
+      const goalStore = useGoalStore();
+      goalStore.$reset();
     },
     async populate() {
       if(this.user === null) {
