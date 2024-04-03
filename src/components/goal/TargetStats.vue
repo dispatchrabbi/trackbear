@@ -5,13 +5,13 @@ import { differenceInCalendarDays } from 'date-fns';
 import type { Goal } from 'src/lib/api/goal.ts';
 import { GoalTargetParameters } from 'server/lib/models/goal.ts';
 import type { Tally } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally';
+import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import StatTile from './StatTile.vue';
-import { formatDuration, parseDateString } from 'src/lib/date';
-import { compileTallies } from '../chart/chart-functions';
-import { commaify } from 'src/lib/number';
+import { formatDuration, parseDateString } from 'src/lib/date.ts';
+import { compileTallies } from '../chart/chart-functions.ts';
+import { commaify } from 'src/lib/number.ts';
 
 const props = defineProps<{
   goal: Goal;
