@@ -89,7 +89,7 @@ loadGoals();
       No projects found.
     </div>
     <div v-if="goals.length === 0">
-      You haven't made any goals yet. Click the <span class="font-bold">New Goal</span> button to get started!
+      You haven't made any goals yet. Click the <span class="font-bold">New</span> button to get started!
     </div>
   </ApplicationLayout>
 </template>

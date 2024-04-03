@@ -12,6 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: Target-based goals now show fun stats about your progress and encouragment. (h/t einhornlasagne)
+- FIXED: When navigating from project to project, project graphs would sometimes not display. That's now fixed.
+
 ## 0.9.2
 
 - FIXED: An extra paragraph on the About page has been removed. (h/t murphy)

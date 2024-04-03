@@ -21,8 +21,7 @@ export const TALLY_MEASURE_INFO = {
   [TALLY_MEASURE.TIME]: {
     counter: { singular: 'hour', plural: 'hours' },
     label: { singular: 'time', plural: 'time' },
-    defaultChartMax: 250,
-
+    defaultChartMax: 250, // hours
   },
 };
 

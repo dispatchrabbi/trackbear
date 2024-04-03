@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, defineProps } from 'vue';
+import { ref, computed, watch, defineProps } from 'vue';
 import type { Work } from 'src/lib/api/work.ts';
 import type { TallyWithTags } from 'src/lib/api/tally.ts';
 
@@ -25,12 +25,17 @@ const measuresAvailable = computed(() => {
   const measuresPresent = new Set(props.tallies.map(tally => tally.measure));
   return Object.keys(TALLY_MEASURE_INFO).filter(measure => measuresPresent.has(measure));
 });
+
 const selectedMeasure = ref(measuresAvailable.value[0]);
+watch(measuresAvailable, () => {
+  selectedMeasure.value = measuresAvailable.value[0];
+});
 
 const chartData = computed(() => {
   const filteredTallies = props.tallies.filter(tally => tally.measure === selectedMeasure.value);
   const normalizedTallies = normalizeTallies(filteredTallies);
 
+  console.log(measuresAvailable.value, selectedMeasure.value, normalizedTallies.length);
   const data = {
     labels: listEachDayOfData(null, null, normalizedTallies[0].date, normalizedTallies[normalizedTallies.length - 1].date),
     datasets: [{

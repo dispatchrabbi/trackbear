@@ -96,7 +96,7 @@ loadWorks();
       No projects found.
     </div>
     <div v-if="works.length === 0">
-      You haven't made any projects yet. Click the <span class="font-bold">New Work</span> button to get started!
+      You haven't made any projects yet. Click the <span class="font-bold">New</span> button to get started!
     </div>
     <Dialog
       v-model:visible="isCreateFormVisible"
@@ -105,7 +105,7 @@ loadWorks();
       <template #header>
         <h2 class="font-heading font-semibold uppercase">
           <span :class="PrimeIcons.PLUS" />
-          Create Work
+          Create Project
         </h2>
       </template>
       <CreateWorkForm

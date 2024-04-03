@@ -11,6 +11,7 @@ const goalStore = useGoalStore();
 
 import { getGoal, GoalWithWorksAndTags } from 'src/lib/api/goal.ts';
 import { Tally, TallyWithWorkAndTags } from 'src/lib/api/tally.ts';
+import { describeGoal } from 'src/lib/goal.ts';
 
 import { PrimeIcons } from 'primevue/api';
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
@@ -18,6 +19,7 @@ import type { MenuItem } from 'primevue/menuitem';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
+import TargetStats from 'src/components/goal/TargetStats.vue';
 import TargetLineChart from 'src/components/goal/TargetLineChart.vue';
 import HabitDataTable from 'src/components/goal/HabitDataTable.vue';
 import DeleteGoalForm from 'src/components/goal/DeleteGoalForm.vue';
@@ -81,10 +83,10 @@ onMounted(() => {
   >
     <div v-if="goal">
       <header class="mb-4">
-        <div class="actions flex gap-2">
+        <div class="actions flex gap-2 items-start">
           <SectionTitle
             :title="goal.title"
-            :subtitle="goal.description"
+            :subtitle="goal.description || describeGoal(goal)"
           />
           <div class="spacer grow" />
           <div class="flex flex-col md:flex-row gap-2">
@@ -103,17 +105,27 @@ onMounted(() => {
         </div>
       </header>
       <div
-        v-if="tallies.length > 0"
+        v-if="tallies.length > 0 || tallies.length === 0"
         class="flex flex-col gap-2 max-w-screen-md"
       >
         <div
           v-if="goal.type === GOAL_TYPE.TARGET"
           class="w-full"
         >
+          <div class="mb-8">
+            <TargetStats
+              :tallies="tallies"
+              :goal="goal"
+            />
+          </div>
           <TargetLineChart
+            v-if="tallies.length > 0"
             :tallies="tallies"
             :goal="goal"
           />
+          <div v-else>
+            You haven't logged any progress on this goal. You want the cool graphs? Get writing!
+          </div>
         </div>
         <div
           v-if="goal.type === GOAL_TYPE.HABIT"
@@ -124,26 +136,6 @@ onMounted(() => {
             :goal="goal"
           />
         </div>
-        <!-- <div class="w-full">
-          <WorkTallyStreakChart
-            :work="goal"
-            :tallies="tallies"
-          />
-        </div>
-        <div class="w-full">
-          <WorkTallyLineChart
-            :work="goal"
-            :tallies="tallies"
-          />
-        </div> -->
-        <!-- <div class="w-full">
-          <GoalTallyDataTable
-            :tallies="tallies"
-          />
-        </div> -->
-      </div>
-      <div v-else>
-        You haven't logged any progress on this goal. You want the cool graphs? Get writing!
       </div>
       <Dialog
         v-model:visible="isDeleteFormVisible"

@@ -169,7 +169,7 @@ onMounted(() => loadBanners());
       No banners to list. Maybe you need to toggle the switches?
     </div>
     <div v-if="banners.length === 0">
-      You haven't made any banners yet. Click the <span class="font-bold">New Work</span> button to get started!
+      You haven't made any banners yet. Click the <span class="font-bold">New Banner</span> button to get started!
     </div>
     <Dialog
       v-model:visible="isCreateFormVisible"

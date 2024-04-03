@@ -135,7 +135,7 @@ onMounted(() => {
         <template #header>
           <h2 class="font-heading font-semibold uppercase">
             <span :class="PrimeIcons.PENCIL" />
-            Edit Work
+            Edit Project
           </h2>
         </template>
         <EditWorkForm
@@ -151,7 +151,7 @@ onMounted(() => {
         <template #header>
           <h2 class="font-heading font-semibold uppercase">
             <span :class="PrimeIcons.TRASH" />
-            Delete Work
+            Delete Project
           </h2>
         </template>
         <DeleteWorkForm
