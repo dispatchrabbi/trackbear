@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.9.4
+
+- CHANGED: The homepage now has screenshots! Now you can see what you're getting into before you sign up.
+
 ## 0.9.3
 
 - NEW: Target-based goals now show fun stats about your progress and encouragment. (h/t einhornlasagne)
@@ -29,8 +33,8 @@ Types of changes include:
 
 ## 0.9.0
 
-- NEW: A number of behind-the-scenes features to help me manage TrackBear.
-- REMOVED: All vestiges of the previous UI that were secretly hiding out.
+- NEW: I've added a number of behind-the-scenes features to help me manage TrackBear.
+- REMOVED: All vestiges of the previous UI that were secretly hiding out have now been removed.
 
 ## 0.8.3
 
