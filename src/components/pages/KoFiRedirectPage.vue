@@ -13,7 +13,7 @@ onMounted(() => {
 <template>
   <PorchLayout>
     <TextBlurb
-      title="Redirecting to the Trackbear Ko-Fi page..."
+      title="Redirecting to the TrackBear Ko-Fi page..."
     >
       <!-- eslint-disable vue/html-indent vue/max-attributes-per-line-->
       <p>

@@ -9,7 +9,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="blurb p-4 max-w-5xl mx-auto mt-4">
+  <div class="blurb p-4 max-w-screen-lg mx-auto mt-4">
     <SectionTitle
       v-if="props.title"
       :title="props.title"
