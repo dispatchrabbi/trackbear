@@ -1,14 +1,17 @@
 # TODO
 
 ## Next
-- [ ] Add totals to project and goal pages
+- [X] Add totals to project and goal pages
 - [ ] Admin user management
-  - [ ] Suspend/activate account
-  - [ ] Send emails
+  - [X] Suspend/activate account
+  - [X] Send emails
   - [ ] Rename user
-  - [ ] Force password reset
+  - [X] Force password reset
   - [ ] View audit events
+  - [ ] Add user ID to sessions and session ID to audit events
 - [ ] Improve goal pages
+  - [X] Target goals
+  - [ ] Habit goals
 - [ ] Implement project tags
 
 ## Soon

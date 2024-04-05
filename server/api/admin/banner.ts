@@ -1,4 +1,5 @@
 import { Router } from "express";
+import winston from "winston";
 import { ApiResponse, success, h } from '../../lib/api-response.ts';
 
 import { requireAdminUser, RequestWithUser } from '../../lib/auth.ts';
@@ -39,7 +40,7 @@ const zBannerPayload = z.object({
   icon: z.string().min(1).nullable(),
   color: z.enum(['info', 'success', 'warning', 'error']).nullable(),
   showUntil: z.coerce.date().nullable(),
-});
+}).strict();
 
 bannerRouter.post('/',
   requireAdminUser,
@@ -59,6 +60,7 @@ bannerRouter.post('/',
     }
   });
 
+  winston.debug(`Created banner ${banner.id} with message ${banner.message}`);
   await logAuditEvent('banner:create', user.id, banner.id);
 
   return res.status(201).send(success(banner));
@@ -86,6 +88,7 @@ bannerRouter.put('/:id',
     }
   });
 
+  winston.debug(`Edited banner ${banner.id}`);
   await logAuditEvent('banner:update', user.id, banner.id);
 
   return res.status(200).send(success(banner));

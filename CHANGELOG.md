@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: More behind-the-scenes improvements to help me manage TrackBear users.
+
 ## 0.9.4
 
 - CHANGED: The homepage now has screenshots! Now you can see what you're getting into before you sign up.

@@ -20,6 +20,8 @@ import TagsPage from 'src/components/pages/settings/TagsPage.vue';
 
 import AdminHomePage from './components/pages/admin/AdminHomePage.vue';
 import AdminBannersListPage from './components/pages/admin/BannersListPage.vue';
+import AdminUsersListPage from './components/pages/admin/UsersListPage.vue';
+import AdminUserPage from './components/pages/admin/UserPage.vue';
 
 import DashboardPage from 'src/components/pages/DashboardPage.vue';
 
@@ -68,6 +70,8 @@ const routes = [
   // Admin section
   { path: '/admin', name: 'admin', component: AdminHomePage },
   { path: '/admin/banners', name: 'admin-banners', component: AdminBannersListPage },
+  { path: '/admin/users', name: 'admin-users', component: AdminUsersListPage },
+  { path: '/admin/users/:id', name: 'admin-user', component: AdminUserPage },
 
   // catch-all
   { path: '/:catchAll(.*)', name:'404', component: PlaceholderPage, props: { title: '404' } },

@@ -3,3 +3,5 @@ export const USER_STATE = {
   SUSPENDED:  'suspended',
   DELETED:    'deleted',
 };
+
+export const USERNAME_REGEX = /^[a-z][a-z0-9_-]+$/;

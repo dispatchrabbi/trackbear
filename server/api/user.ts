@@ -9,8 +9,8 @@ import type { User } from "@prisma/client";
 // import { validateBody } from "../lib/middleware/validate.ts";
 // import { logAuditEvent } from '../lib/audit-events.ts';
 import { requireUser, WithUser } from "../lib/auth.ts";
+import { USERNAME_REGEX } from "../lib/models/user.ts";
 
-export const USERNAME_REGEX = /^[a-z][a-z0-9_-]+$/;
 export type EditUserPayload = Pick<User, 'username' | 'displayName'>;
 // const editUserSchema = z.object({
 //   username: z.string().min(3).max(24).regex(USERNAME_REGEX),

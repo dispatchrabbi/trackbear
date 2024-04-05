@@ -13,7 +13,32 @@ async function logAuditEvent(eventType: string, agentId: number, patientId?: num
   }
 }
 
+type ChangeRecord<F> = {
+  from: F | null;
+  to: F | null;
+};
+function buildChangeRecord<T extends object>(fields: Array<keyof T> , from: Partial<T>, to: Partial<T>)  {
+  const changes = {} as Record<keyof T, ChangeRecord<T[keyof T]>>;
+  for(const field of fields) {
+    // intentional double-equals to capture undefined as well
+    const fromVal = from[field] == null ? null : from[field];
+    const toVal = to[field] == null ? null : to[field];
+
+    if(fromVal === toVal) {
+      continue;
+    }
+
+    changes[field] = {
+      from: fromVal,
+      to: toVal,
+    };
+  }
+
+  return changes;
+}
+
 export {
-  logAuditEvent,
   TRACKBEAR_SYSTEM_ID,
+  logAuditEvent,
+  buildChangeRecord,
 };

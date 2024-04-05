@@ -61,9 +61,21 @@ const items = computed(() => {
     },
   ];
 
+  const users = [
+    {
+      key: 'users',
+      label: 'Users',
+      icon: PrimeIcons.USERS,
+      href: '/admin/users',
+      command: () => emit('menuItemClick', '/admin/users'),
+      section: true,
+    },
+  ];
+
   const items: { label: string; href?: string; command?: () => void; icon?: string; section?: boolean; first?: boolean; }[] = [
     ...app,
     ...banners,
+    ...users,
   ];
 
   return items;

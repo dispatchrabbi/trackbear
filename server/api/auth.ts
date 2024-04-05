@@ -11,23 +11,22 @@ import { PasswordResetLink, PendingEmailVerification, User, UserAuth } from "@pr
 import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut, requireUser, WithUser } from "../lib/auth.ts";
 import { PASSWORD_RESET_LINK_STATE } from "../lib/states.ts";
-import { USER_STATE } from "../lib/models/user.ts";
+import { USER_STATE, USERNAME_REGEX } from "../lib/models/user.ts";
 import CONFIG from '../config.ts';
 
 import { pushTask } from "../lib/queue.ts";
 import sendSignupEmailTask from '../lib/tasks/send-signup-email.ts';
 import sendEmailverificationEmail from "../lib/tasks/send-emailverification-email.ts";
+import sendPwresetEmail from "../lib/tasks/send-pwreset-email.ts";
 import sendPwchangeEmail from "../lib/tasks/send-pwchange-email.ts";
 
 import { logAuditEvent } from '../lib/audit-events.ts';
-import sendPwresetEmail from "../lib/tasks/send-pwreset-email.ts";
 
 export type CreateUserPayload = {
   username: string;
   email: string;
   password: string;
 };
-export const USERNAME_REGEX = /^[a-z][a-z0-9_-]+$/;
 const createUserPayloadSchema = z.object({
   username: z.string().trim().toLowerCase()
     .min(3, { message: 'Username must be at least 3 characters long.'})
@@ -236,6 +235,7 @@ authRouter.post('/verify-email',
       data: pendingEmailVerificationData,
     });
     pushTask(sendEmailverificationEmail.makeTask(pendingEmailVerification.uuid));
+    await logAuditEvent('user:verifyemailreq', user.id, user.id, null, { verificationUuid: pendingEmailVerification.uuid });
   } catch(err) { return next(err); }
 
   return res.status(201).send(success({}));
@@ -376,7 +376,7 @@ authRouter.post('/reset-password',
   } catch(err) { return next(err); }
 
   winston.debug(`PASSWORD: ${user.id} requested a reset link and got ${resetLink.uuid}`);
-  await logAuditEvent('user:pwresetreq', user.id, null, null, { resetLinkUuid: resetLink.uuid });
+  await logAuditEvent('user:pwresetreq', user.id, user.id, null, { resetLinkUuid: resetLink.uuid });
   pushTask(sendPwresetEmail.makeTask(resetLink.uuid));
 
   return res.status(201).send(success({}));
