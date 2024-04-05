@@ -13,6 +13,7 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - NEW: More behind-the-scenes improvements to help me manage TrackBear users.
+- CHANGED: Based on user feedback, stats for target-based goals now count today's contributions in the running average. (h/t einhornlasagne, Elluna, River, cenlyra)
 
 ## 0.9.4
 

@@ -5,6 +5,9 @@ Alpha Testers:
 - Bäumchen
 - blasionpeach
 - cardan
+- cenlyra
+- einhornlasagne
+- Elluna
 - Etlu-Yume
 - Fiona15351
 - grag

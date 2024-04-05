@@ -38,12 +38,12 @@ const daysSoFar = computed(() => {
 
   if(props.goal.startDate) {
     const startDate = parseDateString(props.goal.startDate);
-    return differenceInCalendarDays(today, startDate);
+    return differenceInCalendarDays(today, startDate) + 1;
   } else if(compiledTallies.value.length === 0) {
     return 0;
   } else {
     const startDate = parseDateString(compiledTallies.value[0].date);
-    return differenceInCalendarDays(today, startDate);
+    return differenceInCalendarDays(today, startDate) + 1;
   }
 });
 
@@ -57,7 +57,7 @@ const daysToGo = computed(() => {
 
   const days = differenceInCalendarDays(endDate, today);
 
-  return days + 1;
+  return days;
 });
 
 const totalSoFar = computed(() => {
@@ -130,10 +130,10 @@ const paceToGoOnMars = computed(() => {
 <template>
   <div class="target-stats flex flex-wrap justify-evenly gap-2">
     <StatTile
-      top-legend="it's been"
+      top-legend="you are"
       :highlight="commaify(daysSoFar)"
       :suffix="daysSoFar === 1 ? 'day' : 'days'"
-      bottom-legend="since you started"
+      bottom-legend="into your goal"
     />
     <StatTile
       top-legend="you've logged"
