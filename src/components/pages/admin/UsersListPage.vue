@@ -8,7 +8,6 @@ import { USER_STATE_INFO } from 'src/lib/user.ts';
 
 import AdminLayout from 'src/layouts/AdminLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
-import Knob from 'primevue/knob';
 import IconField from 'primevue/iconfield';
 import InputText from 'primevue/inputtext';
 import InputIcon from 'primevue/inputicon';
@@ -17,6 +16,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
 import { PrimeIcons } from 'primevue/api';
+import StatTile from 'src/components/goal/StatTile.vue';
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Admin', url: '/admin' },
@@ -40,14 +40,36 @@ const loadUsers = async function() {
   }
 }
 
+const activeUsers = computed(() => {
+  return users.value.filter(user => user.state === USER_STATE.ACTIVE).length;
+});
+
+const verifiedActiveUsers = computed(() => {
+  return users.value.filter(user => user.state === USER_STATE.ACTIVE && user.isEmailVerified).length;
+});
+
 const newWeekUsers = computed(() => {
   const aWeekAgo = startOfDay(addDays(new Date(), -6));
   return users.value.filter(user => parseISO(user.createdAt) >= aWeekAgo).length;
 });
 
+const wowPercentage = computed(() => {
+  const aWeekAgo = startOfDay(addDays(new Date(), -6));
+  const twoWeeksAgo = addDays(aWeekAgo, -7);
+  const lastWeekUsers = users.value.filter(user => parseISO(user.createdAt) < aWeekAgo && parseISO(user.createdAt) >= twoWeeksAgo).length;
+  return Math.round(100* (newWeekUsers.value / lastWeekUsers));
+});
+
 const newMonthUsers = computed(() => {
   const aMonthAgo = startOfDay(addMonths(new Date(), -1));
   return users.value.filter(user => parseISO(user.createdAt) >= aMonthAgo).length;
+});
+
+const momPercentage = computed(() => {
+  const aMonthAgo = startOfDay(addMonths(new Date(), -1));
+  const twoMonthsAgo = addMonths(aMonthAgo, -1);
+  const lastMonthUsers = users.value.filter(user => parseISO(user.createdAt) < aMonthAgo && parseISO(user.createdAt) >= twoMonthsAgo).length;
+  return Math.round(100* (newMonthUsers.value / lastMonthUsers));
 });
 
 const usersFilter = ref<string>('');
@@ -80,23 +102,37 @@ onMounted(() => loadUsers());
   <AdminLayout
     :breadcrumbs="breadcrumbs"
   >
-    <div class="data flex gap-4">
-      <div class="flex flex-col">
-        <Knob
-          v-model="newWeekUsers"
-          :max="10"
-          readonly
-        />
-        <div>Sign-Ups (7d)</div>
-      </div>
-      <div class="flex flex-col">
-        <Knob
-          v-model="newMonthUsers"
-          :max="10"
-          readonly
-        />
-        <div>Sign-Ups (1m)</div>
-      </div>
+    <div class="data flex justify-center gap-4 mb-4">
+      <StatTile
+        :highlight="users.length"
+        bottom-legend="total users"
+      />
+      <StatTile
+        :highlight="activeUsers"
+        bottom-legend="active users"
+      />
+      <StatTile
+        :highlight="verifiedActiveUsers"
+        bottom-legend="verified active"
+      />
+      <StatTile
+        :highlight="newWeekUsers"
+        bottom-legend="past week"
+      />
+      <StatTile
+        :highlight="wowPercentage"
+        suffix="%"
+        bottom-legend="week over week"
+      />
+      <StatTile
+        :highlight="newMonthUsers"
+        bottom-legend="past month"
+      />
+      <StatTile
+        :highlight="momPercentage"
+        suffix="%"
+        bottom-legend="month over month"
+      />
     </div>
     <div class="actions flex justify-end gap-4 mb-4">
       <div class="">

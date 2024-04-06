@@ -72,12 +72,12 @@ const streakInfo = computed(() => {
   <div class="flex gap-2">
     <StatTile
       top-legend="your current streak is"
-      :highlight="streakInfo.currentStreak.length.toString()"
+      :highlight="streakInfo.currentStreak.length"
       :suffix="streakInfo.currentStreak.length === 1 ? 'day' : 'days'"
     />
     <StatTile
       top-legend="your longest streak is"
-      :highlight="streakInfo.longestStreak.length.toString()"
+      :highlight="streakInfo.longestStreak.length"
       :suffix="streakInfo.longestStreak.length === 1 ? 'day' : 'days'"
     />
   </div>

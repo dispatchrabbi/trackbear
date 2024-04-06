@@ -2,7 +2,7 @@
 import { defineProps } from 'vue';
 
 const props = defineProps<{
-  highlight: string;
+  highlight: string | number;
   prefix?: string;
   suffix?: string;
   topLegend?: string;
@@ -37,7 +37,7 @@ const props = defineProps<{
         {{ props.prefix }}
       </div>
       <div class="highlight text-2xl">
-        {{ props.highlight }}
+        {{ props.highlight.toString() }}
       </div>
       <div
         v-if="props.suffix"
