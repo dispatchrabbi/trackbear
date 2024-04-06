@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
 
-import { useUserStore } from 'src/stores/user';
+import { useUserStore } from 'src/stores/user.ts';
 const userStore = useUserStore();
 
 import Button from 'primevue/button';
