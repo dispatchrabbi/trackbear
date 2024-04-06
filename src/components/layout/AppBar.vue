@@ -27,21 +27,21 @@ const userMenuItems = ref<MenuItem[]>([
   {
     label: 'Settings',
     items: [
-      { icon: PrimeIcons.COG, label: 'Account Settings', url: '/settings/account' },
-      { icon: PrimeIcons.TAG, label: 'Manage Tags', url: '/settings/tags' },
+      { icon: PrimeIcons.COG, label: 'Account Settings', to: { name: 'account' } },
+      { icon: PrimeIcons.TAG, label: 'Manage Tags', to: { name: 'tags' } },
     ] ,
   },
   {
     label: 'TrackBear',
     items: [
-      { icon: PrimeIcons.INFO_CIRCLE, label: 'About', url: '/about' },
-      { icon: PrimeIcons.WRENCH, label: 'Changelog', url: '/changelog' },
-      { icon: PrimeIcons.SHIELD, label: 'Privacy', url: '/privacy' },
-      { icon: PrimeIcons.HEART_FILL, label: 'Support the Dev', url: '/ko-fi', iconColor: 'text-primary-500 dark:text-primary-400' },
+      { icon: PrimeIcons.INFO_CIRCLE, label: 'About', to: { name: 'about' } },
+      { icon: PrimeIcons.WRENCH, label: 'Changelog', to: { name: 'changelog' } },
+      { icon: PrimeIcons.SHIELD, label: 'Privacy', to: { name: 'privacy' } },
+      { icon: PrimeIcons.HEART_FILL, label: 'Support the Dev', href: '/ko-fi', target: '_blank', iconColor: 'text-primary-500 dark:text-primary-400' },
     ]
   },
   { separator: true },
-  { icon: PrimeIcons.SIGN_OUT, label: 'Log Out', url: '/logout' },
+  { icon: PrimeIcons.SIGN_OUT, label: 'Log Out', to: { name: 'logout' } },
 ]);
 const toggleUserMenu = ev => userMenu.value.toggle(ev);
 
@@ -59,6 +59,7 @@ const toggleUserMenu = ev => userMenu.value.toggle(ev);
     <TrackbearMasthead
       v-if="props.collapsed"
       :hide-logo="true"
+      link-to="dashboard"
     />
     <Breadcrumb
       class="hidden md:block"
@@ -71,16 +72,15 @@ const toggleUserMenu = ev => userMenu.value.toggle(ev);
           v-bind="itemProps.action"
         >
           <span :class="[item.icon, 'text-color']" />
-          <span class="text-primary font-semibold">{{ item.label }}</span>
+          <span>{{ item.label }}</span>
         </RouterLink>
-        <a
+        <span
           v-else
-          :href="item.url"
-          :target="item.target"
-          v-bind="itemProps.action"
+          class="font-semibold text-sm flex items-center gap-x-1.5 rounded-md text-surface-500 dark:text-white/70"
         >
-          <span class="text-color">{{ item.label }}</span>
-        </a>
+          <span :class="[item.icon, 'text-color']" />
+          <span>{{ item.label }}</span>
+        </span>
       </template>
     </Breadcrumb>
     <div class="spacer flex-auto" />
@@ -104,12 +104,22 @@ const toggleUserMenu = ev => userMenu.value.toggle(ev);
     >
       <template #item="{ item, props: itemProps }">
         <RouterLink
-          :to="item.url"
+          v-if="!item.target"
+          :to="item.to"
           v-bind="itemProps.action"
         >
           <span :class="[item.icon, item.iconColor]" />
           <span class="leading-6 text-sm font-medium ml-2">{{ item.label }}</span>
         </RouterLink>
+        <a
+          v-else
+          :href="item.href"
+          :target="item.target"
+          v-bind="itemProps.action"
+        >
+          <span :class="[item.icon, item.iconColor]" />
+          <span class="leading-6 text-sm font-medium ml-2">{{ item.label }}</span>
+        </a>
       </template>
     </Menu>
   </div>
