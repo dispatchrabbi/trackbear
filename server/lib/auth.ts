@@ -32,8 +32,8 @@ function logIn(req: WithSessionAuth<Request>, user: User): void {
   req.session.auth = serializeUser(user);
 }
 
-function logOut(req: WithSessionAuth<Request>): void {
-  req.session.auth = null;
+function logOut(req: WithSessionAuth<Request>, cb: (err: unknown) => void): void {
+  req.session.destroy(cb);
 }
 
 async function requireUser(req: WithSessionAuth<Request>, res: Response, next: NextFunction) {

@@ -14,6 +14,7 @@ Types of changes include:
 
 - CHANGED: The email verification warning is now shown on the Dashboard, in case the initial link goes to spam. (h/t cenlyra)
 - FIXED: The TrackBear logo now always directs you back to the Dashboard if you're logged in, and the homepage if you're not. (h/t Etlu-Yume, kasperdskod007)
+- SECURITY: Session handling is now a little cleaner.
 
 ## 0.9.5
 

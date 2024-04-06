@@ -138,8 +138,13 @@ authRouter.get('/user',
 // it's okay to just... let anyone log out at any time, even if they're not logged in.
 type EmptyObject = Record<string, never>;
 authRouter.post('/logout', (req, res: ApiResponse<EmptyObject>) => {
-  logOut(req);
-  res.status(200).send(success({}));
+  logOut(req, err => {
+    if(err) {
+      winston.error('An error occurred during logout', err);
+      // but let them log out anyway
+    }
+    res.status(200).send(success({}));
+  });
 });
 
 authRouter.post('/signup',

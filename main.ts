@@ -82,9 +82,10 @@ async function main() {
       secure: true,
       sameSite: 'strict',
     },
+    name: 'trackbear.sid',
     secret: cookieSecret,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: new PrismaSessionStore(dbClient, {
       checkPeriod: 2 * 60 * 1000, // in ms, how often to delete expired sessions
       dbRecordIdIsSessionId: true,
