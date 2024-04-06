@@ -18,7 +18,7 @@ async function handleClick() {
 
   try {
     await resendVerifyEmail();
-    await wait(3 * 1000);
+    await wait(1 * 1000);
 
     toast.add({
       severity: 'info',
@@ -49,7 +49,7 @@ async function handleClick() {
     :pt-options="{ mergeSections: true, mergeProps: true }"
   >
     <div class="flex-auto">
-      Your email address is not yet verified.
+      Your email address is not yet verified. Please check your email for a verification link. If you do not verify your email within 10 days of signing up, your account will be suspended.
     </div>
     <div class="whitespace-nowrap">
       <Button
