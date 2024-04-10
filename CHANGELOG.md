@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: You can now star projects, which adds them to the sidebar and pulls them to the top of the list on the projects page. (h/t Athena, kasperdskod007)
+
 ## 0.9.6
 
 - CHANGED: The email verification warning is now shown on the Dashboard, in case the initial link goes to spam. (h/t cenlyra)

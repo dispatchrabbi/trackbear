@@ -80,27 +80,28 @@ workRouter.get('/:id',
   }
 }));
 
-export type WorkPayload = {
+export type WorkCreatePayload = {
   title: string;
   description: string;
   phase: string;
 };
-const zWorkPayload = z.object({
+const zWorkCreatePayload = z.object({
   title: z.string().min(1),
   description: z.string(),
   phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<string>),
-});
+}).strict();
 
 workRouter.post('/',
   requireUser,
-  validateBody(zWorkPayload),
+  validateBody(zWorkCreatePayload),
   h(async (req: RequestWithUser, res: ApiResponse<Work>) =>
 {
   const user = req.user;
 
   const work = await dbClient.work.create({
     data: {
-      ...req.body as WorkPayload,
+      ...req.body as WorkCreatePayload,
+      starred: false,
       state: WORK_STATE.ACTIVE,
       ownerId: user.id,
     }
@@ -111,13 +112,27 @@ workRouter.post('/',
   return res.status(201).send(success(work));
 }));
 
+export type WorkUpdatePayload = Partial<{
+  title: string;
+  description: string;
+  phase: string;
+  starred: boolean;
+}>;
+const zWorkUpdatePayload = z.object({
+  title: z.string().min(1),
+  description: z.string(),
+  phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<string>),
+  starred: z.boolean(),
+}).strict().partial();
+
 workRouter.put('/:id',
   requireUser,
   validateParams(zIdParam()),
-  validateBody(zWorkPayload),
+  validateBody(zWorkUpdatePayload),
   h(async (req: RequestWithUser, res: ApiResponse<Work>) =>
 {
   const user = req.user;
+  const payload = req.body as WorkUpdatePayload;
 
   const work = await dbClient.work.update({
     where: {
@@ -126,11 +141,11 @@ workRouter.put('/:id',
       state: WORK_STATE.ACTIVE,
     },
     data: {
-      ...req.body as WorkPayload,
+      ...payload,
     },
   });
 
-  await logAuditEvent('work:update', user.id, work.id);
+  await logAuditEvent('work:update', user.id, work.id, null, payload);
 
   return res.status(200).send(success(work));
 }));

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
-import type { WorkWithTotals } from 'src/lib/api/work.ts';
+import { ref, defineProps, defineEmits } from 'vue';
+import { WorkWithTotals, starWork } from 'src/lib/api/work.ts';
 import { WORK_PHASE } from 'server/lib/models/work.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
@@ -8,9 +8,10 @@ const props = defineProps<{
   work: WorkWithTotals;
 }>();
 
+const emit = defineEmits(['work:star']);
+
 import Card from 'primevue/card';
 import Tag from 'primevue/tag';
-import Button from 'primevue/button';
 import { PrimeIcons } from 'primevue/api';
 import { formatDuration } from 'src/lib/date.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
@@ -23,6 +24,17 @@ const WORK_PHASE_TAG_COLORS = {
   [WORK_PHASE.ABANDONED]: 'danger',
 };
 
+const isStarLoading = ref<boolean>(false);
+async function onStarClick() {
+  isStarLoading.value = true;
+
+  const newStarVal = !props.work.starred;
+  await starWork(props.work.id, newStarVal);
+  isStarLoading.value = false;
+
+  emit('work:star', { newVal: newStarVal });
+}
+
 </script>
 
 <template>
@@ -31,15 +43,14 @@ const WORK_PHASE_TAG_COLORS = {
     :pt-options="{ mergeSections: true, mergeProps: true }"
   >
     <template #title>
-      <div class="flex gap-2 items-start">
-        <!-- TODO: enable when these are implemented -->
-        <!--
-        <Button
-          :icon="PrimeIcons.STAR"
-          text
-          rounded
-          aria-label="Star"
-        /> -->
+      <div class="flex gap-2 items-baseline">
+        <span
+          :class="[
+            isStarLoading ? PrimeIcons.SPINNER + ' pi-spin' : props.work.starred ? PrimeIcons.STAR_FILL : PrimeIcons.STAR,
+            'text-primary-500 dark:text-primary-400'
+          ]"
+          @click.prevent="onStarClick"
+        />
         <div>{{ props.work.title }}</div>
         <div class="spacer flex-auto" />
         <Tag
@@ -51,7 +62,7 @@ const WORK_PHASE_TAG_COLORS = {
       </div>
     </template>
     <template #content>
-      <div class="flex gap-2">
+      <div class="flex gap-2 items-baseline">
         <div class="font-light italic grow">
           {{ work.description }}
         </div>

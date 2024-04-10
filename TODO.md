@@ -2,6 +2,8 @@
 
 ## Next
 - [X] Add totals to project and goal pages
+- [ ] Star projects and goals to have them appear on the sidebar
+  - [ ] Have starred project and goal stats appear on the dashboard too
 - [ ] Admin user management
   - [X] Suspend/activate account
   - [X] Send emails

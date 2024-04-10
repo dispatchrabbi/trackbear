@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { ref, computed, defineEmits } from 'vue';
+import { ref, computed, defineEmits, onMounted } from 'vue';
 
 const emit = defineEmits(['menuItemClick']);
 
 import { useWorkStore } from 'src/stores/work.ts';
-import { WORK_PHASE_ORDER } from 'server/lib/models/work.ts';
+import { cmpWork } from 'src/lib/work.ts';
+const workStore = useWorkStore();
 
 import { useGoalStore } from 'src/stores/goal.ts';
+const goalStore = useGoalStore();
 
 import Menu from 'primevue/menu';
 import { PrimeIcons } from 'primevue/api';
@@ -41,12 +43,6 @@ const menuPassthrough = ref({
 
 const sectionClasses = ['section', 'flex', 'items-baseline', 'gap-2', 'font-light', 'text-xl', 'm-0'].join(' ');
 
-const workStore = useWorkStore();
-workStore.populate();
-
-const goalStore = useGoalStore();
-goalStore.populate();
-
 // TODO: this menu is a mess, it really needs to get fixed
 const items = computed(() => {
   const dashboard = [
@@ -70,7 +66,7 @@ const items = computed(() => {
       href: '/works',
       section: true,
     },
-    ...(workStore.works ?? []).toSorted((a, b) => WORK_PHASE_ORDER.indexOf(a.phase) - WORK_PHASE_ORDER.indexOf(b.phase)).map(work => ({
+    ...(workStore.starredWorks ?? []).toSorted(cmpWork).map(work => ({
       key: `work-${work.id}`,
       label: work.title,
       command: () => emit('menuItemClick', `/works/${work.id}`),
@@ -82,7 +78,7 @@ const items = computed(() => {
     {
       key: 'goals',
       label: 'Goals',
-      icon: PrimeIcons.STAR,
+      icon: PrimeIcons.FLAG,
       command: () => emit('menuItemClick', '/goals'),
       href: '/goals',
       section: true,
@@ -116,6 +112,11 @@ const items = computed(() => {
   ];
 
   return items;
+});
+
+onMounted(() => {
+  workStore.populate();
+  goalStore.populate();
 });
 </script>
 

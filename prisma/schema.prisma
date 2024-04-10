@@ -170,6 +170,8 @@ model Work {
   description String
   phase       String
 
+  starred     Boolean @default(false)
+
   tallies Tally[]
   goals   Goal[]
 }
@@ -211,6 +213,8 @@ model Goal {
 
   startDate String?
   endDate   String?
+
+  starred     Boolean @default(false)
 
   worksIncluded Work[]
   tagsIncluded  Tag[]

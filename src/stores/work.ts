@@ -6,6 +6,15 @@ export const useWorkStore = defineStore('work', {
   state: () : { works: Work[] | null; } => {
     return { works: null };
   },
+  getters: {
+    starredWorks: state => {
+      if(state.works === null) {
+        return [];
+      }
+
+      return state.works.filter(work => work.starred);
+    },
+  },
   actions: {
     async populate(force = false) {
       if(force || this.works === null) {

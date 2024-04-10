@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 
 import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
 
 import { getWorks, WorkWithTotals } from 'src/lib/api/work.ts';
-import { WORK_PHASE_ORDER } from 'server/lib/models/work.ts';
+import { cmpWork } from 'src/lib/work.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
@@ -49,12 +49,14 @@ const reloadWorks = async function() {
 
 const worksFilter = ref<string>('');
 const filteredWorks = computed(() => {
-  const sortedWorks = works.value.toSorted((a, b) => WORK_PHASE_ORDER.indexOf(a.phase) - WORK_PHASE_ORDER.indexOf(b.phase));
+  const sortedWorks = works.value.toSorted(cmpWork);
   const searchTerm = worksFilter.value.toLowerCase();
   return sortedWorks.filter(work => work.title.toLowerCase().includes(searchTerm) || work.description.toLowerCase().includes(searchTerm));
 });
 
-loadWorks();
+onMounted(() => {
+  loadWorks();
+});
 
 </script>
 
@@ -89,7 +91,10 @@ loadWorks();
       class="mb-2"
     >
       <RouterLink :to="{ name: 'work', params: { id: work.id } }">
-        <WorkTile :work="work" />
+        <WorkTile
+          :work="work"
+          @work:star="reloadWorks()"
+        />
       </RouterLink>
     </div>
     <div v-if="filteredWorks.length === 0 && works.length > 0">
