@@ -72,59 +72,53 @@ goalRouter.get('/:id',
   }))
 }));
 
-export type GoalPayload = {
+export type GoalCreatePayload = {
   title: string;
   description: string;
   type: string;
   parameters: GoalParameters; // I could enforce this more strictly with a discriminated union, but it's fine for now
   startDate?: string;
   endDate?: string;
+  starred?: boolean;
   works: number[];
   tags: number[];
 };
 
-const zCommonGoalPayload = {
+const zTargetGoalParameters = z.object({
+  threshold: z.object({
+    measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
+    count: z.number().int(),
+  }),
+}).strict();
+const zHabitGoalParameters = z.object({
+  cadence: z.object({
+    unit: z.enum(Object.values(GOAL_CADENCE_UNIT) as NonEmptyArray<string>),
+    period: z.number().int(),
+  }),
+  threshold: z.object({
+    measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
+    count: z.number().int(),
+  }).nullable(),
+}).strict();
+const zGoalCreatePayload = z.object({
   title: z.string(),
   description: z.string(),
+  type: z.enum(Object.values(GOAL_TYPE) as NonEmptyArray<string>),
+  parameters: z.union([ zTargetGoalParameters, zHabitGoalParameters ]), // I could enforce this more strictly with a discriminated union, but it's terrible in zod
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
+  starred: z.boolean().nullable().default(false),
   works: z.array(z.number().int()),
   tags: z.array(z.number().int()),
-};
-const zGoalPayload = z.discriminatedUnion('type', [
-  z.object({
-    type: z.literal(GOAL_TYPE.TARGET),
-    parameters: z.object({
-      threshold: z.object({
-        measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
-        count: z.number().int(),
-      }),
-    }),
-    ...zCommonGoalPayload,
-  }),
-  z.object({
-    type: z.literal(GOAL_TYPE.HABIT),
-    parameters: z.object({
-      cadence: z.object({
-        unit: z.enum(Object.values(GOAL_CADENCE_UNIT) as NonEmptyArray<string>),
-        period: z.number().int(),
-      }),
-      threshold: z.object({
-        measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
-        count: z.number().int(),
-      }).nullable(),
-    }),
-    ...zCommonGoalPayload,
-  }),
-]);
+}).strict();
 
 goalRouter.post('/',
   requireUser,
-  validateBody(zGoalPayload),
+  validateBody(zGoalCreatePayload),
   h(async (req: RequestWithUser, res: ApiResponse<GoalAndTallies>) =>
 {
   const user = req.user;
-  const payload = req.body as GoalPayload;
+  const payload = req.body as GoalCreatePayload;
 
   const goal = await dbClient.goal.create({
     data: {
@@ -156,14 +150,17 @@ goalRouter.post('/',
   return res.status(201).send(success({ goal, tallies }));
 }));
 
+export type GoalUpdatePayload = Partial<GoalCreatePayload>;
+const zGoalUpdatePayload = zGoalCreatePayload.partial();
+
 goalRouter.put('/:id',
   requireUser,
   validateParams(zIdParam()),
-  validateBody(zGoalPayload),
+  validateBody(zGoalUpdatePayload),
   h(async (req: RequestWithUser, res: ApiResponse<GoalAndTallies>) =>
 {
   const user = req.user;
-  const payload = req.body as GoalPayload;
+  const payload = req.body as GoalUpdatePayload;
 
   const goal = await dbClient.goal.update({
     where: {
@@ -173,16 +170,16 @@ goalRouter.put('/:id',
     },
     data: {
       ...omit(payload, ['works', 'tags']),
-      worksIncluded: { connect: payload.works.map(workId => ({
+      worksIncluded: payload.works ? { connect: payload.works.map(workId => ({
         id: workId,
         ownerId: user.id,
         state: WORK_STATE.ACTIVE,
-      })) },
-      tagsIncluded: { connect: payload.tags.map(workId => ({
+      })) } : undefined,
+      tagsIncluded: payload.tags ? { connect: payload.tags.map(workId => ({
         id: workId,
         ownerId: user.id,
         state: TAG_STATE.ACTIVE,
-      })) },
+      })) } : undefined,
     },
     include: {
       worksIncluded: { where: { ownerId: req.user.id, state: WORK_STATE.ACTIVE } },

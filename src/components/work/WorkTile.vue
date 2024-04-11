@@ -32,7 +32,7 @@ async function onStarClick() {
   await starWork(props.work.id, newStarVal);
   isStarLoading.value = false;
 
-  emit('work:star', { newVal: newStarVal });
+  emit('work:star', { id: props.work.id, starred: newStarVal });
 }
 
 </script>

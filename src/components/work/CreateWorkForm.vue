@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { createWork, WorkPayload } from 'src/lib/api/work.ts';
+import { createWork, WorkCreatePayload } from 'src/lib/api/work.ts';
 import { WORK_PHASE } from 'server/lib/models/work.ts';
 
 import InputText from 'primevue/inputtext';
@@ -49,7 +49,7 @@ async function handleSubmit() {
 
   try {
     const data = formData();
-    const createdWork = await createWork(data as WorkPayload);
+    const createdWork = await createWork(data as WorkCreatePayload);
 
     emit('work:create', { work: createdWork });
     successMessage.value = `${createdWork.title} has been created.`;

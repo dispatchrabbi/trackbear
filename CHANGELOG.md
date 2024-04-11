@@ -12,7 +12,7 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-- NEW: You can now star projects, which adds them to the sidebar and pulls them to the top of the list on the projects page. (h/t Athena, kasperdskod007)
+- NEW: You can now star projects and goals, which adds them to the sidebar and pulls them to the top of the list on the projects and goals pages respectively. (h/t Athena, kasperdskod007)
 
 ## 0.9.6
 

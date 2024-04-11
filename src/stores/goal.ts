@@ -6,6 +6,15 @@ export const useGoalStore = defineStore('goal', {
   state: () : { goals: Goal[] | null; } => {
     return { goals: null };
   },
+  getters: {
+    starredGoals: state => {
+      if(state.goals === null) {
+        return [];
+      }
+
+      return state.goals.filter(work => work.starred);
+    },
+  },
   actions: {
     async populate(force = false) {
       if(force || this.goals === null) {

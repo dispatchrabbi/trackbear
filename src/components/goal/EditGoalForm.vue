@@ -16,7 +16,7 @@ import { NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe, parseDateStringSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { updateGoal, GoalPayload, GoalWithWorksAndTags } from 'src/lib/api/goal.ts';
+import { updateGoal, GoalUpdatePayload, GoalWithWorksAndTags } from 'src/lib/api/goal.ts';
 import { GOAL_TYPE, GOAL_CADENCE_UNIT, GoalParameters } from 'server/lib/models/goal.ts';
 import { GOAL_CADENCE_UNIT_INFO } from 'src/lib/goal.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
@@ -31,7 +31,7 @@ import InputText from 'primevue/inputtext';
 import MultiSelect from 'primevue/multiselect';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
-import TbTag from 'src/components/tag/TbTag.vue';
+// import TbTag from 'src/components/tag/TbTag.vue';
 
 const props = defineProps<{
   goal: GoalWithWorksAndTags;
@@ -203,7 +203,7 @@ async function handleSubmit() {
       };
     }
 
-    const data: GoalPayload = {
+    const data: GoalUpdatePayload = {
       title: rawData.title,
       description: rawData.description,
 

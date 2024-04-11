@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 
+import { useGoalStore } from 'src/stores/goal.ts';
+const goalStore = useGoalStore();
+
 import { getGoals, Goal } from 'src/lib/api/goal.ts';
+import { cmpGoal } from 'src/lib/goal.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
@@ -36,17 +40,21 @@ const loadGoals = async function() {
   }
 }
 
+const reloadGoals = async function() {
+  goalStore.populate(true);
+  loadGoals();
+}
+
 const goalsFilter = ref<string>('');
 const filteredGoals = computed(() => {
-  const sortedGoals = goals.value.toSorted((a, b) => a.title < b.title ? -1 : a.title > b.title ? 1 : 0);
+  const sortedGoals = goals.value.toSorted(cmpGoal);
   const searchTerm = goalsFilter.value.toLowerCase();
   return sortedGoals.filter(goal => goal.title.toLowerCase().includes(searchTerm) || goal.description.toLowerCase().includes(searchTerm));
 });
 
-// TODO: we can probably get away with just using the store?
-// but if we want to pull in any other info, we'll need to not do that
-// right now, I'm just building the page out so I'm gonna leave as-is and optimize later
-loadGoals();
+onMounted(() => {
+  loadGoals();
+});
 
 </script>
 
@@ -82,7 +90,10 @@ loadGoals();
       class="mb-2"
     >
       <RouterLink :to="{ name: 'goal', params: { id: goal.id } }">
-        <GoalTile :goal="goal" />
+        <GoalTile
+          :goal="goal"
+          @goal:star="reloadGoals()"
+        />
       </RouterLink>
     </div>
     <div v-if="filteredGoals.length === 0 && goals.length > 0">

@@ -30,6 +30,22 @@ export const GOAL_CADENCE_UNIT_INFO = {
   },
 };
 
+export function cmpGoal(a: Goal, b: Goal) {
+  if(a.starred !== b.starred) {
+    return a.starred ? -1 : 1;
+  }
+
+  if(a.endDate < b.endDate) {
+    return -1;
+  } else if(a.endDate > b.endDate) {
+    return 1;
+  }
+
+  const aTitle = a.title.toLowerCase();
+  const bTitle = b.title.toLowerCase();
+  return aTitle < bTitle ? -1 : aTitle > bTitle ? 1 : 0;
+}
+
 export type HabitRange = {
   startDate: string;
   endDate: string;

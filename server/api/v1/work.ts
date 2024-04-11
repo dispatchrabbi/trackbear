@@ -84,11 +84,13 @@ export type WorkCreatePayload = {
   title: string;
   description: string;
   phase: string;
+  starred?: boolean;
 };
 const zWorkCreatePayload = z.object({
   title: z.string().min(1),
   description: z.string(),
   phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<string>),
+  starred: z.boolean().nullable().default(false),
 }).strict();
 
 workRouter.post('/',
@@ -101,7 +103,6 @@ workRouter.post('/',
   const work = await dbClient.work.create({
     data: {
       ...req.body as WorkCreatePayload,
-      starred: false,
       state: WORK_STATE.ACTIVE,
       ownerId: user.id,
     }
@@ -112,18 +113,8 @@ workRouter.post('/',
   return res.status(201).send(success(work));
 }));
 
-export type WorkUpdatePayload = Partial<{
-  title: string;
-  description: string;
-  phase: string;
-  starred: boolean;
-}>;
-const zWorkUpdatePayload = z.object({
-  title: z.string().min(1),
-  description: z.string(),
-  phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<string>),
-  starred: z.boolean(),
-}).strict().partial();
+export type WorkUpdatePayload = Partial<WorkCreatePayload>;
+const zWorkUpdatePayload = zWorkCreatePayload.partial();
 
 workRouter.put('/:id',
   requireUser,

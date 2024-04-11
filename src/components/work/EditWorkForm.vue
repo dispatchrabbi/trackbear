@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { updateWork, Work, WorkPayload } from 'src/lib/api/work.ts';
+import { updateWork, Work, WorkUpdatePayload } from 'src/lib/api/work.ts';
 import { WORK_PHASE } from 'server/lib/models/work.ts';
 
 import InputText from 'primevue/inputtext';
@@ -52,7 +52,7 @@ async function handleSubmit() {
 
   try {
     const data = formData();
-    const updatedWork = await updateWork(props.work.id, data as WorkPayload);
+    const updatedWork = await updateWork(props.work.id, data as WorkUpdatePayload);
 
     emit('work:edit', { work: updatedWork });
     successMessage.value = `${updatedWork.title} has been edited.`;

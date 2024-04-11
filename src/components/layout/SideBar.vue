@@ -8,6 +8,7 @@ import { cmpWork } from 'src/lib/work.ts';
 const workStore = useWorkStore();
 
 import { useGoalStore } from 'src/stores/goal.ts';
+import { cmpGoal } from 'src/lib/goal.ts';
 const goalStore = useGoalStore();
 
 import Menu from 'primevue/menu';
@@ -53,7 +54,7 @@ const items = computed(() => {
       href: '/dashboard',
       command: () => emit('menuItemClick', '/dashboard'),
       section: true,
-      first: true, // oof, wish I didn't have to do this
+      first: true, // TODO: oof, wish I didn't have to do this
     }
   ];
 
@@ -83,7 +84,7 @@ const items = computed(() => {
       href: '/goals',
       section: true,
     },
-    ...(goalStore.goals ?? []).toSorted((a, b) => a.title < b.title ? -1 : a.title > b.title ? 1 : 0).map(goal => ({
+    ...(goalStore.starredGoals ?? []).toSorted(cmpGoal).map(goal => ({
       key: `goal-${goal.id}`,
       label: goal.title,
       command: () => emit('menuItemClick', `/goals/${goal.id}`),
