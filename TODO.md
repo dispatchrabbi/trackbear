@@ -1,9 +1,12 @@
 # TODO
 
 ## Next
-- [X] Add totals to project and goal pages
-- [ ] Star projects and goals to have them appear on the sidebar
-  - [ ] Have starred project and goal stats appear on the dashboard too
+- [ ] Observability
+  - [ ] Ship logs somewhere
+  - [ ] Ship metrics/telemetry somewhere
+- [ ] Improve goal pages
+  - [X] Target goals
+  - [ ] Habit goals
 - [ ] Admin user management
   - [X] Suspend/activate account
   - [X] Send emails
@@ -11,9 +14,6 @@
   - [X] Force password reset
   - [ ] View audit events
   - [ ] Add user ID to sessions and session ID to audit events
-- [ ] Improve goal pages
-  - [X] Target goals
-  - [ ] Habit goals
 - [ ] Implement project tags
 
 ## Soon
