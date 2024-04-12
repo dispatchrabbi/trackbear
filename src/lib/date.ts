@@ -1,4 +1,4 @@
-import { parseISO } from 'date-fns';
+import { parseISO, format } from 'date-fns';
 
 const DATE_STRING_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 export function parseDateString(dateString: string): Date {
@@ -78,4 +78,15 @@ export function validateTimeString(timeString: string) {
       parseInt(parts[1], 10) === +parts[1] && Number.isInteger(+parts[1]) && +parts[1] < 60;
 
   return timeIsValid;
+}
+
+export function formatDateRange(startDate: string, endDate: string, formatString?: string) {
+  const startDateFormatted = formatString ? format(parseDateString(startDate), formatString) : startDate;
+  const endDateFormatted = formatString ? format(parseDateString(endDate), formatString) : endDate;
+
+  if(startDate === endDate) {
+    return startDateFormatted;
+  } else {
+    return startDateFormatted + '  – ' + endDateFormatted;
+  }
 }

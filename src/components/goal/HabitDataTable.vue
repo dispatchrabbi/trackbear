@@ -5,6 +5,7 @@ import { Tally } from 'src/lib/api/tally.ts';
 import { Goal } from 'src/lib/api/goal.ts';
 import { analyzeHabitTallies } from 'src/lib/goal.ts';
 import { formatCount } from 'src/lib/tally.ts';
+import { formatDateRange } from 'src/lib/date.ts';
 
 import Card from 'primevue/card';
 import InputSwitch from 'primevue/inputswitch';
@@ -79,8 +80,7 @@ function formatTallySum(tallies: Tally[]) {
       </Column>
       <Column header="Dates">
         <template #body="slotProps">
-          <span v-if="slotProps.data.startDate === slotProps.data.endDate">{{ slotProps.data.startDate }}</span>
-          <span v-else>{{ slotProps.data.startDate }} – {{ slotProps.data.endDate }}</span>
+          <span>{{ formatDateRange(slotProps.data.startDate, slotProps.data.endDate) }}</span>
         </template>
       </Column>
       <Column header="Progress">

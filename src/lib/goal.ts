@@ -77,7 +77,7 @@ export function describeGoal(goal: Goal) {
   }
 }
 
-export function analyzeHabitTallies(tallies: Tally[], goal: Goal): { ranges: HabitRange[], streaks: { longest: number; current: number; } } {
+export function analyzeHabitTallies(tallies: Tally[], goal: Goal, startDate?: string, endDate?: string): { ranges: HabitRange[], streaks: { longest: number; current: number; } } {
   const threshold = (goal.parameters as GoalHabitParameters).threshold;
   const cadence = (goal.parameters as GoalHabitParameters).cadence;
 
@@ -88,8 +88,8 @@ export function analyzeHabitTallies(tallies: Tally[], goal: Goal): { ranges: Hab
     return { ranges: [], streaks: { longest: 0, current: 0} };
   }
 
-  const startDate = goal.startDate ?? sortedTallies[0].date;
-  const endDate = goal.endDate ?? sortedTallies[sortedTallies.length - 1].date;
+  startDate = startDate ?? goal.startDate ?? sortedTallies[0].date;
+  endDate = endDate ?? goal.endDate ?? sortedTallies[sortedTallies.length - 1].date;
 
   // first, get all the possible date ranges for the habit
   const dateRanges = createDateRanges(cadence.period, cadence.unit, startDate, endDate);

@@ -5,10 +5,10 @@ import type { Tally } from 'src/lib/api/tally.ts';
 import { getISODay, addMonths, startOfWeek } from 'date-fns';
 import { parseDateString, formatDate } from 'src/lib/date.ts';
 
-import { compileTallies, CompiledTallyPoint } from '../chart/chart-functions.ts';
+import { CompiledTallyPoint } from '../chart/chart-functions.ts';
 import CalendarMatrixChart from '../chart/CalendarMatrixChart.vue';
 import { MatrixChartData, MatrixChartOptions } from '../chart/CalendarMatrixChart.vue';
-import { formatCount } from 'src/lib/tally.ts';
+import { formatCount, compileTallies } from 'src/lib/tally.ts';
 
 type ActivityHeatmapDataPoint = {
   x: string;

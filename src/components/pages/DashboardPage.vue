@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useEventBus } from '@vueuse/core';
 
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -7,7 +8,13 @@ const router = useRouter();
 import { User } from '@prisma/client';
 import { getMe } from 'src/lib/api/user.ts';
 
+import { useGoalStore } from 'src/stores/goal.ts';
+const goalStore = useGoalStore();
+
 import { getTallies, Tally } from 'src/lib/api/tally.ts';
+import { getGoal, GoalAndTallies } from 'src/lib/api/goal.ts';
+import { GOAL_TYPE } from 'server/lib/models/goal.ts';
+import { cmpGoal } from 'src/lib/goal.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
@@ -15,6 +22,8 @@ import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import UnverifiedEmailMessage from 'src/components/account/UnverifiedEmailMessage.vue';
 import ActivityHeatmap from 'src/components/dashboard/ActivityHeatmap.vue';
 import StreakCounter from 'src/components/dashboard/StreakCounter.vue';
+import HabitGoalStatus from '../dashboard/HabitGoalStatus.vue';
+import TargetGoalStatus from '../dashboard/TargetGoalStatus.vue';
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Dashboard', url: '/dashboard' },
@@ -30,25 +39,53 @@ async function loadUser() {
 }
 
 const tallies = ref<Tally[]>([]);
-const isLoading = ref<boolean>(false);
-const errorMessage = ref<string | null>(null);
-
+const talliesIsLoading = ref<boolean>(false);
+const talliesErrorMessage = ref<string | null>(null);
 const loadTallies = async function() {
-  isLoading.value = true;
-  errorMessage.value = null;
+  talliesIsLoading.value = true;
+  talliesErrorMessage.value = null;
 
   try {
     tallies.value = await getTallies();
   } catch(err) {
-    errorMessage.value = err.message;
+    talliesErrorMessage.value = err.message;
   } finally {
-    isLoading.value = false;
+    talliesIsLoading.value = false;
   }
 }
 
-onMounted(() => {
-  loadUser();
+const goals = ref<GoalAndTallies[]>([]);
+const goalsIsLoading = ref<boolean>(false);
+const goalsErrorMessage = ref<string | null>(null);
+const loadGoals = async function() {
+  goalsIsLoading.value = true;
+  goalsErrorMessage.value = null;
+
+  try {
+    // could we do this one-by-one or with a specific API call? Sure! But this is fine for now
+    const goalsAndTallies = await Promise.all(goalStore.starredGoals.map(goal => getGoal(goal.id)));
+    goals.value = goalsAndTallies.toSorted((a, b) => cmpGoal(a.goal, b.goal));
+  } catch(err) {
+    goalsErrorMessage.value = err.message;
+  } finally {
+    goalsIsLoading.value = false;
+  }
+};
+
+async function reloadData() {
   loadTallies();
+  loadGoals();
+}
+
+onMounted(async () => {
+  await loadUser();
+  await goalStore.populate();
+
+  reloadData();
+
+  useEventBus<{ tally: Tally }>('tally:create').on(reloadData);
+  useEventBus<{ tally: Tally }>('tally:edit').on(reloadData);
+  useEventBus<{ tally: Tally }>('tally:delete').on(reloadData);
 });
 </script>
 
@@ -63,16 +100,34 @@ onMounted(() => {
       >
         <UnverifiedEmailMessage />
       </div>
-      <div class="">
-        <SectionTitle title="Activity" />
-        <ActivityHeatmap
-          :tallies="tallies"
-        />
+      <div class="flex gap-4 flex-wrap items-top">
+        <div>
+          <SectionTitle title="Activity" />
+          <ActivityHeatmap
+            :tallies="tallies"
+          />
+        </div>
+        <div>
+          <SectionTitle title="Streaks" />
+          <StreakCounter
+            :tallies="tallies"
+          />
+        </div>
       </div>
-      <div class="mt-4">
-        <SectionTitle title="Streaks" />
-        <StreakCounter
-          :tallies="tallies"
+      <div
+        v-for="goalInfo of goals"
+        :key="goalInfo.goal.id"
+        class="mt-4"
+      >
+        <HabitGoalStatus
+          v-if="goalInfo.goal.type === GOAL_TYPE.HABIT"
+          :goal="goalInfo.goal"
+          :tallies="goalInfo.tallies"
+        />
+        <TargetGoalStatus
+          v-if="goalInfo.goal.type === GOAL_TYPE.TARGET"
+          :goal="goalInfo.goal"
+          :tallies="goalInfo.tallies"
         />
       </div>
     </div>
