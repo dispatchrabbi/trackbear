@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: Goal stats on the dashboard now show when you've completed your habit for the current period, streaks, and if you've hit your target.
+
 ## 0.9.7
 
 - NEW: You can now star projects and goals, which adds them to the sidebar and pulls them to the top of the list on the projects and goals pages respectively. Stats for starred goals will also show up on the Dashboard. (h/t Athena, kasperdskod007)

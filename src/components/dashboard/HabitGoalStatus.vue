@@ -6,11 +6,12 @@ import { Goal } from 'src/lib/api/goal.ts';
 import { Tally } from 'src/lib/api/tally.ts';
 
 import { analyzeHabitTallies } from 'src/lib/goal.ts';
+import { streakColors } from 'src/lib/tally.ts';
 import { formatDate, parseDateStringSafe } from 'src/lib/date.ts';
 
-import HabitGauge from 'src/components/goal/HabitGauge.vue';
 
-import Card from 'primevue/card';
+import GoalCard from 'src/components/dashboard/GoalCard.vue';
+import HabitGauge from 'src/components/goal/HabitGauge.vue';
 import { GoalHabitParameters } from 'server/lib/models/goal.ts';
 
 const props = defineProps<{
@@ -47,15 +48,20 @@ function rangeContainsToday(range) {
 
   return isWithinInterval(now, { start, end });
 }
+
 </script>
 
 <template>
-  <Card
-    class="max-w-full"
-    :pt="{ content: { class: 'py-0 px-5 md:px-6' } }"
+  <GoalCard
+    :goal="props.goal"
   >
-    <template #title>
-      {{ props.goal.title }}
+    <template #comment>
+      <div
+        v-if="habitStats.streaks.current > 1"
+        :class="[ 'px-2 py-1 rounded-full text-sm font-normal', streakColors(habitStats.streaks.current) ]"
+      >
+        {{ habitStats.streaks.current }} in a row!
+      </div>
     </template>
     <template #content>
       <div class="flex gap-1 overflow-x-auto">
@@ -68,5 +74,5 @@ function rangeContainsToday(range) {
         />
       </div>
     </template>
-  </Card>
+  </GoalCard>
 </template>

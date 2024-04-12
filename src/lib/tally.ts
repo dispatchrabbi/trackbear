@@ -91,3 +91,23 @@ function determineDateBounds(
 
   return { start, end };
 }
+
+export function streakColors(streakLength) {
+  if(streakLength < 1) {
+    return '';
+  } else if(streakLength < 3) {
+    return 'bg-primary-500 dark:bg-primary-400 text-surface-0 dark:text-surface-950';
+  } else if(streakLength < 5) {
+    return 'bg-purple-600 dark:bg-purple-400 text-surface-0 dark:text-surface-950';
+  } else if(streakLength < 10) {
+    return 'bg-green-500 dark:bg-green-400 text-surface-0 dark:text-surface-950';
+  } else if(streakLength < 30) {
+    return 'bg-pink-500 dark:bg-pink-400 text-surface-0 dark:text-surface-950';
+  } else if(streakLength < 50) {
+    return 'bg-sky-400 dark:bg-sky-400 text-surface-0 dark:text-surface-950';
+  } else if(streakLength < 100) {
+    return 'bg-red-600 dark:bg-red-400 text-surface-0 dark:text-surface-950';
+  } else {
+    return 'bg-amber-400 dark:bg-amber-400 text-surface-950 dark:text-surface-950';
+  }
+}

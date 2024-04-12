@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
-import themeColors, { accent } from 'src/themes/primevue.ts';
 
 import type { Goal } from 'src/lib/api/goal.ts';
 import type { GoalHabitParameters } from 'server/lib/models/goal.ts';
@@ -49,7 +48,8 @@ const max = computed(() => {
         :max="max"
         readonly
         :pt="{
-          value: { class: total >= max ? ['stroke-accent-400 dark:stroke-accent-500'] : [] }
+          value: { class: { '!stroke-accent-400 dark:!stroke-accent-500': total >= max } },
+          range: { class: { '!stroke-surface-400 dark:!stroke-surface-500': highlight }}
         }"
         :pt-options="{ mergeProps: true, mergeSections: true }"
       />
