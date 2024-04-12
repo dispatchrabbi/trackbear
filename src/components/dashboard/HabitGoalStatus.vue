@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
-import { add } from 'date-fns';
+import { add, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 
 import { Goal } from 'src/lib/api/goal.ts';
 import { Tally } from 'src/lib/api/tally.ts';
@@ -39,6 +39,14 @@ const habitStats = computed(() => {
 });
 
 const ranges = computed(() => habitStats.value.ranges.toReversed().slice(0, 5));
+
+function rangeContainsToday(range) {
+  const now = new Date();
+  const start = startOfDay(parseDateStringSafe(range.startDate));
+  const end = endOfDay(parseDateStringSafe(range.endDate));
+
+  return isWithinInterval(now, { start, end });
+}
 </script>
 
 <template>
@@ -50,12 +58,13 @@ const ranges = computed(() => habitStats.value.ranges.toReversed().slice(0, 5));
       {{ props.goal.title }}
     </template>
     <template #content>
-      <div class="flex overflow-x-auto">
+      <div class="flex gap-1 overflow-x-auto">
         <HabitGauge
           v-for="range of ranges"
           :key="range.startDate"
           :range="range"
           :goal="props.goal"
+          :highlight="rangeContainsToday(range)"
         />
       </div>
     </template>

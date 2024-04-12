@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
+import themeColors, { accent } from 'src/themes/primevue.ts';
 
 import type { Goal } from 'src/lib/api/goal.ts';
 import type { GoalHabitParameters } from 'server/lib/models/goal.ts';
@@ -11,6 +12,7 @@ import Knob from 'primevue/knob';
 const props = defineProps<{
   goal: Goal;
   range: HabitRange;
+  highlight?: boolean;
 }>();
 
 // We need to work around the fact that Knob won't (yet) let us format the label
@@ -34,13 +36,22 @@ const max = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center p-4">
+  <div
+    :class="[
+      'flex flex-col items-center p-2 m-1 rounded-lg',
+      { 'bg-surface-200 dark:bg-surface-700': props.highlight },
+    ]"
+  >
     <div>
       <Knob
         v-model="total"
         :min="0"
         :max="max"
         readonly
+        :pt="{
+          value: { class: total >= max ? ['stroke-accent-400 dark:stroke-accent-500'] : [] }
+        }"
+        :pt-options="{ mergeProps: true, mergeSections: true }"
       />
     </div>
     <div class="whitespace-nowrap">

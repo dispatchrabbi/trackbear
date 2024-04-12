@@ -1,13 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 
 // import colors from 'tailwindcss/colors';
-import { primary, surface } from './src/themes/primevue.ts';
+import { primary, accent, surface } from './src/themes/primevue.ts';
 
 const PRIMEVUE_EXTEND = {
 	colors: {
 		transparent: 'transparent',
 		current: 'currentColor',
 		primary,
+		accent,
 		'surface-0': '#ffffff',
 		surface,
 	},
