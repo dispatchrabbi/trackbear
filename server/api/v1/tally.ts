@@ -77,6 +77,7 @@ export type TallyPayload = {
   date: string;
   measure: string;
   count: number;
+  setTotal: boolean;
   note: string;
   workId: number | null;
   tags: string[];
@@ -85,6 +86,7 @@ const zTallyPayload = z.object({
   date: zDateStr(),
   measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
   count: z.number().int(),
+  setTotal: z.boolean(),
   note: z.string(), // this CAN be empty
   workId: z.number().int().nullable(),
   tags: z.array(z.string().min(1)), // tags are specified by name, because you might create a new one here
@@ -97,6 +99,28 @@ tallyRouter.post('/',
 {
   const user = req.user;
 
+  let count = req.body.count;
+  if(req.body.setTotal) {
+    if(req.body.workId === null) {
+      // need a work to set a total, otherwise this doesn't make any sense
+      return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total when no project is specified.'));
+    }
+
+    const tallies = await dbClient.tally.findMany({
+      where: {
+        state: TALLY_STATE.ACTIVE,
+        ownerId: user.id,
+        workId: req.body.workId,
+        measure: req.body.measure,
+        date: { lte: req.body.date },
+      },
+    });
+
+    const currentTotal = tallies.reduce((total, tally) => total + tally.count, 0);
+    const difference = count - currentTotal;
+    count = difference;
+  }
+
   const tally = await dbClient.tally.create({
     data: {
       state: TALLY_STATE.ACTIVE,
@@ -104,7 +128,7 @@ tallyRouter.post('/',
 
       date: req.body.date,
       measure: req.body.measure,
-      count: req.body.count,
+      count: count,
       note: req.body.note,
 
       workId: req.body.workId, // could be null
@@ -160,6 +184,29 @@ tallyRouter.put('/:id',
   const tagNamesToConnectOrCreate = req.body.tags.filter(incomingTag => !existingTally.tags.includes(incomingTag));
   const tagsToDisconnect = existingTally.tags.filter(existingTag => !req.body.tags.includes(existingTag.name));
 
+  let count = req.body.count;
+  if(req.body.setTotal) {
+    if(req.body.workId === null) {
+      // need a work to set a total, otherwise this doesn't make any sense
+      return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total when no project is specified.'));
+    }
+
+    const tallies = await dbClient.tally.findMany({
+      where: {
+        state: TALLY_STATE.ACTIVE,
+        ownerId: user.id,
+        workId: req.body.workId,
+        measure: req.body.measure,
+        date: { lte: req.body.date },
+        id: { notIn: [ +req.params.id ] },
+      },
+    });
+
+    const currentTotal = tallies.reduce((total, tally) => total + tally.count, 0);
+    const difference = count - currentTotal;
+    count = difference;
+  }
+
   const tally = await dbClient.tally.update({
     where: {
       id: +req.params.id,
@@ -169,7 +216,7 @@ tallyRouter.put('/:id',
     data: {
       date: req.body.date,
       measure: req.body.measure,
-      count: req.body.count,
+      count: count,
       note: req.body.note,
 
       workId: req.body.workId, // could be null

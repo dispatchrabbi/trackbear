@@ -12,6 +12,7 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: You can now set your project total when entering and editing progress, as opposed to just entering the increment since last time.
 - NEW: Goal stats on the dashboard now show when you've completed your habit for the current period, streaks, and if you've hit your target.
 - NEW: Added a Total column to the table on the project page.
 - CHANGED: Habit goal pages are now nicer to look at and feature some stats.

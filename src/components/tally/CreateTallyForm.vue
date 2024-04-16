@@ -23,13 +23,14 @@ import { useValidation } from 'src/lib/form.ts';
 import { TallyPayload } from 'server/api/v1/tally.ts';
 import { createTally, Tally } from 'src/lib/api/tally.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
-import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
+import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally.ts';
 
 import Calendar from 'primevue/calendar';
 import Dropdown from 'primevue/dropdown';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
 import InputNumber from 'primevue/inputnumber';
+import InputSwitch from 'primevue/inputswitch';
 import MultiSelect from 'primevue/multiselect';
 import Textarea from 'primevue/textarea';
 import TbForm from 'src/components/form/TbForm.vue';
@@ -159,7 +160,7 @@ async function handleSubmit() {
     </FieldWrapper>
     <FieldWrapper
       for="tally-form-work"
-      label="Work"
+      label="Project"
       :required="true"
       :rule="ruleFor('workId')"
     >
@@ -240,6 +241,27 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
+      label="Set new project total?"
+      for="tally-form-total"
+      :required="true"
+      :rule="ruleFor('setTotal')"
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <div class="flex gap-4 max-w-full">
+          <InputSwitch
+            v-model="formModel.setTotal"
+            :invalid="!isFieldValid"
+            @update:model-value="onUpdate"
+          />
+          <div
+            class="max-w-64 md:max-w-none"
+          >
+            {{ formatCount(formModel.count, formModel.measure) }} will be <span class="font-bold">{{ formModel.setTotal ? `set as` : `added to` }} the total</span> for this project {{ formModel.setTotal ? `as of` : `on` }} {{ formatDateSafe(formModel.date) }}.
+          </div>
+        </div>
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
       for="tally-form-tags"
       label="Tags"
       :required="true"
@@ -293,34 +315,4 @@ async function handleSubmit() {
 </template>
 
 <style scoped>
-/* .tally-form {
-  display: grid;
-  grid-template:
-    "date"
-    "project"
-    "count"
-    "tags"
-    "notes"
-    "button"
-    / 1fr;
-} */
-
-/* .title-area { grid-area: title; }
-.date-area { grid-area: date; }
-.project-area { grid-area: project; }
-.tags-area { grid-area: tags; }
-.count-area { grid-area: count; }
-.mode-area { grid-area: mode; }
-.total-area { grid-area: total; }
-.notes-area { grid-area: notes; }
-.button-area { grid-area: button; } */
-
-/* #tally-form-measure {
-  @apply h-full;
-  & > span {
-    @apply self-center;
-  }
-} */
-
 </style>
-server/lib/models/tally
