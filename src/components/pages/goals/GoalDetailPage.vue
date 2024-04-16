@@ -21,7 +21,8 @@ import Dialog from 'primevue/dialog';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import TargetStats from 'src/components/goal/TargetStats.vue';
 import TargetLineChart from 'src/components/goal/TargetLineChart.vue';
-import HabitDataTable from 'src/components/goal/HabitDataTable.vue';
+import HabitStats from 'src/components/goal/HabitStats.vue';
+import HabitHistory from 'src/components/goal/HabitHistory.vue';
 import DeleteGoalForm from 'src/components/goal/DeleteGoalForm.vue';
 import { GOAL_TYPE } from 'server/lib/models/goal.ts';
 
@@ -106,12 +107,15 @@ onMounted(() => {
       </header>
       <div
         v-if="tallies.length > 0 || tallies.length === 0"
-        class="flex flex-col gap-2 max-w-screen-md"
+        :class="[
+          'flex flex-col gap-2',
+          {
+            'max-w-screen-md': goal.type === GOAL_TYPE.TARGET,
+            'max-w-4xl': goal.type === GOAL_TYPE.HABIT, // to fit 7 gauges across
+          }
+        ]"
       >
-        <div
-          v-if="goal.type === GOAL_TYPE.TARGET"
-          class="w-full"
-        >
+        <div v-if="goal.type === GOAL_TYPE.TARGET">
           <div class="mb-8">
             <TargetStats
               :tallies="tallies"
@@ -127,13 +131,16 @@ onMounted(() => {
             You haven't logged any progress on this goal. You want the cool graphs? Get writing!
           </div>
         </div>
-        <div
-          v-if="goal.type === GOAL_TYPE.HABIT"
-          class="w-full"
-        >
-          <HabitDataTable
-            :tallies="tallies"
+        <div v-if="goal.type === GOAL_TYPE.HABIT">
+          <div class="mb-8">
+            <HabitStats
+              :goal="goal"
+              :tallies="tallies"
+            />
+          </div>
+          <HabitHistory
             :goal="goal"
+            :tallies="tallies"
           />
         </div>
       </div>

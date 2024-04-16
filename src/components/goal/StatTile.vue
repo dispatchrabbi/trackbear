@@ -12,7 +12,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col justify-center max-w-48 p-2 px-4 rounded-lg bg-surface-100 dark:bg-surface-900">
+  <div class="flex flex-col justify-center w-48 p-2 px-4 rounded-lg bg-surface-100 dark:bg-surface-900">
     <div class="top font-light text-center">
       {{ props.topLegend }}
     </div>

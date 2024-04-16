@@ -1,12 +1,10 @@
 # TODO
 
 ## Next
-- [ ] Observability
-  - [ ] Ship logs somewhere
-  - [ ] Ship metrics/telemetry somewhere
-- [ ] Improve goal pages
+- [X] Improve goal pages
   - [X] Target goals
-  - [ ] Habit goals
+  - [X] Habit goals
+- [ ] Starting balances for projects
 - [ ] Admin user management
   - [X] Suspend/activate account
   - [X] Send emails
@@ -15,6 +13,10 @@
   - [ ] View audit events
   - [ ] Add user ID to sessions and session ID to audit events
 - [ ] Implement project tags
+- [ ] Observability
+  - [ ] Ship logs somewhere
+  - [ ] Ship metrics/telemetry somewhere
+
 
 ## Soon
 - [ ] Boards: create, edit, view, delete

@@ -13,6 +13,7 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - NEW: Goal stats on the dashboard now show when you've completed your habit for the current period, streaks, and if you've hit your target.
+- CHANGED: Habit goal pages are now nicer to look at and feature some stats.
 
 ## 0.9.7
 

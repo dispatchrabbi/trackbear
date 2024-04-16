@@ -77,7 +77,15 @@ export function describeGoal(goal: Goal) {
   }
 }
 
-export function analyzeHabitTallies(tallies: Tally[], goal: Goal, startDate?: string, endDate?: string): { ranges: HabitRange[], streaks: { longest: number; current: number; } } {
+export type HabitAnalysis = {
+  ranges: HabitRange[];
+  streaks: {
+    longest: number;
+    current: number;
+    list: number[];
+  };
+};
+export function analyzeHabitTallies(tallies: Tally[], goal: Goal, startDate?: string, endDate?: string): HabitAnalysis {
   const threshold = (goal.parameters as GoalHabitParameters).threshold;
   const cadence = (goal.parameters as GoalHabitParameters).cadence;
 
@@ -85,7 +93,10 @@ export function analyzeHabitTallies(tallies: Tally[], goal: Goal, startDate?: st
   const sortedTallies = filteredTalles.toSorted((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
 
   if(sortedTallies.length === 0) {
-    return { ranges: [], streaks: { longest: 0, current: 0} };
+    return {
+      ranges: [],
+      streaks: { longest: 0, current: 0, list: [] }
+    };
   }
 
   startDate = startDate ?? goal.startDate ?? sortedTallies[0].date;
@@ -107,7 +118,7 @@ export function analyzeHabitTallies(tallies: Tally[], goal: Goal, startDate?: st
       endDate: dateRange.end,
       tallies: talliesInRange,
       total: total,
-      isSuccess: threshold === null ? total > 0 : total > threshold.count
+      isSuccess: threshold === null ? total > 0 : total >= threshold.count
     };
     ranges.push(range);
 
@@ -123,6 +134,7 @@ export function analyzeHabitTallies(tallies: Tally[], goal: Goal, startDate?: st
     streaks: {
       longest: streaks.reduce((max, streak) => Math.max(max, streak), 0),
       current: streaks[streaks.length - 1],
+      list: streaks,
     },
   };
 }

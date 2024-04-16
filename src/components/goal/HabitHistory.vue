@@ -6,11 +6,8 @@ import { Goal } from 'src/lib/api/goal.ts';
 import { Tally } from 'src/lib/api/tally.ts';
 
 import { analyzeHabitTallies } from 'src/lib/goal.ts';
-import { streakColors } from 'src/lib/tally.ts';
 import { formatDate, parseDateStringSafe } from 'src/lib/date.ts';
 
-
-import GoalCard from 'src/components/dashboard/GoalCard.vue';
 import HabitGauge from 'src/components/goal/HabitGauge.vue';
 
 const props = defineProps<{
@@ -31,7 +28,7 @@ const habitStats = computed(() => {
   return stats;
 });
 
-const ranges = computed(() => habitStats.value.ranges.toReversed().slice(0, 5));
+const ranges = computed(() => habitStats.value.ranges.toReversed());
 
 function rangeContainsToday(range) {
   const now = new Date();
@@ -44,27 +41,13 @@ function rangeContainsToday(range) {
 </script>
 
 <template>
-  <GoalCard
-    :goal="props.goal"
-  >
-    <template #comment>
-      <div
-        v-if="habitStats.streaks.current > 1"
-        :class="[ 'px-2 py-1 rounded-full text-sm font-normal', streakColors(habitStats.streaks.current) ]"
-      >
-        {{ habitStats.streaks.current }} in a row!
-      </div>
-    </template>
-    <template #content>
-      <div class="flex gap-1 overflow-x-auto">
-        <HabitGauge
-          v-for="range of ranges"
-          :key="range.startDate"
-          :range="range"
-          :goal="props.goal"
-          :highlight="rangeContainsToday(range)"
-        />
-      </div>
-    </template>
-  </GoalCard>
+  <div class="flex flex-wrap gap-1">
+    <HabitGauge
+      v-for="range of ranges"
+      :key="range.startDate"
+      :range="range"
+      :goal="props.goal"
+      :highlight="rangeContainsToday(range)"
+    />
+  </div>
 </template>
