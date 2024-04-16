@@ -16,15 +16,39 @@ const props = defineProps<{
 }>();
 
 const sortedTallies = computed(() => props.tallies.toSorted((a, b) => {
-  // most recent first, break ties by createdAt (most recent first)
-  return a.date < b.date ? 1 : a.date > b.date ? -1 :
-    a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0;
+  // oldest first, break ties by createdAt (oldest first)
+  return a.date < b.date ? -1 : a.date > b.date ? 1 :
+    a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0;
 }));
+
+const chartRows = computed(() => {
+  const totals = Object.values(TALLY_MEASURE).reduce((obj, measure) => {
+    obj[measure] = 0;
+    return obj;
+  }, {});
+  const rows = [];
+
+  for(let tally of sortedTallies.value) {
+    totals[tally.measure] += tally.count;
+
+    rows.push({
+      tally,
+      date: tally.date,
+      progress: formatCount(tally.count, tally.measure),
+      total: formatCount(totals[tally.measure], tally.measure),
+      tags: tally.tags,
+      note: tally.note,
+    });
+  }
+
+  return rows.toReversed();
+});
 
 // TODO: maybe switch to DataView at some point?
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import TbTag from '../tag/TbTag.vue';
+import { TALLY_MEASURE } from 'server/lib/models/tally';
 
 const currentlyEditingTally = ref<TallyWithTags>(null);
 const isEditFormVisible = computed({
@@ -42,7 +66,7 @@ const isDeleteFormVisible = computed({
 
 <template>
   <DataTable
-    :value="sortedTallies"
+    :value="chartRows"
     sort-field="date"
   >
     <Column
@@ -51,13 +75,15 @@ const isDeleteFormVisible = computed({
       sortable
     />
     <Column
+      field="progress"
       header="Progress"
       class="whitespace-nowrap"
-    >
-      <template #body="{ data }">
-        {{ formatCount(data.count, data.measure) }}
-      </template>
-    </Column>
+    />
+    <Column
+      field="total"
+      header="Total"
+      class="whitespace-nowrap"
+    />
     <Column
       field="tags"
       header="Tags"
@@ -79,21 +105,21 @@ const isDeleteFormVisible = computed({
       header=""
       class="w-0 text-center"
     >
-      <template #body="{ data }: { data: TallyWithTags }">
+      <template #body="{ data }">
         <div class="flex gap-1">
           <Button
             :icon="PrimeIcons.PENCIL"
             severity="secondary"
             text
             rounded
-            @click="currentlyEditingTally = data"
+            @click="currentlyEditingTally = data.tally"
           />
           <Button
             :icon="PrimeIcons.TRASH"
             severity="danger"
             text
             rounded
-            @click="currentlyDeletingTally = data"
+            @click="currentlyDeletingTally = data.tally"
           />
         </div>
       </template>
