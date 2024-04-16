@@ -27,8 +27,10 @@ const measuresAvailable = computed(() => {
 });
 
 const selectedMeasure = ref(measuresAvailable.value[0]);
-watch(measuresAvailable, () => {
-  selectedMeasure.value = measuresAvailable.value[0];
+watch(measuresAvailable, (newMeasuresAvailable) => {
+  if(!newMeasuresAvailable.includes(selectedMeasure.value)) {
+    selectedMeasure.value = measuresAvailable.value[0];
+  }
 });
 
 const chartData = computed(() => {
