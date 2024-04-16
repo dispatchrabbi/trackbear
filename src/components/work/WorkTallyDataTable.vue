@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { ref, computed, defineProps } from 'vue';
 
+import type { TallyWithTags } from 'src/lib/api/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { formatCount } from 'src/lib/tally.ts';
+
+// TODO: maybe switch to DataView at some point?
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import TbTag from '../tag/TbTag.vue';
 import { PrimeIcons } from 'primevue/api';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import EditTallyForm from '../tally/EditTallyForm.vue';
 import DeleteTallyForm from '../tally/DeleteTallyForm.vue';
-
-import type { TallyWithTags } from 'src/lib/api/tally.ts';
-
-import { formatCount } from 'src/lib/tally.ts';
 
 const props = defineProps<{
   tallies: Array<TallyWithTags>
@@ -22,7 +26,7 @@ const sortedTallies = computed(() => props.tallies.toSorted((a, b) => {
 }));
 
 const chartRows = computed(() => {
-  const totals = Object.values(TALLY_MEASURE).reduce((obj, measure) => {
+  const totals = Object.values(TALLY_MEASURE).reduce((obj, measure: string) => {
     obj[measure] = 0;
     return obj;
   }, {});
@@ -43,12 +47,6 @@ const chartRows = computed(() => {
 
   return rows.toReversed();
 });
-
-// TODO: maybe switch to DataView at some point?
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import TbTag from '../tag/TbTag.vue';
-import { TALLY_MEASURE } from 'server/lib/models/tally';
 
 const currentlyEditingTally = ref<TallyWithTags>(null);
 const isEditFormVisible = computed({
