@@ -1,9 +1,6 @@
 # TODO
 
 ## Next
-- [X] Improve goal pages
-  - [X] Target goals
-  - [X] Habit goals
 - [ ] Starting balances for projects
 - [ ] Admin user management
   - [X] Suspend/activate account
@@ -12,22 +9,22 @@
   - [X] Force password reset
   - [ ] View audit events
   - [ ] Add user ID to sessions and session ID to audit events
-- [ ] Implement project tags
-- [ ] Observability
-  - [ ] Ship logs somewhere
-  - [ ] Ship metrics/telemetry somewhere
-
-
-## Soon
 - [ ] Boards: create, edit, view, delete
 - [ ] Multiplayer boards: add, remove, share
   - [ ] Teams for multiplayer boards
+
+
+## Soon
+- [ ] Observability
+  - [ ] Ship logs somewhere
+  - [ ] Ship metrics/telemetry somewhere
 - [ ] Grand total page
   - [ ] Overall total
   - [ ] Totals by tag
   - [ ] Ability to exempt tags/projects from total
 - [ ] Edit your account
 - [ ] Delete your account
+- [ ] Implement project tags
 - [ ] Code quality improvements
   - [ ] Replace the try/catch api call logic in the front-end with something less onerous
   - [X] Make an async error handler wrapper for the backend api handlers so the try/catches can be removed

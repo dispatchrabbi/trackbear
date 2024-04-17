@@ -13,6 +13,7 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - FIXED: The activity heatmaps will now correctly show activity on a day where you entered progress but that progress is negative or net zero (for example, if you wrote 1,000 words and then deleted 1,000 words). It still counts that you wrote, even if you end up not using it! (h/t kasperdskod007)
+- CHANGED: The sidebar now indicates what page you're on.
 
 ## 0.9.8
 

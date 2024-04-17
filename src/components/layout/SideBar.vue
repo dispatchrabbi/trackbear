@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, defineEmits, onMounted } from 'vue';
-
-const emit = defineEmits(['menuItemClick']);
+import { computed, onMounted } from 'vue';
 
 import { useWorkStore } from 'src/stores/work.ts';
 import { cmpWork } from 'src/lib/work.ts';
@@ -11,108 +9,46 @@ import { useGoalStore } from 'src/stores/goal.ts';
 import { cmpGoal } from 'src/lib/goal.ts';
 const goalStore = useGoalStore();
 
-import Menu from 'primevue/menu';
+import MenuBar from 'src/components/layout/MenuBar.vue';
 import { PrimeIcons } from 'primevue/api';
 
-const menuPassthrough = ref({
-  root: {
-    class: [
-      'pl-4 pr-4',
-    ],
-  },
-  content: ({ context }) => ({
-    class: [
-      // Shape
-      'rounded-md',
-      // Layout
-      'py-1 px-2',
-      { 'mt-4': context.item.section && !context.item.first },
-      // Colors
-      {
-        'text-surface-700 dark:text-surface-0': !context.focused,
-        'bg-surface-100 text-primary-500 dark:bg-surface-300/10 dark:text-primary-400': context.focused
-      },
-      // Transitions
-      'transition-shadow',
-      'duration-200',
-      // States
-      'hover:text-primary-600 dark:hover:text-primary-400',
-      'hover:bg-surface-100 dark:hover:bg-surface-400/10'
-    ]
-  }),
-});
-
-const sectionClasses = ['section', 'flex', 'items-baseline', 'gap-2', 'font-light', 'text-xl', 'm-0'].join(' ');
-
-// TODO: this menu is a mess, it really needs to get fixed
 const items = computed(() => {
-  const dashboard = [
+  return [
+    // dashboard
     {
       key: 'dashboard',
       label: 'Dashboard',
       icon: PrimeIcons.HOME,
-      href: '/dashboard',
-      command: () => emit('menuItemClick', '/dashboard'),
-      section: true,
-      first: true, // TODO: oof, wish I didn't have to do this
-    }
-  ];
-
-  const works = [
+      to: { name: 'dashboard' },
+      header: true,
+    },
+    // propjects
     {
       key: 'projects',
       label: 'Projects',
       icon: PrimeIcons.FILE_EDIT,
-      command: () => emit('menuItemClick', '/works'),
-      href: '/works',
-      section: true,
+      to: { name: 'works' },
+      header: true,
     },
     ...(workStore.starredWorks ?? []).toSorted(cmpWork).map(work => ({
       key: `work-${work.id}`,
       label: work.title,
-      command: () => emit('menuItemClick', `/works/${work.id}`),
-      href: `/works/${work.id}`,
+      to: { name: 'work', params: { id: work.id } },
     })),
-  ];
-
-  const goals = [
+    // goals
     {
       key: 'goals',
       label: 'Goals',
       icon: PrimeIcons.FLAG,
-      command: () => emit('menuItemClick', '/goals'),
-      href: '/goals',
-      section: true,
+      to: { name: 'goals' },
+      header: true,
     },
     ...(goalStore.starredGoals ?? []).toSorted(cmpGoal).map(goal => ({
       key: `goal-${goal.id}`,
       label: goal.title,
-      command: () => emit('menuItemClick', `/goals/${goal.id}`),
-      href: `/goals/${goal.id}`,
-    })),
+      to: { name: 'goal', params: { id: goal.id } },
+    }))
   ];
-
-  // const yetToCome = [
-  //   {
-  //     label: 'Boards',
-  //     key: 'boards',
-  //     icon: PrimeIcons.CHART_BAR,
-  //     href: '/boards',
-  //     section: true,
-  //   },
-  //   { label: 'January Challenge' },
-  //   { label: 'Overachievers Guild' },
-  //   { label: 'Progress to 1M' },
-  // ];
-
-  const items: { label: string; href?: string; command?: () => void; icon?: string; section?: boolean; first?: boolean; }[] = [
-    ...dashboard,
-    ...works,
-    ...goals,
-    // ...yetToCome,
-  ];
-
-  return items;
 });
 
 onMounted(() => {
@@ -122,30 +58,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <Menu
-    :model="items"
-    :pt="menuPassthrough"
-  >
-    <template #item="{ item }">
-      <div
-        :class="{ 'flex cursor-pointer': true, [sectionClasses]: item.section }"
-      >
-        <span
-          v-if="item.icon"
-          :class="[item.icon, 'submenuheader-icon']"
-        />
-        <span class="flex-auto">{{ item.label }}</span>
-      </div>
-    </template>
-  </Menu>
+  <MenuBar
+    :items="items"
+  />
 </template>
 
 <style scoped>
-.submenuheader-icon {
-  font-size: 1rem;
-}
-
-.submenuheader-new {
-  font-size: 1rem;
-}
 </style>
