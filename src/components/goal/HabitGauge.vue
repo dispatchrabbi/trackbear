@@ -18,18 +18,22 @@ const props = defineProps<{
 // see https://github.com/primefaces/primevue/pull/5569
 const total = computed(() => {
   const params = props.goal.parameters as GoalHabitParameters;
+  let value;
+
   if(params.threshold && params.threshold.measure === TALLY_MEASURE.TIME) {
-    return parseFloat((props.range.total / 60).toFixed(2));
+    value = parseFloat((props.range.total / 60).toFixed(2));
   } else {
-    return props.range.total;
+    value = props.range.total;
   }
+
+  return value;
 });
 const max = computed(() => {
   const params = props.goal.parameters as GoalHabitParameters;
   const count = params.threshold === null ? -Infinity :  params.threshold.measure === TALLY_MEASURE.TIME ? parseFloat((params.threshold.count / 60).toFixed(2)) : params.threshold.count;
   return Math.max(
     count,
-    total.value,
+    Math.abs(total.value),
   );
 });
 </script>
@@ -48,7 +52,10 @@ const max = computed(() => {
         :max="max"
         readonly
         :pt="{
-          value: { class: { '!stroke-accent-400 dark:!stroke-accent-500': total >= max } },
+          value: { class: {
+            '!stroke-accent-400 dark:!stroke-accent-500': total >= max,
+            '!stroke-rose-400 dark:!stroke-rose-400': total < 0,
+          } },
           range: { class: { '!stroke-surface-400 dark:!stroke-surface-500': highlight }}
         }"
         :pt-options="{ mergeProps: true, mergeSections: true }"
