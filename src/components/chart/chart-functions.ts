@@ -2,7 +2,7 @@ import { addDays, eachDayOfInterval } from "date-fns";
 import { formatDate, parseDateString, maxDateStr } from "src/lib/date.ts";
 
 import type { Tally } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE_INFO, cmpTallies } from "src/lib/tally.ts";
+import { cmpTallies } from "src/lib/tally.ts";
 
 export interface TallyPoint {
   date: string;
@@ -15,16 +15,6 @@ export interface CountedTallyPoint extends TallyPoint {
 
 export interface AccumulatedTallyPoint extends CountedTallyPoint {
   accumulated: number;
-}
-
-export interface CompiledTallyPoint {
-  date: string;
-  count: {
-    [measure in keyof typeof TALLY_MEASURE_INFO]: number;
-  };
-  total: {
-    [measure in keyof typeof TALLY_MEASURE_INFO]: number;
-  };
 }
 
 export function normalizeTallies(tallies: Tally[]): CountedTallyPoint[] {

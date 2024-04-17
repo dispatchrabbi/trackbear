@@ -33,7 +33,7 @@ const chartData = computed(() => {
     x: point.date,
     y: '' + getISODay(parseDateString(point.date)),
     date: point.date,
-    value: Object.keys(point.count).some(measure => point.count[measure] > 0) ? 1 : 0, // we just care about whether you actually did the thing (for now)
+    value: point.tallies.length > 0 ? 1 : 0, // we just care about whether you actually did the thing (for now)
     point,
   }));
 
@@ -56,12 +56,12 @@ const chartOptions: MatrixChartOptions = {
 
           const labels = [];
           for(const measure of Object.keys(point.count)) {
-            if(point.count[measure] > 0) {
+            if(point.count[measure] !== 0) { // negative or positive progress both count
               labels.push(formatCount(point.count[measure], measure));
             }
           }
 
-          return labels.length > 0 ? labels : 'No activity';
+          return labels.length > 0 ? labels : point.tallies.length > 0 ? 'Net zero 🌱' : 'No activity';
         },
       }
     }

@@ -44,6 +44,7 @@ export interface CompiledTally {
   total: {
     [measure in keyof typeof TALLY_MEASURE_INFO]: number;
   };
+  tallies: Tally[];
 }
 
 export function compileTallies(tallies: Tally[], overrideStartDate: string = null, overrideEndDate: string = null): CompiledTally[] {
@@ -60,9 +61,12 @@ export function compileTallies(tallies: Tally[], overrideStartDate: string = nul
       date,
       count: Object.keys(TALLY_MEASURE_INFO).reduce((obj, measure) => { obj[measure] = 0; return obj; }, {}),
       total: Object.keys(TALLY_MEASURE_INFO).reduce((obj, measure) => { obj[measure] = 0; return obj; }, {}),
+      tallies: [],
     };
 
     const todayTallies = sortedTallies.filter(tally => tally.date === date);
+
+    base.tallies = todayTallies;
     for(const tally of todayTallies) {
       base.count[tally.measure] += tally.count;
     }

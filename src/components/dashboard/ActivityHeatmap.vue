@@ -5,17 +5,16 @@ import type { Tally } from 'src/lib/api/tally.ts';
 import { getISODay, addMonths, startOfWeek } from 'date-fns';
 import { parseDateString, formatDate } from 'src/lib/date.ts';
 
-import { CompiledTallyPoint } from '../chart/chart-functions.ts';
 import CalendarMatrixChart from '../chart/CalendarMatrixChart.vue';
 import { MatrixChartData, MatrixChartOptions } from '../chart/CalendarMatrixChart.vue';
-import { formatCount, compileTallies } from 'src/lib/tally.ts';
+import { formatCount, compileTallies, CompiledTally } from 'src/lib/tally.ts';
 
 type ActivityHeatmapDataPoint = {
   x: string;
   y: string;
   date: string;
   value: number;
-  point: CompiledTallyPoint;
+  point: CompiledTally;
 };
 
 const props = defineProps<{
@@ -34,7 +33,7 @@ const chartData = computed(() => {
     x: point.date,
     y: '' + getISODay(parseDateString(point.date)),
     date: point.date,
-    value: Object.keys(point.count).some(measure => point.count[measure] > 0) ? 1 : 0, // we just care about whether you actually did the thing (for now)
+    value: point.tallies.length > 0 ? 1 : 0, // we just care about whether you actually did the thing (for now)
     point,
   }));
 
@@ -57,12 +56,12 @@ const chartOptions: MatrixChartOptions = {
 
           const labels = [];
           for(const measure of Object.keys(point.count)) {
-            if(point.count[measure] > 0) {
+            if(point.count[measure] !== 0) { // negative or positive progress both count
               labels.push(formatCount(point.count[measure], measure));
             }
           }
 
-          return labels.length > 0 ? labels : 'No activity';
+          return labels.length > 0 ? labels : point.tallies.length > 0 ? 'Net zero 🌱' : 'No activity';
         },
       }
     }

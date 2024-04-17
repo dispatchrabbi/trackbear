@@ -1,6 +1,6 @@
 # CHANGELOG
 
-This file lists notable changes to TrackBear in each version. TrackBear uses romantic versioning; all releases currently are alpha releases.
+This file lists notable changes to TrackBear in each version. TrackBear uses romantic versioning, so don't read too far into the version numbers.
 
 Types of changes include:
 - NEW, for new features
@@ -11,6 +11,8 @@ Types of changes include:
 - SECURITY, for vulnerabilities or other security updates
 
 ## Upcoming/Unreleased
+
+- FIXED: The activity heatmaps will now correctly show activity on a day where you entered progress but that progress is negative or net zero (for example, if you wrote 1,000 words and then deleted 1,000 words). It still counts that you wrote, even if you end up not using it! (h/t kasperdskod007)
 
 ## 0.9.8
 
