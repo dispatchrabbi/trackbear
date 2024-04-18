@@ -6,9 +6,9 @@ import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 const model = defineModel<number | null>();
 const props = defineProps<{
-  id: string;
+  id?: string;
   measure: keyof typeof TALLY_MEASURE_INFO;
-  invalid: boolean;
+  invalid?: boolean;
 }>();
 
 // hours and minutes are decomposed from a model value that's just minutes, and have to add back up to that

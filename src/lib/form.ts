@@ -46,6 +46,8 @@ export function useValidation<T extends object, V extends ZodObject<ZodRawShape>
 
   const isValid = computed(() => validate());
 
+  const validationResults = computed(() => schema.safeParse(model));
+
   const formData = function() {
     return schema.parse(model);
   }
@@ -55,6 +57,7 @@ export function useValidation<T extends object, V extends ZodObject<ZodRawShape>
     rulesFor,
     validate,
     isValid,
+    validationResults,
     formData,
   };
 }

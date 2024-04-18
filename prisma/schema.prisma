@@ -170,6 +170,8 @@ model Work {
   description String
   phase       String
 
+  startingBalance Json @default("{}")
+
   starred     Boolean @default(false)
 
   tallies Tally[]

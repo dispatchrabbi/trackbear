@@ -10,7 +10,7 @@ import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 import dbClient from "../../lib/db.ts";
 import type { Work, Tally, Tag } from "@prisma/client";
 import { WORK_PHASE, WORK_STATE } from '../../lib/models/work.ts';
-import { TALLY_STATE } from "../../lib/models/tally.ts";
+import { TALLY_MEASURE, TALLY_STATE } from "../../lib/models/tally.ts";
 import { TAG_STATE } from "../../lib/models/tag.ts";
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
@@ -84,12 +84,14 @@ export type WorkCreatePayload = {
   title: string;
   description: string;
   phase: string;
+  startingBalance: Record<string, number>;
   starred?: boolean;
 };
 const zWorkCreatePayload = z.object({
   title: z.string().min(1),
   description: z.string(),
   phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<string>),
+  startingBalance: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()),
   starred: z.boolean().nullable().default(false),
 }).strict();
 

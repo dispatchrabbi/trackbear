@@ -9,11 +9,13 @@ import { useValidation } from 'src/lib/form.ts';
 
 import { createWork, WorkCreatePayload } from 'src/lib/api/work.ts';
 import { WORK_PHASE } from 'server/lib/models/work.ts';
+import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
+import StartingBalanceInput from 'src/components/work/StartingBalanceInput.vue';
 
 const emit = defineEmits(['work:create', 'formSuccess']);
 
@@ -21,12 +23,17 @@ const formModel = reactive({
   title: '',
   description: '',
   phase: WORK_PHASE.DRAFTING,
+  startingBalance: {},
 });
 
 const validations = z.object({
   title: z.string().min(1, { message: 'Please enter a title.'}),
   description: z.string(),
   phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<typeof WORK_PHASE[keyof typeof WORK_PHASE]>, { required_error: 'Please pick a phase.'}),
+  startingBalance: z.record(
+    z.enum(Object.keys(TALLY_MEASURE_INFO) as NonEmptyArray<string>),
+    z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' })
+  ),
 });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
@@ -109,7 +116,6 @@ async function handleSubmit() {
       label="Phase"
       required
       :rule="ruleFor('phase')"
-      help="This doesn't do anything yet. You can still set it though!"
     >
       <template #default="{ onUpdate, isFieldValid }">
         <Dropdown
@@ -118,6 +124,21 @@ async function handleSubmit() {
           :options="phaseOptions"
           option-label="label"
           option-value="value"
+          :invalid="!isFieldValid"
+          @update:model-value="onUpdate"
+        />
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      for="work-form-starting-balance"
+      label="Starting Balance"
+      :rule="ruleFor('startingBalance')"
+      help="Starting balances will be counted in totals but don't count as activity."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <StartingBalanceInput
+          id="work-form-starting-balance"
+          v-model="formModel.startingBalance"
           :invalid="!isFieldValid"
           @update:model-value="onUpdate"
         />
