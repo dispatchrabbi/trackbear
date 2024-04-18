@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch, defineEmits } from 'vue';
+import { ref, reactive, computed, defineEmits } from 'vue';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 
@@ -31,6 +31,7 @@ import InputText from 'primevue/inputtext';
 import MultiSelect from 'primevue/multiselect';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
+import TallyCountInput from '../tally/TallyCountInput.vue';
 // import TbTag from 'src/components/tag/TbTag.vue';
 
 const emit = defineEmits(['goal:create', 'formSuccess', 'formCancel']);
@@ -106,25 +107,8 @@ const unitOptions = computed(() => {
   }));
 });
 
-const timeCountModel = reactive({
-  hours: null,
-  minutes: null,
-});
-
-const timeValidations = z.object({
-  hours: z.number({ invalid_type_error: 'Please enter a value for hours.' }).int({ message: 'Please enter a whole number.' }), // TODO: add measure type to error messages
-  minutes: z.number({ invalid_type_error: 'Please enter a value for minutes.' }).int({ message: 'Please enter a whole number.' }), // TODO: add measure type to error messages
-});
-
-const { ruleFor: timeRuleFor, rulesFor: timeRulesFor, isValid: timeIsValid } = useValidation(timeValidations, timeCountModel);
-
-// always keep the real count up to date
-watch(timeCountModel, val => formModel.count = ((formModel.measure === TALLY_MEASURE.TIME && timeIsValid.value) ? val.hours * 60 + val.minutes : null));
-
 const onMeasureChange = function() {
   formModel.count = null;
-  timeCountModel.hours = null;
-  timeCountModel.minutes = null;
 };
 
 const savedParams = reactive({
@@ -143,8 +127,6 @@ const onTypeChange = function() {
     unit: formModel.unit,
 
     count: formModel.count,
-    hours: timeCountModel.hours,
-    minutes: timeCountModel.minutes,
     measure: formModel.measure,
   };
 
@@ -153,8 +135,6 @@ const onTypeChange = function() {
   formModel.unit = savedParams.unit;
 
   formModel.count = savedParams.count;
-  timeCountModel.hours = savedParams.hours;
-  timeCountModel.minutes = savedParams.minutes;
   formModel.measure = savedParams.measure;
 
   // overwrite the saved params with the current params
@@ -162,8 +142,6 @@ const onTypeChange = function() {
   savedParams.unit = currentParams.unit;
 
   savedParams.count = currentParams.count;
-  savedParams.hours = currentParams.hours;
-  savedParams.minutes = currentParams.minutes;
   savedParams.measure = currentParams.measure;
 };
 
@@ -328,7 +306,7 @@ async function handleSubmit() {
       for="goal-form-count"
       label="How Much?"
       :required="formModel.type === GOAL_TYPE.TARGET"
-      :rule="formModel.measure === TALLY_MEASURE.TIME ? timeRulesFor(['hours', 'minutes']) : ruleFor('count')"
+      :rule="ruleFor('count')"
       :help="formModel.type === GOAL_TYPE.HABIT ? `Leave this field blank for all progress logged to count for this habit.` : null"
     >
       <template #default="{ onUpdate, isFieldValid }">
@@ -344,43 +322,13 @@ async function handleSubmit() {
             />
           </div>
           <div class="count-fieldset-count flex-auto">
-            <InputGroup>
-              <template v-if="formModel.measure === TALLY_MEASURE.TIME">
-                <InputNumber
-                  id="goal-form-count"
-                  v-model="timeCountModel.hours"
-                  :pt="{ input: { root: { class: 'w-0 grow'} } }"
-                  :pt-options="{ mergeSections: true, mergeProps: true }"
-                  :invalid="timeRuleFor('hours')(timeCountModel.hours) !== true"
-                  @update:model-value="() => onUpdate(timeCountModel)"
-                />
-                <InputGroupAddon class="min-w-0">
-                  h
-                </InputGroupAddon>
-                <InputNumber
-                  id="goal-form-count-minutes"
-                  v-model="timeCountModel.minutes"
-                  :pt="{ input: { root: { class: 'w-0 grow'} } }"
-                  :pt-options="{ mergeSections: true, mergeProps: true }"
-                  :invalid="timeRuleFor('minutes')(timeCountModel.minutes) !== true"
-                  @update:model-value="() => onUpdate(timeCountModel)"
-                />
-                <InputGroupAddon class="min-w-0">
-                  m
-                </InputGroupAddon>
-              </template>
-              <template v-else>
-                <InputNumber
-                  id="goal-form-count"
-                  v-model="formModel.count"
-                  :pt="{ input: { root: { class: 'w-0 grow'} } }"
-                  :pt-options="{ mergeSections: true, mergeProps: true }"
-                  :invalid="!isFieldValid"
-                  @update:model-value="onUpdate"
-                />
-                <InputGroupAddon>{{ TALLY_MEASURE_INFO[formModel.measure].counter.plural }}</InputGroupAddon>
-              </template>
-            </InputGroup>
+            <TallyCountInput
+              id="goal-form-count"
+              v-model="formModel.count"
+              :measure="formModel.measure"
+              :invalid="!isFieldValid"
+              @update:model-value="onUpdate"
+            />
           </div>
         </div>
       </template>

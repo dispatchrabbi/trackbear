@@ -1,4 +1,4 @@
-function commaify(n: number): string {
+export function commaify(n: number): string {
   const isNegative = n < 0;
   const [ intStr, decimalStr ] = Math.abs(n).toString().split('.');
 
@@ -14,7 +14,7 @@ function commaify(n: number): string {
   return (isNegative ? '-' : '') + commaizedArr.join('') + (decimalStr ? '.' + decimalStr : '');
 }
 
-function kify(n: number): string {
+export function kify(n: number): string {
   const na = Math.abs(n);
   if(na >= 1000000 && (na % 10000 === 0)) {
     return (n / 1000000) + 'm';
@@ -25,7 +25,10 @@ function kify(n: number): string {
   }
 }
 
-export {
-  commaify,
-  kify
-};
+export function roundTowardZero(n: number) {
+  return Math.sign(n) * Math.floor(Math.abs(n));
+}
+
+export function decisiveSign(n: number) {
+  return n < 0 ? -1 : 1;
+}
