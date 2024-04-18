@@ -9,7 +9,6 @@ export type LinkDestination = {
 };
 
 const props = defineProps<LinkDestination>();
-console.log(props);
 </script>
 
 <template>
