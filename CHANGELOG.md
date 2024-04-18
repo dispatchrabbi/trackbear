@@ -12,9 +12,11 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.9.9
+
 - NEW: You can now add starting balances to projects to represent work on projects done before you starting tracking them in TrackBear. Starting balances will be counted anywhere that totals are represented (in the graph on the project page, for example) but do not count toward streaks or goals. (h/t murphy, wishonadarkstar)
 - FIXED: The activity heatmaps will now correctly show activity on a day where you entered progress but that progress is negative or net zero (for example, if you wrote 1,000 words and then deleted 1,000 words). It still counts that you wrote, even if you end up not using it! (h/t kasperdskod007)
-- CHANGED: The sidebar now indicates what page you're on.
+- CHANGED: The sidebar now indicates what page you're on. It also got a big behind-the-scenes rework and a minor facelift. Looking good, sidebar!
 
 ## 0.9.8
 
