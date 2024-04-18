@@ -121,6 +121,7 @@ onMounted(() => {
         </div>
         <div class="w-full">
           <WorkTallyDataTable
+            :work="work"
             :tallies="work.tallies"
           />
         </div>

@@ -43,7 +43,7 @@ workRouter.get('/',
     const totals: Record<string, number> = workWithTallies.tallies.reduce((totals, tally) => {
       totals[tally.measure] = (totals[tally.measure] || 0) + tally.count;
       return totals;
-    }, {});
+    }, { ...(workWithTallies.startingBalance as Record<string, number>) });
 
     return {
       ...omit(workWithTallies, [ 'tallies' ]),

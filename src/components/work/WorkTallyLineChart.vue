@@ -37,12 +37,14 @@ const chartData = computed(() => {
   const filteredTallies = props.tallies.filter(tally => tally.measure === selectedMeasure.value);
   const normalizedTallies = normalizeTallies(filteredTallies);
 
+  const startingBalance = props.work.startingBalance[selectedMeasure.value] || 0;
+
   const data = {
     labels: listEachDayOfData(null, null, normalizedTallies[0].date, normalizedTallies[normalizedTallies.length - 1].date),
     datasets: [{
       label: props.work.title,
       measure: selectedMeasure.value,
-      data: accumulateTallies(normalizedTallies),
+      data: accumulateTallies(normalizedTallies, startingBalance),
     }],
   };
 

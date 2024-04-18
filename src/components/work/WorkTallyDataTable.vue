@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, defineProps } from 'vue';
 
+import type { Work } from 'src/lib/api/work.ts';
 import type { TallyWithTags } from 'src/lib/api/tally.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 import { formatCount } from 'src/lib/tally.ts';
@@ -16,6 +17,7 @@ import EditTallyForm from '../tally/EditTallyForm.vue';
 import DeleteTallyForm from '../tally/DeleteTallyForm.vue';
 
 const props = defineProps<{
+  work: Work;
   tallies: Array<TallyWithTags>
 }>();
 
@@ -27,10 +29,19 @@ const sortedTallies = computed(() => props.tallies.toSorted((a, b) => {
 
 const chartRows = computed(() => {
   const totals = Object.values(TALLY_MEASURE).reduce((obj, measure: string) => {
-    obj[measure] = 0;
+    obj[measure] = props.work.startingBalance[measure] || 0;
     return obj;
   }, {});
-  const rows = [];
+  const rows = Object.keys(props.work.startingBalance)
+    .filter(measure => props.work.startingBalance[measure] !== null)
+    .map(measure => ({
+      tally: null,
+      date: null,
+      progress: null,
+      total: formatCount(props.work.startingBalance[measure], measure),
+      tags: [],
+      note: 'Starting Balance',
+    }));
 
   for(let tally of sortedTallies.value) {
     totals[tally.measure] += tally.count;
@@ -66,11 +77,11 @@ const isDeleteFormVisible = computed({
   <DataTable
     :value="chartRows"
     sort-field="date"
+    :sort-order="-1"
   >
     <Column
       field="date"
       header="Date"
-      sortable
     />
     <Column
       field="progress"
@@ -104,7 +115,10 @@ const isDeleteFormVisible = computed({
       class="w-0 text-center"
     >
       <template #body="{ data }">
-        <div class="flex gap-1">
+        <div
+          v-if="data.tally !== null"
+          class="flex gap-1"
+        >
           <Button
             :icon="PrimeIcons.PENCIL"
             severity="secondary"
