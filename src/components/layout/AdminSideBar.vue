@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, defineEmits } from 'vue';
+
+const emit = defineEmits(['menu-navigation'])
 
 import MenuBar from 'src/components/layout/MenuBar.vue';
 import { PrimeIcons } from 'primevue/api';
@@ -32,7 +34,10 @@ const items = computed(() => {
 </script>
 
 <template>
-  <MenuBar :items="items" />
+  <MenuBar
+    :items="items"
+    @menu-navigation="emit('menu-navigation')"
+  />
 </template>
 
 <style scoped>

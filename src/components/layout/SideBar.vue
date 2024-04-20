@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, defineEmits, onMounted } from 'vue';
+
+const emit = defineEmits(['menu-navigation'])
 
 import { useWorkStore } from 'src/stores/work.ts';
 import { cmpWork } from 'src/lib/work.ts';
@@ -60,6 +62,7 @@ onMounted(() => {
 <template>
   <MenuBar
     :items="items"
+    @menu-navigation="emit('menu-navigation')"
   />
 </template>
 

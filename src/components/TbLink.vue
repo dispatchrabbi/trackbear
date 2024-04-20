@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 import { RouterLink, RouteLocationRaw } from 'vue-router';
 
 export type LinkDestination = {
@@ -9,12 +9,14 @@ export type LinkDestination = {
 };
 
 const props = defineProps<LinkDestination>();
+const emit = defineEmits(['click']);
 </script>
 
 <template>
   <RouterLink
     v-if="props.to"
     :to="props.to"
+    @click="emit('click')"
   >
     <slot />
   </RouterLink>
@@ -22,6 +24,7 @@ const props = defineProps<LinkDestination>();
     v-if="props.href"
     :href="props.href"
     :target="props.target"
+    @click="emit('click')"
   >
     <slot />
   </a>

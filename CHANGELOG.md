@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Navigating using the sidebar on mobile will now once again close the sidebar after navigation.
+
 ## 0.9.9
 
 - NEW: You can now add starting balances to projects to represent work on projects done before you starting tracking them in TrackBear. Starting balances will be counted anywhere that totals are represented (in the graph on the project page, for example) but do not count toward streaks or goals. (h/t murphy, wishonadarkstar)

@@ -24,19 +24,10 @@ const props = defineProps<{
   breadcrumbs: MenuItem[];
 }>();
 
-const collapsed = useLocalStorage('sidebarCollapsed', false);
-
-type MenuItemClickOptions = { openInNewTab?: boolean };
-function handleMenuItemClick(href?: string, options?: MenuItemClickOptions) {
+const collapsed = useLocalStorage('sidebar-collapsed', false);
+function handleMenuNavigation() {
   if(breakpoints.smaller('md').value) {
     collapsed.value = true;
-  }
-  if(href) {
-    if(options?.openInNewTab) {
-      window.open(href);
-    } else {
-      router.push(href);
-    }
   }
 }
 
@@ -76,7 +67,7 @@ userStore.populate().catch(() => {
       </div>
       <div class="mb-4">
         <SideBar
-          @menu-item-click="handleMenuItemClick"
+          @menu-navigation="handleMenuNavigation"
         />
       </div>
     </div>

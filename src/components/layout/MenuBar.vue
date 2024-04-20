@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 
 import { useRouter, RouteLocationRaw } from 'vue-router';
 const router = useRouter();
@@ -16,6 +16,8 @@ export type MenuBarItem = {
 const props = defineProps<{
   items: MenuBarItem[];
 }>();
+
+const emit = defineEmits(['menu-navigation'])
 
 function matchesCurrentRoute(to?: RouteLocationRaw, href?: string) {
   const routeToMatch = to ? router.resolve(to).href : href;
@@ -48,9 +50,10 @@ function matchesCurrentRoute(to?: RouteLocationRaw, href?: string) {
         :aria-label="item.label"
       >
         <TbLink
-          :to="'to' in item && item.to"
-          :href="'href' in item && item.href"
-          :target="'target' in item && item.target"
+          :to="'to' in item ? item.to : null"
+          :href="'href' in item ? item.href : null"
+          :target="'target' in item ? item.target: null"
+          @click="emit('menu-navigation')"
         >
           <div
             :class="[
