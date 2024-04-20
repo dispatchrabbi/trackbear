@@ -1,6 +1,69 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
+import { usePreferredColorScheme } from '@vueuse/core';
+const preferredColorScheme = usePreferredColorScheme();
+
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+const breakpoints = useBreakpoints(breakpointsTailwind);
+
+const size = computed(() => {
+  return breakpoints.smaller('md').value ? 'mobile' : 'desktop';
+});
+
 import PorchLayout from 'src/layouts/PorchLayout.vue';
 import TextBlurb from 'src/components/layout/TextBlurb.vue';
+import { RouterLink } from 'vue-router';
+import Image from 'primevue/image';
+import { PrimeIcons } from 'primevue/api';
+
+const sections = [
+  {
+    image: 'screenshot-add-progress',
+    heading: 'Track your work your way',
+    body: [
+      `TrackBear can help no matter how or what you write. You can record progress in <b>words, chapters, pages, or
+      time</b>. You can even mix-and-match how you track within a single project. Finished writing your first draft and
+      need to switch from words written to time spent editing? TrackBear can handle that, no problem.`
+    ],
+  },
+  {
+    image: 'screenshot-target',
+    heading: 'Stay on target',
+    body: [
+      `Aiming to write a novel in a month? Trying to finish your fanfic over summer break? Want to set a sustainable
+      pace for a quarter-million words this year? TrackBear has you covered with <b>targets</b>. Set a goal and a date
+      range, and TrackBear will graph your progress and show you where you are versus par for the day. Targets can span
+      multiple projects, so you can see progress across all your work.`
+    ],
+  },
+  {
+    image: 'screenshot-habit',
+    heading: 'Build writing habits',
+    body: [
+      `TrackBear can help you track writing habits too. If you're trying to draw a comic page a day, spend two hours a
+      day editing, or just write <i>something</i>, set a <b>habit</b> and TrackBear will show you how you're doing. And
+      there's no judgement for breaking a streak — TrackBear celebrates with you but doesn't shame you if you miss a day.`
+    ],
+  },
+  {
+    image: 'screenshot-dashboard',
+    heading: 'No funny business',
+    body: [
+      `TrackBear is designed with privacy in mind and will <b>always be free to use</b>. TrackBear isn't a social
+      network, a chat platform, or AI-powered, and there is no premium tier or pay-to-play. There are no ads, no
+      third-party tracking, and no data harvesting. It's just a place for you to track your writing.`
+    ],
+  }
+]
+
+const imagePt = {
+  rotateRightButton: { class: [ 'hidden' ] },
+  rotateLeftButton: { class: [ 'hidden' ] },
+  zoomInButton: { class: [ 'hidden' ] },
+  zoomOutButton: { class: [ 'hidden' ] },
+  preview: { class: [ 'p-8 max-h-screen max-w-screen' ] },
+};
 </script>
 
 <template>
@@ -16,26 +79,50 @@ import TextBlurb from 'src/components/layout/TextBlurb.vue';
       </div>
       <TextBlurb title="Welcome to TrackBear!">
         <p>
-          TrackBear is an app that helps you track your writing projects. You can track in words, chapters, pages, and
-          time, which makes it perfect no matter whether you're writing a novel, fanfiction, poetry, a webcomic, or
-          anything else. You can also set writing targets and track your writing habits!
+          TrackBear is an app that helps you track your writing projects. You can track words, chapters, pages, and
+          time. That makes it a perfect fit no matter whether you're writing a novel, fanfiction, poetry, a webcomic,
+          or anything else! You can also set writing targets and track your writing habits.
         </p>
         <p>
-          To get started, click <b>Sign Up</b>!
+          <RouterLink
+            class="underline text-primary-500 dark:text-primary-400"
+            :to="{ name: 'signup' }"
+          >
+            Sign up to start tracking your writing!
+          </RouterLink>
         </p>
       </TextBlurb>
-      <div class="screenshots flex flex-wrap gap-2 max-w-screen-lg mx-auto mb-8">
-        <div class="flex-auto">
-          <img src="/images/project-words.png">
+      <div
+        v-for="(section, ix) of sections"
+        :key="ix"
+        :class="[
+          'flex flex-row flex-wrap md:flex-nowrap gap-4 max-w-screen-lg mx-auto p-4',
+          { 'flex-row-reverse': ix % 2 !== 0 },
+        ]"
+      >
+        <div class="w-full md:w-1/3">
+          <Image
+            :src="`images/${section.image}-${preferredColorScheme}-${size}.png`"
+            alt=""
+            preview
+            :pt="imagePt"
+          >
+            <template #indicatoricon>
+              <span :class="PrimeIcons.SEARCH" />
+            </template>
+          </Image>
         </div>
-        <div class="flex-auto">
-          <img src="/images/project-time.png">
-        </div>
-        <div class="flex-auto">
-          <img src="/images/goal-spring-challenge.png">
-        </div>
-        <div class="flex-auto">
-          <img src="/images/add-progress.png">
+        <div class="w-full md:w-2/3">
+          <h2 class="font-heading text-2xl font-bold mb-2">
+            {{ section.heading }}
+          </h2>
+          <!-- eslint-disable vue/no-v-html -->
+          <p
+            v-for="(p, pix) of section.body"
+            :key="pix"
+            v-html="p"
+          />
+          <!-- eslint-enable vue/no-v-html -->
         </div>
       </div>
     </div>
