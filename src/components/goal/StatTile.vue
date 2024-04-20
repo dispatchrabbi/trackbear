@@ -12,13 +12,22 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col justify-center w-48 p-2 px-4 rounded-lg bg-surface-100 dark:bg-surface-900">
+  <div
+    :class="[
+      'flex flex-col justify-center',
+      'w-1/2 md:w-48',
+      'p-2 px-4 rounded-lg',
+      'bg-surface-100 dark:bg-surface-900'
+    ]"
+  >
     <div class="top font-light text-center">
       {{ props.topLegend }}
     </div>
     <div
       :class="[
-        'stat', 'flex items-baseline justify-center font-bold my-2',
+        'stat',
+        'flex items-baseline justify-center font-bold my-2',
+        'min-w-[8ch]',
         {
           'text-primary-500 dark:text-primary-400': props.color === 'primary' || props.color === undefined,
           'text-surface-0 dark:text-surface-950': props.color === 'surface',

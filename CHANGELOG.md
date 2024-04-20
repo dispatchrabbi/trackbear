@@ -14,6 +14,7 @@ Types of changes include:
 
 - CHANGED: The Enter Progress form will now default to the last measure (words, time, etc.) used when entering progress.
 - FIXED: Navigating using the sidebar on mobile will now once again close the sidebar after navigation.
+- FIXED: Stat tiles now look a bit better on mobile. No more accidental masonry effect!
 
 ## 0.9.9
 

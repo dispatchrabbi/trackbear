@@ -47,15 +47,15 @@ const averageStreak = computed(() => {
 
 const successPercent = computed(() => {
   const successes = habitStats.value.ranges.filter(range => range.isSuccess).length;
-  const percent = successes / (habitStats.value.ranges.length || 1);
+  const percent = 100 * successes / (habitStats.value.ranges.length || 1);
 
-  return percent.toFixed(2);
+  return Math.round(percent);
 });
 
 </script>
 
 <template>
-  <div class="target-stats flex flex-wrap justify-evenly gap-2">
+  <div class="habit-stats flex flex-wrap justify-evenly gap-2">
     <StatTile
       top-legend="you're currently at"
       :highlight="commaify(habitStats.streaks.current)"
@@ -69,7 +69,7 @@ const successPercent = computed(() => {
       bottom-legend="in a row"
     />
     <StatTile
-      top-legend="on average, you last"
+      top-legend="your typical streak is"
       :highlight="averageStreak"
       :suffix="GOAL_CADENCE_UNIT_INFO[periodUnit].label[habitStats.streaks.current === 1 ? 'singular' : 'plural']"
       bottom-legend="in a row"
@@ -82,3 +82,9 @@ const successPercent = computed(() => {
     />
   </div>
 </template>
+
+<style>
+.habit-stats > div {
+  flex: 1 1 20%;
+}
+</style>
