@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, defineProps, defineEmits } from 'vue';
 import wait from 'src/lib/wait.ts';
-import { useEventBus } from '@vueuse/core';
+import { useEventBus, useLocalStorage } from '@vueuse/core';
 
 const props = defineProps<{
   initialWorkId?: number;
@@ -37,12 +37,15 @@ import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 
 const emit = defineEmits(['tally:create', 'formSuccess']);
 
+// save the last measure we used for the next time
+const lastTallyMeasure = useLocalStorage('last-tally-measure', TALLY_MEASURE.WORD);
+
 const formModel = reactive({
   date: new Date(), // default to today
   workId: props.initialWorkId ?? null,
   tags: [],
   count: null,
-  measure: TALLY_MEASURE.WORD, // TODO: default to the last measure used
+  measure: lastTallyMeasure.value,
   setTotal: false,
   note: '',
 });
@@ -89,6 +92,10 @@ async function handleSubmit() {
     tallyEventBus.emit({ tally: createdTally });
 
     successMessage.value = `Progress logged!`;
+
+    // save the measure for next time
+    lastTallyMeasure.value = data.measure;
+
     // clear out the form
     formModel.workId = null;
     formModel.tags = [];

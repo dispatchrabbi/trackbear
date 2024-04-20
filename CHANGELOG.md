@@ -12,6 +12,7 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: The Enter Progress form will now default to the last measure (words, time, etc.) used when entering progress.
 - FIXED: Navigating using the sidebar on mobile will now once again close the sidebar after navigation.
 
 ## 0.9.9
