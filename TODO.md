@@ -1,7 +1,7 @@
 # TODO
 
 ## Next
-- [ ] Starting balances for projects
+- [X] Starting balances for projects
 - [ ] Admin user management
   - [X] Suspend/activate account
   - [X] Send emails

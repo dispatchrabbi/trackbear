@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.9.10
+
 - CHANGED: The Enter Progress form will now default to the last measure (words, time, etc.) used when entering progress.
 - CHANGED: The copy on the homepage has been improved. The screenshots now also change with color scheme and device size.
 - FIXED: Navigating using the sidebar on mobile will now once again close the sidebar after navigation.
