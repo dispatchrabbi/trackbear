@@ -76,9 +76,10 @@ async function main() {
   // sessions
   // Allow multiple signing secrets: see using an array at https://www.npmjs.com/package/express-session#secret
   const cookieSecret = (env.COOKIE_SECRET || '').split(',');
+  // the combination of maxAge: 2 days & rolling: true means that you'll get logged out if you don't do _something_ every 2 days
   app.use(session({
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // in ms
+      maxAge: 2 * 24 * 60 * 60 * 1000, // in ms
       secure: true,
       sameSite: 'strict',
     },
@@ -86,6 +87,7 @@ async function main() {
     secret: cookieSecret,
     resave: false,
     saveUninitialized: false,
+    rolling: true,
     store: new PrismaSessionStore(dbClient, {
       checkPeriod: 2 * 60 * 1000, // in ms, how often to delete expired sessions
       dbRecordIdIsSessionId: true,
