@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { ref, computed, defineProps } from 'vue';
 import { useLocalStorage } from '@vueuse/core';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -31,62 +31,73 @@ function handleMenuNavigation() {
   }
 }
 
+const isLoading = ref<boolean>(true);
 // attempt to populate the user, but only care about failing
-userStore.populate().catch(() => {
-  router.push('/login');
+try {
+  await userStore.populate();
+  isLoading.value = false;
+} catch {
+  router.push({ name: 'login', query: { redirectTo: router.currentRoute.value.fullPath } });
+}
+
+const showPage = computed(() => {
+  return isLoading.value === false && userStore.user != null;
 });
 
 </script>
 
 <template>
-  <div class="banner">
-    <BannerContainer />
-  </div>
-  <div
-    v-if="userStore.user"
-    :class="[ 'application flex', collapsed ? 'sidebar-collapsed' : null ]"
-  >
+  <template v-if="showPage">
+    <div class="banner">
+      <BannerContainer />
+    </div>
     <div
-      :class="[
-        'side h-screen overflow-y-auto overscroll-contain flex-none flex flex-col bg-surface-0 dark:bg-surface-800 shadow-md',
-        { 'w-0 md:w-0': collapsed },
-        { 'w-screen md:w-64': !collapsed },
-        'z-50 md:z-auto fixed md:static',
-      ]"
+      :class="[ 'application flex', collapsed ? 'sidebar-collapsed' : null ]"
     >
-      <div class="p-4 flex justify-between">
-        <TrackbearMasthead
-          link-to="dashboard"
-        />
-        <Button
-          class="md:hidden"
-          :icon="PrimeIcons.CHEVRON_LEFT"
-          text
-          @click="collapsed = true"
-        />
+      <div
+        :class="[
+          'side h-screen overflow-y-auto overscroll-contain flex-none flex flex-col bg-surface-0 dark:bg-surface-800 shadow-md',
+          { 'w-0 md:w-0': collapsed },
+          { 'w-screen md:w-64': !collapsed },
+          'z-50 md:z-auto fixed md:static',
+        ]"
+      >
+        <div class="p-4 flex justify-between">
+          <TrackbearMasthead
+            link-to="dashboard"
+          />
+          <Button
+            class="md:hidden"
+            :icon="PrimeIcons.CHEVRON_LEFT"
+            text
+            @click="collapsed = true"
+          />
+        </div>
+        <div class="mb-4">
+          <SideBar
+            @menu-navigation="handleMenuNavigation"
+          />
+        </div>
       </div>
-      <div class="mb-4">
-        <SideBar
-          @menu-navigation="handleMenuNavigation"
-        />
+      <div class="main flex-auto h-screen overflow-y-auto overscroll-contain flex flex-col">
+        <div class="bar sticky top-0 z-10 bg-surface-0 dark:bg-surface-800 box-border border-solid border-b-[1px] border-primary-500 dark:border-primary-400">
+          <AppBar
+            :breadcrumbs="props.breadcrumbs"
+            :collapsed="collapsed"
+            @sidebar:toggle="collapsed = !collapsed"
+          />
+        </div>
+        <div class="content px-4 pt-4 pb-24">
+          <slot />
+        </div>
       </div>
     </div>
-    <div class="main flex-auto h-screen overflow-y-auto overscroll-contain flex flex-col">
-      <div class="bar sticky top-0 z-10 bg-surface-0 dark:bg-surface-800 box-border border-solid border-b-[1px] border-primary-500 dark:border-primary-400">
-        <AppBar
-          :breadcrumbs="props.breadcrumbs"
-          :collapsed="collapsed"
-          @sidebar:toggle="collapsed = !collapsed"
-        />
-      </div>
-      <div class="content px-4 pt-4 pb-24">
-        <slot />
-      </div>
+    <div
+      class="log-progress-button fixed bottom-8 right-8"
+    >
+      <LogProgressButton />
     </div>
-  </div>
-  <div class="log-progress-button fixed bottom-8 right-8">
-    <LogProgressButton />
-  </div>
+  </template>
 </template>
 
 <style scoped>

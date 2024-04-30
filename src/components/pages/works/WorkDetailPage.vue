@@ -56,7 +56,12 @@ const loadWork = async function() {
     work.value = await getWork(+workId.value);
   } catch(err) {
     errorMessage.value = err.message;
-    router.push('/works');
+    // the ApplicationLayout takes care of this. Otherwise, this will redirect to /works before ApplicationLayout
+    // can redirect to /login.
+    // TODO: figure out a better way to ensure that there's no race condition here
+    if(err.code !== 'NOT_LOGGED_IN') {
+      router.push({ name: 'works' });
+    }
   } finally {
     isLoading.value = false;
   }

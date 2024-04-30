@@ -57,7 +57,12 @@ const loadGoal = async function() {
     tallies.value = result.tallies;
   } catch(err) {
     errorMessage.value = err.message;
-    router.push('/goals');
+    // the ApplicationLayout takes care of this. Otherwise, this will redirect to /works before ApplicationLayout
+    // can redirect to /login.
+    // TODO: figure out a better way to ensure that there's no race condition here
+    if(err.code !== 'NOT_LOGGED_IN') {
+      router.push({ name: 'goals' });
+    }
   } finally {
     isLoading.value = false;
   }

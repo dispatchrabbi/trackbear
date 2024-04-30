@@ -54,8 +54,8 @@ const filteredWorks = computed(() => {
   return sortedWorks.filter(work => work.title.toLowerCase().includes(searchTerm) || work.description.toLowerCase().includes(searchTerm));
 });
 
-onMounted(() => {
-  loadWorks();
+onMounted(async () => {
+  await loadWorks();
 });
 
 </script>

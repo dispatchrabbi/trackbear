@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: When a user gets redirected to login, they will now return to the page they were on when they got redirected after logging back in again, instead of landing at the Dashboard. They will even be correctly redirected if they need to go through signup; this is to prepare for sharing TrackBear links in the future.
+
 ## 0.9.10
 
 - CHANGED: The Enter Progress form will now default to the last measure (words, time, etc.) used when entering progress.

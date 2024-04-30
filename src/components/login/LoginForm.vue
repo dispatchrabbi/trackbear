@@ -39,7 +39,12 @@ async function handleSubmit() {
   try {
     const { username, password } = formData();
     await userStore.logIn(username, password);
-    router.push('/dashboard');
+
+    if(router.currentRoute.value.query.redirectTo) {
+      router.push(router.currentRoute.value.query.redirectTo.toString());
+    } else {
+      router.push('/dashboard');
+    }
   } catch(err) {
     if(err.code === 'INCORRECT_CREDS') {
       errorMessage.value = 'Incorrect username or password. Please check and try again.';
@@ -100,9 +105,19 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
   </TbForm>
-  <div class="text-center">
-    <RouterLink to="/reset-password">
+  <div class="flex gap-2 justify-center mt-4">
+    <RouterLink
+      :to="{ name: 'send-reset-password' }"
+      class="underline text-primary-500 dark:text-primary-400"
+    >
       Forgot your password?
+    </RouterLink>
+    <div>|</div>
+    <RouterLink
+      :to="{ name: 'signup', query: router.currentRoute.value.query }"
+      class="underline text-primary-500 dark:text-primary-400"
+    >
+      Don't have an account yet?
     </RouterLink>
   </div>
 </template>

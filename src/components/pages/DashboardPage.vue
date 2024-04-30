@@ -78,14 +78,19 @@ async function reloadData() {
 }
 
 onMounted(async () => {
-  await loadUser();
-  await goalStore.populate();
+  try {
+    await loadUser();
+    await goalStore.populate();
 
-  reloadData();
+    await reloadData();
 
-  useEventBus<{ tally: Tally }>('tally:create').on(reloadData);
-  useEventBus<{ tally: Tally }>('tally:edit').on(reloadData);
-  useEventBus<{ tally: Tally }>('tally:delete').on(reloadData);
+    useEventBus<{ tally: Tally }>('tally:create').on(reloadData);
+    useEventBus<{ tally: Tally }>('tally:edit').on(reloadData);
+    useEventBus<{ tally: Tally }>('tally:delete').on(reloadData);
+  } catch(ex) {
+    // we should only error here when some kind of login error happens
+    router.push({ name: 'login' });
+  }
 });
 </script>
 

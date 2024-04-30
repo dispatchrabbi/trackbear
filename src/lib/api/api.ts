@@ -1,7 +1,6 @@
 import qs from 'qs';
 
 import type { ApiResponsePayload } from "server/lib/api-response.ts";
-
 type ApiResponse<T> = ApiResponsePayload<T> & { status: number; }
 
 export type DateString = string;

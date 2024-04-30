@@ -1,20 +1,27 @@
 # TODO
 
 ## Next
-- [X] Starting balances for projects
+- [X] Preserve destination through login/signup
+- [ ] Improved account settings
+  - [ ] Change username
+  - [ ] Change display name
+  - [ ] Upload avatar
+  - [ ] Delete your account
+- [ ] Leaderboards:
+  - [ ] Create, edit, delete, close invites
+  - [ ] Let others join the board
+  - [ ] Show avatars beside progress
+  - [ ] Remove others from the board
 - [ ] Admin user management
   - [X] Suspend/activate account
   - [X] Send emails
   - [ ] Rename user
-  - [X] Force password reset
+  - [ ] Force password reset
   - [ ] View audit events
   - [ ] Add user ID to sessions and session ID to audit events
-- [ ] Boards: create, edit, view, delete
-- [ ] Multiplayer boards: add, remove, share
-  - [ ] Teams for multiplayer boards
-
 
 ## Soon
+- [ ] Fix the required-auth page architecture
 - [ ] Observability
   - [ ] Ship logs somewhere
   - [ ] Ship metrics/telemetry somewhere
@@ -22,8 +29,6 @@
   - [ ] Overall total
   - [ ] Totals by tag
   - [ ] Ability to exempt tags/projects from total
-- [ ] Edit your account
-- [ ] Delete your account
 - [ ] Implement project tags
 - [ ] Code quality improvements
   - [ ] Replace the try/catch api call logic in the front-end with something less onerous
@@ -35,6 +40,11 @@
 
 # Future
 - [ ] API access
+- [ ] More for boards:
+  - [ ] Progress to individual goals
+  - [ ] "Fundraiser mode" (everyone's progress contributes)
+  - [ ] Add yourself more than once
+  - [ ] Public board sharing
 
 # Security and o11y
 - [ ] Go over [security practices](https://blog.risingstack.com/node-js-security-checklist/)

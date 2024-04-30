@@ -47,7 +47,7 @@ async function handleSubmit() {
 
     successMessage.value = 'Sign up successful! Redirecting to login...';
     await wait(1 * 1000);
-    router.push('/login');
+    router.push({ name: 'login', query: router.currentRoute.value.query });
   } catch(err) {
     if(err.code === 'VALIDATION_FAILED') {
       errorMessage.value = err.message;
