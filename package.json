@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.9.10",
   "type": "module",
+  "engines": {
+    "node": ">=22.0.0 <23.0.0"
+  },
   "imports": {
     "src/*": "./src/*",
     "server/*": "./server/*"
@@ -11,17 +14,17 @@
     "seed": "node --import ./ts-node-loader.js ./prisma/seed/seed.ts"
   },
   "scripts": {
-    "start": "npm run start:dev",
+    "start": "node --run start:dev",
     "start:dev": "NODE_ENV=development node --import ./ts-node-loader.js ./main.ts",
     "start:prod": "NODE_ENV=production node --import ./ts-node-loader.js ./main.ts",
-    "build": "npm run build:prod",
+    "build": "node --run build:prod",
     "build:prod": "docker build -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t dispatchrabbi/trackbear:latest --target prod .",
     "lint": "npx eslint --ext .js,.ts,.vue .",
-    "compile": "npm run compile:db && npm run compile:client",
+    "compile": "node --run compile:db && node --run compile:client",
     "compile:db": "npx prisma generate",
     "compile:client": "npx vue-tsc && npx vite build --emptyOutDir",
     "hooks": "husky install",
-    "preversion": "npm run build",
+    "preversion": "node --run build",
     "version": "VERSION=$(npm pkg get version --workspaces=false | tr -d \\\"); git add .; git commit -m \"v${VERSION}\"; git tag -a \"v${VERSION}\" -m \"v${VERSION}\""
   },
   "dependencies": {

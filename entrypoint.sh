@@ -11,5 +11,5 @@ if [ "$NODE_ENV" == 'production' ]; then
 fi
 
 # Start the server
-# Don't use npm start because it doesn't pass signals correctly
+# Don't use npm run/node --run because it doesn't pass signals correctly
 node --import ./ts-node-loader.js ./main.ts

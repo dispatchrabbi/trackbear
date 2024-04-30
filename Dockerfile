@@ -3,7 +3,7 @@
 
 ###############################################################################
 # base stage
-FROM node:lts-slim as base
+FROM node:22-slim as base
 
 # Install the latest openssl (for HTTPS), and some other tools (for debugging)
 RUN apt update -y && apt install -y openssl curl postgresql-client nano
@@ -78,7 +78,7 @@ ENV DB_APP_DB_URL $DB_APP_DB_URL
 RUN npx prisma generate
 
 # Compile the front-end
-RUN npm run compile:client
+RUN node --run compile:client
 
 # Check every 30s to ensure /api/ping returns HTTP 200
 HEALTHCHECK --interval=30s CMD node ./scripts/healthchecks/trackbear.js
