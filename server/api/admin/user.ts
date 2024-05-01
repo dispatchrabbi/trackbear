@@ -125,7 +125,7 @@ userRouter.put('/:id',
   }
 
   const changes = buildChangeRecord<UserUpdatePayload>(Object.keys(payload) as (keyof UserUpdatePayload)[], current, updated);
-  await logAuditEvent('user:update', admin.id, updated.id, null, changes);
+  await logAuditEvent('user:update', admin.id, updated.id, null, changes, req.sessionID);
 
   return res.status(200).send(success(updated));
 }));
@@ -176,7 +176,7 @@ userRouter.put('/:id/state',
   } else if(payload.state === USER_STATE.DELETED) {
     event = 'delete';
   }
-  await logAuditEvent(`user:${event}`, admin.id, updated.id, null, { reason: 'via admin console' });
+  await logAuditEvent(`user:${event}`, admin.id, updated.id, null, { source: 'admin console' }, req.sessionID);
 
   return res.status(200).send(success(updated));
 }));
@@ -208,7 +208,7 @@ userRouter.post('/:id/verify-email',
   });
   pushTask(sendEmailverificationEmail.makeTask(pendingEmailVerification.uuid));
   winston.debug(`EMAIL: ${admin.id} requested a verification link for ${user.id} and got ${pendingEmailVerification.uuid}`);
-  await logAuditEvent('user:verifyemailreq', admin.id, user.id, null, { verificationUuid: pendingEmailVerification.uuid });
+  await logAuditEvent('user:verifyemailreq', admin.id, user.id, null, { verificationUuid: pendingEmailVerification.uuid }, req.sessionID);
 
   return res.status(201).send(success({}));
 
@@ -239,7 +239,7 @@ userRouter.post('/:id/reset-password',
   });
 
   winston.debug(`PASSWORD: ${admin.id} requested a reset link for ${user.id} and got ${resetLink.uuid}`);
-  await logAuditEvent('user:pwresetreq', admin.id, user.id, null, { resetLinkUuid: resetLink.uuid });
+  await logAuditEvent('user:pwresetreq', admin.id, user.id, null, { resetLinkUuid: resetLink.uuid }, req.sessionID);
   pushTask(sendPwresetEmail.makeTask(resetLink.uuid));
 
     return res.status(201).send(success({}));

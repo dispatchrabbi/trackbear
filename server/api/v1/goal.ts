@@ -143,7 +143,7 @@ goalRouter.post('/',
     },
   });
 
-  await logAuditEvent('goal:create', user.id, goal.id);
+  await logAuditEvent('goal:create', user.id, goal.id, null, null, req.sessionID);
 
   const tallies = await getTalliesForGoal(goal);
 
@@ -187,7 +187,7 @@ goalRouter.put('/:id',
     },
   });
 
-  await logAuditEvent('goal:update', user.id, goal.id);
+  await logAuditEvent('goal:update', user.id, goal.id, null, null, req.sessionID);
 
   const tallies = await getTalliesForGoal(goal);
 
@@ -213,7 +213,7 @@ goalRouter.delete('/:id',
     },
   });
 
-  await logAuditEvent('goal:delete', user.id, goal.id);
+  await logAuditEvent('goal:delete', user.id, goal.id, null, null, req.sessionID);
 
   return res.status(200).send(success(goal));
 }));

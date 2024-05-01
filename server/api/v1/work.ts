@@ -110,7 +110,7 @@ workRouter.post('/',
     }
   });
 
-  await logAuditEvent('work:create', user.id, work.id);
+  await logAuditEvent('work:create', user.id, work.id, null, null, req.sessionID);
 
   return res.status(201).send(success(work));
 }));
@@ -138,7 +138,7 @@ workRouter.put('/:id',
     },
   });
 
-  await logAuditEvent('work:update', user.id, work.id, null, payload);
+  await logAuditEvent('work:update', user.id, work.id, null, null, req.sessionID);
 
   return res.status(200).send(success(work));
 }));
@@ -172,7 +172,7 @@ workRouter.delete('/:id',
     },
   });
 
-  await logAuditEvent('work:delete', user.id, work.id);
+  await logAuditEvent('work:delete', user.id, work.id, null, null, req.sessionID);
 
   return res.status(200).send(success(work));
 }));

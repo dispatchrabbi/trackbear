@@ -61,7 +61,7 @@ bannerRouter.post('/',
   });
 
   winston.debug(`Created banner ${banner.id} with message ${banner.message}`);
-  await logAuditEvent('banner:create', user.id, banner.id);
+  await logAuditEvent('banner:create', user.id, banner.id, null, null, req.sessionID);
 
   return res.status(201).send(success(banner));
 }));
@@ -89,7 +89,7 @@ bannerRouter.put('/:id',
   });
 
   winston.debug(`Edited banner ${banner.id}`);
-  await logAuditEvent('banner:update', user.id, banner.id);
+  await logAuditEvent('banner:update', user.id, banner.id, null, null, req.sessionID);
 
   return res.status(200).send(success(banner));
 }));
@@ -107,7 +107,7 @@ bannerRouter.delete('/:id',
     }
   });
 
-  await logAuditEvent('banner:delete', user.id, banner.id);
+  await logAuditEvent('banner:delete', user.id, banner.id, null, null, req.sessionID);
 
   return res.status(200).send(success(banner));
 }));

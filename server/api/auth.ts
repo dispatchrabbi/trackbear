@@ -110,7 +110,7 @@ authRouter.post('/login',
 
   logIn(req, user);
   winston.debug(`LOGIN: ${username} successfully logged in`);
-  await logAuditEvent('user:login', user.id);
+  await logAuditEvent('user:login', user.id, null, null, null, req.sessionID);
 
   const userResponse: UserResponse = {
     uuid: user.uuid,
@@ -204,7 +204,7 @@ authRouter.post('/signup',
         },
       },
     });
-    await logAuditEvent('user:signup', user.id, user.id);
+    await logAuditEvent('user:signup', user.id, user.id, null, null, req.sessionID);
     winston.debug(`SIGNUP: ${user.id} just signed up`);
 
     pushTask(sendSignupEmailTask.makeTask(user.id));
@@ -240,7 +240,7 @@ authRouter.post('/verify-email',
       data: pendingEmailVerificationData,
     });
     pushTask(sendEmailverificationEmail.makeTask(pendingEmailVerification.uuid));
-    await logAuditEvent('user:verifyemailreq', user.id, user.id, null, { verificationUuid: pendingEmailVerification.uuid });
+    await logAuditEvent('user:verifyemailreq', user.id, user.id, null, { verificationUuid: pendingEmailVerification.uuid }, req.sessionID);
   } catch(err) { return next(err); }
 
   return res.status(201).send(success({}));
@@ -287,7 +287,7 @@ authRouter.post('/verify-email/:uuid',
     });
   } catch(err) { return next(err); }
 
-  await logAuditEvent('user:verifyemail', user.id, user.id, null, { verificationUuid: verification.uuid, email: verification.newEmail });
+  await logAuditEvent('user:verifyemail', user.id, user.id, null, { verificationUuid: verification.uuid, email: verification.newEmail }, req.sessionID);
   winston.debug(`VERIFY: ${user.id} just verified their email`);
 
   return res.status(200).send(success({}));
@@ -341,7 +341,7 @@ authRouter.post('/password',
   } catch(err) { return next(err); }
 
   winston.debug(`PASSWORD: ${req.user.id} has changed their password`);
-  await logAuditEvent('user:pwchange', req.user.id, req.user.id);
+  await logAuditEvent('user:pwchange', req.user.id, req.user.id, null, null, req.sessionID);
   pushTask(sendPwchangeEmail.makeTask(req.user.id));
 
   return res.status(200).send(success({}));
@@ -381,7 +381,7 @@ authRouter.post('/reset-password',
   } catch(err) { return next(err); }
 
   winston.debug(`PASSWORD: ${user.id} requested a reset link and got ${resetLink.uuid}`);
-  await logAuditEvent('user:pwresetreq', user.id, user.id, null, { resetLinkUuid: resetLink.uuid });
+  await logAuditEvent('user:pwresetreq', user.id, user.id, null, { resetLinkUuid: resetLink.uuid }, req.sessionID);
   pushTask(sendPwresetEmail.makeTask(resetLink.uuid));
 
   return res.status(201).send(success({}));
@@ -448,7 +448,7 @@ authRouter.post('/reset-password/:uuid',
 
   const user = userAuth.user;
   winston.debug(`PASSWORD: ${user.id} has reset their password`);
-  await logAuditEvent('user:pwreset', user.id, user.id);
+  await logAuditEvent('user:pwreset', user.id, user.id, null, null, req.sessionID);
   pushTask(sendPwchangeEmail.makeTask(user.id));
 
   return res.status(200).send(success({}));

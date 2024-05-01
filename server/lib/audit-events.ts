@@ -2,13 +2,18 @@ import winston from 'winston';
 import dbClient from "../lib/db.ts";
 
 const TRACKBEAR_SYSTEM_ID = -1;
-async function logAuditEvent(eventType: string, agentId: number, patientId?: number, goalId?: number, auxInfo: Record<string, unknown> = {}) {
+async function logAuditEvent(eventType: string, agentId: number, patientId?: number, goalId?: number, auxInfo: Record<string, unknown> = {}, sessionId?: string) {
   try {
     await dbClient.auditEvent.create({
-      data: { eventType, agentId, patientId, goalId, auxInfo: JSON.stringify(auxInfo) },
+      data: {
+        eventType,
+        agentId, patientId, goalId,
+        auxInfo: JSON.stringify(auxInfo ?? {}),
+        sessionId,
+      },
     });
   } catch(err) {
-    // log an error but don't do anything. failure to record and audit event shouldn't tank a request
+    // log an error but don't do anything. failure to record an audit event shouldn't tank a request
     winston.error(err);
   }
 }

@@ -154,7 +154,7 @@ tallyRouter.post('/',
     },
   });
 
-  await logAuditEvent('tally:create', user.id, tally.id);
+  await logAuditEvent('tally:create', user.id, tally.id, null, null, req.sessionID);
 
   return res.status(201).send(success(tally));
 }));
@@ -243,7 +243,7 @@ tallyRouter.put('/:id',
     },
   });
 
-  await logAuditEvent('tally:update', user.id, tally.id);
+  await logAuditEvent('tally:update', user.id, tally.id, null, null, req.sessionID);
 
   return res.status(200).send(success(tally));
 }));
@@ -267,7 +267,7 @@ tallyRouter.delete('/:id',
     },
   });
 
-  await logAuditEvent('tally:delete', user.id, tally.id);
+  await logAuditEvent('tally:delete', user.id, tally.id, null, null, req.sessionID);
 
   return res.status(200).send(success(tally));
 }));

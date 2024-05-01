@@ -86,7 +86,7 @@ tagRouter.post('/',
     }
   });
 
-  await logAuditEvent('tag:create', user.id, tag.id);
+  await logAuditEvent('tag:create', user.id, tag.id, null, null, req.sessionID);
 
   return res.status(201).send(success(tag));
 }));
@@ -121,7 +121,7 @@ tagRouter.put('/:id',
     data: { ...payload },
   });
 
-  await logAuditEvent('tag:update', user.id, tag.id);
+  await logAuditEvent('tag:update', user.id, tag.id, null, null, req.sessionID);
 
   return res.status(200).send(success(tag));
 }));
@@ -141,7 +141,7 @@ tagRouter.delete('/:id',
     },
   });
 
-  await logAuditEvent('tag:delete', user.id, tag.id);
+  await logAuditEvent('tag:delete', user.id, tag.id, null, null, req.sessionID);
 
   return res.status(200).send(success(tag));
 }));

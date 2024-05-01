@@ -4,6 +4,8 @@ import { ref, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 const route = useRoute();
 
+import { parseISO, format } from 'date-fns';
+
 import { getUser, updateUserState, sendEmailVerificationEmail, sendResetPasswordEmail, User, AuditEvent } from 'src/lib/api/admin/user.ts'
 import { USER_STATE } from 'server/lib/models/user.ts';
 import { USER_STATE_INFO } from 'src/lib/user.ts';
@@ -13,8 +15,11 @@ import DeleteUserForm from 'src/components/account/DeleteUserForm.vue';
 import RestoreUserForm from 'src/components/account/RestoreUserForm.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import Card from 'primevue/card';
+import Panel from 'primevue/panel';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 import Dialog from 'primevue/dialog';
 import { PrimeIcons } from 'primevue/api';
 
@@ -207,14 +212,64 @@ async function handleSendEmailVerificationClick() {
             </dl>
             <dl>
               <dt>created</dt>
-              <dd>{{ user.createdAt }}</dd>
+              <dd>{{ format(parseISO(user.createdAt), `d MMM y, HH:mm:ss`) }}</dd>
               <dt>updated</dt>
-              <dd>{{ user.updatedAt }}</dd>
+              <dd>{{ format(parseISO(user.updatedAt), `d MMM y, HH:mm:ss`) }}</dd>
             </dl>
           </div>
         </template>
       </Card>
-      <pre>{{ JSON.stringify(auditEvents, null, 2) }}</pre>
+      <Panel
+        header="Audit Events"
+        toggleable
+        collapsed
+        class="mt-2"
+      >
+        <DataTable :value="auditEvents">
+          <Column
+            field="id"
+            header="ID"
+          />
+          <Column
+            field="sessionId"
+            header="Session"
+          />
+          <Column
+            header="Time"
+            class="align-right"
+          >
+            <template #body="{ data }">
+              <span class="tabular-nums">
+                {{ format(parseISO(data.createdAt), `d MMM y, HH:mm:ss`) }}
+              </span>
+            </template>
+          </Column>
+          <Column
+            field="eventType"
+            header="Event"
+          />
+          <Column
+            field="agentId"
+            header="Agent"
+          />
+          <Column
+            field="patientId"
+            header="Patient"
+          />
+          <Column
+            field="goalId"
+            header="Goal"
+          />
+          <Column
+            header="Aux Info"
+          >
+            <template #body="{ data }">
+              <pre>{{ JSON.stringify(JSON.parse(data.auxInfo), null, 2) }}</pre>
+            </template>
+          </Column>
+        </DataTable>
+      </Panel>
+
       <Dialog
         v-model:visible="isDeleteFormVisible"
         modal

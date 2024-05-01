@@ -18,8 +18,8 @@
   - [X] Send emails
   - [ ] Rename user
   - [ ] Force password reset
-  - [ ] View audit events more nicely
-  - [ ] Add session ID to audit events
+  - [X] View audit events more nicely
+  - [X] Add session ID to audit events
 
 ## Soon
 - [ ] Fix the required-auth page architecture

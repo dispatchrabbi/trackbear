@@ -105,7 +105,7 @@ meRouter.patch('/',
   }
 
   const changeRecord = buildChangeRecord<MeEditPayload>(Object.keys(payload) as (keyof MeEditPayload)[], current, updated);
-  await logAuditEvent('user:update', req.user.id, req.user.id, null, changeRecord);
+  await logAuditEvent('user:update', req.user.id, req.user.id, null, changeRecord, req.sessionID);
 
   if(didEmailChange) {
     const pendingEmailVerification = await dbClient.pendingEmailVerification.findFirst({
@@ -136,7 +136,7 @@ meRouter.delete('/',
     },
   });
 
-  await logAuditEvent('user:delete', req.user.id, req.user.id);
+  await logAuditEvent('user:delete', req.user.id, req.user.id, null, null, req.sessionID);
   winston.debug(`USER DELETION: ${req.user.id} just deleted their account`);
 
   pushTask(sendAccountDeletedEmail.makeTask(req.user.id));

@@ -52,7 +52,7 @@ async function run() {
       },
     });
 
-    await Promise.all(userIdsToSuspend.map(id => logAuditEvent('user:suspend', TRACKBEAR_SYSTEM_ID, id, null, { reason: NAME })));
+    await Promise.all(userIdsToSuspend.map(id => logAuditEvent('user:suspend', TRACKBEAR_SYSTEM_ID, id, null, { source: NAME })));
   } catch(err) {
     workerLogger.error(`Error while suspending users with expired email verifications: ${err.message}`, { service: NAME });
     return;
