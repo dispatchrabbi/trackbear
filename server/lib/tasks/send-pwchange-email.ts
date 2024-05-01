@@ -5,13 +5,14 @@ import type { User } from '@prisma/client';
 import dbClient from '../db.ts';
 
 import { logAuditEvent, TRACKBEAR_SYSTEM_ID } from '../audit-events.ts';
+import { USER_STATE } from '../models/user.ts';
 
 async function handler(task) {
   let user: User;
   try {
     user = await dbClient.user.findUnique({ where: {
       id: task.userId,
-      state: 'active',
+      state: USER_STATE.ACTIVE,
     } });
   } catch(err) {
     throw new Error(`Could not find a user with id ${task.userId}`);
@@ -35,7 +36,9 @@ async function sendPasswordChangeEmail(user) {
     .setText(`
 Hi, ${user.displayName}!
 
-This email is to confirm that you recently changed your login password on TrackBear. If that wasn't you, you should definitely get in contact with us.
+This email is to confirm that you recently changed your login password on TrackBear.
+
+If you did not change your TrackBear password recently, please contact TrackBear Support at trackbearapp+support@gmail.com.
 
 Beary sincerely yours,
 TrackBear

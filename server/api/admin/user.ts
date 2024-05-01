@@ -135,7 +135,7 @@ export type UserStatePayload = Partial<{
 }>;
 
 const zUserStatePayload = z.object({
-  state: z.enum([USER_STATE.ACTIVE, USER_STATE.SUSPENDED]), // can't delete via this endpoint
+  state: z.enum([USER_STATE.ACTIVE, USER_STATE.SUSPENDED, USER_STATE.DELETED]),
 }).strict();
 
 userRouter.put('/:id/state',
@@ -173,6 +173,8 @@ userRouter.put('/:id/state',
     event = 'activate';
   } else if(payload.state === USER_STATE.SUSPENDED) {
     event = 'suspend';
+  } else if(payload.state === USER_STATE.DELETED) {
+    event = 'delete';
   }
   await logAuditEvent(`user:${event}`, admin.id, updated.id, null, { reason: 'via admin console' });
 

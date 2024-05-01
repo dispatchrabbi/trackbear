@@ -12,14 +12,14 @@ async function handler(task) {
   try {
     user = await dbClient.user.findUnique({ where: {
       id: task.userId,
-      state: USER_STATE.ACTIVE,
+      state: USER_STATE.DELETED,
     } });
   } catch(err) {
-    throw new Error(`Could not find a user with id ${task.userId}`);
+    throw new Error(`Could not find a deleted user with id ${task.userId}`);
   }
 
   await sendConfirmationEmail(user);
-  await logAuditEvent('email:signup', TRACKBEAR_SYSTEM_ID, user.id);
+  await logAuditEvent('email:deleted', TRACKBEAR_SYSTEM_ID, user.id);
 }
 
 async function sendConfirmationEmail(user) {
@@ -32,13 +32,13 @@ async function sendConfirmationEmail(user) {
     .setFrom(sentFrom)
     .setTo(recipients)
     .setReplyTo(sentFrom)
-    .setSubject('Welcome to TrackBear!')
+    .setSubject('Your account has been deleted')
     .setText(`
 Hi, ${user.displayName}!
 
-Thank you for signing up to TrackBear! We hope that this will be the start of a wonderful new era of writing productivity for you! (But if it isn't, don't worry, we don't judge.)
+This email is to confirm that your account has been deleted as requested.
 
-Oh, also — you should receive an email soon that asks you to verify your email. Please make sure you do that within 10 days, or your account will be suspended.
+If you did not request to delete your account, please contact TrackBear Support at trackbearapp+support@gmail.com.
 
 Beary sincerely,
 TrackBear
@@ -47,7 +47,7 @@ TrackBear
   sendEmail(emailParams);
 }
 
-const TASK_NAME = 'send-signup-email';
+const TASK_NAME = 'send-account-deleted-email';
 function makeTask(userId: number) {
   return {
     name: TASK_NAME,

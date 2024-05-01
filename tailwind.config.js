@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 // import colors from 'tailwindcss/colors';
-import { primary, accent, surface } from './src/themes/primevue.ts';
+import { primary, accent, surface, danger, success } from './src/themes/primevue.ts';
 
 const PRIMEVUE_EXTEND = {
 	colors: {
@@ -11,6 +11,8 @@ const PRIMEVUE_EXTEND = {
 		accent,
 		'surface-0': '#ffffff',
 		surface,
+		danger,
+		success,
 	},
 	fontFamily: {
 		sans: ['Jost', 'sans-serif'],

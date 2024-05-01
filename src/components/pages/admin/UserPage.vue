@@ -9,10 +9,13 @@ import { USER_STATE } from 'server/lib/models/user.ts';
 import { USER_STATE_INFO } from 'src/lib/user.ts';
 
 import AdminLayout from 'src/layouts/AdminLayout.vue';
+import DeleteUserForm from 'src/components/account/DeleteUserForm.vue';
+import RestoreUserForm from 'src/components/account/RestoreUserForm.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
+import Dialog from 'primevue/dialog';
 import { PrimeIcons } from 'primevue/api';
 
 import Toast from 'primevue/toast';
@@ -73,6 +76,16 @@ async function handleSuspendClick() {
   }
 }
 
+const isDeleteFormVisible = ref<boolean>(false);
+function handleDeleteClick() {
+  isDeleteFormVisible.value = true;
+}
+
+const isRestoreFormVisible = ref<boolean>(false);
+function handleRestoreClick() {
+  isRestoreFormVisible.value = true;
+}
+
 async function handleSendPasswordResetClick() {
   toast.add({ summary: 'Sending password reset email...', severity: 'secondary', group: 'sendReset' });
   try {
@@ -117,18 +130,33 @@ async function handleSendEmailVerificationClick() {
         <Button
           v-if="user.state === USER_STATE.ACTIVE"
           label="Suspend"
-          :icon="PrimeIcons.USER_MINUS"
+          :icon="PrimeIcons.BAN"
           severity="warning"
           @click="handleSuspendClick"
         />
         <Button
+          v-if="user.state === USER_STATE.ACTIVE"
+          label="Delete"
+          :icon="PrimeIcons.USER_MINUS"
+          severity="danger"
+          @click="handleDeleteClick"
+        />
+        <Button
           v-if="user.state === USER_STATE.SUSPENDED"
           label="Activate"
-          :icon="PrimeIcons.USER_PLUS"
+          :icon="PrimeIcons.BOLT"
           severity="success"
           @click="handleActivateClick"
         />
         <Button
+          v-if="user.state === USER_STATE.DELETED"
+          label="Restore"
+          :icon="PrimeIcons.USER_PLUS"
+          severity="success"
+          @click="handleRestoreClick"
+        />
+        <Button
+          v-if="user.state === USER_STATE.ACTIVE"
           label="Send Password Reset"
           :icon="PrimeIcons.LOCK"
           severity="help"
@@ -136,6 +164,7 @@ async function handleSendEmailVerificationClick() {
           @click="handleSendPasswordResetClick"
         />
         <Button
+          v-if="user.state === USER_STATE.ACTIVE"
           label="Send Email Verification"
           :icon="PrimeIcons.CHECK_CIRCLE"
           :severity="user.isEmailVerified ? 'secondary' : 'help'"
@@ -186,6 +215,38 @@ async function handleSendEmailVerificationClick() {
         </template>
       </Card>
       <pre>{{ JSON.stringify(auditEvents, null, 2) }}</pre>
+      <Dialog
+        v-model:visible="isDeleteFormVisible"
+        modal
+      >
+        <template #header>
+          <h2 class="font-heading font-semibold uppercase">
+            <span :class="PrimeIcons.USER_MINUS" />
+            Delete User
+          </h2>
+        </template>
+        <DeleteUserForm
+          :user="user"
+          @user:delete="loadUser(user.id)"
+          @form-success="isDeleteFormVisible = false"
+        />
+      </Dialog>
+      <Dialog
+        v-model:visible="isRestoreFormVisible"
+        modal
+      >
+        <template #header>
+          <h2 class="font-heading font-semibold uppercase">
+            <span :class="PrimeIcons.USER_PLUS" />
+            Restore User
+          </h2>
+        </template>
+        <RestoreUserForm
+          :user="user"
+          @user:restore="loadUser(user.id)"
+          @form-success="isRestoreFormVisible = false"
+        />
+      </Dialog>
     </div>
   </AdminLayout>
   <Toast />

@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref, reactive, defineProps } from 'vue';
-import wait from 'src/lib/wait.ts';
 
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
 import { User } from '@prisma/client';
+import { updateMe } from 'src/lib/api/me.ts';
+
+import { useUserStore } from 'src/stores/user.ts';
+const userStore = useUserStore();
 
 import InputText from 'primevue/inputtext';
 import TbForm from 'src/components/form/TbForm.vue';
@@ -24,9 +27,9 @@ const formModel = reactive({
 const validations = z.object({
   username: z
     .string()
-    .min(3, { message: 'Username must be at least 3 characters long.' })
+    .min(3, { message: 'Username must be at least 3 characters long.'})
+    .max(24, { message: 'Username may not be longer than 24 characters.'})
     .regex(/^[a-z][a-z0-9_-]+$/i, { message: 'Username must start with a letter and only use letters, numbers, underscores, and dashes.' }),
-  // TODO: this probably needs more thought
   displayName: z
     .string()
     .min(3, { message: 'Display name must be at least 3 characters long.' })
@@ -41,18 +44,25 @@ const successMessage = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 
 async function handleSubmit() {
-  // isLoading.value = true;
-  // successMessage.value = '';
-  // errorMessage.value = '';
+  if(!validate()) {
+    return;
+  }
 
-  // try {
-  //   await resendVerifyEmail();
-  //   successMessage.value = 'Link sent!';
-  // } catch(err) {
-  //   errorMessage.value = err.message;
-  // }
+  isLoading.value = true;
+  successMessage.value = '';
+  errorMessage.value = '';
 
-  // isLoading.value = false;
+  try {
+    const payload = formData();
+    await updateMe(payload);
+    await userStore.populate(true);
+
+    successMessage.value = 'Saved!';
+  } catch(err) {
+    errorMessage.value = err.message;
+  }
+
+  isLoading.value = false;
 }
 </script>
 
@@ -78,7 +88,6 @@ async function handleSubmit() {
           v-model="formModel.username"
           autocomplete="username"
           :invalid="!isFieldValid"
-          disabled
           @update:model-value="onUpdate"
         />
       </template>
@@ -88,13 +97,13 @@ async function handleSubmit() {
       label="Display NAme"
       required
       :rule="ruleFor('displayName')"
+      help="This name is used in group settings, such as on a leaderboard."
     >
       <template #default="{ onUpdate, isFieldValid }">
         <InputText
           id="account-info-form-displayName"
           v-model="formModel.displayName"
           :invalid="!isFieldValid"
-          disabled
           @update:model-value="onUpdate"
         />
       </template>
@@ -112,13 +121,10 @@ async function handleSubmit() {
           autocomplete="email"
           type="email"
           :invalid="!isFieldValid"
-          disabled
           @update:model-value="onUpdate"
         />
       </template>
     </FieldWrapper>
-    <!-- no actions for this disabled form -->
-    <template #actions />
   </TbForm>
 </template>
 

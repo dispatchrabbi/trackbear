@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 import { User } from '@prisma/client';
-import { getMe } from 'src/lib/api/user.ts';
+import { getMe } from 'src/lib/api/me.ts';
 
 import { useGoalStore } from 'src/stores/goal.ts';
 const goalStore = useGoalStore();
@@ -34,7 +34,7 @@ async function loadUser() {
   try {
     user.value = await getMe();
   } catch(err) {
-    router.push('/logout');
+    router.push({ name: 'login' });
   }
 }
 

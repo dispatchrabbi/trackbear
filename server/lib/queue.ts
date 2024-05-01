@@ -6,6 +6,8 @@ import sendSignupEmailTask from './tasks/send-signup-email.ts';
 import sendPwchangeEmailTask from './tasks/send-pwchange-email.ts';
 import sendPwresetEmailTask from './tasks/send-pwreset-email.ts';
 import sendEmailverificationEmailTask from './tasks/send-emailverification-email.ts';
+import sendUsernameChangedEmailTask from './tasks/send-username-changed-email.ts';
+import sendAccountDeletedEmailTask from './tasks/send-account-deleted-email.ts';
 import sendTestEmail from './tasks/send-test-email.ts';
 
 // use the queue log to log info about the queue
@@ -45,6 +47,8 @@ async function initQueue() {
   registerTaskType(sendPwchangeEmailTask);
   registerTaskType(sendPwresetEmailTask);
   registerTaskType(sendEmailverificationEmailTask);
+  registerTaskType(sendUsernameChangedEmailTask);
+  registerTaskType(sendAccountDeletedEmailTask);
   registerTaskType(sendTestEmail);
 
   const queueLogger = winston.loggers.get('queue');

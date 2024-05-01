@@ -3,10 +3,10 @@
 ## Next
 - [X] Preserve destination through login/signup
 - [ ] Improved account settings
-  - [ ] Change username
-  - [ ] Change display name
+  - [X] Change username
+  - [X] Change display name
   - [ ] Upload avatar
-  - [ ] Delete your account
+  - [X] Delete your account
 - [ ] Leaderboards:
   - [ ] Create, edit, delete, close invites
   - [ ] Let others join the board
@@ -14,11 +14,12 @@
   - [ ] Remove others from the board
 - [ ] Admin user management
   - [X] Suspend/activate account
+  - [X] Delete/restore account
   - [X] Send emails
   - [ ] Rename user
   - [ ] Force password reset
-  - [ ] View audit events
-  - [ ] Add user ID to sessions and session ID to audit events
+  - [ ] View audit events more nicely
+  - [ ] Add session ID to audit events
 
 ## Soon
 - [ ] Fix the required-auth page architecture
@@ -37,6 +38,7 @@
   - [ ] Make the worker and queue architectures... better
   - [ ] Do a better job with shared data/functions
   - [ ] Figure out how to make 'server/*' work on back end imports
+  - [ ] Make the API more consistent w/r/t PUT, POST, and PATCH
 
 # Future
 - [ ] API access
@@ -52,9 +54,6 @@
   - [X] Double-check Helmet settings
   - [ ] Make rate-limiting better
   - [ ] Lock-out sign-in attempts
-- [ ] Observability
-  - [ ] Ship logs somewhere
-  - [ ] Ship metrics/telemetry somewhere
 - [ ] TOTP
 - [ ] ...passkeys?!
 

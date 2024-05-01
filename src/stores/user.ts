@@ -38,8 +38,8 @@ export const useUserStore = defineStore('user', {
       const goalStore = useGoalStore();
       goalStore.$reset();
     },
-    async populate() {
-      if(this.user === null) {
+    async populate(force = false) {
+      if(force || this.user === null) {
         const user = await getUser();
         this.user = user;
       }

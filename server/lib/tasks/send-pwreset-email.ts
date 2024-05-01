@@ -7,6 +7,7 @@ import { PASSWORD_RESET_LINK_STATE } from '../states.ts';
 
 import { getNormalizedEnv } from '../env.ts';
 import { logAuditEvent, TRACKBEAR_SYSTEM_ID } from '../audit-events.ts';
+import { USER_STATE } from '../models/user.ts';
 
 async function handler(task) {
   let resetLink: PasswordResetLink & { user: User };
@@ -15,6 +16,7 @@ async function handler(task) {
       where: {
         uuid: task.resetUuid,
         state: PASSWORD_RESET_LINK_STATE.ACTIVE,
+        user: { state: USER_STATE.ACTIVE },
       },
       include: { user: true }
     });
@@ -45,7 +47,7 @@ Hi, ${user.displayName}!
 
 Please click this link to reset your password: ${resetUrl}
 
-This link will stay active for 10 minutes, after which you will have to request a new link.
+This link will stay active for 10 minutes, after which it will expire and you will have to request a new link.
 
 Beary sincerely yours,
 TrackBear
