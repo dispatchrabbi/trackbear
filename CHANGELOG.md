@@ -12,11 +12,7 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-## 0.9.12
-
-- FIXED: In some cases, avatar uploads would fail. This should now be fixed.
-
-## 0.9.11
+## 0.9.13
 
 - NEW: You can now change your username, display name, and email address.
 - NEW:You can also upload a custom avatar! This is fun in general, but will come in handy with the planned multi-user leaderboard features.
