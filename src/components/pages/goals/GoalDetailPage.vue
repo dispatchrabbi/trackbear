@@ -28,8 +28,10 @@ import { GOAL_TYPE } from 'server/lib/models/goal.ts';
 
 const goalId = ref<number>(+route.params.id);
 watch(() => route.params.id, newId => {
-  goalId.value = +newId;
-  reloadGoals(); // this isn't a great pattern - it should get changed
+  if(newId !== undefined) {
+    goalId.value = +newId;
+    reloadGoals(); // this isn't a great pattern - it should get changed
+  }
 });
 
 const goal = ref<GoalWithWorksAndTags | null>(null);

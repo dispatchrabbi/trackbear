@@ -20,12 +20,14 @@ const props = defineProps<{
 
 const habitStats = computed(() => {
   const now = new Date();
+  const goalEndDate = parseDateStringSafe(props.goal.endDate) ?? now;
+  const endDate = now < goalEndDate ? now : goalEndDate;
 
   const stats = analyzeHabitTallies(
     props.tallies,
     props.goal,
     props.goal.startDate,
-    props.goal.endDate ?? formatDate(now),
+    formatDate(endDate),
   );
 
   return stats;

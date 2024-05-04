@@ -16,6 +16,7 @@ Types of changes include:
 - NEW:You can also upload a custom avatar! This is fun in general, but will come in handy with the planned multi-user leaderboard features.
 - NEW: You can now delete your account.
 - CHANGED: When a user gets redirected to login, they will now return to the page they were on when they got redirected after logging back in again, instead of landing at the Dashboard. They will even be correctly redirected if they need to go through signup; this is to prepare for sharing TrackBear links in the future.
+- FIXED: Habit goals on the Dashboard with an end date will now show the most recent 5 days, not the last 5 days of the goal. (h/t EosLaetitia)
 - SECURITY: Sessions now expire after 48 hours, but the expiration is also now reset every time a user takes an action. The upshot here is that a user who is adding progress every day (with a grace period) will never get logged out, but users who do not will need to log back in.
 
 ## 0.9.10

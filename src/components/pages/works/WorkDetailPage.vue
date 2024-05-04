@@ -28,8 +28,10 @@ const workId = ref<number>(+route.params.id);
 watch(
   () => route.params.id,
   newId => {
-    workId.value = +newId;
-    reloadWorks(); // this isn't a great pattern - it should get changed
+    if(newId !== undefined) {
+      workId.value = +newId;
+      reloadWorks(); // this isn't a great pattern - it should get changed
+    }
   }
 );
 
