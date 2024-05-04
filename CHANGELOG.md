@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.9.12
+
+- FIXED: In some cases, avatar uploads would fail. This should now be fixed.
+
 ## 0.9.11
 
 - NEW: You can now change your username, display name, and email address.
