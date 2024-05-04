@@ -18,3 +18,11 @@ export async function updateMe(data: MeEditPayload) {
 export async function deleteMe() {
   return callApiV1<User>(ENDPOINT, 'DELETE');
 }
+
+export async function uploadAvatar(data: FormData) {
+  return callApiV1<User>(ENDPOINT + '/avatar', 'POST', data);
+}
+
+export async function deleteAvatar() {
+  return callApiV1<User>(ENDPOINT + '/avatar', 'DELETE');
+}

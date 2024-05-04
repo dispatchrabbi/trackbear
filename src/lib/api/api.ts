@@ -9,12 +9,14 @@ export type RoundTrip<T extends object> = {
   [K in keyof T]: T[K] extends Date ? DateString : T[K]
 };
 
-export async function callApi<T>(path: string, method: string = 'GET', payload: object | null = null, query: object | null = null): Promise<ApiResponse<T>> {
+export async function callApi<T>(path: string, method: string = 'GET', payload: Record<string, unknown> | FormData | null = null, query: object | null = null): Promise<ApiResponse<T>> {
   const headers = {};
   let body = null;
 
-  // until we have to do file uploads, this will suffice for all payloads
-  if(payload !== null) {
+  if(payload instanceof FormData) {
+    body = payload;
+    // do not set Content-Type; this allows fetch to set the multipart/form-data boundary itself
+  } else if(payload !== null) {
     body = JSON.stringify(payload);
     headers['Content-Type'] = 'application/json';
   }
@@ -37,7 +39,7 @@ export async function callApi<T>(path: string, method: string = 'GET', payload: 
   };
 }
 
-export async function callApiV1<T>(path: string, method: string = 'GET', payload: object | null = null, query: object | null = null): Promise<T> {
+export async function callApiV1<T>(path: string, method: string = 'GET', payload: Record<string, unknown> | FormData | null = null, query: object | null = null): Promise<T> {
   const response = await callApi<T>(path, method, payload, query);
 
   if(response.success === true) {
@@ -47,7 +49,7 @@ export async function callApiV1<T>(path: string, method: string = 'GET', payload
   }
 }
 
-export function makeCrudFns<Entity extends object, CreatePayload extends object, UpdatePayload extends object = CreatePayload>(entityName: string) {
+export function makeCrudFns<Entity extends object, CreatePayload extends Record<string, unknown>, UpdatePayload extends Record<string, unknown> = CreatePayload>(entityName: string) {
   const path = `/api/v1/${entityName}`;
   return {
     getAll: async function() {

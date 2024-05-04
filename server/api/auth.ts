@@ -62,17 +62,11 @@ const passwordResetPayloadSchema = z.object({
   newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
 });
 
-export type UserResponse = {
-  uuid: string;
-  username: string;
-  displayName: string;
-};
-
 const authRouter = Router();
 
 authRouter.post('/login',
   validateBody(z.object({ username: z.string().toLowerCase(), password: z.string() })),
-  async (req: Request, res: ApiResponse<UserResponse>, next) =>
+  async (req: Request, res: ApiResponse<User>, next) =>
 {
   const { username, password } = req.body;
 
@@ -112,26 +106,7 @@ authRouter.post('/login',
   winston.debug(`LOGIN: ${username} successfully logged in`);
   await logAuditEvent('user:login', user.id, null, null, null, req.sessionID);
 
-  const userResponse: UserResponse = {
-    uuid: user.uuid,
-    username: user.username,
-    displayName: user.displayName,
-  };
-  return res.status(200).send(success(userResponse));
-});
-
-authRouter.get('/user',
-  requireUser,
-  (req: WithUser<Request>, res: ApiResponse<UserResponse>) =>
-{
-  const user = req.user;
-  const userResponse: UserResponse = {
-    uuid: user.uuid,
-    username: user.username,
-    displayName: user.displayName,
-  };
-
-  res.status(200).send(success(userResponse));
+  return res.status(200).send(success(user));
 });
 
 // logout ought to requireUser but since all it does is remove that user,
@@ -149,7 +124,7 @@ authRouter.post('/logout', (req, res: ApiResponse<EmptyObject>) => {
 
 authRouter.post('/signup',
   validateBody(createUserPayloadSchema),
-  async (req, res: ApiResponse<UserResponse>, next) =>
+  async (req, res: ApiResponse<User>, next) =>
 {
   const { username: submittedUsername, password, email } = req.body as CreateUserPayload;
 
@@ -210,11 +185,7 @@ authRouter.post('/signup',
     pushTask(sendSignupEmailTask.makeTask(user.id));
     pushTask(sendEmailverificationEmail.makeTask(user.pendingEmailVerifications[0].uuid));
 
-    res.status(201).send(success({
-      uuid: user.uuid,
-      username: user.username,
-      displayName: user.displayName,
-    }));
+    res.status(201).send(success(user));
   } catch(err) { return next(err); }
 });
 

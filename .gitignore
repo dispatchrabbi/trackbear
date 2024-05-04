@@ -65,5 +65,12 @@ node_modules/
 dist
 dist-ssr
 *.local
+
+# Storage for database files
 db
+
+# Certificate files
 certs
+
+# User uploads
+uploads

@@ -11,6 +11,7 @@ async function middleware() {
         directives: {
           "default-src": ["'self'", "ws://localhost:24678", "wss://localhost:24678", "http://localhost:24678", "https://localhost:24678"],
           "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+          "img-src": ["'self'", "blob:"],
         },
       },
     });
@@ -19,6 +20,7 @@ async function middleware() {
       contentSecurityPolicy: {
         directives: {
           "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+          "img-src": ["'self'", "blob:"],
         },
       },
     });

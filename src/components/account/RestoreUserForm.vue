@@ -5,7 +5,7 @@ import wait from 'src/lib/wait.ts';
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
-import { updateUserState } from 'src/lib/api/admin/user';
+import { updateUserState } from 'src/lib/api/admin/user.ts';
 import { USER_STATE } from 'server/lib/models/user.ts';
 
 import InputText from 'primevue/inputtext';

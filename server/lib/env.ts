@@ -26,6 +26,8 @@ type TrackbearCommonEnv = {
   ENABLE_EMAIL: boolean;
   MAILERSEND_API_KEY: string;
   EMAIL_URL_PREFIX: string;
+
+  UPLOADS_PATH: string;
 };
 
 type TrackbearTlsEnv =
@@ -116,6 +118,8 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   if(!process.env.EMAIL_URL_PREFIX) { throw new Error('Missing EMAIL_URL_PREFIX value in .env'); }
   if(process.env.EMAIL_URL_PREFIX.startsWith('"') && process.env.EMAIL_URL_PREFIX.endsWith('"')) { console.warn('EMAIL_URL_PREFIX value is quoted; it probably should not be.'); }
 
+  process.env.UPLOADS_PATH = process.env.UPLOADS_PATH || '/uploads';
+
   // second step is to parse the values into more usable types
   return {
     NODE_ENV:               process.env.NODE_ENV,
@@ -142,6 +146,8 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
     ENABLE_EMAIL:           process.env.ENABLE_EMAIL === '1',
     MAILERSEND_API_KEY:     process.env.MAILERSEND_API_KEY,
     EMAIL_URL_PREFIX:       process.env.EMAIL_URL_PREFIX,
+
+    UPLOADS_PATH:           process.env.UPLOADS_PATH,
   };
 }
 

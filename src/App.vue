@@ -1,5 +1,7 @@
 <script setup lang="ts">
+
 import Toast from 'primevue/toast';
+import ConfirmPopup from 'primevue/confirmpopup';
 
 </script>
 
@@ -13,6 +15,7 @@ import Toast from 'primevue/toast';
     </template>
   </RouterView>
   <Toast />
+  <ConfirmPopup />
 </template>
 
 <style scoped>

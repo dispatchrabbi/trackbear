@@ -48,6 +48,7 @@ model User {
 
   username    String @unique
   displayName String
+  avatar      String?
 
   email           String
   isEmailVerified Boolean @default(false)

@@ -3,16 +3,16 @@ import { ref, defineProps, defineEmits } from "vue";
 
 import { RouterLink } from "vue-router";
 
-import { useUserStore } from "src/stores/user";
+import { useUserStore } from "src/stores/user.ts";
 const userStore = useUserStore();
 
 import { PrimeIcons } from 'primevue/api';
-import Avatar from "primevue/avatar";
 import Button from "primevue/button";
 import Menu from "primevue/menu";
 import Breadcrumb from "primevue/breadcrumb";
 import type { MenuItem } from 'primevue/menuitem';
 import TrackbearMasthead from "./TrackbearMasthead.vue";
+import UserAvatar from "../UserAvatar.vue";
 
 const props = defineProps<{
   breadcrumbs: MenuItem[];
@@ -90,17 +90,15 @@ const toggleUserMenu = ev => userMenu.value.toggle(ev);
     <div
       :class="[
         'mr-2 p-1 pr-2 rounded-md',
-        'flex items-baseline gap-2',
+        'flex items-center gap-2',
         'hover:text-primary-600 dark:hover:text-primary-300 hover:bg-surface-100 dark:hover:bg-surface-400/10 cursor-pointer',
       ]"
       aria-haspopup="true"
       aria-controls="user-menu"
       @click="toggleUserMenu"
     >
-      <Avatar
-        label="🐻"
-        shape="circle"
-        size="large"
+      <UserAvatar
+        :user="userStore.user"
       />
       <div class="font-light">
         {{ userStore.user.displayName }}

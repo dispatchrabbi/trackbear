@@ -169,5 +169,10 @@ export default {
                 'transition-width duration-1000 ease-in-out'
             ]
         }
+    },
+    badge: {
+        root: {
+            class: 'px-2'
+        }
     }
 };

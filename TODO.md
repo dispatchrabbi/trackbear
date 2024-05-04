@@ -2,10 +2,10 @@
 
 ## Next
 - [X] Preserve destination through login/signup
-- [ ] Improved account settings
+- [X] Improved account settings
   - [X] Change username
   - [X] Change display name
-  - [ ] Upload avatar
+  - [X] Upload avatar
   - [X] Delete your account
 - [ ] Leaderboards:
   - [ ] Create, edit, delete, close invites

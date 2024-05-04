@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import { logIn, logOut, getUser } from 'src/lib/api/auth.ts';
+import { logIn, logOut } from 'src/lib/api/auth.ts';
+import { getMe } from 'src/lib/api/me.ts';
 
 import { useWorkStore } from 'src/stores/work.ts';
 import { useTagStore } from 'src/stores/tag.ts';
@@ -13,8 +14,8 @@ export const useUserStore = defineStore('user', {
   },
   actions: {
     async logIn(username: string, password: string) {
-      const user = await logIn(username, password);
-      this.user = user;
+      await logIn(username, password);
+      await this.populate(true);
 
       const workStore = useWorkStore();
       workStore.$reset();
@@ -40,8 +41,7 @@ export const useUserStore = defineStore('user', {
     },
     async populate(force = false) {
       if(force || this.user === null) {
-        const user = await getUser();
-        this.user = user;
+        this.user = await getMe();
       }
     }
   },
