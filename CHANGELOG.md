@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.9.11
+
 - NEW: You can now change your username, display name, and email address.
 - NEW:You can also upload a custom avatar! This is fun in general, but will come in handy with the planned multi-user leaderboard features.
 - NEW: You can now delete your account.
