@@ -28,6 +28,7 @@
     "version": "VERSION=$(npm pkg get version --workspaces=false | tr -d \\\"); git add .; git commit -m \"v${VERSION}\"; git tag -a \"v${VERSION}\" -m \"v${VERSION}\""
   },
   "dependencies": {
+    "@observablehq/plot": "^0.6.14",
     "@prisma/client": "^5.10.2",
     "@quixo3/prisma-session-store": "^3.1.13",
     "@vitejs/plugin-vue": "^4.5.0",
