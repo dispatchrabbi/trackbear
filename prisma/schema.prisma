@@ -5,18 +5,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// datasource db {
-//   provider = "sqlite"
-//   url      = env("DB_APP_DB_URL")
-// }
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
-// ----------------------------------------------------------------------------
-// These models are for general system functioning
 
 model Session {
   id        String   @id
@@ -46,7 +38,7 @@ model User {
   uuid  String @unique @default(uuid())
   state String
 
-  username    String @unique
+  username    String  @unique
   displayName String
   avatar      String?
 
@@ -57,6 +49,7 @@ model User {
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
   userAuth UserAuth?
+  adminPerms AdminPerms?
 
   passwordResetLinks        PasswordResetLink[]
   pendingEmailVerifications PendingEmailVerification[]
@@ -64,8 +57,8 @@ model User {
   works                     Work[]
   tags                      Tag[]
   goals                     Goal[]
-
-  adminPerms AdminPerms?
+  boards                    Board[]
+  boardParticipants         BoardParticipant[]
 }
 
 model UserAuth {
@@ -134,9 +127,6 @@ model Banner {
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 }
 
-// ----------------------------------------------------------------------------
-// These models are for the tag-and-tally idiom
-
 model Tally {
   id        Int      @id @default(autoincrement())
   uuid      String   @unique @default(uuid())
@@ -174,10 +164,11 @@ model Work {
 
   startingBalance Json @default("{}")
 
-  starred     Boolean @default(false)
+  starred Boolean @default(false)
 
-  tallies Tally[]
-  goals   Goal[]
+  tallies          Tally[]
+  goals            Goal[]
+  boardParticiants BoardParticipant[]
 }
 
 model Tag {
@@ -193,8 +184,9 @@ model Tag {
   name  String
   color String
 
-  tallies Tally[]
-  goals   Goal[]
+  tallies          Tally[]
+  goals            Goal[]
+  boardParticiants BoardParticipant[]
 
   @@unique([ownerId, name])
 }
@@ -218,47 +210,47 @@ model Goal {
   startDate String?
   endDate   String?
 
-  starred     Boolean @default(false)
+  starred Boolean @default(false)
 
   worksIncluded Work[]
   tagsIncluded  Tag[]
 }
 
-// Board and Participant are not yet implemented
-// model Board {
-//   id   Int    @id @default(autoincrement())
-//   uuid String @unique @default(uuid())
-//   state String
-//   createdAt DateTime @db.Timestamptz(3) @default(now())
-//   updatedAt DateTime @db.Timestamptz(3) @updatedAt
+model Board {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  state     String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
-//   ownerId Int
-//   owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
-//   title String
-//   description String
-//   starred Boolean
-//   visibility String
+  title       String
+  description String
 
-//   parameters Json
+  startDate String?
+  endDate   String?
+  goal      Json
 
-//   joinability String
-//   participants Participant[]
-// }
+  isJoinable   Boolean
+  participants BoardParticipant[]
+}
 
-// model Participant {
-//   id   Int    @id @default(autoincrement())
-//   uuid String @unique @default(uuid())
-//   state String
-//   createdAt DateTime @db.Timestamptz(3) @default(now())
-//   updatedAt DateTime @db.Timestamptz(3) @updatedAt
+model BoardParticipant {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  state     String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
-//   userId Int
-//   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-//   boardId Int
-//   board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  boardId Int
+  board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  role    String
 
-//   role String
-//   parameters Json
-// }
+  worksIncluded Work[]
+  tagsIncluded  Tag[]
+}

@@ -1,6 +1,9 @@
 import { Router } from "express";
 const v1Router = Router();
 
+import boardRouter from "./board.ts";
+v1Router.use('/board', boardRouter);
+
 import goalRouter from './goal.ts';
 v1Router.use('/goal', goalRouter);
 
