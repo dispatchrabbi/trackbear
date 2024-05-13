@@ -98,7 +98,7 @@ onMounted(async () => {
       </RouterLink>
     </div>
     <div v-if="filteredWorks.length === 0 && works.length > 0">
-      No projects found.
+      No matching projects found.
     </div>
     <div v-if="works.length === 0">
       You haven't made any projects yet. Click the <span class="font-bold">New</span> button to get started!

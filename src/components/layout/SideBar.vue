@@ -11,6 +11,10 @@ import { useGoalStore } from 'src/stores/goal.ts';
 import { cmpGoal } from 'src/lib/goal.ts';
 const goalStore = useGoalStore();
 
+import { useBoardStore } from 'src/stores/board.ts';
+import { cmpBoard } from 'src/lib/board.ts';
+const boardStore = useBoardStore();
+
 import MenuBar from 'src/components/layout/MenuBar.vue';
 import { PrimeIcons } from 'primevue/api';
 
@@ -49,6 +53,19 @@ const items = computed(() => {
       key: `goal-${goal.id}`,
       label: goal.title,
       to: { name: 'goal', params: { id: goal.id } },
+    })),
+    // boards
+    {
+      key: 'boards',
+      label: 'Boards',
+      icon: PrimeIcons.CHART_LINE,
+      to: { name: 'boards' },
+      header: true,
+    },
+    ...(boardStore.starredBoards ?? []).toSorted(cmpBoard).map(board => ({
+      key: `board-${board.id}`,
+      label: board.title,
+      to: { name: 'board', params: { uuid: board.uuid } },
     }))
   ];
 });

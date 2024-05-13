@@ -33,6 +33,9 @@ import NewGoalPage from './components/pages/goals/NewGoalPage.vue';
 import GoalDetailPage from './components/pages/goals/GoalDetailPage.vue';
 import EditGoalPage from './components/pages/goals/EditGoalPage.vue';
 
+import BoardsListPage from 'src/components/pages/boards/BoardsListPage.vue';
+import BoardDetailPage from 'src/components/pages/boards/BoardDetailPage.vue';
+
 const routes = [
   // no login needed
   { path: '/', name: 'home', component: HomePage },
@@ -62,6 +65,10 @@ const routes = [
   { path: '/goals/new', name: 'new-goal', component: NewGoalPage },
   { path: '/goals/:id', name: 'goal', component: GoalDetailPage },
   { path: '/goals/:id/edit', name: 'edit-goal', component: EditGoalPage },
+
+  // Boards section
+  { path: '/boards', name: 'boards', component: BoardsListPage },
+  { path: '/boards/:uuid', name: 'board', component: BoardDetailPage },
 
   // Account section
   { path: '/settings/account', name: 'account', component: AccountPage },

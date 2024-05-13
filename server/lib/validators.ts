@@ -15,7 +15,7 @@ export const zIdParam = function() {
 }
 
 export const zUuidParam = function() {
-  return z.object({ id: z.string().uuid() });
+  return z.object({ uuid: z.string().uuid() });
 }
 
 export const zDateStr = function(params?: { message?: string; }) {

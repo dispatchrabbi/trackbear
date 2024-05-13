@@ -2,37 +2,33 @@
 import { ref, computed, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 
-import { useGoalStore } from 'src/stores/goal.ts';
-const goalStore = useGoalStore();
-
-import { getGoals, Goal } from 'src/lib/api/goal.ts';
-import { cmpGoal } from 'src/lib/goal.ts';
+import { useBoardStore } from 'src/stores/board.ts';
+import { cmpBoard } from 'src/lib/board.ts';
+const boardStore = useBoardStore();
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
-
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 
-import GoalTile from 'src/components/goal/GoalTile.vue';
+import BoardTile from 'src/components/board/BoardTile.vue';
 import { PrimeIcons } from 'primevue/api';
 
 const breadcrumbs: MenuItem[] = [
-  { label: 'Goals', url: '/goals' },
+  { label: 'Boards', url: '/boards' },
 ];
 
-const goals = ref<Goal[]>([]);
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string | null>(null);
 
-const loadGoals = async function() {
+const loadBoards = async function(force = false) {
   isLoading.value = true;
   errorMessage.value = null;
 
   try {
-    goals.value = await getGoals();
+    await boardStore.populate(force);
   } catch(err) {
     errorMessage.value = err.message;
   } finally {
@@ -40,20 +36,23 @@ const loadGoals = async function() {
   }
 }
 
-const reloadGoals = async function() {
-  goalStore.populate(true);
-  loadGoals();
+const reloadBoards = async function() {
+  loadBoards(true);
 }
 
-const goalsFilter = ref<string>('');
-const filteredGoals = computed(() => {
-  const sortedGoals = goals.value.toSorted(cmpGoal);
-  const searchTerm = goalsFilter.value.toLowerCase();
-  return sortedGoals.filter(goal => goal.title.toLowerCase().includes(searchTerm) || goal.description.toLowerCase().includes(searchTerm));
+const boards = computed(() => {
+  return boardStore.boards === null ? [] : boardStore.boards;
+})
+
+const boardsFilter = ref<string>('');
+const filteredBoards = computed(() => {
+  const sortedGoals = boards.value.toSorted(cmpBoard);
+  const searchTerm = boardsFilter.value.toLowerCase();
+  return sortedGoals.filter(board => board.title.toLowerCase().includes(searchTerm) || board.description.toLowerCase().includes(searchTerm));
 });
 
 onMounted(() => {
-  loadGoals();
+  loadBoards();
 });
 
 </script>
@@ -69,14 +68,14 @@ onMounted(() => {
             <span :class="PrimeIcons.SEARCH" />
           </InputIcon>
           <InputText
-            v-model="goalsFilter"
+            v-model="boardsFilter"
             class="w-full"
             placeholder="Type to filter..."
           />
         </IconField>
       </div>
       <div>
-        <RouterLink to="/goals/new">
+        <RouterLink to="/boards/new">
           <Button
             label="New"
             :icon="PrimeIcons.PLUS"
@@ -85,25 +84,22 @@ onMounted(() => {
       </div>
     </div>
     <div
-      v-for="goal in filteredGoals"
-      :key="goal.id"
+      v-for="board in filteredBoards"
+      :key="board.id"
       class="mb-2"
     >
-      <RouterLink :to="{ name: 'goal', params: { id: goal.id } }">
-        <GoalTile
-          :goal="goal"
-          @goal:star="reloadGoals()"
+      <RouterLink :to="{ name: 'board', params: { uuid: board.uuid } }">
+        <BoardTile
+          :board="board"
+          @board:star="reloadBoards()"
         />
       </RouterLink>
     </div>
-    <div v-if="filteredGoals.length === 0 && goals.length > 0">
-      No matching goals found.
+    <div v-if="filteredBoards.length === 0 && boards.length > 0">
+      No matching boards found.
     </div>
-    <div v-if="goals.length === 0">
-      You haven't made any goals yet. Click the <span class="font-bold">New</span> button to get started!
+    <div v-if="boards.length === 0">
+      You haven't made any boards yet. Click the <span class="font-bold">New</span> button to get started!
     </div>
   </ApplicationLayout>
 </template>
-
-<style scoped>
-</style>

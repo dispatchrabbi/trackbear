@@ -12,7 +12,7 @@ export const useGoalStore = defineStore('goal', {
         return [];
       }
 
-      return state.goals.filter(work => work.starred);
+      return state.goals.filter(goal => goal.starred);
     },
   },
   actions: {

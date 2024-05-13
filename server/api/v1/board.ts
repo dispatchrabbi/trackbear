@@ -56,7 +56,7 @@ boardRouter.get('/:uuid',
 }));
 
 // POST / - create a new board
-type BoardCreatePayload = {
+export type BoardCreatePayload = {
   title: string;
   description: string;
   startDate?: string;
@@ -77,9 +77,8 @@ const zBoardCreatePayload = z.object({
 
 boardRouter.post('/',
   requireUser,
-  validateParams(zUuidParam()),
   validateBody(zBoardCreatePayload),
-  h(async (req: RequestWithUser, res: ApiResponse<FullBoard>) =>
+  h(async (req: RequestWithUser, res: ApiResponse<Board>) =>
 {
   const user = req.user;
   const payload = req.body as BoardCreatePayload;
@@ -96,9 +95,7 @@ boardRouter.post('/',
   await logAuditEvent('board:create', user.id, board.id, null, null, req.sessionID);
   winston.info(`BOARD: ${user.id} (${user.username}) just created Board ${board.id} (UUID ${board.uuid}: ${board.title})`);
 
-  const fullBoard = await getFullBoard(board.uuid);
-
-  return res.status(200).send(success(fullBoard));
+  return res.status(200).send(success(board as Board));
 }));
 
 // PATCH /:uuid - update a board
@@ -109,7 +106,7 @@ boardRouter.patch('/:uuid',
   requireUser,
   validateParams(zUuidParam()),
   validateBody(zBoardUpdatePayload),
-  h(async (req: RequestWithUser, res: ApiResponse<FullBoard>) =>
+  h(async (req: RequestWithUser, res: ApiResponse<Board>) =>
 {
   const user = req.user;
   const payload = req.body as BoardUpdatePayload;
@@ -127,8 +124,7 @@ boardRouter.patch('/:uuid',
 
   await logAuditEvent('board:update', user.id, board.id, null, null, req.sessionID);
 
-  const fullBoard = await getFullBoard(board.uuid);
-  return res.status(200).send(success(fullBoard));
+  return res.status(200).send(success(board as Board));
 }));
 
 // DELETE /:uuid - delete a board
