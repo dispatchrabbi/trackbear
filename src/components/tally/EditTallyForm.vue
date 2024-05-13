@@ -18,7 +18,7 @@ import { useValidation } from 'src/lib/form.ts';
 
 import { TallyPayload } from 'server/api/v1/tally.ts';
 import { updateTally, Tally, TallyWithTags } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally.ts';
 import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally.ts';
 
 const props = defineProps<{
@@ -54,7 +54,7 @@ const validations = z.object({
   workId: z.number({ invalid_type_error: 'Please select a project.' }).positive({ message: 'Please select a project.' }), // TODO: constrain to known projects
   tags: z.array(z.string()),
   count: z.number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }), // TODO: add measure type to error messages
-  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<typeof TALLY_MEASURE[keyof typeof TALLY_MEASURE]>, { required_error: 'Please pick a type.'}), // long way to go for `string`
+  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<TallyMeasure>, { required_error: 'Please pick a type.'}), // long way to go for `string`
   setTotal: z.boolean(),
   note: z.string().max(MAXIMUM_NOTE_LENGTH, { message: `Notes can be at most ${MAXIMUM_NOTE_LENGTH} characters.`}),
 });

@@ -10,3 +10,5 @@ export const TALLY_MEASURE = {
   CHAPTER: 'chapter',
   // TODO: SCENE?
 };
+
+export type TallyMeasure = typeof TALLY_MEASURE[keyof typeof TALLY_MEASURE];

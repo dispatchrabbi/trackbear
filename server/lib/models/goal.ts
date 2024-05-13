@@ -1,7 +1,7 @@
 import type { Goal, Work, Tag } from "@prisma/client";
 import dbClient from "../db.ts";
 
-import { TALLY_MEASURE, TALLY_STATE } from "./tally.ts";
+import { TALLY_STATE, TallyMeasure } from "./tally.ts";
 import type { TallyWithWorkAndTags } from "../../api/v1/tally.ts";
 
 export const GOAL_STATE = {
@@ -24,7 +24,7 @@ export const GOAL_CADENCE_UNIT = {
 };
 
 type GoalThreshold = {
-  measure: typeof TALLY_MEASURE[keyof typeof TALLY_MEASURE];
+  measure: TallyMeasure;
   count: number;
 };
 
