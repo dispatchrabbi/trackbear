@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: The activity heatmap has been revamped so it's easier to work with and add features to. The tooltips aren't as nice anymore, but I will be going back and adding better tooltips later.
+
 ## 0.9.13
 
 - NEW: You can now change your username, display name, and email address.

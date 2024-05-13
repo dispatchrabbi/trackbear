@@ -53,7 +53,6 @@ const loadTallies = async function() {
     talliesIsLoading.value = false;
   }
 }
-
 const goals = ref<GoalAndTallies[]>([]);
 const goalsIsLoading = ref<boolean>(false);
 const goalsErrorMessage = ref<string | null>(null);
@@ -106,7 +105,7 @@ onMounted(async () => {
         <UnverifiedEmailMessage />
       </div>
       <div class="flex gap-4 flex-wrap items-top">
-        <div>
+        <div class="flex-grow">
           <SectionTitle title="Activity" />
           <ActivityHeatmap
             :tallies="tallies"

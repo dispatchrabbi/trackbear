@@ -1,5 +1,5 @@
 import { addDays, eachDayOfInterval } from "date-fns";
-import { formatDate, parseDateString, maxDateStr } from "src/lib/date.ts";
+import { formatDate, parseDateString, maxDate } from "src/lib/date.ts";
 
 import type { Tally } from 'src/lib/api/tally.ts';
 import { cmpTallies } from "src/lib/tally.ts";
@@ -82,7 +82,7 @@ function determineChartEndDate(lastUpdate?: string, nominalEndDate?: string, nom
     return lastUpdate;
   } else if(nominalStartDate) {
     // display a 7-day chart
-    return maxDateStr(formatDate(addDays(parseDateString(nominalStartDate), 6)), formatDate(addDays(new Date(), 6)));
+    return maxDate(formatDate(addDays(parseDateString(nominalStartDate), 6)), formatDate(addDays(new Date(), 6)));
   } else {
     // display a 7-day chart
     return formatDate(addDays(new Date(), 6));

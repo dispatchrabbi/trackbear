@@ -2,79 +2,62 @@
 import { computed, defineProps } from 'vue';
 import type { Tally } from 'src/lib/api/tally.ts';
 
-import { getISODay, addMonths, startOfWeek } from 'date-fns';
-import { parseDateString, formatDate } from 'src/lib/date.ts';
+import { addYears } from 'date-fns';
+import { maxDate, formatDate, parseDateString } from 'src/lib/date.ts';
 
-import CalendarMatrixChart from '../chart/CalendarMatrixChart.vue';
-import { MatrixChartData, MatrixChartOptions } from '../chart/CalendarMatrixChart.vue';
-import { formatCount, compileTallies, CompiledTally } from 'src/lib/tally.ts';
-
-type ActivityHeatmapDataPoint = {
-  x: string;
-  y: string;
-  date: string;
-  value: number;
-  point: CompiledTally;
-};
+import CalendarHeatMap, { CalendarHeatMapDataPoint } from 'src/components/chart/CalendarHeatMap.vue';
+import { cmpTallies, compileTallies, formatCount } from 'src/lib/tally.ts';
 
 const props = defineProps<{
   tallies: Array<Tally>;
 }>();
 
-const chartData = computed(() => {
+const data = computed(() => {
   const today = new Date();
-  const compiledPoints = compileTallies(
-    props.tallies,
-    formatDate(startOfWeek(addMonths(today, -1), { weekStartsOn: 1 })),
+  const timelineStart = addYears(today, -1);
+
+  const sortedTallies = props.tallies.toSorted(cmpTallies);
+
+  const compiledTallies = compileTallies(
+    sortedTallies,
+    sortedTallies.length > 0 ? maxDate(sortedTallies[0].date, formatDate(timelineStart)) : formatDate(timelineStart),
     formatDate(today),
   );
 
-  const tallyData: ActivityHeatmapDataPoint[] = compiledPoints.map(point => ({
-    x: point.date,
-    y: '' + getISODay(parseDateString(point.date)),
-    date: point.date,
-    value: point.tallies.length > 0 ? 1 : 0, // we just care about whether you actually did the thing (for now)
-    point,
+  const compiledData = compiledTallies.map(compiledTally => ({
+    date: parseDateString(compiledTally.date),
+    value: compiledTally.count,
   }));
 
-  const data: MatrixChartData = {
-    datasets: [{
-      label: 'Activity',
-      data: tallyData,
-    }]
-  };
-
-  return data;
+  return compiledData;
 });
 
-const chartOptions: MatrixChartOptions = {
-  plugins: {
-    tooltip: {
-      callbacks: {
-        label: ctx => {
-          const point = (ctx.raw as ActivityHeatmapDataPoint).point;
-
-          const labels = [];
-          for(const measure of Object.keys(point.count)) {
-            if(point.count[measure] !== 0) { // negative or positive progress both count
-              labels.push(formatCount(point.count[measure], measure));
-            }
-          }
-
-          return labels.length > 0 ? labels : point.tallies.length > 0 ? 'Net zero 🌱' : 'No activity';
-        },
-      }
+const maxima = computed(() => {
+  return data.value.reduce((obj, datum) => {
+    for(const measure of Object.keys(datum.value)) {
+      obj[measure] = Math.max(obj[measure] || 0, Math.abs(datum.value[measure]));
     }
-  }
+
+    return obj;
+  }, {});
+});
+
+const normalizerFn = function(datum: CalendarHeatMapDataPoint/*, data: CalendarHeatMapDataPoint[]*/) {
+  return Math.max(...Object.keys(datum.value).map(measure => maxima.value[measure] === 0 ? 0 : datum.value[measure] / maxima.value[measure]));
+};
+const valueFormatFn = function(datum: CalendarHeatMapDataPoint) {
+  return Object.keys(datum.value).filter(measure => datum.value[measure] > 0).map(measure => formatCount(datum.value[measure], measure)).join('\n');
 };
 
 </script>
 
 <template>
-  <CalendarMatrixChart
-    :data="chartData"
-    :options="chartOptions"
-    highlight-today
+  <CalendarHeatMap
+    v-if="props.tallies.length > 0"
+    :data="data"
+    anchor="end"
+    :normalizer-fn="normalizerFn"
+    :value-format-fn="valueFormatFn"
   />
 </template>
 

@@ -63,11 +63,11 @@ export function formatDuration(totalMinutes, omitZeroMinutes = false, forceColon
   }
 }
 
-export function minDateStr(a, b) {
+export function minDate<T extends Date|string>(a: T, b: T) {
   return a < b ? a : b;
 }
 
-export function maxDateStr(a, b) {
+export function maxDate<T extends Date|string>(a: T, b: T) {
   return a > b ? a : b;
 }
 
