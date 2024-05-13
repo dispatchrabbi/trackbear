@@ -48,7 +48,7 @@ model User {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
-  userAuth UserAuth?
+  userAuth   UserAuth?
   adminPerms AdminPerms?
 
   passwordResetLinks        PasswordResetLink[]
@@ -166,9 +166,9 @@ model Work {
 
   starred Boolean @default(false)
 
-  tallies          Tally[]
-  goals            Goal[]
-  boardParticiants BoardParticipant[]
+  tallies           Tally[]
+  goals             Goal[]
+  boardParticipants BoardParticipant[]
 }
 
 model Tag {
@@ -184,9 +184,9 @@ model Tag {
   name  String
   color String
 
-  tallies          Tally[]
-  goals            Goal[]
-  boardParticiants BoardParticipant[]
+  tallies           Tally[]
+  goals             Goal[]
+  boardParticipants BoardParticipant[]
 
   @@unique([ownerId, name])
 }
@@ -233,7 +233,9 @@ model Board {
   endDate   String?
   goal      Json
 
-  isJoinable   Boolean
+  starred Boolean @default(false)
+
+  isJoinable   Boolean            @default(false)
   participants BoardParticipant[]
 }
 
@@ -244,12 +246,11 @@ model BoardParticipant {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
-  userId Int
+  userId Int  @unique
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   boardId Int
   board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
-  role    String
 
   worksIncluded Work[]
   tagsIncluded  Tag[]

@@ -101,7 +101,7 @@ const zHabitGoalParameters = z.object({
   }).nullable(),
 }).strict();
 const zGoalCreatePayload = z.object({
-  title: z.string(),
+  title: z.string().min(1),
   description: z.string(),
   type: z.enum(Object.values(GOAL_TYPE) as NonEmptyArray<string>),
   parameters: z.union([ zTargetGoalParameters, zHabitGoalParameters ]), // I could enforce this more strictly with a discriminated union, but it's terrible in zod
@@ -170,12 +170,12 @@ goalRouter.put('/:id',
     },
     data: {
       ...omit(payload, ['works', 'tags']),
-      worksIncluded: payload.works ? { connect: payload.works.map(workId => ({
+      worksIncluded: payload.works ? { set: payload.works.map(workId => ({
         id: workId,
         ownerId: user.id,
         state: WORK_STATE.ACTIVE,
       })) } : undefined,
-      tagsIncluded: payload.tags ? { connect: payload.tags.map(workId => ({
+      tagsIncluded: payload.tags ? { set: payload.tags.map(workId => ({
         id: workId,
         ownerId: user.id,
         state: TAG_STATE.ACTIVE,
