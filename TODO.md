@@ -4,12 +4,11 @@
 - [ ] Leaderboards:
   - [X] Create, edit, delete, close invites
   - [X] Let others join the board
+  - [ ] Add "Join" button to the list page
   - [ ] Restrict measures per board
   - [X] Show avatars beside progress
-  - [ ] Remove others from the board
   - [X] Add user avatars on board tile
   - [X] Fix board starring so owners and participants can star
-  - [ ] Show starred boards on dashboard
 - [ ] Admin user management
   - [X] Suspend/activate account
   - [X] Delete/restore account
@@ -29,6 +28,9 @@
   - [ ] Totals by tag
   - [ ] Ability to exempt tags/projects from total
 - [ ] Implement project tags
+- [ ] Show starred projects on dashboard
+- [ ] Show starred boards on dashboard
+- [ ] Allow owners to remove participants from the board
 - [ ] Code quality improvements
   - [ ] Replace the try/catch api call logic in the front-end with something less onerous
   - [X] Make an async error handler wrapper for the backend api handlers so the try/catches can be removed
