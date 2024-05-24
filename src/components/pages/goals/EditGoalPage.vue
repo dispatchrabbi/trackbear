@@ -19,8 +19,10 @@ import Card from 'primevue/card';
 
 const goalId = ref<number>(+route.params.id);
 watch(() => route.params.id, newId => {
-  goalId.value = +newId;
-  loadGoal();
+  if(newId !== undefined) {
+    goalId.value = +newId;
+    loadGoal();
+  }
 });
 
 const goal = ref<GoalWithWorksAndTags | null>(null);
@@ -29,7 +31,7 @@ const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
     { label: 'Goals', url: '/goals' },
     { label: goal.value === null ? 'Loading...' : goal.value.title, url: `/goals/${goalId.value}` },
-    { label: goal.value === null ? 'Loading...' : goal.value.title, url: `/goals/${goalId.value}/edit` },
+    { label: goal.value === null ? 'Loading...' : 'Edit', url: `/goals/${goalId.value}/edit` },
   ];
   return crumbs;
 });

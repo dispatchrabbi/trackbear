@@ -34,7 +34,7 @@ const chartData = computed(() => {
   const parDataset = {
     label: 'Par',
     data: props.goal.endDate === null ?
-      eachDay.map(date => ({ date, count: goalCount })) :
+      eachDay.map(date => ({ date, value: goalCount })) :
       eachDay.map((date, ix) => ({
         date,
         value: (ix === eachDay.length - 1) ? goalCount : Math.ceil((goalCount / eachDay.length) * (ix + 1)),

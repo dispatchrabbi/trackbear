@@ -35,6 +35,9 @@ import EditGoalPage from './components/pages/goals/EditGoalPage.vue';
 
 import BoardsListPage from 'src/components/pages/boards/BoardsListPage.vue';
 import BoardDetailPage from 'src/components/pages/boards/BoardDetailPage.vue';
+import NewBoardPage from './components/pages/boards/NewBoardPage.vue';
+import EditBoardPage from './components/pages/boards/EditBoardPage.vue';
+import EditBoardParticipationPage from './components/pages/boards/EditBoardParticipationPage.vue';
 
 const routes = [
   // no login needed
@@ -68,7 +71,10 @@ const routes = [
 
   // Boards section
   { path: '/boards', name: 'boards', component: BoardsListPage },
+  { path: '/boards/new', name: 'new-board', component: NewBoardPage },
   { path: '/boards/:uuid', name: 'board', component: BoardDetailPage },
+  { path: '/boards/:uuid/edit', name: 'edit-board', component: EditBoardPage },
+  { path: '/boards/:uuid/participation', name: 'join-board', component: EditBoardParticipationPage },
 
   // Account section
   { path: '/settings/account', name: 'account', component: AccountPage },

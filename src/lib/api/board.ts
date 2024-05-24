@@ -1,15 +1,18 @@
 import { callApiV1 } from "./api.ts";
 
 import type { BoardParticipant } from "@prisma/client";
-import type { Board, FullBoard } from "server/lib/models/board.ts";
-import type { BoardCreatePayload, BoardUpdatePayload, BoardParticipantPayload } from "server/api/v1/board.ts";
+import type { Board, FullBoard, ExtendedBoard, Participant, ReducedTally, BoardGoal, BoardWithParticipants, ExtendedBoardParticipant } from "server/lib/models/board.ts";
+import type { BoardCreatePayload, BoardUpdatePayload, BoardStarUpdatePayload, BoardStarUpdateResponse, BoardParticipantPayload } from "server/api/v1/board.ts";
 
-export type { Board, FullBoard, BoardParticipant, BoardCreatePayload, BoardUpdatePayload, BoardParticipantPayload };
+export type {
+  Board, FullBoard, ExtendedBoard, Participant, ReducedTally, BoardWithParticipants, BoardGoal, BoardParticipant, ExtendedBoardParticipant,
+  BoardCreatePayload, BoardUpdatePayload, BoardParticipantPayload, BoardStarUpdatePayload, BoardStarUpdateResponse,
+};
 
 const ENDPOINT = '/api/v1/board';
 
 export async function getBoards() {
-  return callApiV1<Board[]>(ENDPOINT, 'GET');
+  return callApiV1<ExtendedBoard[]>(ENDPOINT, 'GET');
 }
 
 export async function getBoard(uuid: string) {
@@ -25,11 +28,16 @@ export async function updateBoard(uuid: string, data: BoardUpdatePayload) {
 }
 
 export async function starBoard(uuid: string, starred: boolean) {
-  return callApiV1<Board>(ENDPOINT + `/${uuid}`, 'PATCH', { starred });
+  const data: BoardStarUpdatePayload = { starred };
+  return callApiV1<BoardStarUpdateResponse>(ENDPOINT + `/${uuid}/star`, 'PATCH', data);
 }
 
 export async function deleteBoard(uuid: string) {
   return callApiV1<Board>(ENDPOINT + `/${uuid}`, 'DELETE');
+}
+
+export async function getBoardParticipation(uuid: string) {
+  return callApiV1<BoardWithParticipants>(ENDPOINT + `/${uuid}/participation`, 'GET');
 }
 
 export async function joinBoard(uuid: string, data: BoardParticipantPayload) {

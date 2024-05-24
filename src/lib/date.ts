@@ -46,9 +46,9 @@ export function formatDateSafe(date: Date | null | undefined): string | null {
 }
 
 export function formatDuration(totalMinutes, omitZeroMinutes = false, forceColon = false) {
-  const hours = '' + Math.floor(totalMinutes / 60);
+  const hours = '' + Math.floor(Math.abs(totalMinutes / 60)) * Math.sign(totalMinutes);
 
-  let minutes = '' + totalMinutes % 60;
+  let minutes = '' + Math.abs(totalMinutes) % 60;
   if(minutes.length < 2) {
     minutes = '0' + minutes;
   }

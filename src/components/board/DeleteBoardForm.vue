@@ -5,23 +5,23 @@ import wait from 'src/lib/wait.ts';
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
-import { deleteGoal, Goal } from 'src/lib/api/goal.ts';
+import { deleteBoard, Board } from 'src/lib/api/board.ts';
 
 import InputText from 'primevue/inputtext';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 
 const props = defineProps<{
-  goal: Goal;
+  board: Board;
 }>();
-const emit = defineEmits(['goal:delete', 'formSuccess']);
+const emit = defineEmits(['board:delete', 'formSuccess']);
 
 const formModel = reactive({
   deleteConfirmation: '',
 });
 
 const validations = z.object({
-  deleteConfirmation: z.string().refine(val => val === props.goal.title, { message: 'You must type the title exactly.',  }), // only allow exactly the work title
+  deleteConfirmation: z.string().refine(val => val === props.board.title, { message: 'You must type the title exactly.',  }), // only allow exactly the work title
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);
@@ -39,14 +39,14 @@ async function handleSubmit() {
   errorMessage.value = null;
 
   try {
-    const deletedGoal = await deleteGoal(props.goal.id);
+    const deletedBoard = await deleteBoard(props.board.uuid);
 
-    emit('goal:delete', { goal: deletedGoal });
-    successMessage.value = `${deletedGoal.title} has been deleted.`;
+    emit('board:delete', { board: deletedBoard });
+    successMessage.value = `${deletedBoard.title} has been deleted.`;
     await wait(1 * 1000);
     emit('formSuccess');
   } catch(err) {
-    errorMessage.value = 'Could not delete the goal: something went wrong server-side.';
+    errorMessage.value = 'Could not delete the board: something went wrong server-side.';
 
     return;
   } finally {
@@ -67,18 +67,18 @@ async function handleSubmit() {
     @submit="validate() && handleSubmit()"
   >
     <p class="font-bold text-red-500 dark:text-red-400">
-      You are about to delete {{ props.goal.title }}. There is no way to undo this.
+      You are about to delete {{ props.board.title }}. All of the participants will also lose access to it. There is no way to undo this.
     </p>
-    <p>In order to confirm that you want to delete this goal, please type <span class="font-bold">{{ props.goal.title }}</span> into the input below and click Delete.</p>
+    <p>In order to confirm that you want to delete this board, please type <span class="font-bold">{{ props.board.title }}</span> into the input below and click Delete.</p>
     <FieldWrapper
-      for="goal-form-confirmation"
+      for="board-form-confirmation"
       label="Type the title to confirm deletion:"
       required
       :rule="ruleFor('deleteConfirmation')"
     >
       <template #default>
         <InputText
-          id="goal-form-confirmation"
+          id="board-form-confirmation"
           v-model="formModel.deleteConfirmation"
           autocomplete="off"
         />

@@ -30,7 +30,7 @@ const userMenuItems = ref<MenuItem[]>([
   {
     label: 'Settings',
     items: [
-      { icon: PrimeIcons.COG, label: 'Account Settings', to: { name: 'account' } },
+      { icon: PrimeIcons.USER, label: 'Account', to: { name: 'account' } },
       { icon: PrimeIcons.TAG, label: 'Manage Tags', to: { name: 'tags' } },
     ] ,
   },

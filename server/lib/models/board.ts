@@ -1,10 +1,10 @@
-import type { Board as PrismaBoard, BoardParticipant, User, Tally } from "@prisma/client";
+import type { Board as PrismaBoard, BoardParticipant, User, Tally, Work, Tag } from "@prisma/client";
 import { TALLY_STATE, TallyMeasure } from "./tally.ts";
 import { USER_STATE } from "./user.ts";
 
 import dbClient from "../db.ts";
 
-import { omit } from "../obj.ts";
+import { pick } from "../obj.ts";
 
 export const BOARD_STATE = {
   ACTIVE:   'active',
@@ -19,13 +19,59 @@ export const BOARD_PARTICIPANT_STATE = {
 export type BoardGoal = Record<TallyMeasure, number>;
 export type Board = PrismaBoard & { goal: BoardGoal };
 
-export type FullBoard = Board & {
-  participants: (BoardParticipant & {
-    user: User;
-    tallies: Tally[];
-  })[];
+export type ReducedTally = Pick<Tally, 'uuid' | 'date' | 'measure' | 'count'>;
+export type Participant = Pick<User, 'uuid' | 'displayName' | 'avatar'>;
+export type ParticipantWithTallies = Participant & {
+  tallies: ReducedTally[];
 };
-export async function getFullBoard(uuid: string) {
+
+export type ExtendedBoard = Board & {
+  participants: Participant[];
+};
+export type FullBoard = Board & {
+  participants: ParticipantWithTallies[];
+};
+
+export async function getExtendedBoardsForUser(userId: number): Promise<ExtendedBoard[]> {
+  const boards = await dbClient.board.findMany({
+    where: {
+      state: BOARD_STATE.ACTIVE,
+      OR: [
+        { ownerId: userId },
+        {
+          participants: {
+            some: {
+              userId: userId,
+              state: BOARD_PARTICIPANT_STATE.ACTIVE,
+            }
+          }
+        },
+      ],
+    },
+    include: {
+      participants: {
+        where: {
+          state: BOARD_PARTICIPANT_STATE.ACTIVE,
+          user: { is: { state: USER_STATE.ACTIVE } }
+        },
+        include: {
+          user: true,
+        },
+      },
+    }
+  });
+
+  const extendedBoards = boards.map(board => ({
+    ...board as Board,
+    // say the board is starred if it's starred and owned by the user or if the user's participant record has it starred
+    starred: (board.ownerId === userId && board.starred) || board.participants.filter(p => p.userId === userId).some(p => p.starred),
+    participants: board.participants.map(participant => pick(participant.user, ['uuid', 'displayName', 'avatar'])),
+  }));
+
+  return extendedBoards;
+}
+
+export async function getFullBoard(uuid: string): Promise<FullBoard | null> {
   const board = await dbClient.board.findUnique({
     where: {
       state: BOARD_STATE.ACTIVE,
@@ -72,10 +118,46 @@ export async function getFullBoard(uuid: string) {
   const fullBoard = {
     ...board as Board,
     participants: board.participants.map(participant => ({
-      ...omit(participant, ['worksIncluded', 'tagsIncluded']),
-      tallies: tallies.filter(tally => tally.ownerId === participant.userId),
+      ...pick(participant.user, ['uuid', 'displayName', 'avatar']),
+      tallies: tallies.filter(tally => tally.ownerId === participant.userId).map(tally => ({
+        uuid: tally.uuid,
+        date: tally.date,
+        count: tally.count,
+        measure: tally.measure,
+      })),
     })),
   };
 
   return fullBoard;
+}
+
+export type ExtendedBoardParticipant = BoardParticipant & {
+  worksIncluded: Work[];
+  tagsIncluded: Tag[];
+};
+export type BoardWithParticipants = Board & {
+  participants: ExtendedBoardParticipant[];
+};
+
+export async function getBoardParticipationForUser(uuid: string, userId: number) {
+  const board = await dbClient.board.findUnique({
+    where: {
+      state: BOARD_STATE.ACTIVE,
+      uuid: uuid,
+      isJoinable: true,
+    },
+    include: {
+      participants: {
+        where: {
+          userId: { equals: userId },
+        },
+        include: {
+          worksIncluded: true,
+          tagsIncluded: true,
+        }
+      },
+    },
+  });
+
+  return board;
 }

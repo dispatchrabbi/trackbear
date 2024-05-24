@@ -15,7 +15,7 @@ import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
-import StartingBalanceInput from 'src/components/work/StartingBalanceInput.vue';
+import MultiMeasureInput from 'src/components/work/MultiMeasureInput.vue';
 
 const emit = defineEmits(['work:create', 'formSuccess']);
 
@@ -136,10 +136,11 @@ async function handleSubmit() {
       help="Starting balances will be counted in totals but don't count as activity."
     >
       <template #default="{ onUpdate, isFieldValid }">
-        <StartingBalanceInput
+        <MultiMeasureInput
           id="work-form-starting-balance"
           v-model="formModel.startingBalance"
           :invalid="!isFieldValid"
+          add-button-text="Add Starting Balance"
           @update:model-value="onUpdate"
         />
       </template>

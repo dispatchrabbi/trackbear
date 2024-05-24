@@ -3,7 +3,10 @@ import { defineProps } from 'vue';
 
 import Avatar from 'primevue/avatar';
 
-type UserWithAvatar = { avatar?: string; };
+export type UserWithAvatar = {
+  avatar?: string;
+  displayName: string;
+};
 const props = defineProps<{
   user: UserWithAvatar;
   size?: 'normal' | 'large' | 'xlarge';
@@ -18,5 +21,6 @@ const props = defineProps<{
     shape="circle"
     :pt="{ image: { class: [ 'object-cover' ] } }"
     :pt-options="{ mergeSections: true, mergeProps: true }"
+    :title="props.user.displayName"
   />
 </template>

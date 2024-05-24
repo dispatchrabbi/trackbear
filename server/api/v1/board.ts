@@ -12,7 +12,7 @@ import dbClient from "../../lib/db.ts";
 import type { BoardParticipant } from "@prisma/client";
 import type { Board, BoardGoal } from "../../lib/models/board.ts"
 
-import { BOARD_PARTICIPANT_STATE, BOARD_STATE, getFullBoard, FullBoard } from "../../lib/models/board.ts";
+import { BOARD_PARTICIPANT_STATE, BOARD_STATE, getFullBoard, FullBoard, getExtendedBoardsForUser, ExtendedBoard, getBoardParticipationForUser, BoardWithParticipants } from "../../lib/models/board.ts";
 import { TALLY_MEASURE } from "../../lib/models/tally.ts";
 import { WORK_STATE } from '../../lib/models/work.ts';
 import { TAG_STATE } from "../../lib/models/tag.ts";
@@ -25,19 +25,11 @@ export default boardRouter;
 // GET / - get boards you have access to, either as an owner or a participant
 boardRouter.get('/',
   requireUser,
-  h(async (req: RequestWithUser, res: ApiResponse<Board[]>) =>
+  h(async (req: RequestWithUser, res: ApiResponse<ExtendedBoard[]>) =>
 {
-  const boards = await dbClient.board.findMany({
-    where: {
-      state: BOARD_STATE.ACTIVE,
-      OR: [
-        { ownerId: req.user.id },
-        { participants: { some: { userId: req.user.id } } },
-      ]
-    }
-  });
+  const boards = await getExtendedBoardsForUser(req.user.id);
 
-  return res.status(200).send(success(boards as Board[]));
+  return res.status(200).send(success(boards));
 }));
 
 // GET /:uuid - get all the info about a board, including participant info
@@ -52,6 +44,14 @@ boardRouter.get('/:uuid',
     return res.status(404).send(failure('NOT_FOUND', `Could not find a board with UUID ${req.params.uuid}`));
   }
 
+  if((board.ownerId !== req.user.id) && !(board.isPublic || board.participants.some(p => p.uuid === req.user.uuid))) {
+    if(board.isJoinable) {
+      return res.status(428).send(failure('MUST_JOIN', `User must join the board with UUID ${req.params.uuid} before accessing its data`));
+    } else {
+      return res.status(404).send(failure('NOT_FOUND', `Could not find a board with UUID ${req.params.uuid}`));
+    }
+  }
+
   res.status(200).send(success(board));
 }));
 
@@ -62,8 +62,8 @@ export type BoardCreatePayload = {
   startDate?: string;
   endDate?: string;
   goal: BoardGoal;
-  starred?: boolean;
   isJoinable?: boolean;
+  isPublic?: boolean;
 };
 const zBoardCreatePayload = z.object({
   title: z.string().min(1),
@@ -71,8 +71,8 @@ const zBoardCreatePayload = z.object({
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
   goal: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()),
-  starred: z.boolean().nullable().default(false),
   isJoinable: z.boolean().nullable().default(false),
+  isPublic: z.boolean().nullable().default(false),
 }).strict();
 
 boardRouter.post('/',
@@ -127,6 +127,80 @@ boardRouter.patch('/:uuid',
   return res.status(200).send(success(board as Board));
 }));
 
+// PATCH /:uuid/star - update a board's star status
+export type BoardStarUpdatePayload = {
+  starred: boolean;
+};
+const zBoardStarUpdatePayload = z.object({
+  starred: z.boolean(),
+}).strict();
+
+export type BoardStarUpdateResponse = {
+  starred: boolean;
+  board: boolean;
+  participant: boolean;
+};
+
+boardRouter.patch('/:uuid/star',
+  requireUser,
+  validateParams(zUuidParam()),
+  validateBody(zBoardStarUpdatePayload),
+  h(async (req: RequestWithUser, res: ApiResponse<BoardStarUpdateResponse>) =>
+{
+  const user = req.user;
+  const payload = req.body as BoardStarUpdatePayload;
+
+  const targetBoard = await dbClient.board.findUnique({
+    where: {
+      uuid: req.params.uuid,
+      state: BOARD_STATE.ACTIVE,
+      OR: [
+        { ownerId: user.id },
+        { participants: { some: { userId: user.id, state: BOARD_PARTICIPANT_STATE.ACTIVE } } },
+      ]
+    },
+  });
+
+  if(!targetBoard) {
+    return res.status(404).send(failure('NOT_FOUND', `Could not find a board with UUID ${req.params.uuid}`));
+  }
+
+  const [ board, participant ] = await dbClient.$transaction([
+    // update the board (if one exists)
+    dbClient.board.updateMany({
+      where: {
+        ownerId: user.id,
+        id: targetBoard.id,
+        state: BOARD_STATE.ACTIVE,
+      },
+      data: {
+        starred: payload.starred,
+      },
+    }),
+    // update the participant (if one exists)
+    dbClient.boardParticipant.updateMany({
+      where: {
+        userId: user.id,
+        boardId: targetBoard.id,
+        state: BOARD_PARTICIPANT_STATE.ACTIVE,
+      },
+      data: {
+        starred: payload.starred,
+      },
+    }),
+  ]);
+
+  const summary: BoardStarUpdateResponse = {
+    starred: payload.starred,
+    board: board.count > 0,
+    participant: participant.count > 0,
+  };
+
+  await logAuditEvent('board:star', user.id, targetBoard.id, null, summary, req.sessionID);
+
+  return res.status(200).send(success(summary));
+}));
+
 // DELETE /:uuid - delete a board
 boardRouter.delete('/:uuid',
   requireUser,
@@ -153,25 +227,19 @@ boardRouter.delete('/:uuid',
 }));
 
 // GET /:uuid/participation - get basic info about a board, to check if you can join it
-boardRouter.get('/:uuid',
+boardRouter.get('/:uuid/participation',
   requireUser,
   validateParams(zUuidParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<Board>) =>
+  h(async (req: RequestWithUser, res: ApiResponse<BoardWithParticipants>) =>
 {
   // TODO: if invites or bans are implemented, this will need to be changed
-  const board = await dbClient.board.findUnique({
-    where: {
-      state: BOARD_STATE.ACTIVE,
-      uuid: req.params.uuid,
-      isJoinable: true,
-    },
-  });
+  const board = await getBoardParticipationForUser(req.params.uuid, req.user.id);
 
   if(!board) {
     return res.status(404).send(failure('NOT_FOUND', `Could not find a board with UUID ${req.params.uuid}`));
   }
 
-  res.status(200).send(success(board as Board));
+  res.status(200).send(success(board as BoardWithParticipants));
 }));
 
 // POST /:uuid/participation - add or modify your own participation
@@ -193,45 +261,60 @@ boardRouter.post('/:uuid/participation',
   const user = req.user;
   const payload = req.body as BoardParticipantPayload;
 
-  const participant = await dbClient.boardParticipant.upsert({
+  // we can't do an upsert because the combination of user and board isn't actually unique
+  // this is on purpose: we may want someone in the future to be able to join a board multiple times
+  // of course, that would probably mean we need a new set of endpoints but... baby steps
+  const existingParticipantRecord = await dbClient.boardParticipant.findFirst({
     where: {
       state: BOARD_PARTICIPANT_STATE.ACTIVE,
       userId: user.id,
       board: { uuid: req.params.uuid },
     },
-    update: {
-      worksIncluded: payload.works ? { set: payload.works.map(workId => ({
-        id: workId,
-        ownerId: user.id,
-        state: WORK_STATE.ACTIVE,
-      })) } : undefined,
-      tagsIncluded: payload.tags ? { set: payload.tags.map(workId => ({
-        id: workId,
-        ownerId: user.id,
-        state: TAG_STATE.ACTIVE,
-      })) } : undefined,
-    },
-
-    create: {
-      state: BOARD_PARTICIPANT_STATE.ACTIVE,
-      user: { connect: { id: user.id }},
-      board: { connect: { uuid: req.params.uuid } },
-
-      worksIncluded: payload.works ? { connect: payload.works.map(workId => ({
-        id: workId,
-        ownerId: user.id,
-        state: WORK_STATE.ACTIVE,
-      })) } : undefined,
-      tagsIncluded: payload.tags ? { connect: payload.tags.map(workId => ({
-        id: workId,
-        ownerId: user.id,
-        state: TAG_STATE.ACTIVE,
-      })) } : undefined,
-    },
   });
 
+  let participant;
+  if(existingParticipantRecord) {
+    participant = await dbClient.boardParticipant.update({
+      where: {
+        state: BOARD_PARTICIPANT_STATE.ACTIVE,
+        id: existingParticipantRecord.id,
+      },
+      data: {
+        worksIncluded: payload.works ? { set: payload.works.map(workId => ({
+          id: workId,
+          ownerId: user.id,
+          state: WORK_STATE.ACTIVE,
+        })) } : undefined,
+        tagsIncluded: payload.tags ? { set: payload.tags.map(workId => ({
+          id: workId,
+          ownerId: user.id,
+          state: TAG_STATE.ACTIVE,
+        })) } : undefined,
+      },
+    });
+  } else {
+    participant = await dbClient.boardParticipant.create({
+      data: {
+        state: BOARD_PARTICIPANT_STATE.ACTIVE,
+        user: { connect: { id: user.id }},
+        board: { connect: { uuid: req.params.uuid } },
+
+        worksIncluded: payload.works ? { connect: payload.works.map(workId => ({
+          id: workId,
+          ownerId: user.id,
+          state: WORK_STATE.ACTIVE,
+        })) } : undefined,
+        tagsIncluded: payload.tags ? { connect: payload.tags.map(workId => ({
+          id: workId,
+          ownerId: user.id,
+          state: TAG_STATE.ACTIVE,
+        })) } : undefined,
+      }
+    });
+  }
+
   return res.status(200).send(success(participant));
-}))
+}));
 
 // DELETE /:uuid/participation - leave a board
 boardRouter.delete('/:uuid/participation',
@@ -241,11 +324,21 @@ boardRouter.delete('/:uuid/participation',
 {
   const user = req.user;
 
-  const participant = await dbClient.boardParticipant.delete({
+  // we can't do a delete because the combination of user and board isn't actually unique
+  // this is on purpose: we may want someone in the future to be able to join a board multiple times
+  // of course, that would probably mean we need a new set of endpoints but... baby steps
+  const existingParticipantRecord = await dbClient.boardParticipant.findFirst({
     where: {
       state: BOARD_PARTICIPANT_STATE.ACTIVE,
       userId: user.id,
       board: { uuid: req.params.uuid },
+    },
+  });
+
+  const participant = await dbClient.boardParticipant.delete({
+    where: {
+      state: BOARD_PARTICIPANT_STATE.ACTIVE,
+      id: existingParticipantRecord.id,
     },
   });
 

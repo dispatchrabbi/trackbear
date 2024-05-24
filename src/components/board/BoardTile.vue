@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { ref, defineProps, defineEmits } from 'vue';
-import { Board, starBoard } from 'src/lib/api/board.ts';
+import { ExtendedBoard, starBoard } from 'src/lib/api/board.ts';
 
 const props = defineProps<{
-  board: Board;
+  board: ExtendedBoard;
 }>();
 
 const emit = defineEmits(['board:star']);
 
 import Card from 'primevue/card';
+import UserAvatarGroup from '../UserAvatarGroup.vue';
 import { PrimeIcons } from 'primevue/api';
 
 const isStarLoading = ref<boolean>(false);
@@ -46,9 +47,12 @@ async function onStarClick() {
         <div class="font-light italic grow">
           {{ props.board.description }}
         </div>
-        <!-- <div>
-          {{ describeGoal(props.goal) }}
-        </div> -->
+        <div>
+          <UserAvatarGroup
+            :users="props.board.participants"
+            :limit="5"
+          />
+        </div>
       </div>
     </template>
   </Card>

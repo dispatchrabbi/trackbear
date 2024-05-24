@@ -236,6 +236,7 @@ model Board {
   starred Boolean @default(false)
 
   isJoinable   Boolean            @default(false)
+  isPublic   Boolean            @default(false)
   participants BoardParticipant[]
 }
 
@@ -246,7 +247,7 @@ model BoardParticipant {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
-  userId Int  @unique
+  userId Int
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   boardId Int
@@ -254,4 +255,6 @@ model BoardParticipant {
 
   worksIncluded Work[]
   tagsIncluded  Tag[]
+
+  starred Boolean @default(false)
 }

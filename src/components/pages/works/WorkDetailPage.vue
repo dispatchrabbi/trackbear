@@ -98,13 +98,13 @@ onMounted(() => {
           <div class="spacer grow" />
           <div class="flex flex-col md:flex-row gap-2">
             <Button
-              label="Edit"
-              :icon="PrimeIcons.PENCIL"
+              label="Configure Project"
+              :icon="PrimeIcons.COG"
               @click="isEditFormVisible = true"
             />
             <Button
               severity="danger"
-              label="Delete"
+              label="Delete Project"
               :icon="PrimeIcons.TRASH"
               @click="isDeleteFormVisible = true"
             />

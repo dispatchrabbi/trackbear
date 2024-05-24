@@ -72,8 +72,8 @@ const validations = z
       .date({ invalid_type_error:'Please select a valid start date or clear the field.' }).nullable()
       .refine(v => v === null || formModel.endDate === null || v <= formModel.endDate, { message: 'Start date must be before end date.'}).transform(formatDateSafe),
     endDate: z
-    .date({ invalid_type_error:'Please select a valid end date or clear the field.' }).nullable()
-    .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.'}).transform(formatDateSafe),
+      .date({ invalid_type_error:'Please select a valid end date or clear the field.' }).nullable()
+      .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.'}).transform(formatDateSafe),
 
     works: z.array(z.number({ invalid_type_error: 'Please select only valid projects.' }).int({ message: 'Please select only valid projects.' }).positive({ message: 'Please select only valid projects.' })),
     tags: z.array(z.number({ invalid_type_error: 'Please select only valid tags.' }).int({ message: 'Please select only valid tags.' }).positive({ message: 'Please select only valid tags.' })),

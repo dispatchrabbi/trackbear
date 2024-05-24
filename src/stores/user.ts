@@ -5,6 +5,7 @@ import { getMe } from 'src/lib/api/me.ts';
 import { useWorkStore } from 'src/stores/work.ts';
 import { useTagStore } from 'src/stores/tag.ts';
 import { useGoalStore } from 'src/stores/goal.ts';
+import { useBoardStore } from 'src/stores/board.ts';
 
 export const useUserStore = defineStore('user', {
   state: () => {
@@ -25,6 +26,9 @@ export const useUserStore = defineStore('user', {
 
       const goalStore = useGoalStore();
       goalStore.$reset();
+
+      const boardStore = useBoardStore();
+      boardStore.$reset();
     },
     async logOut() {
       await logOut();
@@ -38,6 +42,9 @@ export const useUserStore = defineStore('user', {
 
       const goalStore = useGoalStore();
       goalStore.$reset();
+
+      const boardStore = useBoardStore();
+      boardStore.$reset();
     },
     async populate(force = false) {
       if(force || this.user === null) {

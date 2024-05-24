@@ -194,7 +194,7 @@ async function handleSubmit() {
       :rule="ruleFor('setTotal')"
     >
       <template #default="{ onUpdate, isFieldValid }">
-        <div class="flex gap-4 max-w-full">
+        <div class="flex gap-4 max-w-full items-center">
           <InputSwitch
             v-model="formModel.setTotal"
             :invalid="!isFieldValid"

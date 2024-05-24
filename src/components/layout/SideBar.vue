@@ -73,6 +73,7 @@ const items = computed(() => {
 onMounted(() => {
   workStore.populate();
   goalStore.populate();
+  boardStore.populate();
 });
 </script>
 

@@ -19,7 +19,7 @@ export default {
                 'w-12 h-12': props.size == 'large',
                 'w-16 h-16': props.size == 'xlarge'
             },
-            { '-ml-4': parent.instance.$style?.name == 'avatargroup' },
+            { '[&:not(:first-child)]:-ml-4': parent.instance.$style?.name == 'avatargroup' },
 
             // Shapes
             {

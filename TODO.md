@@ -1,17 +1,15 @@
 # TODO
 
 ## Next
-- [X] Preserve destination through login/signup
-- [X] Improved account settings
-  - [X] Change username
-  - [X] Change display name
-  - [X] Upload avatar
-  - [X] Delete your account
 - [ ] Leaderboards:
-  - [ ] Create, edit, delete, close invites
-  - [ ] Let others join the board
-  - [ ] Show avatars beside progress
+  - [X] Create, edit, delete, close invites
+  - [X] Let others join the board
+  - [ ] Restrict measures per board
+  - [X] Show avatars beside progress
   - [ ] Remove others from the board
+  - [X] Add user avatars on board tile
+  - [X] Fix board starring so owners and participants can star
+  - [ ] Show starred boards on dashboard
 - [ ] Admin user management
   - [X] Suspend/activate account
   - [X] Delete/restore account

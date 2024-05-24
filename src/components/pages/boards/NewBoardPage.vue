@@ -2,19 +2,19 @@
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import { useGoalStore } from 'src/stores/goal.ts';
-const goalStore = useGoalStore();
+import { useBoardStore } from 'src/stores/board.ts';
+const boardStore = useBoardStore();
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import type { MenuItem } from 'primevue/menuitem';
 
-import CreateGoalForm from 'src/components/goal/CreateGoalForm.vue';
+import CreateBoardForm from 'src/components/board/CreateBoardForm.vue';
 import Card from 'primevue/card';
 
 const breadcrumbs: MenuItem[] = [
-  { label: 'Goals', url: '/goals' },
-  { label: 'New Goal', url: '/goals/new' },
+  { label: 'Boards', url: '/boards' },
+  { label: 'New Board', url: '/boards/new' },
 ];
 
 </script>
@@ -27,13 +27,13 @@ const breadcrumbs: MenuItem[] = [
       class="max-w-screen-md"
     >
       <template #title>
-        <SectionTitle title="Create a Goal" />
+        <SectionTitle title="Create a Board" />
       </template>
       <template #content>
-        <CreateGoalForm
-          @goal:create="goalStore.populate(true)"
-          @form-success="router.push('/goals')"
-          @form-cancel="router.push('/goals')"
+        <CreateBoardForm
+          @board:create="boardStore.populate(true)"
+          @form-success="router.push('/boards')"
+          @form-cancel="router.push('/boards')"
         />
       </template>
     </Card>

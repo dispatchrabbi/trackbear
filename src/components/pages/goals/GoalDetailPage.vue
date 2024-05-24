@@ -99,13 +99,13 @@ onMounted(() => {
           <div class="spacer grow" />
           <div class="flex flex-col md:flex-row gap-2">
             <Button
-              label="Edit"
-              :icon="PrimeIcons.PENCIL"
+              label="Configure Goal"
+              :icon="PrimeIcons.COG"
               @click="router.push({ name: 'edit-goal', params: { id: goal.id } })"
             />
             <Button
               severity="danger"
-              label="Delete"
+              label="Delete Goal"
               :icon="PrimeIcons.TRASH"
               @click="isDeleteFormVisible = true"
             />

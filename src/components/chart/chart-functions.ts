@@ -1,8 +1,12 @@
 import { addDays, eachDayOfInterval } from "date-fns";
 import { formatDate, parseDateString, maxDate } from "src/lib/date.ts";
 
-import type { Tally } from 'src/lib/api/tally.ts';
 import { cmpTallies } from "src/lib/tally.ts";
+
+export interface Tallyish {
+  date: string;
+  count: number;
+}
 
 export interface TallyPoint {
   date: string;
@@ -17,7 +21,7 @@ export interface AccumulatedTallyPoint extends CountedTallyPoint {
   accumulated: number;
 }
 
-export function normalizeTallies(tallies: Tally[]): CountedTallyPoint[] {
+export function normalizeTallies(tallies: Tallyish[]): CountedTallyPoint[] {
   // total all the tallies by day
   const dateTotals = new Map<string, number>();
   for(const tally of tallies) {
@@ -66,7 +70,7 @@ export function listEachDayOfData(nominalStartDate?: string, nominalEndDate?: st
   const eachDay = eachDayOfInterval(dates).map(formatDate).sort();
   return eachDay;
 }
-function determineChartStartDate(firstUpdate?: string, nominalStartDate?: string): string {
+export function determineChartStartDate(firstUpdate?: string, nominalStartDate?: string): string {
   if(nominalStartDate) {
     return nominalStartDate;
   } else if(firstUpdate) {
@@ -75,7 +79,7 @@ function determineChartStartDate(firstUpdate?: string, nominalStartDate?: string
     return formatDate(new Date()); // today
   }
 }
-function determineChartEndDate(lastUpdate?: string, nominalEndDate?: string, nominalStartDate?: string): string {
+export function determineChartEndDate(lastUpdate?: string, nominalEndDate?: string, nominalStartDate?: string): string {
   if(nominalEndDate) {
     return nominalEndDate;
   } else if(lastUpdate) {

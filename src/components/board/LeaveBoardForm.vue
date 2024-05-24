@@ -2,26 +2,29 @@
 import { ref, reactive, defineProps, defineEmits } from 'vue';
 import wait from 'src/lib/wait.ts';
 
+import { useUserStore } from 'src/stores/user';
+const userStore = useUserStore();
+
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
-import { deleteGoal, Goal } from 'src/lib/api/goal.ts';
+import { leaveBoard, Board } from 'src/lib/api/board.ts';
 
 import InputText from 'primevue/inputtext';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 
 const props = defineProps<{
-  goal: Goal;
+  board: Board;
 }>();
-const emit = defineEmits(['goal:delete', 'formSuccess']);
+const emit = defineEmits(['board:leave', 'formSuccess']);
 
 const formModel = reactive({
-  deleteConfirmation: '',
+  leaveConfirmation: '',
 });
 
 const validations = z.object({
-  deleteConfirmation: z.string().refine(val => val === props.goal.title, { message: 'You must type the title exactly.',  }), // only allow exactly the work title
+  leaveConfirmation: z.string().refine(val => val === userStore.user.username, { message: 'You must type your username exactly.',  }), // only allow exactly the work title
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);
@@ -39,14 +42,14 @@ async function handleSubmit() {
   errorMessage.value = null;
 
   try {
-    const deletedGoal = await deleteGoal(props.goal.id);
+    const leftParticipant = await leaveBoard(props.board.uuid);
 
-    emit('goal:delete', { goal: deletedGoal });
-    successMessage.value = `${deletedGoal.title} has been deleted.`;
+    emit('board:leave', { participant: leftParticipant, board: props.board });
+    successMessage.value = `You have left ${props.board.title}.`;
     await wait(1 * 1000);
     emit('formSuccess');
   } catch(err) {
-    errorMessage.value = 'Could not delete the goal: something went wrong server-side.';
+    errorMessage.value = 'Could not leave the board: something went wrong server-side.';
 
     return;
   } finally {
@@ -59,27 +62,27 @@ async function handleSubmit() {
 <template>
   <TbForm
     :is-valid="isValid"
-    submit-message="Delete"
+    submit-message="Leave"
     submit-severity="danger"
-    :loading-message="isLoading ? 'Deleting...' : null"
+    :loading-message="isLoading ? 'Leaving...' : null"
     :success-message="successMessage"
     :error-message="errorMessage"
     @submit="validate() && handleSubmit()"
   >
     <p class="font-bold text-red-500 dark:text-red-400">
-      You are about to delete {{ props.goal.title }}. There is no way to undo this.
+      You are about to leave {{ props.board.title }}.
     </p>
-    <p>In order to confirm that you want to delete this goal, please type <span class="font-bold">{{ props.goal.title }}</span> into the input below and click Delete.</p>
+    <p>In order to confirm that you want to leave this board, please type <span class="font-bold">{{ userStore.user.username }}</span> into the input below and click Leave.</p>
     <FieldWrapper
-      for="goal-form-confirmation"
-      label="Type the title to confirm deletion:"
+      for="board-form-confirmation"
+      label="Type your username to confirm:"
       required
-      :rule="ruleFor('deleteConfirmation')"
+      :rule="ruleFor('leaveConfirmation')"
     >
       <template #default>
         <InputText
-          id="goal-form-confirmation"
-          v-model="formModel.deleteConfirmation"
+          id="board-form-confirmation"
+          v-model="formModel.leaveConfirmation"
           autocomplete="off"
         />
       </template>
