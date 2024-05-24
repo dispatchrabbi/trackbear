@@ -47,6 +47,15 @@ const sections = [
     ],
   },
   {
+    image: 'screenshot-board',
+    heading: 'Words with friends',
+    body: [
+      `Everything is better when you do it with a group. Set up leaderboards so you can race each other to the finish
+      line, encourage your friends, or put on a community-wide challenge. Everyone picks what they want to track and
+      TrackBear shows you who's in the lead and how you're trending versus par.`
+    ],
+  },
+  {
     image: 'screenshot-dashboard',
     heading: 'No funny business',
     body: [
@@ -81,7 +90,8 @@ const imagePt = {
         <p>
           TrackBear is an app that helps you track your writing projects. You can track words, chapters, pages, and
           time. That makes it a perfect fit no matter whether you're writing a novel, fanfiction, poetry, a webcomic,
-          or anything else! You can also set writing targets and track your writing habits.
+          or anything else! You can also set writing targets, track your writing habits, and set up leaderboards to
+          include your friends. No matter what, TrackBear is here to support you, however you write.
         </p>
         <p>
           <RouterLink

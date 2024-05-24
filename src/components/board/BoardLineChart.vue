@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
-import type { Board, Participant } from 'src/lib/api/board.ts';
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+const breakpoints = useBreakpoints(breakpointsTailwind);
+
+import type { Board, ParticipantWithTallies } from 'src/lib/api/board.ts';
 
 import { kify } from 'src/lib/number.ts';
 import { formatDuration } from "src/lib/date.ts";
@@ -14,9 +17,13 @@ import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally.ts';
 
 const props = defineProps<{
   board: Board;
-  participants: Participant[];
+  participants: ParticipantWithTallies[];
   measure: TallyMeasure;
 }>();
+
+const size = computed(() => {
+  return breakpoints.smaller('md').value ? 'mobile' : 'desktop';
+});
 
 const chartData = computed(() => {
   const [ earliestDate, latestDate ] = props.participants
@@ -67,7 +74,8 @@ const chartData = computed(() => {
     const participantDataset = {
       label: participant.displayName,
       avatar: participant.avatar,
-      data: accumulatedTallies
+      data: accumulatedTallies,
+      pointRadius: size.value === 'mobile' ? 1 : null,
     };
 
     if(participantDataset.data.length > 0) {
