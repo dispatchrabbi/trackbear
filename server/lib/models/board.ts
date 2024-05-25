@@ -99,6 +99,8 @@ export async function getFullBoard(uuid: string): Promise<FullBoard | null> {
   const tallies = await dbClient.tally.findMany({
     where: {
       state: TALLY_STATE.ACTIVE,
+      // only include tallies with the board's measures
+      measure: { in: board.measures },
       // only include tallies within the time range (if one exists)
       date: {
         gte: board.startDate || undefined,

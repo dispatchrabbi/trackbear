@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, defineEmits } from 'vue';
 import wait from 'src/lib/wait.ts';
+import { toTitleCase } from 'src/lib/str.ts';
 
 import { useBoardStore } from 'src/stores/board.ts';
 const boardStore = useBoardStore();
@@ -16,10 +17,12 @@ import { formatDateSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createBoard, BoardCreatePayload } from 'src/lib/api/board.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import Calendar from 'primevue/calendar';
 import InputText from 'primevue/inputtext';
+import Checkbox from 'primevue/checkbox';
 import InputSwitch from 'primevue/inputswitch';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
@@ -31,6 +34,7 @@ const emit = defineEmits(['board:create', 'formSuccess', 'formCancel']);
 const formModel = reactive({
   title: '',
   description: '',
+  measures: Object.values(TALLY_MEASURE),
 
   startDate: null,
   endDate: null,
@@ -45,6 +49,7 @@ const validations = z
   .object({
     title: z.string().min(1, { message: 'Please enter a title.'}),
     description: z.string(),
+    measures: z.array(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>)).min(1, { message: 'Please select at least one.' }),
 
     startDate: z
       .date({ invalid_type_error:'Please select a valid start date or clear the field.' }).nullable()
@@ -54,7 +59,7 @@ const validations = z
       .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.'}).transform(formatDateSafe),
 
     goal: z.record(
-      z.enum(Object.keys(TALLY_MEASURE_INFO) as NonEmptyArray<string>),
+      z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
       z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' })
     ),
 
@@ -130,6 +135,29 @@ async function handleSubmit() {
           :invalid="!isFieldValid"
           @update:model-value="onUpdate"
         />
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      for="board-form-measures"
+      label="What to track?"
+      :rule="ruleFor('measures')"
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <div
+          v-for="measure of Object.values(TALLY_MEASURE)"
+          :key="measure"
+          class="flex items-center gap-2"
+        >
+          <Checkbox
+            v-model="formModel.measures"
+            :input-id="`board-form-measures-checkbox-${measure}`"
+            name="board-form-measures"
+            :value="measure"
+            :invalid="!isFieldValid"
+            @update:model-value="onUpdate"
+          />
+          <label :for="`board-form-measures-checkbox-${measure}`">{{ toTitleCase(TALLY_MEASURE_INFO[measure].label.plural) }}</label>
+        </div>
       </template>
     </FieldWrapper>
     <FieldWrapper

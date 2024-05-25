@@ -228,6 +228,7 @@ model Board {
 
   title       String
   description String
+  measures    String[]
 
   startDate String?
   endDate   String?
@@ -236,7 +237,7 @@ model Board {
   starred Boolean @default(false)
 
   isJoinable   Boolean            @default(false)
-  isPublic   Boolean            @default(false)
+  isPublic     Boolean            @default(false)
   participants BoardParticipant[]
 }
 
@@ -251,7 +252,7 @@ model BoardParticipant {
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   boardId Int
-  board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
   worksIncluded Work[]
   tagsIncluded  Tag[]

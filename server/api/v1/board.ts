@@ -13,7 +13,7 @@ import type { BoardParticipant } from "@prisma/client";
 import type { Board, BoardGoal } from "../../lib/models/board.ts"
 
 import { BOARD_PARTICIPANT_STATE, BOARD_STATE, getFullBoard, FullBoard, getExtendedBoardsForUser, ExtendedBoard, getBoardParticipationForUser, BoardWithParticipants } from "../../lib/models/board.ts";
-import { TALLY_MEASURE } from "../../lib/models/tally.ts";
+import { TALLY_MEASURE, TallyMeasure } from "../../lib/models/tally.ts";
 import { WORK_STATE } from '../../lib/models/work.ts';
 import { TAG_STATE } from "../../lib/models/tag.ts";
 
@@ -59,6 +59,7 @@ boardRouter.get('/:uuid',
 export type BoardCreatePayload = {
   title: string;
   description: string;
+  measures: TallyMeasure[];
   startDate?: string;
   endDate?: string;
   goal: BoardGoal;
@@ -68,6 +69,7 @@ export type BoardCreatePayload = {
 const zBoardCreatePayload = z.object({
   title: z.string().min(1),
   description: z.string(),
+  measures: z.array(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>)),
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
   goal: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()),

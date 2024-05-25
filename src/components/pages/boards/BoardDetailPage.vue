@@ -225,7 +225,7 @@ onMounted(() => {
               @update:active-index="index => selectedMeasure = measuresAvailable[index]"
             >
               <TabPanel
-                v-for="measure of measuresAvailable"
+                v-for="measure of board.measures"
                 :key="measure"
                 :header="toTitleCase(TALLY_MEASURE_INFO[measure].label.plural)"
               >
