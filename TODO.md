@@ -4,7 +4,7 @@
 - [ ] Leaderboards:
   - [X] Create, edit, delete, close invites
   - [X] Let others join the board
-  - [ ] Add "Join" button to the list page
+  - [X] Add "Join" button to the list page
   - [X] Restrict measures per board
   - [X] Show avatars beside progress
   - [X] Add user avatars on board tile

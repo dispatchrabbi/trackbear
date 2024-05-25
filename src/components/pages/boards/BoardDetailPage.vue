@@ -72,18 +72,20 @@ watch(measuresAvailable, (newMeasuresAvailable) => {
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
     { label: 'Boards', url: '/boards' },
-    { label: board.value === null ? 'Loading...' : board.value.title, url: `/goals/${boardUuid.value}` },
+    { label: board.value === null ? 'Loading...' : board.value.title, url: `/boards/${boardUuid.value}` },
   ];
   return crumbs;
 });
 
 const { copy } = useClipboard({ legacy: true });
 const handleShareClick = function() {
-  copy(document.location.href);
+  if(board.value === null) { return; }
+
+  copy(board.value.uuid);
   toast.add({
-    severity: 'info',
-    summary: 'Link copied!',
-    detail: 'This link to this board has been copied to your clipboard.',
+    severity: 'success',
+    summary: 'Code copied!',
+    detail: 'The join code for this board has been copied to your clipboard.',
     life: 3 * 1000,
   });
 };
@@ -138,18 +140,7 @@ onMounted(() => {
           <SectionTitle
             :title="board.title"
             :subtitle="board.description"
-          >
-            <template #action>
-              <Button
-                v-if="board.isPublic || board.isPublic"
-                :icon="PrimeIcons.SHARE_ALT"
-                size="small"
-                rounded
-                text
-                @click="handleShareClick"
-              />
-            </template>
-          </SectionTitle>
+          />
           <div class="spacer grow" />
           <div class="flex gap-2 flex-col md:flex-row">
             <Button
@@ -189,20 +180,31 @@ onMounted(() => {
               Click "Configure Board" to open the board so people can join.
             </p>
           </div>
-          <div class="flex gap-2 flex-row">
+          <div class="flex gap-2 flex-row flex-wrap">
             <Button
               v-if="board.isJoinable && !board.participants.some(p => p.uuid === userStore.user.uuid)"
               size="small"
               label="Join Board"
               :icon="PrimeIcons.USER_PLUS"
+              outlined
               @click="router.push({ name: 'join-board', params: { uuid: board.uuid } })"
+            />
+            <Button
+              v-if="board.isJoinable"
+              severity="help"
+              size="small"
+              label="Copy Join Code"
+              :icon="PrimeIcons.COPY"
+              outlined
+              @click="handleShareClick"
             />
             <Button
               v-if="board.participants.some(p => p.uuid === userStore.user.uuid)"
               size="small"
               label="Edit Filters"
               :icon="PrimeIcons.USER_EDIT"
-              @click="router.push({ name: 'join-board', params: { uuid: board.uuid } })"
+              outlined
+              @click="router.push({ name: 'edit-board-filters', params: { uuid: board.uuid } })"
             />
             <Button
               v-if="board.participants.some(p => p.uuid === userStore.user.uuid)"
@@ -210,6 +212,7 @@ onMounted(() => {
               size="small"
               label="Leave Board"
               :icon="PrimeIcons.USER_MINUS"
+              outlined
               @click="isLeaveFormVisible = true"
             />
           </div>

@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 
-import { getBoards, Board } from 'src/lib/api/board.ts';
+import { getBoards, ExtendedBoard } from 'src/lib/api/board.ts';
 
 export const useBoardStore = defineStore('board', {
-  state: () : { boards: Board[] | null; } => {
+  state: () : { boards: ExtendedBoard[] | null; } => {
     return { boards: null };
   },
   getters: {

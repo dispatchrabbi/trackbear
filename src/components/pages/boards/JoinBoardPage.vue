@@ -53,18 +53,14 @@ const loadBoardParticipation = async function() {
   }
 }
 
-const hasJoined = computed(() => {
-  return board.value && board.value.participants.length > 0;
+const isNewParticipant = computed(() => {
+  return board.value && board.value.participants.length === 0;
 });
 
 onMounted(async () => {
   await loadBoardParticipation();
-  if(!hasJoined.value) {
-    if(board.value.isJoinable) {
-      router.push({ name: 'join-board', params: { uuid: boardUuid.value } });
-    } else {
-      router.push({ name: 'board', params: { uuid: boardUuid.value } });
-    }
+  if(!isNewParticipant.value) {
+    router.push({ name: 'board', params: { uuid: boardUuid.value } });
   }
 });
 
@@ -80,20 +76,27 @@ onMounted(async () => {
     >
       <template #title>
         <SectionTitle
-          :title="`${hasJoined ? 'Join' : 'Reselect options for'} ${board.title}`"
+          :title="`Join ${board.title}`"
         />
       </template>
       <template #content>
-        <div class="mb-4">
-          Select which progress updates you want to include on this board. You can filter by project, tag, or both.
+        <div v-if="board.isJoinable">
+          <div class="mb-4">
+            Select which progress updates you want to include on this board. You can filter by project, tag, or both.
+          </div>
+          <EditBoardParticipationForm
+            :board="board"
+            :participant="board.participants[0] ?? null"
+            @participation:edit="boardStore.populate(true)"
+            @form-success="router.push({ name: 'board', params: { uuid: board.uuid } })"
+            @form-cancel="board.isPublic ? router.push({ name: 'board', params: { uuid: board.uuid } }) : router.push({ name: 'boards' })"
+          />
         </div>
-        <EditBoardParticipationForm
-          :board="board"
-          :participant="board.participants[0] ?? null"
-          @participation:edit="boardStore.populate(true)"
-          @form-success="router.push({ name: 'board', params: { uuid: board.uuid } })"
-          @form-cancel="board.isPublic ? router.push({ name: 'board', params: { uuid: board.uuid } }) : router.push({ name: 'boards' })"
-        />
+        <div v-else>
+          <div class="mb-4">
+            Sorry, but this board is not open to new participants. If you are trying to join this board, please talk to the board owner.
+          </div>
+        </div>
       </template>
     </Card>
   </ApplicationLayout>

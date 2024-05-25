@@ -12,7 +12,7 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-- NEW: Leaderboards! Now you and your friends can track your progress together on the same graph. Race your writing partner to a goal, get your whole writing group involved, or keep each other accountable by creating a leaderboard. Then send the link to your friends so they can join.
+- NEW: Leaderboards! Now you and your friends can track your progress together on the same graph. Race your writing partner to a goal, get your whole writing group involved, or keep each other accountable by creating a leaderboard. Once you've created a leaderboard, your friends can join it using the leaderboard's join code, which you can copy from the leaderboard's page.
 - CHANGED: The activity heatmap has been revamped so it's easier to work with and add features to. The tooltips aren't as nice anymore, but I will be going back and adding better tooltips later.
 - CHANGED: The "Edit" buttons for projects and goals have been renamed "Configure" and the pencil icon has been replaced with a gear icon. "Account Settings" under the user menu was renamed "Account" and the gear icon has been replaced with an icon of a person.
 
