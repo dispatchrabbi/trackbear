@@ -1,15 +1,6 @@
 # TODO
 
 ## Next
-- [X] Leaderboards:
-  - [X] Create, edit, delete, close invites
-  - [X] Let others join the board
-  - [X] Add "Join" button to the list page
-  - [X] Restrict measures per board
-  - [X] Show avatars beside progress
-  - [X] Add user avatars on board tile
-  - [X] Fix board starring so owners and participants can star
-  - [X] Change "boards" to "leaderboards"
 - [ ] Admin user management
   - [X] Suspend/activate account
   - [X] Delete/restore account
