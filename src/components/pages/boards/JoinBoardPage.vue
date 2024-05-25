@@ -29,7 +29,7 @@ const board = ref<BoardWithParticipants | null>(null);
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
-    { label: 'Boards', url: '/boards' },
+    { label: 'Leaderboards', url: '/leaderboards' },
     { label: board.value === null ? 'Loading...' : board.value.title, url: `/boards/${boardUuid.value}` },
     { label: board.value === null ? 'Loading...' : 'Join', url: `/boards/${boardUuid.value}/join` },
     ];
@@ -82,7 +82,7 @@ onMounted(async () => {
       <template #content>
         <div v-if="board.isJoinable">
           <div class="mb-4">
-            Select which progress updates you want to include on this board. You can filter by project, tag, or both.
+            Select which progress updates you want to include on this leaderboard. You can filter by project, tag, or both.
           </div>
           <EditBoardParticipationForm
             :board="board"
@@ -94,7 +94,7 @@ onMounted(async () => {
         </div>
         <div v-else>
           <div class="mb-4">
-            Sorry, but this board is not open to new participants. If you are trying to join this board, please talk to the board owner.
+            Sorry, but this leaderboard is not open to new participants. If you are trying to join this leaderboard, please talk to the leaderboard owner.
           </div>
         </div>
       </template>

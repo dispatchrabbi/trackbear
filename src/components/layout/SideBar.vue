@@ -57,7 +57,7 @@ const items = computed(() => {
     // boards
     {
       key: 'boards',
-      label: 'Boards',
+      label: 'Leaderboards',
       icon: PrimeIcons.CHART_LINE,
       to: { name: 'boards' },
       header: true,

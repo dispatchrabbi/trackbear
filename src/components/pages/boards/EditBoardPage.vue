@@ -27,7 +27,7 @@ const board = ref<Board | null>(null);
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
-    { label: 'Boards', url: '/boards' },
+    { label: 'Leaderboards', url: '/leaderboards' },
     { label: board.value === null ? 'Loading...' : board.value.title, url: `/boards/${boardUuid.value}` },
     { label: board.value === null ? 'Loading...' : 'Edit', url: `/boards/${boardUuid.value}/edit` },
     ];
@@ -45,7 +45,7 @@ const loadBoard = async function() {
     board.value = result;
   } catch(err) {
     errorMessage.value = err.message;
-    router.push('/boards');
+    router.push('/leaderboards');
   } finally {
     isLoading.value = false;
   }

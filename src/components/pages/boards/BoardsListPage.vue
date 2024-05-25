@@ -20,7 +20,7 @@ import JoinCodeForm from 'src/components/board/JoinCodeForm.vue';
 import { PrimeIcons } from 'primevue/api';
 
 const breadcrumbs: MenuItem[] = [
-  { label: 'Boards', url: '/boards' },
+  { label: 'Leaderboards', url: '/leaderboards' },
 ];
 
 const isJoinFormVisible = ref<boolean>(false);
@@ -111,10 +111,10 @@ onMounted(() => {
       </RouterLink>
     </div>
     <div v-if="filteredBoards.length === 0 && boards.length > 0">
-      No matching boards found.
+      No matching leaderboards found.
     </div>
     <div v-if="boards.length === 0">
-      You haven't made any boards yet. Click the <span class="font-bold">New</span> button to get started!
+      You haven't made any leaderboards yet. Click the <span class="font-bold">New</span> button to get started!
     </div>
     <Dialog
       v-model:visible="isJoinFormVisible"

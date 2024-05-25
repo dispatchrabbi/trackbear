@@ -71,12 +71,12 @@ const routes = [
   { path: '/goals/:id/edit', name: 'edit-goal', component: EditGoalPage },
 
   // Boards section
-  { path: '/boards', name: 'boards', component: BoardsListPage },
-  { path: '/boards/new', name: 'new-board', component: NewBoardPage },
-  { path: '/boards/:uuid', name: 'board', component: BoardDetailPage },
-  { path: '/boards/:uuid/edit', name: 'edit-board', component: EditBoardPage },
-  { path: '/boards/:uuid/join', name: 'join-board', component: JoinBoardPage },
-  { path: '/boards/:uuid/filters', name: 'edit-board-filters', component: EditBoardParticipationPage },
+  { path: '/leaderboards', name: 'boards', component: BoardsListPage },
+  { path: '/leaderboards/new', name: 'new-board', component: NewBoardPage },
+  { path: '/leaderboards/:uuid', name: 'board', component: BoardDetailPage },
+  { path: '/leaderboards/:uuid/edit', name: 'edit-board', component: EditBoardPage },
+  { path: '/leaderboards/:uuid/join', name: 'join-board', component: JoinBoardPage },
+  { path: '/leaderboards/:uuid/filters', name: 'edit-board-filters', component: EditBoardParticipationPage },
 
   // Account section
   { path: '/settings/account', name: 'account', component: AccountPage },

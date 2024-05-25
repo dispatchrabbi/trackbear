@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
-import type { Board, Participant } from 'src/lib/api/board.ts';
+import type { Board, ParticipantWithTallies } from 'src/lib/api/board.ts';
 
 import { differenceInCalendarDays } from 'date-fns';
 
@@ -15,7 +15,7 @@ import { TallyMeasure } from 'server/lib/models/tally.ts';
 
 const props = defineProps<{
   board: Board;
-  participants: Participant[];
+  participants: ParticipantWithTallies[];
   measure: TallyMeasure;
 }>();
 

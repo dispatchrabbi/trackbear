@@ -87,7 +87,7 @@ async function handleSubmit() {
     await wait(1 * 1000);
     emit('formSuccess');
   } catch(err) {
-    errorMessage.value = 'Could not create the board: something went wrong server-side.';
+    errorMessage.value = 'Could not create the leaderboard: something went wrong server-side.';
 
     return;
   } finally {
@@ -202,7 +202,7 @@ async function handleSubmit() {
       for="board-form-goal"
       label="Goal"
       :rule="ruleFor('goal')"
-      help="If your board's participants will be tracking progress in different ways, you can set a goal for each type of progress."
+      help="If your leaderboard's participants will be tracking progress in different ways, you can set a goal for each type of progress."
     >
       <template #default="{ onUpdate, isFieldValid }">
         <MultiMeasureInput
@@ -231,13 +231,13 @@ async function handleSubmit() {
           <div
             class="max-w-64 md:max-w-none"
           >
-            This board is <span class="font-bold">{{ formModel.isJoinable ? `open` : `closed` }}</span> for users to join.
+            This leaderboard is <span class="font-bold">{{ formModel.isJoinable ? `open` : `closed` }}</span> for users to join.
           </div>
         </div>
       </template>
     </FieldWrapper>
     <FieldWrapper
-      label="Can everyone see this board?"
+      label="Can people join?"
       for="board-form-is-public"
       :required="true"
       :rule="ruleFor('isPublic')"
@@ -253,7 +253,7 @@ async function handleSubmit() {
           <div
             class="max-w-64 md:max-w-none"
           >
-            <span class="font-bold">{{ formModel.isPublic ? `Any user with the link` : `Only participants` }}</span> will be able to view this board. {{ formModel.isPublic ? `They will not need to join it to do so.` : `Non-participants will not be able to view it until they join.` }}
+            <span class="font-bold">{{ formModel.isPublic ? `Any user with the link` : `Only participants` }}</span> will be able to view this leaderboard. {{ formModel.isPublic ? `They will not need to join it to do so.` : `Non-participants will not be able to view it until they join.` }}
           </div>
         </div>
       </template>

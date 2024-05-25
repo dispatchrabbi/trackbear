@@ -21,7 +21,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  deleteConfirmation: z.string().refine(val => val === props.board.title, { message: 'You must type the title exactly.',  }), // only allow exactly the work title
+  deleteConfirmation: z.string().refine(val => val === props.board.title, { message: 'You must type the title exactly.',  }), // only allow exactly the board title
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);
@@ -46,7 +46,7 @@ async function handleSubmit() {
     await wait(1 * 1000);
     emit('formSuccess');
   } catch(err) {
-    errorMessage.value = 'Could not delete the board: something went wrong server-side.';
+    errorMessage.value = 'Could not delete the leaderboard: something went wrong server-side.';
 
     return;
   } finally {
@@ -69,7 +69,7 @@ async function handleSubmit() {
     <p class="font-bold text-red-500 dark:text-red-400">
       You are about to delete {{ props.board.title }}. All of the participants will also lose access to it. There is no way to undo this.
     </p>
-    <p>In order to confirm that you want to delete this board, please type <span class="font-bold">{{ props.board.title }}</span> into the input below and click Delete.</p>
+    <p>In order to confirm that you want to delete this leaderboard, please type <span class="font-bold">{{ props.board.title }}</span> into the input below and click Delete.</p>
     <FieldWrapper
       for="board-form-confirmation"
       label="Type the title to confirm deletion:"

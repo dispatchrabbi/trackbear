@@ -16,7 +16,7 @@ import { getBoard, FullBoard } from 'src/lib/api/board.ts';
 import { Tally } from 'src/lib/api/tally.ts';
 
 import { toTitleCase } from 'src/lib/str.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally';
+import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import { PrimeIcons } from 'primevue/api';
@@ -71,7 +71,7 @@ watch(measuresAvailable, (newMeasuresAvailable) => {
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
-    { label: 'Boards', url: '/boards' },
+    { label: 'Leaderboards', url: '/leaderboards' },
     { label: board.value === null ? 'Loading...' : board.value.title, url: `/boards/${boardUuid.value}` },
   ];
   return crumbs;
@@ -85,7 +85,7 @@ const handleShareClick = function() {
   toast.add({
     severity: 'success',
     summary: 'Code copied!',
-    detail: 'The join code for this board has been copied to your clipboard.',
+    detail: 'The join code for this leaderboard has been copied to your clipboard.',
     life: 3 * 1000,
   });
 };
@@ -145,14 +145,14 @@ onMounted(() => {
           <div class="flex gap-2 flex-col md:flex-row">
             <Button
               v-if="ownerIsViewing"
-              label="Configure Board"
+              label="Configure Leaderboard"
               :icon="PrimeIcons.COG"
               @click="router.push({ name: 'edit-board', params: { uuid: board.uuid } })"
             />
             <Button
               v-if="ownerIsViewing"
               severity="danger"
-              label="Delete Board"
+              label="Delete Leaderboard"
               :icon="PrimeIcons.TRASH"
               @click="isDeleteFormVisible = true"
             />
@@ -175,16 +175,16 @@ onMounted(() => {
             />
           </div>
           <div v-else-if="!board.isJoinable">
-            <p>This board is closed to joining.</p>
+            <p>This leaderboard is closed to joining.</p>
             <p v-if="ownerIsViewing">
-              Click "Configure Board" to open the board so people can join.
+              Click "Configure Leaderboard" to open the leaderboard so people can join.
             </p>
           </div>
           <div class="flex gap-2 flex-row flex-wrap">
             <Button
               v-if="board.isJoinable && !board.participants.some(p => p.uuid === userStore.user.uuid)"
               size="small"
-              label="Join Board"
+              label="Join Leaderboard"
               :icon="PrimeIcons.USER_PLUS"
               outlined
               @click="router.push({ name: 'join-board', params: { uuid: board.uuid } })"
@@ -210,7 +210,7 @@ onMounted(() => {
               v-if="board.participants.some(p => p.uuid === userStore.user.uuid)"
               severity="danger"
               size="small"
-              label="Leave Board"
+              label="Leave Leaderboard"
               :icon="PrimeIcons.USER_MINUS"
               outlined
               @click="isLeaveFormVisible = true"
@@ -252,7 +252,7 @@ onMounted(() => {
             </TabView>
           </div>
           <div v-else>
-            This board has no participants, so there's nothing to show.
+            This leaderboard has no participants, so there's nothing to show.
           </div>
         </div>
       </div>
@@ -263,7 +263,7 @@ onMounted(() => {
         <template #header>
           <h2 class="font-heading font-semibold uppercase">
             <span :class="PrimeIcons.USER_MINUS" />
-            Leave Board
+            Leave Leaderboard
           </h2>
         </template>
         <LeaveBoardForm
@@ -279,7 +279,7 @@ onMounted(() => {
         <template #header>
           <h2 class="font-heading font-semibold uppercase">
             <span :class="PrimeIcons.TRASH" />
-            Delete Board
+            Delete Leaderboard
           </h2>
         </template>
         <DeleteBoardForm

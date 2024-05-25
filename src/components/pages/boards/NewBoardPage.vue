@@ -13,8 +13,8 @@ import CreateBoardForm from 'src/components/board/CreateBoardForm.vue';
 import Card from 'primevue/card';
 
 const breadcrumbs: MenuItem[] = [
-  { label: 'Boards', url: '/boards' },
-  { label: 'New Board', url: '/boards/new' },
+  { label: 'Leaderboards', url: '/leaderboards' },
+  { label: 'New Leaderboard', url: '/leaderboards/new' },
 ];
 
 </script>
@@ -27,13 +27,13 @@ const breadcrumbs: MenuItem[] = [
       class="max-w-screen-md"
     >
       <template #title>
-        <SectionTitle title="Create a Board" />
+        <SectionTitle title="Create a Leaderboard" />
       </template>
       <template #content>
         <CreateBoardForm
           @board:create="boardStore.populate(true)"
-          @form-success="router.push('/boards')"
-          @form-cancel="router.push('/boards')"
+          @form-success="router.push('/leaderboards')"
+          @form-cancel="router.push('/leaderboards')"
         />
       </template>
     </Card>

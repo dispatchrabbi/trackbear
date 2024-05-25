@@ -29,7 +29,7 @@ const board = ref<BoardWithParticipants | null>(null);
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
-    { label: 'Boards', url: '/boards' },
+    { label: 'Leaderboards', url: '/leaderboards' },
     { label: board.value === null ? 'Loading...' : board.value.title, url: `/boards/${boardUuid.value}` },
     { label: board.value === null ? 'Loading...' : 'Join', url: `/boards/${boardUuid.value}/join` },
     ];
@@ -85,7 +85,7 @@ onMounted(async () => {
       </template>
       <template #content>
         <div class="mb-4">
-          Select which progress updates you want to include on this board. You can filter by project, tag, or both.
+          Select which progress updates you want to include on this leaderboard. You can filter by project, tag, or both.
         </div>
         <EditBoardParticipationForm
           :board="board"

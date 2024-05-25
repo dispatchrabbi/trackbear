@@ -88,7 +88,7 @@ async function handleSubmit() {
       for="board-form-works"
       label="Projects to include"
       :rule="ruleFor('works')"
-      info="Only progress entries from the selected projects will be included on this board."
+      info="Only progress entries from the selected projects will be included on this leaderboard."
     >
       <template #default="{ onUpdate, isFieldValid }">
         <MultiSelect
@@ -109,7 +109,7 @@ async function handleSubmit() {
       for="board-form-tags"
       label="Tags to include"
       :rule="ruleFor('tags')"
-      info="Only progress entries with at least one of these tags will be included on this board."
+      info="Only progress entries with at least one of these tags will be included on this leaderboard."
     >
       <template #default="{ onUpdate, isFieldValid }">
         <MultiSelect

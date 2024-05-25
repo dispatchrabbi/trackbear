@@ -2,7 +2,7 @@
 import { ref, reactive, defineProps, defineEmits } from 'vue';
 import wait from 'src/lib/wait.ts';
 
-import { useUserStore } from 'src/stores/user';
+import { useUserStore } from 'src/stores/user.ts';
 const userStore = useUserStore();
 
 import { z } from 'zod';
@@ -49,7 +49,7 @@ async function handleSubmit() {
     await wait(1 * 1000);
     emit('formSuccess');
   } catch(err) {
-    errorMessage.value = 'Could not leave the board: something went wrong server-side.';
+    errorMessage.value = 'Could not leave the leaderboard: something went wrong server-side.';
 
     return;
   } finally {
@@ -72,7 +72,7 @@ async function handleSubmit() {
     <p class="font-bold text-red-500 dark:text-red-400">
       You are about to leave {{ props.board.title }}.
     </p>
-    <p>In order to confirm that you want to leave this board, please type <span class="font-bold">{{ userStore.user.username }}</span> into the input below and click Leave.</p>
+    <p>In order to confirm that you want to leave this leaderboard, please type <span class="font-bold">{{ userStore.user.username }}</span> into the input below and click Leave.</p>
     <FieldWrapper
       for="board-form-confirmation"
       label="Type your username to confirm:"
