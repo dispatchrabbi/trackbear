@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.10.1
+
+- CHANGED: Updated the copy on the homepage.
+
 ## 0.10.0
 
 - NEW: Leaderboards! Now you and your friends can track your progress together on the same graph. Race your writing partner to a goal, get your whole writing group involved, or keep each other accountable by creating a leaderboard. Once you've created a leaderboard, your friends can join it using the leaderboard's join code, which you can copy from the leaderboard's page.
