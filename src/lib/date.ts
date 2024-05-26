@@ -53,7 +53,6 @@ export function formatDuration(totalMinutes, omitZeroMinutes = false, forceColon
     minutes = '0' + minutes;
   }
 
-  // TODO: revamp time editing/input to remove dependency on this function
   if(forceColon) {
     return `${hours}:${minutes}`;
   } else if(omitZeroMinutes && minutes == '00') {

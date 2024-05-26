@@ -102,7 +102,6 @@ userRouter.put('/:id',
     return res.status(404).send(failure('NOT_FOUND', `No user found with id ${req.params.id}.`));
   }
 
-  // TODO: check username for unique first
   if('username' in payload) {
     const existingUserWithThisUsername = await dbClient.user.findUnique({
       where: { username: payload.username },

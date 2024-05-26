@@ -51,10 +51,7 @@ async function main() {
   let users: User[] = [];
   try {
     scriptLogger.info(`Fetching all users...`);
-    // TODO: remove the where clause here
-    users = await dbClient.user.findMany({
-      where: { username: { notIn: [ 'beartest2' ] } }
-    });
+    users = await dbClient.user.findMany();
   } catch(err) {
     scriptLogger.error(`Error fetching users: ${err.message}`);
   }

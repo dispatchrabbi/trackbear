@@ -25,6 +25,8 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Overall total
   - [ ] Totals by tag
   - [ ] Ability to exempt tags/projects from total
+- [ ] User settings
+  - [ ] Implement theme switcher (including light/dark/system)
 - [ ] Improve tag inputs
 - [ ] Replace chart.js line graphs with d3- or d3/plot-driven ones
 - [ ] Add a little red dot when there's been an update
@@ -64,7 +66,6 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 
 ## Branding
 - [ ] Create/commission logo and assets
-- [ ] Finalize color scheme
 - [ ] Improve home page
 - [ ] Rewrite copy on "outside" pages
 

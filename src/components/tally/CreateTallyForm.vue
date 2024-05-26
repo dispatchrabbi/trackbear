@@ -54,10 +54,10 @@ const MAXIMUM_NOTE_LENGTH = 140;
 
 const validations = z.object({
   date: z.date({ invalid_type_error:'Please select a date.' }).transform(formatDateSafe),
-  workId: z.number({ invalid_type_error: 'Please select a project.' }).positive({ message: 'Please select a project.' }), // TODO: constrain to known projects
+  workId: z.number({ invalid_type_error: 'Please select a project.' }).positive({ message: 'Please select a project.' }),
   tags: z.array(z.string()),
-  count: z.number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }), // TODO: add measure type to error messages
-  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<TallyMeasure>, { required_error: 'Please pick a type.'}), // long way to go for `string`
+  count: z.number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }),
+  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<TallyMeasure>, { required_error: 'Please pick a type.'}),
   setTotal: z.boolean(),
   note: z.string().max(MAXIMUM_NOTE_LENGTH, { message: `Notes can be at most ${MAXIMUM_NOTE_LENGTH} characters.`}),
 });
