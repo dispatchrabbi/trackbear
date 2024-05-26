@@ -50,9 +50,9 @@ const sections = [
     image: 'screenshot-board',
     heading: 'Words with friends',
     body: [
-      `Everything is better when you do it with a group. Set up leaderboards so you can race each other to the finish
-      line, encourage your friends, or put on a community-wide challenge. Everyone picks what they want to track and
-      TrackBear shows you who's in the lead and how you're trending versus par.`
+      `Keep up with your community with leaderboards. When you create a leaderboard and your friends join it, everyone
+      can see each other's progress. You can cheer your friends on, set up an accountability buddy system, or set a
+      community goal and see who hits it first. Writing is more fun with friends, and TrackBear helps make that happen.`
     ],
   },
   {
