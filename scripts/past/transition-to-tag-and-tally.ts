@@ -1,17 +1,17 @@
 #!/usr/bin/env -S node --import ./ts-node-loader.js
 
 import dotenv from 'dotenv';
-import { getNormalizedEnv } from '../server/lib/env.ts';
+import { getNormalizedEnv } from '../../server/lib/env.ts';
 
 import winston from 'winston';
-import { initLoggers } from '../server/lib/logger.ts';
+import { initLoggers } from '../../server/lib/logger.ts';
 
-import dbClient from '../server/lib/db.ts';
+import dbClient from '../../server/lib/db.ts';
 import type { User, Project, Update, Work, Goal } from '@prisma/client';
-import { PROJECT_STATE, PROJECT_TYPE } from '../server/lib/states.ts';
-import { WORK_STATE, WORK_PHASE } from '../server/lib/models/work.ts';
-import { TALLY_STATE, TALLY_MEASURE } from '../server/lib/models/tally.ts';
-import { GOAL_STATE, GOAL_TYPE, GoalParameters } from '../server/lib/models/goal.ts';
+import { PROJECT_STATE, PROJECT_TYPE } from '../../server/lib/states.ts';
+import { WORK_STATE, WORK_PHASE } from '../../server/lib/models/work.ts';
+import { TALLY_STATE, TALLY_MEASURE } from '../../server/lib/models/tally.ts';
+import { GOAL_STATE, GOAL_TYPE, GoalParameters } from '../../server/lib/models/goal.ts';
 
 const MEASURE_CONVERSION = {
   [PROJECT_TYPE.WORDS]: TALLY_MEASURE.WORD,
