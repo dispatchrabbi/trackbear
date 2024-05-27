@@ -12,7 +12,7 @@ import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 import dbClient from "../../lib/db.ts";
 import type { User, AuditEvent } from "@prisma/client";
 import { USER_STATE, USERNAME_REGEX } from "../../lib/models/user.ts";
-import { PASSWORD_RESET_LINK_STATE } from "../../lib/states.ts";
+import { PASSWORD_RESET_LINK_STATE } from "../../lib/models/password-reset-link.ts";
 import CONFIG from '../../config.ts';
 
 import { pushTask } from "../../lib/queue.ts";

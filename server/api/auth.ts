@@ -10,7 +10,7 @@ import dbClient from '../lib/db.ts';
 import { PasswordResetLink, PendingEmailVerification, User, UserAuth } from "@prisma/client";
 import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut, requireUser, WithUser } from "../lib/auth.ts";
-import { PASSWORD_RESET_LINK_STATE } from "../lib/states.ts";
+import { PASSWORD_RESET_LINK_STATE } from "../lib/models/password-reset-link.ts";
 import { USER_STATE, USERNAME_REGEX } from "../lib/models/user.ts";
 import CONFIG from '../config.ts';
 

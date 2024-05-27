@@ -1,8 +1,6 @@
 import { expect, describe, it } from 'vitest';
 import { success, failure, h } from './api-response.ts';
 
-import express from 'express';
-
 describe('success', () => {
   it('returns a success object', () => {
     const expected = {
