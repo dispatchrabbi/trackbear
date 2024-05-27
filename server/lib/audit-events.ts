@@ -1,8 +1,8 @@
 import winston from 'winston';
-import dbClient from "../lib/db.ts";
+import dbClient from "./db.ts";
 
-const TRACKBEAR_SYSTEM_ID = -1;
-async function logAuditEvent(eventType: string, agentId: number, patientId?: number, goalId?: number, auxInfo: Record<string, unknown> = {}, sessionId?: string) {
+export const TRACKBEAR_SYSTEM_ID = -1;
+export async function logAuditEvent(eventType: string, agentId: number, patientId?: number, goalId?: number, auxInfo: Record<string, unknown> = {}, sessionId?: string) {
   try {
     await dbClient.auditEvent.create({
       data: {
@@ -22,8 +22,10 @@ type ChangeRecord<F> = {
   from: F | null;
   to: F | null;
 };
-function buildChangeRecord<T extends object>(fields: Array<keyof T> , from: Partial<T>, to: Partial<T>)  {
+export function buildChangeRecord<T extends object>(from: Partial<T>, to: Partial<T>)  {
   const changes = {} as Record<keyof T, ChangeRecord<T[keyof T]>>;
+
+  const fields = [...new Set([...Object.keys(from), ...Object.keys(to)])];
   for(const field of fields) {
     // intentional double-equals to capture undefined as well
     const fromVal = from[field] == null ? null : from[field];
@@ -41,9 +43,3 @@ function buildChangeRecord<T extends object>(fields: Array<keyof T> , from: Part
 
   return changes;
 }
-
-export {
-  TRACKBEAR_SYSTEM_ID,
-  logAuditEvent,
-  buildChangeRecord,
-};

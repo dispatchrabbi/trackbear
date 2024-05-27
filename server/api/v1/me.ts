@@ -112,7 +112,7 @@ meRouter.patch('/',
     return res.status(404).send(failure('NOT_FOUND', `No active user found to update`));
   }
 
-  const changeRecord = buildChangeRecord<MeEditPayload>(Object.keys(payload) as (keyof MeEditPayload)[], current, updated);
+  const changeRecord = buildChangeRecord<MeEditPayload>(current, updated);
   await logAuditEvent('user:update', req.user.id, req.user.id, null, changeRecord, req.sessionID);
 
   if(didEmailChange) {
@@ -228,7 +228,7 @@ meRouter.post('/avatar',
   }
 
   winston.debug(`AVATAR: User ${req.user.id} (${req.user.username}) successfully uploaded a new avatar (${filename})`);
-  const changeRecord = buildChangeRecord(['avatar'], { avatar: req.user.avatar }, { avatar: updated.avatar });
+  const changeRecord = buildChangeRecord({ avatar: req.user.avatar }, { avatar: updated.avatar });
   await logAuditEvent('user:avatar', req.user.id, req.user.id, null, changeRecord, req.sessionID);
 
   req.user = updated;
@@ -252,7 +252,7 @@ meRouter.delete('/avatar',
   }
 
   winston.debug(`AVATAR: User ${req.user.id} (${req.user.username}) deleted their avatar`);
-  const changeRecord = buildChangeRecord(['avatar'], { avatar: req.user.avatar }, { avatar: updated.avatar });
+  const changeRecord = buildChangeRecord({ avatar: req.user.avatar }, { avatar: updated.avatar });
   await logAuditEvent('user:avatar', req.user.id, req.user.id, null, changeRecord, req.sessionID);
 
   req.user = updated;

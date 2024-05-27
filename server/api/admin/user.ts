@@ -123,7 +123,7 @@ userRouter.put('/:id',
     return res.status(404).send(failure('NOT_FOUND', `No user found with id ${req.params.id}.`));
   }
 
-  const changes = buildChangeRecord<UserUpdatePayload>(Object.keys(payload) as (keyof UserUpdatePayload)[], current, updated);
+  const changes = buildChangeRecord<UserUpdatePayload>(current, updated);
   await logAuditEvent('user:update', admin.id, updated.id, null, changes, req.sessionID);
 
   return res.status(200).send(success(updated));

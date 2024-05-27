@@ -35,17 +35,37 @@ See [the environment variable documentation](./docs/env.md) for more details on 
 To start TrackBear in development mode:
 
 ```sh
-npm run start
+node --run start
 ```
 
 You can also start TrackBear in production mode:
 
 ```sh
 # compile the app first
-npm run compile
+node --run compile
 
 # then start it up
-npm run start:prod
+node --run start:prod
+```
+
+### Testing
+
+You can run tests thus:
+
+```sh
+node --run test
+```
+
+or you can look at the results in a web-based UI:
+
+```sh
+node --run test:webui
+```
+
+There is also coverage reporting available, which will deposit a coverage report in _coverage/_:
+
+```sh
+node --run coverage
 ```
 
 ### Migrations
@@ -78,8 +98,7 @@ Once you do this, a Github Action will build a production-ready container and up
 
 ## Deploying
 
-The app runs as a container on the server. There's no fancy remote deploy yet, so to update, you'll need to
-SSH into the server, change the container restart script to the latest version, and run it.
+The app runs as a container on the server. There's no fancy remote deploy yet, so to update, you'll need to SSH into the server, change the container restart script to the latest version, and run it.
 
 This should probably be made better at some point, but for now, it works fine.
 
