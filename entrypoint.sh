@@ -12,4 +12,4 @@ fi
 
 # Start the server
 # Don't use npm run/node --run because it doesn't pass signals correctly
-node --import ./ts-node-loader.js ./main.ts
+node --import tsx ./main.ts
