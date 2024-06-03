@@ -1,18 +1,19 @@
 import { Router } from "express";
-import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
+import { ApiResponse, success, failure, h } from 'server/lib/api-response.ts';
 
-import { requireUser, RequestWithUser } from '../../lib/auth.ts';
+import { requireUser, RequestWithUser } from 'server/lib/auth.ts';
 
 import { z } from 'zod';
-import { zIdParam, zDateStr, NonEmptyArray } from '../../lib/validators.ts';
-import { validateBody, validateParams, validateQuery } from "../../lib/middleware/validate.ts";
+import { zIdParam, zDateStr, NonEmptyArray } from 'server/lib/validators.ts';
+import { validateBody, validateParams, validateQuery } from "server/lib/middleware/validate.ts";
 
-import dbClient from "../../lib/db.ts";
+import dbClient from "server/lib/db.ts";
 import type { Tally, Work, Tag } from "@prisma/client";
-import { TALLY_STATE, TALLY_MEASURE } from '../../lib/models/tally.ts';
-import { TAG_STATE, TAG_DEFAULT_COLOR } from '../../lib/models/tag.ts';
+import { TALLY_STATE, TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { TAG_STATE, TAG_DEFAULT_COLOR } from 'server/lib/models/tag.ts';
 
-import { logAuditEvent } from '../../lib/audit-events.ts';
+import { logAuditEvent } from 'server/lib/audit-events.ts';
+import { WORK_STATE } from "server/lib/models/work.ts";
 
 const tallyRouter = Router();
 export default tallyRouter;
@@ -106,6 +107,17 @@ tallyRouter.post('/',
       return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total when no project is specified.'));
     }
 
+    const work = await dbClient.work.findUnique({
+      where: {
+        state: WORK_STATE.ACTIVE,
+        ownerId: user.id,
+        id: req.body.workId,
+      },
+    });
+    if(!work) {
+      return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total because the project specified was not found.'));
+    }
+
     const tallies = await dbClient.tally.findMany({
       where: {
         state: TALLY_STATE.ACTIVE,
@@ -116,7 +128,8 @@ tallyRouter.post('/',
       },
     });
 
-    const currentTotal = tallies.reduce((total, tally) => total + tally.count, 0);
+    const startingBalance = req.body.measure in (work.startingBalance as Record<string, number>) ? work.startingBalance[req.body.measure] : 0;
+    const currentTotal = startingBalance + tallies.reduce((total, tally) => total + tally.count, 0);
     const difference = count - currentTotal;
     count = difference;
   }
@@ -191,6 +204,17 @@ tallyRouter.put('/:id',
       return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total when no project is specified.'));
     }
 
+    const work = await dbClient.work.findUnique({
+      where: {
+        state: WORK_STATE.ACTIVE,
+        ownerId: user.id,
+        id: req.body.workId,
+      },
+    });
+    if(!work) {
+      return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total because the project specified was not found.'));
+    }
+
     const tallies = await dbClient.tally.findMany({
       where: {
         state: TALLY_STATE.ACTIVE,
@@ -202,7 +226,8 @@ tallyRouter.put('/:id',
       },
     });
 
-    const currentTotal = tallies.reduce((total, tally) => total + tally.count, 0);
+    const startingBalance = req.body.measure in (work.startingBalance as Record<string, number>) ? work.startingBalance[req.body.measure] : 0;
+    const currentTotal = startingBalance + tallies.reduce((total, tally) => total + tally.count, 0);
     const difference = count - currentTotal;
     count = difference;
   }

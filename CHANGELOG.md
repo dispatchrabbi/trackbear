@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Fixed a bug where starting balances weren't taken into account when adding or editing progress and using the "set as total" option. If you have used this option with a project that has starting balances, you should check to make sure your totals are still accurate. Sorry about this, and thank you to wishonadarkstar for pointing out this bug. (h/t wishonadarkstar)
+
 ## 0.10.1
 
 - CHANGED: Updated the copy on the homepage.
