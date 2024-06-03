@@ -1,6 +1,6 @@
 import path from 'path';
 import winston, { format, transports } from 'winston';
-import { getNormalizedEnv } from './env.ts';
+import { getNormalizedEnv } from 'server/lib/env.ts';
 
 export type LoggerInitOpts = {
   forceConsoles?: boolean

@@ -1,6 +1,6 @@
 import { Router, Request, ErrorRequestHandler } from "express";
-import type { WithSessionAuth } from '../lib/auth.ts';
-import { ApiResponse, failure } from "../lib/api-response.ts";
+import type { WithSessionAuth } from 'server/lib/auth.ts';
+import { ApiResponse, failure } from "server/lib/api-response.ts";
 
 import winston from "winston";
 

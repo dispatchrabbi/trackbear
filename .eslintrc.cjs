@@ -14,6 +14,6 @@ module.exports = {
     sourceType: 'module'
   },
   rules: {
-
+    "@typescript-eslint/ban-ts-comment": "off"
   },
 }

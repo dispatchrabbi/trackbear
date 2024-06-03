@@ -11,12 +11,12 @@
     "server/*": "./server/*"
   },
   "prisma": {
-    "seed": "node --import ./ts-node-loader.js ./prisma/seed/seed.ts"
+    "seed": "node --import tsx ./prisma/seed/seed.ts"
   },
   "scripts": {
     "start": "node --run start:dev",
-    "start:dev": "NODE_ENV=development node --import ./ts-node-loader.js ./main.ts",
-    "start:prod": "NODE_ENV=production node --import ./ts-node-loader.js ./main.ts",
+    "start:dev": "NODE_ENV=development node --import tsx ./main.ts",
+    "start:prod": "NODE_ENV=production node --import tsx ./main.ts",
     "test": "vitest",
     "test:webui": "vitest --ui",
     "coverage": "vitest run --coverage",
@@ -64,7 +64,7 @@
     "primevue": "^3.50.0",
     "prisma": "^5.11.0",
     "tailwindcss": "^3.4.1",
-    "ts-node": "^10.9.1",
+    "tsx": "^4.11.0",
     "vite": "^5.0.0",
     "vue": "^3.3.8",
     "vue-chartjs": "^5.2.0",

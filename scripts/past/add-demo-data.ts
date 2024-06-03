@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node --import ./ts-node-loader.js
+#!/usr/bin/env -S node --import tsx
 import dotenv from 'dotenv';
 import winston from 'winston';
 import { initLoggers } from '../../server/lib/logger.ts';

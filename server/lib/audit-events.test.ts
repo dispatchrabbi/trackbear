@@ -8,6 +8,7 @@ describe('logAuditEvent', () => {
   it('creates an audit event in the database', async () => {
     await logAuditEvent('test:event', 12, 34, null, { extra: 'info' }, 'some-fake-session-id');
 
+    // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
     expect(dbClientMock.auditEvent.create).toBeCalled();
   });
 
@@ -16,6 +17,7 @@ describe('logAuditEvent', () => {
 
     const result = await logAuditEvent('test:event', 12, 34, null, { extra: 'info' }, 'some-fake-session-id');
 
+    // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
     expect(dbClientMock.auditEvent.create).toBeCalled();
     expect(result).toBe(undefined);
   });

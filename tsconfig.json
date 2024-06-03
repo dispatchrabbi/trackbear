@@ -9,7 +9,6 @@
     "useDefineForClassFields": true,
     "forceConsistentCasingInFileNames": true,
 
-    // "moduleResolution": "bundler",
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
@@ -22,7 +21,7 @@
     // "strict": true,
     // "noUnusedLocals": true,
     // "noUnusedParameters": true,
-    // "noFallthroughCasesInSwitch": true
+    // "noFallthroughCasesInSwitch": true,
 
     "baseUrl": ".",
     "paths": {
@@ -33,8 +32,9 @@
   "include": [
     "src/**/*.ts", "src/**/*.js", "src/**/*.vue",
     "server/**/*.ts",
+    "main.ts",
   ],
   "references": [
-    { "path": "./tsconfig.vite.json" },
+    { "path": "./tsconfig.vite.json" }
   ],
 }

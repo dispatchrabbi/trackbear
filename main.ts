@@ -1,30 +1,30 @@
 import { readFile } from 'fs/promises';
 import dotenv from 'dotenv';
-import { getNormalizedEnv } from './server/lib/env.ts';
+import { getNormalizedEnv } from 'server/lib/env.ts';
 
 import winston from 'winston';
-import { initLoggers, closeLoggers } from './server/lib/logger.ts';
+import { initLoggers, closeLoggers } from 'server/lib/logger.ts';
 
-import { initQueue } from './server/lib/queue.ts';
-import initWorkers from './server/lib/workers.ts';
+import { initQueue } from 'server/lib/queue.ts';
+import initWorkers from 'server/lib/workers.ts';
 
-import dbClient from './server/lib/db.ts';
+import dbClient from 'server/lib/db.ts';
 
 import http from 'http';
 import https from 'https';
 import { promisify } from 'util';
 import express, { ErrorRequestHandler } from 'express';
 import morgan from 'morgan';
-import helmet from './server/lib/middleware/helmet.ts';
+import helmet from 'server/lib/middleware/helmet.ts';
 import compression from 'compression';
 import bodyParser from 'body-parser';
 import qs from 'qs';
 import session from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
-import rateLimit from './server/lib/middleware/rate-limit.ts';
+import rateLimit from 'server/lib/middleware/rate-limit.ts';
 
-import apiRouter from './server/api/index.ts';
-import spaRoutes from './server/lib/middleware/spa-routes.ts';
+import apiRouter from 'server/api/index.ts';
+import spaRoutes from 'server/lib/middleware/spa-routes.ts';
 import { createServer as createViteServer } from 'vite';
 
 async function main() {
@@ -46,7 +46,7 @@ async function main() {
 
   // allow arrays in query strings with just commas
   // this must be set before anything else (see https://github.com/expressjs/express/issues/4979)
-  app.set('query parser', str => qs.parse(str, { comma: true }));
+  app.set('query parser', (str: string) => qs.parse(str, { comma: true }));
 
   // add security headers
   app.use(await helmet());

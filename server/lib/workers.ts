@@ -1,9 +1,9 @@
 import { CronJob } from 'cron';
 import winston from 'winston';
 
-import suspendUnverifiedUsersWorker from '../workers/suspendUnverifiedUsersWorker.ts';
-import clearResetLinksWorker from '../workers/clearResetLinksWorker.ts';
-import removeExpiredEmailVerificationsWorker from '../workers/removeExpiredEmailVerificationsWorker.ts';
+import suspendUnverifiedUsersWorker from 'server/workers/suspendUnverifiedUsersWorker.ts';
+import clearResetLinksWorker from 'server/workers/clearResetLinksWorker.ts';
+import removeExpiredEmailVerificationsWorker from 'server/workers/removeExpiredEmailVerificationsWorker.ts';
 
 const WORKERS = [
   suspendUnverifiedUsersWorker,

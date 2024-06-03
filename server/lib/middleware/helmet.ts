@@ -1,5 +1,5 @@
 import helmet from "helmet";
-import { getNormalizedEnv } from '../env.ts';
+import { getNormalizedEnv } from 'server/lib/env.ts';
 
 async function middleware() {
   const env = await getNormalizedEnv();
