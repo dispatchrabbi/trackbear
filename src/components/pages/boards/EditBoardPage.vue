@@ -28,8 +28,8 @@ const board = ref<Board | null>(null);
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
     { label: 'Leaderboards', url: '/leaderboards' },
-    { label: board.value === null ? 'Loading...' : board.value.title, url: `/boards/${boardUuid.value}` },
-    { label: board.value === null ? 'Loading...' : 'Edit', url: `/boards/${boardUuid.value}/edit` },
+    { label: board.value === null ? 'Loading...' : board.value.title, url: `/leaderboards/${boardUuid.value}` },
+    { label: board.value === null ? 'Loading...' : 'Edit', url: `/leaderboards/${boardUuid.value}/edit` },
     ];
   return crumbs;
 });
@@ -70,8 +70,8 @@ onMounted(() => loadBoard());
         <EditBoardForm
           :board="board"
           @board:update="boardStore.populate(true)"
-          @form-success="router.push(`/boards/${board.uuid}`)"
-          @form-cancel="router.push(`/boards/${board.uuid}`)"
+          @form-success="router.push(`/leaderboards/${board.uuid}`)"
+          @form-cancel="router.push(`/leaderboards/${board.uuid}`)"
         />
       </template>
     </Card>

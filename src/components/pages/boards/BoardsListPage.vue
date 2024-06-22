@@ -77,7 +77,7 @@ onMounted(() => {
           />
         </div>
         <div>
-          <RouterLink to="/boards/new">
+          <RouterLink :to="{ name: 'new-board' }">
             <Button
               label="New"
               :icon="PrimeIcons.PLUS"

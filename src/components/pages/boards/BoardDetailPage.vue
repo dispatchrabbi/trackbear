@@ -72,7 +72,7 @@ watch(measuresAvailable, (newMeasuresAvailable) => {
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
     { label: 'Leaderboards', url: '/leaderboards' },
-    { label: board.value === null ? 'Loading...' : board.value.title, url: `/boards/${boardUuid.value}` },
+    { label: board.value === null ? 'Loading...' : board.value.title, url: `/leaderboards/${boardUuid.value}` },
   ];
   return crumbs;
 });

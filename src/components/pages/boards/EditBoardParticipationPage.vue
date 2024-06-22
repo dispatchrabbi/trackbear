@@ -30,8 +30,8 @@ const board = ref<BoardWithParticipants | null>(null);
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
     { label: 'Leaderboards', url: '/leaderboards' },
-    { label: board.value === null ? 'Loading...' : board.value.title, url: `/boards/${boardUuid.value}` },
-    { label: board.value === null ? 'Loading...' : 'Join', url: `/boards/${boardUuid.value}/join` },
+    { label: board.value === null ? 'Loading...' : board.value.title, url: `/leaderboards/${boardUuid.value}` },
+    { label: board.value === null ? 'Loading...' : 'Join', url: `/boarleaderboardsds/${boardUuid.value}/join` },
     ];
   return crumbs;
 });
