@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     // "module": "ES2022",
-    "module": "NodeNext",
+    "module": "ESNext",
     "target": "es2022",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
 
@@ -9,7 +9,7 @@
     "useDefineForClassFields": true,
     "forceConsistentCasingInFileNames": true,
 
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "Bundler",
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,

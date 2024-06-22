@@ -25,7 +25,7 @@ import rateLimit from 'server/lib/middleware/rate-limit.ts';
 
 import apiRouter from 'server/api/index.ts';
 import spaRoutes from 'server/lib/middleware/spa-routes.ts';
-import { createServer as createViteServer } from 'vite';
+import { createServer } from 'vite';
 
 async function main() {
   dotenv.config();
@@ -114,7 +114,7 @@ async function main() {
     // Serve the front end using the schmancy HMR vite server.
     // This middleware has a catch-all route
     winston.debug('Serving the front-end dynamically using vite');
-    const vite = await createViteServer({
+    const vite = await createServer({
       server: {
         middlewareMode: true,
         https:  env.ENABLE_TLS ? {
