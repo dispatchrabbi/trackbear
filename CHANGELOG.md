@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.11.2
+
 - FIXED: Some leaderboard-related links pointed to outdated URLs. These have now been fixed. (h/t kasperdskod007)
 
 ## 0.11.0
