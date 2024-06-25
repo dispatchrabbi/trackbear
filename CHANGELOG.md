@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.11.3
+
 - FIXED: Heatmaps would show progress on the day before for users in timezones ahead of UTC. Heatmaps now should work correctly in all timezones. Sorry, Australians! (h/t EosLaetitia)
 
 ## 0.11.2
