@@ -57,12 +57,12 @@ const colorScale = computed(() => {
 });
 
 // Define formatting functions for the axes and tooltips.
-const formatDate = d3.utcFormat("%x");
+const formatDate = d3.timeFormat("%x");
 const formatDay = (i: number) => "SMTWTFS"[i];
-const formatMonth = d3.utcFormat("%b");
+const formatMonth = d3.timeFormat("%b");
 
 // Helpers to compute a day’s position in the week.
-const timeWeek = d3.utcMonday;
+const timeWeek = d3.timeMonday;
 const countDay = (i: number) => (i + 6) % 7;
 
 // other date helpers
@@ -138,7 +138,7 @@ onMounted(() => {
         .attr("width", cellSize - 1)
         .attr("height", cellSize - 1)
         .attr("x", d => timeWeek.count(firstWeek, d.date) * cellSize + 0.5 + cellSize)
-        .attr("y", d => countDay(d.date.getUTCDay()) * cellSize + 0.5)
+        .attr("y", d => countDay(d.date.getDay()) * cellSize + 0.5)
         .attr("fill", d => quantileColor(d.normalized))
       .append("title")
         .text(d => [formatDate(d.date), props.valueFormatFn(d)].join('\n'));
@@ -146,7 +146,7 @@ onMounted(() => {
     // create a group for each month
     const month = timeline.append("g")
       .selectAll()
-      .data((data) => d3.utcMonths(d3.utcMonth(data[0].date), data.at(-1).date))
+      .data((data) => d3.timeMonths(d3.timeMonth(data[0].date), data.at(-1).date))
       .join("g");
 
     // draw an overlay between months to give a little separation
@@ -158,7 +158,7 @@ onMounted(() => {
 
     // A function that draws a thin line to the left of each month.
     function pathMonth(t) {
-      const d = Math.max(0, Math.min(7, countDay(t.getUTCDay())));
+      const d = Math.max(0, Math.min(7, countDay(t.getDay())));
       const w = timeWeek.count(firstWeek, t) + 1; // +1 to account for the weekday legend
       return `${d === 0 ? `M${w * cellSize},0`
           : d === 7 ? `M${(w + 1) * cellSize},0`
