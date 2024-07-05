@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.11.4
+
 - NEW: Leaderboards now have Fundraiser Mode, where everyone's progress counts toward the goal — play co-op instead of versus!
 - FIXED: Fixed a bug where target graphs accidentally would count progress no matter what measure was used. This has been fixed and graphs should now be accurate again. (h/t misupstairs)
 
