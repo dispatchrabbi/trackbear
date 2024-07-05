@@ -2,7 +2,7 @@
 import { computed, toValue, defineProps } from 'vue';
 
 import { Line } from 'vue-chartjs';
-import { Chart as ChartJS, Title, Tooltip, Legend, LineController, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js';
+import { Chart as ChartJS, Title, Tooltip, Legend, LineController, LineElement, PointElement, CategoryScale, LinearScale, Filler } from 'chart.js';
 import type { ChartData, ChartOptions } from 'chart.js';
 import { provideLineChartDataDefaults, provideLineChartOptionsDefaults } from './line-chart-defaults.ts';
 
@@ -18,7 +18,7 @@ const props = defineProps<{
   isFullscreen?: boolean;
 }>();
 
-ChartJS.register(Title, Tooltip, LineController, Legend, LineElement, PointElement, CategoryScale, LinearScale);
+ChartJS.register(Title, Tooltip, LineController, Legend, LineElement, PointElement, CategoryScale, LinearScale, Filler);
 ChartJS.defaults.font.family = 'Jost, sans-serif';
 
 const options = computed(() => {

@@ -40,6 +40,7 @@ const formModel = reactive({
   endDate: null,
 
   goal: {},
+  fundraiserMode: false,
 
   isJoinable: true,
   isPublic: false,
@@ -62,6 +63,7 @@ const validations = z
       z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
       z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' })
     ),
+    fundraiserMode: z.boolean(),
 
     isJoinable: z.boolean(),
     isPublic: z.boolean(),
@@ -215,8 +217,30 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
+      label="Fundraiser Mode"
+      for="board-form-fundraiser-mode"
+      :required="true"
+      :rule="ruleFor('fundraiserMode')"
+      help="You can always change this setting later."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <div class="flex gap-4 max-w-full items-center">
+          <InputSwitch
+            v-model="formModel.fundraiserMode"
+            :invalid="!isFieldValid"
+            @update:model-value="onUpdate"
+          />
+          <div
+            class="max-w-64 md:max-w-none"
+          >
+            Everyone's progress will be counted <span class="font-bold">{{ formModel.fundraiserMode ? `collectively` : `separately` }}</span>.
+          </div>
+        </div>
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
       label="Can people join?"
-      for="board-form-is-joinable"
+      for="board-form-fundraiser-mode"
       :required="true"
       :rule="ruleFor('isJoinable')"
       help="You can always change this setting later."
@@ -237,7 +261,7 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
-      label="Can people join?"
+      label="Can people view without joining?"
       for="board-form-is-public"
       :required="true"
       :rule="ruleFor('isPublic')"

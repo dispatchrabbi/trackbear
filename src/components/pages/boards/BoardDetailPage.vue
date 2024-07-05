@@ -29,7 +29,8 @@ import TabPanel from 'primevue/tabpanel';
 import Dialog from 'primevue/dialog';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import SubsectionTitle from 'src/components/layout/SubsectionTitle.vue';
-import BoardLineChart from 'src/components/board/BoardLineChart.vue';
+import BoardProgressMeter from 'src/components/board/BoardProgressMeter.vue';
+import BoardProgressChart from 'src/components/board/BoardProgressChart.vue';
 import BoardStandings from 'src/components/board/BoardStandings.vue';
 import LeaveBoardForm from 'src/components/board/LeaveBoardForm.vue';
 import DeleteBoardForm from 'src/components/board/DeleteBoardForm.vue';
@@ -234,7 +235,18 @@ onMounted(() => {
               >
                 <!-- line chart -->
                 <div class="w-full">
-                  <BoardLineChart
+                  <BoardProgressChart
+                    :board="board"
+                    :participants="board.participants"
+                    :measure="selectedMeasure"
+                  />
+                </div>
+                <!-- fundraiser meter -->
+                <div
+                  v-if="board.fundraiserMode"
+                  class="w-full mt-8"
+                >
+                  <BoardProgressMeter
                     :board="board"
                     :participants="board.participants"
                     :measure="selectedMeasure"

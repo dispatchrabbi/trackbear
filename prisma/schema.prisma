@@ -233,6 +233,7 @@ model Board {
   startDate String?
   endDate   String?
   goal      Json
+  fundraiserMode  Boolean @default(false)
 
   starred Boolean @default(false)
 

@@ -32,7 +32,10 @@ export function formatCount(count: number, measure: string ) {
   return measure === TALLY_MEASURE.TIME ? formatDuration(count) : `${commaify(count)} ${TALLY_MEASURE_INFO[measure].counter[Math.abs(count) === 1 ? 'singular' : 'plural']}`;
 }
 
-export function cmpTallies(a: Tally, b: Tally) {
+interface ComparableTally {
+  date: string;
+}
+export function cmpTallies(a: ComparableTally, b: ComparableTally) {
   return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
 }
 

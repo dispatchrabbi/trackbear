@@ -15,7 +15,8 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] Leaderboards
   - [ ] Allow owners to remove (or ban?) participants from leaderboards
   - [ ] Progress to individual goals
-  - [ ] "Fundraiser mode" (everyone's progress contributes)
+  - [ ] Multiple goals (a la "stretch goals")
+  - [X] "Fundraiser mode" (everyone's progress contributes)
   - [ ] Add yourself more than once
 - [ ] Dashboard
   - [ ] Dashboard could be more fun/welcoming
@@ -30,6 +31,10 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] TinyPNG-ify avatar files to save on space
 - [ ] Improve tag inputs
 - [ ] Replace chart.js line graphs with d3- or d3/plot-driven ones
+  - [X] Leaderboards
+  - [ ] Targets
+  - [ ] Projects
+  - [ ] Elsewhere
 - [ ] Add a little red dot when there's been an update
 
 ## Admin Console Features

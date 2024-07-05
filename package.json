@@ -26,11 +26,14 @@
     "compile": "node --run compile:db && node --run compile:client",
     "compile:db": "npx prisma generate",
     "compile:client": "npx vue-tsc && npx vite build --emptyOutDir",
+    "migrate:dev": "npx prisma migrate dev && npx prisma generate",
+    "migrate:prod": "npx prisma migrate deploy",
     "hooks": "husky install",
     "preversion": "node --run build",
     "version": "VERSION=$(npm pkg get version --workspaces=false | tr -d \\\"); git add .; git commit -m \"v${VERSION}\"; git tag -a \"v${VERSION}\" -m \"v${VERSION}\""
   },
   "dependencies": {
+    "@observablehq/plot": "^0.6.15",
     "@prisma/client": "^5.10.2",
     "@quixo3/prisma-session-store": "^3.1.13",
     "@vitejs/plugin-vue": "^4.5.0",

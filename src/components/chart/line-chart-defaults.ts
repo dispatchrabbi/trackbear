@@ -1,3 +1,5 @@
+import color from 'color';
+import { FillTarget } from 'chart.js';
 import { LineChartOptions, LineChartData } from './LineChart.vue';
 
 import twColors from 'tailwindcss/colors.js';
@@ -64,6 +66,13 @@ export function provideLineChartDataDefaults(data: LineChartData): LineChartData
     dataset.pointStyle = dataset.pointStyle ?? LINE_POINT_STYLES[Math.floor(ix / DEFAULT_LINE_COLORS.cycle[colorScheme].length)];
     dataset.pointRadius = dataset.pointRadius ?? 4;
     dataset.borderWidth = dataset.borderWidth ?? 2;
+
+    if(dataset.fill === 'stack') {
+      dataset.fill = {
+        target: dataset.fill as FillTarget,
+        below: color(dataset.backgroundColor).fade(0.5).toString(),
+      };
+    }
   });
 
   return data;

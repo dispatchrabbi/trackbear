@@ -93,6 +93,6 @@ export function determineChartEndDate(lastUpdate?: string, nominalEndDate?: stri
   }
 }
 
-export function densifyTallies(sparseTallies: TallyPoint[], eachDay: string[]): TallyPoint[] {
-  return eachDay.map(date => (sparseTallies.find(tally => tally.date === date) || ({ date, value: 0 })));
+export function densifyTallies(sparseTallies: Tallyish[], eachDay: string[]): Tallyish[] {
+  return eachDay.map(date => (sparseTallies.find(tally => tally.date === date) || ({ date, count: 0 })));
 }

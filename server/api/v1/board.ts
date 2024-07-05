@@ -63,6 +63,7 @@ export type BoardCreatePayload = {
   startDate?: string;
   endDate?: string;
   goal: BoardGoal;
+  fundraiserMode: boolean;
   isJoinable?: boolean;
   isPublic?: boolean;
 };
@@ -73,6 +74,7 @@ const zBoardCreatePayload = z.object({
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
   goal: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()),
+  fundraiserMode: z.boolean().nullable().default(false),
   isJoinable: z.boolean().nullable().default(false),
   isPublic: z.boolean().nullable().default(false),
 }).strict();

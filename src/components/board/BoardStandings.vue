@@ -20,7 +20,7 @@ const props = defineProps<{
 }>();
 
 const hasPar = computed(() => {
-  return props.measure in props.board.goal;
+  return props.measure in props.board.goal && !props.board.fundraiserMode;
 });
 
 const tableData = computed(() => {
