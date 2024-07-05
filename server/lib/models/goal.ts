@@ -51,6 +51,10 @@ export type GoalWithWorksAndTags = Goal & {
   tagsIncluded: Tag[]
 };
 export async function getTalliesForGoal(goal: GoalWithWorksAndTags): Promise<TallyWithWorkAndTags[]> {
+  const measure = goal.type === GOAL_TYPE.TARGET ?
+    (goal.parameters as GoalTargetParameters).threshold.measure : // targets always have an associated measure
+    (goal.parameters as GoalHabitParameters).threshold?.measure;  // habits sometimes have an associated measure
+
   return dbClient.tally.findMany({
     where: {
       ownerId: goal.ownerId,
@@ -65,6 +69,8 @@ export async function getTalliesForGoal(goal: GoalWithWorksAndTags): Promise<Tal
         gte: goal.startDate || undefined,
         lte: goal.endDate || undefined,
       },
+      // only include tallies of the appropriate measure, if it exists
+      measure: measure || undefined,
     },
     include: {
       work: true,

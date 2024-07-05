@@ -10,7 +10,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] Goals
   - [ ] Target goal pages could be nicer/more informative
   - [ ] Goal pages could be more fun
-  - [ ] Consider splitting targets and habits?
+  - [ ] Split targets and habits
   - [ ] Habit progress gauges need a UI revamp
 - [ ] Leaderboards
   - [ ] Allow owners to remove (or ban?) participants from leaderboards
@@ -27,6 +27,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Ability to exempt tags/projects from total
 - [ ] User settings
   - [ ] Implement theme switcher (including light/dark/system)
+  - [ ] TinyPNG-ify avatar files to save on space
 - [ ] Improve tag inputs
 - [ ] Replace chart.js line graphs with d3- or d3/plot-driven ones
 - [ ] Add a little red dot when there's been an update

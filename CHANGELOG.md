@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Fixed a bug where target graphs accidentally would count progress no matter what measure was used. This has been fixed and graphs should now be accurate again. (h/t misupstairs)
+
 ## 0.11.3
 
 - FIXED: Heatmaps would show progress on the day before for users in timezones ahead of UTC. Heatmaps now should work correctly in all timezones. Sorry, Australians! (h/t EosLaetitia)
