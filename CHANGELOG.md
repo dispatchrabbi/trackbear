@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Tooltips on the new leaderboard graphs are now readable in dark mode.
+
 ## 0.11.4
 
 - NEW: Leaderboards now have Fundraiser Mode, where everyone's progress counts toward the goal — play co-op instead of versus!

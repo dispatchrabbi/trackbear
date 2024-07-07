@@ -32,15 +32,21 @@ const props = withDefaults(defineProps<{
 const DEFAULT_LINE_COLORS = {
   text: { light: themeColors.surface[900], dark: themeColors.surface[50] },
   secondaryText: { light: themeColors.surface[300], dark: themeColors.surface[600] },
+  background: { light: themeColors.surface[0], dark: themeColors.surface[800] },
 
   cycle: {
     light: [ themeColors.primary[500], twColors.red[500], twColors.orange[500], twColors.yellow[500], twColors.green[500], twColors.blue[500], twColors.purple[500] ],
     dark: [ themeColors.primary[400], twColors.red[400], twColors.orange[400], twColors.yellow[400], twColors.green[400], twColors.blue[400], twColors.purple[400] ],
   },
 };
-const colorCycle = computed(() => {
+const colorScheme = computed(() => {
   const preferredColorScheme = usePreferredColorScheme().value;
-  return DEFAULT_LINE_COLORS.cycle[preferredColorScheme];
+  return {
+    text: DEFAULT_LINE_COLORS.text[preferredColorScheme],
+    secondaryText: DEFAULT_LINE_COLORS.secondaryText[preferredColorScheme],
+    background: DEFAULT_LINE_COLORS.background[preferredColorScheme],
+    cycle: DEFAULT_LINE_COLORS.cycle[preferredColorScheme],
+  };
 });
 
 // now start configuring the chart
@@ -56,6 +62,9 @@ onMounted(() => {
       Plot.ruleY([0]),
     ];
 
+    const TIP_STYLE: Plot.TipOptions = {
+      fill: colorScheme.value.background,
+    };
     if(props.isStacked) {
       marks.push(
         Plot.areaY(props.data, Plot.stackY({
@@ -71,6 +80,7 @@ onMounted(() => {
               y: d => props.valueFormatFn(d),
             },
             pointer: 'xy',
+            ...TIP_STYLE,
           },
         }))
       );
@@ -89,6 +99,7 @@ onMounted(() => {
               y: d => props.valueFormatFn(d),
             },
             pointer: 'xy',
+            ...TIP_STYLE,
           },
         })
       );
@@ -108,6 +119,7 @@ onMounted(() => {
               z: false,
             },
             pointer: 'xy',
+            ...TIP_STYLE,
           },
         })
       );
@@ -121,7 +133,7 @@ onMounted(() => {
       width: plotContainerWidth.value,
       color: {
         type: 'categorical',
-        range: colorCycle.value,
+        range: colorScheme.value.cycle,
         legend: true,
       },
       x: { type: 'time' },
