@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.11.5
+
 - FIXED: Tooltips on the new leaderboard graphs are now readable in dark mode.
 - FIXED: The tabs on the leaderboard page now show the correct graphs and stats, instead of that for a different measure. (h/t einhornlasagne, diannethegeek)
 
