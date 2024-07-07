@@ -60,7 +60,7 @@ const measuresAvailable = computed(() => {
   if(board.value === null) { return [ TALLY_MEASURE.WORD ]; }
 
   const measuresPresent = new Set(board.value.participants.flatMap(participant => participant.tallies.map(tally => tally.measure)));
-  return Object.keys(TALLY_MEASURE_INFO).filter(measure => measuresPresent.has(measure));
+  return board.value.measures.filter(measure => measuresPresent.has(measure));
 });
 
 const selectedMeasure = ref(TALLY_MEASURE.WORD);
@@ -229,7 +229,7 @@ onMounted(() => {
               @update:active-index="index => selectedMeasure = measuresAvailable[index]"
             >
               <TabPanel
-                v-for="measure of board.measures"
+                v-for="measure of measuresAvailable"
                 :key="measure"
                 :header="toTitleCase(TALLY_MEASURE_INFO[measure].label.plural)"
               >
