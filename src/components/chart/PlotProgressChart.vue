@@ -130,7 +130,9 @@ onMounted(() => {
         fontFamily: 'Jost, sans-serif',
         fontSize: '0.75rem',
       },
+      // the plot should be a 16:9 aspect ratio
       width: plotContainerWidth.value,
+      height: (plotContainerWidth.value * 9) / 16,
       color: {
         type: 'categorical',
         range: colorScheme.value.cycle,
@@ -164,9 +166,6 @@ onMounted(() => {
   position: relative;
   margin: auto;
 
-  /* this is all to keep the chart nicely-sized for desktop and mobile
-     fullscreen is another ball of wax */
-  aspect-ratio: calc(16 / 9);
   min-height: 12rem;
   max-height: calc(100vh - 4rem);
   max-width: 100%;

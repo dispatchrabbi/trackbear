@@ -13,6 +13,7 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - FIXED: In cases where multiple progress entries were made in a single day, the graph on leaderboards would only show the first entry. The graph now shows the correct total. (h/t Athena)
+- FIXED: The leaderboard chart no longer overflows into the standings on mobile. (h/t cenlyra)
 
 ## 0.11.5
 

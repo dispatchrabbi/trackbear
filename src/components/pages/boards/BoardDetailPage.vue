@@ -234,7 +234,7 @@ onMounted(() => {
                 :header="toTitleCase(TALLY_MEASURE_INFO[measure].label.plural)"
               >
                 <!-- line chart -->
-                <div class="w-full">
+                <div class="w-full mb-4">
                   <BoardProgressChart
                     :board="board"
                     :participants="board.participants"
@@ -244,7 +244,7 @@ onMounted(() => {
                 <!-- fundraiser meter -->
                 <div
                   v-if="board.fundraiserMode"
-                  class="w-full mt-8"
+                  class="w-full"
                 >
                   <BoardProgressMeter
                     :board="board"
