@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: In cases where multiple progress entries were made in a single day, the graph on leaderboards would only show the first entry. The graph now shows the correct total. (h/t Athena)
+
 ## 0.11.5
 
 - FIXED: Tooltips on the new leaderboard graphs are now readable in dark mode.

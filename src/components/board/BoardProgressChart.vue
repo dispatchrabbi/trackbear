@@ -52,9 +52,9 @@ const chartData = computed(() => {
 
   data.tallies = props.participants.flatMap(participant => {
     const tallies = participant.tallies.filter(tally => tally.measure === props.measure);
-    const densifiedTallies = props.board.fundraiserMode ? densifyTallies(tallies, eachDayOfData) : tallies;
-    const normalizedTallies = normalizeTallies(densifiedTallies);
-    const accumulatedTallies = accumulateTallies(normalizedTallies);
+    const normalizedTallies = normalizeTallies(tallies);
+    const densifiedTallies = props.board.fundraiserMode ? densifyTallies(normalizedTallies, eachDayOfData) : normalizedTallies;
+    const accumulatedTallies = accumulateTallies(densifiedTallies);
 
     const participantTallyData = accumulatedTallies.map(tally => ({
       series: participant.displayName,
