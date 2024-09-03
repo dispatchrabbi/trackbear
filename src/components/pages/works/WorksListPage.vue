@@ -84,6 +84,17 @@ onMounted(async () => {
           @click="isCreateFormVisible = true"
         />
       </div>
+      <div>
+        <RouterLink
+          :to="{ name: 'import-works' }"
+        >
+          <Button
+            label="Import"
+            severity="help"
+            :icon="PrimeIcons.FILE_IMPORT"
+          />
+        </RouterLink>
+      </div>
     </div>
     <div
       v-for="work in filteredWorks"

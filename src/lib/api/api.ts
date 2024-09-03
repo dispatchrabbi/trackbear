@@ -9,7 +9,7 @@ export type RoundTrip<T extends object> = {
   [K in keyof T]: T[K] extends Date ? DateString : T[K]
 };
 
-export async function callApi<T>(path: string, method: string = 'GET', payload: Record<string, unknown> | FormData | null = null, query: object | null = null): Promise<ApiResponse<T>> {
+export async function callApi<T>(path: string, method: string = 'GET', payload: Record<string, unknown> | Record<string, unknown>[] | FormData | null = null, query: object | null = null): Promise<ApiResponse<T>> {
   const headers = {};
   let body = null;
 
@@ -39,7 +39,7 @@ export async function callApi<T>(path: string, method: string = 'GET', payload: 
   };
 }
 
-export async function callApiV1<T>(path: string, method: string = 'GET', payload: Record<string, unknown> | FormData | null = null, query: object | null = null): Promise<T> {
+export async function callApiV1<T>(path: string, method: string = 'GET', payload: Record<string, unknown> | Record<string, unknown>[] | FormData | null = null, query: object | null = null): Promise<T> {
   const response = await callApi<T>(path, method, payload, query);
 
   if(response.success === true) {

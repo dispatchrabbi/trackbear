@@ -27,6 +27,9 @@ import DashboardPage from 'src/components/pages/DashboardPage.vue';
 
 import WorksListPage from 'src/components/pages/works/WorksListPage.vue';
 import WorkDetailPage from 'src/components/pages/works/WorkDetailPage.vue';
+import WorksImportPage from 'src/components/pages/works/import/WorksImportPage.vue';
+import WorksImportNanoAutoPage from './components/pages/works/import/WorksImportNanoAutoPage.vue';
+import WorksImportNanoManualPage from './components/pages/works/import/WorksImportNanoManualPage.vue';
 
 import GoalsListPage from './components/pages/goals/GoalsListPage.vue';
 import NewGoalPage from './components/pages/goals/NewGoalPage.vue';
@@ -62,21 +65,24 @@ const routes = [
 
   // Works section
   { path: '/works', name: 'works', component: WorksListPage },
-  { path: '/works/:id', name: 'work', component: WorkDetailPage },
+  { path: '/works/import', name: 'import-works', component: WorksImportPage },
+  { path: '/works/import/auto-nano', name: 'import-works-nano-auto', component: WorksImportNanoAutoPage },
+  { path: '/works/import/manual-nano', name: 'import-works-nano-manual', component: WorksImportNanoManualPage },
+  { path: '/works/:id(\\d+)', name: 'work', component: WorkDetailPage },
 
   // Goals section
   { path: '/goals', name: 'goals', component: GoalsListPage },
   { path: '/goals/new', name: 'new-goal', component: NewGoalPage },
-  { path: '/goals/:id', name: 'goal', component: GoalDetailPage },
-  { path: '/goals/:id/edit', name: 'edit-goal', component: EditGoalPage },
+  { path: '/goals/:id(\\d+)', name: 'goal', component: GoalDetailPage },
+  { path: '/goals/:id(\\d+)/edit', name: 'edit-goal', component: EditGoalPage },
 
   // Boards section
   { path: '/leaderboards', name: 'boards', component: BoardsListPage },
   { path: '/leaderboards/new', name: 'new-board', component: NewBoardPage },
-  { path: '/leaderboards/:uuid', name: 'board', component: BoardDetailPage },
-  { path: '/leaderboards/:uuid/edit', name: 'edit-board', component: EditBoardPage },
-  { path: '/leaderboards/:uuid/join', name: 'join-board', component: JoinBoardPage },
-  { path: '/leaderboards/:uuid/filters', name: 'edit-board-filters', component: EditBoardParticipationPage },
+  { path: '/leaderboards/:uuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', name: 'board', component: BoardDetailPage },
+  { path: '/leaderboards/:uuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/edit', name: 'edit-board', component: EditBoardPage },
+  { path: '/leaderboards/:uuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/join', name: 'join-board', component: JoinBoardPage },
+  { path: '/leaderboards/:uuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/filters', name: 'edit-board-filters', component: EditBoardParticipationPage },
 
   // Account section
   { path: '/settings/account', name: 'account', component: AccountPage },
@@ -86,7 +92,7 @@ const routes = [
   { path: '/admin', name: 'admin', component: AdminHomePage },
   { path: '/admin/banners', name: 'admin-banners', component: AdminBannersListPage },
   { path: '/admin/users', name: 'admin-users', component: AdminUsersListPage },
-  { path: '/admin/users/:id', name: 'admin-user', component: AdminUserPage },
+  { path: '/admin/users/:id(\\d+)', name: 'admin-user', component: AdminUserPage },
 
   // catch-all
   { path: '/:catchAll(.*)', name:'404', component: PlaceholderPage, props: { title: '404' } },

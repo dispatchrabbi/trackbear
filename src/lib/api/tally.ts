@@ -4,7 +4,7 @@ import type { Tally } from "@prisma/client";
 import type { TallyQuery, TallyPayload, TallyWithWorkAndTags } from "server/api/v1/tally.ts";
 import type { Tag } from "src/lib/api/tag.ts";
 
-export type { Tally, TallyWithWorkAndTags };
+export type { Tally, TallyWithWorkAndTags, TallyPayload };
 export type TallyWithTags = Tally & { tags: Tag[] };
 
 const ENDPOINT = '/api/v1/tally';
@@ -19,6 +19,10 @@ export async function getTally(id: number) {
 
 export async function createTally(data: TallyPayload) {
   return callApiV1<Tally>(ENDPOINT, 'POST', data);
+}
+
+export async function batchCreateTallies(data: TallyPayload[]) {
+  return callApiV1<Tally[]>(ENDPOINT + `/batch`, 'POST', data);
 }
 
 export async function updateTally(id: number, data: TallyPayload) {

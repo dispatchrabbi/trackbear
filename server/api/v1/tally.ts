@@ -172,6 +172,44 @@ tallyRouter.post('/',
   return res.status(201).send(success(tally));
 }));
 
+const zBatchTallyPayload = z.object({
+  date: zDateStr(),
+  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
+  count: z.number().int(),
+  setTotal: z.literal(false), // no submitting batch tallies that set the total... for now. // TODO: allow this in future
+  note: z.string(), // this CAN be empty
+  workId: z.number().int().nullable(),
+  tags: z.array(z.string()).length(0), // no tags yet either, sorry // TODO: allow this in future
+});
+
+tallyRouter.post('/batch',
+  requireUser,
+  validateBody(z.array(zBatchTallyPayload)),
+  h(async (req: RequestWithUser, res: ApiResponse<Tally[]>) =>
+{
+  const user = req.user;
+
+  const createdTallies = await dbClient.tally.createManyAndReturn({
+    data: req.body.map(tallyData => ({
+      state: TALLY_STATE.ACTIVE,
+      ownerId: user.id,
+
+      date: tallyData.date,
+      measure: tallyData.measure,
+      count: tallyData.count,
+      note: tallyData.note,
+
+      workId: tallyData.workId, // could be null
+    })),
+  });
+
+  await Promise.all(createdTallies.map(createdTally => logAuditEvent('tally:create', user.id, createdTally.id, null, null, req.sessionID)));
+
+  return res.status(201).send(success(createdTallies));
+}));
+
+
+
 tallyRouter.put('/:id',
   requireUser,
   validateParams(zIdParam()),
