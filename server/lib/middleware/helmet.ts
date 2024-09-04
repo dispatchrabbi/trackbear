@@ -22,7 +22,7 @@ async function middleware() {
         directives: {
           "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
           "img-src": ["'self'", "blob:"],
-          "connect-src": ["'self", "https://localhost:3000/", "https://trackbear.app", "https://api.nanowrimo.org"],
+          "connect-src": ["'self'", "https://api.nanowrimo.org"],
         },
       },
     });
