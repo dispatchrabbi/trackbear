@@ -150,6 +150,37 @@ goalRouter.post('/',
   return res.status(201).send(success({ goal, tallies }));
 }));
 
+goalRouter.post('/batch',
+  requireUser,
+  validateBody(z.array(zGoalCreatePayload)),
+  h(async (req: RequestWithUser, res: ApiResponse<Goal[]>) =>
+{
+  const user = req.user;
+
+  const createdGoals = await dbClient.goal.createManyAndReturn({
+    data: req.body.map(goalData => ({
+      state: WORK_STATE.ACTIVE,
+      ownerId: user.id,
+
+      ...omit(goalData, ['works', 'tags']),
+      worksIncluded: { connect: goalData.works.map(workId => ({
+        id: workId,
+        ownerId: user.id,
+        state: WORK_STATE.ACTIVE,
+      })) },
+      tagsIncluded: { connect: goalData.tags.map(workId => ({
+        id: workId,
+        ownerId: user.id,
+        state: TAG_STATE.ACTIVE,
+      })) },
+    })),
+  });
+
+  await Promise.all(createdGoals.map(createdGoal => logAuditEvent('goal:create', user.id, createdGoal.id, null, null, req.sessionID)));
+
+  return res.status(201).send(success(createdGoals));
+}));
+
 export type GoalUpdatePayload = Partial<GoalCreatePayload>;
 const zGoalUpdatePayload = zGoalCreatePayload.partial();
 

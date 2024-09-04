@@ -24,7 +24,7 @@ const sections = [
     body: [
       `TrackBear can help no matter how or what you write. You can record progress in <b>words, chapters, pages, or
       time</b>. You can even mix-and-match how you track within a single project. Finished writing your first draft and
-      need to switch from words written to time spent editing? TrackBear can handle that, no problem.`
+      need to switch from words written to time spent editing? TrackBear can handle that, no problem.`,
     ],
   },
   {
@@ -34,7 +34,8 @@ const sections = [
       `Aiming to write a novel in a month? Trying to finish your fanfic over summer break? Want to set a sustainable
       pace for a quarter-million words this year? TrackBear has you covered with <b>targets</b>. Set a goal and a date
       range, and TrackBear will graph your progress and show you where you are versus par for the day. Targets can span
-      multiple projects, so you can see progress across all your work.`
+      multiple projects, so you can see progress across all your work.`,
+      `(P.S.: you can even import your old projects from NaNoWriMo.)`
     ],
   },
   {
@@ -51,8 +52,8 @@ const sections = [
     heading: 'Words with friends',
     body: [
       `Keep up with your community with leaderboards. When you create a leaderboard and your friends join it, everyone
-      can see each other's progress. You can cheer your friends on, set up an accountability buddy system, or set a
-      community goal and see who hits it first. Writing is more fun with friends, and TrackBear helps make that happen.`
+      can see each other's progress. You can cheer your friends on, set up an accountability buddy system, or all try
+      to hit a community goal together. Writing is more fun with friends, and TrackBear helps make that happen.`
     ],
   },
   {
@@ -130,6 +131,7 @@ const imagePt = {
           <p
             v-for="(p, pix) of section.body"
             :key="pix"
+            class="mb-2"
             v-html="p"
           />
           <!-- eslint-enable vue/no-v-html -->

@@ -32,7 +32,7 @@ import Column from 'primevue/column';
 import InlineMessage from 'primevue/inlinemessage';
 import { PrimeIcons } from 'primevue/api';
 
-const emit = defineEmits(['work:create', 'formSuccess']);
+const emit = defineEmits(['work:create']);
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Projects', url: '/works' },
@@ -269,8 +269,8 @@ function resetWizard() {
         >
           <StepperPanel header="Get Started">
             <template #content="{nextCallback}">
-              <div class="mb-4">
-                <p class="mb-2">
+              <div class="mb-4 flex flex-col gap-2">
+                <p>
                   Let's get started importing your project manually into TrackBear from NaNoWriMo! This page will walk
                   you through the process step-by-step. You will be copying the data from NaNoWriMo and pasting it in
                   here, and then you will have the chance to choose which project to import that data to, or you can

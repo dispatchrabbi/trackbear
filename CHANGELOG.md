@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: You can now import projects to TrackBear from NaNoWriMo! Go to the Projects page and hit the Import button. You can import projects automatically, or manually by copy-paste.
+
 ## 0.11.6
 
 - FIXED: In cases where multiple progress entries were made in a single day, the graph on leaderboards would only show the first entry. The graph now shows the correct total. (h/t Athena)

@@ -19,6 +19,10 @@ export async function createGoal(data: GoalCreatePayload) {
   return callApiV1<GoalAndTallies>(ENDPOINT, 'POST', data);
 }
 
+export async function batchCreateGoals(data: GoalCreatePayload[]) {
+  return callApiV1<Goal[]>(ENDPOINT + `/batch`, 'POST', data);
+}
+
 export async function updateGoal(id: number, data: GoalUpdatePayload) {
   return callApiV1<GoalAndTallies>(ENDPOINT + `/${id}`, 'PUT', data);
 }

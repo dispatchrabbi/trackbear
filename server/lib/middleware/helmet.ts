@@ -12,6 +12,7 @@ async function middleware() {
           "default-src": ["'self'", "ws://localhost:24678", "wss://localhost:24678", "http://localhost:24678", "https://localhost:24678"],
           "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
           "img-src": ["'self'", "blob:"],
+          "connect-src": ["'self'", "ws://localhost:24678", "wss://localhost:24678", "http://localhost:24678", "https://localhost:24678", "https://api.nanowrimo.org"],
         },
       },
     });
@@ -21,6 +22,7 @@ async function middleware() {
         directives: {
           "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
           "img-src": ["'self'", "blob:"],
+          "connect-src": ["'self", "https://api.nanowrimo.org"],
         },
       },
     });
