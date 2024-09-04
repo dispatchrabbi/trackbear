@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.12.0
+
 - NEW: You can now import projects to TrackBear from NaNoWriMo! Go to the Projects page and hit the Import button. You can import projects automatically, or manually by copy-paste.
 
 ## 0.11.6
