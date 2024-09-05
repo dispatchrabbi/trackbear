@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Fixed the manual NaNoWriMo import to account for differences in how Firefox, Chrome, and Safari copy/paste text off of the NaNoWriMo page.
+
 ## 0.12.0
 
 - NEW: You can now import projects to TrackBear from NaNoWriMo! Go to the Projects page and hit the Import button. You can import projects automatically, or manually by copy-paste.

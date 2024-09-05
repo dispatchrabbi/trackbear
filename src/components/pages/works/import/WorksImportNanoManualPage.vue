@@ -65,7 +65,7 @@ const validations = z.object({
 
 const { ruleFor, isValid } = useValidation(validations, formModel);
 
-const validateCountsText = function(countsText) {
+const validateCountsText = function(countsText: string) {
   if(countsText.length === 0) {
     return {
       valid: false,
@@ -74,12 +74,19 @@ const validateCountsText = function(countsText) {
     };
   }
 
+  // We expect to see something like:
+  // Date\tCount\tActions
+  // Nov 1, 2023\t1667
+  // but: Firefox inserts spaces before the tabs. Chrome doesn't put a \t before Actions and copies alt-text of the
+  // trash can action button after the count. Safari doesn't copy the Actions header and also copies the alt-text.
+  // So we gotta Postel's law this thing.
+
   const lines = countsText.split('\n');
 
   // is the first line a valid header?
   const firstLine = lines.shift();
   const parts = firstLine.split(/\s+/);
-  if(!(parts[0] === 'Date' && parts[1] === 'Count')) {
+  if(!(parts[0] === 'Date' && parts[1].startsWith('Count'))) {
     return {
       valid: false,
       empty: false,
@@ -89,7 +96,7 @@ const validateCountsText = function(countsText) {
 
   // are the rest of the lines valid?
   for(let i = 0; i < lines.length; ++i) {
-    const lineParts = lines[i].split(' \t');
+    const lineParts = lines[i].split('\t').map(x => x.trim());
     if(lineParts.length < 2) {
       return {
         valid: false,
@@ -154,8 +161,9 @@ const parsedCountsData = computed(() => {
 
   const now = new Date();
   const lines = formModel.countsText.split('\n');
+  // i starts at 1 because we skip the first line
   for(let i = 1; i < lines.length; ++i) {
-    const lineParts = lines[i].split(' \t');
+    const lineParts = lines[i].split('\t').map(x => x.trim());
 
     const date = formatDate(parse(lineParts[0].trim(), 'MMM d, y', now));
     const count = Number.parseInt(lineParts[1], 10);
