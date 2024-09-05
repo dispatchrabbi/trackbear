@@ -4,6 +4,8 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 
 ## User-Facing Features
 - [ ] Create help documentation
+- [ ] Tallies
+  - [ ] Add line (h/t Penny) and scene measures
 - [ ] Projects
   - [ ] The project page could be nicer/more informative
   - [ ] Implement project tags (maybe)
@@ -22,13 +24,17 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Dashboard could be more fun/welcoming
   - [ ] Show starred leaderboards on dashboard
   - [ ] Show starred projects on dashboard
+  - [ ] Show lifetime counts on dashboard
 - [ ] Grand Totals page
   - [ ] Overall total
   - [ ] Totals by tag
   - [ ] Ability to exempt tags/projects from total
+  - [ ] Heatmap by year
+  - [ ] Graph lifetime progress
 - [ ] User settings
   - [ ] Implement theme switcher (including light/dark/system)
   - [ ] TinyPNG-ify avatar files to save on space
+  - [ ] Implement data export
 - [ ] Improve tag inputs
 - [ ] Replace chart.js line graphs with d3- or d3/plot-driven ones
   - [X] Leaderboards
