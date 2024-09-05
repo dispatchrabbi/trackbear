@@ -13,6 +13,7 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - FIXED: Fixed the manual NaNoWriMo import to account for differences in how Firefox, Chrome, and Safari copy/paste text off of the NaNoWriMo page.
+- FIXED: Fixed the cause of a warning emitted by the chart library TrackBear uses for Leaderboards. (h/t Eirin)
 
 ## 0.12.0
 

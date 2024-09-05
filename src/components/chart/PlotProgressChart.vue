@@ -70,6 +70,7 @@ onMounted(() => {
         Plot.areaY(props.data, Plot.stackY({
           x: { label: 'Date', transform: data => data.map(d => d.date) },
           y: { label: 'Progress', transform: data => data.map(d => d.value) },
+          z: { label: 'Participant', transform: data => data.map(d => d.series) },
           order: 'appearance',
           sort: 'date',
           fill: { label: 'Participant', transform: data => data.map(d => d.series) },
@@ -89,6 +90,7 @@ onMounted(() => {
         Plot.lineY(props.data, {
           x: { label: 'Date', transform: data => data.map(d => d.date) },
           y: { label: 'Progress', transform: data => data.map(d => d.value) },
+          z: { label: 'Participant', transform: data => data.map(d => d.series) },
           sort: 'date',
           stroke: { label: 'Participant', transform: data => data.map(d => d.series) },
           marker: 'dot',
