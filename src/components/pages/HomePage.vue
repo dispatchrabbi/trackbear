@@ -22,9 +22,9 @@ const sections = [
     image: 'screenshot-add-progress',
     heading: 'Track your work your way',
     body: [
-      `TrackBear can help no matter how or what you write. You can record progress in <b>words, chapters, pages, or
-      time</b>. You can even mix-and-match how you track within a single project. Finished writing your first draft and
-      need to switch from words written to time spent editing? TrackBear can handle that, no problem.`,
+      `TrackBear can help no matter how or what you write. You can record progress in <b>words, chapters, pages,
+      scenes, lines, or time</b>. You can even mix-and-match how you track within a single project. Finished writing
+      your first draft and need to switch from words written to time spent editing? TrackBear can handle that, no problem.`,
     ],
   },
   {

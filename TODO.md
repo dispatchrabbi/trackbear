@@ -5,7 +5,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 ## User-Facing Features
 - [ ] Create help documentation
 - [ ] Tallies
-  - [ ] Add line (h/t Penny) and scene measures
+  - [X] Add line (h/t Penny) and scene measures
 - [ ] Projects
   - [ ] The project page could be nicer/more informative
   - [ ] Implement project tags (maybe)
@@ -20,6 +20,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Multiple goals (a la "stretch goals")
   - [X] "Fundraiser mode" (everyone's progress contributes)
   - [ ] Add yourself more than once
+  - [ ] Allow board owners to rotate the join code
 - [ ] Dashboard
   - [ ] Dashboard could be more fun/welcoming
   - [ ] Show starred leaderboards on dashboard
@@ -41,7 +42,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Targets
   - [ ] Projects
   - [ ] Elsewhere
-- [ ] Add a little red dot when there's been an update
+- [X] Add a little red dot when there's been an update
 
 ## Admin Console Features
 - [ ] Admin landing page
