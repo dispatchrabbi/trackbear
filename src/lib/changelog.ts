@@ -1,24 +1,12 @@
 import packageJson from '../../package.json' assert { type: 'json' };
 import { useLocalStorage } from '@vueuse/core';
 
-import { Changelog } from 'server/lib/parse-changelog.ts';
-
 export function useLastChangelogViewed() {
   return useLocalStorage('last-changelog-viewed', '0.0.0');
 }
 
 export function getCurrentVersion() {
   return packageJson.version;
-}
-
-export function findLatestChangelogVersion(changelog: Changelog) {
-  const versions = changelog
-    .map(c => c.version)
-    .filter(v => /\d+\.\d+\.\d+/.test(v))
-    .sort(cmpVersion)
-    .reverse();
-
-  return versions.length >= 1 ? versions[0] : '0.0.0';
 }
 
 export function cmpVersion(a: string, b: string) {

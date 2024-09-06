@@ -6,8 +6,7 @@ import { RouterLink } from "vue-router";
 import { useUserStore } from "src/stores/user.ts";
 const userStore = useUserStore();
 
-import { getChangelog } from 'src/lib/api/info.ts';
-import { useLastChangelogViewed, findLatestChangelogVersion, cmpVersion } from 'src/lib/changelog.ts';
+import { useLastChangelogViewed, getCurrentVersion, cmpVersion } from 'src/lib/changelog.ts';
 const lastChangelogViewed = useLastChangelogViewed();
 const flagUpdates = ref(false);
 
@@ -57,14 +56,9 @@ const userMenuItems = computed(() => {
 const toggleUserMenu = ev => userMenu.value.toggle(ev);
 
 async function checkForUpdates() {
-  try {
-    const result = await getChangelog();
-    const latestVersion = findLatestChangelogVersion(result);
-    if(cmpVersion(latestVersion, lastChangelogViewed.value) > 0) {
-      flagUpdates.value = true;
-    }
-  } catch(err) {
-    // swallow any error
+  const latestVersion = getCurrentVersion();
+  if(cmpVersion(latestVersion, lastChangelogViewed.value) > 0) {
+    flagUpdates.value = true;
   }
 }
 
