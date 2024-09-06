@@ -31,6 +31,12 @@ apiRouter.use('/v1', v1Router);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const lastChanceApiErrorHandler: ErrorRequestHandler = (err, req, res: ApiResponse<never>, next) => {
   if(err) {
+    winston.error(`${req.method} ${req.originalUrl}: ${err.message}`, {
+      sessionId: req.sessionID,
+      user: (req as WithSessionAuth<Request>).session.auth?.id,
+      message: err.message,
+      stack: err.stack.split('\n'),
+    });
     console.error(err);
     res.status(500).send(failure('SERVER_ERROR', 'An unanticipated server error occurred.'));
   }
