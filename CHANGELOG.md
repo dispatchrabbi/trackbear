@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.13.0
+
 - NEW: You can now enter progress in scenes and lines. Screenwriters and poets rejoice! (h/t Penny Gotch)
 - NEW: The Changelog entry in the user menu will show when TrackBear has been updated (and the avatar will get a little sparkle icon too).
 - FIXED: Fixed a bug where it would take two clicks on the sidebar to get from one starred project, goal, or leaderboard to another. (h/t Binna)
