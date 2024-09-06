@@ -17,8 +17,8 @@ import type { MenuItem } from 'primevue/menuitem';
 import EditGoalForm from 'src/components/goal/EditGoalForm.vue';
 import Card from 'primevue/card';
 
-const goalId = ref<number>(+route.params.id);
-watch(() => route.params.id, newId => {
+const goalId = ref<number>(+route.params.goalId);
+watch(() => route.params.goalId, newId => {
   if(newId !== undefined) {
     goalId.value = +newId;
     loadGoal();

@@ -164,7 +164,7 @@ onMounted(() => loadUsers());
         >
           <template #body="{ data }">
             <RouterLink
-              :to="{ name: 'admin-user', params: { id: data.id } }"
+              :to="{ name: 'admin-user', params: { userId: data.id } }"
               class="text-underline text-primary-500 dark:text-primary-400"
             >
               {{ data.id }}
@@ -191,7 +191,7 @@ onMounted(() => loadUsers());
         <Column header="Username (Display)">
           <template #body="{ data }">
             <RouterLink
-              :to="{ name: 'admin-user', params: { id: data.id } }"
+              :to="{ name: 'admin-user', params: { userId: data.id } }"
               class="text-underline text-primary-500 dark:text-primary-400"
             >
               {{ data.username }} ({{ data.displayName }})

@@ -24,9 +24,9 @@ import WorkTallyLineChart from 'src/components/work/WorkTallyLineChart.vue';
 import WorkTallyDataTable from 'src/components/work/WorkTallyDataTable.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 
-const workId = ref<number>(+route.params.id);
+const workId = ref<number>(+route.params.workId);
 watch(
-  () => route.params.id,
+  () => route.params.workId,
   newId => {
     if(newId !== undefined) {
       workId.value = +newId;

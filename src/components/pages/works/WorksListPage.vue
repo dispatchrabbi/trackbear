@@ -101,7 +101,7 @@ onMounted(async () => {
       :key="work.id"
       class="mb-2"
     >
-      <RouterLink :to="{ name: 'work', params: { id: work.id } }">
+      <RouterLink :to="{ name: 'work', params: { workId: work.id } }">
         <WorkTile
           :work="work"
           @work:star="reloadWorks()"

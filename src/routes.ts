@@ -56,9 +56,9 @@ const routes = [
   { path: '/signup', name:'signup', component: SignUpPage },
   { path: '/login', name:'login', component: LoginPage },
   { path: '/logout', name:'logout', component: LogoutPage },
-  { path: '/verify-email/:uuid', name:'verify-email', component: VerifyEmailPage },
+  { path: '/verify-email/:verifyUuid', name:'verify-email', component: VerifyEmailPage },
   { path: '/reset-password/', name:'send-reset-password', component: SendResetPasswordPage },
-  { path: '/reset-password/:uuid', name:'reset-password', component: ResetPasswordPage },
+  { path: '/reset-password/:resetUuid', name:'reset-password', component: ResetPasswordPage },
 
   // Tag-and-Tally building
   { path: '/dashboard', name:'dashboard', component: DashboardPage },
@@ -68,21 +68,21 @@ const routes = [
   { path: '/works/import', name: 'import-works', component: WorksImportPage },
   { path: '/works/import/auto-nano', name: 'import-works-nano-auto', component: WorksImportNanoAutoPage },
   { path: '/works/import/manual-nano', name: 'import-works-nano-manual', component: WorksImportNanoManualPage },
-  { path: '/works/:id(\\d+)', name: 'work', component: WorkDetailPage },
+  { path: '/works/:workId(\\d+)', name: 'work', component: WorkDetailPage },
 
   // Goals section
   { path: '/goals', name: 'goals', component: GoalsListPage },
   { path: '/goals/new', name: 'new-goal', component: NewGoalPage },
-  { path: '/goals/:id(\\d+)', name: 'goal', component: GoalDetailPage },
-  { path: '/goals/:id(\\d+)/edit', name: 'edit-goal', component: EditGoalPage },
+  { path: '/goals/:goalId(\\d+)', name: 'goal', component: GoalDetailPage },
+  { path: '/goals/:goalId(\\d+)/edit', name: 'edit-goal', component: EditGoalPage },
 
   // Boards section
   { path: '/leaderboards', name: 'boards', component: BoardsListPage },
   { path: '/leaderboards/new', name: 'new-board', component: NewBoardPage },
-  { path: '/leaderboards/:uuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', name: 'board', component: BoardDetailPage },
-  { path: '/leaderboards/:uuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/edit', name: 'edit-board', component: EditBoardPage },
-  { path: '/leaderboards/:uuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/join', name: 'join-board', component: JoinBoardPage },
-  { path: '/leaderboards/:uuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/filters', name: 'edit-board-filters', component: EditBoardParticipationPage },
+  { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', name: 'board', component: BoardDetailPage },
+  { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/edit', name: 'edit-board', component: EditBoardPage },
+  { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/join', name: 'join-board', component: JoinBoardPage },
+  { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/filters', name: 'edit-board-filters', component: EditBoardParticipationPage },
 
   // Account section
   { path: '/settings/account', name: 'account', component: AccountPage },
@@ -92,7 +92,7 @@ const routes = [
   { path: '/admin', name: 'admin', component: AdminHomePage },
   { path: '/admin/banners', name: 'admin-banners', component: AdminBannersListPage },
   { path: '/admin/users', name: 'admin-users', component: AdminUsersListPage },
-  { path: '/admin/users/:id(\\d+)', name: 'admin-user', component: AdminUserPage },
+  { path: '/admin/users/:userId(\\d+)', name: 'admin-user', component: AdminUserPage },
 
   // catch-all
   { path: '/:catchAll(.*)', name:'404', component: PlaceholderPage, props: { title: '404' } },

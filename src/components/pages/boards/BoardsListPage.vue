@@ -103,7 +103,7 @@ onMounted(() => {
       :key="board.id"
       class="mb-2"
     >
-      <RouterLink :to="{ name: 'board', params: { uuid: board.uuid } }">
+      <RouterLink :to="{ name: 'board', params: { boardUuid: board.uuid } }">
         <BoardTile
           :board="board"
           @board:star="reloadBoards()"

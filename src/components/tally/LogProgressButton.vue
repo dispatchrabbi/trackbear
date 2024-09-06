@@ -5,7 +5,7 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 const relevantWorkId = computed(() => {
   if(route.name === 'work') {
-    return +route.params.id;
+    return +route.params.workId;
   } else {
     return null;
   }

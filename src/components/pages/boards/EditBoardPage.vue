@@ -17,8 +17,8 @@ import type { MenuItem } from 'primevue/menuitem';
 import EditBoardForm from 'src/components/board/EditBoardForm.vue';
 import Card from 'primevue/card';
 
-const boardUuid = ref<string>(route.params.uuid.toString());
-watch(() => route.params.uuid, newUuid => {
+const boardUuid = ref<string>(route.params.boardUuid.toString());
+watch(() => route.params.boardUuid, newUuid => {
   boardUuid.value = newUuid.toString();
   loadBoard();
 });

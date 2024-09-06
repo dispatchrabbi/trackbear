@@ -27,11 +27,13 @@ import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 
-const userId = ref<number>(+route.params.id);
+const userId = ref<number>(+route.params.userId);
 watch(
-  () => route.params.id,
+  () => route.params.userId,
   newId => {
-    userId.value = +newId;
+    if(newId !== undefined) {
+      userId.value = +newId;
+    }
   }
 );
 

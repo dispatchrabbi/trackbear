@@ -38,8 +38,8 @@ import DeleteBoardForm from 'src/components/board/DeleteBoardForm.vue';
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 
-const boardUuid = ref<string>(route.params.uuid.toString());
-watch(() => route.params.uuid, newUuid => {
+const boardUuid = ref<string>(route.params.boardUuid.toString());
+watch(() => route.params.boardUuid, newUuid => {
   if(newUuid !== undefined) {
     boardUuid.value = newUuid.toString();
     reloadBoards(); // this isn't a great pattern - it should get changed
@@ -148,7 +148,7 @@ onMounted(() => {
               v-if="ownerIsViewing"
               label="Configure Leaderboard"
               :icon="PrimeIcons.COG"
-              @click="router.push({ name: 'edit-board', params: { uuid: board.uuid } })"
+              @click="router.push({ name: 'edit-board', params: { boardUuid: board.uuid } })"
             />
             <Button
               v-if="ownerIsViewing"
@@ -188,7 +188,7 @@ onMounted(() => {
               label="Join Leaderboard"
               :icon="PrimeIcons.USER_PLUS"
               outlined
-              @click="router.push({ name: 'join-board', params: { uuid: board.uuid } })"
+              @click="router.push({ name: 'join-board', params: { boardUuid: board.uuid } })"
             />
             <Button
               v-if="board.isJoinable"
@@ -205,7 +205,7 @@ onMounted(() => {
               label="Edit Filters"
               :icon="PrimeIcons.USER_EDIT"
               outlined
-              @click="router.push({ name: 'edit-board-filters', params: { uuid: board.uuid } })"
+              @click="router.push({ name: 'edit-board-filters', params: { boardUuid: board.uuid } })"
             />
             <Button
               v-if="board.participants.some(p => p.uuid === userStore.user.uuid)"

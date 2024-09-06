@@ -39,7 +39,7 @@ const items = computed(() => {
     ...(workStore.starredWorks ?? []).toSorted(cmpWork).map(work => ({
       key: `work-${work.id}`,
       label: work.title,
-      to: { name: 'work', params: { id: work.id } },
+      to: { name: 'work', params: { workId: work.id } },
     })),
     // goals
     {
@@ -52,7 +52,7 @@ const items = computed(() => {
     ...(goalStore.starredGoals ?? []).toSorted(cmpGoal).map(goal => ({
       key: `goal-${goal.id}`,
       label: goal.title,
-      to: { name: 'goal', params: { id: goal.id } },
+      to: { name: 'goal', params: { goalId: goal.id } },
     })),
     // boards
     {
@@ -65,7 +65,7 @@ const items = computed(() => {
     ...(boardStore.starredBoards ?? []).toSorted(cmpBoard).map(board => ({
       key: `board-${board.id}`,
       label: board.title,
-      to: { name: 'board', params: { uuid: board.uuid } },
+      to: { name: 'board', params: { boardUuid: board.uuid } },
     }))
   ];
 });

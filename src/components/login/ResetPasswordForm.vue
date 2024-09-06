@@ -30,7 +30,7 @@ const successMessage = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 
 function checkUuidParam() {
-  if(!z.string().uuid().safeParse(route.params.uuid).success) {
+  if(!z.string().uuid().safeParse(route.params.resetUuid).success) {
     router.push('/');
     return;
   }
@@ -44,7 +44,7 @@ async function handleSubmit() {
   try {
     const { newPassword } = formData();
 
-    const uuidParam = typeof route.params.uuid === 'string' ? route.params.uuid : route.params.uuid[0];
+    const uuidParam = typeof route.params.resetUuid === 'string' ? route.params.resetUuid : route.params.resetUuid[0];
     await resetPassword(uuidParam, newPassword);
 
     successMessage.value = 'Your password has been reset! Redirecting you to the login page...';

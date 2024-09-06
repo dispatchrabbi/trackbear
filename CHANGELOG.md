@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Fixed a bug where it would take two clicks on the sidebar to get from one starred project, goal, or leaderboard to another. (h/t Binna)
+
 ## 0.12.3
 
 - FIXED: Fixed the manual NaNoWriMo import to account for differences in how Firefox, Chrome, and Safari copy/paste text off of the NaNoWriMo page.

@@ -26,8 +26,8 @@ import HabitHistory from 'src/components/goal/HabitHistory.vue';
 import DeleteGoalForm from 'src/components/goal/DeleteGoalForm.vue';
 import { GOAL_TYPE } from 'server/lib/models/goal.ts';
 
-const goalId = ref<number>(+route.params.id);
-watch(() => route.params.id, newId => {
+const goalId = ref<number>(+route.params.goalId);
+watch(() => route.params.goalId, newId => {
   if(newId !== undefined) {
     goalId.value = +newId;
     reloadGoals(); // this isn't a great pattern - it should get changed
@@ -101,7 +101,7 @@ onMounted(() => {
             <Button
               label="Configure Goal"
               :icon="PrimeIcons.COG"
-              @click="router.push({ name: 'edit-goal', params: { id: goal.id } })"
+              @click="router.push({ name: 'edit-goal', params: { goalId: goal.id } })"
             />
             <Button
               severity="danger"

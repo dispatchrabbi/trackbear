@@ -17,8 +17,8 @@ import type { MenuItem } from 'primevue/menuitem';
 import EditBoardParticipationForm from 'src/components/board/EditBoardParticipationForm.vue';
 import Card from 'primevue/card';
 
-const boardUuid = ref<string>(route.params.uuid.toString());
-watch(() => route.params.uuid, newUuid => {
+const boardUuid = ref<string>(route.params.boardUuid.toString());
+watch(() => route.params.boardUuid, newUuid => {
   if(newUuid !== undefined) {
     boardUuid.value = newUuid.toString();
     loadBoardParticipation();
@@ -88,8 +88,8 @@ onMounted(async () => {
             :board="board"
             :participant="board.participants[0] ?? null"
             @participation:edit="boardStore.populate(true)"
-            @form-success="router.push({ name: 'board', params: { uuid: board.uuid } })"
-            @form-cancel="board.isPublic ? router.push({ name: 'board', params: { uuid: board.uuid } }) : router.push({ name: 'boards' })"
+            @form-success="router.push({ name: 'board', params: { boardUuid: board.uuid } })"
+            @form-cancel="board.isPublic ? router.push({ name: 'board', params: { boardUuid: board.uuid } }) : router.push({ name: 'boards' })"
           />
         </div>
         <div v-else>

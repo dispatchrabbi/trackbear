@@ -89,7 +89,7 @@ onMounted(() => {
       :key="goal.id"
       class="mb-2"
     >
-      <RouterLink :to="{ name: 'goal', params: { id: goal.id } }">
+      <RouterLink :to="{ name: 'goal', params: { goalId: goal.id } }">
         <GoalTile
           :goal="goal"
           @goal:star="reloadGoals()"
