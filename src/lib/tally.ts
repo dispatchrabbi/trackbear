@@ -21,6 +21,16 @@ export const TALLY_MEASURE_INFO = {
     label: { singular: 'chapter', plural: 'chapters' },
     defaultChartMax: 30,
   },
+  [TALLY_MEASURE.SCENE]: {
+    counter: { singular: 'scene', plural: 'scenes' },
+    label: { singular: 'scene', plural: 'scenes' },
+    defaultChartMax: 30,
+  },
+  [TALLY_MEASURE.LINE]: {
+    counter: { singular: 'line', plural: 'lines' },
+    label: { singular: 'line', plural: 'lines' },
+    defaultChartMax: 100,
+  },
   [TALLY_MEASURE.TIME]: {
     counter: { singular: 'hour', plural: 'hours' },
     label: { singular: 'time', plural: 'time' },

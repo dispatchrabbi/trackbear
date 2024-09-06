@@ -8,7 +8,8 @@ export const TALLY_MEASURE = {
   TIME: 'time',
   PAGE: 'page',
   CHAPTER: 'chapter',
-  // TODO: SCENE?
+  SCENE: 'scene',
+  LINE: 'line',
 };
 
 export type TallyMeasure = typeof TALLY_MEASURE[keyof typeof TALLY_MEASURE];

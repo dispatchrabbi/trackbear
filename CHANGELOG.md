@@ -12,6 +12,7 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: You can now enter progress in scenes and lines. Screenwriters and poets rejoice! (h/t Penny Gotch)
 - FIXED: Fixed a bug where it would take two clicks on the sidebar to get from one starred project, goal, or leaderboard to another. (h/t Binna)
 
 ## 0.12.3
