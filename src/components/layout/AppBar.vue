@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from "vue";
+import { ref, computed, defineProps, defineEmits, onMounted } from "vue";
 
 import { RouterLink } from "vue-router";
 
 import { useUserStore } from "src/stores/user.ts";
 const userStore = useUserStore();
+
+import { getChangelog } from 'src/lib/api/info.ts';
+import { useLastChangelogViewed, findLatestChangelogVersion, cmpVersion } from 'src/lib/changelog.ts';
+const lastChangelogViewed = useLastChangelogViewed();
+const flagUpdates = ref(false);
 
 import { PrimeIcons } from 'primevue/api';
 import Button from "primevue/button";
@@ -13,6 +18,7 @@ import Breadcrumb from "primevue/breadcrumb";
 import type { MenuItem } from 'primevue/menuitem';
 import TrackbearMasthead from "./TrackbearMasthead.vue";
 import UserAvatar from "../UserAvatar.vue";
+import Tag from 'primevue/tag';
 
 const props = defineProps<{
   breadcrumbs: MenuItem[];
@@ -26,27 +32,45 @@ const toggleSidebar = function() {
 }
 
 const userMenu = ref(null);
-const userMenuItems = ref<MenuItem[]>([
-  {
-    label: 'Settings',
-    items: [
-      { icon: PrimeIcons.USER, label: 'Account', to: { name: 'account' } },
-      { icon: PrimeIcons.TAG, label: 'Manage Tags', to: { name: 'tags' } },
-    ] ,
-  },
-  {
-    label: 'TrackBear',
-    items: [
-      { icon: PrimeIcons.INFO_CIRCLE, label: 'About', to: { name: 'about' } },
-      { icon: PrimeIcons.WRENCH, label: 'Changelog', to: { name: 'changelog' } },
-      { icon: PrimeIcons.SHIELD, label: 'Privacy', to: { name: 'privacy' } },
-      { icon: PrimeIcons.HEART_FILL, label: 'Support the Dev', href: '/ko-fi', target: '_blank', iconColor: 'text-primary-500 dark:text-primary-400' },
-    ]
-  },
-  { separator: true },
-  { icon: PrimeIcons.SIGN_OUT, label: 'Log Out', to: { name: 'logout' } },
-]);
+const userMenuItems = computed(() => {
+  return [
+    {
+      label: 'Settings',
+      items: [
+        { icon: PrimeIcons.USER, label: 'Account', to: { name: 'account' } },
+        { icon: PrimeIcons.TAG, label: 'Manage Tags', to: { name: 'tags' } },
+      ] ,
+    },
+    {
+      label: 'TrackBear',
+      items: [
+        { icon: PrimeIcons.INFO_CIRCLE, label: 'About', to: { name: 'about' } },
+        { icon: PrimeIcons.WRENCH, label: 'Changelog', to: { name: 'changelog' }, tag: flagUpdates.value ? { text: 'Updates!', icon: PrimeIcons.SPARKLES } : undefined },
+        { icon: PrimeIcons.SHIELD, label: 'Privacy', to: { name: 'privacy' } },
+        { icon: PrimeIcons.HEART_FILL, label: 'Support the Dev', href: '/ko-fi', target: '_blank', iconColor: 'text-primary-500 dark:text-primary-400' },
+      ]
+    },
+    { separator: true },
+    { icon: PrimeIcons.SIGN_OUT, label: 'Log Out', to: { name: 'logout' } },
+  ] as MenuItem[];
+});
 const toggleUserMenu = ev => userMenu.value.toggle(ev);
+
+async function checkForUpdates() {
+  try {
+    const result = await getChangelog();
+    const latestVersion = findLatestChangelogVersion(result);
+    if(cmpVersion(latestVersion, lastChangelogViewed.value) > 0) {
+      flagUpdates.value = true;
+    }
+  } catch(err) {
+    // swallow any error
+  }
+}
+
+onMounted(() => {
+  checkForUpdates();
+});
 
 </script>
 
@@ -99,6 +123,8 @@ const toggleUserMenu = ev => userMenu.value.toggle(ev);
     >
       <UserAvatar
         :user="userStore.user"
+        :icon="flagUpdates ? PrimeIcons.SPARKLES : null"
+        icon-class="primary"
       />
       <div class="font-light">
         {{ userStore.user.displayName }}
@@ -113,23 +139,31 @@ const toggleUserMenu = ev => userMenu.value.toggle(ev);
       :pt-options="{ mergeSections: true, mergeProps: true, }"
     >
       <template #item="{ item, props: itemProps }">
-        <RouterLink
-          v-if="!item.target"
-          :to="item.to"
-          v-bind="itemProps.action"
-        >
-          <span :class="[item.icon, item.iconColor]" />
-          <span class="leading-6 text-sm font-medium ml-2">{{ item.label }}</span>
-        </RouterLink>
-        <a
-          v-else
-          :href="item.href"
-          :target="item.target"
-          v-bind="itemProps.action"
-        >
-          <span :class="[item.icon, item.iconColor]" />
-          <span class="leading-6 text-sm font-medium ml-2">{{ item.label }}</span>
-        </a>
+        <div class="flex items-center">
+          <RouterLink
+            v-if="!item.target"
+            :to="item.to"
+            v-bind="itemProps.action"
+          >
+            <span :class="[item.icon, item.iconColor]" />
+            <span class="leading-6 text-sm font-medium ml-2">{{ item.label }}</span>
+          </RouterLink>
+          <a
+            v-else
+            :href="item.href"
+            :target="item.target"
+            v-bind="itemProps.action"
+          >
+            <span :class="[item.icon, item.iconColor]" />
+            <span class="leading-6 text-sm font-medium ml-2">{{ item.label }}</span>
+          </a>
+          <div class="spacer flex-auto" />
+          <Tag
+            v-if="item.tag"
+            :icon="item.tag.icon"
+            :value="item.tag.text"
+          />
+        </div>
       </template>
     </Menu>
   </div>

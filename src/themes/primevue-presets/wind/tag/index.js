@@ -20,6 +20,7 @@ export default {
             'text-white dark:text-surface-900',
             {
                 'bg-primary-500 dark:bg-primary-400': props.severity == null || props.severity == 'primary',
+                'bg-accent-500 dark:bg-accent-400': props.severity == 'accent',
                 'bg-green-500 dark:bg-green-400': props.severity == 'success',
                 'bg-blue-500 dark:bg-blue-400': props.severity == 'info',
                 'bg-orange-500 dark:bg-orange-400': props.severity == 'warning',

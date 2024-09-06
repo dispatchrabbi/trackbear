@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 import { Changelog } from 'server/lib/parse-changelog.ts';
 import { getChangelog } from 'src/lib/api/info.ts';
+
+import { useLastChangelogViewed, findLatestChangelogVersion, cmpVersion } from 'src/lib/changelog.ts';
+const lastChangelogViewed = useLastChangelogViewed();
 
 import PorchLayout from 'src/layouts/PorchLayout.vue';
 import TextBlurb from 'src/components/layout/TextBlurb.vue';
@@ -11,14 +14,23 @@ import ChangelogVersion from 'src/components/changelog/ChangelogVersion.vue';
 const changelog = ref<Changelog>(null);
 const errorMessage = ref<string>('');
 
-function loadChangelog() {
-  getChangelog()
-    .then(c => changelog.value = c)
-    .catch(err => {
-      errorMessage.value = err.message;
-    });
+async function loadChangelog() {
+  try {
+    const result = await getChangelog();
+    changelog.value = result;
+
+    const latestVersion = findLatestChangelogVersion(changelog.value);
+    if(cmpVersion(latestVersion, lastChangelogViewed.value) > 0) {
+      lastChangelogViewed.value = latestVersion;
+    }
+  } catch(err) {
+    errorMessage.value = err.message;
+  }
 }
-loadChangelog();
+
+onMounted(() => {
+  loadChangelog();
+});
 
 // const CHANGELOG_FIXTURE = [
 //   {
