@@ -3,7 +3,7 @@ import { UserSettings } from "@prisma/client";
 
 import type { FullUser, MeEditPayload, SettingsEditPayload } from "server/api/v1/me.ts";
 
-export type { MeEditPayload, FullUser };
+export type { MeEditPayload, SettingsEditPayload, FullUser };
 
 const ENDPOINT = '/api/v1/me';
 
