@@ -17,8 +17,8 @@ import Dialog from 'primevue/dialog';
 import type { MenuItem } from 'primevue/menuitem';
 import { PrimeIcons } from 'primevue/api';
 const breadcrumbs: MenuItem[] = [
-  { label: 'Settings' },
-  { label: 'Tags', url: '/settings/tags' },
+  { label: 'Account' },
+  { label: 'Tags', url: '/account/tags' },
 ];
 
 const tags = ref<Tag[]>(null);

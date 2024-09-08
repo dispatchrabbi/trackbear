@@ -10,25 +10,25 @@ await userStore.populate();
 
 import { deleteAvatar } from 'src/lib/api/me.ts';
 
+import { PrimeIcons } from 'primevue/api';
 import Panel from 'primevue/panel';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
+import type { MenuItem } from 'primevue/menuitem';
+
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import UnverifiedEmailMessage from 'src/components/account/UnverifiedEmailMessage.vue';
 import AccountInfoForm from 'src/components/account/AccountInfoForm.vue';
 import UploadAvatarForm from 'src/components/account/UploadAvatarForm.vue';
 import ChangePasswordForm from 'src/components/account/ChangePasswordForm.vue';
 import DeleteUserForm from 'src/components/account/DeleteUserForm.vue';
-import type { MenuItem } from 'primevue/menuitem';
-import { PrimeIcons } from 'primevue/api';
 import UserAvatar from 'src/components/UserAvatar.vue';
 
 import { useConfirm } from "primevue/useconfirm";
 const confirm = useConfirm();
 
 const breadcrumbs: MenuItem[] = [
-  { label: 'Settings' },
-  { label: 'Account', url: '/settings/account' },
+  { label: 'Account', url: '/account' },
 ];
 
 const isUploadFormVisible = ref<boolean>(false);

@@ -15,6 +15,7 @@ import VerifyEmailPage from 'src/components/pages/VerifyEmailPage.vue';
 import SendResetPasswordPage from 'src/components/pages/SendResetPasswordPage.vue';
 import ResetPasswordPage from 'src/components/pages/ResetPasswordPage.vue';
 
+import SettingsPage from './components/pages/settings/SettingsPage.vue';
 import AccountPage from 'src/components/pages/settings/AccountPage.vue';
 import TagsPage from 'src/components/pages/settings/TagsPage.vue';
 
@@ -85,8 +86,9 @@ const routes = [
   { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/filters', name: 'edit-board-filters', component: EditBoardParticipationPage },
 
   // Account section
-  { path: '/settings/account', name: 'account', component: AccountPage },
-  { path: '/settings/tags', name: 'tags', component: TagsPage },
+  { path: '/account', name: 'account', component: AccountPage },
+  { path: '/account/settings', name: 'settings', component: SettingsPage },
+  { path: '/account/tags', name: 'tags', component: TagsPage },
 
   // Admin section
   { path: '/admin', name: 'admin', component: AdminHomePage },

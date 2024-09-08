@@ -34,9 +34,10 @@ const userMenu = ref(null);
 const userMenuItems = computed(() => {
   return [
     {
-      label: 'Settings',
+      label: 'Account',
       items: [
         { icon: PrimeIcons.USER, label: 'Account', to: { name: 'account' } },
+        { icon: PrimeIcons.COG, label: 'Settings', to: { name: 'settings' } },
         { icon: PrimeIcons.TAG, label: 'Manage Tags', to: { name: 'tags' } },
       ] ,
     },
