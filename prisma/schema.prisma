@@ -51,6 +51,8 @@ model User {
   userAuth   UserAuth?
   adminPerms AdminPerms?
 
+  userSettings UserSettings?
+
   passwordResetLinks        PasswordResetLink[]
   pendingEmailVerifications PendingEmailVerification[]
   tallies                   Tally[]
@@ -81,6 +83,18 @@ model AdminPerms {
   userId Int  @unique
 
   isAdmin Boolean
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+}
+
+model UserSettings {
+  id Int @id @default(autoincrement())
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int  @unique
+
+  lifetimeStartingBalance Json @default("{}")
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)

@@ -13,14 +13,18 @@ import multer from 'multer';
 import { getNormalizedEnv } from '../../lib/env.ts';
 
 import dbClient from "../../lib/db.ts";
-import type { User } from "@prisma/client";
+import type { User, UserSettings } from "@prisma/client";
 import { USERNAME_REGEX, USER_STATE, ALLOWED_AVATAR_FORMATS, MAX_AVATAR_SIZE_IN_BYTES } from "../../lib/models/user.ts";
+import { TALLY_MEASURE } from "../../lib/models/tally.ts";
 import CONFIG from '../../config.ts';
 
 import { z } from 'zod';
+import { NonEmptyArray } from '../../lib/validators.ts';
 import { validateBody } from "../../lib/middleware/validate.ts";
 import { logAuditEvent, buildChangeRecord } from '../../lib/audit-events.ts';
 import { requireUser, RequestWithUser } from "../../lib/auth.ts";
+
+import deepEql from 'deep-eql';
 
 import { pushTask } from "../../lib/queue.ts";
 import sendEmailverificationEmail from "../../lib/tasks/send-emailverification-email.ts";
@@ -29,12 +33,31 @@ import sendAccountDeletedEmail from "../../lib/tasks/send-account-deleted-email.
 
 const meRouter = Router();
 
+export type FullUser = User & {
+  userSettings: UserSettings;
+};
+
 // GET /me - get your own user information
 meRouter.get('/',
   requireUser,
-  h(async (req: RequestWithUser, res: ApiResponse<User>) =>
+  h(async (req: RequestWithUser, res: ApiResponse<FullUser>) =>
 {
-  return res.status(200).send(success(req.user));
+  const me = await dbClient.user.findUnique({
+    where: {
+      id: req.user.id,
+      state: USER_STATE.ACTIVE,
+    },
+    include: {
+      userSettings: true,
+    }
+  });
+
+  // this should only happen if a user is logged in, gets suspended, and tries to find their data
+  if(!me) {
+    return res.status(404).send(failure('NOT_FOUND', `No active user found`));
+  }
+
+  return res.status(200).send(success(me));
 }));
 
 export type MeEditPayload = Partial<{
@@ -57,7 +80,7 @@ const zMeEditPayload = z.object({
 meRouter.patch('/',
   requireUser,
   validateBody(zMeEditPayload),
-  h(async (req: RequestWithUser, res: ApiResponse<User>) =>
+  h(async (req: RequestWithUser, res: ApiResponse<FullUser>) =>
 {
   const current = {
     username: req.user.username,
@@ -104,6 +127,9 @@ meRouter.patch('/',
     where: {
       id: req.user.id,
       state: USER_STATE.ACTIVE,
+    },
+    include: {
+      userSettings: true,
     }
   });
 
@@ -235,6 +261,7 @@ meRouter.post('/avatar',
   return res.status(200).send(success(req.user));
 }));
 
+// DELETE /me/avatar - delete your avatar
 meRouter.delete('/avatar',
   requireUser,
   h(async (req: RequestWithUser, res: ApiResponse<User>) =>
@@ -257,6 +284,57 @@ meRouter.delete('/avatar',
 
   req.user = updated;
   return res.status(200).send(success(req.user));
+}));
+
+export type SettingsEditPayload = Partial<{
+  lifetimeStartingBalance: Record<string, number>;
+}>;
+const zSettingsEditPayload = z.object({
+  lifetimeStartingBalance: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()),
+}).strict().partial();
+
+// PATCH /me/settings - patch your settings
+meRouter.patch('/settings',
+  requireUser,
+  validateBody(zSettingsEditPayload),
+  h(async (req: RequestWithUser, res: ApiResponse<UserSettings>) =>
+{
+  const current = await dbClient.userSettings.findUnique({ where: {
+    userId: req.user.id,
+    user: { state: USER_STATE.ACTIVE },
+  }});
+
+  // This should basically never happen. If it does, something screwed up on user creation
+  if(!current) {
+    return res.status(404).send(failure('NOT_FOUND', `No settings found on active user`));
+  }
+
+  const payload = req.body as SettingsEditPayload;
+  for(const field of Object.keys(current)) {
+    if(deepEql(current[field], payload[field])) {
+      delete payload[field];
+    }
+  }
+
+  const updated = await dbClient.userSettings.update({
+    data: {
+      ...payload,
+    },
+    where: {
+      userId: req.user.id,
+      user: { state: USER_STATE.ACTIVE },
+    },
+  });
+
+  // this should only happen if a user is logged in, gets suspended, and tries to update their settings
+  if(!updated) {
+    return res.status(404).send(failure('NOT_FOUND', `No active user found to update`));
+  }
+
+  const changeRecord = buildChangeRecord<UserSettings>(current, updated);
+  await logAuditEvent('settings:update', req.user.id, updated.id, null, changeRecord, req.sessionID);
+
+  return res.status(200).send(success(updated));
 }));
 
 export default meRouter;

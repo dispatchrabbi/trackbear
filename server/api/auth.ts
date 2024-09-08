@@ -70,8 +70,8 @@ authRouter.post('/login',
 {
   const { username, password } = req.body;
 
-  let user: User | null;
-  let userAuth: UserAuth | null;
+  let user;
+  let userAuth;
   try {
     user = await dbClient.user.findUnique({ where: { username } });
     if(user) {
@@ -160,6 +160,10 @@ authRouter.post('/signup',
     salt: salt,
   };
 
+  const userSettingsData = {
+    lifetimeStartingBalance: {},
+  };
+
   const pendingEmailVerificationData = {
     newEmail: userData.email,
     expiresAt: addDays(new Date(), CONFIG.EMAIL_VERIFICATION_TIMEOUT_IN_DAYS),
@@ -170,6 +174,7 @@ authRouter.post('/signup',
       data: {
         ...userData,
         userAuth: { create: userAuthData },
+        userSettings: { create: userSettingsData },
         pendingEmailVerifications: { create: pendingEmailVerificationData },
       },
       include: {

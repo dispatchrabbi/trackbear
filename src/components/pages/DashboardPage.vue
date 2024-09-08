@@ -6,7 +6,8 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 import { User } from '@prisma/client';
-import { getMe } from 'src/lib/api/me.ts';
+import { useUserStore } from 'src/stores/user.ts';
+const userStore = useUserStore();
 
 import { useGoalStore } from 'src/stores/goal.ts';
 const goalStore = useGoalStore();
@@ -32,7 +33,7 @@ const breadcrumbs: MenuItem[] = [
 const user = ref<User>(null);
 async function loadUser() {
   try {
-    user.value = await getMe();
+    await userStore.populate();
   } catch(err) {
     router.push({ name: 'login' });
   }
