@@ -58,7 +58,7 @@ const items = computed(() => {
     {
       key: 'boards',
       label: 'Leaderboards',
-      icon: PrimeIcons.CHART_LINE,
+      icon: PrimeIcons.TROPHY,
       to: { name: 'boards' },
       header: true,
     },
@@ -66,7 +66,14 @@ const items = computed(() => {
       key: `board-${board.id}`,
       label: board.title,
       to: { name: 'board', params: { boardUuid: board.uuid } },
-    }))
+    })),
+    {
+      key: 'stats',
+      label: 'Stats',
+      icon: PrimeIcons.CHART_BAR,
+      to: { name: 'lifetime-stats' },
+      header: true,
+    },
   ];
 });
 

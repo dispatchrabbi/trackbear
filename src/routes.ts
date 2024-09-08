@@ -44,6 +44,8 @@ import EditBoardPage from './components/pages/boards/EditBoardPage.vue';
 import JoinBoardPage from './components/pages/boards/JoinBoardPage.vue';
 import EditBoardParticipationPage from './components/pages/boards/EditBoardParticipationPage.vue';
 
+import LifetimeStatsPage from './components/pages/stats/LifetimeStats.vue';
+
 const routes = [
   // no login needed
   { path: '/', name: 'home', component: HomePage },
@@ -84,6 +86,9 @@ const routes = [
   { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/edit', name: 'edit-board', component: EditBoardPage },
   { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/join', name: 'join-board', component: JoinBoardPage },
   { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/filters', name: 'edit-board-filters', component: EditBoardParticipationPage },
+
+  // Stats section
+  { path: '/stats/lifetime', name: 'lifetime-stats', component: LifetimeStatsPage },
 
   // Account section
   { path: '/account', name: 'account', component: AccountPage },
