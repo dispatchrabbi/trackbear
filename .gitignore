@@ -20,7 +20,7 @@ coverage
 *.lcov
 
 # bundle statistics
-stats.*
+/stats.*
 
 # node-waf configuration
 .lock-wscript
