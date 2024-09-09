@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.13.3
+
 - FIXED: Fixed a bug that made it impossible to join boards using the code. (h/t Jagodzianka)
 
 ## 0.13.0
