@@ -208,8 +208,6 @@ tallyRouter.post('/batch',
   return res.status(201).send(success(createdTallies));
 }));
 
-
-
 tallyRouter.put('/:id',
   requireUser,
   validateParams(zIdParam()),

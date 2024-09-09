@@ -1,9 +1,7 @@
 import { addDays } from "date-fns";
-import { parseDateString, formatDate } from "./date.ts";
+import { parseDateString, formatDate, Dated} from "./date.ts";
 
-import type { Tally } from "src/lib/api/tally.ts";
-
-export function findStreaks(tallies: Tally[]): string[][] {
+export function findStreaks(tallies: Dated[]): string[][] {
   const tallyDates = [...(new Set(tallies.map(tally => tally.date)))].sort();
 
   const streaks = [];
@@ -34,7 +32,7 @@ export function findStreaks(tallies: Tally[]): string[][] {
   return streaks;
 }
 
-export function getStreakInfo(tallies: Tally[]) {
+export function getStreakInfo(tallies: Dated[]) {
   const streaks = findStreaks(tallies);
 
   const currentStreak = streaks[streaks.length - 1];

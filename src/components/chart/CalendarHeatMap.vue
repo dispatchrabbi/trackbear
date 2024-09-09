@@ -25,11 +25,13 @@ const defaultConfig: CalendarHeatMapConfig = {
 const props = withDefaults(defineProps<{
   data: CalendarHeatMapDataPoint[];
   anchor?: 'start' | 'end';
+  constrainWidth?: boolean;
   config?: Partial<CalendarHeatMapConfig>;
   normalizerFn?: (datum: CalendarHeatMapDataPoint, data: CalendarHeatMapDataPoint[]) => number | null;
   valueFormatFn?: (datum: CalendarHeatMapDataPoint) => string;
 }>(), {
   anchor: 'start',
+  constrainWidth: false,
   normalizerFn: datum => datum.value == null ? null : (+datum.value) > 0 ? 1 : 0,
   valueFormatFn: datum => datum.value.toString(),
   config: () => ({
@@ -81,15 +83,19 @@ onMounted(() => {
 
   // With lots of thanks to https://observablehq.com/@d3/calendar/2
   watchEffect(() => {
-    const width = heatmapContainerWidth.value;
     const cellSize = config.value.cellSize + config.value.padding;
     const height = (cellSize * 7) + 15; // 7 days + 15px for the month label
+    const width = props.constrainWidth ? heatmapContainerWidth.value : (cellSize * 53);
 
     const firstDataWeek = timeWeek(sortedData.value[0].date);
     const lastDataWeek = timeWeek.ceil(sortedData.value[sortedData.value.length - 1].date);
     const weeksVisible = Math.floor(width / cellSize) - 1;
-    const firstWeek = props.anchor === 'end' ? maxDate(timeWeek.offset(lastDataWeek, -weeksVisible), firstDataWeek) : firstDataWeek;
-    const lastWeek = props.anchor === 'end' ? lastDataWeek : minDate(timeWeek.offset(firstDataWeek, weeksVisible), lastDataWeek);
+    const firstWeek = props.constrainWidth ?
+      props.anchor === 'end' ? maxDate(timeWeek.offset(lastDataWeek, -weeksVisible), firstDataWeek) : firstDataWeek :
+      firstDataWeek;
+    const lastWeek = props.constrainWidth ?
+      props.anchor === 'end' ? lastDataWeek : minDate(timeWeek.offset(firstDataWeek, weeksVisible), lastDataWeek) :
+      lastDataWeek;
 
     const preferredColorScheme = usePreferredColorScheme().value;
 
@@ -103,7 +109,7 @@ onMounted(() => {
       .attr("width", width)
       .attr("height", height)
       .attr("viewBox", [0, 0, width, height])
-      .attr("style", "max-width: 100%; height: auto; font: 10px sans-serif;");
+      .attr("style", (props.constrainWidth ? "max-width: 100%; " : "overflow-x: scroll; ") + "height: auto; font: 10px sans-serif;");
 
     // this is a weird way to do it, because it's kind of expecting there to be multiple timelines
     // but I'm not good enough yet at d3 to do it a different way, so for now, here it is
@@ -179,7 +185,7 @@ onMounted(() => {
 <template>
   <div
     ref="heatmapContainer"
-    class="w-full overflow-hidden"
+    :class="{ 'w-full': true, 'overflow-hidden': props.constrainWidth, 'overflow-scroll': !props.constrainWidth }"
   >
     <svg ref="heatmapSvg" />
   </div>

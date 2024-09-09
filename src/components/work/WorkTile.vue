@@ -2,7 +2,6 @@
 import { ref, defineProps, defineEmits } from 'vue';
 import { WorkWithTotals, starWork } from 'src/lib/api/work.ts';
 import { WORK_PHASE } from 'server/lib/models/work.ts';
-import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 const props = defineProps<{
   work: WorkWithTotals;
@@ -13,8 +12,7 @@ const emit = defineEmits(['work:star']);
 import Card from 'primevue/card';
 import Tag from 'primevue/tag';
 import { PrimeIcons } from 'primevue/api';
-import { formatDuration } from 'src/lib/date.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { formatCount } from 'src/lib/tally.ts';
 
 const WORK_PHASE_TAG_COLORS = {
   [WORK_PHASE.DRAFTING]: 'primary',
@@ -73,13 +71,8 @@ async function onStarClick() {
             class="total text-right"
           >
             <span
-              v-if="measure === TALLY_MEASURE.TIME"
-              class="font-medium"
-            >{{ formatDuration(total) }}</span>
-            <span
-              v-else
               class="font-light"
-            ><span class="font-medium">{{ total }}</span> {{ TALLY_MEASURE_INFO[measure].counter[Math.abs(total) === 1 ? 'singular' : 'plural'] }}</span>
+            >{{ formatCount(total, measure) }}</span>
           </div>
           <div
             v-if="Object.keys(props.work.totals).length < 1"

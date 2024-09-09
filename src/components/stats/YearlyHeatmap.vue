@@ -1,35 +1,21 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
-import type { Tally } from 'src/lib/api/tally.ts';
+import type { DayCount } from 'src/lib/api/stats.ts';
 
-import { addYears } from 'date-fns';
-import { maxDate, formatDate, parseDateString } from 'src/lib/date.ts';
+import { parseDateString, cmpByDate } from 'src/lib/date.ts';
 
 import CalendarHeatMap, { CalendarHeatMapDataPoint } from 'src/components/chart/CalendarHeatMap.vue';
-import { cmpTallies, compileTallies, formatCount } from 'src/lib/tally.ts';
+import { formatCount } from 'src/lib/tally.ts';
 
 const props = defineProps<{
-  tallies: Array<Tally>;
+  dayCounts: Array<DayCount>;
 }>();
 
 const data = computed(() => {
-  const today = new Date();
-  const timelineStart = addYears(today, -1);
-
-  const sortedTallies = props.tallies.toSorted(cmpTallies);
-
-  const compiledTallies = compileTallies(
-    sortedTallies,
-    sortedTallies.length > 0 ? maxDate(sortedTallies[0].date, formatDate(timelineStart)) : formatDate(timelineStart),
-    formatDate(today),
-  );
-
-  const compiledData = compiledTallies.map(compiledTally => ({
-    date: parseDateString(compiledTally.date),
-    value: compiledTally.count,
+  return props.dayCounts.toSorted(cmpByDate).map(c => ({
+    date: parseDateString(c.date),
+    value: c.counts
   }));
-
-  return compiledData;
 });
 
 const maxima = computed(() => {
@@ -53,10 +39,9 @@ const valueFormatFn = function(datum: CalendarHeatMapDataPoint) {
 
 <template>
   <CalendarHeatMap
-    v-if="props.tallies.length > 0"
+    v-if="props.dayCounts.length > 0"
     :data="data"
-    anchor="end"
-    constrain-width
+    start="end"
     :normalizer-fn="normalizerFn"
     :value-format-fn="valueFormatFn"
   />

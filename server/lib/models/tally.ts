@@ -13,3 +13,4 @@ export const TALLY_MEASURE = {
 };
 
 export type TallyMeasure = typeof TALLY_MEASURE[keyof typeof TALLY_MEASURE];
+export type MeasureRecord<T> = Record<TallyMeasure, T>;

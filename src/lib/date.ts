@@ -89,3 +89,11 @@ export function formatDateRange(startDate: string, endDate: string, formatString
     return startDateFormatted + '  – ' + endDateFormatted;
   }
 }
+
+export type Dated = {
+  date: string;
+}
+
+export function cmpByDate(a: Dated, b: Dated) {
+  return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
+}
