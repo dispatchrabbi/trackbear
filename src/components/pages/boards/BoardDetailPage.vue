@@ -106,7 +106,7 @@ const loadBoard = async function() {
   } catch(err) {
     errorMessage.value = err.message;
     if(err.code === 'MUST_JOIN') {
-      router.push({ name: 'join-board', params: { uuid: boardUuid.value } });
+      router.push({ name: 'join-board', params: { boardUuid: boardUuid.value } });
     } else if(err.code !== 'NOT_LOGGED_IN') {
       // the ApplicationLayout takes care of this. Otherwise, this will redirect to /boards before ApplicationLayout can redirect to /login.
       // TODO: figure out a better way to ensure that there's no race condition here

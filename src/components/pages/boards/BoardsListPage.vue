@@ -127,7 +127,7 @@ onMounted(() => {
         </h2>
       </template>
       <JoinCodeForm
-        @code:confirm="({code}) => router.push({ name: 'join-board', params: { uuid: code }})"
+        @code:confirm="({code}) => router.push({ name: 'join-board', params: { boardUuid: code }})"
         @form-success="isJoinFormVisible = false"
       />
     </Dialog>

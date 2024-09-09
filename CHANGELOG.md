@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Fixed a bug that made it impossible to join boards using the code. (h/t Jagodzianka)
+
 ## 0.13.0
 
 - NEW: You can now enter progress in scenes and lines. Screenwriters and poets rejoice! (h/t Penny Gotch)

@@ -60,7 +60,7 @@ const isNewParticipant = computed(() => {
 onMounted(async () => {
   await loadBoardParticipation();
   if(!isNewParticipant.value) {
-    router.push({ name: 'board', params: { uuid: boardUuid.value } });
+    router.push({ name: 'board', params: { boardUuid: boardUuid.value } });
   }
 });
 
