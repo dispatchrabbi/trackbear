@@ -7,7 +7,6 @@ import { ApiResponse, success, h, failure } from '../../lib/api-response.ts';
 import { requireAdminUser, RequestWithUser } from '../../lib/auth.ts';
 
 import dbClient from "../../lib/db.ts";
-import { getActiveUsersByWeek } from '@prisma/client/sql';
 
 const statsRouter = Router();
 export default statsRouter;
@@ -21,7 +20,15 @@ statsRouter.get('/weekly-active-users',
   requireAdminUser,
   h(async (req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) =>
 {
-  const results = await dbClient.$queryRawTyped(getActiveUsersByWeek());
+  const results: { weekNumber: string; activeUsers: number }[] = await dbClient.$queryRaw`
+SELECT
+	EXTRACT(ISOYEAR FROM "createdAt") || '-' || lpad(EXTRACT(WEEK FROM "createdAt")::text, 2, '0') AS "weekNumber",
+	COUNT(DISTINCT "agentId") AS "activeUsers"
+FROM public."AuditEvent"
+WHERE "eventType" = 'user:login'
+GROUP BY "weekNumber"
+;
+  `;
 
   const now = new Date();
   const activeUsersByWeek = results.map(({ weekNumber, activeUsers }) => {

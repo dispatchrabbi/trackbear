@@ -55,7 +55,7 @@ COPY --chown=node:node . .
 
 # Regenerate db models (needs an existing but fake DB_APP_DB_URL in the env)
 ENV DB_APP_DB_URL $DB_APP_DB_URL
-RUN npx prisma generate
+RUN node --run compile:db
 
 # Check every 30s to ensure /api/ping returns HTTP 200
 HEALTHCHECK --interval=30s CMD node ./scripts/healthchecks/trackbear.js
@@ -75,7 +75,7 @@ COPY --chown=node:node . .
 
 # Regenerate db models (needs an existing but fake DB_APP_DB_URL in the env)
 ENV DB_APP_DB_URL $DB_APP_DB_URL
-RUN npx prisma generate
+RUN node --run compile:db
 
 # Compile the front-end
 RUN node --run compile:client
