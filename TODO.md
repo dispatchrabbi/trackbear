@@ -71,6 +71,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] De-duplicate form components
 - [ ] Expand the model layer in the backend to be used for all db access
 - [ ] Create better seed data for testing
+- [ ] Use 'omit' in prisma schema to protect password and other secret fields
 
 ## Observability
 - [ ] Create ping check

@@ -20,6 +20,7 @@ import AccountPage from 'src/components/pages/settings/AccountPage.vue';
 import TagsPage from 'src/components/pages/settings/TagsPage.vue';
 
 import AdminHomePage from './components/pages/admin/AdminHomePage.vue';
+import AdminStatsPage from './components/pages/admin/AdminStatsPage.vue';
 import AdminBannersListPage from './components/pages/admin/BannersListPage.vue';
 import AdminUsersListPage from './components/pages/admin/UsersListPage.vue';
 import AdminUserPage from './components/pages/admin/UserPage.vue';
@@ -97,6 +98,7 @@ const routes = [
 
   // Admin section
   { path: '/admin', name: 'admin', component: AdminHomePage },
+  { path: '/admin/stats', name: 'admin-stats', component: AdminStatsPage },
   { path: '/admin/banners', name: 'admin-banners', component: AdminBannersListPage },
   { path: '/admin/users', name: 'admin-users', component: AdminUsersListPage },
   { path: '/admin/users/:userId(\\d+)', name: 'admin-user', component: AdminUserPage },

@@ -102,7 +102,7 @@ onMounted(() => loadUsers());
   <AdminLayout
     :breadcrumbs="breadcrumbs"
   >
-    <div class="data flex justify-center gap-4 mb-4">
+    <div class="data flex flex-wrap justify-center gap-4 mb-4">
       <StatTile
         :highlight="users.length"
         bottom-legend="total users"

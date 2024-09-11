@@ -10,6 +10,9 @@ adminRouter.use('/me', meRouter);
 import bannerRouter from './banner.ts';
 adminRouter.use('/banner', bannerRouter);
 
+import statsRouter from './stats.ts';
+adminRouter.use('/stats', statsRouter);
+
 import userRouter from './user.ts';
 adminRouter.use('/user', userRouter);
 

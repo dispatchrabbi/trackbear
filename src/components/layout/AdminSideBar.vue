@@ -16,6 +16,13 @@ const items = computed(() => {
       header: true,
     },
     {
+      key: 'stats',
+      label: 'Stats',
+      icon: PrimeIcons.CHART_SCATTER,
+      to: { name: 'admin-stats' },
+      header: true,
+    },
+    {
       key: 'banners',
       label: 'Banners',
       icon: PrimeIcons.MEGAPHONE,
