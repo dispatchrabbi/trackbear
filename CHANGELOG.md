@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.14.0
+
 - NEW: There's a new Lifetime Stats page! This will show you your lifetime totals and yearly activity heatmaps. There will be more to come here soon!
 - NEW: If you have been tracking your writing for a long time, you may have stats from before using TrackBear. Add your lifetime starting balance in the new Settings page (find it under the user menu in the top right) and it'll be added to your totals on the Lifetime Stats page.
 
