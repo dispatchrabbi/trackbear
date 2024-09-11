@@ -7,7 +7,7 @@ import { Tally } from 'src/lib/api/tally.ts';
 import { analyzeHabitTallies } from 'src/lib/goal.ts';
 import { formatDate } from 'src/lib/date.ts';
 
-import StatTile from './StatTile.vue';
+import StatTile from 'src/components/goal/StatTile.vue';
 import { commaify } from 'src/lib/number.ts';
 import { GoalHabitParameters } from 'server/lib/models/goal.ts';
 import { GOAL_CADENCE_UNIT_INFO } from 'src/lib/goal.ts';

@@ -42,6 +42,14 @@ export function formatCount(count: number, measure: string ) {
   return measure === TALLY_MEASURE.TIME ? formatDuration(count) : `${commaify(count)} ${TALLY_MEASURE_INFO[measure].counter[Math.abs(count) === 1 ? 'singular' : 'plural']}`;
 }
 
+export function formatCountValue(count: number, measure: string ) {
+  return measure === TALLY_MEASURE.TIME ? formatDuration(count) : commaify(count);
+}
+
+export function formatCountCounter(count: number, measure: string ) {
+  return measure === TALLY_MEASURE.TIME ? '' : TALLY_MEASURE_INFO[measure].counter[Math.abs(count) === 1 ? 'singular' : 'plural'];
+}
+
 interface ComparableTally {
   date: string;
 }
