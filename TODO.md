@@ -3,17 +3,24 @@
 These are in no particular order. Which isn't to say they _aren't_ in any order. But it would be wise not to read too far into the order they _are_ in.
 
 ## User-Facing Features
-- [ ] Create help documentation
+- [ ] Help
+  - [ ] Create help documentation
+  - [ ] Introduction to TrackBear
+  - [ ] Deep dive into each bit of functionality
 - [ ] Tallies
   - [X] Add line (h/t Penny) and scene measures
+  - [ ] Allow logging half-pages (but only for pages probably) (h/t Alex)
 - [ ] Projects
   - [ ] The project page could be nicer/more informative
+  - [ ] Better project organization (sorting? filter by status? folders? h/t Ren the Ghost)
   - [ ] Implement project tags (maybe)
 - [ ] Goals
   - [ ] Target goal pages could be nicer/more informative
+  - [ ] Multiple goals (a la "stretch goals")
   - [ ] Goal pages could be more fun
   - [ ] Split targets and habits
   - [ ] Habit progress gauges need a UI revamp
+  - [ ] Make it clearer when a goal has been met (h/t Liv)
 - [ ] Leaderboards
   - [ ] Allow owners to remove (or ban?) participants from leaderboards
   - [ ] Progress to individual goals
@@ -21,21 +28,31 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [X] "Fundraiser mode" (everyone's progress contributes)
   - [ ] Add yourself more than once
   - [ ] Allow board owners to rotate the join code
+  - [ ] Group participants into teams and compare team totals (h/t Asha)
 - [ ] Dashboard
   - [ ] Dashboard could be more fun/welcoming
   - [ ] Show starred leaderboards on dashboard
   - [ ] Show starred projects on dashboard
   - [ ] Show lifetime counts on dashboard
-- [ ] Grand Totals page
-  - [ ] Overall total
+- [X] Grand Totals page
+  - [X] Overall total
   - [ ] Totals by tag
   - [ ] Ability to exempt tags/projects from total
-  - [ ] Heatmap by year
+  - [X] Heatmap by year
+  - [ ] Totals by year (h/t Deerna)
   - [ ] Graph lifetime progress
 - [ ] User settings
   - [ ] Implement theme switcher (including light/dark/system)
   - [ ] TinyPNG-ify avatar files to save on space
   - [ ] Implement data export
+- [ ] Profiles
+  - [ ] Allow a public-facing profile page with overall stats
+  - [ ] Add projects to your profile
+  - [ ] Add goals to your profile
+- [ ] Embeds
+  - [ ] Project progress embed (h/t Laura)
+  - [ ] Grand Totals embed (h/t Laura)
+  - [ ] Progress update widget (h/t Laura)
 - [ ] Improve tag inputs
 - [ ] Replace chart.js line graphs with d3- or d3/plot-driven ones
   - [X] Leaderboards
@@ -43,12 +60,13 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Projects
   - [ ] Elsewhere
 - [X] Add a little red dot when there's been an update
+- [ ] Enable PWA mode (h/t Judy L. Mohr)
 
 ## Admin Console Features
 - [ ] Admin landing page
 - [ ] Improve user management
   - [ ] Rename user/displayName
-  - [ ] Force password reset
+  - [X] Force password reset
   - [ ] Improved audit event retrieval/listings
 - [ ] Manage projects, goals, leaderboards
 - [ ] Add link to admin console from app UI (maybe)
