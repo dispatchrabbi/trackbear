@@ -22,6 +22,11 @@ const isTimeMeasure = computed(() => {
   return parameters.threshold.measure === TALLY_MEASURE.TIME;
 });
 
+const isSmallMeasure = computed(() => {
+  const parameters = props.goal.parameters as GoalTargetParameters;
+  return [TALLY_MEASURE.CHAPTER, TALLY_MEASURE.PAGE, TALLY_MEASURE.SCENE].includes(parameters.threshold.measure);
+})
+
 const measureCounter = computed(() => {
   const parameters = props.goal.parameters as GoalTargetParameters;
   return TALLY_MEASURE_INFO[parameters.threshold.measure].counter;
@@ -75,7 +80,9 @@ const paceSoFar = computed(() => {
   } else if(daysSoFar.value === 0) {
     return totalSoFar.value;
   } else {
-    return Math.round(totalSoFar.value / daysSoFar.value);
+    const precision = isSmallMeasure.value ? 2 : 0;
+    // yeah, yeah, this will be a bit inaccurate. That's okay.
+    return +(totalSoFar.value / daysSoFar.value).toFixed(precision);
   }
 });
 
@@ -93,7 +100,9 @@ const paceToGo = computed(() => {
   } else if(daysToGo.value === Infinity) {
     return 0;
   } else {
-    return Math.round(totalToGo.value / daysToGo.value);
+    const precision = isSmallMeasure.value ? 2 : 0;
+    // yeah, yeah, this will be a bit inaccurate. That's okay.
+    return +(totalToGo.value / daysToGo.value).toFixed(precision);
   }
 });
 
@@ -121,7 +130,9 @@ const paceToGoOnMars = computed(() => {
   } else if(daysToGo.value === Infinity) {
     return 0;
   } else {
-    return Math.round((totalToGo.value * 24) / (daysToGo.value * 24.5));
+    const precision = isSmallMeasure.value ? 2 : 0;
+    // yeah, yeah, this will be a bit inaccurate. That's okay.
+    return +((totalToGo.value * 24) / (daysToGo.value * 24.5)).toFixed(precision);
   }
 });
 </script>

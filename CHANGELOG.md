@@ -12,6 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.14.1
+- CHANGED: Target goals for scenes, pages, and chapters will now display average pace to 2 decimal places, and will no longer erroneously tell you that you have an eternity to reach your goal even though you have, in fact, been making progress toward it. (h/t Sam)
+
 ## 0.14.0
 
 - NEW: There's a new Lifetime Stats page! This will show you your lifetime totals and yearly activity heatmaps. There will be more to come here soon!
