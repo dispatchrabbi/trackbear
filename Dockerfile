@@ -3,7 +3,7 @@
 
 ###############################################################################
 # base stage
-FROM node:22-slim as base
+FROM node:22-slim AS base
 
 # Install the latest openssl (for HTTPS), and some other tools (for debugging)
 RUN apt update -y && apt install -y openssl curl postgresql-client nano
@@ -13,7 +13,7 @@ ENV NODE_ENV=development
 
 # Default to port 3000 for Node
 ARG PORT=3000
-ENV PORT $PORT
+ENV PORT=$PORT
 EXPOSE $PORT
 
 # Use the built-in node user so that we're not running as root
@@ -32,11 +32,11 @@ COPY --chown=node:node package.json package-lock.json* ./
 RUN --mount=type=cache,target=~/.npm npm ci --no-audit --no-fund
 
 # Make sure we can run commands from node_modules/.bin
-ENV PATH /app/node_modules/.bin:$PATH
+ENV PATH=/app/node_modules/.bin:$PATH
 
 ###############################################################################
 # dev stage
-FROM base as dev
+FROM base AS dev
 
 # overwrite NODE_ENV to development
 ENV NODE_ENV=development
@@ -54,7 +54,7 @@ RUN --mount=type=cache,target=~/.npm npm install
 COPY --chown=node:node . .
 
 # Regenerate db models (needs an existing but fake DB_APP_DB_URL in the env)
-ENV DB_APP_DB_URL $DB_APP_DB_URL
+ENV DB_APP_DB_URL=dummy
 RUN node --run compile:db
 
 # Check every 30s to ensure /api/ping returns HTTP 200
@@ -65,7 +65,7 @@ CMD [ "./entrypoint.sh" ]
 
 ###############################################################################
 # prod stage
-FROM base as prod
+FROM base AS prod
 
 # overwrite NODE_ENV to production
 ENV NODE_ENV=production
@@ -74,7 +74,7 @@ ENV NODE_ENV=production
 COPY --chown=node:node . .
 
 # Regenerate db models (needs an existing but fake DB_APP_DB_URL in the env)
-ENV DB_APP_DB_URL $DB_APP_DB_URL
+ENV DB_APP_DB_URL=dummy
 RUN node --run compile:db
 
 # Compile the front-end
