@@ -109,8 +109,33 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] De-duplicate add/edit forms
 - [ ] Create better seed data for testing
 - [ ] Use 'omit' in prisma schema to protect password and other secret fields
-- [ ] Update date-fns to 4.0
-- [ ] Simplify createDateRanges when date-fns hits 4.0
+- [X] Update date-fns to 4.0
+  - [ ] Simplify createDateRanges when this happens
+- [ ] Replace the /env API with Vite's env var substitution
+- [ ] Fix winston warnings by creating a non-default logger to use and exporting that (which can be silenced during unit tests)
+
+## Observability
+- [ ] Create ping check
+- [ ] Ship logs somewhere
+- [ ] Ship metrics/telemetry somewhere
+- [ ] Set up dev instrumentation
+  - [ ] Set up HTTP tracing
+  - [ ] Create tracing middleware (because the express tracing doesn't like Router)
+  - [ ] Add Prisma tracing
+  - [ ] Enrich via @opentelemetry/semantic-conventions / https://opentelemetry.io/docs/specs/semconv/resource/#service
+  - [ ] Stand up Jaeger and Elasticsearch backend on separate server
+  - [ ] Convert to env vars where needed
+  - [ ] Enable prod instrumentation
+
+## Branding
+- [ ] Create/commission logo and assets
+- [ ] Improve home page
+- [ ] Rewrite copy on "outside" pages
+
+## Developer Access
+- [ ] API access
+  - [ ] Swagger/OpenAPI docs
+  - [ ] API tokens
 
 ## Deployment
 - [ ] Create staging instance
