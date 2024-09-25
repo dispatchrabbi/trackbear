@@ -16,6 +16,7 @@
   "scripts": {
     "start": "node --run start:dev",
     "start:dev": "NODE_ENV=development node --import tsx ./main.ts",
+    "start:dev:instrumented": "NODE_ENV=development node --import tsx --import ./instrumentation.ts ./main.ts",
     "start:prod": "NODE_ENV=production node --import tsx ./main.ts",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -37,6 +38,13 @@
   },
   "dependencies": {
     "@observablehq/plot": "^0.6.15",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.50.0",
+    "@opentelemetry/exporter-metrics-otlp-http": "^0.53.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.53.0",
+    "@opentelemetry/sdk-metrics": "^1.26.0",
+    "@opentelemetry/sdk-node": "^0.53.0",
+    "@opentelemetry/sdk-trace-node": "^1.26.0",
     "@prisma/client": "^5.19.1",
     "@quixo3/prisma-session-store": "^3.1.13",
     "@vitejs/plugin-vue": "^4.5.0",
