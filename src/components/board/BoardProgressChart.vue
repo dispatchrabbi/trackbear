@@ -74,6 +74,11 @@ const chartData = computed(() => {
     :data="chartData.tallies"
     :par="chartData.par"
     :is-stacked="props.board.fundraiserMode"
+    :config="{
+      measureHint: props.measure,
+      seriesTitle: 'Participant',
+      showLegend: true,
+    }"
     :value-format-fn="d => formatCount(d, props.measure)"
   />
 </template>

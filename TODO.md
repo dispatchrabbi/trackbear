@@ -9,7 +9,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] Features
   - [ ] Goals: Make it clearer when a (target?) goal has been met (h/t Liv)
   - [ ] Leaderboards: Add "everyone has their own goal" mode
-  - [ ] Graphs: Convert all graphs from chart.js to Plot
+  - [X] Graphs: Convert all graphs from chart.js to Plot
   - [ ] Graphs: Add "save as image" functionality
   - [ ] Profiles: Add opt-in public-facing profile
   - [ ] Profiles: Add ability to put projects and goals on your profile
@@ -73,11 +73,11 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Grand Totals embed (h/t Laura)
   - [ ] Progress update widget (h/t Laura)
 - [ ] Improve tag inputs
-- [ ] Replace chart.js line graphs with d3- or d3/plot-driven ones
+- [X] Replace chart.js line graphs with d3- or d3/plot-driven ones
   - [X] Leaderboards
-  - [ ] Targets
-  - [ ] Projects
-  - [ ] Elsewhere
+  - [X] Targets
+  - [X] Projects
+  - [X] Elsewhere
 - [X] Add a little red dot when there's been an update
 - [ ] Enable PWA mode (h/t Judy L. Mohr)
 

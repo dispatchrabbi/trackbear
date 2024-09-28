@@ -11,6 +11,8 @@ Types of changes include:
 - SECURITY, for vulnerabilities or other security updates
 
 ## Upcoming/Unreleased
+- CHANGED: All charts are now using Observable Plot, and have now been made consistent with the Leaderboard chart. They're still not *exactly* where I want them, but nothing is broken and it'll be easier to modify them all from here in one go.
+- CHANGED: Leaderboards now have many more colors to use for participants.
 
 ## 0.14.1
 - CHANGED: Target goals for scenes, pages, and chapters will now display average pace to 2 decimal places, and will no longer erroneously tell you that you have an eternity to reach your goal even though you have, in fact, been making progress toward it. (h/t Sam)
