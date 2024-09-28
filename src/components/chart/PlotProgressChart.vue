@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect, defineProps, withDefaults, onMounted } from 'vue';
+import { ref, computed, watchEffect, defineProps, withDefaults, onMounted, useTemplateRef } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import * as Plot from "@observablehq/plot";
+
+import { saveSvgAsPng } from 'src/lib/image.ts';
 
 import { usePreferredColorScheme } from '@vueuse/core';
 import twColors from 'tailwindcss/colors.js';
@@ -45,7 +47,7 @@ const props = withDefaults(defineProps<{
 const DEFAULT_LINE_COLORS = {
   text: { light: themeColors.surface[900], dark: themeColors.surface[50] },
   secondaryText: { light: themeColors.surface[300], dark: themeColors.surface[600] },
-  background: { light: themeColors.surface[0], dark: themeColors.surface[800] },
+  background: { light: themeColors.surface[50], dark: themeColors.surface[800] },
 
   cycle: {
     light: [
@@ -71,8 +73,19 @@ const colorScheme = computed(() => {
 });
 
 // now start configuring the chart
-const plotContainer = ref(null);
+const plotContainer = useTemplateRef('plot-contatiner');
 const plotContainerWidth = ref(0);
+
+const handlePlotDoubleclick = function(ev: MouseEvent) {
+  // only do this if the alt/option key is held down
+  if(!ev.altKey) { return; }
+
+  const figureEl = plotContainer.value.querySelector('figure');
+  const svgClass = figureEl.className.replace('-figure', '');
+  const svgEl = plotContainer.value.querySelector(`svg.${svgClass}`) as SVGSVGElement;
+  saveSvgAsPng(svgEl, 'chart.png', DEFAULT_LINE_COLORS.background.light);
+}
+
 onMounted(() => {
   useResizeObserver(plotContainer, entries => {
     plotContainerWidth.value = entries[0].contentRect.width;
@@ -162,10 +175,12 @@ onMounted(() => {
         fontFamily: 'Jost, sans-serif',
         fontSize: '0.75rem',
       },
+      figure: true,
       // the plot should be a 16:9 aspect ratio
       width: plotContainerWidth.value,
       height: (plotContainerWidth.value * 9) / 16,
       marginLeft: props.config.measureHint === TALLY_MEASURE.TIME ? 60 : undefined,
+      marginBottom: 36,
       color: {
         type: 'categorical',
         range: colorScheme.value.cycle,
@@ -195,11 +210,12 @@ onMounted(() => {
 
 <template>
   <div
-    ref="plotContainer"
+    ref="plot-contatiner"
     :class="[
       'line-chart-container',
       isFullscreen ? 'line-chart-container-fullscreen' : null,
     ]"
+    @dblclick="handlePlotDoubleclick"
   />
 </template>
 

@@ -10,16 +10,16 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Goals: Make it clearer when a (target?) goal has been met (h/t Liv)
   - [ ] Leaderboards: Add "everyone has their own goal" mode
   - [X] Graphs: Convert all graphs from chart.js to Plot
-  - [ ] Graphs: Add "save as image" functionality
+  - [X] Graphs: Add "save as image" functionality
   - [ ] Profiles: Add opt-in public-facing profile
   - [ ] Profiles: Add ability to put projects and goals on your profile
-- [ ] Bug fixes
-  - [ ] Fix small-number (scene/page/chapter) issues in goal stats
+- [X] Bug fixes
+  - [X] Fix small-number (scene/page/chapter) issues in goal stats
 - [ ] Admin Help
   - [ ] Create staging server
   - [ ] Implement telemetry
   - [ ] Double-check backups
-  - [ ] Improve ability to judge app usage
+  - [X] Improve ability to judge app usage
 
 ## User-Facing Features
 - [ ] Help
