@@ -11,7 +11,7 @@ Types of changes include:
 - SECURITY, for vulnerabilities or other security updates
 
 ## Upcoming/Unreleased
-- NEW: If you hold down alt/option and double-click on any line chart (on a project, target goal, or leaderboard page), it will download a PNG of that chart. This is a bit of a hidden feature right now (and doesn't work on mobile, due to needing to hold down alt), but it lays the groundwork for some future stuff, and is also a nice way to get a chart without needing to do a screenshot.
+- NEW: If you hold down alt/option and double-click on any chart or heatmap, it will download a PNG of that chart. This is a bit of a hidden/preview feature right now (and doesn't work on mobile, due to needing to hold down alt), but it lays the groundwork for some future stuff, and is also a nice way to get a chart without needing to do a screenshot.
 - CHANGED: All charts are now using Observable Plot, and have now been made consistent with the Leaderboard chart. They're still not *exactly* where I want them, but nothing is broken and it'll be easier to modify them all from here in one go.
 - CHANGED: Leaderboards now have many more colors to use for participants.
 

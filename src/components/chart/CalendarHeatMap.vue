@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect, defineProps, withDefaults, onMounted } from 'vue';
+import { ref, computed, watchEffect, defineProps, withDefaults, onMounted, useTemplateRef } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import * as d3 from 'd3';
 
 import { usePreferredColorScheme } from '@vueuse/core';
 import themeColors from 'src/themes/primevue.ts';
+
+import { saveSvgAsPng } from 'src/lib/image.ts';
 
 export type CalendarHeatMapDataPoint = {
   date: Date;
@@ -71,9 +73,18 @@ const countDay = (i: number) => (i + 6) % 7;
 const minDate = (a: Date, b: Date) => a < b ? a : b;
 const maxDate = (a: Date, b: Date) => a > b ? a : b;
 
-const heatmapContainer = ref(null);
+const heatmapContainer = useTemplateRef('heatmap-container');
 const heatmapContainerWidth = ref(0);
-const heatmapSvg = ref(null);
+const heatmapSvg = useTemplateRef('heatmap-svg');
+
+const handleHeatmapDoubleclick = function(ev: MouseEvent) {
+  // only do this if the alt/option key is held down
+  if(!ev.altKey) { return; }
+
+  const svgEl = heatmapSvg.value;
+  saveSvgAsPng(svgEl, 'heatmap.png', themeColors.surface[50]);
+}
+
 onMounted(() => {
   useResizeObserver(heatmapContainer, entries => {
     heatmapContainerWidth.value = entries[0].contentRect.width;
@@ -184,9 +195,10 @@ onMounted(() => {
 
 <template>
   <div
-    ref="heatmapContainer"
+    ref="heatmap-container"
     :class="{ 'w-full': true, 'overflow-hidden': props.constrainWidth, 'overflow-scroll': !props.constrainWidth }"
+    @dblclick="handleHeatmapDoubleclick"
   >
-    <svg ref="heatmapSvg" />
+    <svg ref="heatmap-svg" />
   </div>
 </template>
