@@ -6,6 +6,10 @@ import { useUserStore } from 'src/stores/user.ts';
 const userStore = useUserStore();
 await userStore.populate();
 
+import { useEnvStore } from 'src/stores/env.ts';
+const envStore = useEnvStore();
+await envStore.populate();
+
 import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
@@ -16,6 +20,7 @@ import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import MultiMeasureInput from 'src/components/work/MultiMeasureInput.vue';
+import InputSwitch from 'primevue/inputswitch';
 
 const emit = defineEmits(['settings:edit', 'formSuccess']);
 
@@ -28,6 +33,7 @@ const validations = z.object({
     z.enum(Object.keys(TALLY_MEASURE_INFO) as NonEmptyArray<string>),
     z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' })
   ),
+  enablePublicProfile: z.boolean(),
 });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
@@ -69,6 +75,34 @@ async function handleSubmit() {
     :error-message="errorMessage"
     @submit="validate() && handleSubmit()"
   >
+    <FieldWrapper
+      for="settings-form-enable-profile"
+      label="Public Profile"
+      :rule="ruleFor('enablePublicProfile')"
+      :help="``"
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <div class="flex gap-4 max-w-full items-center">
+          <InputSwitch
+            v-model="formModel.enablePublicProfile"
+            :invalid="!isFieldValid"
+            @update:model-value="onUpdate"
+          />
+          <div
+            class="max-w-64 md:max-w-none"
+          >
+            Enable public profile
+          </div>
+        </div>
+      </template>
+      <template #help>
+        Your public profile shows your avatar, username, display name, lifetime stats, and any projects or goals you add to your profile.
+        If enabled, your profile will be accessible at <a
+          target="_blank"
+          :href="`${envStore.env.URL_PREFIX}/@${userStore.user.username}`"
+        >{{ envStore.env.URL_PREFIX }}/@{{ userStore.user.username }}</a>.
+      </template>
+    </FieldWrapper>
     <FieldWrapper
       for="settings-form-starting-balance"
       label="Pre-TrackBear Totals"

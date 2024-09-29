@@ -48,13 +48,18 @@ const onUpdate = function(val) {
     <slot
       name="message"
       :validation-message="validationMessage"
-      :help="help"
+      :help="props.help"
     >
       <div
         v-if="!validationMessage"
         class="help-message mt-1 text-sm"
       >
-        {{ help }}
+        <slot
+          name="help"
+          :help="props.help"
+        >
+          {{ props.help }}
+        </slot>
       </div>
       <div class="validation-message mt-1 text-sm text-red-500 dark:text-red-400">
         {{ validationMessage }}

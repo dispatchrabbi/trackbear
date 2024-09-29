@@ -10,7 +10,7 @@ import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
 import type { BoardParticipant } from "@prisma/client";
-import type { Board, BoardGoal } from "../../lib/models/board.ts"
+import type { Board, BoardGoal } from "../../lib/models/board.ts";
 
 import { BOARD_PARTICIPANT_STATE, BOARD_STATE, getFullBoard, FullBoard, getExtendedBoardsForUser, ExtendedBoard, getBoardParticipationForUser, BoardWithParticipants } from "../../lib/models/board.ts";
 import { TALLY_MEASURE, TallyMeasure } from "../../lib/models/tally.ts";
@@ -52,7 +52,7 @@ boardRouter.get('/:uuid',
     }
   }
 
-  res.status(200).send(success(board));
+  return res.status(200).send(success(board));
 }));
 
 // POST / - create a new board
@@ -243,7 +243,7 @@ boardRouter.get('/:uuid/participation',
     return res.status(404).send(failure('NOT_FOUND', `Could not find a board with UUID ${req.params.uuid}`));
   }
 
-  res.status(200).send(success(board as BoardWithParticipants));
+  return res.status(200).send(success(board as BoardWithParticipants));
 }));
 
 // POST /:uuid/participation - add or modify your own participation

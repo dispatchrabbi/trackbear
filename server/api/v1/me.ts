@@ -288,9 +288,11 @@ meRouter.delete('/avatar',
 
 export type SettingsEditPayload = Partial<{
   lifetimeStartingBalance: Record<string, number>;
+  enablePublicProfile: boolean;
 }>;
 const zSettingsEditPayload = z.object({
   lifetimeStartingBalance: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()),
+  enablePublicProfile: z.boolean(),
 }).strict().partial();
 
 // PATCH /me/settings - patch your settings

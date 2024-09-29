@@ -13,6 +13,9 @@ v1Router.use('/me', meRouter);
 import pingRouter from './ping.ts';
 v1Router.use('/ping', pingRouter);
 
+import profileRouter from './profile.ts';
+v1Router.use('/profile', profileRouter);
+
 import statsRouter from './stats.ts';
 v1Router.use('/stats', statsRouter);
 

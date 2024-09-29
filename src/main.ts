@@ -11,6 +11,7 @@ import 'primeicons/primeicons.css';
 import './assets/primevue.css';
 import './style.css';
 
+import { useEnvStore } from './stores/env.ts';
 import { useThemeStore } from './stores/theme.ts';
 
 import PrimeVue from 'primevue/config';
@@ -37,5 +38,9 @@ createApp(App)
   .directive('ripple', Ripple as unknown as Directive)
   .mount('#app');
 
+const envStore = useEnvStore();
+envStore.populate();
+
 const themeStore = useThemeStore();
 themeStore.applyTheme();
+

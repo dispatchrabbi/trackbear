@@ -7,7 +7,11 @@ import { ApiResponse, success } from '../lib/api-response.ts';
 import { readFile } from 'fs/promises';
 import { parseChangelog, Changelog } from '../lib/parse-changelog.ts';
 
+import { getNormalizedEnv } from 'server/lib/env.ts';
+
 const infoRouter = Router();
+
+export type { Changelog };
 
 let PARSED_CHANGELOG = null;
 infoRouter.get('/changelog',
@@ -21,6 +25,20 @@ infoRouter.get('/changelog',
   }
 
   return res.status(200).send(success(PARSED_CHANGELOG));
+});
+
+export type EnvInfo = {
+  URL_PREFIX: string;
+};
+infoRouter.get('/env',
+  async (req: Request, res: ApiResponse<EnvInfo>) =>
+{
+  const env = await getNormalizedEnv();
+  const envInfo: EnvInfo = {
+    URL_PREFIX: env.EMAIL_URL_PREFIX
+  };
+
+  return res.status(200).send(success(envInfo));
 });
 
 export default infoRouter;

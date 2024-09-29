@@ -15,6 +15,10 @@ import VerifyEmailPage from 'src/components/pages/VerifyEmailPage.vue';
 import SendResetPasswordPage from 'src/components/pages/SendResetPasswordPage.vue';
 import ResetPasswordPage from 'src/components/pages/ResetPasswordPage.vue';
 
+import ProfilePage from 'src/components/pages/public/ProfilePage.vue';
+import { USERNAME_REGEX } from 'server/lib/models/user.ts';
+const ROUTER_PARAM_USERNAME_REGEX = USERNAME_REGEX.source.replace('^', '').replace('$', '');
+
 import SettingsPage from './components/pages/settings/SettingsPage.vue';
 import AccountPage from 'src/components/pages/settings/AccountPage.vue';
 import TagsPage from 'src/components/pages/settings/TagsPage.vue';
@@ -63,6 +67,8 @@ const routes = [
   { path: '/verify-email/:verifyUuid', name:'verify-email', component: VerifyEmailPage },
   { path: '/reset-password/', name:'send-reset-password', component: SendResetPasswordPage },
   { path: '/reset-password/:resetUuid', name:'reset-password', component: ResetPasswordPage },
+
+  { path: `/:username(@${ROUTER_PARAM_USERNAME_REGEX})`, name: 'profile', component: ProfilePage },
 
   // Tag-and-Tally building
   { path: '/dashboard', name:'dashboard', component: DashboardPage },
