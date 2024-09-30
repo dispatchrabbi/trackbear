@@ -2,8 +2,6 @@ import { Router } from "express";
 import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
 import { RequestWithUser } from '../../lib/auth.ts';
 
-import winston from "winston";
-
 import { z } from 'zod';
 import { USERNAME_REGEX } from "../../lib/models/user.ts";
 import { validateParams } from "../../lib/middleware/validate.ts";

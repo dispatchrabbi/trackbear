@@ -9,20 +9,24 @@ export type UserWithAvatar = {
   avatar?: string;
   displayName: string;
 };
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   user: UserWithAvatar;
   size?: 'normal' | 'large' | 'xlarge';
   icon?: string;
   iconClass?: 'primary' | 'accent';
-}>();
+}>(), {
+  size: 'normal',
+  icon: null,
+  iconClass: 'primary',
+});
 </script>
 
 <template>
-  <div class="relative">
+  <div class="relative leading-[0]">
     <Avatar
       :label="props.user.avatar ? null : '🐻'"
       :image="'/uploads/avatars/' + props.user.avatar"
-      :size="props.size ?? 'normal'"
+      :size="props.size"
       shape="circle"
       :pt="{ image: { class: [ 'object-cover' ] } }"
       :pt-options="{ mergeSections: true, mergeProps: true }"

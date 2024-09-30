@@ -14,8 +14,8 @@ const props = defineProps<{
 <template>
   <div
     :class="[
-      'flex flex-col justify-center',
-      'w-1/2 md:w-48',
+      'flex flex-col flex-1 justify-center',
+      'whitespace-nowrap',
       'p-2 px-4 rounded-lg',
       'bg-surface-100 dark:bg-surface-900'
     ]"

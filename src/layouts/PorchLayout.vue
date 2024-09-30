@@ -5,8 +5,10 @@ import PorchFooter from 'src/components/layout/PorchFooter.vue';
 </script>
 
 <template>
-  <BannerContainer />
-  <div class="porch">
+  <div class="banner">
+    <BannerContainer />
+  </div>
+  <div class="porch flex">
     <div class="bar">
       <PorchHeader />
     </div>
@@ -26,11 +28,10 @@ import PorchFooter from 'src/components/layout/PorchFooter.vue';
     "bar"
     "main" 1fr
     "foot"
-    / 1fr
+    / 100vw;
   ;
 
   min-height: 100vh;
-
 }
 
 .bar {

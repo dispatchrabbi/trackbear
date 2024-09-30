@@ -106,5 +106,4 @@ const showPage = computed(() => {
   transition-duration: 250ms;
   transition-timing-function: ease-in-out;
 }
-
 </style>

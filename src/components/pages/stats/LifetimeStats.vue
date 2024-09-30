@@ -75,8 +75,6 @@ onMounted(() => {
           :suffix="formatCountCounter(totals[measure], measure)"
         />
       </div>
-      <!-- <p><pre>{{ JSON.stringify(userStore.user.userSettings) }}</pre></p>
-      <p><pre>{{ JSON.stringify(dailyStats) }}</pre></p> -->
       <div class="flex flex-col gap-4">
         <div
           v-for="year in Object.keys(dayCountsByYear).sort().reverse()"

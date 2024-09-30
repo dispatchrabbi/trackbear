@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 
 import { useUserStore } from 'src/stores/user.ts';
@@ -8,6 +9,10 @@ import Button from 'primevue/button';
 import TrackbearMasthead from './TrackbearMasthead.vue';
 // TODO: restore the dark mode toggle
 // import DarkModeToggle from './DarkModeToggle.vue';
+
+onMounted(() => {
+  userStore.populate();
+})
 
 </script>
 
@@ -19,7 +24,7 @@ import TrackbearMasthead from './TrackbearMasthead.vue';
     <div class="porch-header-buttons space-x-2 md:space-x-4">
       <RouterLink
         v-if="!userStore.user"
-        to="/signup"
+        :to="{ name: 'signup' }"
       >
         <Button
           label="Sign Up"
@@ -28,13 +33,13 @@ import TrackbearMasthead from './TrackbearMasthead.vue';
       </RouterLink>
       <RouterLink
         v-if="!userStore.user"
-        to="/login"
+        :to="{ name: 'login' }"
       >
         <Button label="Log In" />
       </RouterLink>
       <RouterLink
         v-if="userStore.user"
-        to="/dashboard"
+        :to="{ name: 'dashboard' }"
       >
         <Button
           label="Back to the Dashboard"

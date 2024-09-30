@@ -7,9 +7,12 @@ import { parseDateString, cmpByDate } from 'src/lib/date.ts';
 import CalendarHeatMap, { CalendarHeatMapDataPoint } from 'src/components/chart/CalendarHeatMap.vue';
 import { formatCount } from 'src/lib/tally.ts';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   dayCounts: Array<DayCount>;
-}>();
+  anchor?: 'start' | 'end'
+}>(), {
+  anchor: 'start',
+});
 
 const data = computed(() => {
   return props.dayCounts.toSorted(cmpByDate).map(c => ({
@@ -41,7 +44,7 @@ const valueFormatFn = function(datum: CalendarHeatMapDataPoint) {
   <CalendarHeatMap
     v-if="props.dayCounts.length > 0"
     :data="data"
-    start="end"
+    :anchor="props.anchor"
     :normalizer-fn="normalizerFn"
     :value-format-fn="valueFormatFn"
   />

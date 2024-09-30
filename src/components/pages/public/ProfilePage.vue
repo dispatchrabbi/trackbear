@@ -6,8 +6,8 @@ const route = useRoute();
 
 import { getProfile } from 'src/lib/api/profile.ts';
 
-import Card from 'primevue/card';
 import PorchLayout from 'src/layouts/PorchLayout.vue';
+import PublicProfile from 'src/components/profile/PublicProfile.vue';
 import TextBlurb from 'src/components/layout/TextBlurb.vue';
 
 const profile = ref(null);
@@ -37,7 +37,9 @@ onMounted(() => {
       <div
         v-if="profilePopulated && profile !== null"
       >
-        <pre>{{ JSON.stringify(profile) }}</pre>
+        <PublicProfile
+          :profile="profile"
+        />
       </div>
       <div
         v-else-if="profilePopulated && profile === null"
