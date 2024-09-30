@@ -8,12 +8,20 @@ import { WORK_STATE } from "./work.ts";
 import { MeasureRecord, TALLY_MEASURE, TALLY_STATE } from "./tally.ts";
 import { getDayCounts, DayCount } from "./stats.ts";
 
+type ProfileWorkSummary = {
+  uuid: string;
+  title: string;
+  totals: MeasureRecord<number>,
+  recentActivity: DayCount[],
+};
+
 export type PublicProfile = {
   username: string;
   displayName: string;
   avatar: string;
   lifetimeTotals: MeasureRecord<number>;
   recentActivity: DayCount[];
+  workSummaries: ProfileWorkSummary[];
 };
 
 export async function getUserProfile(username): Promise<PublicProfile> {
@@ -72,13 +80,16 @@ export async function getUserProfile(username): Promise<PublicProfile> {
   const oneYearAgo = formatDate(add(new Date(), { years: -1 }));
   const recentActivity = await getDayCounts(user.id, oneYearAgo);
 
-  // currently, we're just going to return username, display name, and avatar
+  // we also give the option to display selected works
+  const workSummaries = await getProfileWorkSummary(user.id);
+
   return {
     username: user.username,
     displayName: user.displayName,
     avatar: user.avatar,
     lifetimeTotals,
-    recentActivity
+    recentActivity,
+    workSummaries,
   };
 }
 
@@ -121,4 +132,58 @@ async function getTallyTotals(userId: number): Promise<MeasureRecord<number>> {
   }, {});
 
   return totals;
+}
+
+async function getProfileWorkSummary(userId: number): Promise<ProfileWorkSummary[]> {
+  const worksOnProfile = await dbClient.work.findMany({
+    where: {
+      ownerId: userId,
+      state: WORK_STATE.ACTIVE,
+      displayOnProfile: true,
+    },
+    select: {
+      id: true,
+      uuid: true,
+      title: true,
+      startingBalance: true,
+    },
+  });
+
+  const dayCountsForProfile = await dbClient.tally.groupBy({
+    by: [ 'workId', 'date', 'measure' ],
+    where: {
+      ownerId: userId,
+      workId: { in: worksOnProfile.map(work => work.id) },
+      state: TALLY_STATE.ACTIVE,
+    },
+    _sum: { count: true },
+  });
+
+  const oneYearAgo = formatDate(add(new Date(), { years: -1 }));
+  const summaries = worksOnProfile.map(work => {
+    const workCounts = dayCountsForProfile.filter(dayCount => dayCount.workId === work.id);
+    const totals = workCounts.reduce((obj, dayCount) => {
+      obj[dayCount.measure] = obj[dayCount.measure] || work.startingBalance[dayCount.measure] || 0;
+      obj[dayCount.measure] += dayCount._sum.count;
+      return obj;
+    }, {});
+
+    const recentActivityObj = workCounts
+      .filter(dayCount => dayCount.date > oneYearAgo)
+      .reduce<Record<string, DayCount>>((obj, dayCount) => {
+        obj[dayCount.date] = obj[dayCount.date] || { date: dayCount.date, counts: {} };
+        obj[dayCount.date].counts[dayCount.measure] = (obj[dayCount.date].counts[dayCount.measure] || 0) + dayCount._sum.count;
+        return obj;
+      }, {});
+    const recentActivity = Object.values(recentActivityObj);
+
+    return {
+      uuid: work.uuid,
+      title: work.title,
+      totals,
+      recentActivity
+    }
+  });
+
+  return summaries;
 }

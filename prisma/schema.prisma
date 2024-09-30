@@ -181,6 +181,7 @@ model Work {
   startingBalance Json @default("{}")
 
   starred Boolean @default(false)
+  displayOnProfile Boolean @default(false)
 
   tallies           Tally[]
   goals             Goal[]

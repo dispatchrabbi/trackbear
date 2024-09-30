@@ -91,7 +91,7 @@ async function handleSubmit() {
           <div
             class="max-w-64 md:max-w-none"
           >
-            Enable public profile
+            {{ formModel.enablePublicProfile ? 'Enabled' : 'Disabled' }}
           </div>
         </div>
       </template>

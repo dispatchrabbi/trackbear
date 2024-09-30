@@ -86,6 +86,7 @@ export type WorkCreatePayload = {
   phase: string;
   startingBalance: Record<string, number>;
   starred?: boolean;
+  displayOnProfile?: boolean;
 };
 const zWorkCreatePayload = z.object({
   title: z.string().min(1),
@@ -93,6 +94,7 @@ const zWorkCreatePayload = z.object({
   phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<string>),
   startingBalance: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()),
   starred: z.boolean().nullable().default(false),
+  displayOnProfile: z.boolean().nullable().default(false),
 }).strict();
 
 workRouter.post('/',

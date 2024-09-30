@@ -12,6 +12,7 @@ import { WORK_PHASE } from 'server/lib/models/work.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import InputText from 'primevue/inputtext';
+import InputSwitch from 'primevue/inputswitch';
 import Dropdown from 'primevue/dropdown';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
@@ -24,6 +25,7 @@ const formModel = reactive({
   description: '',
   phase: WORK_PHASE.DRAFTING,
   startingBalance: {},
+  displayOnProfile: false,
 });
 
 const validations = z.object({
@@ -34,6 +36,7 @@ const validations = z.object({
     z.enum(Object.keys(TALLY_MEASURE_INFO) as NonEmptyArray<string>),
     z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' })
   ),
+  displayOnProfile: z.boolean(),
 });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
@@ -143,6 +146,27 @@ async function handleSubmit() {
           add-button-text="Add Starting Balance"
           @update:model-value="onUpdate"
         />
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      for="work-form-display-on-profile"
+      label="Show on Profile?"
+      :rule="ruleFor('displayOnProfile')"
+      help="This only takes effect if you have enabled your public profile in Settings."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <div class="flex gap-4 max-w-full items-center">
+          <InputSwitch
+            v-model="formModel.displayOnProfile"
+            :invalid="!isFieldValid"
+            @update:model-value="onUpdate"
+          />
+          <div
+            class="max-w-64 md:max-w-none"
+          >
+            This project <b>{{ formModel.displayOnProfile ? 'will' : `will not` }}</b> be shown on your profile.
+          </div>
+        </div>
       </template>
     </FieldWrapper>
   </TbForm>

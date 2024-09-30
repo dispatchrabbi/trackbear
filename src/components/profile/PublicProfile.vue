@@ -10,6 +10,7 @@ const props = defineProps<{
 import { formatCountValue, formatCountCounter } from 'src/lib/tally.ts';
 
 import Card from 'primevue/card';
+import Divider from 'primevue/divider';
 import UserAvatar from '../UserAvatar.vue';
 import SectionTitle from '../layout/SectionTitle.vue';
 import StatTile from '../goal/StatTile.vue';
@@ -36,7 +37,6 @@ import YearlyHeatmap from '../stats/YearlyHeatmap.vue';
       </div>
     </template>
     <template #content>
-      <!-- <SectionTitle title="Grand Totals" /> -->
       <div class="total-counts flex flex-wrap justify-evenly gap-2 mb-4">
         <StatTile
           v-for="measure in Object.keys(props.profile.lifetimeTotals)"
@@ -45,12 +45,32 @@ import YearlyHeatmap from '../stats/YearlyHeatmap.vue';
           :suffix="formatCountCounter(props.profile.lifetimeTotals[measure], measure)"
         />
       </div>
-      <!-- <SectionTitle title="Recent Activity" /> -->
       <div class="recent-activity mb-4">
         <YearlyHeatmap
           :day-counts="props.profile.recentActivity"
           anchor="end"
         />
+      </div>
+      <div
+        v-for="workSummary in props.profile.workSummaries"
+        :key="workSummary.uuid"
+      >
+        <Divider />
+        <SectionTitle :title="workSummary.title" />
+        <div class="total-counts flex flex-wrap justify-evenly gap-2 mb-4">
+          <StatTile
+            v-for="measure in Object.keys(workSummary.totals)"
+            :key="measure"
+            :highlight="formatCountValue(workSummary.totals[measure], measure)"
+            :suffix="formatCountCounter(workSummary.totals[measure], measure)"
+          />
+        </div>
+        <div class="recent-activity mb-4">
+          <YearlyHeatmap
+            :day-counts="workSummary.recentActivity"
+            anchor="end"
+          />
+        </div>
       </div>
     </template>
   </Card>
