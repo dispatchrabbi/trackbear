@@ -48,7 +48,7 @@ import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import StatTile from 'src/components/goal/StatTile.vue';
-import YearlyHeatmap from 'src/components/stats/YearlyHeatmap.vue';
+import DayCountHeatmap from 'src/components/stats/DayCountHeatmap.vue';
 // import StreakCounter from 'src/components/dashboard/StreakCounter.vue';
 
 const breadcrumbs: MenuItem[] = [
@@ -81,7 +81,7 @@ onMounted(() => {
           :key="year"
         >
           <SectionTitle :title="`${year} Activity`" />
-          <YearlyHeatmap
+          <DayCountHeatmap
             :day-counts="dayCountsByYear[year]"
           />
         </div>

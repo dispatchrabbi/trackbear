@@ -64,6 +64,7 @@ const colorScale = computed(() => {
 const formatDate = d3.timeFormat("%x");
 const formatDay = (i: number) => "SMTWTFS"[i];
 const formatMonth = d3.timeFormat("%b");
+const formatYear = d3.timeFormat("%y");
 
 // Helpers to compute a day’s position in the week.
 const timeWeek = d3.timeMonday;
@@ -72,6 +73,7 @@ const countDay = (i: number) => (i + 6) % 7;
 // other date helpers
 const minDate = (a: Date, b: Date) => a < b ? a : b;
 const maxDate = (a: Date, b: Date) => a > b ? a : b;
+const isJanuary = (d: Date) => d.getMonth() === 0;
 
 const heatmapContainer = useTemplateRef('heatmap-container');
 const heatmapContainerWidth = ref(0);
@@ -184,10 +186,10 @@ onMounted(() => {
 
     // add the month name above the top of the month
     month.append("text")
-      .attr("x", d => (timeWeek.count(firstWeek, d) + 2) * cellSize)
+      .attr("x", (d, i) => (i === 0 ? 1 : timeWeek.count(firstWeek, timeWeek.ceil(d)) + 1) * cellSize + 2)
       .attr("y", -5)
       .style("fill", preferredColorScheme === 'dark' ? themeColors.surface[50] : themeColors.surface[950])
-      .text(formatMonth);
+      .text((d, i) => (formatMonth(d) + (i === 0 || isJanuary(d)  ? ` '${formatYear(d)}` : '')));
   });
 });
 

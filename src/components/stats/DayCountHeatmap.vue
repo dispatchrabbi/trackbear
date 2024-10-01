@@ -9,7 +9,7 @@ import { formatCount } from 'src/lib/tally.ts';
 
 const props = withDefaults(defineProps<{
   dayCounts: Array<DayCount>;
-  anchor?: 'start' | 'end'
+  anchor?: 'start' | 'end';
 }>(), {
   anchor: 'start',
 });

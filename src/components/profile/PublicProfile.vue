@@ -14,7 +14,7 @@ import Divider from 'primevue/divider';
 import UserAvatar from '../UserAvatar.vue';
 import SectionTitle from '../layout/SectionTitle.vue';
 import StatTile from '../goal/StatTile.vue';
-import YearlyHeatmap from '../stats/YearlyHeatmap.vue';
+import DayCountHeatmap from '../stats/DayCountHeatmap.vue';
 
 </script>
 
@@ -37,6 +37,7 @@ import YearlyHeatmap from '../stats/YearlyHeatmap.vue';
       </div>
     </template>
     <template #content>
+      <SectionTitle title="Overall Activity" />
       <div class="total-counts flex flex-wrap justify-evenly gap-2 mb-4">
         <StatTile
           v-for="measure in Object.keys(props.profile.lifetimeTotals)"
@@ -46,7 +47,7 @@ import YearlyHeatmap from '../stats/YearlyHeatmap.vue';
         />
       </div>
       <div class="recent-activity mb-4">
-        <YearlyHeatmap
+        <DayCountHeatmap
           :day-counts="props.profile.recentActivity"
           anchor="end"
         />
@@ -66,7 +67,7 @@ import YearlyHeatmap from '../stats/YearlyHeatmap.vue';
           />
         </div>
         <div class="recent-activity mb-4">
-          <YearlyHeatmap
+          <DayCountHeatmap
             :day-counts="workSummary.recentActivity"
             anchor="end"
           />
