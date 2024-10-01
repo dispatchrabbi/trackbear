@@ -28,6 +28,7 @@ import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
 import InputNumber from 'primevue/inputnumber';
 import InputText from 'primevue/inputtext';
+import InputSwitch from 'primevue/inputswitch';
 import MultiSelect from 'primevue/multiselect';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
@@ -39,6 +40,7 @@ const emit = defineEmits(['goal:create', 'formSuccess', 'formCancel']);
 const formModel = reactive({
   title: '',
   description: '',
+  displayOnProfile: false,
 
   type: GOAL_TYPE.TARGET,
   measure: TALLY_MEASURE.WORD,
@@ -57,6 +59,7 @@ const validations = z
   .object({
     title: z.string().min(1, { message: 'Please enter a title.'}),
     description: z.string(),
+    displayOnProfile: z.boolean(),
 
     type: z.enum(Object.values(GOAL_TYPE) as NonEmptyArray<typeof GOAL_TYPE[keyof typeof GOAL_TYPE]>, { required_error: 'Please pick a goal type.'}),
     measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
@@ -181,6 +184,7 @@ async function handleSubmit() {
     const data: GoalCreatePayload = {
       title: rawData.title,
       description: rawData.description,
+      displayOnProfile: rawData.displayOnProfile,
 
       type: rawData.type,
       parameters: parameters as GoalParameters,
@@ -247,6 +251,27 @@ async function handleSubmit() {
           :invalid="!isFieldValid"
           @update:model-value="onUpdate"
         />
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      for="goal-form-display-on-profile"
+      label="Show on Profile?"
+      :rule="ruleFor('displayOnProfile')"
+      help="This only takes effect if you have enabled your public profile in Settings."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <div class="flex gap-4 max-w-full items-center">
+          <InputSwitch
+            v-model="formModel.displayOnProfile"
+            :invalid="!isFieldValid"
+            @update:model-value="onUpdate"
+          />
+          <div
+            class="max-w-64 md:max-w-none"
+          >
+            This goal <b>{{ formModel.displayOnProfile ? 'will' : `will not` }}</b> be shown on your profile.
+          </div>
+        </div>
       </template>
     </FieldWrapper>
     <FieldWrapper

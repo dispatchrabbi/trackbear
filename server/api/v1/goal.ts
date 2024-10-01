@@ -80,6 +80,7 @@ export type GoalCreatePayload = {
   startDate?: string;
   endDate?: string;
   starred?: boolean;
+  displayOnProfile?: boolean;
   works: number[];
   tags: number[];
 };
@@ -108,6 +109,7 @@ const zGoalCreatePayload = z.object({
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
   starred: z.boolean().nullable().default(false),
+  displayOnProfile: z.boolean().nullable().default(false),
   works: z.array(z.number().int()),
   tags: z.array(z.number().int()),
 }).strict();

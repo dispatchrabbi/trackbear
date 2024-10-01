@@ -228,6 +228,7 @@ model Goal {
   endDate   String?
 
   starred Boolean @default(false)
+  displayOnProfile Boolean @default(false)
 
   worksIncluded Work[]
   tagsIncluded  Tag[]
