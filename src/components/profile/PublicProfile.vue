@@ -8,6 +8,8 @@ const props = defineProps<{
 }>()
 
 import { formatCountValue, formatCountCounter } from 'src/lib/tally.ts';
+import { commaify } from 'src/lib/number.ts';
+import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal.ts';
 
 import Card from 'primevue/card';
 import Divider from 'primevue/divider';
@@ -15,6 +17,8 @@ import UserAvatar from '../UserAvatar.vue';
 import SectionTitle from '../layout/SectionTitle.vue';
 import StatTile from '../goal/StatTile.vue';
 import DayCountHeatmap from '../stats/DayCountHeatmap.vue';
+import TargetLineChart from '../goal/TargetLineChart.vue';
+import ProfileHabitGauge from './ProfileHabitGauge.vue';
 
 </script>
 
@@ -51,6 +55,55 @@ import DayCountHeatmap from '../stats/DayCountHeatmap.vue';
           :day-counts="props.profile.recentActivity"
           anchor="end"
         />
+      </div>
+      <div
+        v-for="targetSummary in props.profile.targetSummaries"
+        :key="targetSummary.uuid"
+      >
+        <Divider />
+        <SectionTitle :title="targetSummary.title" />
+        <div class="target-chart mb-4">
+          <TargetLineChart
+            :goal="targetSummary"
+            :tallies="targetSummary.dayCounts"
+          />
+        </div>
+      </div>
+      <div
+        v-for="habitSummary in props.profile.habitSummaries"
+        :key="habitSummary.uuid"
+      >
+        <Divider />
+        <SectionTitle :title="habitSummary.title" />
+        <div class="recent-activity flex flex-col md:flex-row items-center gap-4 mb-4">
+          <div
+            v-if="habitSummary.currentRange !== null"
+            class="current-progress"
+          >
+            <ProfileHabitGauge
+              :goal="habitSummary"
+              :range="habitSummary.currentRange"
+            />
+          </div>
+          <div
+            v-if="habitSummary.currentStreak !== null"
+            class="current-streak"
+          >
+            <StatTile
+              top-legend="Current streak:"
+              :highlight="commaify(habitSummary.currentStreak)"
+              :suffix="GOAL_CADENCE_UNIT_INFO[habitSummary.parameters.cadence.unit].label[habitSummary.currentStreak === 1 ? 'singular' : 'plural']"
+              bottom-legend="in a row"
+            />
+          </div>
+          <div class="success-rate">
+            <StatTile
+              :top-legend="`Successful ${GOAL_CADENCE_UNIT_INFO[habitSummary.parameters.cadence.unit].label.plural}:`"
+              :highlight="habitSummary.successCount"
+              :bottom-legend="`out of ${habitSummary.totalCount}`"
+            />
+          </div>
+        </div>
       </div>
       <div
         v-for="workSummary in props.profile.workSummaries"

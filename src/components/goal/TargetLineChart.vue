@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 import type { Goal } from 'src/lib/api/goal.ts';
-import type { Tally } from 'src/lib/api/tally.ts';
 
 import { formatCount } from 'src/lib/tally.ts';
 
-import { normalizeTallies, accumulateTallies, listEachDayOfData } from '../chart/chart-functions.ts';
+import { normalizeTallies, accumulateTallies, listEachDayOfData, Tallyish } from '../chart/chart-functions.ts';
 import PlotProgressChart from 'src/components/chart/PlotProgressChart.vue';
 import { GoalTargetParameters } from 'server/lib/models/goal.ts';
 
+type Goalish = Pick<Goal, 'title' | 'parameters' | 'startDate' | 'endDate'>;
 const props = defineProps<{
-  goal: Goal;
-  tallies: Tally[];
+  goal: Goalish;
+  tallies: Tallyish[];
 }>();
 
 const measure = computed(() => (props.goal.parameters as GoalTargetParameters).threshold.measure);

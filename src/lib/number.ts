@@ -1,4 +1,12 @@
 export function commaify(n: number): string {
+  if(n === Infinity) {
+    return 'Infinity';
+  } else if(n === -Infinity) {
+    return '-Infinity';
+  } else if(isNaN(n)) {
+    return 'NaN';
+  }
+
   const isNegative = n < 0;
   const [ intStr, decimalStr ] = Math.abs(n).toString().split('.');
 

@@ -26,7 +26,7 @@ const emit = defineEmits(['work:edit', 'formSuccess']);
 const formModel = reactive({
   title: props.work.title,
   description: props.work.description,
-  displayOnProfile: false,
+  displayOnProfile: props.work.displayOnProfile,
 
   phase: props.work.phase,
   startingBalance: props.work.startingBalance,

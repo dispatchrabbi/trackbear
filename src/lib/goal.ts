@@ -1,34 +1,12 @@
 import {
-  startOfDay, addDays, endOfDay,
-  startOfWeek, addWeeks,
-  startOfMonth, addMonths,
-  startOfYear, addYears,
+  addDays, endOfDay,
 } from 'date-fns';
 import { formatDate, parseDateString } from './date.ts';
 
 import { Tally } from 'src/lib/api/tally.ts';
 import { Goal } from 'src/lib/api/goal.ts';
-import { GOAL_CADENCE_UNIT, GOAL_TYPE, GoalHabitParameters, GoalTargetParameters } from 'server/lib/models/goal.ts';
+import { GOAL_CADENCE_UNIT_INFO, GOAL_TYPE, GoalHabitParameters, GoalTargetParameters } from 'server/lib/models/goal.ts';
 import { formatCount } from './tally.ts';
-
-export const GOAL_CADENCE_UNIT_INFO = {
-  [GOAL_CADENCE_UNIT.DAY]: {
-    label: { singular: 'day', plural: 'days' },
-    fns: { startOf: startOfDay, add: addDays },
-  },
-  [GOAL_CADENCE_UNIT.WEEK]: {
-    label: { singular: 'week', plural: 'weeks' },
-    fns: { startOf: startOfWeek, add: addWeeks },
-  },
-  [GOAL_CADENCE_UNIT.MONTH]: {
-    label: { singular: 'month', plural: 'months' },
-    fns: { startOf: startOfMonth, add: addMonths },
-  },
-  [GOAL_CADENCE_UNIT.YEAR]: {
-    label: { singular: 'year', plural: 'years' },
-    fns: { startOf: startOfYear, add: addYears },
-  },
-};
 
 export function cmpGoal(a: Goal, b: Goal) {
   if(a.starred !== b.starred) {

@@ -1,3 +1,9 @@
+import {
+  eachDayOfInterval, startOfDay, endOfDay, addDays,
+  eachWeekOfInterval, startOfWeek, endOfWeek, addWeeks,
+  eachMonthOfInterval, startOfMonth, endOfMonth, addMonths,
+  eachYearOfInterval, startOfYear, endOfYear, addYears,
+} from 'date-fns';
 import type { Goal, Work, Tag } from "@prisma/client";
 import dbClient from "../db.ts";
 
@@ -23,15 +29,56 @@ export const GOAL_CADENCE_UNIT = {
   YEAR: 'year',
 };
 
-type GoalThreshold = {
+export type GoalCadenceUnit = typeof GOAL_CADENCE_UNIT[keyof typeof GOAL_CADENCE_UNIT];
+
+export const GOAL_CADENCE_UNIT_INFO = {
+  [GOAL_CADENCE_UNIT.DAY]: {
+    label: { singular: 'day', plural: 'days' },
+    fns: {
+      each: eachDayOfInterval,
+      startOf: startOfDay,
+      endOf: endOfDay,
+      add: addDays
+    },
+  },
+  [GOAL_CADENCE_UNIT.WEEK]: {
+    label: { singular: 'week', plural: 'weeks' },
+    fns: {
+      each: eachWeekOfInterval,
+      startOf: startOfWeek,
+      endOf: endOfWeek,
+      add: addWeeks
+    },
+  },
+  [GOAL_CADENCE_UNIT.MONTH]: {
+    label: { singular: 'month', plural: 'months' },
+    fns: {
+      each: eachMonthOfInterval,
+      startOf: startOfMonth,
+      endOf: endOfMonth,
+      add: addMonths
+    },
+  },
+  [GOAL_CADENCE_UNIT.YEAR]: {
+    label: { singular: 'year', plural: 'years' },
+    fns: {
+      each: eachYearOfInterval,
+      startOf: startOfYear,
+      endOf: endOfYear,
+      add: addYears
+    },
+  },
+};
+
+export type GoalThreshold = {
   measure: TallyMeasure;
   count: number;
 };
 
-type GoalCadence = {
+export type GoalCadence = {
   times?: number | null; // actually, this property is on hiatus until I want to start using it again
   period: number;
-  unit: typeof GOAL_CADENCE_UNIT[keyof typeof GOAL_CADENCE_UNIT];
+  unit: GoalCadenceUnit;
 };
 
 export type GoalTargetParameters = {

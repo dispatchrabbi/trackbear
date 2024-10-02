@@ -18,7 +18,7 @@ import { useValidation } from 'src/lib/form.ts';
 
 import { createGoal, GoalCreatePayload } from 'src/lib/api/goal.ts';
 import { GOAL_TYPE, GOAL_CADENCE_UNIT, GoalParameters } from 'server/lib/models/goal.ts';
-import { GOAL_CADENCE_UNIT_INFO } from 'src/lib/goal.ts';
+import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 

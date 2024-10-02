@@ -9,8 +9,7 @@ import { formatDate } from 'src/lib/date.ts';
 
 import StatTile from 'src/components/goal/StatTile.vue';
 import { commaify } from 'src/lib/number.ts';
-import { GoalHabitParameters } from 'server/lib/models/goal.ts';
-import { GOAL_CADENCE_UNIT_INFO } from 'src/lib/goal.ts';
+import { GoalHabitParameters, GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal.ts';
 
 const props = defineProps<{
   goal: Goal,
