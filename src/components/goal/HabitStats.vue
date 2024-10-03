@@ -4,8 +4,7 @@ import { computed, defineProps } from 'vue';
 import { Goal } from 'src/lib/api/goal.ts';
 import { Tally } from 'src/lib/api/tally.ts';
 
-import { analyzeHabitTallies } from 'src/lib/goal.ts';
-import { formatDate } from 'src/lib/date.ts';
+import { analyzeStreaksForHabit } from 'server/lib/models/goal.ts';
 
 import StatTile from 'src/components/goal/StatTile.vue';
 import { commaify } from 'src/lib/number.ts';
@@ -17,13 +16,13 @@ const props = defineProps<{
 }>();
 
 const habitStats = computed(() => {
-  const now = new Date();
-
-  const stats = analyzeHabitTallies(
+  const parameters = props.goal.parameters as GoalHabitParameters;
+  const stats = analyzeStreaksForHabit(
     props.tallies,
-    props.goal,
+    parameters.cadence,
+    parameters.threshold,
     props.goal.startDate,
-    props.goal.endDate ?? formatDate(now),
+    props.goal.endDate
   );
 
   return stats;
@@ -35,7 +34,7 @@ const periodUnit = computed(() => {
 });
 
 const averageStreak = computed(() => {
-  const streaks = habitStats.value.streaks.list.filter(streak => streak !== 0);
+  const streaks = habitStats.value.streaks.all.map(streak => streak.length).filter(streak => streak !== 0);
   if(streaks.length > 0) {
     const average = streaks.reduce((total, streak) => total + streak, 0) / streaks.length;
     return average.toFixed(2);
@@ -57,20 +56,20 @@ const successPercent = computed(() => {
   <div class="habit-stats flex flex-wrap justify-evenly gap-2">
     <StatTile
       top-legend="you're currently at"
-      :highlight="commaify(habitStats.streaks.current)"
-      :suffix="GOAL_CADENCE_UNIT_INFO[periodUnit].label[habitStats.streaks.current === 1 ? 'singular' : 'plural']"
+      :highlight="commaify(habitStats.streaks.current.length)"
+      :suffix="GOAL_CADENCE_UNIT_INFO[periodUnit].label[habitStats.streaks.current.length === 1 ? 'singular' : 'plural']"
       bottom-legend="in a row"
     />
     <StatTile
       top-legend="your record is"
-      :highlight="commaify(habitStats.streaks.longest)"
-      :suffix="GOAL_CADENCE_UNIT_INFO[periodUnit].label[habitStats.streaks.current === 1 ? 'singular' : 'plural']"
+      :highlight="commaify(habitStats.streaks.longest.length)"
+      :suffix="GOAL_CADENCE_UNIT_INFO[periodUnit].label[habitStats.streaks.longest.length === 1 ? 'singular' : 'plural']"
       bottom-legend="in a row"
     />
     <StatTile
       top-legend="your typical streak is"
       :highlight="averageStreak"
-      :suffix="GOAL_CADENCE_UNIT_INFO[periodUnit].label[habitStats.streaks.current === 1 ? 'singular' : 'plural']"
+      :suffix="GOAL_CADENCE_UNIT_INFO[periodUnit].label[(+averageStreak) === 1 ? 'singular' : 'plural']"
       bottom-legend="in a row"
     />
     <StatTile

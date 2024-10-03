@@ -11,6 +11,7 @@ Types of changes include:
 - SECURITY, for vulnerabilities or other security updates
 
 ## Upcoming/Unreleased
+- NEW: Public profiles have launched! You can now enable your public profile in Settings. Once you do, your public profile will be available at trackbear.app/@[your username]. Profiles list lifetime stats by default, and you can add goals and projects to it by going to the goal or project, clicking **Configure**, and toggling the switch under "Show on profile?".
 
 ## 0.14.2
 - NEW: If you hold down alt/option and double-click on any chart or heatmap, it will download a PNG of that chart. This is a bit of a hidden/preview feature right now (and doesn't work on mobile, due to needing to hold down alt), but it lays the groundwork for some future stuff, and is also a nice way to get a chart without needing to do a screenshot.

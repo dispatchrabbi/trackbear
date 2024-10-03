@@ -2,8 +2,7 @@
 import { computed, defineProps } from 'vue';
 
 import type { Goal } from 'src/lib/api/goal.ts';
-import type { GoalHabitParameters } from 'server/lib/models/goal.ts';
-import type { ProfileHabitRange } from 'server/lib/models/profile';
+import type { GoalHabitParameters, HabitRange } from 'server/lib/models/goal.ts';
 import { formatDateRange } from 'src/lib/date.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 
@@ -12,7 +11,7 @@ import Knob from 'primevue/knob';
 type Goalish = Pick<Goal, 'title' | 'parameters'>;
 const props = defineProps<{
   goal: Goalish;
-  range: ProfileHabitRange;
+  range: HabitRange;
   highlight?: boolean;
 }>();
 

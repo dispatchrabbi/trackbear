@@ -5,7 +5,7 @@ import { isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { Goal } from 'src/lib/api/goal.ts';
 import { Tally } from 'src/lib/api/tally.ts';
 
-import { analyzeHabitTallies } from 'src/lib/goal.ts';
+import { analyzeStreaksForHabit, GoalHabitParameters } from 'server/lib/models/goal.ts';
 import { streakColors } from 'src/lib/tally.ts';
 import { formatDate, parseDateStringSafe } from 'src/lib/date.ts';
 
@@ -23,9 +23,11 @@ const habitStats = computed(() => {
   const goalEndDate = parseDateStringSafe(props.goal.endDate) ?? now;
   const endDate = now < goalEndDate ? now : goalEndDate;
 
-  const stats = analyzeHabitTallies(
+  const parameters = props.goal.parameters as GoalHabitParameters;
+  const stats = analyzeStreaksForHabit(
     props.tallies,
-    props.goal,
+    parameters.cadence,
+    parameters.threshold,
     props.goal.startDate,
     formatDate(endDate),
   );
@@ -51,7 +53,7 @@ function rangeContainsToday(range) {
   >
     <template #comment>
       <div
-        v-if="habitStats.streaks.current > 1"
+        v-if="habitStats.streaks.current.length > 1"
         :class="[ 'px-2 py-1 rounded-full text-sm font-normal', streakColors(habitStats.streaks.current) ]"
       >
         {{ habitStats.streaks.current }} in a row!

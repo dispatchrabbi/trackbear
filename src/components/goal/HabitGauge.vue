@@ -2,8 +2,7 @@
 import { computed, defineProps } from 'vue';
 
 import type { Goal } from 'src/lib/api/goal.ts';
-import type { GoalHabitParameters } from 'server/lib/models/goal.ts';
-import type { HabitRange } from 'src/lib/goal.ts';
+import type { GoalHabitParameters, HabitRange } from 'server/lib/models/goal.ts';
 import { formatDateRange } from 'src/lib/date.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 

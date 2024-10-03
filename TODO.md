@@ -11,8 +11,8 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Leaderboards: Add "everyone has their own goal" mode
   - [X] Graphs: Convert all graphs from chart.js to Plot
   - [X] Graphs: Add "save as image" functionality
-  - [ ] Profiles: Add opt-in public-facing profile
-  - [ ] Profiles: Add ability to put projects and goals on your profile
+  - [X] Profiles: Add opt-in public-facing profile
+  - [X] Profiles: Add ability to put projects and goals on your profile
   - [ ] General: Make TrackBear a PWA
 - [X] Bug fixes
   - [X] Fix small-number (scene/page/chapter) issues in goal stats
@@ -66,10 +66,10 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Implement theme switcher (including light/dark/system)
   - [ ] TinyPNG-ify avatar files to save on space
   - [ ] Implement data export
-- [ ] Profiles
-  - [ ] Allow a public-facing profile page with overall stats
-  - [ ] Add projects to your profile
-  - [ ] Add goals to your profile
+- [X] Profiles
+  - [X] Allow a public-facing profile page with overall stats
+  - [X] Add projects to your profile
+  - [X] Add goals to your profile
 - [ ] Embeds
   - [ ] Project progress embed (h/t Laura)
   - [ ] Grand Totals embed (h/t Laura)
@@ -111,6 +111,8 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] Expand the model layer in the backend to be used for all db access
 - [ ] Create better seed data for testing
 - [ ] Use 'omit' in prisma schema to protect password and other secret fields
+- [ ] Update date-fns to 4.0
+  - [ ] Simplify createDateRanges when this happens
 
 ## Observability
 - [ ] Create ping check

@@ -20,6 +20,12 @@ import DayCountHeatmap from '../stats/DayCountHeatmap.vue';
 import TargetLineChart from '../goal/TargetLineChart.vue';
 import ProfileHabitGauge from './ProfileHabitGauge.vue';
 
+function formatSuccessRate(successful: number, total: number) {
+  const percentage = (successful * 100) / total;
+  const precision = Number.isInteger(percentage) ? 0 : 2;
+  return percentage.toFixed(precision);
+}
+
 </script>
 
 <template>
@@ -57,25 +63,12 @@ import ProfileHabitGauge from './ProfileHabitGauge.vue';
         />
       </div>
       <div
-        v-for="targetSummary in props.profile.targetSummaries"
-        :key="targetSummary.uuid"
-      >
-        <Divider />
-        <SectionTitle :title="targetSummary.title" />
-        <div class="target-chart mb-4">
-          <TargetLineChart
-            :goal="targetSummary"
-            :tallies="targetSummary.dayCounts"
-          />
-        </div>
-      </div>
-      <div
         v-for="habitSummary in props.profile.habitSummaries"
         :key="habitSummary.uuid"
       >
         <Divider />
         <SectionTitle :title="habitSummary.title" />
-        <div class="recent-activity flex flex-col md:flex-row items-center gap-4 mb-4">
+        <div class="recent-activity flex flex-wrap justify-evenly md:justify-start items-center gap-4 mb-4">
           <div
             v-if="habitSummary.currentRange !== null"
             class="current-progress"
@@ -86,23 +79,47 @@ import ProfileHabitGauge from './ProfileHabitGauge.vue';
             />
           </div>
           <div
-            v-if="habitSummary.currentStreak !== null"
+            v-if="habitSummary.currentStreakLength !== null"
             class="current-streak"
           >
             <StatTile
-              top-legend="Current streak:"
-              :highlight="commaify(habitSummary.currentStreak)"
-              :suffix="GOAL_CADENCE_UNIT_INFO[habitSummary.parameters.cadence.unit].label[habitSummary.currentStreak === 1 ? 'singular' : 'plural']"
+              top-legend="Current streak"
+              :highlight="commaify(habitSummary.currentStreakLength)"
+              :suffix="GOAL_CADENCE_UNIT_INFO[habitSummary.parameters.cadence.unit].label[habitSummary.currentStreakLength === 1 ? 'singular' : 'plural']"
+              bottom-legend="in a row"
+            />
+          </div>
+          <div
+            v-if="habitSummary.longestStreakLength !== null"
+            class="current-streak"
+          >
+            <StatTile
+              top-legend="Longest streak"
+              :highlight="commaify(habitSummary.longestStreakLength)"
+              :suffix="GOAL_CADENCE_UNIT_INFO[habitSummary.parameters.cadence.unit].label[habitSummary.longestStreakLength === 1 ? 'singular' : 'plural']"
               bottom-legend="in a row"
             />
           </div>
           <div class="success-rate">
             <StatTile
-              :top-legend="`Successful ${GOAL_CADENCE_UNIT_INFO[habitSummary.parameters.cadence.unit].label.plural}:`"
-              :highlight="habitSummary.successCount"
-              :bottom-legend="`out of ${habitSummary.totalCount}`"
+              :top-legend="`Success rate`"
+              :highlight="`${formatSuccessRate(habitSummary.successfulRanges, habitSummary.totalRanges)}%`"
+              :bottom-legend="`or ${habitSummary.successfulRanges} / ${habitSummary.totalRanges}`"
             />
           </div>
+        </div>
+      </div>
+      <div
+        v-for="targetSummary in props.profile.targetSummaries"
+        :key="targetSummary.uuid"
+      >
+        <Divider />
+        <SectionTitle :title="targetSummary.title" />
+        <div class="target-chart mb-4">
+          <TargetLineChart
+            :goal="targetSummary"
+            :tallies="targetSummary.dayCounts"
+          />
         </div>
       </div>
       <div

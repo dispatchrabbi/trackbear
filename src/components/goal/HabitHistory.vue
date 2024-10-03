@@ -5,8 +5,8 @@ import { isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { Goal } from 'src/lib/api/goal.ts';
 import { Tally } from 'src/lib/api/tally.ts';
 
-import { analyzeHabitTallies } from 'src/lib/goal.ts';
-import { formatDate, parseDateStringSafe } from 'src/lib/date.ts';
+import { analyzeStreaksForHabit, GoalHabitParameters } from 'server/lib/models/goal.ts';
+import { parseDateStringSafe } from 'src/lib/date.ts';
 
 import HabitGauge from 'src/components/goal/HabitGauge.vue';
 
@@ -16,13 +16,13 @@ const props = defineProps<{
 }>();
 
 const habitStats = computed(() => {
-  const now = new Date();
-
-  const stats = analyzeHabitTallies(
+  const parameters = props.goal.parameters as GoalHabitParameters;
+  const stats = analyzeStreaksForHabit(
     props.tallies,
-    props.goal,
+    parameters.cadence,
+    parameters.threshold,
     props.goal.startDate,
-    props.goal.endDate ?? formatDate(now),
+    props.goal.endDate
   );
 
   return stats;
