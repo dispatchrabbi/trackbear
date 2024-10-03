@@ -11,6 +11,8 @@ Types of changes include:
 - SECURITY, for vulnerabilities or other security updates
 
 ## Upcoming/Unreleased
+
+## 0.15.0
 - NEW: Public profiles have launched! You can now enable your public profile in Settings. Once you do, your public profile will be available at trackbear.app/@[your username]. Profiles list lifetime stats by default, and you can add goals and projects to it by going to the goal or project, clicking **Configure**, and toggling the switch under "Show on profile?".
 
 ## 0.14.2
