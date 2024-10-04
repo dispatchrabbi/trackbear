@@ -8,7 +8,7 @@ const props = defineProps<{
 }>()
 
 import { formatCountValue, formatCountCounter } from 'src/lib/tally.ts';
-import { commaify } from 'src/lib/number.ts';
+import { commaify, formatPercent } from 'src/lib/number.ts';
 import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal.ts';
 
 import Card from 'primevue/card';
@@ -19,12 +19,6 @@ import StatTile from '../goal/StatTile.vue';
 import DayCountHeatmap from '../stats/DayCountHeatmap.vue';
 import TargetLineChart from '../goal/TargetLineChart.vue';
 import ProfileHabitGauge from './ProfileHabitGauge.vue';
-
-function formatSuccessRate(successful: number, total: number) {
-  const percentage = (successful * 100) / total;
-  const precision = Number.isInteger(percentage) ? 0 : 2;
-  return percentage.toFixed(precision);
-}
 
 </script>
 
@@ -68,7 +62,7 @@ function formatSuccessRate(successful: number, total: number) {
       >
         <Divider />
         <SectionTitle :title="habitSummary.title" />
-        <div class="recent-activity flex flex-wrap justify-evenly md:justify-start items-center gap-4 mb-4">
+        <div class="habit-summary flex flex-wrap justify-evenly md:justify-start items-center gap-4 mb-4">
           <div
             v-if="habitSummary.currentRange !== null"
             class="current-progress"
@@ -103,7 +97,7 @@ function formatSuccessRate(successful: number, total: number) {
           <div class="success-rate">
             <StatTile
               :top-legend="`Success rate`"
-              :highlight="`${formatSuccessRate(habitSummary.successfulRanges, habitSummary.totalRanges)}%`"
+              :highlight="`${formatPercent(habitSummary.successfulRanges, habitSummary.totalRanges)}%`"
               :bottom-legend="`or ${habitSummary.successfulRanges} / ${habitSummary.totalRanges}`"
             />
           </div>
@@ -128,7 +122,7 @@ function formatSuccessRate(successful: number, total: number) {
       >
         <Divider />
         <SectionTitle :title="workSummary.title" />
-        <div class="total-counts flex flex-wrap justify-evenly gap-2 mb-4">
+        <div class="work-summary flex flex-wrap justify-evenly gap-2 mb-4">
           <StatTile
             v-for="measure in Object.keys(workSummary.totals)"
             :key="measure"

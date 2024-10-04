@@ -40,3 +40,9 @@ export function roundTowardZero(n: number) {
 export function decisiveSign(n: number) {
   return n < 0 ? -1 : 1;
 }
+
+export function formatPercent(numerator: number, denominator: number) {
+  const percentage = (numerator * 100) / denominator;
+  const precision = Number.isInteger(percentage) ? 0 : 2;
+  return percentage.toFixed(precision);
+}

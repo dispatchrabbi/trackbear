@@ -164,7 +164,8 @@ export function analyzeStreaksForHabit(tallies: TallyLike[], cadence: GoalCadenc
   }
 
   startDate = startDate ?? sortedTallies[0].date;
-  endDate = endDate ?? today;
+  // if endDate doesn't exist, use today; otherwise use the earlier of endDate or today
+  endDate = endDate ? endDate > today ? today : endDate : today;
 
   // first, get all the possible date ranges for the habit
   const dateRanges = createDateRanges(cadence.period, cadence.unit, startDate, endDate);

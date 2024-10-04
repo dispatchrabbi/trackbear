@@ -55,6 +55,7 @@ const successPercent = computed(() => {
 <template>
   <div class="habit-stats flex flex-wrap justify-evenly gap-2">
     <StatTile
+      v-if="habitStats.streaks.current !== null"
       top-legend="you're currently at"
       :highlight="commaify(habitStats.streaks.current.length)"
       :suffix="GOAL_CADENCE_UNIT_INFO[periodUnit].label[habitStats.streaks.current.length === 1 ? 'singular' : 'plural']"
