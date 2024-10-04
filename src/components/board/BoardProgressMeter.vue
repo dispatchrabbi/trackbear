@@ -5,10 +5,10 @@ import { usePreferredColorScheme } from '@vueuse/core';
 import twColors from 'tailwindcss/colors.js';
 import themeColors from 'src/themes/primevue.ts';
 
-import MeterGroup, { MeterItem } from 'primevue/metergroup';
 import type { Board, ParticipantWithTallies } from 'src/lib/api/board.ts';
 import { TallyMeasure } from "server/lib/models/tally.ts";
-// import { formatCount } from 'src/lib/tally.ts'; // TODO: change percentage to formatted count? or both?
+
+import MeterGroup, { MeterItem } from 'primevue/metergroup';
 
 const props = defineProps<{
   board: Board;
@@ -25,7 +25,9 @@ const contributions = computed(() => {
       participant,
       total
     };
-  }).sort((a, b) => a.total < b.total ? 1 : a.total > b.total ? -1 : 0);
+  })
+    .filter(participant => participant.total > 0)
+    .sort((a, b) => a.total < b.total ? 1 : a.total > b.total ? -1 : 0);
 
   return participantContributions;
 });
@@ -56,13 +58,15 @@ const meterValue = computed(() => {
   return value;
 });
 
-const max = computed(() => {
-  const grandTotal = contributions.value.reduce((totalSoFar, c) => totalSoFar + c.total, 0);
+const grandTotal = computed(() => {
+  return contributions.value.reduce((totalSoFar, c) => totalSoFar + c.total, 0);
+});
 
+const max = computed(() => {
   if(props.measure in props.board.goal) {
-    return Math.max(props.board.goal[props.measure], grandTotal);
+    return Math.max(props.board.goal[props.measure], grandTotal.value);
   } else {
-    return grandTotal;
+    return grandTotal.value;
   }
 });
 

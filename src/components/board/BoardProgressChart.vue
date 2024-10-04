@@ -16,8 +16,12 @@ const props = defineProps<{
   measure: TallyMeasure;
 }>();
 
+const participants = computed(() => {
+  return props.participants.filter(participant => participant.tallies.filter(tally => tally.measure === props.measure).length > 0);
+})
+
 const chartData = computed(() => {
-  const [ earliestDate, latestDate ] = props.participants
+  const [ earliestDate, latestDate ] = participants.value
     .flatMap(participant => participant.tallies
       .filter(tally => tally.measure === props.measure)
       .map(tally => tally.date)
@@ -50,7 +54,7 @@ const chartData = computed(() => {
     data.par = parData;
   }
 
-  data.tallies = props.participants.flatMap(participant => {
+  data.tallies = participants.value.flatMap(participant => {
     const tallies = participant.tallies.filter(tally => tally.measure === props.measure);
     const normalizedTallies = normalizeTallies(tallies);
     const densifiedTallies = props.board.fundraiserMode ? densifyTallies(normalizedTallies, eachDayOfData) : normalizedTallies;

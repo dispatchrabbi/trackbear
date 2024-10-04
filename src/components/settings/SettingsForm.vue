@@ -107,7 +107,7 @@ async function handleSubmit() {
       for="settings-form-starting-balance"
       label="Pre-TrackBear Totals"
       :rule="ruleFor('lifetimeStartingBalance')"
-      help="These totals will be added to your TrackBear totals for your lifetime stats page."
+      help="These totals will be added to your TrackBear totals for your lifetime stats page. Your project starting balances are already counted, so you do not need to account for them here."
     >
       <template #default="{ onUpdate, isFieldValid }">
         <MultiMeasureInput

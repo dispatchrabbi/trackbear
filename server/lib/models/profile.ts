@@ -78,7 +78,7 @@ export async function getUserProfile(username): Promise<PublicProfile> {
   // next, get their lifetime totals
   // lifetime totals are: lifetime starting balance + work starting balances + total of tallies
   const lifetimeStartingBalance = user.userSettings.lifetimeStartingBalance as MeasureRecord<number>;
-  const workStartingBalances = await getWorkStartingBalances(user.id);
+  const works = await getWorksWithStartingBalances(user.id);
   const tallyTotals = await getTallyTotals(user.id);
   const lifetimeTotals = Object.values(TALLY_MEASURE).reduce((obj, measure) => {
     let didTheyUseThisMeasureEver = false;
@@ -89,9 +89,9 @@ export async function getUserProfile(username): Promise<PublicProfile> {
       didTheyUseThisMeasureEver = true;
     }
 
-    for(const balance of workStartingBalances) {
-      if(measure in balance) {
-        total += balance[measure];
+    for(const work of works) {
+      if(measure in work.startingBalance) {
+        total += work.startingBalance[measure];
         didTheyUseThisMeasureEver = true;
       }
     }
@@ -134,7 +134,7 @@ type WorkStartingBalance = {
   id: number;
   startingBalance: MeasureRecord<number>;
 };
-async function getWorkStartingBalances(userId: number): Promise<WorkStartingBalance[]> {
+async function getWorksWithStartingBalances(userId: number): Promise<WorkStartingBalance[]> {
   const works = await dbClient.work.findMany({
     where: {
       ownerId: userId,

@@ -29,6 +29,7 @@ import TabPanel from 'primevue/tabpanel';
 import Dialog from 'primevue/dialog';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import SubsectionTitle from 'src/components/layout/SubsectionTitle.vue';
+import BoardStats from 'src/components/board/BoardStats.vue';
 import BoardProgressMeter from 'src/components/board/BoardProgressMeter.vue';
 import BoardProgressChart from 'src/components/board/BoardProgressChart.vue';
 import BoardStandings from 'src/components/board/BoardStandings.vue';
@@ -233,6 +234,17 @@ onMounted(() => {
                 :key="measure"
                 :header="toTitleCase(TALLY_MEASURE_INFO[measure].label.plural)"
               >
+                <!-- fundraiser total -->
+                <div
+                  v-if="board.fundraiserMode"
+                  class="w-full"
+                >
+                  <BoardStats
+                    :board="board"
+                    :participants="board.participants"
+                    :measure="selectedMeasure"
+                  />
+                </div>
                 <!-- line chart -->
                 <div class="w-full mb-4">
                   <BoardProgressChart
