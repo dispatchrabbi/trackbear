@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.15.1
+
 - NEW: Leaderboards in fundraiser mode now show their totals.
 - CHANGED: The progress table on project pages is now paginated.
 - FIXED: The streak counter for habit goals on the dashboard no longer dumps a bunch of unrelated text and instead now gives a cheery "X in a row!" counter like it's supposed to. (h/t CaitSidhe, sarah, Quinoafox)
