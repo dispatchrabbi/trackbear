@@ -62,7 +62,7 @@ const showPage = computed(() => {
           'z-50 md:z-auto fixed md:static',
         ]"
       >
-        <div class="p-4 flex justify-between">
+        <div class="px-4 pt-4 pb-1 flex justify-between">
           <TrackbearMasthead
             link-to="dashboard"
           />

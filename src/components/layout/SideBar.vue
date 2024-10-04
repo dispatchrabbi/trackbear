@@ -15,6 +15,8 @@ import { useBoardStore } from 'src/stores/board.ts';
 import { cmpBoard } from 'src/lib/board.ts';
 const boardStore = useBoardStore();
 
+import SidebarLogProgressButton from 'src/components/tally/SidebarLogProgressButton.vue';
+
 import MenuBar from 'src/components/layout/MenuBar.vue';
 import { PrimeIcons } from 'primevue/api';
 
@@ -85,6 +87,9 @@ onMounted(() => {
 </script>
 
 <template>
+  <div class="flex justify-center p-2 px-4 mb-1">
+    <SidebarLogProgressButton />
+  </div>
   <MenuBar
     :items="items"
     @menu-navigation="emit('menu-navigation')"

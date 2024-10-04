@@ -99,6 +99,7 @@ onMounted(() => {
           <div class="flex flex-col md:flex-row gap-2">
             <Button
               label="Configure Project"
+              severity="info"
               :icon="PrimeIcons.COG"
               @click="isEditFormVisible = true"
             />

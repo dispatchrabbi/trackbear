@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: Added an Enter Progress button to the sidebar so that it's more obvious how to do that.
+
 ## 0.15.1
 
 - NEW: Leaderboards in fundraiser mode now show their totals.

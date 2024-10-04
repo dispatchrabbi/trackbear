@@ -100,6 +100,7 @@ onMounted(() => {
           <div class="flex flex-col md:flex-row gap-2">
             <Button
               label="Configure Goal"
+              severity="info"
               :icon="PrimeIcons.COG"
               @click="router.push({ name: 'edit-goal', params: { goalId: goal.id } })"
             />

@@ -148,6 +148,7 @@ onMounted(() => {
             <Button
               v-if="ownerIsViewing"
               label="Configure Leaderboard"
+              severity="info"
               :icon="PrimeIcons.COG"
               @click="router.push({ name: 'edit-board', params: { boardUuid: board.uuid } })"
             />

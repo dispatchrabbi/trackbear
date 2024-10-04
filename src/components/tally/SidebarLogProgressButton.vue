@@ -26,13 +26,13 @@ const toggleForm = function() {
 
 <template>
   <Button
-    v-tooltip="'Enter Progress'"
-    :icon="PrimeIcons.CALENDAR_PLUS"
+    class="w-full"
     size="large"
-    rounded
+    :icon="PrimeIcons.CALENDAR_PLUS"
     raised
+    label="Enter Progress"
     aria-label="Enter Progress"
-    :pt="{ root: { class: 'text-xl !h-12 !w-12' } }"
+    :pt="{ root: { class: ['items-baseline'] }, label: { class: ['flex-none' ] } }"
     :pt-options="{ mergeSections: true, mergeProps: true }"
     @click="toggleForm"
   />
