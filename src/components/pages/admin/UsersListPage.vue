@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { watchDebounced } from '@vueuse/core';
 import { parseISO, addDays, addMonths, startOfDay } from 'date-fns';
 
 import { getUsers, User } from 'src/lib/api/admin/user.ts'
@@ -73,22 +74,26 @@ const momPercentage = computed(() => {
 });
 
 const usersFilter = ref<string>('');
-const onlyShowActiveUsers = ref<boolean>(false);
+const debouncedUsersFilter = ref<string>('');
+watchDebounced(usersFilter, () => debouncedUsersFilter.value = usersFilter.value, { debounce: 500, maxWait: 1000 });
+
+const onlyShowSuspendedUsers = ref<boolean>(false);
 const sortedFilteredUsers = computed(() => {
   let sortedUsers = users.value.toSorted((a, b) => a.createdAt > b.createdAt ? -1 : a.createdAt < b.createdAt ? 1 : 0);
+  const filter = debouncedUsersFilter.value.toLowerCase();
 
-  if(usersFilter.value.length > 0) {
+  if(filter.length > 0) {
     sortedUsers = sortedUsers.filter(user =>
-      user.username.includes(usersFilter.value) ||
-      user.displayName.includes(usersFilter.value) ||
-      user.email.includes(usersFilter.value) ||
-      user.uuid.includes(usersFilter.value) ||
-      user.id.toString().includes(usersFilter.value)
+      user.username.toLowerCase().includes(filter) ||
+      user.displayName.toLowerCase().includes(filter) ||
+      user.email.toLowerCase().includes(filter) ||
+      user.uuid.toLowerCase().includes(filter) ||
+      user.id.toString().includes(filter)
     );
   }
 
-  if(onlyShowActiveUsers.value === true) {
-    sortedUsers = sortedUsers.filter(user => user.state === USER_STATE.ACTIVE);
+  if(onlyShowSuspendedUsers.value === true) {
+    sortedUsers = sortedUsers.filter(user => user.state === USER_STATE.SUSPENDED);
   }
 
   return sortedUsers;
@@ -150,15 +155,22 @@ onMounted(() => loadUsers());
       <div class="flex gap-1 items-center">
         <span :class="PrimeIcons.USERS" />
         <InputSwitch
-          v-model="onlyShowActiveUsers"
+          v-model="onlyShowSuspendedUsers"
         />
-        <span :class="PrimeIcons.STAR_FILL" />
+        <span :class="PrimeIcons.EXCLAMATION_CIRCLE" />
       </div>
     </div>
     <div
       class="user-list"
     >
-      <DataTable :value="sortedFilteredUsers">
+      <DataTable
+        :value="sortedFilteredUsers"
+        paginator
+        :rows="50"
+        :rows-per-page-options="[50, 100, 250]"
+        paginator-template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
+        current-page-report-template="{first} to {last} of {totalRecords}"
+      >
         <Column
           header="ID"
         >

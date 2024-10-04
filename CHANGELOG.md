@@ -13,6 +13,7 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - NEW: Leaderboards in fundraiser mode now show their totals.
+- CHANGED: The progress table on project pages is now paginated.
 - FIXED: The streak counter for habit goals on the dashboard no longer dumps a bunch of unrelated text and instead now gives a cheery "X in a row!" counter like it's supposed to. (h/t CaitSidhe, sarah, Quinoafox)
 - FIXED: Lifetime stats now take into account starting balances from your projects as well as your lifetime starting balance in your Settings. (h/t RJ)
 - FIXED: Public profiles now also take into account starting balances from your projects; they accidentally did not before.

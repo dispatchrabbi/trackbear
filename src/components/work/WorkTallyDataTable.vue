@@ -78,6 +78,11 @@ const isDeleteFormVisible = computed({
     :value="chartRows"
     sort-field="date"
     :sort-order="-1"
+    paginator
+    :rows="30"
+    :rows-per-page-options="[30, 60, 90]"
+    paginator-template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
+    current-page-report-template="{first} to {last} of {totalRecords}"
   >
     <Column
       field="date"
