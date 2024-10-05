@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.15.4
+
 - FIXED: Target goal graphs on profile pages are now accurate again. They had been counting the total progress each day as the additional progress each day, resulting in much higher counts than actual. (h/t Tea)
 
 ## 0.15.2
