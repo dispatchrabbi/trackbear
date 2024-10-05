@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Target goal graphs on profile pages are now accurate again. They had been counting the total progress each day as the additional progress each day, resulting in much higher counts than actual. (h/t Tea)
+
 ## 0.15.2
 
 - NEW: You can now install TrackBear as an app on your computer or phone. Look for "Add to Home Screen" or "Install TrackBear" buttons; the way to install TrackBear will differ by OS and browser.

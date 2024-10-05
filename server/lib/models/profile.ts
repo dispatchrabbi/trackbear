@@ -248,7 +248,7 @@ async function getProfileTargetSummaries(userId: number): Promise<ProfileTargetS
     // not happy about hitting the db once for every target but anything else is way too complicated
     const talliesForTarget = await getTalliesForGoal(target);
     
-    const countsForTarget = Object.values(talliesForTarget.reduce((obj: Record<string, SimpleDayCount>, tally) => {
+    const dayCounts = Object.values(talliesForTarget.reduce((obj: Record<string, SimpleDayCount>, tally) => {
       if(!(tally.date in obj)) {
         obj[tally.date] = { date: tally.date, count: 0 };
       }
@@ -258,20 +258,11 @@ async function getProfileTargetSummaries(userId: number): Promise<ProfileTargetS
       return obj;
     }, {}));
 
-    let total = 0;
-    const totalsForTarget = countsForTarget.map(el => {
-      total += el.count;
-      return {
-        date: el.date,
-        count: total,
-      };
-    });
-
     summaries.push({
       uuid: target.uuid,
       title: target.title,
       parameters: target.parameters,
-      dayCounts: totalsForTarget,
+      dayCounts,
       startDate: target.startDate,
       endDate: target.endDate,
     });
