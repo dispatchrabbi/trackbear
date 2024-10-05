@@ -13,7 +13,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [X] Graphs: Add "save as image" functionality
   - [X] Profiles: Add opt-in public-facing profile
   - [X] Profiles: Add ability to put projects and goals on your profile
-  - [ ] General: Make TrackBear a PWA
+  - [X] General: Make TrackBear a PWA
 - [X] Bug fixes
   - [X] Fix small-number (scene/page/chapter) issues in goal stats
   - [ ] Ensure that project starting balances are counted in lifetime stats

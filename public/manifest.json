@@ -1,0 +1,20 @@
+{
+  "name": "TrackBear",
+  "icons": [
+    {
+      "src": "images/brown-bear.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "images/brown-bear.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "display": "standalone",
+  "theme_color": "#6366f1",
+  "orientation": "natural"
+}

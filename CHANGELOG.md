@@ -12,6 +12,7 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: You can now install TrackBear as an app on your computer or phone. Look for "Add to Home Screen" or "Install TrackBear" buttons; the way to install TrackBear will differ by OS and browser.
 - NEW: Added an Enter Progress button to the sidebar so that it's more obvious how to do that.
 
 ## 0.15.1
