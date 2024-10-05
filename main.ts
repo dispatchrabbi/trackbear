@@ -107,7 +107,7 @@ async function main() {
   if(env.NODE_ENV === 'production') {
     // serve the front-end statically out of dist/
     winston.debug('Serving the front-end out of dist/');
-    app.use(spaRoutes(['/assets', '/images', '/uploads']));
+    app.use(spaRoutes(['/assets', '/images', '/uploads', '/manifest.json']));
     app.use('/uploads', express.static(env.UPLOADS_PATH));
     app.use(express.static('./dist'));
   } else {
@@ -150,9 +150,6 @@ async function main() {
   }
   server.listen(env.PORT, () => {
     winston.info(`TrackBear is now listening on ${env.ENABLE_TLS ? 'https' : 'http'}://localhost:${env.PORT}/`);
-
-    // let pm2 know that the app is ready
-    process.send && process.send('ready');
   });
 
   // handle SIGINT for graceful shutdown
