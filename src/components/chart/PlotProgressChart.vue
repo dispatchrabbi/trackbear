@@ -2,6 +2,7 @@
 import { ref, computed, watchEffect, defineProps, withDefaults, onMounted, useTemplateRef } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import * as Plot from "@observablehq/plot";
+import { timeFormat } from 'd3-time-format'
 
 import { saveSvgAsPng } from 'src/lib/image.ts';
 
@@ -11,7 +12,7 @@ import themeColors from 'src/themes/primevue.ts';
 import { kify } from 'src/lib/number';
 import { formatDuration } from 'src/lib/date';
 import { TallyMeasure, TALLY_MEASURE } from 'server/lib/models/tally';
-import { TALLY_MEASURE_INFO } from 'src/lib/tally';
+import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally';
 
 export type LineChartDataPoint = {
   series: string;
@@ -96,79 +97,57 @@ onMounted(() => {
       Plot.ruleY([0]),
     ];
 
-    const TIP_STYLE: Plot.TipOptions = {
-      fill: colorScheme.value.background,
-    };
     if(props.isStacked) {
       marks.push(
         Plot.areaY(props.data, Plot.stackY({
-          x: { label: 'Date', transform: data => data.map(d => d.date) },
-          y: { label: 'Progress', transform: data => data.map(d => d.value) },
-          z: { label: props.config.seriesTitle, transform: data => data.map(d => d.series) },
-          order: 'appearance',
+          x: 'date',
+          y: 'value',
+          z: 'series',
+          order: 'series',
           sort: 'date',
-          fill: { label: props.config.seriesTitle, transform: data => data.map(d => d.series) },
-          tip: {
-            format: {
-              x: true,
-              fill: true,
-              y: d => props.valueFormatFn(d),
-            },
-            pointer: 'xy',
-            ...TIP_STYLE,
-          },
+          fill: 'series',
         }))
       );
     } else {
       marks.push(
         Plot.lineY(props.data, {
-          x: { label: 'Date', transform: data => data.map(d => d.date) },
-          y: { label: 'Progress', transform: data => data.map(d => d.value) },
-          z: { label: props.config.seriesTitle, transform: data => data.map(d => d.series) },
+          x: 'date',
+          y: 'value',
+          z: 'series',
           sort: 'date',
-          stroke: { label: props.config.seriesTitle, transform: data => data.map(d => d.series) },
+          stroke: 'series',
           marker: 'dot',
-          tip: {
-            format: {
-              x: true,
-              fill: true,
-              y: d => props.valueFormatFn(d),
-            },
-            pointer: 'xy',
-            ...TIP_STYLE,
-          },
         })
       );
     }
     if(props.par !== null) {
-      marks.push(
+      marks.unshift(
         Plot.lineY(props.par, {
-          x: { label: 'Date', transform: data => data.map(d => d.date) },
-          y: { label: 'Par', transform: data => data.map(d => d.value) },
-          stroke: { label: props.config.seriesTitle, transform: data => data.map(d => d.series) },
+          x: 'date',
+          y: 'value',
+          stroke: 'series',
           strokeDasharray: 8,
-          tip: {
-            format: {
-              x: true,
-              y: d => props.valueFormatFn(d),
-              stroke: false,
-              z: false,
-            },
-            pointer: 'xy',
-            ...TIP_STYLE,
-          },
         })
       );
     }
 
-    // TODO: this is not quite ready for primetime
-    // marks.push(
-    //   Plot.tip(props.data.concat(props.par ?? []), Plot.pointer({
-    //     x: { label: 'Date', transform: data => data.map(d => d.date) },
-    //     y: { label: 'Value', transform: data => data.map(d => d.value) },
-    //     z: { label: props.config.seriesTitle, transform: data => data.map(d => d.series) },
-    //   }))
-    // );
+    const tooltipData = props.data.concat(props.par ?? []);
+    const seriesNames = tooltipData.reduce((set, d) => set.add(d.series), new Set());
+    marks.push(
+      Plot.tip(tooltipData, Plot.pointer({
+        x: { label: 'Date', value: 'date' },
+        y: { label: 'Value', value: 'value' },
+        channels: {
+          series: { label: 'Series', value: 'series' },
+        },
+        format: {
+          series: seriesNames.size > 1,
+          x: true,
+          y: d => formatCount(d, props.config.measureHint),
+        },
+        fill: colorScheme.value.background,
+      }))
+    );
 
     const chart = Plot.plot({
       style: {
@@ -189,6 +168,13 @@ onMounted(() => {
       x: {
         type: 'utc',
         nice: 'day',
+        tickFormat: (d: Date) => {
+          if(d.getUTCHours() === 0) {
+            return timeFormat("%-d\n%b")(d);
+          } else {
+            return '';
+          }
+        },
       },
       y: {
         tickFormat: props.config.measureHint === TALLY_MEASURE.TIME ?

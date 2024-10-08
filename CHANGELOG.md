@@ -12,13 +12,16 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Tooltips for the par line and participant progress will no longer overlap. You should now only see one tooltip at a time. (h/t AbagailHunter, anchorlightforge, Samantha)
+- FIXED: The x-axis for graphs will no longer (misleadingly) include the time. (h/t anchorlightforge)
+
 ## 0.15.4
 
 - FIXED: Target goal graphs on profile pages are now accurate again. They had been counting the total progress each day as the additional progress each day, resulting in much higher counts than actual. (h/t Tea)
 
 ## 0.15.2
 
-- NEW: You can now install TrackBear as an app on your computer or phone. Look for "Add to Home Screen" or "Install TrackBear" buttons; the way to install TrackBear will differ by OS and browser.
+- NEW: You can now install TrackBear as an app on your computer or phone. Look for "Add to Home Screen" or "Install TrackBear" buttons; the way to install TrackBear will differ by OS and browser. (h/t Judy L. Mohr)
 - NEW: Added an Enter Progress button to the sidebar so that it's more obvious how to do that.
 
 ## 0.15.1

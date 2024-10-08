@@ -16,7 +16,8 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [X] General: Make TrackBear a PWA
 - [X] Bug fixes
   - [X] Fix small-number (scene/page/chapter) issues in goal stats
-  - [ ] Ensure that project starting balances are counted in lifetime stats
+  - [X] Ensure that project starting balances are counted in lifetime stats
+  - [X] Fix the double-tooltip overlap bug
 - [ ] Admin Help
   - [ ] Create staging server
   - [ ] Implement telemetry
@@ -33,8 +34,9 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Allow logging half-pages (but only for pages probably) (h/t Alex)
 - [ ] Projects
   - [ ] The project page could be nicer/more informative
-  - [ ] Better project organization (sorting? filter by status? folders? h/t Ren the Ghost)
+  - [ ] Better project organization (sorting? filter by status? folders?) (h/t Ren the Ghost)
   - [ ] Implement project tags (maybe)
+  - [ ] Make it clearer on mobile that the edit and delete buttons for tallies are offscreen (or more likely, rejigger the table so it's way more mobile-friendly) (h/t lailah)
 - [ ] Goals
   - [ ] Target goal pages could be nicer/more informative
   - [ ] Multiple goals (a la "stretch goals")
@@ -50,6 +52,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Add yourself more than once
   - [ ] Allow board owners to rotate the join code
   - [ ] Group participants into teams and compare team totals (h/t Asha)
+  - [ ] Make sure each participant has their own, consistent color and marker across the graph and the progress bar (h/t Arden)
 - [ ] Dashboard
   - [ ] Dashboard could be more fun/welcoming
   - [ ] Show starred leaderboards on dashboard
@@ -81,7 +84,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [X] Projects
   - [X] Elsewhere
 - [X] Add a little red dot when there's been an update
-- [ ] Enable PWA mode (h/t Judy L. Mohr)
+- [X] Enable PWA mode (h/t Judy L. Mohr)
 
 ## Admin Console Features
 - [ ] Admin landing page
