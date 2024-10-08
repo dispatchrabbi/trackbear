@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.15.5
+
 - FIXED: Tooltips for the par line and participant progress will no longer overlap. You should now only see one tooltip at a time. (h/t AbagailHunter, anchorlightforge, Samantha)
 - FIXED: The x-axis for graphs will no longer (misleadingly) include the time. (h/t anchorlightforge)
 
