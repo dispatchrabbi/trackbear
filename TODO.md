@@ -14,6 +14,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [X] Profiles: Add opt-in public-facing profile
   - [X] Profiles: Add ability to put projects and goals on your profile
   - [X] General: Make TrackBear a PWA
+  - [ ] General: Implement theme switcher
 - [X] Bug fixes
   - [X] Fix small-number (scene/page/chapter) issues in goal stats
   - [X] Ensure that project starting balances are counted in lifetime stats
@@ -30,8 +31,8 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Introduction to TrackBear
   - [ ] Deep dive into each bit of functionality
 - [ ] Tallies
-  - [X] Add line (h/t Penny) and scene measures
   - [ ] Allow logging half-pages (but only for pages probably) (h/t Alex)
+  - [ ] Consider the ability to add more than one type of progress at once (h/t Alice)
 - [ ] Projects
   - [ ] The project page could be nicer/more informative
   - [ ] Better project organization (sorting? filter by status? folders?) (h/t Ren the Ghost)
@@ -48,7 +49,6 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Allow owners to remove (or ban?) participants from leaderboards
   - [ ] Progress to individual goals
   - [ ] Multiple goals (a la "stretch goals")
-  - [X] "Fundraiser mode" (everyone's progress contributes)
   - [ ] Add yourself more than once
   - [ ] Allow board owners to rotate the join code
   - [ ] Group participants into teams and compare team totals (h/t Asha)
@@ -69,22 +69,13 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Implement theme switcher (including light/dark/system)
   - [ ] TinyPNG-ify avatar files to save on space
   - [ ] Implement data export
-- [X] Profiles
-  - [X] Allow a public-facing profile page with overall stats
-  - [X] Add projects to your profile
-  - [X] Add goals to your profile
 - [ ] Embeds
   - [ ] Project progress embed (h/t Laura)
   - [ ] Grand Totals embed (h/t Laura)
   - [ ] Progress update widget (h/t Laura)
+- [ ] Charts
+  - [ ] Rewrite the heatmap to use Plot
 - [ ] Improve tag inputs
-- [X] Replace chart.js line graphs with d3- or d3/plot-driven ones
-  - [X] Leaderboards
-  - [X] Targets
-  - [X] Projects
-  - [X] Elsewhere
-- [X] Add a little red dot when there's been an update
-- [X] Enable PWA mode (h/t Judy L. Mohr)
 
 ## Admin Console Features
 - [ ] Admin landing page
