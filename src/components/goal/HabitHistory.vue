@@ -41,7 +41,7 @@ function rangeContainsToday(range) {
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-1">
+  <div class="flex flex-wrap justify-evenly md:justify-between gap-1">
     <HabitGauge
       v-for="range of ranges"
       :key="range.startDate"

@@ -82,7 +82,7 @@ const successPercent = computed(() => {
   </div>
 </template>
 
-<style>
+<style scoped>
 .habit-stats > div {
   flex: 1 1 20%;
 }
