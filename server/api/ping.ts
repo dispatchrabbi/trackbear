@@ -2,17 +2,14 @@ import { Response, Router } from "express";
 import { ApiResponsePayload, success } from '../lib/api-response.ts';
 
 const pingRouter = Router();
-
-pingRouter.get('/', (req, res: Response<ApiResponsePayload<'pong'>>) => {
-  res.send(success('pong'));
-});
-
-pingRouter.get(
-  '/error',
-  (req, res: Response<ApiResponsePayload<'pong'>>) =>
-{
-  throw new Error('pong');
-  res.send(success('pong'));
-});
-
 export default pingRouter;
+
+export function handleGetPing(req, res: Response<ApiResponsePayload<'pong'>>) {
+  res.status(200).send(success('pong'));
+};
+pingRouter.get('/', handleGetPing);
+
+export function handleGetError(req, res: Response<ApiResponsePayload<'pong'>>) {
+  throw new Error('pong');
+};
+pingRouter.get('/error', handleGetError);
