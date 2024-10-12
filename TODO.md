@@ -47,7 +47,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Make it clearer when a goal has been met (h/t Liv)
 - [ ] Leaderboards
   - [ ] Allow owners to remove (or ban?) participants from leaderboards
-  - [ ] Progress to individual goals
+  - [X] Progress to individual goals
   - [ ] Multiple goals (a la "stretch goals")
   - [ ] Add yourself more than once
   - [ ] Allow board owners to rotate the join code
@@ -56,7 +56,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] Dashboard
   - [ ] Dashboard could be more fun/welcoming
   - [ ] Show starred leaderboards on dashboard
-  - [ ] Show starred projects on dashboard
+  - [X] Show starred projects on dashboard
   - [ ] Show lifetime counts on dashboard
 - [X] Grand Totals page
   - [X] Overall total
