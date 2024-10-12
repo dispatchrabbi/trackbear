@@ -86,3 +86,27 @@ GROUP BY "weekNumber"
 
   return res.status(200).send(success(activeUsersByWeek));
 }));
+
+statsRouter.get('/weekly-signups',
+  requireAdminUser,
+  h(async (req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) =>
+{
+  const results: { weekNumber: string; signups: number }[] = await dbClient.$queryRaw`
+SELECT
+	EXTRACT(ISOYEAR FROM "createdAt") || '-' || lpad(EXTRACT(WEEK FROM "createdAt")::text, 2, '0') AS "weekNumber",
+	COUNT(DISTINCT "agentId") AS "signups"
+FROM public."AuditEvent"
+WHERE "eventType" = 'user:signup'
+GROUP BY "weekNumber"
+;
+  `;
+
+  const now = new Date();
+  const signupsByWeek = results.map(({ weekNumber, signups }) => {
+    const weekStart = format(parse(weekNumber, 'R-II', now), 'y-MM-dd');
+
+    return { weekStart, count: Number(signups) };
+  });
+
+  return res.status(200).send(success(signupsByWeek));
+}));

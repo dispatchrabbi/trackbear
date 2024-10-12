@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 
-import { getWeeklyActiveUsers, WeeklyStat } from 'src/lib/api/admin/stats.ts'
+import { getWeeklyActiveUsers, getWeeklySignups, WeeklyStat } from 'src/lib/api/admin/stats.ts'
 
 import AdminLayout from 'src/layouts/AdminLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
@@ -15,23 +15,20 @@ const breadcrumbs: MenuItem[] = [
 ];
 
 const weeklyActiveUsers = ref<WeeklyStat[]>([]);
-const isLoading = ref<boolean>(false);
-const errorMessage = ref<string | null>(null);
-
 const loadWeeklyActiveUsers = async function() {
-  isLoading.value = true;
-  errorMessage.value = null;
-
   try {
     weeklyActiveUsers.value = await getWeeklyActiveUsers();
-  } catch(err) {
-    errorMessage.value = err.message;
-  } finally {
-    isLoading.value = false;
-  }
+  } catch(err) { }
 }
 
-const data = computed(() => {
+const weeklySignups = ref<WeeklyStat[]>([]);
+const loadWeeklySignups = async function() {
+  try {
+    weeklySignups.value = await getWeeklySignups();
+  } catch(err) { }
+}
+
+const activeUsersData = computed(() => {
   return weeklyActiveUsers.value.map(({ weekStart, count }) => ({
     series: 'Weekly Active Users',
     date: weekStart,
@@ -39,7 +36,18 @@ const data = computed(() => {
   }));
 });
 
-onMounted(() => loadWeeklyActiveUsers());
+const signupsData = computed(() => {
+  return weeklySignups.value.map(({ weekStart, count }) => ({
+    series: 'Weekly Signups',
+    date: weekStart,
+    value: count,
+  }));
+});
+
+onMounted(() => {
+  loadWeeklyActiveUsers();
+  loadWeeklySignups();
+});
 
 </script>
 
@@ -48,13 +56,15 @@ onMounted(() => loadWeeklyActiveUsers());
     :breadcrumbs="breadcrumbs"
   >
     <SectionTitle title="Weekly Active Users" />
-    <div class="w-full">
+    <div class="max-w-screen-lg">
       <PlotWavyLineChart
-        :data="data"
+        :data="activeUsersData"
       />
     </div>
-    <div v-if="data.length === 0">
-      No stats found. Are you sure this thing is on?
+    <div class="max-w-screen-lg">
+      <PlotWavyLineChart
+        :data="signupsData"
+      />
     </div>
   </AdminLayout>
 </template>
