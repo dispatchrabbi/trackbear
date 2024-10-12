@@ -32,6 +32,7 @@ import SubsectionTitle from 'src/components/layout/SubsectionTitle.vue';
 import BoardStats from 'src/components/board/BoardStats.vue';
 import BoardProgressMeter from 'src/components/board/BoardProgressMeter.vue';
 import BoardProgressChart from 'src/components/board/BoardProgressChart.vue';
+import BoardIndividualProgressChart from 'src/components/board/BoardIndividualProgressChart.vue';
 import BoardStandings from 'src/components/board/BoardStandings.vue';
 import LeaveBoardForm from 'src/components/board/LeaveBoardForm.vue';
 import DeleteBoardForm from 'src/components/board/DeleteBoardForm.vue';
@@ -204,7 +205,7 @@ onMounted(() => {
             <Button
               v-if="board.participants.some(p => p.uuid === userStore.user.uuid)"
               size="small"
-              label="Edit Filters"
+              label="Edit Your Participation"
               :icon="PrimeIcons.USER_EDIT"
               outlined
               @click="router.push({ name: 'edit-board-filters', params: { boardUuid: board.uuid } })"
@@ -225,7 +226,27 @@ onMounted(() => {
         >
           <SubsectionTitle title="Standings" />
           <div v-if="board.participants.length > 0">
+            <div
+              v-if="board.individualGoalMode"
+            >
+              <!-- line chart -->
+              <div class="w-full mb-4">
+                <BoardIndividualProgressChart
+                  :board="board"
+                  :participants="board.participants"
+                />
+              </div>
+              <!-- stats table -->
+              <div class="w-full mt-4">
+                <BoardStandings
+                  :board="board"
+                  :participants="board.participants"
+                  measure="percent"
+                />
+              </div>
+            </div>
             <TabView
+              v-if="!board.individualGoalMode"
               :pt="{ tabpanel: { content: { class: [ 'px-0' ] } } }"
               :pt-options="{ mergeSections: true, mergeProps: true }"
               @update:active-index="index => selectedMeasure = measuresAvailable[index]"

@@ -2,7 +2,7 @@
 import { ref, computed, watchEffect, defineProps, withDefaults, onMounted, useTemplateRef } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import * as Plot from "@observablehq/plot";
-import { timeFormat } from 'd3-time-format'
+import { utcFormat } from 'd3-time-format'
 
 import { saveSvgAsPng } from 'src/lib/image.ts';
 
@@ -22,7 +22,7 @@ export type LineChartDataPoint = {
 
 export type LineChartConfig = {
   showLegend: boolean;
-  measureHint: TallyMeasure;
+  measureHint: TallyMeasure | 'percent';
   seriesTitle: string;
 };
 
@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<{
   isFullscreen?: boolean;
 }>(), {
   par: null,
-  valueFormatFn: value => value.toString(),
+  valueFormatFn: null,
   config: () => ({
     showLegend: true,
     measureHint: TALLY_MEASURE.WORD,
@@ -76,6 +76,23 @@ const colorScheme = computed(() => {
 // now start configuring the chart
 const plotContainer = useTemplateRef('plot-contatiner');
 const plotContainerWidth = ref(0);
+
+const getSuggestedYAxisMaximum = function(measureHint: TallyMeasure | 'percent') {
+  if(measureHint === 'percent') {
+    return 100;
+  } else {
+    return TALLY_MEASURE_INFO[measureHint].defaultChartMax
+  }
+};
+
+// so we have to do this this way because you can't initialize a prop with a default that refers to another prop
+const formatValue = function(d: number) {
+  if(props.valueFormatFn) {
+    return props.valueFormatFn(d);
+  } else {
+    return formatCount(d, props.config.measureHint);
+  }
+}
 
 const handlePlotDoubleclick = function(ev: MouseEvent) {
   // only do this if the alt/option key is held down
@@ -143,7 +160,7 @@ onMounted(() => {
         format: {
           series: seriesNames.size > 1,
           x: true,
-          y: d => formatCount(d, props.config.measureHint),
+          y: formatValue,
         },
         fill: colorScheme.value.background,
       }))
@@ -170,7 +187,7 @@ onMounted(() => {
         nice: 'day',
         tickFormat: (d: Date) => {
           if(d.getUTCHours() === 0) {
-            return timeFormat("%-d\n%b")(d);
+            return utcFormat("%-d\n%b")(d);
           } else {
             return '';
           }
@@ -179,11 +196,13 @@ onMounted(() => {
       y: {
         tickFormat: props.config.measureHint === TALLY_MEASURE.TIME ?
           tick => formatDuration(tick) :
+          props.config.measureHint === 'percent' ?
+          tick => `${tick}%` :
           tick => kify(tick),
         grid: true,
         domain: [
           props.data.concat(props.par ?? []).reduce((min, point) => Math.min(min, point.value), 0),
-          props.data.concat(props.par ?? []).reduce((max, point) => Math.max(max, point.value), TALLY_MEASURE_INFO[props.config.measureHint].defaultChartMax),
+          props.data.concat(props.par ?? []).reduce((max, point) => Math.max(max, point.value), getSuggestedYAxisMaximum(props.config.measureHint)),
         ]
       },
       marks: marks,

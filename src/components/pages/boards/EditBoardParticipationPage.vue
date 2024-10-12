@@ -84,9 +84,6 @@ onMounted(async () => {
         />
       </template>
       <template #content>
-        <div class="mb-4">
-          Select which progress updates you want to include on this leaderboard. You can filter by project, tag, or both.
-        </div>
         <EditBoardParticipationForm
           :board="board"
           :participant="board.participants[0] ?? null"

@@ -1,5 +1,6 @@
 import { computed } from 'vue';
 import { ZodObject, ZodRawShape } from "zod";
+import type { RoundTrip } from 'src/lib/api/api.ts';
 
 export function useValidation<T extends object, V extends ZodObject<ZodRawShape> = ZodObject<ZodRawShape>>(schema: V, model: T) {
   const ruleFor = function(field: string) {
@@ -48,8 +49,8 @@ export function useValidation<T extends object, V extends ZodObject<ZodRawShape>
 
   const validationResults = computed(() => schema.safeParse(model));
 
-  const formData = function() {
-    return schema.parse(model);
+  const formData = function(): RoundTrip<T> {
+    return schema.parse(model) as RoundTrip<T>;
   }
 
   return {

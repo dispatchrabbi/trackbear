@@ -10,7 +10,7 @@ import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
 import type { BoardParticipant } from "@prisma/client";
-import type { Board, BoardGoal } from "../../lib/models/board.ts";
+import type { Board, BoardGoal, ParticipantGoal } from "../../lib/models/board.ts";
 
 import { BOARD_PARTICIPANT_STATE, BOARD_STATE, getFullBoard, FullBoard, getExtendedBoardsForUser, ExtendedBoard, getBoardParticipationForUser, BoardWithParticipants } from "../../lib/models/board.ts";
 import { TALLY_MEASURE, TallyMeasure } from "../../lib/models/tally.ts";
@@ -64,6 +64,7 @@ export type BoardCreatePayload = {
   endDate?: string;
   goal: BoardGoal;
   fundraiserMode: boolean;
+  individualGoalMode: boolean;
   isJoinable?: boolean;
   isPublic?: boolean;
 };
@@ -73,7 +74,8 @@ const zBoardCreatePayload = z.object({
   measures: z.array(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>)),
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
-  goal: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()),
+  goal: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()).nullable(),
+  individualGoalMode: z.boolean().nullable().default(false),
   fundraiserMode: z.boolean().nullable().default(false),
   isJoinable: z.boolean().nullable().default(false),
   isPublic: z.boolean().nullable().default(false),
@@ -86,6 +88,13 @@ boardRouter.post('/',
 {
   const user = req.user;
   const payload = req.body as BoardCreatePayload;
+
+  // normalizing the input
+  if(payload.individualGoalMode) {
+    payload.goal = {};
+    payload.measures = [];
+    payload.fundraiserMode = false;
+  }
 
   const board = await dbClient.board.create({
     data: {
@@ -114,6 +123,13 @@ boardRouter.patch('/:uuid',
 {
   const user = req.user;
   const payload = req.body as BoardUpdatePayload;
+
+  // normalizing the input
+  if(payload.individualGoalMode) {
+    payload.goal = {};
+    payload.measures = [];
+    payload.fundraiserMode = false;
+  }
 
   const board = await dbClient.board.update({
     where: {
@@ -248,10 +264,15 @@ boardRouter.get('/:uuid/participation',
 
 // POST /:uuid/participation - add or modify your own participation
 export type BoardParticipantPayload = {
+  goal: ParticipantGoal;
   works: number[];
   tags: number[];
 };
 const zBoardParticipantPayload = z.object({
+  goal: z.object({
+    measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
+    count: z.number().int(),
+  }).nullable(),
   works: z.array(z.number().int()),
   tags: z.array(z.number().int()),
 }).strict();
@@ -264,6 +285,23 @@ boardRouter.post('/:uuid/participation',
 {
   const user = req.user;
   const payload = req.body as BoardParticipantPayload;
+
+  // first, look up the board we're dealing with
+  const board = await dbClient.board.findUnique({
+    where: {
+      state: BOARD_STATE.ACTIVE,
+      uuid: req.params.uuid,
+      isJoinable: true,
+    },
+  });
+  if(!board) {
+    return res.status(404).send(failure('NOT_FOUND', `Could not find a board with UUID ${req.params.uuid}`));
+  }
+
+  // normalize the data - we never store a goal unless there are individual goals
+  if(!board.individualGoalMode) {
+    payload.goal = null;
+  }
 
   // we can't do an upsert because the combination of user and board isn't actually unique
   // this is on purpose: we may want someone in the future to be able to join a board multiple times
@@ -284,6 +322,7 @@ boardRouter.post('/:uuid/participation',
         id: existingParticipantRecord.id,
       },
       data: {
+        goal: payload.goal,
         worksIncluded: payload.works ? { set: payload.works.map(workId => ({
           id: workId,
           ownerId: user.id,
@@ -303,6 +342,7 @@ boardRouter.post('/:uuid/participation',
         user: { connect: { id: user.id }},
         board: { connect: { uuid: req.params.uuid } },
 
+        goal: payload.goal,
         worksIncluded: payload.works ? { connect: payload.works.map(workId => ({
           id: workId,
           ownerId: user.id,

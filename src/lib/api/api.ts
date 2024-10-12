@@ -6,7 +6,11 @@ type ApiResponse<T> = ApiResponsePayload<T> & { status: number; }
 export type DateString = string;
 // this type lets us turn server-side objects into client-side objects that have been through JSON.parse(JSON.stringify())
 export type RoundTrip<T extends object> = {
-  [K in keyof T]: T[K] extends Date ? DateString : T[K]
+  [K in keyof T]: T[K] extends Date
+    ? DateString
+    : T[K] extends object
+    ? RoundTrip<T[K]>
+    : T[K];
 };
 
 export async function callApi<T>(path: string, method: string = 'GET', payload: Record<string, unknown> | Record<string, unknown>[] | FormData | null = null, query: object | null = null): Promise<ApiResponse<T>> {

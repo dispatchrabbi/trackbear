@@ -37,12 +37,13 @@ const emit = defineEmits(['board:update', 'formSuccess', 'formCancel']);
 const formModel = reactive({
   title: props.board.title,
   description: props.board.description,
-  measures: props.board.measures,
 
   startDate: parseDateStringSafe(props.board.startDate),
   endDate: parseDateStringSafe(props.board.endDate),
 
+  measures: props.board.measures,
   goal: props.board.goal as BoardGoal,
+  individualGoalMode: props.board.individualGoalMode,
   fundraiserMode: props.board.fundraiserMode,
 
   isJoinable: props.board.isJoinable,
@@ -53,7 +54,6 @@ const validations = z
   .object({
     title: z.string().min(1, { message: 'Please enter a title.'}),
     description: z.string(),
-    measures: z.array(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>)).min(1, { message: 'Please select at least one.' }),
 
     startDate: z
       .date({ invalid_type_error:'Please select a valid start date or clear the field.' }).nullable()
@@ -62,10 +62,19 @@ const validations = z
       .date({ invalid_type_error:'Please select a valid end date or clear the field.' }).nullable()
       .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.'}).transform(formatDateSafe),
 
+    measures: z.array(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>))
+    .refine(arr => {
+      if(formModel.individualGoalMode) {
+        return true;
+      } else {
+        return arr.length >= 1;
+      }
+    }, { message: 'Please select at least one.' }),
     goal: z.record(
       z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
       z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' })
     ),
+    individualGoalMode: z.boolean(),
     fundraiserMode: z.boolean(),
 
     isJoinable: z.boolean(),
@@ -85,6 +94,12 @@ async function handleSubmit() {
 
   try {
     const data = formData();
+    if(data.individualGoalMode) {
+      data.measures = [];
+      data.goal = {};
+      data.fundraiserMode = false;
+    }
+    
     const updatedBoard = await updateBoard(props.board.uuid, data as BoardUpdatePayload);
 
     emit('board:update', { board: updatedBoard });
@@ -143,29 +158,6 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
-      for="board-form-measures"
-      label="What to track?"
-      :rule="ruleFor('measures')"
-    >
-      <template #default="{ onUpdate, isFieldValid }">
-        <div
-          v-for="measure of Object.values(TALLY_MEASURE)"
-          :key="measure"
-          class="flex items-center gap-2"
-        >
-          <Checkbox
-            v-model="formModel.measures"
-            :input-id="`board-form-measures-checkbox-${measure}`"
-            name="board-form-measures"
-            :value="measure"
-            :invalid="!isFieldValid"
-            @update:model-value="onUpdate"
-          />
-          <label :for="`board-form-measures-checkbox-${measure}`">{{ toTitleCase(TALLY_MEASURE_INFO[measure].label.plural) }}</label>
-        </div>
-      </template>
-    </FieldWrapper>
-    <FieldWrapper
       for="board-form-start-date"
       label="Start Date"
       :rule="ruleFor('startDate')"
@@ -204,8 +196,54 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
+      label="Goal Settings"
+      for="board-form-individual-goal-mode"
+      :required="true"
+      :rule="ruleFor('individualGoalMode')"
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <div class="flex gap-4 max-w-full items-center">
+          <InputSwitch
+            v-model="formModel.individualGoalMode"
+            :invalid="!isFieldValid"
+            @update:model-value="onUpdate"
+          />
+          <div
+            class="max-w-64 md:max-w-none"
+          >
+            Everyone will be working toward <span class="font-bold">{{ formModel.individualGoalMode ? `their own goals` : `the same goal` }}</span>.
+          </div>
+        </div>
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      v-if="!formModel.individualGoalMode"
+      for="board-form-measures"
+      label="What to track?"
+      :rule="ruleFor('measures')"
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <div
+          v-for="measure of Object.values(TALLY_MEASURE)"
+          :key="measure"
+          class="flex items-center gap-2"
+        >
+          <Checkbox
+            v-model="formModel.measures"
+            :input-id="`board-form-measures-checkbox-${measure}`"
+            name="board-form-measures"
+            :value="measure"
+            :invalid="!isFieldValid"
+            @update:model-value="onUpdate"
+          />
+          <label :for="`board-form-measures-checkbox-${measure}`">{{ toTitleCase(TALLY_MEASURE_INFO[measure].label.plural) }}</label>
+        </div>
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      v-if="!formModel.individualGoalMode"
       for="board-form-goal"
-      label="Goal"
+      label="Leaderboard goal"
       :rule="ruleFor('goal')"
       help="If your leaderboard's participants will be tracking progress in different ways, you can set a goal for each type of progress."
     >
@@ -220,6 +258,7 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
+      v-if="!formModel.individualGoalMode"
       label="Fundraiser Mode"
       for="board-form-fundraiser-mode"
       :required="true"

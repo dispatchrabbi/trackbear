@@ -251,6 +251,7 @@ model Board {
   startDate String?
   endDate   String?
   goal      Json
+  individualGoalMode  Boolean @default(false)
   fundraiserMode  Boolean @default(false)
 
   starred Boolean @default(false)
@@ -272,6 +273,8 @@ model BoardParticipant {
 
   boardId Int
   board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  goal Json?
 
   worksIncluded Work[]
   tagsIncluded  Tag[]

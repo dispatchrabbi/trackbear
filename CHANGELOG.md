@@ -12,6 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: Leaderboards now allow participants to set their own goals! If you are running a community event where everyone sets their own goals, but you want a community leaderboard, this feature is for you. You can find the setting when you make a new leaderboard or configure an existing one. If you change an existing leaderboard to individual goal mode, existing participants will have to set their own goals before they show up on the leaderboard, which they can do under "Edit Your Participation".
+- CHANGED: The "Edit Filters" button on the Leaderboard page now reads "Edit Your Participation".
+
 ## 0.15.5
 
 - FIXED: Tooltips for the par line and participant progress will no longer overlap. You should now only see one tooltip at a time. (h/t AbagailHunter, anchorlightforge, Samantha)

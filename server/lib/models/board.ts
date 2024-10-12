@@ -16,12 +16,17 @@ export const BOARD_PARTICIPANT_STATE = {
   // I anticipate that we'll eventually want a BANNED or KICKED state of some kind
 };
 
-export type BoardGoal = Record<TallyMeasure, number>;
+export type BoardGoal = null | Record<TallyMeasure, number>;
 export type Board = PrismaBoard & { goal: BoardGoal };
 
 export type ReducedTally = Pick<Tally, 'uuid' | 'date' | 'measure' | 'count'>;
 export type Participant = Pick<User, 'uuid' | 'displayName' | 'avatar'>;
+export type ParticipantGoal = null | {
+  measure: TallyMeasure;
+  count: number;
+};
 export type ParticipantWithTallies = Participant & {
+  goal: ParticipantGoal,
   tallies: ReducedTally[];
 };
 
@@ -99,8 +104,8 @@ export async function getFullBoard(uuid: string): Promise<FullBoard | null> {
   const tallies = await dbClient.tally.findMany({
     where: {
       state: TALLY_STATE.ACTIVE,
-      // only include tallies with the board's measures
-      measure: { in: board.measures },
+      // if there's an overall board goal, only include tallies with the board's measures
+      measure: board.individualGoalMode ? undefined : { in: board.measures },
       // only include tallies within the time range (if one exists)
       date: {
         gte: board.startDate || undefined,
@@ -108,7 +113,10 @@ export async function getFullBoard(uuid: string): Promise<FullBoard | null> {
       },
       // forgive me for what I do here
       OR: board.participants.map(participant => ({
+        // the tally should be owned by the participant
         ownerId: participant.userId,
+        // only include tallies with the measure from the individual goal, if there are individual goals
+        measure: board.individualGoalMode ? ((participant.goal as ParticipantGoal)?.measure ?? 'do-not-return-tallies') : undefined,
         // only include tallies from works specified in the participant's config (if any were)
         workId: participant.worksIncluded.length > 0 ? { in: participant.worksIncluded.map(work => work.id ) } : undefined,
         // only include tallies with at least one tag specified in the participant's config (if any were)
@@ -121,6 +129,7 @@ export async function getFullBoard(uuid: string): Promise<FullBoard | null> {
     ...board as Board,
     participants: board.participants.map(participant => ({
       ...pick(participant.user, ['uuid', 'displayName', 'avatar']),
+      goal: participant.goal as ParticipantGoal,
       tallies: tallies.filter(tally => tally.ownerId === participant.userId).map(tally => ({
         uuid: tally.uuid,
         date: tally.date,

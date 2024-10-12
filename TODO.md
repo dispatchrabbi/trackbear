@@ -8,7 +8,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Write a guide/introduction to each piece of TrackBear
 - [ ] Features
   - [ ] Goals: Make it clearer when a (target?) goal has been met (h/t Liv)
-  - [ ] Leaderboards: Add "everyone has their own goal" mode
+  - [X] Leaderboards: Add "everyone has their own goal" mode
   - [X] Graphs: Convert all graphs from chart.js to Plot
   - [X] Graphs: Add "save as image" functionality
   - [X] Profiles: Add opt-in public-facing profile

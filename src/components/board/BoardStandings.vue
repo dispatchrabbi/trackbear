@@ -12,21 +12,30 @@ import UserAvatar from 'src/components/UserAvatar.vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { TallyMeasure } from 'server/lib/models/tally.ts';
+import { formatPercent } from 'src/lib/number.ts';
 
 const props = defineProps<{
   board: Board;
   participants: ParticipantWithTallies[];
-  measure: TallyMeasure;
+  measure: TallyMeasure | 'percent';
 }>();
 
+const getMeasure = function(participant: ParticipantWithTallies): TallyMeasure {
+  return props.measure === 'percent' ? participant.goal.measure : props.measure;
+};
+
+const getGoalCount = function(participant) {
+  return props.measure === 'percent' ? participant.goal.count : props.board.goal[props.measure];
+};
+
 const hasPar = computed(() => {
-  return props.measure in props.board.goal && !props.board.fundraiserMode;
+  return (props.measure === 'percent') || (props.measure in props.board.goal && !props.board.fundraiserMode);
 });
 
 const tableData = computed(() => {
   const [ earliestDate, latestDate ] = props.participants
     .flatMap(participant => participant.tallies
-      .filter(tally => tally.measure === props.measure)
+      .filter(tally => tally.measure === getMeasure(participant))
       .map(tally => tally.date)
     )
     .reduce(([earliest, latest], date) => {
@@ -46,20 +55,25 @@ const tableData = computed(() => {
     displayName: string;
     avatar: string;
     progress: number;
+    measure: TallyMeasure;
     versusPar: number | null;
+    goal: number;
+    percent: string;
     lastActivity: string;
   };
   const data: StandingsDataRow[] = [];
 
-  let par = null;
-  if(hasPar.value) {
-    const goalCount = props.board.goal[props.measure];
+  const getPar = function(participant) {
+    if(!hasPar.value) { return null; }
+
+    const goalCount = getGoalCount(participant);
     if(props.board.endDate === null) {
-      par = goalCount;
+      return goalCount;
     } else {
-      par = daysAlong >= daysBetween ? goalCount : Math.ceil((goalCount / daysBetween) * daysAlong);
+      // if we're past the end, par is just the goal; otherwise, do the intermediate calculation
+      return daysAlong >= daysBetween ? goalCount : Math.ceil((goalCount / daysBetween) * daysAlong);
     }
-  }
+  };
 
   const today = formatDate(new Date());
   const sortedParticipants = props.participants.toSorted((a, b) => {
@@ -68,7 +82,7 @@ const tableData = computed(() => {
     return aDisplayName < bDisplayName ? -1 : aDisplayName > bDisplayName ? 1 : 0;
   })
   for(const participant of sortedParticipants) {
-    const normalizedTallies = normalizeTallies(participant.tallies.filter(tally => tally.measure === props.measure));
+    const normalizedTallies = normalizeTallies(participant.tallies.filter(tally => tally.measure === getMeasure(participant)));
     const accumulatedTallies = accumulateTallies(normalizedTallies);
 
     const lastRelevantTally = accumulatedTallies.findLast(tally => tally.date <= today);
@@ -78,7 +92,10 @@ const tableData = computed(() => {
         displayName: participant.displayName,
         avatar: participant.avatar,
         progress: lastRelevantTally.accumulated,
-        versusPar: hasPar.value ? lastRelevantTally.accumulated - par : null,
+        measure: getMeasure(participant),
+        versusPar: hasPar.value ? lastRelevantTally.accumulated - getPar(participant) : null,
+        goal: getGoalCount(participant),
+        percent: formatPercent(lastRelevantTally.accumulated, getGoalCount(participant)) + '%',
         lastActivity: lastRelevantTally.date,
       });
     }
@@ -109,13 +126,34 @@ const tableData = computed(() => {
       </template>
     </Column>
     <Column
+      header="Percent"
+      field="percent"
+      sortable
+      class="whitespace-nowrap text-right"
+    >
+      <template #body="slotProps">
+        {{ slotProps.data.percent }}
+      </template>
+    </Column>
+    <Column
       header="Total"
       field="progress"
       sortable
       class="whitespace-nowrap text-right"
     >
       <template #body="slotProps">
-        {{ formatCount(slotProps.data.progress, props.measure) }}
+        {{ formatCount(slotProps.data.progress, slotProps.data.measure) }}
+      </template>
+    </Column>
+    <Column
+      v-if="props.measure === 'percent'"
+      header="Goal"
+      field="goal"
+      sortable
+      class="whitespace-nowrap text-right"
+    >
+      <template #body="slotProps">
+        {{ formatCount(slotProps.data.goal, slotProps.data.measure) }}
       </template>
     </Column>
     <Column
@@ -126,7 +164,7 @@ const tableData = computed(() => {
       class="whitespace-nowrap text-right"
     >
       <template #body="slotProps">
-        {{ (slotProps.data.versusPar > 0 ? '+' : '') + formatCount(slotProps.data.versusPar, props.measure) }}
+        {{ (slotProps.data.versusPar > 0 ? '+' : '') + formatCount(slotProps.data.versusPar, slotProps.data.measure) }}
       </template>
     </Column>
     <Column
