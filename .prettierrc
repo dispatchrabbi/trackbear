@@ -1,0 +1,10 @@
+{
+  "experimentalTernaries": true,
+  "printWidth": 100,
+  "semi": true,
+  "singleQuote": true,
+  "trailingCommas": "es5",
+  "bracketSameLine": false,
+  "arrowParens": "avoid",
+  "vueIndentScriptAndStyle": false
+}
