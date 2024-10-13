@@ -85,5 +85,4 @@ Types of changes include:
 
     expect(actual).toEqual(expected);
   });
-
 });

@@ -100,7 +100,7 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   if(!['', 'debug', 'info', 'warn', 'error', 'critical'].includes(process.env.LOG_LEVEL)) { throw new Error('LOG_LEVEL should be one of: `debug`, `info`, `warn`, `error`, `critical`'); }
   process.env.LOG_LEVEL = process.env.LOG_LEVEL || 'info';
 
-  if(!process.env.DATABASE_USER) {throw new Error('Missing DATABASE_USER value in .env'); }
+  if(!process.env.DATABASE_USER) { throw new Error('Missing DATABASE_USER value in .env'); }
   if(process.env.DATABASE_USER.startsWith('"') && process.env.DATABASE_USER.endsWith('"')) { console.warn('DATABASE_USER value is quoted; it probably should not be.'); }
 
   if(!process.env.DATABASE_PASSWORD) { throw new Error('Missing DATABASE_PASSWORD value in .env'); }

@@ -29,6 +29,7 @@ export const handleGetChangelog = (function() {
 })();
 infoRouter.get('/changelog', handleGetChangelog);
 
+infoRouter.get('/env', handleGetEnv);
 export type EnvInfo = {
   URL_PREFIX: string;
   ENABLE_METRICS: boolean;
