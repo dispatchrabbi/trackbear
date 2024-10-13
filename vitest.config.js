@@ -10,7 +10,6 @@ export default defineConfig({
       'prisma/**',
       'public/**',
       'scripts/**',
-      'server/api/**',
       'server/workers/**',
       'src/**',
       '*.{js,ts}',

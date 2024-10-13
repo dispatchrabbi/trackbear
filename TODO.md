@@ -105,7 +105,8 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] Expand the model layer in the backend to be used for all db access
 - [ ] Create better seed data for testing
 - [ ] Use 'omit' in prisma schema to protect password and other secret fields
-- [ ] Update date-fns to 4.0
+- [ ] Unify create and edit forms
+- [X] Update date-fns to 4.0
   - [ ] Simplify createDateRanges when this happens
 
 ## Observability

@@ -1,9 +1,5 @@
 import { vi, expect, describe, it, beforeEach } from 'vitest';
 
-vi.mock('../lib/db.ts');
-import dbClientMock from '../lib/__mocks__/db.ts';
-import { Banner } from '@prisma/client';
-
 import { getHandlerMocks } from 'server/lib/__mocks__/express.ts';
 import { success } from '../lib/api-response.ts';
 

@@ -9,10 +9,10 @@ export type Banner = Omit<PrismaBanner, 'id' | 'createdAt' | 'updatedAt'>;
 const bannerRouter = Router();
 export default bannerRouter;
 
+bannerRouter.get('/', handleGetBanners);
 export async function handleGetBanners(req: Request, res: ApiResponse<Banner[]>, next) {
   try {
     const banners = await getActiveBanners();
     return res.status(200).send(success(banners));
   } catch(err) { return next(err); }
 };
-bannerRouter.get('/', handleGetBanners);

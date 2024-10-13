@@ -29,6 +29,7 @@ export const handleGetChangelog = (function() {
 })();
 infoRouter.get('/changelog', handleGetChangelog);
 
+infoRouter.get('/env', handleGetEnv);
 export type EnvInfo = {
   URL_PREFIX: string;
 };
@@ -40,4 +41,3 @@ export async function handleGetEnv(req: Request, res: ApiResponse<EnvInfo>) {
 
   return res.status(200).send(success(envInfo));
 }
-infoRouter.get('/env', handleGetEnv);
