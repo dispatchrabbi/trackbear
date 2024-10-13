@@ -45,7 +45,7 @@ async function handleSubmit() {
     successMessage.value = `${deletedTag.name} has been deleted.`;
     await wait(1 * 1000);
     emit('formSuccess');
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not delete the tag: something went wrong server-side.';
 
     return;

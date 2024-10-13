@@ -66,7 +66,7 @@ async function handleSubmit() {
     successMessage.value = `${createdWork.title} has been created.`;
     await wait(1 * 1000);
     emit('formSuccess');
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not create the project: something went wrong server-side.';
 
     return;

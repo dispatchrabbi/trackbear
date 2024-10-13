@@ -211,7 +211,7 @@ async function handleImportClick() {
 
       emit('work:create', { work: createdWork });
       workStore.populate(true);
-    } catch(err) {
+    } catch {
       errorMessage.value = 'Could not create the new project: something went wrong server-side.';
       isLoading.value = false;
       progressMessage.value = null;
@@ -238,7 +238,7 @@ async function handleImportClick() {
 
     successMessage.value = `The data has been imported (${createdTallies.length} ${createdTallies.length === 1 ? 'entry' : 'entries'}).`;
     hasUploadHappened.value = true;
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not import the data: something went wrong server-side.';
   } finally {
     isLoading.value = false;

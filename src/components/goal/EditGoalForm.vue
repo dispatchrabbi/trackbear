@@ -205,7 +205,7 @@ async function handleSubmit() {
     successMessage.value = `${updatedGoal.goal.title} has been updated.`;
     await wait(1 * 1000);
     emit('formSuccess');
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not update the goal: something went wrong server-side.';
 
     return;

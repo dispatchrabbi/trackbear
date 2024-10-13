@@ -34,7 +34,7 @@ const user = ref<User>(null);
 async function loadUser() {
   try {
     await userStore.populate();
-  } catch(err) {
+  } catch {
     router.push({ name: 'login' });
   }
 }
@@ -87,7 +87,7 @@ onMounted(async () => {
     useEventBus<{ tally: Tally }>('tally:create').on(reloadData);
     useEventBus<{ tally: Tally }>('tally:edit').on(reloadData);
     useEventBus<{ tally: Tally }>('tally:delete').on(reloadData);
-  } catch(ex) {
+  } catch {
     // we should only error here when some kind of login error happens
     router.push({ name: 'login' });
   }

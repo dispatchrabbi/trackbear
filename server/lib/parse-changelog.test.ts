@@ -1,15 +1,6 @@
 import { expect, describe, it } from "vitest";
 import { parseChangelog } from "./parse-changelog";
 
-const BLANK_LINE = ``;
-const TITLE = `#CHANGELOG`;
-const INTRO = `This is a bunch of text that doesn't matter.`;
-const FAKEOUT = `- NEW, for new features`;
-const VERSION = `## 0.15.5`;
-const CHANGE_WITHOUT_HT = `- NEW: Leaderboards in fundraiser mode now show their totals.`;
-const CHANGE_WITH_HT = `- FIXED: Fixed a bug that made it impossible to join boards using the code. (h/t Jagodzianka)`;
-const CHANGE_WITH_MULTIPLE_HT = `- FIXED: The streak counter for habit goals on the dashboard no longer dumps a bunch of unrelated text and instead now gives a cheery "X in a row!" counter like it's supposed to. (h/t CaitSidhe, sarah, Quinoafox)`;
-
 describe('parseChangelog', () => {
   
   it('returns an empty array if fed an empty string', () => {

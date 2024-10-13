@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { mock } from "vitest-mock-extended";
 
 import { getNormalizedEnv } from "./env";
 

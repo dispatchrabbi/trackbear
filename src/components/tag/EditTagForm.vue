@@ -9,7 +9,7 @@ import { useValidation } from 'src/lib/form.ts';
 
 import { updateTag, Tag, TagPayload } from 'src/lib/api/tag.ts';
 import { TAG_COLORS } from 'server/lib/models/tag.ts';
-import { TAG_COLOR_CLASSES } from 'src/components/tag/tag-color-classes.ts';
+// import { TAG_COLOR_CLASSES } from 'src/components/tag/tag-color-classes.ts';
 
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';

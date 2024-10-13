@@ -48,7 +48,7 @@ async function handleSubmit() {
     successMessage.value = `You have left ${props.board.title}.`;
     await wait(1 * 1000);
     emit('formSuccess');
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not leave the leaderboard: something went wrong server-side.';
 
     return;

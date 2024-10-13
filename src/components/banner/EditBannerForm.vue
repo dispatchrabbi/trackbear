@@ -63,7 +63,7 @@ async function handleSubmit() {
     successMessage.value = `Banner has been updated.`;
     await wait(1 * 1000);
     emit('formSuccess');
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not edit the banner: something went wrong server-side.';
 
     return;

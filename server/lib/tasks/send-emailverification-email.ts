@@ -27,7 +27,7 @@ async function handler(task) {
       },
       include: { user: true }
     });
-  } catch(err) {
+  } catch {
     taskLogger.error(`Could not find a pending email verification with uuid ${task.verificationUuid}`);
     throw new Error(`Could not find a pending email verification with uuid ${task.verificationUuid}`);
   }

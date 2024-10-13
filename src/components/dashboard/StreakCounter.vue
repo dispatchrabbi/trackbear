@@ -3,7 +3,7 @@ import { computed, defineProps } from 'vue';
 
 import type { Tally } from 'src/lib/api/tally.ts';
 import { getStreakInfo } from 'src/lib/streak.ts';
-import { getRandomElement } from 'src/lib/arr.ts';
+// import { getRandomElement } from 'src/lib/arr.ts';
 
 import StatTile from '../goal/StatTile.vue';
 

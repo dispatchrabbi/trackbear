@@ -19,7 +19,7 @@ async function logOut() {
   try {
     await userStore.logOut();
     router.push('/');
-  } catch(err) {
+  } catch {
     logOutError.value = true;
   }
 }

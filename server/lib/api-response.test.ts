@@ -1,5 +1,5 @@
 import { expect, describe, it } from 'vitest';
-import { success, failure, h } from './api-response.ts';
+import { success, failure } from './api-response.ts';
 
 describe('success', () => {
   it('returns a success object', () => {

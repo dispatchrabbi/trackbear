@@ -18,7 +18,7 @@ const populateProfile = async function() {
   try {
     const result = await getProfile(username);
     profile.value = result;
-  } catch(err) {
+  } catch {
     profile.value = null;
   } finally {
     profilePopulated.value = true;
