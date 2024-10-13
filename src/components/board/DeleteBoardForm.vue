@@ -45,7 +45,7 @@ async function handleSubmit() {
     successMessage.value = `${deletedBoard.title} has been deleted.`;
     await wait(1 * 1000);
     emit('formSuccess');
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not delete the leaderboard: something went wrong server-side.';
 
     return;

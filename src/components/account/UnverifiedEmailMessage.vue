@@ -25,7 +25,7 @@ async function handleClick() {
       detail: 'A new verification link has been sent to your email address.',
       life: 3 * 1000,
     });
-  } catch(err) {
+  } catch {
     toast.add({
       severity: 'error',
       detail: 'There was an error sending a new verification link.',

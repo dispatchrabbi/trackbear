@@ -26,7 +26,7 @@ const errorMessage = ref<string | null>(null);
 async function loadTags() {
   try {
     tags.value = await getTags();
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not get tags; something went wrong server-side.';
   }
 }

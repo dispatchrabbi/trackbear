@@ -103,7 +103,7 @@ async function handleSubmit() {
     successMessage.value = `${createdBoard.title} has been created.`;
     await wait(1 * 1000);
     emit('formSuccess');
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not create the leaderboard: something went wrong server-side.';
 
     return;

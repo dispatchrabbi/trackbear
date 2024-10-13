@@ -12,4 +12,5 @@ export function handleGetPing(req, res: Response<ApiResponsePayload<'pong'>>) {
 pingRouter.get('/error', handleGetError);
 export function handleGetError(req, res: Response<ApiResponsePayload<'pong'>>) {
   throw new Error('pong');
+  res.status(200).send(success('pong'));
 };

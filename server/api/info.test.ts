@@ -3,7 +3,7 @@ import { mockObject } from "../lib/__mocks__/util";
 import { getHandlerMocks } from '../lib/__mocks__/express.ts';
 import * as env from '../lib/env';
 
-import { EnvInfo, handleGetChangelog, handleGetEnv } from "./info";
+import { EnvInfo, handleGetEnv } from "./info";
 
 describe('/api/info', () => {
   describe.todo('GET /changelog', () => {

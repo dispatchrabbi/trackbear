@@ -20,7 +20,7 @@ async function handler(task) {
       },
       include: { user: true }
     });
-  } catch(err) {
+  } catch {
     throw new Error(`Could not find an active password reset link with uuid ${task.resetUuid}`);
   }
 

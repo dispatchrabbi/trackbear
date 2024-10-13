@@ -43,7 +43,7 @@ const chartRows = computed(() => {
       note: 'Starting Balance',
     }));
 
-  for(let tally of sortedTallies.value) {
+  for(const tally of sortedTallies.value) {
     totals[tally.measure] += tally.count;
 
     rows.push({

@@ -61,7 +61,7 @@ export default {
         ]
     }),
     inputtoken: ({ props }) => ({
-        class: [{ 'py-1.5 px-0': !props.multiple, 'p-0.5': props.multiple }, , 'inline-flex flex-auto']
+        class: [{ 'py-1.5 px-0': !props.multiple, 'p-0.5': props.multiple }, 'inline-flex flex-auto']
     }),
     input: ({ props }) => ({
         class: [

@@ -49,7 +49,9 @@ async function submitVerification() {
 }
 
 onMounted(() => {
-  checkUuidParam() && submitVerification();
+  if(checkUuidParam()) {
+    submitVerification();
+  }
 });
 
 </script>

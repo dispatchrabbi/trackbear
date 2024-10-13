@@ -46,7 +46,7 @@ async function handleSubmit() {
     successMessage.value = `The banner has been deleted.`;
     await wait(1 * 1000);
     emit('formSuccess');
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not delete the banner: something went wrong server-side.';
 
     return;

@@ -12,7 +12,7 @@ describe('/api/ping', () => {
     });
 
     it('sends back pong', async () => {
-      const { req, res, next } = getHandlerMocks();
+      const { req, res } = getHandlerMocks();
 
       await handleGetPing(req, res);
 
@@ -27,7 +27,7 @@ describe('/api/ping', () => {
     });
 
     it('errors out and does not respond', async () => {
-      const { req, res, next } = getHandlerMocks();
+      const { req, res } = getHandlerMocks();
 
       let expectedErr: Error;
 

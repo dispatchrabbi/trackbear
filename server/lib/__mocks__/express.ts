@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
 import type { User } from "@prisma/client";
 
-import { beforeEach, vi } from 'vitest';
-import type { Mock } from 'vitest';
-import { mockDeep, mockReset } from 'vitest-mock-extended';
+import { vi, Mock } from 'vitest';
 import { mockObject } from './util';
 import { RequestWithUser } from '../auth';
 
@@ -27,11 +25,15 @@ export function getMockRequest(overrides?: Partial<MockRequest>): Request {
   return req as unknown as Request;
 }
 
+type MockResponse = {
+  status: Mock<(code: number) => MockResponse>,
+  send: Mock<(payload: unknown) => MockResponse>,
+};
 export function getMockResponse(): Response {
   const res = {
-    status: vi.fn((code: number) => res),
-    send: vi.fn((payload: unknown) => res)
-  };
+    status: vi.fn(() => res),
+    send: vi.fn(() => res)
+  } as MockResponse;
 
   return res as unknown as Response;
 }

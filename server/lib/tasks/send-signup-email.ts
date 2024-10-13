@@ -14,7 +14,7 @@ async function handler(task) {
       id: task.userId,
       state: USER_STATE.ACTIVE,
     } });
-  } catch(err) {
+  } catch {
     throw new Error(`Could not find a user with id ${task.userId}`);
   }
 

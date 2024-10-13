@@ -48,7 +48,7 @@ async function handleSubmit() {
     await wait(1 * 1000);
     emit('formSuccess');
 
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not restore the account: something went wrong server-side.';
 
     return;

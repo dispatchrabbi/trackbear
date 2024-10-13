@@ -32,7 +32,7 @@ async function handleSubmit() {
     successMessage.value = `Your progress entry has been deleted.`;
     await wait(1 * 1000);
     emit('formSuccess');
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not delete progress entry: something went wrong server-side.';
 
     return;

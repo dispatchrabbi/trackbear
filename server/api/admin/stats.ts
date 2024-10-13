@@ -1,9 +1,8 @@
 import { Router } from "express";
-import winston from "winston";
 
 import { parse, format } from 'date-fns';
 
-import { ApiResponse, success, h, failure } from '../../lib/api-response.ts';
+import { ApiResponse, success, h } from '../../lib/api-response.ts';
 import { requireAdminUser, RequestWithUser } from '../../lib/auth.ts';
 
 import dbClient from "../../lib/db.ts";

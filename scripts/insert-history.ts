@@ -121,9 +121,9 @@ async function main() {
   scriptLogger.info(`History has been inserted!`);
 }
 
-function getRandomWordCount() {
-  return randn_bm(100, 8000, 3);
-}
+// function getRandomWordCount() {
+//   return randn_bm(100, 8000, 3);
+// }
 function getRandomTimeCount() {
   return randn_bm(30, 240, 1.5);
 }

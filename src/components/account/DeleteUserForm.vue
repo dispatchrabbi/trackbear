@@ -60,7 +60,7 @@ async function handleSubmit() {
     if(props.isSelf) {
       router.push({ name: 'logout' });
     }
-  } catch(err) {
+  } catch {
     errorMessage.value = `Could not delete ${props.isSelf ? 'your' : 'the'} account: something went wrong server-side.`;
 
     return;
