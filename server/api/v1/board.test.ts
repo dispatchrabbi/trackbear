@@ -128,7 +128,7 @@ describe('board api v1', () => {
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.board.create).toHaveBeenCalled();
       expect(logAuditEventMock).toHaveBeenCalledWith('board:create', MOCK_USER_ID, BOARD_ID, null, null, TEST_SESSION_ID);
-      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalled();
     });
   });
@@ -213,17 +213,23 @@ describe('board api v1', () => {
 
   describe('updateBoardParticipation', () => {
     it(`adds you to the board if you aren't already a member`, async () => {
+      dbClientMock.board.findUnique.mockResolvedValue(mockObject<Board>({
+        individualGoalMode: true,
+      }));
       dbClientMock.boardParticipant.findFirst.mockResolvedValue(null);
   
       const { req, res } = getHandlerMocksWithUser();
       await updateBoardParticipation(req, res);
 
       expect(dbClientMock.boardParticipant.create).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalled();
     });
 
     it(`updates your record if you are already a member`, async () => {
+      dbClientMock.board.findUnique.mockResolvedValue(mockObject<Board>({
+        individualGoalMode: true,
+      }));
       dbClientMock.boardParticipant.findFirst.mockResolvedValue(mockObject<BoardParticipant>());
   
       const { req, res } = getHandlerMocksWithUser();
