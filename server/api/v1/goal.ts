@@ -31,8 +31,9 @@ export default goalRouter;
 
 goalRouter.get('/',
   requireUser,
-  h(async (req: RequestWithUser, res: ApiResponse<Goal[]>) =>
-{
+  h(getGoals)
+);
+export async function getGoals(req: RequestWithUser, res: ApiResponse<Goal[]>) {
   const goals = await dbClient.goal.findMany({
     where: {
       ownerId: req.user.id,
@@ -41,13 +42,13 @@ goalRouter.get('/',
   });
 
   return res.status(200).send(success(goals))
-}));
+}
 
 goalRouter.get('/:id',
   requireUser,
   validateParams(zIdParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<GoalAndTallies>) =>
-{
+  h(getGoal));
+export async function getGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
   const goal = await dbClient.goal.findUnique({
     where: {
       id: +req.params.id,
@@ -69,8 +70,8 @@ goalRouter.get('/:id',
   return res.status(200).send(success({
     goal,
     tallies,
-  }))
-}));
+  }));
+}
 
 export type GoalCreatePayload = {
   title: string;
@@ -84,7 +85,6 @@ export type GoalCreatePayload = {
   works: number[];
   tags: number[];
 };
-
 const zTargetGoalParameters = z.object({
   threshold: z.object({
     measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
@@ -117,8 +117,9 @@ const zGoalCreatePayload = z.object({
 goalRouter.post('/',
   requireUser,
   validateBody(zGoalCreatePayload),
-  h(async (req: RequestWithUser, res: ApiResponse<GoalAndTallies>) =>
-{
+  h(createGoal)
+);
+export async function createGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
   const user = req.user;
   const payload = req.body as GoalCreatePayload;
 
@@ -150,13 +151,14 @@ goalRouter.post('/',
   const tallies = await getTalliesForGoal(goal);
 
   return res.status(201).send(success({ goal, tallies }));
-}));
+}
 
 goalRouter.post('/batch',
   requireUser,
   validateBody(z.array(zGoalCreatePayload)),
-  h(async (req: RequestWithUser, res: ApiResponse<Goal[]>) =>
-{
+  h(createGoals)
+);
+export async function createGoals(req: RequestWithUser, res: ApiResponse<Goal[]>) {
   const user = req.user;
 
   const createdGoals = await dbClient.goal.createManyAndReturn({
@@ -181,7 +183,7 @@ goalRouter.post('/batch',
   await Promise.all(createdGoals.map(createdGoal => logAuditEvent('goal:create', user.id, createdGoal.id, null, null, req.sessionID)));
 
   return res.status(201).send(success(createdGoals));
-}));
+}
 
 export type GoalUpdatePayload = Partial<GoalCreatePayload>;
 const zGoalUpdatePayload = zGoalCreatePayload.partial();
@@ -190,8 +192,9 @@ goalRouter.put('/:id',
   requireUser,
   validateParams(zIdParam()),
   validateBody(zGoalUpdatePayload),
-  h(async (req: RequestWithUser, res: ApiResponse<GoalAndTallies>) =>
-{
+  h(updateGoal)
+);
+export async function updateGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
   const user = req.user;
   const payload = req.body as GoalUpdatePayload;
 
@@ -225,13 +228,14 @@ goalRouter.put('/:id',
   const tallies = await getTalliesForGoal(goal);
 
   return res.status(200).send(success({ goal, tallies }));
-}));
+}
 
 goalRouter.delete('/:id',
   requireUser,
   validateParams(zIdParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<Goal>) =>
-{
+  h(deleteGoal)
+);
+export async function deleteGoal(req: RequestWithUser, res: ApiResponse<Goal>) {
   const user = req.user;
 
   // Don't actually delete the goal; set the status instead
@@ -249,4 +253,4 @@ goalRouter.delete('/:id',
   await logAuditEvent('goal:delete', user.id, goal.id, null, null, req.sessionID);
 
   return res.status(200).send(success(goal));
-}));
+}
