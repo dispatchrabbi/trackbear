@@ -111,7 +111,7 @@ export async function createBoard(req: RequestWithUser, res: ApiResponse<Board>)
   await logAuditEvent('board:create', user.id, board.id, null, null, req.sessionID);
   winston.info(`BOARD: ${user.id} (${user.username}) just created Board ${board.id} (UUID ${board.uuid}: ${board.title})`);
 
-  return res.status(200).send(success(board as Board));
+  return res.status(201).send(success(board as Board));
 }
 
 // PATCH /:uuid - update a board
@@ -322,8 +322,9 @@ export async function updateBoardParticipation(req: RequestWithUser, res: ApiRes
     },
   });
 
+  const isUpdate = !!existingParticipantRecord;
   let participant;
-  if(existingParticipantRecord) {
+  if(isUpdate) {
     participant = await dbClient.boardParticipant.update({
       where: {
         state: BOARD_PARTICIPANT_STATE.ACTIVE,
@@ -365,7 +366,7 @@ export async function updateBoardParticipation(req: RequestWithUser, res: ApiRes
     });
   }
 
-  return res.status(200).send(success(participant));
+  return res.status(isUpdate ? 200 : 201).send(success(participant));
 }
 
 // DELETE /:uuid/participation - leave a board
