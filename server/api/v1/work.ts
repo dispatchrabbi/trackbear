@@ -44,9 +44,9 @@ export default workRouter;
 
 workRouter.get('/',
   requireUser,
-  h(getWorks)
+  h(handleGetWorks)
 );
-export async function getWorks(req: RequestWithUser, res: ApiResponse<SummarizedWork[]>) {
+export async function handleGetWorks(req: RequestWithUser, res: ApiResponse<SummarizedWork[]>) {
   const worksWithTallies = await dbClient.work.findMany({
     where: {
       ownerId: req.user.id,
@@ -80,9 +80,9 @@ export async function getWorks(req: RequestWithUser, res: ApiResponse<Summarized
 workRouter.get('/:id',
   requireUser,
   validateParams(zIdParam()),
-  h(getWork)
+  h(handleGetWork)
 );
-export async function getWork(req: RequestWithUser, res: ApiResponse<WorkWithTallies>) {
+export async function handleGetWork(req: RequestWithUser, res: ApiResponse<WorkWithTallies>) {
   const work = await dbClient.work.findUnique({
     where: {
       id: +req.params.id,
@@ -124,9 +124,9 @@ const zWorkCreatePayload = z.object({
 workRouter.post('/',
   requireUser,
   validateBody(zWorkCreatePayload),
-  h(createWork)
+  h(handleCreateWork)
 );
-export async function createWork(req: RequestWithUser, res: ApiResponse<Work>) {
+export async function handleCreateWork(req: RequestWithUser, res: ApiResponse<Work>) {
   const user = req.user;
 
   const work = await dbClient.work.create({
@@ -149,9 +149,9 @@ workRouter.put('/:id',
   requireUser,
   validateParams(zIdParam()),
   validateBody(zWorkUpdatePayload),
-  h(updateWork)
+  h(handleUpdateWork)
 );
-export async function updateWork(req: RequestWithUser, res: ApiResponse<Work>) {
+export async function handleUpdateWork(req: RequestWithUser, res: ApiResponse<Work>) {
   const user = req.user;
   const payload = req.body as WorkUpdatePayload;
 
@@ -174,9 +174,9 @@ export async function updateWork(req: RequestWithUser, res: ApiResponse<Work>) {
 workRouter.delete('/:id',
   requireUser,
   validateParams(zIdParam()),
-  h(deleteWork)
+  h(handleDeleteWork)
 )
-export async function deleteWork(req: RequestWithUser, res: ApiResponse<Work>) {
+export async function handleDeleteWork(req: RequestWithUser, res: ApiResponse<Work>) {
   const user = req.user;
 
   // Don't actually delete the work; set the status instead

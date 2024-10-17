@@ -31,9 +31,9 @@ export default goalRouter;
 
 goalRouter.get('/',
   requireUser,
-  h(getGoals)
+  h(handleGetGoals)
 );
-export async function getGoals(req: RequestWithUser, res: ApiResponse<Goal[]>) {
+export async function handleGetGoals(req: RequestWithUser, res: ApiResponse<Goal[]>) {
   const goals = await dbClient.goal.findMany({
     where: {
       ownerId: req.user.id,
@@ -47,8 +47,8 @@ export async function getGoals(req: RequestWithUser, res: ApiResponse<Goal[]>) {
 goalRouter.get('/:id',
   requireUser,
   validateParams(zIdParam()),
-  h(getGoal));
-export async function getGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
+  h(handleGetGoal));
+export async function handleGetGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
   const goal = await dbClient.goal.findUnique({
     where: {
       id: +req.params.id,
@@ -117,9 +117,9 @@ const zGoalCreatePayload = z.object({
 goalRouter.post('/',
   requireUser,
   validateBody(zGoalCreatePayload),
-  h(createGoal)
+  h(handleCreateGoal)
 );
-export async function createGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
+export async function handleCreateGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
   const user = req.user;
   const payload = req.body as GoalCreatePayload;
 
@@ -156,9 +156,9 @@ export async function createGoal(req: RequestWithUser, res: ApiResponse<GoalAndT
 goalRouter.post('/batch',
   requireUser,
   validateBody(z.array(zGoalCreatePayload)),
-  h(createGoals)
+  h(handleCreateGoals)
 );
-export async function createGoals(req: RequestWithUser, res: ApiResponse<Goal[]>) {
+export async function handleCreateGoals(req: RequestWithUser, res: ApiResponse<Goal[]>) {
   const user = req.user;
 
   const createdGoals = await dbClient.goal.createManyAndReturn({
@@ -192,9 +192,9 @@ goalRouter.put('/:id',
   requireUser,
   validateParams(zIdParam()),
   validateBody(zGoalUpdatePayload),
-  h(updateGoal)
+  h(handleUpdateGoal)
 );
-export async function updateGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
+export async function handleUpdateGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
   const user = req.user;
   const payload = req.body as GoalUpdatePayload;
 
@@ -233,9 +233,9 @@ export async function updateGoal(req: RequestWithUser, res: ApiResponse<GoalAndT
 goalRouter.delete('/:id',
   requireUser,
   validateParams(zIdParam()),
-  h(deleteGoal)
+  h(handleDeleteGoal)
 );
-export async function deleteGoal(req: RequestWithUser, res: ApiResponse<Goal>) {
+export async function handleDeleteGoal(req: RequestWithUser, res: ApiResponse<Goal>) {
   const user = req.user;
 
   // Don't actually delete the goal; set the status instead
