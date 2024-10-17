@@ -25,9 +25,9 @@ export default boardRouter;
 // GET / - get boards you have access to, either as an owner or a participant
 boardRouter.get('/',
   requireUser,
-  h(getBoards)
+  h(handleGetBoards)
 );
-export async function getBoards(req: RequestWithUser, res: ApiResponse<ExtendedBoard[]>) {
+export async function handleGetBoards(req: RequestWithUser, res: ApiResponse<ExtendedBoard[]>) {
   const boards = await getExtendedBoardsForUser(req.user.id);
 
   return res.status(200).send(success(boards));
@@ -37,9 +37,9 @@ export async function getBoards(req: RequestWithUser, res: ApiResponse<ExtendedB
 boardRouter.get('/:uuid',
   requireUser,
   validateParams(zUuidParam()),
-  h(getBoard)
+  h(handleGetBoard)
 );
-export async function getBoard(req: RequestWithUser, res: ApiResponse<FullBoard>) {
+export async function handleGetBoard(req: RequestWithUser, res: ApiResponse<FullBoard>) {
   const board = await getFullBoard(req.params.uuid);
 
   if(!board) {
@@ -86,9 +86,9 @@ const zBoardCreatePayload = z.object({
 boardRouter.post('/',
   requireUser,
   validateBody(zBoardCreatePayload),
-  h(createBoard)
+  h(handleCreateBoard)
 );
-export async function createBoard(req: RequestWithUser, res: ApiResponse<Board>) {
+export async function handleCreateBoard(req: RequestWithUser, res: ApiResponse<Board>) {
   const user = req.user;
   const payload = req.body as BoardCreatePayload;
 
@@ -122,9 +122,9 @@ boardRouter.patch('/:uuid',
   requireUser,
   validateParams(zUuidParam()),
   validateBody(zBoardUpdatePayload),
-  h(updateBoard)
+  h(handleUpdateBoard)
 );
-export async function updateBoard(req: RequestWithUser, res: ApiResponse<Board>) {
+export async function handleUpdateBoard(req: RequestWithUser, res: ApiResponse<Board>) {
   const user = req.user;
   const payload = req.body as BoardUpdatePayload;
 
@@ -169,9 +169,9 @@ boardRouter.patch('/:uuid/star',
   requireUser,
   validateParams(zUuidParam()),
   validateBody(zBoardStarUpdatePayload),
-  h(starBoard)
+  h(handleStarBoard)
 );
-export async function starBoard(req: RequestWithUser, res: ApiResponse<BoardStarUpdateResponse>) {
+export async function handleStarBoard(req: RequestWithUser, res: ApiResponse<BoardStarUpdateResponse>) {
   const user = req.user;
   const payload = req.body as BoardStarUpdatePayload;
 
@@ -230,9 +230,9 @@ export async function starBoard(req: RequestWithUser, res: ApiResponse<BoardStar
 boardRouter.delete('/:uuid',
   requireUser,
   validateParams(zUuidParam()),
-  h(deleteBoard)
+  h(handleDeleteBoard)
 );
-export async function deleteBoard(req: RequestWithUser, res: ApiResponse<Board>) {
+export async function handleDeleteBoard(req: RequestWithUser, res: ApiResponse<Board>) {
   const user = req.user;
 
   // Don't actually delete the board; set the status instead
@@ -256,9 +256,9 @@ export async function deleteBoard(req: RequestWithUser, res: ApiResponse<Board>)
 boardRouter.get('/:uuid/participation',
   requireUser,
   validateParams(zUuidParam()),
-  h(getBoardParticipation)
+  h(handleGetBoardParticipation)
 );
-export async function getBoardParticipation(req: RequestWithUser, res: ApiResponse<BoardWithParticipants>) {
+export async function handleGetBoardParticipation(req: RequestWithUser, res: ApiResponse<BoardWithParticipants>) {
   // TODO: if invites or bans are implemented, this will need to be changed
   const board = await getBoardParticipationForUser(req.params.uuid, req.user.id);
 
@@ -288,9 +288,9 @@ boardRouter.post('/:uuid/participation',
   requireUser,
   validateParams(zUuidParam()),
   validateBody(zBoardParticipantPayload),
-  h(updateBoardParticipation)
+  h(handleUpdateBoardParticipation)
 );
-export async function updateBoardParticipation(req: RequestWithUser, res: ApiResponse<BoardParticipant>) {
+export async function handleUpdateBoardParticipation(req: RequestWithUser, res: ApiResponse<BoardParticipant>) {
   const user = req.user;
   const payload = req.body as BoardParticipantPayload;
 
@@ -373,9 +373,9 @@ export async function updateBoardParticipation(req: RequestWithUser, res: ApiRes
 boardRouter.delete('/:uuid/participation',
   requireUser,
   validateParams(zUuidParam()),
-  h(deleteBoardParticipation)
+  h(handleDeleteBoardParticipation)
 );
-export async function deleteBoardParticipation(req: RequestWithUser, res: ApiResponse<BoardParticipant>) {
+export async function handleDeleteBoardParticipation(req: RequestWithUser, res: ApiResponse<BoardParticipant>) {
   const user = req.user;
 
   // we can't do a delete because the combination of user and board isn't actually unique

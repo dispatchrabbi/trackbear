@@ -9,7 +9,7 @@ import dbClientMock from '../../lib/__mocks__/db.ts';
 vi.mock('../../lib/audit-events.ts', { spy: true });
 import logAuditEventMock from '../../lib/__mocks__/audit-events.ts';
 
-import { getWorks, getWork, createWork, updateWork, deleteWork } from './work.ts';
+import { handleGetWorks, handleGetWork, handleCreateWork, handleUpdateWork, handleDeleteWork } from './work.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 
 describe('work api v1', () => {
@@ -27,7 +27,7 @@ describe('work api v1', () => {
       );
 
       const { req, res } = getHandlerMocksWithUser();
-      await getWorks(req, res);
+      await handleGetWorks(req, res);
 
       expect(dbClientMock.work.findMany).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
@@ -40,7 +40,7 @@ describe('work api v1', () => {
       dbClientMock.work.findUnique.mockResolvedValue(mockObject<Work>());
 
       const { req, res } = getHandlerMocksWithUser();
-      await getWork(req, res);
+      await handleGetWork(req, res);
 
       expect(dbClientMock.work.findUnique).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
@@ -51,7 +51,7 @@ describe('work api v1', () => {
       dbClientMock.work.findUnique.mockResolvedValue(null);
 
       const { req, res } = getHandlerMocksWithUser();
-      await getWork(req, res);
+      await handleGetWork(req, res);
 
       expect(dbClientMock.work.findUnique).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(404);
@@ -68,7 +68,7 @@ describe('work api v1', () => {
       }));
 
       const { req, res } = getHandlerMocksWithUser();
-      await createWork(req, res);
+      await handleCreateWork(req, res);
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.work.create).toHaveBeenCalled();
@@ -86,7 +86,7 @@ describe('work api v1', () => {
       );
 
       const { req, res } = getHandlerMocksWithUser();
-      await updateWork(req, res);
+      await handleUpdateWork(req, res);
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.work.update).toHaveBeenCalled();
@@ -104,7 +104,7 @@ describe('work api v1', () => {
       );
 
       const { req, res } = getHandlerMocksWithUser();
-      await deleteWork(req, res);
+      await handleDeleteWork(req, res);
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.work.update).toHaveBeenCalled();

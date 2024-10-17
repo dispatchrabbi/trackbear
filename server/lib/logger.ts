@@ -21,15 +21,31 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
     ),
     defaultMeta: { service: 'trackbear' },
     transports: [
-      new transports.File({ filename: path.join(env.LOG_PATH, 'trackbear.log') }), // log everything
-      new transports.File({ filename: path.join(env.LOG_PATH, 'errors.log'), level: 'error' }), // log errors and up
-      new transports.Console({ format: format.combine(format.colorize(), format.simple()) }), // always log to the console
+       // log everything
+      new transports.File({
+        filename: path.join(env.LOG_PATH, 'trackbear.log'),
+      }),
+      // log errors and up
+      new transports.File({
+        filename: path.join(env.LOG_PATH, 'errors.log'),
+        level: 'error'
+      }),
+      // always log to the console
+      new transports.Console({
+        format: format.combine(format.colorize(), format.simple()),
+      }),
     ],
     exceptionHandlers: [
-      new transports.File({ filename: path.join(env.LOG_PATH, 'exceptions.log') }), // handle uncaught exceptions
+      // handle uncaught exceptions
+      new transports.File({
+        filename: path.join(env.LOG_PATH, 'exceptions.log'),
+      }),
     ],
     rejectionHandlers: [
-      new transports.File({ filename: path.join(env.LOG_PATH, 'rejections.log') }), // handle uncaught promise rejections
+       // handle uncaught promise rejections
+      new transports.File({
+        filename: path.join(env.LOG_PATH, 'rejections.log'),
+      }),
     ],
     exitOnError: false,
   });
@@ -46,7 +62,9 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
     ),
     defaultMeta: { service: 'trackbear' },
     transports: [
-      new transports.File({ filename: path.join(env.LOG_PATH, 'access.log') }),
+      new transports.File({
+        filename: path.join(env.LOG_PATH, 'access.log'),
+      }),
     ],
     exitOnError: false,
   });
@@ -63,7 +81,10 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
     ),
     defaultMeta: { service: 'queue' },
     transports: [
-      new transports.File({ filename: path.join(env.LOG_PATH, 'queue.log') }), // log everything
+       // log everything
+      new transports.File({
+        filename: path.join(env.LOG_PATH, 'queue.log')
+      }),
     ],
     exitOnError: false,
   });
@@ -80,13 +101,16 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
     ),
     defaultMeta: { service: 'worker' },
     transports: [
-      new transports.File({ filename: path.join(env.LOG_PATH, 'worker.log') }), // log everything
+       // log everything
+      new transports.File({
+        filename: path.join(env.LOG_PATH, 'worker.log')
+      }),
     ],
     exitOnError: false,
   });
 
   // also log queue and worker to the console if we're in development mode
-  if (forceConsoles || env.NODE_ENV !== 'production') {
+  if (forceConsoles || env.NODE_ENV === 'production') {
     winston.loggers.get('queue').add(new transports.Console({
       format: format.combine(
         format.colorize(),
@@ -100,6 +124,13 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
         format.simple()
       )
     }));
+  }
+
+  // if we're testing, don't log anything
+  if(env.NODE_ENV === 'testing') {
+    winston.loggers.loggers.forEach(logger => {
+      logger.silent = true;
+    });
   }
 }
 

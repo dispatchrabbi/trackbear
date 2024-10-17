@@ -18,8 +18,9 @@ export default tagRouter;
 
 tagRouter.get('/',
   requireUser,
-  h(async (req: RequestWithUser, res: ApiResponse<Tag[]>) =>
-{
+  h(handleGetTags)
+);
+export async function handleGetTags(req: RequestWithUser, res: ApiResponse<Tag[]>) {
   const tags = await dbClient.tag.findMany({
     where: {
       ownerId: req.user.id,
@@ -28,13 +29,14 @@ tagRouter.get('/',
   });
 
   return res.status(200).send(success(tags));
-}));
+}
 
 tagRouter.get('/:id',
   requireUser,
   validateParams(zIdParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<Tag>) =>
-{
+  h(handleGetTag)
+);
+export async function handleGetTag(req: RequestWithUser, res: ApiResponse<Tag>) {
   const tag = await dbClient.tag.findUnique({
     where: {
       id: +req.params.id,
@@ -48,7 +50,7 @@ tagRouter.get('/:id',
   } else {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any tag with id ${req.params.id}.`));
   }
-}));
+}
 
 export type TagPayload = {
   name: string;
@@ -62,8 +64,9 @@ const zTagPayload = z.object({
 tagRouter.post('/',
   requireUser,
   validateBody(zTagPayload),
-  h(async (req: RequestWithUser, res: ApiResponse<Tag>) =>
-{
+  h(handleCreateTag)
+);
+export async function handleCreateTag(req: RequestWithUser, res: ApiResponse<Tag>) {
   const user = req.user;
   const payload = req.body as TagPayload;
 
@@ -89,14 +92,15 @@ tagRouter.post('/',
   await logAuditEvent('tag:create', user.id, tag.id, null, null, req.sessionID);
 
   return res.status(201).send(success(tag));
-}));
+}
 
 tagRouter.put('/:id',
   requireUser,
   validateParams(zIdParam()),
   validateBody(zTagPayload),
-  h(async (req: RequestWithUser, res: ApiResponse<Tag>) =>
-{
+  h(handleUpdateTag)
+);
+export async function handleUpdateTag(req: RequestWithUser, res: ApiResponse<Tag>) {
   const user = req.user;
   const payload = req.body as TagPayload;
 
@@ -124,15 +128,17 @@ tagRouter.put('/:id',
   await logAuditEvent('tag:update', user.id, tag.id, null, null, req.sessionID);
 
   return res.status(200).send(success(tag));
-}));
+}
 
 tagRouter.delete('/:id',
   requireUser,
   validateParams(zIdParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<Tag>) =>
-{
+  h(handleDeleteTag)
+);
+export async function handleDeleteTag(req: RequestWithUser, res: ApiResponse<Tag>) {
   const user = req.user;
 
+  // tags actually get deleted instead of a status change
   const tag = await dbClient.tag.delete({
     where: {
       id: +req.params.id,
@@ -144,4 +150,4 @@ tagRouter.delete('/:id',
   await logAuditEvent('tag:delete', user.id, tag.id, null, null, req.sessionID);
 
   return res.status(200).send(success(tag));
-}));
+}

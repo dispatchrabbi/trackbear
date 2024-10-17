@@ -11,7 +11,7 @@ import logAuditEventMock from '../../lib/__mocks__/audit-events.ts';
 
 import * as boardModel from "../../lib/models/board.ts";
 
-import { getBoards, getBoard, createBoard, updateBoard, starBoard, deleteBoard, getBoardParticipation, updateBoardParticipation, deleteBoardParticipation } from './board';
+import { handleGetBoards, handleGetBoard, handleCreateBoard, handleUpdateBoard, handleStarBoard, handleDeleteBoard, handleGetBoardParticipation, handleUpdateBoardParticipation, handleDeleteBoardParticipation } from './board';
 
 describe('board api v1', () => {
   afterEach(() => {
@@ -26,7 +26,7 @@ describe('board api v1', () => {
       ]);
   
       const { req, res } = getHandlerMocksWithUser();
-      await getBoards(req, res);
+      await handleGetBoards(req, res);
 
       expect(boardModel.getExtendedBoardsForUser).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
@@ -42,7 +42,7 @@ describe('board api v1', () => {
       }));
   
       const { req, res } = getHandlerMocksWithUser({ params: { uuid: NIL_UUID } });
-      await getBoard(req, res);
+      await handleGetBoard(req, res);
 
       expect(boardModel.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
       expect(res.status).toHaveBeenCalledWith(200);
@@ -60,7 +60,7 @@ describe('board api v1', () => {
         user: mockObject<User>({ id: MOCK_USER_ID, uuid: NIL_UUID }),
         params: { uuid: NIL_UUID }
       });
-      await getBoard(req, res);
+      await handleGetBoard(req, res);
 
       expect(boardModel.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
       expect(res.status).toHaveBeenCalledWith(200);
@@ -74,7 +74,7 @@ describe('board api v1', () => {
       }));
 
       const { req, res } = getHandlerMocksWithUser({ params: { uuid: NIL_UUID } });
-      await getBoard(req, res);
+      await handleGetBoard(req, res);
 
       expect(boardModel.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
       expect(res.status).toHaveBeenCalledWith(200);
@@ -90,7 +90,7 @@ describe('board api v1', () => {
       }));
 
       const { req, res } = getHandlerMocksWithUser({ params: { uuid: NIL_UUID } });
-      await getBoard(req, res);
+      await handleGetBoard(req, res);
 
       expect(boardModel.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
       expect(res.status).toHaveBeenCalledWith(404);
@@ -106,7 +106,7 @@ describe('board api v1', () => {
       }));
 
       const { req, res } = getHandlerMocksWithUser({ params: { uuid: NIL_UUID } });
-      await getBoard(req, res);
+      await handleGetBoard(req, res);
 
       expect(boardModel.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
       expect(res.status).toHaveBeenCalledWith(428);
@@ -123,7 +123,7 @@ describe('board api v1', () => {
       }));
 
       const { req, res } = getHandlerMocksWithUser();
-      await createBoard(req, res);
+      await handleCreateBoard(req, res);
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.board.create).toHaveBeenCalled();
@@ -141,7 +141,7 @@ describe('board api v1', () => {
       }));
 
       const { req, res } = getHandlerMocksWithUser();
-      await updateBoard(req, res);
+      await handleUpdateBoard(req, res);
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.board.update).toHaveBeenCalled();
@@ -168,7 +168,7 @@ describe('board api v1', () => {
       };
 
       const { req, res } = await getHandlerMocksWithUser({ body: { starred: true } });
-      await starBoard(req, res);
+      await handleStarBoard(req, res);
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.board.updateMany).toHaveBeenCalled();
@@ -188,7 +188,7 @@ describe('board api v1', () => {
       }));
 
       const { req, res } = getHandlerMocksWithUser();
-      await deleteBoard(req, res);
+      await handleDeleteBoard(req, res);
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.board.update).toHaveBeenCalled();
@@ -203,7 +203,7 @@ describe('board api v1', () => {
       vi.spyOn(boardModel, 'getBoardParticipationForUser').mockResolvedValue(mockObject<boardModel.BoardWithParticipants>());
   
       const { req, res } = getHandlerMocksWithUser();
-      await getBoardParticipation(req, res);
+      await handleGetBoardParticipation(req, res);
 
       expect(boardModel.getBoardParticipationForUser).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
@@ -219,7 +219,7 @@ describe('board api v1', () => {
       dbClientMock.boardParticipant.findFirst.mockResolvedValue(null);
   
       const { req, res } = getHandlerMocksWithUser();
-      await updateBoardParticipation(req, res);
+      await handleUpdateBoardParticipation(req, res);
 
       expect(dbClientMock.boardParticipant.create).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(201);
@@ -233,7 +233,7 @@ describe('board api v1', () => {
       dbClientMock.boardParticipant.findFirst.mockResolvedValue(mockObject<BoardParticipant>());
   
       const { req, res } = getHandlerMocksWithUser();
-      await updateBoardParticipation(req, res);
+      await handleUpdateBoardParticipation(req, res);
 
       expect(dbClientMock.boardParticipant.update).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
@@ -248,7 +248,7 @@ describe('board api v1', () => {
       }));
       
       const { req, res } = getHandlerMocksWithUser();
-      await deleteBoardParticipation(req, res);
+      await handleDeleteBoardParticipation(req, res);
 
       expect(dbClientMock.boardParticipant.findFirst).toHaveBeenCalled();
       expect(dbClientMock.boardParticipant.delete).toHaveBeenCalled();
