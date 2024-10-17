@@ -21,6 +21,7 @@ describe('goal api v1', () => {
 
   describe('getGoals', () => {
     it('returns goals', async () => {
+      // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       dbClientMock.goal.findMany.mockResolvedValue([
         mockObject<Goal>(),
         mockObject<Goal>(),

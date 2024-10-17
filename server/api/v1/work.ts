@@ -27,8 +27,9 @@ export default workRouter;
 
 workRouter.get('/',
   requireUser,
-  h(async (req: RequestWithUser, res: ApiResponse<WorkWithTotals[]>) =>
-{
+  h(getWorks)
+);
+export async function getWorks(req: RequestWithUser, res: ApiResponse<WorkWithTotals[]>) {
   const worksWithTallies = await dbClient.work.findMany({
     where: {
       ownerId: req.user.id,
@@ -52,13 +53,14 @@ workRouter.get('/',
   });
 
   return res.status(200).send(success(works));
-}));
+}
 
 workRouter.get('/:id',
   requireUser,
   validateParams(zIdParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<WorkWithTallies>) =>
-{
+  h(getWork)
+);
+export async function getWork(req: RequestWithUser, res: ApiResponse<WorkWithTallies>) {
   const work = await dbClient.work.findUnique({
     where: {
       id: +req.params.id,
@@ -78,7 +80,7 @@ workRouter.get('/:id',
   } else {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any work with id ${req.params.id}.`));
   }
-}));
+}
 
 export type WorkCreatePayload = {
   title: string;
@@ -100,8 +102,9 @@ const zWorkCreatePayload = z.object({
 workRouter.post('/',
   requireUser,
   validateBody(zWorkCreatePayload),
-  h(async (req: RequestWithUser, res: ApiResponse<Work>) =>
-{
+  h(createWork)
+);
+export async function createWork(req: RequestWithUser, res: ApiResponse<Work>) {
   const user = req.user;
 
   const work = await dbClient.work.create({
@@ -115,7 +118,7 @@ workRouter.post('/',
   await logAuditEvent('work:create', user.id, work.id, null, null, req.sessionID);
 
   return res.status(201).send(success(work));
-}));
+}
 
 export type WorkUpdatePayload = Partial<WorkCreatePayload>;
 const zWorkUpdatePayload = zWorkCreatePayload.partial();
@@ -124,8 +127,9 @@ workRouter.put('/:id',
   requireUser,
   validateParams(zIdParam()),
   validateBody(zWorkUpdatePayload),
-  h(async (req: RequestWithUser, res: ApiResponse<Work>) =>
-{
+  h(updateWork)
+);
+export async function updateWork(req: RequestWithUser, res: ApiResponse<Work>) {
   const user = req.user;
   const payload = req.body as WorkUpdatePayload;
 
@@ -143,13 +147,14 @@ workRouter.put('/:id',
   await logAuditEvent('work:update', user.id, work.id, null, null, req.sessionID);
 
   return res.status(200).send(success(work));
-}));
+}
 
 workRouter.delete('/:id',
   requireUser,
   validateParams(zIdParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<Work>) =>
-{
+  h(deleteWork)
+)
+export async function deleteWork(req: RequestWithUser, res: ApiResponse<Work>) {
   const user = req.user;
 
   // Don't actually delete the work; set the status instead
@@ -177,4 +182,4 @@ workRouter.delete('/:id',
   await logAuditEvent('work:delete', user.id, work.id, null, null, req.sessionID);
 
   return res.status(200).send(success(work));
-}));
+}
