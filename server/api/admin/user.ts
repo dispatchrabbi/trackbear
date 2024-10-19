@@ -27,20 +27,22 @@ const userRouter = Router();
 
 userRouter.get('/',
   requireAdminUser,
-  h(async (req: RequestWithUser, res: ApiResponse<User[]>) =>
-{
+  h(handleGetUsers)
+);
+export async function handleGetUsers(req: RequestWithUser, res: ApiResponse<User[]>) {
   const users = await dbClient.user.findMany({
     orderBy: { username: 'asc' },
   });
 
   return res.status(200).send(success(users));
-}));
+}
 
 userRouter.get('/:id',
   requireAdminUser,
   validateParams(zIdParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<{ user: User; auditEvents: AuditEvent[]; }>) =>
-{
+  h(handleGetUser)
+);
+export async function handleGetUser(req: RequestWithUser, res: ApiResponse<{ user: User; auditEvents: AuditEvent[]; }>) {
   const user = await dbClient.user.findUnique({
     where: {
       id: +req.params.id,
@@ -65,7 +67,7 @@ userRouter.get('/:id',
   });
 
   return res.status(200).send(success({ user, auditEvents }));
-}));
+}
 
 export type UserUpdatePayload = Partial<{
   username: string;
@@ -73,7 +75,6 @@ export type UserUpdatePayload = Partial<{
   email: string;
   isEmailVerified: boolean;
 }>;
-
 const zUserUpdatePayload = z.object({
   username: z.string().trim().toLowerCase()
     .min(3, { message: 'Username must be at least 3 characters long.'})
@@ -88,8 +89,9 @@ userRouter.put('/:id',
   requireAdminUser,
   validateParams(zIdParam()),
   validateBody(zUserUpdatePayload),
-  h(async (req: RequestWithUser, res: ApiResponse<User>) =>
-{
+  h(handleUpdateUser)
+);
+export async function handleUpdateUser(req: RequestWithUser, res: ApiResponse<User>) {
   const admin = req.user;
   const payload = req.body as UserUpdatePayload;
 
@@ -127,12 +129,11 @@ userRouter.put('/:id',
   await logAuditEvent('user:update', admin.id, updated.id, null, changes, req.sessionID);
 
   return res.status(200).send(success(updated));
-}));
+}
 
 export type UserStatePayload = Partial<{
   state: string;
 }>;
-
 const zUserStatePayload = z.object({
   state: z.enum([USER_STATE.ACTIVE, USER_STATE.SUSPENDED, USER_STATE.DELETED]),
 }).strict();
@@ -141,8 +142,9 @@ userRouter.put('/:id/state',
   requireAdminUser,
   validateParams(zIdParam()),
   validateBody(zUserStatePayload),
-  h(async (req: RequestWithUser, res: ApiResponse<User>) =>
-{
+  h(handleUpdateUserState)
+);
+export async function handleUpdateUserState(req: RequestWithUser, res: ApiResponse<User>) {
   const admin = req.user;
   const payload = req.body as UserStatePayload;
 
@@ -178,14 +180,14 @@ userRouter.put('/:id/state',
   await logAuditEvent(`user:${event}`, admin.id, updated.id, null, { source: 'admin console' }, req.sessionID);
 
   return res.status(200).send(success(updated));
-}));
-
+}
 
 userRouter.post('/:id/verify-email',
   requireAdminUser,
   validateParams(zIdParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<EmptyObject>) =>
-{
+  h(handleSendUserVerifyEmail)
+);
+export async function handleSendUserVerifyEmail(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
   const admin = req.user;
 
   const user = await dbClient.user.findUnique({
@@ -210,14 +212,14 @@ userRouter.post('/:id/verify-email',
   await logAuditEvent('user:verifyemailreq', admin.id, user.id, null, { verificationUuid: pendingEmailVerification.uuid }, req.sessionID);
 
   return res.status(201).send(success({}));
-
-}));
+}
 
 userRouter.post('/:id/reset-password',
   requireAdminUser,
   validateParams(zIdParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<EmptyObject>) =>
-{
+  h(handleSendPasswordResetEmail)
+);
+export async function handleSendPasswordResetEmail(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
   const admin = req.user;
 
   const user = await dbClient.user.findUnique({
@@ -241,7 +243,7 @@ userRouter.post('/:id/reset-password',
   await logAuditEvent('user:pwresetreq', admin.id, user.id, null, { resetLinkUuid: resetLink.uuid }, req.sessionID);
   pushTask(sendPwresetEmail.makeTask(resetLink.uuid));
 
-    return res.status(201).send(success({}));
-}));
+  return res.status(201).send(success({}));
+}
 
 export default userRouter;

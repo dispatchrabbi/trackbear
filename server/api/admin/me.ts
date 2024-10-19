@@ -11,8 +11,9 @@ const meRouter = Router();
 // GET /admin/me/perms - get your own user information
 meRouter.get('/perms',
   requireAdminUser,
-  h(async (req: RequestWithUser, res: ApiResponse<AdminPerms>) =>
-{
+  h(handleGetPerms)
+);
+export async function handleGetPerms(req: RequestWithUser, res: ApiResponse<AdminPerms>) {
   const adminPerms = await dbClient.adminPerms.findUnique({
     where: {
       userId: req.user.id,
@@ -20,6 +21,6 @@ meRouter.get('/perms',
   });
 
   return res.status(200).send(success(adminPerms));
-}));
+}
 
 export default meRouter;
