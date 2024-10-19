@@ -22,8 +22,9 @@ export type DailyStat = {
 
 statsRouter.get('/weekly-active-users',
   requireAdminUser,
-  h(async (req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) =>
-{
+  h(handleGetWeeklyActiveUsers)
+);
+export async function handleGetWeeklyActiveUsers(req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) {
   const results: { weekNumber: string; activeUsers: number }[] = await dbClient.$queryRaw`
 SELECT
 	EXTRACT(ISOYEAR FROM "createdAt") || '-' || lpad(EXTRACT(WEEK FROM "createdAt")::text, 2, '0') AS "weekNumber",
@@ -111,8 +112,9 @@ GROUP BY "weekNumber"
 
 statsRouter.get('/weekly-signups',
   requireAdminUser,
-  h(async (req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) =>
-{
+  h(handleGetWeeklySignups)
+);
+export async function handleGetWeeklySignups(req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) {
   const results: { weekNumber: string; signups: number }[] = await dbClient.$queryRaw`
 SELECT
 	EXTRACT(ISOYEAR FROM "createdAt") || '-' || lpad(EXTRACT(WEEK FROM "createdAt")::text, 2, '0') AS "weekNumber",

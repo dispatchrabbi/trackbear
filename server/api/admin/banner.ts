@@ -18,14 +18,15 @@ const bannerRouter = Router();
 
 bannerRouter.get('/',
   requireAdminUser,
-  h(async (req: RequestWithUser, res: ApiResponse<Banner[]>) =>
-{
+  h(handleGetBanners)
+);
+export async function handleGetBanners(req: RequestWithUser, res: ApiResponse<Banner[]>) {
   const banners = await dbClient.banner.findMany({
     orderBy: { updatedAt: 'asc' },
   });
 
   return res.status(200).send(success(banners));
-}));
+}
 
 export type BannerPayload = {
   enabled?: boolean;
@@ -45,8 +46,9 @@ const zBannerPayload = z.object({
 bannerRouter.post('/',
   requireAdminUser,
   validateBody(zBannerPayload),
-  h(async (req: RequestWithUser, res: ApiResponse<Banner>) =>
-{
+  h(handleCreateBanner)
+);
+export async function handleCreateBanner(req: RequestWithUser, res: ApiResponse<Banner>) {
   const user = req.user;
   const payload = req.body as BannerPayload;
 
@@ -64,14 +66,15 @@ bannerRouter.post('/',
   await logAuditEvent('banner:create', user.id, banner.id, null, null, req.sessionID);
 
   return res.status(201).send(success(banner));
-}));
+}
 
 bannerRouter.put('/:id',
   requireAdminUser,
   validateParams(zIdParam()),
   validateBody(zBannerPayload),
-  h(async (req: RequestWithUser, res: ApiResponse<Banner>) =>
-{
+  h(handleUpdateBanner)
+);
+export async function handleUpdateBanner(req: RequestWithUser, res: ApiResponse<Banner>) {
   const user = req.user;
   const payload = req.body as BannerPayload;
 
@@ -92,13 +95,14 @@ bannerRouter.put('/:id',
   await logAuditEvent('banner:update', user.id, banner.id, null, null, req.sessionID);
 
   return res.status(200).send(success(banner));
-}));
+}
 
 bannerRouter.delete('/:id',
   requireAdminUser,
   validateParams(zIdParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<Banner>) =>
-{
+  h(handleDeleteBanner)
+);
+export async function handleDeleteBanner(req: RequestWithUser, res: ApiResponse<Banner>) {
   const user = req.user;
 
   const banner = await dbClient.banner.delete({
@@ -110,6 +114,6 @@ bannerRouter.delete('/:id',
   await logAuditEvent('banner:delete', user.id, banner.id, null, null, req.sessionID);
 
   return res.status(200).send(success(banner));
-}));
+}
 
 export default bannerRouter;
