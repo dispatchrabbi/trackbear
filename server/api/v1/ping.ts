@@ -5,7 +5,8 @@ const pingRouter = Router();
 export default pingRouter;
 
 pingRouter.get('/',
-  h(async (req: Request, res: ApiResponse<'pong'>) =>
-{
-    return res.status(200).send(success('pong'));
-}));
+  h(handleGetPing)
+);
+export async function handleGetPing(req: Request, res: ApiResponse<'pong'>) {
+  return res.status(200).send(success('pong'));
+}

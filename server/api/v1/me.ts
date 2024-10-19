@@ -4,17 +4,13 @@ import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
 import winston from "winston";
 import { addDays } from "date-fns";
 
-import { promisify } from 'node:util';
-import { tmpdir } from 'node:os';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
-import multer from 'multer';
-import { getNormalizedEnv } from '../../lib/env.ts';
 
 import dbClient from "../../lib/db.ts";
 import type { User, UserSettings } from "@prisma/client";
-import { USERNAME_REGEX, USER_STATE, ALLOWED_AVATAR_FORMATS, MAX_AVATAR_SIZE_IN_BYTES } from "../../lib/models/user.ts";
+import { USERNAME_REGEX, USER_STATE, ALLOWED_AVATAR_FORMATS } from "../../lib/models/user.ts";
 import { TALLY_MEASURE } from "../../lib/models/tally.ts";
 import CONFIG from '../../config.ts';
 
@@ -22,6 +18,7 @@ import { z } from 'zod';
 import { NonEmptyArray } from '../../lib/validators.ts';
 import { validateBody } from "../../lib/middleware/validate.ts";
 import { logAuditEvent, buildChangeRecord } from '../../lib/audit-events.ts';
+import { pick } from '../../lib/obj.ts';
 import { requireUser, RequestWithUser } from "../../lib/auth.ts";
 
 import deepEql from 'deep-eql';
@@ -30,6 +27,7 @@ import { pushTask } from "../../lib/queue.ts";
 import sendEmailverificationEmail from "../../lib/tasks/send-emailverification-email.ts";
 import sendUsernameChangedEmail from "../../lib/tasks/send-username-changed-email.ts";
 import sendAccountDeletedEmail from "../../lib/tasks/send-account-deleted-email.ts";
+import { getAvatarUploadFn, getAvatarUploadPath } from "server/lib/upload.ts";
 
 const meRouter = Router();
 
@@ -40,8 +38,9 @@ export type FullUser = User & {
 // GET /me - get your own user information
 meRouter.get('/',
   requireUser,
-  h(async (req: RequestWithUser, res: ApiResponse<FullUser>) =>
-{
+  h(handleGetMe)
+);
+export async function handleGetMe(req: RequestWithUser, res: ApiResponse<FullUser>) {
   const me = await dbClient.user.findUnique({
     where: {
       id: req.user.id,
@@ -58,7 +57,7 @@ meRouter.get('/',
   }
 
   return res.status(200).send(success(me));
-}));
+}
 
 export type MeEditPayload = Partial<{
   username: string;
@@ -80,8 +79,9 @@ const zMeEditPayload = z.object({
 meRouter.patch('/',
   requireUser,
   validateBody(zMeEditPayload),
-  h(async (req: RequestWithUser, res: ApiResponse<FullUser>) =>
-{
+  h(handlePatchMe)
+);
+export async function handlePatchMe(req: RequestWithUser, res: ApiResponse<FullUser>) {
   const current = {
     username: req.user.username,
     displayName: req.user.displayName,
@@ -138,7 +138,7 @@ meRouter.patch('/',
     return res.status(404).send(failure('NOT_FOUND', `No active user found to update`));
   }
 
-  const changeRecord = buildChangeRecord<MeEditPayload>(current, updated);
+  const changeRecord = buildChangeRecord<MeEditPayload>(current, pick(updated, ['username', 'email', 'displayName']));
   await logAuditEvent('user:update', req.user.id, req.user.id, null, changeRecord, req.sessionID);
 
   if(didEmailChange) {
@@ -155,12 +155,13 @@ meRouter.patch('/',
 
   req.user = updated;
   return res.status(200).send(success(updated));
-}));
+}
 
 meRouter.delete('/',
   requireUser,
-  h(async (req: RequestWithUser, res: ApiResponse<User>) =>
-{
+  h(handleDeleteMe)
+);
+export async function handleDeleteMe(req: RequestWithUser, res: ApiResponse<User>) {
   const deleted = await dbClient.user.update({
     data: {
       state: USER_STATE.DELETED,
@@ -176,96 +177,76 @@ meRouter.delete('/',
   pushTask(sendAccountDeletedEmail.makeTask(req.user.id));
 
   return res.status(200).send(success(deleted));
-}));
-
-const storage = multer.diskStorage({
-  destination: async (req, file, cb) => {
-    // store the file in a temporary directory for now
-    const tbTmpDir = await fs.mkdtemp(path.join(tmpdir(), 'trackbear-'));
-    cb(null, tbTmpDir);
-  }
-})
-// const storage = multer.memoryStorage();
-const upload = promisify(multer({
-  storage,
-  limits: {
-    fileSize: MAX_AVATAR_SIZE_IN_BYTES,
-  },
-}).single('avatar'));
+}
 
 // POST /me/avatar - upload a new avatar
 meRouter.post('/avatar',
   requireUser,
-  h(async (req: RequestWithUser, res: ApiResponse<User>) =>
-{
-  // make sure the file uploads correctly and is under limits and such
-  try{
-    await upload(req, res);
-  } catch(err) {
-    return res.status(400).send(failure(err.code, err.message));
+  h(handleUploadAvatar)
+);
+export async function handleUploadAvatar(req: RequestWithUser, res: ApiResponse<User>) {
+// make sure the file uploads correctly and is under limits and such
+console.log(getAvatarUploadFn);
+const uploadAvatar = getAvatarUploadFn();
+try{
+  await uploadAvatar(req, res);
+} catch(err) {
+  return res.status(400).send(failure(err.code, err.message));
+}
+
+// is this a file format we accept for avatars?
+const isAllowedFormat = Object.keys(ALLOWED_AVATAR_FORMATS).includes(req.file.mimetype);
+if(!isAllowedFormat) {
+  return res.status(400).send(failure('INVALID_FILE_TYPE', `Avatars of type ${req.file.mimetype} are not allowed. Allowed types are: ${Object.keys(ALLOWED_AVATAR_FORMATS).join(', ')}`));
+}
+
+const avatarUploadPath = await getAvatarUploadPath();
+
+// move the uploaded file over to the avatar directory
+const oldPath = req.file.path;
+const filename = randomUUID() + '.' + ALLOWED_AVATAR_FORMATS[req.file.mimetype];
+const newPath = path.join(avatarUploadPath, filename);
+try {
+  await fs.copyFile(oldPath, newPath);
+} catch(err) {
+  winston.error(`Could not move uploaded avatar file (from: ${oldPath}, to: ${newPath}): ${err.message}`, err);
+  return res.status(500).send(failure('SERVER_ERROR', 'Could not save avatar file'));
+}
+
+try {
+  await fs.rm(oldPath);
+} catch(err) {
+  winston.error(`Could not delete temporary avatar file (from: ${oldPath}): ${err.message}`, err);
+  // but we don't actually want to stop the upload on this error, so keep going...
+}
+
+// save this as the user's avatar
+const updated = await dbClient.user.update({
+  where: { id: req.user.id },
+  data: {
+    avatar: filename,
   }
+});
 
-  // is this a file format we accept for avatars?
-  const isAllowedFormat = Object.keys(ALLOWED_AVATAR_FORMATS).includes(req.file.mimetype);
-  if(!isAllowedFormat) {
-    return res.status(400).send(failure('INVALID_FILE_TYPE', `Avatars of type ${req.file.mimetype} are not allowed. Allowed types are: ${Object.keys(ALLOWED_AVATAR_FORMATS).join(', ')}`));
-  }
+// this should only happen if a user is logged in, gets suspended, and tries to update their info
+if(!updated) {
+  return res.status(404).send(failure('NOT_FOUND', `No active user found to update`));
+}
 
-  const env = await getNormalizedEnv();
-  const avatarPath = path.join(env.UPLOADS_PATH, 'avatars');
-  // create the avatar directory if it doesn't exist
-  try {
-    await fs.mkdir(avatarPath);
-  } catch(err) {
-    if(err.code !== 'EEXIST') {
-      throw err;
-    } // else EEXIST means it exists and we're good
-  }
+winston.debug(`AVATAR: User ${req.user.id} (${req.user.username}) successfully uploaded a new avatar (${filename})`);
+const changeRecord = buildChangeRecord({ avatar: req.user.avatar }, { avatar: updated.avatar });
+await logAuditEvent('user:avatar', req.user.id, req.user.id, null, changeRecord, req.sessionID);
 
-  // move the uploaded file over to the avatar directory
-  const oldPath = req.file.path;
-  const filename = randomUUID() + '.' + ALLOWED_AVATAR_FORMATS[req.file.mimetype];
-  const newPath = path.join(avatarPath, filename);
-  try {
-    await fs.copyFile(oldPath, newPath);
-  } catch(err) {
-    winston.error(`Could not move uploaded avatar file (from: ${oldPath}, to: ${newPath}): ${err.message}`, err);
-    return res.status(500).send(failure('SERVER_ERROR', 'Could not save avatar file'));
-  }
-
-  try {
-    await fs.rm(oldPath);
-  } catch(err) {
-    winston.error(`Could not delete uploaded avatar file (from: ${oldPath}): ${err.message}`, err);
-    // but we don't actually want to stop the upload on this error, so keep going...
-  }
-
-  // save this as the user's avatar
-  const updated = await dbClient.user.update({
-    where: { id: req.user.id },
-    data: {
-      avatar: filename,
-    }
-  });
-
-  // this should only happen if a user is logged in, gets suspended, and tries to update their info
-  if(!updated) {
-    return res.status(404).send(failure('NOT_FOUND', `No active user found to update`));
-  }
-
-  winston.debug(`AVATAR: User ${req.user.id} (${req.user.username}) successfully uploaded a new avatar (${filename})`);
-  const changeRecord = buildChangeRecord({ avatar: req.user.avatar }, { avatar: updated.avatar });
-  await logAuditEvent('user:avatar', req.user.id, req.user.id, null, changeRecord, req.sessionID);
-
-  req.user = updated;
-  return res.status(200).send(success(req.user));
-}));
+req.user = updated;
+return res.status(200).send(success(req.user));
+}
 
 // DELETE /me/avatar - delete your avatar
 meRouter.delete('/avatar',
   requireUser,
-  h(async (req: RequestWithUser, res: ApiResponse<User>) =>
-{
+  h(handleDeleteAvatar)
+);
+export async function handleDeleteAvatar(req: RequestWithUser, res: ApiResponse<User>) {
   const updated = await dbClient.user.update({
     where: { id: req.user.id },
     data: {
@@ -284,7 +265,7 @@ meRouter.delete('/avatar',
 
   req.user = updated;
   return res.status(200).send(success(req.user));
-}));
+}
 
 export type SettingsEditPayload = Partial<{
   lifetimeStartingBalance: Record<string, number>;
@@ -299,8 +280,9 @@ const zSettingsEditPayload = z.object({
 meRouter.patch('/settings',
   requireUser,
   validateBody(zSettingsEditPayload),
-  h(async (req: RequestWithUser, res: ApiResponse<UserSettings>) =>
-{
+  h(handleUpdateSettings)
+);
+export async function handleUpdateSettings(req: RequestWithUser, res: ApiResponse<UserSettings>) {
   const current = await dbClient.userSettings.findUnique({ where: {
     userId: req.user.id,
     user: { state: USER_STATE.ACTIVE },
@@ -337,6 +319,6 @@ meRouter.patch('/settings',
   await logAuditEvent('settings:update', req.user.id, updated.id, null, changeRecord, req.sessionID);
 
   return res.status(200).send(success(updated));
-}));
+}
 
 export default meRouter;
