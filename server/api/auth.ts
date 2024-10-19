@@ -4,6 +4,7 @@ import winston from "winston";
 import { addMinutes, addDays } from 'date-fns';
 
 import { validateBody, validateParams } from "../lib/middleware/validate.ts";
+import { zUuidParam } from "server/lib/validators.ts";
 import { ApiResponse, success, failure } from '../lib/api-response.ts';
 
 import dbClient from '../lib/db.ts';
@@ -22,52 +23,24 @@ import sendPwchangeEmail from "../lib/tasks/send-pwchange-email.ts";
 
 import { logAuditEvent } from '../lib/audit-events.ts';
 
-export type CreateUserPayload = {
+const authRouter = Router();
+export default authRouter;
+
+export type LoginPayload = {
   username: string;
-  email: string;
   password: string;
 };
-const createUserPayloadSchema = z.object({
-  username: z.string().trim().toLowerCase()
-    .min(3, { message: 'Username must be at least 3 characters long.'})
-    .max(24, { message: 'Username may not be longer than 24 characters.'})
-    .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters long.' }),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
+const zLoginPayload = z.object({
+  username: z.string().toLowerCase(),
+  password: z.string()
 });
-
-export type ChangePasswordPayload = {
-  currentPassword: string;
-  newPassword: string;
-};
-const changePasswordPayloadSchema = z.object({
-  currentPassword: z.string().min(1, { message: 'Current password is required.' }),
-  newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
-});
-
-export type RequestPasswordResetPayload = {
-  username: string;
-};
-const requestPasswordResetPayloadSchema = z.object({
-  username: z.string().trim().toLowerCase()
-    .min(3, { message: 'Username must be at least 3 characters long.'})
-    .max(24, { message: 'Username may not be longer than 24 characters.'})
-    .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
-});
-
-export type PasswordResetPayload = {
-  newPassword: string;
-};
-const passwordResetPayloadSchema = z.object({
-  newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
-});
-
-const authRouter = Router();
 
 authRouter.post('/login',
-  validateBody(z.object({ username: z.string().toLowerCase(), password: z.string() })),
-  async (req: Request, res: ApiResponse<User>, next) =>
-{
+  validateBody(zLoginPayload),
+  handleLogin
+);
+// TODO: rewrite this and others for h()
+export async function handleLogin(req: Request, res: ApiResponse<User>, next) {
   const { username, password } = req.body;
 
   let user;
@@ -107,12 +80,16 @@ authRouter.post('/login',
   await logAuditEvent('user:login', user.id, null, null, null, req.sessionID);
 
   return res.status(200).send(success(user));
-});
+}
 
 // logout ought to requireUser but since all it does is remove that user,
 // it's okay to just... let anyone log out at any time, even if they're not logged in.
 type EmptyObject = Record<string, never>;
-authRouter.post('/logout', (req, res: ApiResponse<EmptyObject>) => {
+authRouter.post(
+  '/logout',
+  handleLogout
+);
+export async function handleLogout(req, res: ApiResponse<EmptyObject>) {
   logOut(req, err => {
     if(err) {
       winston.error('An error occurred during logout', err);
@@ -120,12 +97,27 @@ authRouter.post('/logout', (req, res: ApiResponse<EmptyObject>) => {
     }
     res.status(200).send(success({}));
   });
+}
+
+export type CreateUserPayload = {
+  username: string;
+  email: string;
+  password: string;
+};
+const zCreateUserPayload = z.object({
+  username: z.string().trim().toLowerCase()
+    .min(3, { message: 'Username must be at least 3 characters long.'})
+    .max(24, { message: 'Username may not be longer than 24 characters.'})
+    .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters long.' }),
+  email: z.string().email({ message: 'Please enter a valid email address.' }),
 });
 
 authRouter.post('/signup',
-  validateBody(createUserPayloadSchema),
-  async (req, res: ApiResponse<User>, next) =>
-{
+  validateBody(zCreateUserPayload),
+  handleSignup
+);
+export async function handleSignup(req, res: ApiResponse<User>, next) {
   const { username: submittedUsername, password, email } = req.body as CreateUserPayload;
 
   // validate the username: must start with a letter and only contain letters, numbers, and underscore/dash
@@ -192,12 +184,13 @@ authRouter.post('/signup',
 
     res.status(201).send(success(user));
   } catch(err) { return next(err); }
-});
+}
 
 authRouter.post('/verify-email',
   requireUser,
-  async (req: WithUser<Request>, res: ApiResponse<EmptyObject>, next) =>
-{
+  handleSendEmailVerification
+);
+export async function handleSendEmailVerification(req: WithUser<Request>, res: ApiResponse<EmptyObject>, next) {
   const user: User = req.user;
 
   if(user.isEmailVerified) {
@@ -220,14 +213,13 @@ authRouter.post('/verify-email',
   } catch(err) { return next(err); }
 
   return res.status(201).send(success({}));
-});
+}
 
 authRouter.post('/verify-email/:uuid',
-  validateParams(z.object({
-    uuid: z.string().uuid(),
-  })),
-  async (req: Request, res: ApiResponse<EmptyObject>, next) =>
-{
+  validateParams(zUuidParam()),
+  handleVerifyEmail
+);
+export async function handleVerifyEmail(req: Request, res: ApiResponse<EmptyObject>, next) {
   const uuid = req.params.uuid;
   let verification: PendingEmailVerification & { user: User } | null;
   try {
@@ -267,13 +259,23 @@ authRouter.post('/verify-email/:uuid',
   winston.debug(`VERIFY: ${user.id} just verified their email`);
 
   return res.status(200).send(success({}));
+}
+
+export type ChangePasswordPayload = {
+  currentPassword: string;
+  newPassword: string;
+};
+const zChangePasswordPayload = z.object({
+  currentPassword: z.string().min(1, { message: 'Current password is required.' }),
+  newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
 });
 
 authRouter.post('/password',
   requireUser,
-  validateBody(changePasswordPayloadSchema),
-  async (req: WithUser<Request>, res: ApiResponse<EmptyObject>, next) =>
-{
+  validateBody(zChangePasswordPayload),
+  handleChangePassword
+);
+export async function handleChangePassword(req: WithUser<Request>, res: ApiResponse<EmptyObject>, next) {
   const { currentPassword, newPassword } = req.body;
 
   // first make sure that we know that the userauth exists
@@ -321,12 +323,23 @@ authRouter.post('/password',
   pushTask(sendPwchangeEmail.makeTask(req.user.id));
 
   return res.status(200).send(success({}));
+}
+
+export type RequestPasswordResetPayload = {
+  username: string;
+};
+const zRequestPasswordResetPayload = z.object({
+  username: z.string().trim().toLowerCase()
+    .min(3, { message: 'Username must be at least 3 characters long.'})
+    .max(24, { message: 'Username may not be longer than 24 characters.'})
+    .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
 });
 
 authRouter.post('/reset-password',
-  validateBody(requestPasswordResetPayloadSchema),
-  async (req: Request, res: ApiResponse<EmptyObject>, next) =>
-{
+  validateBody(zRequestPasswordResetPayload),
+  handleSendPasswordResetEmail
+);
+export async function handleSendPasswordResetEmail(req: Request, res: ApiResponse<EmptyObject>, next) {
   const username = req.body.username;
 
   let user: User | null;
@@ -361,15 +374,21 @@ authRouter.post('/reset-password',
   pushTask(sendPwresetEmail.makeTask(resetLink.uuid));
 
   return res.status(201).send(success({}));
+}
+
+export type PasswordResetPayload = {
+  newPassword: string;
+};
+const zPasswordResetPayload = z.object({
+  newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
 });
 
 authRouter.post('/reset-password/:uuid',
-  validateParams(z.object({
-    uuid: z.string().uuid(),
-  })),
-  validateBody(passwordResetPayloadSchema),
-  async (req: Request, res: ApiResponse<EmptyObject>, next) =>
-{
+  validateParams(zUuidParam()),
+  validateBody(zPasswordResetPayload),
+  handlePasswordReset
+);
+export async function handlePasswordReset(req: Request, res: ApiResponse<EmptyObject>, next) {
   const uuid = req.params.uuid;
   let passwordResetLink: PasswordResetLink | null;
   try {
@@ -428,6 +447,4 @@ authRouter.post('/reset-password/:uuid',
   pushTask(sendPwchangeEmail.makeTask(user.id));
 
   return res.status(200).send(success({}));
-});
-
-export default authRouter;
+}
