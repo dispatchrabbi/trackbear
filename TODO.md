@@ -20,6 +20,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] Lock-out multiple wrong sign-in attempts
 - [ ] Add optional TOTP setup
 - [ ] Double-check [Node.js Security Checklist](https://blog.risingstack.com/node-js-security-checklist/)
+- [ ] Fix winston warnings by creating a non-default logger to use and exporting that (which can be silenced during unit tests)
 
 ## Charts
 - [ ] Fix the leaderboard tooltips
@@ -56,6 +57,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] Group participants into teams and compare team totals (h/t Asha)
 - [ ] Make sure each participant has their own, consistent color and marker across the graph and the progress bar (h/t Arden)
 - [ ] Allow viewing leaderboards without logging in
+- [ ] Cyclical leaderboards (renews or does new standings every week/month/yearh) (h/t Becca Stargazer)
 
 ## Observability
 - [ ] Create ping check

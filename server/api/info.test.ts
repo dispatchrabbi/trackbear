@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
-import { mockObject } from "../lib/__mocks__/util";
+import { mockObject } from "../../testing-support/util.ts";
 import { getHandlerMocks } from '../lib/__mocks__/express.ts';
 import * as env from '../lib/env';
 

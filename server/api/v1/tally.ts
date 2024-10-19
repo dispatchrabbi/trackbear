@@ -7,12 +7,12 @@ import { z } from 'zod';
 import { zIdParam, zDateStr, NonEmptyArray } from 'server/lib/validators.ts';
 import { validateBody, validateParams, validateQuery } from "server/lib/middleware/validate.ts";
 
-import dbClient from "server/lib/db.ts";
+import dbClient from "../../lib/db.ts";
 import type { Tally, Work, Tag } from "@prisma/client";
 import { TALLY_STATE, TALLY_MEASURE } from 'server/lib/models/tally.ts';
 import { TAG_STATE, TAG_DEFAULT_COLOR } from 'server/lib/models/tag.ts';
 
-import { logAuditEvent } from 'server/lib/audit-events.ts';
+import { logAuditEvent } from '../../lib/audit-events.ts';
 import { WORK_STATE } from "server/lib/models/work.ts";
 
 const tallyRouter = Router();
@@ -30,8 +30,9 @@ export type TallyQuery = z.infer<typeof zTallyQuery>;
 tallyRouter.get('/',
   requireUser,
   validateQuery(zTallyQuery),
-  h(async (req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags[]>) =>
-{
+  h(handleGetTallies)
+);
+export async function handleGetTallies(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags[]>) {
   const query = req.query as TallyQuery;
 
   const tallies = await dbClient.tally.findMany({
@@ -48,13 +49,14 @@ tallyRouter.get('/',
   });
 
   return res.status(200).send(success(tallies));
-}));
+}
 
 tallyRouter.get('/:id',
   requireUser,
   validateParams(zIdParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) =>
-{
+  h(handleGetTally)
+);
+export async function handleGetTally(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) {
   const tally = await dbClient.tally.findUnique({
     where: {
       id: +req.params.id,
@@ -72,7 +74,7 @@ tallyRouter.get('/:id',
   } else {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any tally with id ${req.params.id}.`));
   }
-}));
+}
 
 export type TallyPayload = {
   date: string;
@@ -96,8 +98,9 @@ const zTallyPayload = z.object({
 tallyRouter.post('/',
   requireUser,
   validateBody(zTallyPayload),
-  h(async (req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) =>
-{
+  h(handleCreateTally)
+);
+export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) {
   const user = req.user;
 
   let count = req.body.count;
@@ -170,7 +173,7 @@ tallyRouter.post('/',
   await logAuditEvent('tally:create', user.id, tally.id, null, null, req.sessionID);
 
   return res.status(201).send(success(tally));
-}));
+}
 
 const zBatchTallyPayload = z.object({
   date: zDateStr(),
@@ -185,8 +188,9 @@ const zBatchTallyPayload = z.object({
 tallyRouter.post('/batch',
   requireUser,
   validateBody(z.array(zBatchTallyPayload)),
-  h(async (req: RequestWithUser, res: ApiResponse<Tally[]>) =>
-{
+  h(handleCreateTallies)
+);
+export async function handleCreateTallies(req: RequestWithUser, res: ApiResponse<Tally[]>) {
   const user = req.user;
 
   const createdTallies = await dbClient.tally.createManyAndReturn({
@@ -206,14 +210,15 @@ tallyRouter.post('/batch',
   await Promise.all(createdTallies.map(createdTally => logAuditEvent('tally:create', user.id, createdTally.id, null, null, req.sessionID)));
 
   return res.status(201).send(success(createdTallies));
-}));
+}
 
 tallyRouter.put('/:id',
   requireUser,
   validateParams(zIdParam()),
   validateBody(zTallyPayload),
-  h(async (req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) =>
-{
+  h(handleUpdateTally)
+);
+export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) {
   const user = req.user;
 
   const existingTally = await dbClient.tally.findUnique({
@@ -307,15 +312,17 @@ tallyRouter.put('/:id',
   await logAuditEvent('tally:update', user.id, tally.id, null, null, req.sessionID);
 
   return res.status(200).send(success(tally));
-}));
+}
 
 tallyRouter.delete('/:id',
   requireUser,
   validateParams(zIdParam()),
-  h(async (req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) =>
-{
+  h(handleDeleteTally)
+);
+export async function handleDeleteTally(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) {
   const user = req.user;
 
+  // we actually delete deleted tallies
   const tally = await dbClient.tally.delete({
     where: {
       id: +req.params.id,
@@ -331,4 +338,4 @@ tallyRouter.delete('/:id',
   await logAuditEvent('tally:delete', user.id, tally.id, null, null, req.sessionID);
 
   return res.status(200).send(success(tally));
-}));
+}

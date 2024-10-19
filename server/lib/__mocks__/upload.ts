@@ -1,7 +1,7 @@
 import * as upload from '../upload.ts';
 import { vi, beforeEach } from 'vitest';
 import { mockReset } from 'vitest-mock-extended';
-import { mockObject } from './util.ts';
+import { mockObject } from '../../../testing-support/util.ts';
 
 const getAvatarUploadFnMock = vi.spyOn(upload, 'getAvatarUploadFn');
 const getAvatarUploadPathMock = vi.spyOn(upload, 'getAvatarUploadPath');

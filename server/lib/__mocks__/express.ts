@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import type { User } from "@prisma/client";
 
 import { vi, Mock } from 'vitest';
-import { mockObject } from './util';
+import { mockObject } from '../../../testing-support/util';
 import { RequestWithUser } from '../auth';
 
 type MockRequest = {
