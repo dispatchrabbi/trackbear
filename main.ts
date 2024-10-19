@@ -5,6 +5,8 @@ import { getNormalizedEnv } from 'server/lib/env.ts';
 import winston from 'winston';
 import { initLoggers, closeLoggers } from 'server/lib/logger.ts';
 
+import { createAvatarUploadDirectory } from 'server/lib/upload';
+
 import { initQueue } from 'server/lib/queue.ts';
 import initWorkers from 'server/lib/workers.ts';
 
@@ -34,6 +36,9 @@ async function main() {
   await initLoggers();
   // use `winston` just as the general logger
   const accessLogger = winston.loggers.get('access');
+
+  // make sure all the directories we need exist
+  await createAvatarUploadDirectory();
 
   // initialize the queue
   await initQueue();

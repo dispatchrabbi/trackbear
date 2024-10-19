@@ -18,12 +18,13 @@ const zUsernameParam = z.object({
 });
 profileRouter.get('/:username',
   validateParams(zUsernameParam),
-  h(async (req: RequestWithUser, res: ApiResponse<PublicProfile>) =>
-{
+  h(handleGetProfile)
+);
+export async function handleGetProfile(req: RequestWithUser, res: ApiResponse<PublicProfile>) {
   const profile = await getUserProfile(req.params.username);
   if(!profile) {
     return res.status(404).send(failure('NOT_FOUND', `Could not find a profile with username ${req.params.username}`));
   }
 
   return res.status(200).send(success(profile));
-}));
+}
