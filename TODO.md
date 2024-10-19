@@ -53,6 +53,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Allow board owners to rotate the join code
   - [ ] Group participants into teams and compare team totals (h/t Asha)
   - [ ] Make sure each participant has their own, consistent color and marker across the graph and the progress bar (h/t Arden)
+  - [ ] Cyclical leaderboards (renews or does new standings every week/month/yearh) (h/t Becca Stargazer)
 - [ ] Dashboard
   - [ ] Dashboard could be more fun/welcoming
   - [ ] Show starred leaderboards on dashboard
@@ -102,12 +103,14 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] Make the API more consistent w/r/t PUT, POST, and PATCH
 - [ ] Do a better job with shared data/functions
 - [ ] De-duplicate form components
+  - [ ] Unify create and edit forms
 - [ ] Expand the model layer in the backend to be used for all db access
 - [ ] Create better seed data for testing
 - [ ] Use 'omit' in prisma schema to protect password and other secret fields
-- [ ] Unify create and edit forms
 - [X] Update date-fns to 4.0
   - [ ] Simplify createDateRanges when this happens
+- [ ] Replace the /env API with Vite's env var substitution
+- [ ] Fix winston warnings by creating a non-default logger to use and exporting that (which can be silenced during unit tests)
 
 ## Observability
 - [ ] Create ping check

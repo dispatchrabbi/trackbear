@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, afterEach } from 'vitest';
-import { mockObject } from '../../lib/__mocks__/util.ts';
+import { mockObject } from '../../../testing-support/util.ts';
 import { getHandlerMocksWithUser } from '../../lib/__mocks__/express.ts';
 
 import * as profileModel from "../../lib/models/profile.ts";

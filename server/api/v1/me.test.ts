@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, afterEach, beforeEach } from 'vitest';
-import { mockObject, NIL_UUID, TEST_SESSION_ID } from '../../lib/__mocks__/util.ts';
+import { mockObject, NIL_UUID, TEST_SESSION_ID } from '../../../testing-support/util.ts';
 import { getHandlerMocksWithUser, MOCK_USER_ID } from '../../lib/__mocks__/express.ts';
 import type { PendingEmailVerification, User } from '@prisma/client';
 

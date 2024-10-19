@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, afterEach } from 'vitest';
-import { mockObject, mockObjects, TEST_SESSION_ID } from '../../lib/__mocks__/util.ts';
+import { mockObject, mockObjects, TEST_SESSION_ID } from '../../../testing-support/util.ts';
 import { getHandlerMocksWithUser, MOCK_USER_ID } from '../../lib/__mocks__/express.ts';
 import type { Work, Tally } from "@prisma/client";
 

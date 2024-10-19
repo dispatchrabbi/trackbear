@@ -34,9 +34,9 @@ export type DaysQuery = z.infer<typeof zDaysQuery>;
 statsRouter.get('/days',
   requireUser,
   validateQuery(zDaysQuery), // TODO: allow specifying start and end dates
-  h(async (req: RequestWithUser, res: ApiResponse<DayCount[]>) =>
-{
+  h(handleGetDays));
+export async function handleGetDays(req: RequestWithUser, res: ApiResponse<DayCount[]>) {
   const dayCounts = await getDayCounts(req.user.id);
 
   return res.status(200).send(success(dayCounts));
-}));
+}

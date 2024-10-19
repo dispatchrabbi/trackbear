@@ -32,7 +32,7 @@
   "include": [
     "src/**/*.ts", "src/**/*.js", "src/**/*.vue",
     "server/**/*.ts",
-    "main.ts",
+    "main.ts", "testing-support/util.ts",
   ],
   "references": [
     { "path": "./tsconfig.vite.json" }
