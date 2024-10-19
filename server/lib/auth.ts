@@ -35,6 +35,10 @@ function logOut(req: WithSessionAuth<Request>, cb: (err: unknown) => void): void
   req.session.destroy(cb);
 }
 
+async function requirePublic(req: Request, res: Response, next: NextFunction) {
+  next();
+}
+
 async function requireUser(req: WithSessionAuth<Request>, res: Response, next: NextFunction) {
   if(!req.session.auth) {
     return res.status(403).send(failure('NOT_LOGGED_IN', 'Must be logged in'));
@@ -69,9 +73,15 @@ async function requireAdminUser(req: WithSessionAuth<Request>, res: Response, ne
   next();
 }
 
+async function requirePrivate(req: Request, res: Response) {
+  return res.status(403).send(failure('FORBIDDEN', 'Forbidden'));
+}
+
 export {
   logIn,
   logOut,
+  requirePublic,
   requireUser,
   requireAdminUser,
+  requirePrivate,
 };

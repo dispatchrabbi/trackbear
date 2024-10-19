@@ -32,7 +32,7 @@ export function failure(code: string, message: string): ApiFailurePayload {
   };
 }
 
-type ApiHandler<T> = (req: Request, res: Response) => Promise<ApiResponse<T>>;
+export type ApiHandler<T> = (req: Request, res: Response) => Promise<ApiResponse<T>>;
 export function h<T>(handler: ApiHandler<T>) {
   return async function handle(req: Request, res: Response, next: NextFunction) {
     try {
