@@ -1,3 +1,4 @@
+import { promisify } from 'node:util';
 import type { User } from "@prisma/client";
 import type { Request, Response, NextFunction } from "express";
 
@@ -31,9 +32,10 @@ function logIn(req: WithSessionAuth<Request>, user: User): void {
   req.session.auth = serializeUser(user);
 }
 
-function logOut(req: WithSessionAuth<Request>, cb: (err: unknown) => void): void {
+function _logOut(req: WithSessionAuth<Request>, cb: (err: unknown) => void): void {
   req.session.destroy(cb);
 }
+const logOut = promisify(_logOut);
 
 async function requirePublic(req: Request, res: Response, next: NextFunction) {
   next();

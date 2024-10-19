@@ -5,10 +5,10 @@ import { addMinutes, addDays } from 'date-fns';
 
 import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 import { zUuidParam } from "server/lib/validators.ts";
-import { ApiResponse, success, failure } from '../lib/api-response.ts';
+import { ApiResponse, success, failure, h } from '../lib/api-response.ts';
 
 import dbClient from '../lib/db.ts';
-import { PasswordResetLink, PendingEmailVerification, User, UserAuth } from "@prisma/client";
+import type { User } from "@prisma/client";
 import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut, requireUser, WithUser } from "../lib/auth.ts";
 import { PASSWORD_RESET_LINK_STATE } from "../lib/models/password-reset-link.ts";
@@ -37,20 +37,16 @@ const zLoginPayload = z.object({
 
 authRouter.post('/login',
   validateBody(zLoginPayload),
-  handleLogin
+  h(handleLogin)
 );
-// TODO: rewrite this and others for h()
-export async function handleLogin(req: Request, res: ApiResponse<User>, next) {
+export async function handleLogin(req: Request, res: ApiResponse<User>) {
   const { username, password } = req.body;
 
-  let user;
   let userAuth;
-  try {
-    user = await dbClient.user.findUnique({ where: { username } });
-    if(user) {
-      userAuth = await dbClient.userAuth.findUnique({ where: { userId: user.id } });
-    }
-  } catch(err) { return next(err); }
+  const user = await dbClient.user.findUnique({ where: { username } });
+  if(user) {
+    userAuth = await dbClient.userAuth.findUnique({ where: { userId: user.id } });
+  }
 
   if(!user) {
     winston.info(`LOGIN: ${username} attempted to log in but does not exist`);
@@ -65,10 +61,7 @@ export async function handleLogin(req: Request, res: ApiResponse<User>, next) {
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
 
-  let verified: boolean;
-  try {
-    verified = await verifyHash(userAuth.password, password, userAuth.salt);
-  } catch(err) { return next(err); }
+  const verified = await verifyHash(userAuth.password, password, userAuth.salt);
 
   if(!verified) {
     winston.debug(`LOGIN: ${username} had the incorrect password`);
@@ -87,16 +80,17 @@ export async function handleLogin(req: Request, res: ApiResponse<User>, next) {
 type EmptyObject = Record<string, never>;
 authRouter.post(
   '/logout',
-  handleLogout
+  h(handleLogout)
 );
 export async function handleLogout(req, res: ApiResponse<EmptyObject>) {
-  logOut(req, err => {
-    if(err) {
-      winston.error('An error occurred during logout', err);
+  try {
+    await logOut(req);
+  } catch(err) {
+    winston.error('An error occurred during logout', err);
       // but let them log out anyway
-    }
-    res.status(200).send(success({}));
-  });
+  }
+  
+  return res.status(200).send(success({}));
 }
 
 export type CreateUserPayload = {
@@ -115,9 +109,9 @@ const zCreateUserPayload = z.object({
 
 authRouter.post('/signup',
   validateBody(zCreateUserPayload),
-  handleSignup
+  h(handleSignup)
 );
-export async function handleSignup(req, res: ApiResponse<User>, next) {
+export async function handleSignup(req, res: ApiResponse<User>) {
   const { username: submittedUsername, password, email } = req.body as CreateUserPayload;
 
   // validate the username: must start with a letter and only contain letters, numbers, and underscore/dash
@@ -134,10 +128,7 @@ export async function handleSignup(req, res: ApiResponse<User>, next) {
     return res.status(409).send(failure('USERNAME_EXISTS', 'A user with that username already exists.'));
   }
 
-  let hashedPassword: string, salt: string;
-  try {
-    ({ hashedPassword, salt } = await hash(password));
-  } catch(err) { return next(err); }
+  const { hashedPassword, salt } = await hash(password);
 
   const userData = {
     state: USER_STATE.ACTIVE,
@@ -161,36 +152,34 @@ export async function handleSignup(req, res: ApiResponse<User>, next) {
     expiresAt: addDays(new Date(), CONFIG.EMAIL_VERIFICATION_TIMEOUT_IN_DAYS),
   };
 
-  try {
-    const user = await dbClient.user.create({
-      data: {
-        ...userData,
-        userAuth: { create: userAuthData },
-        userSettings: { create: userSettingsData },
-        pendingEmailVerifications: { create: pendingEmailVerificationData },
+  const user = await dbClient.user.create({
+    data: {
+      ...userData,
+      userAuth: { create: userAuthData },
+      userSettings: { create: userSettingsData },
+      pendingEmailVerifications: { create: pendingEmailVerificationData },
+    },
+    include: {
+      pendingEmailVerifications: {
+        orderBy: { createdAt: 'desc' },
+        take: 1,
       },
-      include: {
-        pendingEmailVerifications: {
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-        },
-      },
-    });
-    await logAuditEvent('user:signup', user.id, user.id, null, null, req.sessionID);
-    winston.debug(`SIGNUP: ${user.id} just signed up`);
+    },
+  });
+  await logAuditEvent('user:signup', user.id, user.id, null, null, req.sessionID);
+  winston.debug(`SIGNUP: ${user.id} just signed up`);
 
-    pushTask(sendSignupEmailTask.makeTask(user.id));
-    pushTask(sendEmailverificationEmail.makeTask(user.pendingEmailVerifications[0].uuid));
+  pushTask(sendSignupEmailTask.makeTask(user.id));
+  pushTask(sendEmailverificationEmail.makeTask(user.pendingEmailVerifications[0].uuid));
 
-    res.status(201).send(success(user));
-  } catch(err) { return next(err); }
+  return res.status(201).send(success(user));
 }
 
 authRouter.post('/verify-email',
   requireUser,
-  handleSendEmailVerification
+  h(handleSendEmailVerification)
 );
-export async function handleSendEmailVerification(req: WithUser<Request>, res: ApiResponse<EmptyObject>, next) {
+export async function handleSendEmailVerification(req: WithUser<Request>, res: ApiResponse<EmptyObject>) {
   const user: User = req.user;
 
   if(user.isEmailVerified) {
@@ -204,35 +193,30 @@ export async function handleSendEmailVerification(req: WithUser<Request>, res: A
     expiresAt: addDays(new Date(), CONFIG.EMAIL_VERIFICATION_TIMEOUT_IN_DAYS),
   };
 
-  try {
-    const pendingEmailVerification = await dbClient.pendingEmailVerification.create({
-      data: pendingEmailVerificationData,
-    });
-    pushTask(sendEmailverificationEmail.makeTask(pendingEmailVerification.uuid));
-    await logAuditEvent('user:verifyemailreq', user.id, user.id, null, { verificationUuid: pendingEmailVerification.uuid }, req.sessionID);
-  } catch(err) { return next(err); }
+  const pendingEmailVerification = await dbClient.pendingEmailVerification.create({
+    data: pendingEmailVerificationData,
+  });
+  pushTask(sendEmailverificationEmail.makeTask(pendingEmailVerification.uuid));
+  await logAuditEvent('user:verifyemailreq', user.id, user.id, null, { verificationUuid: pendingEmailVerification.uuid }, req.sessionID);
 
   return res.status(201).send(success({}));
 }
 
 authRouter.post('/verify-email/:uuid',
   validateParams(zUuidParam()),
-  handleVerifyEmail
+  h(handleVerifyEmail)
 );
-export async function handleVerifyEmail(req: Request, res: ApiResponse<EmptyObject>, next) {
+export async function handleVerifyEmail(req: Request, res: ApiResponse<EmptyObject>) {
   const uuid = req.params.uuid;
-  let verification: PendingEmailVerification & { user: User } | null;
-  try {
-    verification = await dbClient.pendingEmailVerification.findUnique({
-      where: {
-        uuid,
-        expiresAt: { gt: new Date() },
-      },
-      include: {
-        user: true,
-      },
-    });
-  } catch(err) { return next(err); }
+  const verification = await dbClient.pendingEmailVerification.findUnique({
+    where: {
+      uuid,
+      expiresAt: { gt: new Date() },
+    },
+    include: {
+      user: true,
+    },
+  });
 
   const user = verification?.user;
 
@@ -245,15 +229,13 @@ export async function handleVerifyEmail(req: Request, res: ApiResponse<EmptyObje
   }
 
   // now we mark the email verified and delete all pending verifications for this email
-  try {
-    await dbClient.user.update({
-      data: {
-        isEmailVerified: true,
-        pendingEmailVerifications: { deleteMany: {} },
-      },
-      where: { id: user.id },
-    });
-  } catch(err) { return next(err); }
+  await dbClient.user.update({
+    data: {
+      isEmailVerified: true,
+      pendingEmailVerifications: { deleteMany: {} },
+    },
+    where: { id: user.id },
+  });
 
   await logAuditEvent('user:verifyemail', user.id, user.id, null, { verificationUuid: verification.uuid, email: verification.newEmail }, req.sessionID);
   winston.debug(`VERIFY: ${user.id} just verified their email`);
@@ -273,16 +255,13 @@ const zChangePasswordPayload = z.object({
 authRouter.post('/password',
   requireUser,
   validateBody(zChangePasswordPayload),
-  handleChangePassword
+  h(handleChangePassword)
 );
-export async function handleChangePassword(req: WithUser<Request>, res: ApiResponse<EmptyObject>, next) {
+export async function handleChangePassword(req: WithUser<Request>, res: ApiResponse<EmptyObject>) {
   const { currentPassword, newPassword } = req.body;
 
   // first make sure that we know that the userauth exists
-  let userAuth: UserAuth | null;
-  try {
-    userAuth = await dbClient.userAuth.findUnique({ where: { userId: req.user.id } });
-  } catch(err) { return next(err); }
+  let userAuth = await dbClient.userAuth.findUnique({ where: { userId: req.user.id } });
 
   if(!userAuth) {
     winston.error(`LOGIN: ${req.user.id} attempted to change their password but they were not found!`);
@@ -290,10 +269,7 @@ export async function handleChangePassword(req: WithUser<Request>, res: ApiRespo
   }
 
   // then validate the password
-  let verified: boolean;
-  try {
-    verified = await verifyHash(userAuth.password, currentPassword, userAuth.salt);
-  } catch(err) { return next(err); }
+  const verified = await verifyHash(userAuth.password, currentPassword, userAuth.salt);
 
   if(!verified) {
     winston.debug(`LOGIN: ${req.user.id} had the incorrect password`);
@@ -301,22 +277,16 @@ export async function handleChangePassword(req: WithUser<Request>, res: ApiRespo
   }
 
   // now, change out the password
-  let hashedPassword: string, salt: string;
-  try {
-    ({ hashedPassword, salt } = await hash(newPassword));
-  } catch(err) { return next(err); }
-
-  try {
-    userAuth = await dbClient.userAuth.update({
-      data: {
-        password: hashedPassword,
-        salt: salt,
-      },
-      where: {
-        userId: req.user.id,
-      },
-    });
-  } catch(err) { return next(err); }
+  const { hashedPassword, salt } = await hash(newPassword);
+  userAuth = await dbClient.userAuth.update({
+    data: {
+      password: hashedPassword,
+      salt: salt,
+    },
+    where: {
+      userId: req.user.id,
+    },
+  });
 
   winston.debug(`PASSWORD: ${req.user.id} has changed their password`);
   await logAuditEvent('user:pwchange', req.user.id, req.user.id, null, null, req.sessionID);
@@ -337,20 +307,17 @@ const zRequestPasswordResetPayload = z.object({
 
 authRouter.post('/reset-password',
   validateBody(zRequestPasswordResetPayload),
-  handleSendPasswordResetEmail
+  h(handleSendPasswordResetEmail)
 );
-export async function handleSendPasswordResetEmail(req: Request, res: ApiResponse<EmptyObject>, next) {
+export async function handleSendPasswordResetEmail(req: Request, res: ApiResponse<EmptyObject>) {
   const username = req.body.username;
 
-  let user: User | null;
-  try {
-    user = await dbClient.user.findUnique({
-      where: {
-        username,
-        state: USER_STATE.ACTIVE,
-      },
-    });
-  } catch(err) { return next(err); }
+  const user = await dbClient.user.findUnique({
+    where: {
+      username,
+      state: USER_STATE.ACTIVE,
+    },
+  });
 
   if(!user) {
     // Even though there was no user found, we send back success so that we don't leak which usernames do and don't exist
@@ -358,16 +325,13 @@ export async function handleSendPasswordResetEmail(req: Request, res: ApiRespons
     return res.status(200).send(success({}));
   }
 
-  let resetLink: PasswordResetLink;
-  try {
-    resetLink = await dbClient.passwordResetLink.create({
-      data: {
-        userId: user.id,
-        state: PASSWORD_RESET_LINK_STATE.ACTIVE,
-        expiresAt: addMinutes(new Date(), CONFIG.PASSWORD_RESET_LINK_TIMEOUT_IN_MINUTES),
-      }
-    });
-  } catch(err) { return next(err); }
+  const resetLink = await dbClient.passwordResetLink.create({
+    data: {
+      userId: user.id,
+      state: PASSWORD_RESET_LINK_STATE.ACTIVE,
+      expiresAt: addMinutes(new Date(), CONFIG.PASSWORD_RESET_LINK_TIMEOUT_IN_MINUTES),
+    }
+  });
 
   winston.debug(`PASSWORD: ${user.id} requested a reset link and got ${resetLink.uuid}`);
   await logAuditEvent('user:pwresetreq', user.id, user.id, null, { resetLinkUuid: resetLink.uuid }, req.sessionID);
@@ -386,20 +350,17 @@ const zPasswordResetPayload = z.object({
 authRouter.post('/reset-password/:uuid',
   validateParams(zUuidParam()),
   validateBody(zPasswordResetPayload),
-  handlePasswordReset
+  h(handlePasswordReset)
 );
-export async function handlePasswordReset(req: Request, res: ApiResponse<EmptyObject>, next) {
+export async function handlePasswordReset(req: Request, res: ApiResponse<EmptyObject>) {
   const uuid = req.params.uuid;
-  let passwordResetLink: PasswordResetLink | null;
-  try {
-    passwordResetLink = await dbClient.passwordResetLink.findUnique({
-      where: {
-        uuid,
-        expiresAt: { gt: new Date() },
-        state: PASSWORD_RESET_LINK_STATE.ACTIVE,
-      },
-    });
-  } catch(err) { return next(err); }
+  const passwordResetLink = await dbClient.passwordResetLink.findUnique({
+    where: {
+      uuid,
+      expiresAt: { gt: new Date() },
+      state: PASSWORD_RESET_LINK_STATE.ACTIVE,
+    },
+  });
 
   if(!passwordResetLink) {
     return res.status(404).send(failure('NOT_FOUND', 'This reset link is either expired or bogus. You should request a new one.'));
@@ -407,33 +368,27 @@ export async function handlePasswordReset(req: Request, res: ApiResponse<EmptyOb
 
   // now, change out the password
   const newPassword = req.body.newPassword;
-  let hashedPassword: string, salt: string;
-  try {
-    ({ hashedPassword, salt } = await hash(newPassword));
-  } catch(err) { return next(err); }
+  const { hashedPassword, salt } = await hash(newPassword);
 
-  let userAuth: UserAuth & { user: User } | null;
-  try {
-    userAuth = await dbClient.userAuth.update({
-      data: {
-        password: hashedPassword,
-        salt: salt,
-      },
-      where: {
-        userId: passwordResetLink.userId,
-      },
-      include: { user: true },
-    });
+  const userAuth = await dbClient.userAuth.update({
+    data: {
+      password: hashedPassword,
+      salt: salt,
+    },
+    where: {
+      userId: passwordResetLink.userId,
+    },
+    include: { user: true },
+  });
 
-    await dbClient.passwordResetLink.update({
-      data: {
-        state: PASSWORD_RESET_LINK_STATE.USED,
-      },
-      where: {
-        uuid: passwordResetLink.uuid,
-      },
-    });
-  } catch(err) { return next(err); }
+  await dbClient.passwordResetLink.update({
+    data: {
+      state: PASSWORD_RESET_LINK_STATE.USED,
+    },
+    where: {
+      uuid: passwordResetLink.uuid,
+    },
+  });
 
   // this should basically never happen...
   if(!userAuth) {
