@@ -20,6 +20,16 @@ export const ACCESS_LEVEL = {
 } as const;
 type AccessLevel = typeof ACCESS_LEVEL[keyof typeof ACCESS_LEVEL];
 
+export type RouteConfig = {
+  method: HttpMethod;
+  path: string;
+  handler: ApiHandler<any>
+  accessLevel?: AccessLevel;
+  paramsSchema?: ZodSchema;
+  querySchema?: ZodSchema;
+  bodySchema?: ZodSchema;
+};
+
 type EndpointOptions = {
   method: HttpMethod;
   accessLevel?: AccessLevel;
@@ -43,6 +53,7 @@ const ACCESS_LEVEL_TO_MIDDLEWARE = {
   [ACCESS_LEVEL.NONE]: requirePrivate,
 };
 
+// TODO: this probably needs to take a RouteConfig instead
 export function mountEndpoint<ResponseShape>(app: Express.Application, path: string, handler: ApiHandler<ResponseShape>, options: EndpointOptions): void {
   if(!path.startsWith('/')) {
     throw new Error(`Attempted to mount endpoint on invalid path '${path}'`);

@@ -1,18 +1,25 @@
 import { Router, Request } from "express";
-import { ApiResponse, success } from '../lib/api-response.ts';
+import { ApiResponse, success, h } from '../lib/api-response.ts';
 
 import type { Banner as PrismaBanner } from "@prisma/client";
 import { getActiveBanners } from "server/lib/models/banner.ts";
+import { HTTP_METHODS, RouteConfig } from "server/lib/api.ts";
 
 export type Banner = Omit<PrismaBanner, 'id' | 'createdAt' | 'updatedAt'>;
 
-const bannerRouter = Router();
-export default bannerRouter;
+export const bannersRouter = Router();
 
-bannerRouter.get('/', handleGetBanners);
-export async function handleGetBanners(req: Request, res: ApiResponse<Banner[]>, next) {
-  try {
-    const banners = await getActiveBanners();
-    return res.status(200).send(success(banners));
-  } catch(err) { return next(err); }
+bannersRouter.get('/', h(handleGetBanners));
+export async function handleGetBanners(req: Request, res: ApiResponse<Banner[]>) {
+  const banners = await getActiveBanners();
+  return res.status(200).send(success(banners));
 };
+
+const routes: RouteConfig[] = [
+  {
+    path: '/',
+    method: HTTP_METHODS.GET,
+    handler: handleGetBanners,
+  },
+];
+export default routes;

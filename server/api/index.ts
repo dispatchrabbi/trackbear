@@ -5,9 +5,9 @@ import { ApiResponse, failure } from "server/lib/api-response.ts";
 import winston from "winston";
 
 import authRouter from './auth.ts';
-import bannersRouter from './banners.ts';
-import infoRouter from './info.ts';
-import pingRouter from './ping.ts';
+import { bannersRouter } from './banners.ts';
+import { infoRouter } from './info.ts';
+import { pingRouter } from './ping.ts';
 
 import adminRouter from './admin/index.ts';
 import v1Router from "./v1/index.ts";

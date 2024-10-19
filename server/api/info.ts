@@ -2,32 +2,30 @@ import path from 'path';
 const ROOT_DIR = path.resolve(import.meta.url.replace('file://', ''), '../../..');
 
 import { Router, Request } from "express";
-import { ApiResponse, success } from '../lib/api-response.ts';
+import { ApiHandler, ApiResponse, success, h } from '../lib/api-response.ts';
 
 import { readFile } from 'fs/promises';
 import { parseChangelog, Changelog } from '../lib/parse-changelog.ts';
 
 import { getNormalizedEnv } from 'server/lib/env.ts';
+import { HTTP_METHODS, RouteConfig } from 'server/lib/api.ts';
 
-const infoRouter = Router();
-export default infoRouter;
+export const infoRouter = Router();
 
 export type { Changelog };
-export const handleGetChangelog = (function() {
+export const handleGetChangelog: ApiHandler<Changelog> = (function() {
   let memoizedParsedChangelog = null;
   
-  return async function(req: Request, res: ApiResponse<Changelog>, next) {
+  return async function(req: Request, res: ApiResponse<Changelog>) {
     if(memoizedParsedChangelog === null) {
-      try {
-        const changelogContents = await readFile(path.join(ROOT_DIR, 'CHANGELOG.md'), { encoding: 'utf-8' });
-        memoizedParsedChangelog = parseChangelog(changelogContents);
-      } catch(err) { return next(err); }
+      const changelogContents = await readFile(path.join(ROOT_DIR, 'CHANGELOG.md'), { encoding: 'utf-8' });
+      memoizedParsedChangelog = parseChangelog(changelogContents);
     }
 
     return res.status(200).send(success(memoizedParsedChangelog));
   };
 })();
-infoRouter.get('/changelog', handleGetChangelog);
+infoRouter.get('/changelog', h(handleGetChangelog));
 
 infoRouter.get('/env', handleGetEnv);
 export type EnvInfo = {
@@ -46,5 +44,18 @@ export async function handleGetEnv(req: Request, res: ApiResponse<EnvInfo>) {
   };
 
   return res.status(200).send(success(envInfo));
-};
-infoRouter.get('/env', handleGetEnv);
+}
+
+const routes: RouteConfig[] = [
+  {
+    path: '/changelog',
+    method: HTTP_METHODS.GET,
+    handler: handleGetChangelog,
+  },
+  {
+    path: '/env',
+    method: HTTP_METHODS.GET,
+    handler: handleGetEnv,
+  }
+]
+export default routes;
