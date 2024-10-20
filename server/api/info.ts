@@ -8,7 +8,7 @@ import { readFile } from 'fs/promises';
 import { parseChangelog, Changelog } from '../lib/parse-changelog.ts';
 
 import { getNormalizedEnv } from 'server/lib/env.ts';
-import { HTTP_METHODS, RouteConfig } from 'server/lib/api.ts';
+import { HTTP_METHODS, ACCESS_LEVEL, RouteConfig } from 'server/lib/api.ts';
 
 export const infoRouter = Router();
 
@@ -51,11 +51,13 @@ const routes: RouteConfig[] = [
     path: '/changelog',
     method: HTTP_METHODS.GET,
     handler: handleGetChangelog,
+    accessLevel: ACCESS_LEVEL.PUBLIC,
   },
   {
     path: '/env',
     method: HTTP_METHODS.GET,
     handler: handleGetEnv,
+    accessLevel: ACCESS_LEVEL.PUBLIC,
   }
 ]
 export default routes;

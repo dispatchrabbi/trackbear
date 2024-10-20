@@ -22,9 +22,9 @@ import sendPwresetEmail from "../lib/tasks/send-pwreset-email.ts";
 import sendPwchangeEmail from "../lib/tasks/send-pwchange-email.ts";
 
 import { logAuditEvent } from '../lib/audit-events.ts';
+import { HTTP_METHODS, ACCESS_LEVEL, RouteConfig } from "server/lib/api.ts";
 
-const authRouter = Router();
-export default authRouter;
+export const authRouter = Router();
 
 export type LoginPayload = {
   username: string;
@@ -78,8 +78,7 @@ export async function handleLogin(req: Request, res: ApiResponse<User>) {
 // logout ought to requireUser but since all it does is remove that user,
 // it's okay to just... let anyone log out at any time, even if they're not logged in.
 type EmptyObject = Record<string, never>;
-authRouter.post(
-  '/logout',
+authRouter.post('/logout',
   h(handleLogout)
 );
 export async function handleLogout(req, res: ApiResponse<EmptyObject>) {
@@ -403,3 +402,65 @@ export async function handlePasswordReset(req: Request, res: ApiResponse<EmptyOb
 
   return res.status(200).send(success({}));
 }
+
+const routes: RouteConfig[] = [
+  {
+    path: '/login',
+    method: HTTP_METHODS.POST,
+    handler: handleLogin,
+    accessLevel: ACCESS_LEVEL.PUBLIC,
+    bodySchema: zLoginPayload,
+  },
+  {
+    path: '/logout',
+    method: HTTP_METHODS.POST,
+    handler: handleLogout,
+    // logout ought to require a user but since all it does is remove that user,
+    // it's probably okay to let anyone call it even if they're not logged in
+    accessLevel: ACCESS_LEVEL.PUBLIC,
+  },
+  {
+    path: '/signup',
+    method: HTTP_METHODS.POST,
+    handler: handleSignup,
+    accessLevel: ACCESS_LEVEL.PUBLIC,
+    bodySchema: zCreateUserPayload,
+  },
+  {
+    path: '/verify-email',
+    method: HTTP_METHODS.POST,
+    handler: handleSendEmailVerification,
+    accessLevel: ACCESS_LEVEL.USER,
+    bodySchema: zCreateUserPayload,
+  },
+  {
+    path: '/verify-email/:uuid',
+    method: HTTP_METHODS.POST,
+    handler: handleVerifyEmail,
+    accessLevel: ACCESS_LEVEL.PUBLIC,
+    paramsSchema: zUuidParam(),
+  },
+  {
+    path: '/password',
+    method: HTTP_METHODS.POST,
+    handler: handleChangePassword,
+    accessLevel: ACCESS_LEVEL.USER,
+    bodySchema: zChangePasswordPayload,
+  },
+  {
+    path: '/reset-password',
+    method: HTTP_METHODS.POST,
+    handler: handleSendPasswordResetEmail,
+    accessLevel: ACCESS_LEVEL.PUBLIC,
+    bodySchema: zRequestPasswordResetPayload,
+  },
+  {
+    path: '/reset-password/:uuid',
+    method: HTTP_METHODS.POST,
+    handler: handlePasswordReset,
+    accessLevel: ACCESS_LEVEL.PUBLIC,
+    paramsSchema: zUuidParam(),
+    bodySchema: zPasswordResetPayload,
+  },
+];
+export default routes;

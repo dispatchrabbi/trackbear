@@ -1,6 +1,6 @@
 import { Response, Router } from "express";
 import { ApiResponsePayload, success } from '../lib/api-response.ts';
-import { HTTP_METHODS, RouteConfig } from "server/lib/api.ts";
+import { ACCESS_LEVEL, HTTP_METHODS, RouteConfig } from "server/lib/api.ts";
 
 export const pingRouter = Router();
 
@@ -20,11 +20,13 @@ const routes: RouteConfig[] = [
     path: '/',
     method: HTTP_METHODS.GET,
     handler: handleGetPing,
+    accessLevel: ACCESS_LEVEL.PUBLIC,
   },
   {
     path: '/error',
     method: HTTP_METHODS.GET,
     handler: handleGetError,
+    accessLevel: ACCESS_LEVEL.PUBLIC,
   },
 ];
 export default routes;

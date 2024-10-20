@@ -1,3 +1,4 @@
+import type { Application, Router } from "express";
 import type { ZodSchema } from "zod";
 import { h, type ApiHandler } from "./api-response";
 import { requirePublic, requireUser, requireAdminUser, requirePrivate } from "./auth";
@@ -24,15 +25,7 @@ export type RouteConfig = {
   method: HttpMethod;
   path: string;
   handler: ApiHandler<any>
-  accessLevel?: AccessLevel;
-  paramsSchema?: ZodSchema;
-  querySchema?: ZodSchema;
-  bodySchema?: ZodSchema;
-};
-
-type EndpointOptions = {
-  method: HttpMethod;
-  accessLevel?: AccessLevel;
+  accessLevel: AccessLevel;
   paramsSchema?: ZodSchema;
   querySchema?: ZodSchema;
   bodySchema?: ZodSchema;
@@ -53,33 +46,65 @@ const ACCESS_LEVEL_TO_MIDDLEWARE = {
   [ACCESS_LEVEL.NONE]: requirePrivate,
 };
 
-// TODO: this probably needs to take a RouteConfig instead
-export function mountEndpoint<ResponseShape>(app: Express.Application, path: string, handler: ApiHandler<ResponseShape>, options: EndpointOptions): void {
-  if(!path.startsWith('/')) {
-    throw new Error(`Attempted to mount endpoint on invalid path '${path}'`);
+export function prefixRoutes(prefix: string, routes: RouteConfig[]) {
+  const prefixedRoutes = routes.map(route => ({
+    ...route,
+    path: route.path === '/' ? prefix : prefix + route.path,
+  }));
+
+  return prefixedRoutes;
+}
+
+export function mountEndpoints(app: Application | Router, routes: RouteConfig[]) {
+  for(const route of routes) {
+    mountEndpoint(app, route);
+  }
+}
+
+export function mountEndpoint(app: Application | Router, route: RouteConfig) {
+  if(!validatePath(route.path)) {
+    throw new Error(`Attempted to mount endpoint on invalid path '${route.path}'`);
   }
 
-  if(!(options.method in HTTP_METHODS_TO_EXPRESS_METHOD)) {
-    throw new Error(`Unknown HTTP method '${options.method}' specified for path '${path}'`);
+  if(!(route.method in HTTP_METHODS_TO_EXPRESS_METHOD)) {
+    throw new Error(`Unknown HTTP method '${route.method}' specified for path '${route.path}'`);
   }
-  const method = HTTP_METHODS_TO_EXPRESS_METHOD[options.method];
+  const method = HTTP_METHODS_TO_EXPRESS_METHOD[route.method];
 
-  if((!options.accessLevel) || !(options.accessLevel in ACCESS_LEVEL_TO_MIDDLEWARE)) {
+  if(!(route.accessLevel in ACCESS_LEVEL_TO_MIDDLEWARE)) {
     // default to no access
-    options.accessLevel = ACCESS_LEVEL.NONE;
+    route.accessLevel = ACCESS_LEVEL.NONE;
   }
-  const accessMiddleware = ACCESS_LEVEL_TO_MIDDLEWARE[options.accessLevel];
+  const accessMiddleware = ACCESS_LEVEL_TO_MIDDLEWARE[route.accessLevel];
 
   const validators = [
-    options.paramsSchema && validateParams(options.paramsSchema),
-    options.querySchema && validateQuery(options.querySchema),
-    options.bodySchema && validateBody(options.bodySchema)
-  ].filter(v => !!v);
+    route.paramsSchema && validateParams(route.paramsSchema),
+    route.querySchema && validateQuery(route.querySchema),
+    route.bodySchema && validateBody(route.bodySchema)
+  ].filter(fn => !!fn);
 
   app[method](
-    path,
+    route.path,
     accessMiddleware,
     ...validators,
-    h(handler),
+    h(route.handler),
   );
+}
+
+const PATH_PART_REGEX = /^[:]?[a-z0-9-_]+$/i;
+function validatePath(path: string) {
+  // path must start with /
+  if(!path.startsWith('/')) {
+    return false;
+  }
+
+  // path must not end with /
+  if(path.endsWith('/')) {
+    return false;
+  }
+
+  const parts = path.substring(1).split('/');
+  const allPartsValid = parts.every(part => PATH_PART_REGEX.test(part));
+
+  return allPartsValid;
 }

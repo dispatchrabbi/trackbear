@@ -1,13 +1,14 @@
 import { Router, Request, ErrorRequestHandler } from "express";
 import type { WithSessionAuth } from 'server/lib/auth.ts';
 import { ApiResponse, failure } from "server/lib/api-response.ts";
+import { mountEndpoints, prefixRoutes } from "server/lib/api.ts";
 
 import winston from "winston";
 
-import authRouter from './auth.ts';
-import { bannersRouter } from './banners.ts';
-import { infoRouter } from './info.ts';
-import { pingRouter } from './ping.ts';
+import authRoutes from './auth.ts';
+import bannersRoutes from './banners.ts';
+import infoRoutes from './info.ts';
+import pingRoutes from './ping.ts';
 
 import adminRouter from './admin/index.ts';
 import v1Router from "./v1/index.ts";
@@ -19,10 +20,10 @@ apiRouter.use((req, res, next) => {
   next();
 });
 
-apiRouter.use('/auth', authRouter);
-apiRouter.use('/banners', bannersRouter);
-apiRouter.use('/info', infoRouter);
-apiRouter.use('/ping', pingRouter);
+mountEndpoints(apiRouter, prefixRoutes('/auth', authRoutes));
+mountEndpoints(apiRouter, prefixRoutes('/banners', bannersRoutes));
+mountEndpoints(apiRouter, prefixRoutes('/info', infoRoutes));
+mountEndpoints(apiRouter, prefixRoutes('/ping', pingRoutes));
 
 apiRouter.use('/admin', adminRouter);
 apiRouter.use('/v1', v1Router);
