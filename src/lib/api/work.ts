@@ -1,11 +1,9 @@
 import { callApiV1 } from "./api.ts";
 
-import type { Work as PrismaWork, Tally, Tag } from "@prisma/client";
-export type Work = Omit<PrismaWork, 'startingBalance'> & {
-  startingBalance: Record<string, number | null>;
-};
+import type { Tally, Tag } from "@prisma/client";
+import type { Work, SummarizedWork } from "server/api/v1/work.ts";
 
-export type WorkWithTotals = Work & { totals: Record<string, number> };
+export type { Work, SummarizedWork };
 
 export type TallyWithTags = Tally & { tags: Tag[] };
 export type WorkWithTallies = Work & { tallies: TallyWithTags[] };
@@ -16,7 +14,7 @@ export type { WorkCreatePayload, WorkUpdatePayload };
 const ENDPOINT = '/api/v1/work';
 
 export async function getWorks() {
-  return callApiV1<WorkWithTotals[]>(ENDPOINT, 'GET');
+  return callApiV1<SummarizedWork[]>(ENDPOINT, 'GET');
 }
 
 export async function getWork(id: number) {

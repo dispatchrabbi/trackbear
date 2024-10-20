@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, defineProps, defineEmits } from 'vue';
-import { WorkWithTotals, starWork } from 'src/lib/api/work.ts';
+import { SummarizedWork, starWork } from 'src/lib/api/work.ts';
 import { WORK_PHASE } from 'server/lib/models/work.ts';
 
 const props = defineProps<{
-  work: WorkWithTotals;
+  work: SummarizedWork;
 }>();
 
 const emit = defineEmits(['work:star']);
@@ -15,8 +15,10 @@ import { PrimeIcons } from 'primevue/api';
 import { formatCount } from 'src/lib/tally.ts';
 
 const WORK_PHASE_TAG_COLORS = {
+  [WORK_PHASE.PLANNING]: 'help',
+  [WORK_PHASE.OUTLINING]: 'info',
   [WORK_PHASE.DRAFTING]: 'primary',
-  [WORK_PHASE.REVISING]: 'info',
+  [WORK_PHASE.REVISING]: 'accent',
   [WORK_PHASE.ON_HOLD]: 'warning',
   [WORK_PHASE.FINISHED]: 'success',
   [WORK_PHASE.ABANDONED]: 'danger',

@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { useLocalStorage } from '@vueuse/core';
 import { RouterLink } from 'vue-router';
 
 import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
 
-import { getWorks, WorkWithTotals } from 'src/lib/api/work.ts';
-import { cmpWork } from 'src/lib/work.ts';
+import { getWorks, type SummarizedWork } from 'src/lib/api/work.ts';
+import { cmpWorkByTitle, cmpWorkByPhase, cmpWorkByLastUpdate } from 'src/lib/work.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
+import Dropdown from 'primevue/dropdown';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
@@ -25,7 +27,7 @@ const breadcrumbs: MenuItem[] = [
 
 const isCreateFormVisible = ref<boolean>(false);
 
-const works = ref<WorkWithTotals[]>([]);
+const works = ref<SummarizedWork[]>([]);
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string | null>(null);
 
@@ -47,9 +49,16 @@ const reloadWorks = async function() {
   loadWorks();
 }
 
+const WORK_SORTS = {
+  'phase': { key: 'phase', label: 'Phase', cmpFn: cmpWorkByPhase },
+  'title': { key: 'title', label: 'Title', cmpFn: cmpWorkByTitle },
+  'last-updated': { key: 'last-updated', label: 'Last Updated', cmpFn: cmpWorkByLastUpdate },
+};
+
 const worksFilter = ref<string>('');
+const worksSort = useLocalStorage('works-sort', 'phase');
 const filteredWorks = computed(() => {
-  const sortedWorks = works.value.toSorted(cmpWork);
+  const sortedWorks = works.value.toSorted(WORK_SORTS[worksSort.value].cmpFn);
   const searchTerm = worksFilter.value.toLowerCase();
   return sortedWorks.filter(work => work.title.toLowerCase().includes(searchTerm) || work.description.toLowerCase().includes(searchTerm));
 });
@@ -64,8 +73,18 @@ onMounted(async () => {
   <ApplicationLayout
     :breadcrumbs="breadcrumbs"
   >
-    <div class="actions flex justify-end gap-2 mb-4">
-      <div class="">
+    <div class="actions flex flex-wrap justify-end gap-2 mb-4">
+      <div class="flex justify-end gap-2">
+        <div>
+        <Dropdown
+          aria-label="Sort order"
+          v-model="worksSort"
+          :options="Object.values(WORK_SORTS)"
+          option-label="label"
+          option-value="key"
+        />
+      </div>
+      <div>
         <IconField>
           <InputIcon>
             <span :class="PrimeIcons.SEARCH" />
@@ -77,7 +96,9 @@ onMounted(async () => {
           />
         </IconField>
       </div>
-      <div>
+      </div>
+      <div class="flex justify-end gap-2">
+        <div>
         <Button
           label="New"
           :icon="PrimeIcons.PLUS"
@@ -94,6 +115,7 @@ onMounted(async () => {
             :icon="PrimeIcons.FILE_IMPORT"
           />
         </RouterLink>
+      </div>
       </div>
     </div>
     <div

@@ -35,7 +35,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Consider the ability to add more than one type of progress at once (h/t Alice)
 - [ ] Projects
   - [ ] The project page could be nicer/more informative
-  - [ ] Better project organization (sorting? filter by status? folders?) (h/t Ren the Ghost)
+  - [X] Better project organization (added sort order) (h/t Ren the Ghost)
   - [ ] Implement project tags (maybe)
   - [ ] Make it clearer on mobile that the edit and delete buttons for tallies are offscreen (or more likely, rejigger the table so it's way more mobile-friendly) (h/t lailah)
 - [ ] Goals

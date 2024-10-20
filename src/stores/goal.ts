@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 
+import { cmpGoal } from 'src/lib/goal.ts';
 import { getGoals, Goal } from 'src/lib/api/goal.ts';
 
 export const useGoalStore = defineStore('goal', {
@@ -19,7 +20,7 @@ export const useGoalStore = defineStore('goal', {
     async populate(force = false) {
       if(force || this.goals === null) {
         const goals = await getGoals();
-        this.goals = goals;
+        this.goals = goals.sort(cmpGoal);
       }
     }
   },

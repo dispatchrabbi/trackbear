@@ -12,6 +12,13 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: You can now sort your projects page by phase, title, or last updated. For "last updated", projects that have never been updated will be last. (h/t Ren the Ghost)
+- NEW: Projects can now be in "planning" and "outlining" phases. Colors for each phase have also been tweaked slightly. (h/t Inkyrius)
+- CHANGED: Starred projects, goals, and leaderboards in the sidebar are now sorted by title.
+- CHANGED: Goals and leaderboards are now sorted by title on their list pages, with starred items first.
+- CHANGED: Projects in dropdowns (such as in the Enter Progress dialog and when creating a new goal) are now sorted by title, with starred items first. (h/t Robot)
+- CHANGED: Tags in dropdowns (such as in the Enter Progress dialog and when creating a new goal) are now sorted by name.
+
 ## 0.16.0
 
 - NEW: Leaderboards now allow participants to set their own goals! If you are running a community event where everyone sets their own goals, but you want a community leaderboard, this feature is for you. You can find the setting when you make a new leaderboard or configure an existing one. If you change an existing leaderboard to individual goal mode, existing participants will have to set their own goals before they show up on the leaderboard, which they can do under "Edit Your Participation".

@@ -25,7 +25,7 @@ const formModel = reactive({
   description: '',
   displayOnProfile: false,
 
-  phase: WORK_PHASE.DRAFTING,
+  phase: WORK_PHASE.PLANNING,
   startingBalance: {},
 });
 

@@ -8,7 +8,7 @@ import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
 import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
-import type { Work, Tally, Tag } from "@prisma/client";
+import type { Work as PrismaWork, Tally, Tag } from "@prisma/client";
 import { WORK_PHASE, WORK_STATE } from '../../lib/models/work.ts';
 import { TALLY_MEASURE, TALLY_STATE } from "../../lib/models/tally.ts";
 import { TAG_STATE } from "../../lib/models/tag.ts";
@@ -17,7 +17,14 @@ import { logAuditEvent } from '../../lib/audit-events.ts';
 
 import { omit } from '../../lib/obj.ts';
 
-export type WorkWithTotals = Work & { totals: Record<string, number> };
+export type Work = Omit<PrismaWork, 'startingBalance'> & {
+  startingBalance: Record<string, number | null>;
+};
+
+export type SummarizedWork = Work & {
+  totals: Record<string, number>;
+  lastUpdated: string | null;
+};
 
 export type TallyWithTags = Tally & { tags: Tag[] };
 export type WorkWithTallies = Work & { tallies: TallyWithTags[] };
@@ -27,7 +34,7 @@ export default workRouter;
 
 workRouter.get('/',
   requireUser,
-  h(async (req: RequestWithUser, res: ApiResponse<WorkWithTotals[]>) =>
+  h(async (req: RequestWithUser, res: ApiResponse<SummarizedWork[]>) =>
 {
   const worksWithTallies = await dbClient.work.findMany({
     where: {
@@ -45,10 +52,15 @@ workRouter.get('/',
       return totals;
     }, { ...(workWithTallies.startingBalance as Record<string, number>) });
 
+    const lastUpdated = workWithTallies.tallies.length > 0 ? workWithTallies.tallies.reduce((last, tally) => {
+      return tally.date > last ? tally.date : last
+    }, '0000-00-00') : null;
+
     return {
       ...omit(workWithTallies, [ 'tallies' ]),
       totals,
-    };
+      lastUpdated
+    } as SummarizedWork;
   });
 
   return res.status(200).send(success(works));
@@ -71,7 +83,7 @@ workRouter.get('/:id',
         include: { tags: { where: { state: TAG_STATE.ACTIVE } } },
       },
     }
-  });
+  }) as WorkWithTallies;
 
   if(work) {
     return res.status(200).send(success(work));
@@ -110,7 +122,7 @@ workRouter.post('/',
       state: WORK_STATE.ACTIVE,
       ownerId: user.id,
     }
-  });
+  }) as Work;
 
   await logAuditEvent('work:create', user.id, work.id, null, null, req.sessionID);
 
@@ -138,7 +150,7 @@ workRouter.put('/:id',
     data: {
       ...payload,
     },
-  });
+  }) as Work;
 
   await logAuditEvent('work:update', user.id, work.id, null, null, req.sessionID);
 
@@ -172,7 +184,7 @@ workRouter.delete('/:id',
       ownerId: req.user.id,
       state: WORK_STATE.ACTIVE,
     },
-  });
+  }) as Work;
 
   await logAuditEvent('work:delete', user.id, work.id, null, null, req.sessionID);
 

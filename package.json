@@ -59,6 +59,7 @@
     "mitt": "^3.0.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "natural-orderby": "^4.0.0",
     "pg": "^8.11.3",
     "pinia": "^2.1.7",
     "postcss": "^8.4.32",

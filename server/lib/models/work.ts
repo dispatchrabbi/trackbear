@@ -4,6 +4,8 @@ export const WORK_STATE = {
 };
 
 export const WORK_PHASE = {
+  PLANNING: 'planning',
+  OUTLINING: 'outlining',
   DRAFTING: 'drafting',
   REVISING: 'revising',
   ON_HOLD: 'on hold',

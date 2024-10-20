@@ -4,7 +4,7 @@ import { computed, defineEmits, onMounted } from 'vue';
 const emit = defineEmits(['menu-navigation'])
 
 import { useWorkStore } from 'src/stores/work.ts';
-import { cmpWork } from 'src/lib/work.ts';
+import { cmpWorkByTitle } from 'src/lib/work.ts';
 const workStore = useWorkStore();
 
 import { useGoalStore } from 'src/stores/goal.ts';
@@ -38,7 +38,7 @@ const items = computed(() => {
       to: { name: 'works' },
       header: true,
     },
-    ...(workStore.starredWorks ?? []).toSorted(cmpWork).map(work => ({
+    ...(workStore.starredWorks ?? []).toSorted(cmpWorkByTitle).map(work => ({
       key: `work-${work.id}`,
       label: work.title,
       to: { name: 'work', params: { workId: work.id } },
