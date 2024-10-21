@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.16.1
+
 - NEW: You can now sort your projects page by phase, title, or last updated. For "last updated", projects that have never been updated will be last. (h/t Ren the Ghost)
 - NEW: Projects can now be in "planning" and "outlining" phases. Colors for each phase have also been tweaked slightly. (h/t Inkyrius)
 - CHANGED: Starred projects, goals, and leaderboards in the sidebar are now sorted by title.
