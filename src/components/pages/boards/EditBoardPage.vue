@@ -19,8 +19,10 @@ import Card from 'primevue/card';
 
 const boardUuid = ref<string>(route.params.boardUuid.toString());
 watch(() => route.params.boardUuid, newUuid => {
-  boardUuid.value = newUuid.toString();
-  loadBoard();
+  if(newUuid !== undefined) {
+    boardUuid.value = newUuid.toString();
+    loadBoard();
+  }
 });
 
 const board = ref<Board | null>(null);
