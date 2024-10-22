@@ -8,7 +8,6 @@ import routes from './routes.ts';
 
 // import our baseline app styles
 import 'primeicons/primeicons.css';
-import './assets/primevue.css';
 import './style.css';
 
 import { useEnvStore } from './stores/env.ts';

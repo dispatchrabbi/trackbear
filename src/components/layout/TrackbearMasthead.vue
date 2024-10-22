@@ -22,7 +22,7 @@ const props = defineProps<{
       <div class="app-name mt-1">
         <span class="uppercase">TrackBear</span><span
           v-if="!props.hideStage"
-          class="disclaimer text-sm text-indigo-500 dark:text-indigo-400"
+          class="disclaimer text-sm text-primary-500 dark:text-primary-400"
         >BETA</span>
       </div>
     </div>

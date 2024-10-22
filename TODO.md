@@ -67,6 +67,13 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Graph lifetime progress
 - [ ] User settings
   - [ ] Implement theme switcher (including light/dark/system)
+    - [ ] Make a strategy for actual color systems: changelog, project phase, goal type, tag color
+    - [ ] Change hard-coded danger/warning/help/info/secondary/etc.
+    - [ ] Need to figure out accent vs success vs completion
+    - [ ] Definitely need to figure out chart colors somehow
+    - [ ] Make the switcher part + example
+    - [ ] remove primvevue.css
+
   - [ ] TinyPNG-ify avatar files to save on space
   - [ ] Implement data export
 - [ ] Embeds
