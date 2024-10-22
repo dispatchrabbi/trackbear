@@ -66,7 +66,7 @@ async function handleSubmit() {
     :error-message="errorMessage"
     @submit="validate() && handleSubmit()"
   >
-    <p class="font-bold text-red-500 dark:text-red-400">
+    <p class="font-bold text-danger-500 dark:text-danger-400">
       You are about to delete {{ props.work.title }}. This will also delete all the progress you've logged on this work. There is no way to undo this.
     </p>
     <p>In order to confirm that you want to delete this project, please type <span class="font-bold">{{ props.work.title }}</span> into the input below and click Delete.</p>

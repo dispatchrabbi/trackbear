@@ -31,11 +31,11 @@ const props = defineProps<{
         {
           'text-primary-500 dark:text-primary-400': props.color === 'primary' || props.color === undefined,
           'text-surface-0 dark:text-surface-950': props.color === 'surface',
-          'text-green-500 dark:text-green-400': props.color === 'success',
-          'text-blue-500 dark:text-blue-400': props.color === 'info',
-          'text-purple-500 dark:text-purple-400': props.color === 'help',
-          'text-red-500 dark:text-red-400': props.color === 'danger',
-          'text-orange-500 dark:text-orange-400': props.color === 'warning',
+          'text-success-500 dark:text-success-400': props.color === 'success',
+          'text-info-500 dark:text-info-400': props.color === 'info',
+          'text-help-500 dark:text-help-400': props.color === 'help',
+          'text-danger-500 dark:text-danger-400': props.color === 'danger',
+          'text-warning-500 dark:text-warning-400': props.color === 'warning',
         },
       ]"
     >

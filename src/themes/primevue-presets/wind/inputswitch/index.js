@@ -45,7 +45,7 @@ export default {
             { 'border-transparent': !props.invalid },
 
             // Invalid State
-            { 'border-red-500 dark:border-red-400': props.invalid },
+            { 'border-error-500 dark:border-error-400': props.invalid },
 
             // States
             { 'peer-hover:bg-surface-300 dark:peer-hover:bg-surface-600 ': !(props.modelValue == props.trueValue) && !props.disabled },

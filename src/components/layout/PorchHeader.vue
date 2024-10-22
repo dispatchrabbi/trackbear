@@ -7,8 +7,6 @@ const userStore = useUserStore();
 
 import Button from 'primevue/button';
 import TrackbearMasthead from './TrackbearMasthead.vue';
-// TODO: restore the dark mode toggle
-// import DarkModeToggle from './DarkModeToggle.vue';
 
 onMounted(() => {
   userStore.populate();

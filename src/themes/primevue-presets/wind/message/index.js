@@ -10,10 +10,10 @@ export default {
             'bg-surface-0 dark:bg-surface-800',
 
             {
-                'text-blue-500 dark:text-blue-300': props.severity == 'info',
-                'text-green-500 dark:text-green-300': props.severity == 'success',
-                'text-orange-500 dark:text-orange-300': props.severity == 'warn',
-                'text-red-500 dark:text-red-300': props.severity == 'error'
+                'text-info-500 dark:text-info-300': props.severity == 'info',
+                'text-success-500 dark:text-success-300': props.severity == 'success',
+                'text-warning-500 dark:text-warning-300': props.severity == 'warn',
+                'text-danger-500 dark:text-danger-300': props.severity == 'error'
             }
         ]
     }),

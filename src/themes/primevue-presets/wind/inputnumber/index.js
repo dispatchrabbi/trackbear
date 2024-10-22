@@ -49,7 +49,7 @@ export default {
                 { 'border-surface-300 dark:border-surface-700': !parent.props.invalid },
 
                 // Invalid State
-                { 'border border-red-500 dark:border-red-400': parent.props.invalid },
+                { 'border border-error-500 dark:border-error-400': parent.props.invalid },
 
                 // States
                 'outline-none focus:ring-primary-600 dark:focus:ring-primary-500',

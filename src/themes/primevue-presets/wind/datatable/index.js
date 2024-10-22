@@ -569,10 +569,10 @@ export default {
                     'rounded-md',
 
                     'bg-transparent border-transparent',
-                    'text-red-500 dark:text-red-400',
-                    'hover:bg-red-300/20',
+                    'text-danger-500 dark:text-danger-400',
+                    'hover:bg-danger-300/20',
                     'focus:outline-none focus:outline-offset-0 focus:ring-2 focus:ring-offset-current',
-                    'focus:ring-red-500 dark:focus:ring-red-400',
+                    'focus:ring-danger-500 dark:focus:ring-danger-400',
 
                     // Transitions
                     'transition duration-200 ease-in-out',

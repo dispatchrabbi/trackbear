@@ -17,10 +17,10 @@ export default {
             'ring-1 ring-inset ring-surface-200 dark:ring-surface-700 ring-offset-0',
             // Colors
             {
-                'text-blue-500 dark:text-blue-300': props.message.severity == 'info',
-                'text-green-500 dark:text-green-300': props.message.severity == 'success',
-                'text-orange-500 dark:text-orange-300': props.message.severity == 'warn',
-                'text-red-500 dark:text-red-300': props.message.severity == 'error'
+                'text-info-500 dark:text-info-300': props.message.severity == 'info',
+                'text-success-500 dark:text-success-300': props.message.severity == 'success',
+                'text-warning-500 dark:text-warning-300': props.message.severity == 'warn',
+                'text-danger-500 dark:text-danger-300': props.message.severity == 'error'
             }
         ]
     }),

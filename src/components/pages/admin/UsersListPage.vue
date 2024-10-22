@@ -213,7 +213,7 @@ onMounted(() => loadUsers());
         <Column header="Email">
           <template #body="{ data }">
             {{ data.email }}
-            <span :class="data.isEmailVerified ? [ PrimeIcons.CHECK_CIRCLE, 'text-green-500 dark:text-green-400' ] : [ PrimeIcons.TIMES_CIRCLE, 'text-red-500 dark:text-red-400' ]" />
+            <span :class="data.isEmailVerified ? [ PrimeIcons.CHECK_CIRCLE, 'text-success-500 dark:text-success-400' ] : [ PrimeIcons.TIMES_CIRCLE, 'text-danger-500 dark:text-danger-400' ]" />
           </template>
         </Column>
       </DataTable>

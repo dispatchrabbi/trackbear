@@ -12,7 +12,7 @@ export default {
             { 'ring-surface-200 dark:ring-surface-700': !props.invalid },
 
             // Invalid State
-            { 'ring-red-500 dark:ring-red-400': props.invalid }
+            { 'ring-error-500 dark:ring-error-400': props.invalid }
         ]
     }),
     wrapper: {

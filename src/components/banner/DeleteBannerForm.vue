@@ -67,7 +67,7 @@ async function handleSubmit() {
     :error-message="errorMessage"
     @submit="validate() && handleSubmit()"
   >
-    <p class="font-bold text-red-500 dark:text-red-400">
+    <p class="font-bold text-danger-500 dark:text-danger-400">
       You are about to delete this banner. This will also delete all the progress you've logged on this work. There is no way to undo this.
     </p>
     <AnnouncementBanner

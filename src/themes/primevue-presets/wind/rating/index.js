@@ -33,7 +33,7 @@ export default {
             'w-5 h-5',
 
             // Color
-            'text-red-500 dark:text-red-400'
+            'text-danger-500 dark:text-danger-400'
         ]
     },
     item: ({ props, context }) => ({

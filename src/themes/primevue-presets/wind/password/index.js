@@ -47,9 +47,9 @@ export default {
 
             // Colors
             {
-                'bg-red-500 dark:bg-red-400/50': instance?.meter?.strength == 'weak',
-                'bg-orange-500 dark:bg-orange-400/50': instance?.meter?.strength == 'medium',
-                'bg-green-500 dark:bg-green-400/50': instance?.meter?.strength == 'strong'
+                'bg-danger-500 dark:bg-danger-400/50': instance?.meter?.strength == 'weak',
+                'bg-warning-500 dark:bg-warning-400/50': instance?.meter?.strength == 'medium',
+                'bg-success-500 dark:bg-success-400/50': instance?.meter?.strength == 'strong'
             },
 
             // Transitions
@@ -89,7 +89,7 @@ export default {
                 { 'ring-surface-300 dark:ring-surface-700': !parent.props.invalid },
 
                 // Invalid State
-                { 'ring-red-500 dark:ring-red-400': parent.props.invalid },
+                { 'ring-error-500 dark:ring-error-400': parent.props.invalid },
 
                 // Shape
                 { 'rounded-md': parent.instance.$name !== 'InputGroup' },

@@ -61,7 +61,7 @@ const onUpdate = function(val) {
           {{ props.help }}
         </slot>
       </div>
-      <div class="validation-message mt-1 text-sm text-red-500 dark:text-red-400">
+      <div class="validation-message mt-1 text-sm text-danger-500 dark:text-danger-400">
         {{ validationMessage }}
       </div>
     </slot>

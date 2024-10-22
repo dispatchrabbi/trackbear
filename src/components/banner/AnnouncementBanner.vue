@@ -20,16 +20,16 @@ const pt = {
           'border-solid border-0 border-l-[6px]',
           // Colors
           {
-            'bg-blue-100/70 dark:bg-blue-500/20': props.severity == 'info',
-            'bg-green-100/70 dark:bg-green-500/20': props.severity == 'success',
-            'bg-orange-100/70 dark:bg-orange-500/20': props.severity == 'warn',
-            'bg-red-100/70 dark:bg-red-500/20': props.severity == 'error'
+            'bg-info-100/70 dark:bg-info-500/20': props.severity == 'info',
+            'bg-success-100/70 dark:bg-success-500/20': props.severity == 'success',
+            'bg-warning-100/70 dark:bg-warning-500/20': props.severity == 'warn',
+            'bg-danger-100/70 dark:bg-danger-500/20': props.severity == 'error'
           },
           {
-            'border-blue-500 dark:border-blue-400': props.severity == 'info',
-            'border-green-500 dark:border-green-400': props.severity == 'success',
-            'border-orange-500 dark:border-orange-400': props.severity == 'warn',
-            'border-red-500 dark:border-red-400': props.severity == 'error'
+            'border-info-500 dark:border-info-400': props.severity == 'info',
+            'border-success-500 dark:border-success-400': props.severity == 'success',
+            'border-warning-500 dark:border-warning-400': props.severity == 'warn',
+            'border-danger-500 dark:border-danger-400': props.severity == 'error'
           },
         ]
     }),

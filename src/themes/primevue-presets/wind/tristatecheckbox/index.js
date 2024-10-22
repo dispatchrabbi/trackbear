@@ -30,7 +30,7 @@ export default {
             },
 
             // Invalid State
-            { 'ring-1 ring-red-500 dark:ring-red-400': props.invalid },
+            { 'ring-1 ring-error-500 dark:ring-error-400': props.invalid },
 
             // States
             {

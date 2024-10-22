@@ -34,7 +34,7 @@ export default {
             },
 
             // Invalid State
-            { 'ring-red-500 dark:ring-red-400': props.invalid },
+            { 'ring-error-500 dark:ring-error-400': props.invalid },
 
             // States
             'peer-hover:bg-surface-200 dark:peer-hover:bg-surface-600/80',

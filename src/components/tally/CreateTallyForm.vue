@@ -258,10 +258,10 @@ async function handleSubmit() {
       </template>
       <template #message="{ validationMessage }">
         <div class="flex">
-          <div class="validation-message flex-auto text-sm text-red-500">
+          <div class="validation-message flex-auto text-sm text-error-500">
             {{ validationMessage }}
           </div>
-          <div :class="['flex-none text-sm text-right', { 'text-orange-500': formModel.note.length > MAXIMUM_NOTE_LENGTH - 20, 'text-red-500': formModel.note.length > MAXIMUM_NOTE_LENGTH }]">
+          <div :class="['flex-none text-sm text-right', { 'text-warning-500': formModel.note.length > MAXIMUM_NOTE_LENGTH - 20, 'text-danger-500': formModel.note.length > MAXIMUM_NOTE_LENGTH }]">
             {{ formModel.note.length }} / {{ MAXIMUM_NOTE_LENGTH }}
           </div>
         </div>

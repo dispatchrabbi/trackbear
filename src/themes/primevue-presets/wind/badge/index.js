@@ -31,11 +31,11 @@ export default {
             {
                 'bg-primary-500 dark:bg-primary-400': props.severity == null || props.severity == 'primary',
                 'bg-surface-500 dark:bg-surface-400': props.severity == 'secondary',
-                'bg-green-500 dark:bg-green-400': props.severity == 'success',
-                'bg-blue-500 dark:bg-blue-400': props.severity == 'info',
-                'bg-orange-500 dark:bg-orange-400': props.severity == 'warning',
-                'bg-purple-500 dark:bg-purple-400': props.severity == 'help',
-                'bg-red-500 dark:bg-red-400': props.severity == 'danger'
+                'bg-success-500 dark:bg-success-400': props.severity == 'success',
+                'bg-info-500 dark:bg-info-400': props.severity == 'info',
+                'bg-warning-500 dark:bg-warning-400': props.severity == 'warning',
+                'bg-help-500 dark:bg-help-400': props.severity == 'help',
+                'bg-danger-500 dark:bg-danger-400': props.severity == 'danger'
             }
         ]
     })

@@ -66,7 +66,7 @@ async function handleSubmit() {
     :error-message="errorMessage"
     @submit="validate() && handleSubmit()"
   >
-    <p class="font-bold text-red-500 dark:text-red-400">
+    <p class="font-bold text-danger-500 dark:text-danger-400">
       You are about to delete {{ props.board.title }}. All of the participants will also lose access to it. There is no way to undo this.
     </p>
     <p>In order to confirm that you want to delete this leaderboard, please type <span class="font-bold">{{ props.board.title }}</span> into the input below and click Delete.</p>

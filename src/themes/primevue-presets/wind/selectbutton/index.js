@@ -29,7 +29,7 @@ export default {
             },
 
             // Invalid State
-            { 'ring-red-500 dark:ring-red-400': props.invalid },
+            { 'ring-error-500 dark:ring-error-400': props.invalid },
 
             // States
             'focus:outline-none focus:outline-offset-0 focus:ring-primary-500 dark:focus:ring-primary-400 focus:z-10',

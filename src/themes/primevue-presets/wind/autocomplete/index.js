@@ -51,7 +51,7 @@ export default {
             { 'ring-surface-300 dark:ring-surface-600': !props.invalid && !state.focused },
 
             // Invalid State
-            { 'ring-red-500 dark:ring-red-400': props.invalid && !state.focused },
+            { 'ring-error-500 dark:ring-error-400': props.invalid && !state.focused },
 
             // Transition
             'transition duration-200 ease-in-out',
@@ -90,7 +90,7 @@ export default {
             },
 
             // Invalid State
-            { 'border-red-500 dark:border-red-400': props.invalid },
+            { 'border-error-500 dark:border-error-400': props.invalid },
 
             // States
             { 'focus:outline-none focus:outline-offset-0 focus:ring-inset focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400': !props.multiple },

@@ -53,7 +53,7 @@ async function handleSubmit() {
     :error-message="errorMessage"
     @submit="handleSubmit()"
   >
-    <p class="font-bold text-red-500 dark:text-red-400">
+    <p class="font-bold text-danger-500 dark:text-danger-400">
       You are about to delete {{ formatCount(props.tally.count, props.tally.measure) }}. There is no way to undo this.
     </p>
     <p>To proceed, click Delete.</p>

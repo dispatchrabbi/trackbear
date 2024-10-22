@@ -69,7 +69,7 @@ async function handleSubmit() {
     :error-message="errorMessage"
     @submit="validate() && handleSubmit()"
   >
-    <p class="font-bold text-red-500 dark:text-red-400">
+    <p class="font-bold text-danger-500 dark:text-danger-400">
       You are about to leave {{ props.board.title }}.
     </p>
     <p>In order to confirm that you want to leave this leaderboard, please type <span class="font-bold">{{ userStore.user.username }}</span> into the input below and click Leave.</p>

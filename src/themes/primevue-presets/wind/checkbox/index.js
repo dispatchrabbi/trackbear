@@ -39,7 +39,7 @@ export default {
             },
 
             // Invalid State
-            { 'border-red-500 dark:border-red-400': props.invalid },
+            { 'border-error-500 dark:border-error-400': props.invalid },
 
             {
                 'ring-2 ring-primary-500 dark:ring-primary-400': !props.disabled && context.focused,

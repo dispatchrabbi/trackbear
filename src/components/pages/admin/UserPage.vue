@@ -209,7 +209,7 @@ async function handleSendEmailVerificationClick() {
               <dt>Email</dt>
               <dd>
                 {{ user.email }}
-                <span :class="user.isEmailVerified ? [ PrimeIcons.CHECK_CIRCLE, 'text-green-500 dark:text-green-400' ] : [ PrimeIcons.TIMES_CIRCLE, 'text-red-500 dark:text-red-400' ]" />
+                <span :class="user.isEmailVerified ? [ PrimeIcons.CHECK_CIRCLE, 'text-success-500 dark:text-success-400' ] : [ PrimeIcons.TIMES_CIRCLE, 'text-danger-500 dark:text-danger-400' ]" />
               </dd>
             </dl>
             <dl>

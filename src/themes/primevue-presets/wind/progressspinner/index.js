@@ -42,7 +42,7 @@ export default {
     circle: {
         class: [
             // Colors
-            'text-red-500',
+            'text-danger-500',
 
             // Misc
             'progress-spinner-circle'
