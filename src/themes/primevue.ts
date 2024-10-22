@@ -2,7 +2,11 @@ import colors from 'tailwindcss/colors.js';
 
 export const primary = colors.indigo;
 export const accent = colors.amber;
-export const surface = colors.stone;
+export const surface = {
+  '1000': '#000000',
+  ...colors.stone,
+  '0': '#ffffff',
+};
 
 export const secondary = surface;
 export const success = colors.green;
@@ -11,6 +15,8 @@ export const warning = colors.orange;
 export const help = colors.purple;
 export const danger = colors.red;
 export const contrast = surface;
+
+export const error = colors.red;
 
 export default {
   primary,
@@ -24,4 +30,6 @@ export default {
   help,
   danger,
   contrast,
+
+  error,
 };

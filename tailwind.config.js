@@ -12,24 +12,36 @@ import {
   warning,
   help,
   danger,
-  contrast
+  contrast,
+
+	error
 } from './src/themes/primevue.ts';
+
+function invert(colorSet) {
+	return Object.keys(colorSet).reduce((inverted, level) => {
+		inverted[1000 - level] = colorSet[level];
+		return inverted;
+	}, {});
+}
 
 const PRIMEVUE_EXTEND = {
 	colors: {
 		transparent: 'transparent',
 		current: 'currentColor',
+
 		primary,
 		accent,
-		'surface-0': '#ffffff',
 		surface,
+		
 		secondary,
 		success,
 		info,
 		warning,
 		help,
 		danger,
-		contrast
+		contrast,
+
+		error,
 	},
 	fontFamily: {
 		sans: ['Jost', 'sans-serif'],
