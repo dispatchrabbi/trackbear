@@ -1,4 +1,4 @@
-import type { Theme } from "src/lib/theme.ts";
+import type { LegacyTheme_DEPRECATED } from "src/lib/theme.ts";
 
 // catpuccin is from https://github.com/catppuccin/catppuccin
 const latteColors = {
@@ -30,7 +30,7 @@ const latteColors = {
   crust: 'hsl(220, 21%, 89%)',
 };
 
-const latte: Theme = {
+const latte: LegacyTheme_DEPRECATED = {
   primary: latteColors.mauve,
   secondary: latteColors.sapphire,
   success: latteColors.green,

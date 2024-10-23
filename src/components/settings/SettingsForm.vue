@@ -52,11 +52,11 @@ async function handleSubmit() {
     const updatedUser = await updateSettings(data as SettingsEditPayload);
 
     emit('settings:edit', { user: updatedUser });
-    successMessage.value = `Your settings have been updated.`;
+    successMessage.value = `Your settings have been saved.`;
     await wait(1 * 1000);
     emit('formSuccess');
   } catch(err) {
-    errorMessage.value = 'Could not update your settings: something went wrong server-side.';
+    errorMessage.value = 'Could not save your settings: something went wrong server-side.';
 
     return;
   } finally {
@@ -69,8 +69,8 @@ async function handleSubmit() {
 <template>
   <TbForm
     :is-valid="isValid"
-    submit-message="Submit"
-    :loading-message="isLoading ? 'Creating...' : null"
+    submit-message="Save"
+    :loading-message="isLoading ? 'Saving...' : null"
     :success-message="successMessage"
     :error-message="errorMessage"
     @submit="validate() && handleSubmit()"

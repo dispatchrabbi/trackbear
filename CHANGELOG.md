@@ -12,6 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: You can now set your theme! No longer will you be at the mercy of your system's theme. You can select between light mode, dark mode, and auto under Settings. Note that the setting applies per device, so if you access TrackBear on multiple devices, you may need to set it multiple times.
+- FIXED: The theme switcher is back! Calling this both "new" and "fixed" is a little cheeky, but for the true OGs who remember the December 2023 version of TrackBear, this is the last piece of functionality I had left to achieve parity. Sorry it took so long!
+
 ## 0.16.1
 
 - NEW: You can now sort your projects page by phase, title, or last updated. For "last updated", projects that have never been updated will be last. (h/t Ren the Ghost)

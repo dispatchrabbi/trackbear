@@ -12,7 +12,12 @@ export const BACKGROUND = {
   // TODO: secondary, danger, warning, info, success, error
 };
 
+// export const SURFACE = {
+//   primary: 'text-surface-1000/70',
+// };
+
 export default {
   TEXT,
   BACKGROUND,
+  // SURFACE
 };

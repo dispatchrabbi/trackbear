@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { usePreferredColorScheme } from '@vueuse/core';
-const preferredColorScheme = usePreferredColorScheme();
+import { useTheme } from 'src/lib/theme';
+const { computedTheme } = useTheme();
 
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -113,7 +113,7 @@ const imagePt = {
       >
         <div class="w-full md:w-1/3">
           <Image
-            :src="`images/${section.image}-${preferredColorScheme}-${size}.png`"
+            :src="`images/${section.image}-${computedTheme}-${size}.png`"
             alt=""
             preview
             :pt="imagePt"

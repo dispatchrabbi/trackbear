@@ -2,7 +2,7 @@
 import { computed, defineProps } from 'vue';
 import themeColors from 'src/themes/primevue.ts';
 
-import { usePreferredColorScheme } from '@vueuse/core';
+import { useTheme } from 'src/lib/theme';
 
 import { formatCount } from 'src/lib/tally.ts';
 
@@ -16,7 +16,7 @@ const props = defineProps<{
 }>();
 
 const meterStats = computed(() => {
-  const preferredColorScheme = usePreferredColorScheme().value;
+  const preferredColorScheme = useTheme().computedTheme.value;
 
   const isComplete = props.past + props.today >= props.goal;
   const pastColor = isComplete ? themeColors.accent : themeColors.surface;

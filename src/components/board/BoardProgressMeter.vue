@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 
-import { usePreferredColorScheme } from '@vueuse/core';
+import { useTheme } from 'src/lib/theme';
 import twColors from 'tailwindcss/colors.js';
 import themeColors from 'src/themes/primevue.ts';
 
@@ -42,7 +42,7 @@ const DEFAULT_LINE_COLORS = {
   },
 };
 const colorCycle = computed(() => {
-  const preferredColorScheme = usePreferredColorScheme().value;
+  const preferredColorScheme = useTheme().computedTheme.value;
   return DEFAULT_LINE_COLORS.cycle[preferredColorScheme];
 });
 

@@ -3,7 +3,7 @@ import { ref, computed, watchEffect, defineProps, withDefaults, onMounted, useTe
 import { useResizeObserver } from '@vueuse/core';
 import * as d3 from 'd3';
 
-import { usePreferredColorScheme } from '@vueuse/core';
+import { useTheme } from 'src/lib/theme';
 import themeColors from 'src/themes/primevue.ts';
 
 import { saveSvgAsPng } from 'src/lib/image.ts';
@@ -52,7 +52,7 @@ const sortedData = computed(() => {
 });
 
 const colorScale = computed(() => {
-  const preferredColorScheme = usePreferredColorScheme().value;
+  const preferredColorScheme = useTheme().computedTheme.value;
   const start = preferredColorScheme === 'dark' ? themeColors.surface[950] : themeColors.surface[50];
   const end = preferredColorScheme === 'dark' ? themeColors.primary[400] : themeColors.primary[500];
 
@@ -110,7 +110,7 @@ onMounted(() => {
       props.anchor === 'end' ? lastDataWeek : minDate(timeWeek.offset(firstDataWeek, weeksVisible), lastDataWeek) :
       lastDataWeek;
 
-    const preferredColorScheme = usePreferredColorScheme().value;
+    const preferredColorScheme = useTheme().computedTheme.value;
 
     // Helper to compute the color of a data point
     const quantileColor = (normalizedValue: number) => {

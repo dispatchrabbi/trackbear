@@ -1,4 +1,4 @@
-import { createApp, Plugin, Directive } from 'vue';
+import { createApp, Plugin, Directive, watch } from 'vue';
 
 import App from './App.vue';
 
@@ -11,7 +11,7 @@ import 'primeicons/primeicons.css';
 import './style.css';
 
 import { useEnvStore } from './stores/env.ts';
-import { useThemeStore } from './stores/theme.ts';
+import { useTheme } from './lib/theme.ts';
 
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
@@ -40,6 +40,5 @@ createApp(App)
 const envStore = useEnvStore();
 envStore.populate();
 
-const themeStore = useThemeStore();
-themeStore.applyTheme();
-
+// TODO: I think this may need to be in the App component or something
+useTheme();

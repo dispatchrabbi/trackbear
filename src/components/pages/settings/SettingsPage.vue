@@ -9,6 +9,9 @@ import type { MenuItem } from 'primevue/menuitem';
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import SettingsForm from 'src/components/settings/SettingsForm.vue';
+import ThemeSwitcher from 'src/components/settings/ThemeSwitcher.vue';
+
+import Panel from 'primevue/panel';
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Account' },
@@ -30,9 +33,20 @@ async function reloadUserStore() {
       v-if="userStore.user"
       class="flex flex-col justify-center max-w-screen-md"
     >
-      <SettingsForm
-        @settings:edit="reloadUserStore"
-      />
+      <Panel
+        header="General Settings"
+        class="m-2"
+      >
+        <SettingsForm
+          @settings:edit="reloadUserStore"
+        />
+      </Panel>
+      <Panel
+        header="Theme"
+        class="m-2"
+      >
+        <ThemeSwitcher />
+      </Panel>
     </div>
   </ApplicationLayout>
 </template>

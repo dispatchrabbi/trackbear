@@ -1,8 +1,8 @@
-import type { Theme } from "src/lib/theme.ts";
+import type { LegacyTheme_DEPRECATED } from "src/lib/theme.ts";
 
 // Nord is from https://www.nordtheme.com/docs/colors-and-palettes
 // TODO: build from Nord colors
-const nordDark: Theme = {
+const nordDark: LegacyTheme_DEPRECATED = {
   primary: '#88c0d0',
   secondary: '#81a1c1',
   success: '#a3be8c',

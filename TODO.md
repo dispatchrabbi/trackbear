@@ -14,7 +14,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [X] Profiles: Add opt-in public-facing profile
   - [X] Profiles: Add ability to put projects and goals on your profile
   - [X] General: Make TrackBear a PWA
-  - [ ] General: Implement theme switcher
+  - [X] General: Implement theme switcher
 - [X] Bug fixes
   - [X] Fix small-number (scene/page/chapter) issues in goal stats
   - [X] Ensure that project starting balances are counted in lifetime stats
@@ -68,11 +68,12 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] User settings
   - [ ] Implement theme switcher (including light/dark/system)
     - [ ] Make a strategy for actual color systems: changelog, project phase, goal type, tag color
-    - [ ] Change hard-coded danger/warning/help/info/secondary/etc.
+    - [X] Change hard-coded danger/warning/help/info/secondary/etc.
+    - [X] Make the auto/light/dark version
     - [ ] Need to figure out accent vs success vs completion
     - [ ] Definitely need to figure out chart colors somehow
-    - [ ] Make the switcher part + example
-    - [ ] remove primvevue.css
+    - [ ] Make the switcher part
+    - [X] remove primvevue.css
 
   - [ ] TinyPNG-ify avatar files to save on space
   - [ ] Implement data export

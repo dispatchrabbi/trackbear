@@ -53,6 +53,7 @@ export default {
 		'./src/**/*.{vue,js,ts,jsx,tsx}',
 		'./index.html',
   ],
+	darkMode: ['selector', '[data-theme="dark"]'],
 	theme: {
 		extend: Object.assign({}, PRIMEVUE_EXTEND),
 	}

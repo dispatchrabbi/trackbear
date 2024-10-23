@@ -6,9 +6,10 @@ import { utcFormat } from 'd3-time-format'
 
 import { saveSvgAsPng } from 'src/lib/image.ts';
 
-import { usePreferredColorScheme } from '@vueuse/core';
+import { useTheme } from 'src/lib/theme';
 import twColors from 'tailwindcss/colors.js';
 import themeColors from 'src/themes/primevue.ts';
+
 import { kify } from 'src/lib/number';
 import { formatDuration } from 'src/lib/date';
 import { TallyMeasure, TALLY_MEASURE } from 'server/lib/models/tally';
@@ -64,7 +65,7 @@ const DEFAULT_LINE_COLORS = {
   },
 };
 const colorScheme = computed(() => {
-  const preferredColorScheme = usePreferredColorScheme().value;
+  const preferredColorScheme = useTheme().computedTheme.value;
   return {
     text: DEFAULT_LINE_COLORS.text[preferredColorScheme],
     secondaryText: DEFAULT_LINE_COLORS.secondaryText[preferredColorScheme],
