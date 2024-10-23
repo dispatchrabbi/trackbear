@@ -1,3 +1,4 @@
+import "core-js/stable"; // polyfill for older browsers
 import { createApp, Plugin, Directive, watch } from 'vue';
 
 import App from './App.vue';

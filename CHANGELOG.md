@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Some users on older browsers were experiencing issues getting TrackBear to load. Those users should now be able to access TrackBear without issues (although I don't have older browsers to test on, so it's tough for me to test this or give exact browser version ranges). As always, the best way to make sure you can access TrackBear is to keep your browser up to date.
+
 ## 0.16.3
 
 - NEW: You can now set your theme! No longer will you be at the mercy of your system's theme. You can select between light mode, dark mode, and auto under Settings. Note that the setting applies per device, so if you access TrackBear on multiple devices, you may need to set it multiple times.

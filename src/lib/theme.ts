@@ -6,7 +6,6 @@ const theme = useLocalStorage('theme', 'auto');
 const systemTheme = usePreferredColorScheme();
 
 const computedTheme = computed(() => {
-  console.log(systemTheme.value, theme.value);
   return theme.value === 'auto' ? systemTheme.value === 'no-preference' ? 'light' : systemTheme.value : theme.value;
 });
 
