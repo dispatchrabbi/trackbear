@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: TrackBear's logo will now change to a polar bear for the dark theme.
+
 ## 0.16.4
 
 - FIXED: Some users on older browsers were experiencing issues getting TrackBear to load. Those users should now be able to access TrackBear without issues (although I don't have older browsers to test on, so it's tough for me to test this or give exact browser version ranges). As always, the best way to make sure you can access TrackBear is to keep your browser up to date.

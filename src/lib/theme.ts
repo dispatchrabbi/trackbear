@@ -2,6 +2,17 @@ import { useLocalStorage, usePreferredColorScheme } from "@vueuse/core";
 import { computed, watchEffect } from "vue";
 import { PrimeIcons } from "primevue/api";
 
+export const THEME_OPTIONS = [
+  { label: 'Auto', value: 'auto', icon: PrimeIcons.GLOBE },
+  { label: 'Light', value: 'light', icon: PrimeIcons.SUN },
+  { label: 'Dark', value: 'dark', icon: PrimeIcons.MOON },
+];
+
+export const LOGO = {
+  light: '/images/brown-bear.png',
+  dark: '/images/polar-bear.png',
+};
+
 const theme = useLocalStorage('theme', 'auto');
 const systemTheme = usePreferredColorScheme();
 
@@ -11,17 +22,12 @@ const computedTheme = computed(() => {
 
 watchEffect(() => {
   window.document.body.dataset.theme = computedTheme.value;
+  (window.document.querySelector('link[rel="icon"]') as HTMLLinkElement).href = LOGO[computedTheme.value] ?? LOGO['light'];
 });
 
 export function useTheme() {
   return { theme, computedTheme };
 }
-
-export const THEME_OPTIONS = [
-  { label: 'Auto', value: 'auto', icon: PrimeIcons.GLOBE },
-  { label: 'Light', value: 'light', icon: PrimeIcons.SUN },
-  { label: 'Dark', value: 'dark', icon: PrimeIcons.MOON },
-]
 
 export type LegacyTheme_DEPRECATED = {
   primary: string;

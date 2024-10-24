@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import { RouterLink } from 'vue-router';
+import { useTheme, LOGO } from 'src/lib/theme';
 
 const props = defineProps<{
   hideLogo?: boolean;
   hideStage?: boolean;
   linkTo?: string;
 }>();
+
+const { computedTheme } = useTheme();
 
 </script>
 
@@ -17,7 +20,7 @@ const props = defineProps<{
         v-if="!props.hideLogo"
         class="logo flex-none"
       >
-        <img :src="`/images/brown-bear.png`">
+        <img :src="LOGO[computedTheme] ?? LOGO['light']">
       </div>
       <div class="app-name mt-1">
         <span class="uppercase">TrackBear</span><span
