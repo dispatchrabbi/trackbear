@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.16.5
+
 - CHANGED: TrackBear's logo will now change to a polar bear for the dark theme.
 
 ## 0.16.4
