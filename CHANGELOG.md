@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.16.6
+
 - FIXED: The reminder banner for unverified accounts on the Dashboard now appears when it is supposed to.
 
 ## 0.16.5
