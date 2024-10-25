@@ -30,7 +30,6 @@ const breadcrumbs: MenuItem[] = [
   { label: 'Dashboard', url: '/dashboard' },
 ];
 
-const user = ref<User>(null);
 async function loadUser() {
   try {
     await userStore.populate();
@@ -100,8 +99,8 @@ onMounted(async () => {
   >
     <div class="max-w-screen-lg">
       <div
-        v-if="user && !user.isEmailVerified"
-        class="m-2"
+        v-if="userStore.user && !userStore.user.isEmailVerified"
+        class="mb-4"
       >
         <UnverifiedEmailMessage />
       </div>

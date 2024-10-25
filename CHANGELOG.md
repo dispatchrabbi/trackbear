@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: The reminder banner for unverified accounts on the Dashboard now appears when it is supposed to.
+
 ## 0.16.5
 
 - CHANGED: TrackBear's logo will now change to a polar bear for the dark theme.

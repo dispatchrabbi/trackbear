@@ -42,23 +42,22 @@ async function handleClick() {
     severity="warn"
     :closable="false"
     :icon="PrimeIcons.EXCLAMATION_TRIANGLE"
-    :pt="{
-      root: { class: ['!my-0'] },
-      text: { class: ['flex items-center gap-3 w-full'] }
-    }"
+    :pt="{ wrapper: { class: [ '!items-start md:!items-center' ] } }"
     :pt-options="{ mergeSections: true, mergeProps: true }"
   >
-    <div class="flex-auto">
-      Your email address is not yet verified. Please check your email for a verification link. If you do not verify your email within 10 days of signing up, your account will be suspended.
-    </div>
-    <div class="whitespace-nowrap">
-      <Button
-        severity="warning"
-        :label="isLoading ? 'Sending...' : 'Resend verification'"
-        :icon="PrimeIcons.SEND"
-        :loading="isLoading"
-        @click="handleClick"
-      />
+    <div class="flex flex-col md:flex-row items-start md:items-center gap-2">
+      <div class="flex-auto">
+        Your email address is not yet verified. Please check your email for a verification link and click it to verify your email address. If you do not verify your email within 10 days of signing up, your account will be suspended.
+      </div>
+      <div class="whitespace-nowrap">
+        <Button
+          severity="warning"
+          :label="isLoading ? 'Sending...' : 'Resend verification'"
+          :icon="PrimeIcons.SEND"
+          :loading="isLoading"
+          @click="handleClick"
+        />
+      </div>
     </div>
   </Message>
 </template>
