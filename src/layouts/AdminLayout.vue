@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { defineProps, onMounted } from 'vue';
-import { useLocalStorage } from '@vueuse/core';
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+import { breakpointsTailwind, useBreakpoints, useLocalStorage } from '@vueuse/core';
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 import type { MenuItem } from 'primevue/menuitem';

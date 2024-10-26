@@ -76,46 +76,46 @@ onMounted(async () => {
     <div class="actions flex flex-wrap justify-end gap-2 mb-4">
       <div class="flex justify-end gap-2">
         <div>
-        <Dropdown
-          aria-label="Sort order"
-          v-model="worksSort"
-          :options="Object.values(WORK_SORTS)"
-          option-label="label"
-          option-value="key"
-        />
-      </div>
-      <div>
-        <IconField>
-          <InputIcon>
-            <span :class="PrimeIcons.SEARCH" />
-          </InputIcon>
-          <InputText
-            v-model="worksFilter"
-            class="w-full"
-            placeholder="Type to filter..."
+          <Dropdown
+            v-model="worksSort"
+            aria-label="Sort order"
+            :options="Object.values(WORK_SORTS)"
+            option-label="label"
+            option-value="key"
           />
-        </IconField>
-      </div>
+        </div>
+        <div>
+          <IconField>
+            <InputIcon>
+              <span :class="PrimeIcons.SEARCH" />
+            </InputIcon>
+            <InputText
+              v-model="worksFilter"
+              class="w-full"
+              placeholder="Type to filter..."
+            />
+          </IconField>
+        </div>
       </div>
       <div class="flex justify-end gap-2">
         <div>
-        <Button
-          label="New"
-          :icon="PrimeIcons.PLUS"
-          @click="isCreateFormVisible = true"
-        />
-      </div>
-      <div>
-        <RouterLink
-          :to="{ name: 'import-works' }"
-        >
           <Button
-            label="Import"
-            severity="help"
-            :icon="PrimeIcons.FILE_IMPORT"
+            label="New"
+            :icon="PrimeIcons.PLUS"
+            @click="isCreateFormVisible = true"
           />
-        </RouterLink>
-      </div>
+        </div>
+        <div>
+          <RouterLink
+            :to="{ name: 'import-works' }"
+          >
+            <Button
+              label="Import"
+              severity="help"
+              :icon="PrimeIcons.FILE_IMPORT"
+            />
+          </RouterLink>
+        </div>
       </div>
     </div>
     <div

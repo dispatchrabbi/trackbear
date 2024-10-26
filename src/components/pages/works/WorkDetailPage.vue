@@ -9,20 +9,21 @@ const router = useRouter();
 import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
 
-import { getWork, WorkWithTallies } from 'src/lib/api/work.ts';
-import { Tally } from 'src/lib/api/tally.ts';
+import { getWork, type WorkWithTallies } from 'src/lib/api/work.ts';
+import type { Tally } from 'src/lib/api/tally.ts';
 
 import { PrimeIcons } from 'primevue/api';
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
-import EditWorkForm from 'src/components/work/EditWorkForm.vue';
 import DeleteWorkForm from 'src/components/work/DeleteWorkForm.vue';
+import UploadCoverForm from 'src/components/work/UploadCoverForm.vue';
 import ActivityHeatmap from 'src/components/dashboard/ActivityHeatmap.vue';
 import WorkTallyLineChart from 'src/components/work/WorkTallyLineChart.vue';
 import WorkTallyDataTable from 'src/components/work/WorkTallyDataTable.vue';
-import SectionTitle from 'src/components/layout/SectionTitle.vue';
+import DetailPageHeader from 'src/components/layout/DetailPageHeader.vue';
+import WorkCover from 'src/components/work/WorkCover.vue';
 
 const workId = ref<number>(+route.params.workId);
 watch(
@@ -45,8 +46,8 @@ const breadcrumbs = computed(() => {
   return crumbs;
 });
 
-const isEditFormVisible = ref<boolean>(false);
 const isDeleteFormVisible = ref<boolean>(false);
+const isCoverFormVisible = ref<boolean>(false);
 
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string | null>(null);
@@ -88,30 +89,32 @@ onMounted(() => {
   <ApplicationLayout
     :breadcrumbs="breadcrumbs"
   >
-    <div v-if="work">
-      <header class="mb-4">
-        <div class="actions flex gap-2 items-start">
-          <SectionTitle
-            :title="work.title"
-            :subtitle="work.description"
+    <div
+      v-if="work"
+      class="max-w-screen-md"
+    >
+      <DetailPageHeader
+        :title="work.title"
+        :subtitle="work.description"
+      >
+        <template #image>
+          <WorkCover :work="work" />
+        </template>
+        <template #actions>
+          <Button
+            label="Configure Project"
+            severity="info"
+            :icon="PrimeIcons.COG"
+            @click="router.push({ name: 'edit-work', params: { workId: work.id } })"
           />
-          <div class="spacer grow" />
-          <div class="flex flex-col md:flex-row gap-2">
-            <Button
-              label="Configure Project"
-              severity="info"
-              :icon="PrimeIcons.COG"
-              @click="isEditFormVisible = true"
-            />
-            <Button
-              severity="danger"
-              label="Delete Project"
-              :icon="PrimeIcons.TRASH"
-              @click="isDeleteFormVisible = true"
-            />
-          </div>
-        </div>
-      </header>
+          <Button
+            severity="danger"
+            label="Delete Project"
+            :icon="PrimeIcons.TRASH"
+            @click="isDeleteFormVisible = true"
+          />
+        </template>
+      </DetailPageHeader>
       <div
         v-if="work.tallies.length > 0"
         class="flex flex-col gap-2 max-w-screen-md"
@@ -138,22 +141,6 @@ onMounted(() => {
         You haven't logged any progress on this project. You want the cool graphs? Get writing!
       </div>
       <Dialog
-        v-model:visible="isEditFormVisible"
-        modal
-      >
-        <template #header>
-          <h2 class="font-heading font-semibold uppercase">
-            <span :class="PrimeIcons.PENCIL" />
-            Edit Project
-          </h2>
-        </template>
-        <EditWorkForm
-          :work="work"
-          @work:edit="reloadWorks()"
-          @form-success="isEditFormVisible = false"
-        />
-      </Dialog>
-      <Dialog
         v-model:visible="isDeleteFormVisible"
         modal
       >
@@ -168,6 +155,18 @@ onMounted(() => {
           @work:delete="workStore.populate(true)"
           @form-success="router.push('/works')"
         />
+      </Dialog>
+      <Dialog
+        v-model:visible="isCoverFormVisible"
+        modal
+      >
+        <template #header>
+          <h2 class="font-heading font-semibold uppercase">
+            <span :class="PrimeIcons.BOOK" />
+            Upload Cover
+          </h2>
+        </template>
+        <UploadCoverForm :work="work" />
       </Dialog>
     </div>
   </ApplicationLayout>

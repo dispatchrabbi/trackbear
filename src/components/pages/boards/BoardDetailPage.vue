@@ -27,7 +27,8 @@ import UserAvatar from 'src/components/UserAvatar.vue';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Dialog from 'primevue/dialog';
-import SectionTitle from 'src/components/layout/SectionTitle.vue';
+
+import DetailPageHeader from 'src/components/layout/DetailPageHeader.vue';
 import SubsectionTitle from 'src/components/layout/SubsectionTitle.vue';
 import BoardStats from 'src/components/board/BoardStats.vue';
 import BoardProgressMeter from 'src/components/board/BoardProgressMeter.vue';
@@ -138,31 +139,27 @@ onMounted(() => {
     :breadcrumbs="breadcrumbs"
   >
     <div v-if="board">
-      <header class="mb-4">
-        <div class="actions flex gap-2 items-start">
-          <SectionTitle
-            :title="board.title"
-            :subtitle="board.description"
+      <DetailPageHeader
+        :title="board.title"
+        :subtitle="board.description"
+      >
+        <template #actions>
+          <Button
+            v-if="ownerIsViewing"
+            label="Configure Leaderboard"
+            severity="info"
+            :icon="PrimeIcons.COG"
+            @click="router.push({ name: 'edit-board', params: { boardUuid: board.uuid } })"
           />
-          <div class="spacer grow" />
-          <div class="flex gap-2 flex-col md:flex-row">
-            <Button
-              v-if="ownerIsViewing"
-              label="Configure Leaderboard"
-              severity="info"
-              :icon="PrimeIcons.COG"
-              @click="router.push({ name: 'edit-board', params: { boardUuid: board.uuid } })"
-            />
-            <Button
-              v-if="ownerIsViewing"
-              severity="danger"
-              label="Delete Leaderboard"
-              :icon="PrimeIcons.TRASH"
-              @click="isDeleteFormVisible = true"
-            />
-          </div>
-        </div>
-      </header>
+          <Button
+            v-if="ownerIsViewing"
+            severity="danger"
+            label="Delete Leaderboard"
+            :icon="PrimeIcons.TRASH"
+            @click="isDeleteFormVisible = true"
+          />
+        </template>
+      </DetailPageHeader>
       <div
         class="flex flex-row-reverse flex-wrap justify-end gap-8"
       >

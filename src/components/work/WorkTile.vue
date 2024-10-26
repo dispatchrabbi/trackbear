@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, computed, defineProps, defineEmits } from 'vue';
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
+const breakpoints = useBreakpoints(breakpointsTailwind);
+
 import { SummarizedWork, starWork } from 'src/lib/api/work.ts';
 import { WORK_PHASE } from 'server/lib/models/work.ts';
 
@@ -9,10 +12,11 @@ const props = defineProps<{
 
 const emit = defineEmits(['work:star']);
 
-import Card from 'primevue/card';
+import { formatCount } from 'src/lib/tally.ts';
+
+import WorkCover from './WorkCover.vue';
 import Tag from 'primevue/tag';
 import { PrimeIcons } from 'primevue/api';
-import { formatCount } from 'src/lib/tally.ts';
 
 const WORK_PHASE_TAG_COLORS = {
   [WORK_PHASE.PLANNING]: 'help',
@@ -35,10 +39,71 @@ async function onStarClick() {
   emit('work:star', { id: props.work.id, starred: newStarVal });
 }
 
+const isNotMobile = computed(() => {
+  return breakpoints.greater('sm').value;
+})
+
 </script>
 
 <template>
-  <Card
+  <div class="work-tile flex gap-3 rounded-lg shadow-md bg-surface-0 dark:bg-surface-900 mb-2">
+    <div
+      v-if="isNotMobile"
+      class="work-tile-cover self-center flex-none w-32 h-48 my-auto bg-surface-100 dark:bg-surface-950 rounded-s-lg"
+    >
+      <WorkCover
+        :work="work"
+        rounded="lg"
+        shadow="none"
+      />
+    </div>
+    <div class="work-tile-content flex-grow py-4 pr-4 pl-4 md:pl-0 flex flex-col gap-2">
+      <div class="flex gap-2 items-baseline">
+        <!-- star, phase, title -->
+        <span
+          :class="[
+            isStarLoading ? PrimeIcons.SPINNER + ' pi-spin' : props.work.starred ? PrimeIcons.STAR_FILL : PrimeIcons.STAR,
+            'text-primary-500 dark:text-primary-400'
+          ]"
+          @click.prevent="onStarClick"
+        />
+        <div class="text-lg font-medium">
+          {{ props.work.title }}
+        </div>
+        <div class="spacer flex-auto" />
+        <Tag
+          :value="props.work.phase"
+          :severity="WORK_PHASE_TAG_COLORS[props.work.phase]"
+          :pt="{ root: { class: 'font-normal uppercase' } }"
+          :pt-options="{ mergeSections: true, mergeProps: true }"
+        />
+      </div>
+      <div class="flex justify-between gap-2">
+        <div class="font-light italic text-balance">
+          <!-- description -->
+          {{ work.description }}
+        </div>
+        <div class="flex flex-col text-right">
+          <!-- update info -->
+          <div
+            v-for="(total, measure) in props.work.totals"
+            :key="measure"
+            class="total"
+          >
+            <span
+              class="font-light whitespace-nowrap"
+            >{{ formatCount(total, measure) }}</span>
+          </div>
+          <div
+            v-if="Object.keys(props.work.totals).length < 1"
+          >
+            <span class="font-light whitespace-nowrap">No progress yet!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <Card
     :pt="{ content: { class: '!py-0' } }"
     :pt-options="{ mergeSections: true, mergeProps: true }"
   >
@@ -84,7 +149,7 @@ async function onStarClick() {
         </div>
       </div>
     </template>
-  </Card>
+  </Card> -->
 </template>
 
 <style scoped>

@@ -177,6 +177,7 @@ model Work {
   title       String
   description String
   phase       String
+  cover       String?
 
   startingBalance Json @default("{}")
 

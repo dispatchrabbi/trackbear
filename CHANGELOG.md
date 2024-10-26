@@ -12,6 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.17.0
+- NEW: You can now upload cover art for your projects! For best results, cover art should have a 2:3 ratio (mimicking a 6"x9" trade paperback); a 320x480px image will work great.
+
 ## 0.16.6
 
 - FIXED: The reminder banner for unverified accounts on the Dashboard now appears when it is supposed to.

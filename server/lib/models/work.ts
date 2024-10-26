@@ -12,3 +12,14 @@ export const WORK_PHASE = {
   FINISHED: 'finished',
   ABANDONED: 'abandoned',
 };
+
+export const ALLOWED_COVER_FORMATS = {
+  'image/apng': 'apng',
+  'image/avif': 'avif',
+  'image/gif': 'gif',
+  'image/jpeg': 'jpeg',
+  'image/png': 'png',
+  'image/svg+xml': 'svg',
+  'image/webp': 'webp',
+};
+export const MAX_COVER_SIZE_IN_BYTES = 2 * 1024 * 1024; // 2MB

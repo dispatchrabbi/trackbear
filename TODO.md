@@ -67,12 +67,13 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
   - [ ] Graph lifetime progress
 - [ ] User settings
   - [ ] Implement theme switcher (including light/dark/system)
-    - [ ] Make a strategy for actual color systems: changelog, project phase, goal type, tag color
+    - [ ] Make a strategy for actual color systems: changelog, project phase, goal type, tag color, streak length
     - [X] Change hard-coded danger/warning/help/info/secondary/etc.
     - [X] Make the auto/light/dark version
     - [ ] Need to figure out accent vs success vs completion
+    - [ ] Should convert text-white to text-surface-0 probably
     - [ ] Definitely need to figure out chart colors somehow
-    - [ ] Make the switcher part
+    - [ ] Investigate 'progress-spinner-circle' (might need to look at colors on /progressspinner)
     - [X] remove primvevue.css
 
   - [ ] TinyPNG-ify avatar files to save on space

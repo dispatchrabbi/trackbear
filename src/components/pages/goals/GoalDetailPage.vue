@@ -18,7 +18,7 @@ import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
-import SectionTitle from 'src/components/layout/SectionTitle.vue';
+import DetailPageHeader from 'src/components/layout/DetailPageHeader.vue';
 import TargetStats from 'src/components/goal/TargetStats.vue';
 import TargetLineChart from 'src/components/goal/TargetLineChart.vue';
 import HabitStats from 'src/components/goal/HabitStats.vue';
@@ -89,30 +89,29 @@ onMounted(() => {
   <ApplicationLayout
     :breadcrumbs="breadcrumbs"
   >
-    <div v-if="goal">
-      <header class="mb-4">
-        <div class="actions flex gap-2 items-start">
-          <SectionTitle
-            :title="goal.title"
-            :subtitle="goal.description || describeGoal(goal)"
+    <div
+      v-if="goal"
+      class="max-w-screen-md"
+    >
+      <DetailPageHeader
+        :title="goal.title"
+        :subtitle="goal.description || describeGoal(goal)"
+      >
+        <template #actions>
+          <Button
+            label="Configure Goal"
+            severity="info"
+            :icon="PrimeIcons.COG"
+            @click="router.push({ name: 'edit-goal', params: { goalId: goal.id } })"
           />
-          <div class="spacer grow" />
-          <div class="flex flex-col md:flex-row gap-2">
-            <Button
-              label="Configure Goal"
-              severity="info"
-              :icon="PrimeIcons.COG"
-              @click="router.push({ name: 'edit-goal', params: { goalId: goal.id } })"
-            />
-            <Button
-              severity="danger"
-              label="Delete Goal"
-              :icon="PrimeIcons.TRASH"
-              @click="isDeleteFormVisible = true"
-            />
-          </div>
-        </div>
-      </header>
+          <Button
+            severity="danger"
+            label="Delete Goal"
+            :icon="PrimeIcons.TRASH"
+            @click="isDeleteFormVisible = true"
+          />
+        </template>
+      </DetailPageHeader>
       <div
         v-if="tallies.length > 0 || tallies.length === 0"
         :class="[

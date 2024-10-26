@@ -24,30 +24,6 @@ function invert(colorSet) {
 	}, {});
 }
 
-const PRIMEVUE_EXTEND = {
-	colors: {
-		transparent: 'transparent',
-		current: 'currentColor',
-
-		primary,
-		accent,
-		surface,
-		
-		secondary,
-		success,
-		info,
-		warning,
-		help,
-		danger,
-		contrast,
-
-		error,
-	},
-	fontFamily: {
-		sans: ['Jost', 'sans-serif'],
-	},
-};
-
 export default {
   content: [
 		'./src/**/*.{vue,js,ts,jsx,tsx}',
@@ -55,6 +31,31 @@ export default {
   ],
 	darkMode: ['selector', '[data-theme="dark"]'],
 	theme: {
-		extend: Object.assign({}, PRIMEVUE_EXTEND),
+		extend: {
+			colors: {
+				transparent: 'transparent',
+				current: 'currentColor',
+		
+				primary,
+				accent,
+				surface,
+				
+				secondary,
+				success,
+				info,
+				warning,
+				help,
+				danger,
+				contrast,
+		
+				error,
+			},
+			fontFamily: {
+				sans: ['Jost', 'sans-serif'],
+			},
+			aspectRatio: {
+				'2/3': '2 / 3',
+			}
+		}
 	}
 };

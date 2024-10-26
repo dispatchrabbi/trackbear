@@ -33,6 +33,7 @@ import DashboardPage from 'src/components/pages/DashboardPage.vue';
 
 import WorksListPage from 'src/components/pages/works/WorksListPage.vue';
 import WorkDetailPage from 'src/components/pages/works/WorkDetailPage.vue';
+import EditWorkPage from './components/pages/works/EditWorkPage.vue';
 import WorksImportPage from 'src/components/pages/works/import/WorksImportPage.vue';
 import WorksImportNanoAutoPage from './components/pages/works/import/WorksImportNanoAutoPage.vue';
 import WorksImportNanoManualPage from './components/pages/works/import/WorksImportNanoManualPage.vue';
@@ -79,6 +80,7 @@ const routes = [
   { path: '/works/import/auto-nano', name: 'import-works-nano-auto', component: WorksImportNanoAutoPage },
   { path: '/works/import/manual-nano', name: 'import-works-nano-manual', component: WorksImportNanoManualPage },
   { path: '/works/:workId(\\d+)', name: 'work', component: WorkDetailPage },
+  { path: '/works/:workId(\\d+)/edit', name: 'edit-work', component: EditWorkPage },
 
   // Goals section
   { path: '/goals', name: 'goals', component: GoalsListPage },

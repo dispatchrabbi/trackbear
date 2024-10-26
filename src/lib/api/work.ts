@@ -36,3 +36,11 @@ export async function starWork(id: number, starred: boolean) {
 export async function deleteWork(id: number) {
   return callApiV1<Work>(ENDPOINT + `/${id}`, 'DELETE');
 }
+
+export async function uploadCover(id: number, data: FormData) {
+  return callApiV1<Work>(ENDPOINT + `/${id}/cover`, 'POST', data);
+}
+
+export async function deleteCover(id: number) {
+  return callApiV1<Work>(ENDPOINT + `/${id}/cover`, 'DELETE');
+}
