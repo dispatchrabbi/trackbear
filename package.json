@@ -1,7 +1,7 @@
 {
   "name": "writing-tracker",
   "private": true,
-  "version": "0.16.6",
+  "version": "0.17.0",
   "type": "module",
   "engines": {
     "node": ">=22.0.0 <23.0.0"
