@@ -6,9 +6,7 @@ import { useUserStore } from 'src/stores/user.ts';
 const userStore = useUserStore();
 await userStore.populate();
 
-import { useEnvStore } from 'src/stores/env.ts';
-const envStore = useEnvStore();
-await envStore.populate();
+import ENV from 'src/env.ts';
 
 import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
@@ -55,7 +53,7 @@ async function handleSubmit() {
     successMessage.value = `Your settings have been saved.`;
     await wait(1 * 1000);
     emit('formSuccess');
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not save your settings: something went wrong server-side.';
 
     return;
@@ -99,8 +97,8 @@ async function handleSubmit() {
         Your public profile shows your avatar, username, display name, lifetime stats, and any projects or goals you add to your profile.
         If enabled, your profile will be accessible at <a
           target="_blank"
-          :href="`${envStore.env.URL_PREFIX}/@${userStore.user.username}`"
-        >{{ envStore.env.URL_PREFIX }}/@{{ userStore.user.username }}</a>.
+          :href="`${ENV.URL_PREFIX}/@${userStore.user.username}`"
+        >{{ ENV.URL_PREFIX }}/@{{ userStore.user.username }}</a>.
       </template>
     </FieldWrapper>
     <FieldWrapper

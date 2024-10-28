@@ -6,16 +6,23 @@ import TextBlurb from 'src/components/layout/TextBlurb.vue';
 <template>
   <PorchLayout>
     <TextBlurb title="Privacy Policy">
+      <!-- eslint-disable vue/html-indent vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
       <p>
         I'm gonna be honest with you: I'm just some guy. I don't really have a solid privacy policy for TrackBear —
         just some principles that I intend to follow while running this app. But here's the deal.
       </p>
       <p>
-        TrackBear (perhaps ironically) doesn't do any tracking of you at all. Not even any analytics on the pages.
-        There's some stuff to make the site run and logs so I can troubleshoot and make sure that everything is
-        working okay, but absolutely nothing third-party. If there is any telemetry on the pages, it'll be entirely for
-        the purposes of seeing how people are using the app, mainly so I can make sure that any changes I'm planning
-        are actually a good idea.
+        TrackBear (perhaps ironically) doesn't track you at all, and all data I do collect stays on servers
+        controlled by me — absolutely nothing third-party. There are two main places where I collect data: server logs
+        and website metrics. Both are to help me troubleshoot and see how people are using the site, and for my own
+        curiosity. I will only ever use this data in the service of running TrackBear.
+      </p>
+      <p>
+        Here's exactly what I collect: Server logs use standard Apache combined format, which includes IP
+        addresses, User Agent strings, session IDs, Referer headers, and the URL accessed. Website metrics are via a
+        self-hosted installation of <a class="underline text-primary-500 dark:text-primary-400" href="https://github.com/plausible/community-edition">Plausible</a> (which is
+        specifically designed to be privacy-preserving) and includes the current page, the referrer, and your device's
+        screen width (in order to distinguish between mobile and desktop).
       </p>
       <p>
         The only cookies and local storage that TrackBear uses are those necessary for site functionality (hence no
@@ -26,9 +33,9 @@ import TextBlurb from 'src/components/layout/TextBlurb.vue';
       <p>
         As far as the information in the database goes and other technical security things with regards to the backend,
         I will do my best to safeguard TrackBear using current best practices. If you have a specific question that I
-        did not cover here, please feel free to get in touch — but please remember that I'm just some guy, doing a
-        thing on the internet.
+        did not cover here, please feel free to get in touch!
       </p>
+      <!-- eslint-enable vue/html-indent vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
     </TextBlurb>
   </PorchLayout>
 </template>

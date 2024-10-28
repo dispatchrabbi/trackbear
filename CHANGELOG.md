@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: I have updated the [Privacy](/privacy) page to be more specific about what data is collected and how it's used. I have not begun collecting new or different data, but I am using the data I already collect in different ways. This update also adds some technical details for the curious.
+
 ## 0.17.0
 - NEW: You can now upload cover art for your projects! For best results, cover art should have a 2:3 ratio (mimicking a 6"x9" trade paperback); a 320x480px image will work great.
 

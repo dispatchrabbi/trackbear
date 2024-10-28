@@ -1,5 +1,5 @@
 import "core-js/stable"; // polyfill for older browsers
-import { createApp, Plugin, Directive, watch } from 'vue';
+import { createApp, type Plugin, type Directive } from 'vue';
 
 import App from './App.vue';
 
@@ -11,8 +11,8 @@ import routes from './routes.ts';
 import 'primeicons/primeicons.css';
 import './style.css';
 
-import { useEnvStore } from './stores/env.ts';
-import { useTheme } from './lib/theme.ts';
+import { initPlausible } from './lib/metrics.ts';
+initPlausible();
 
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
@@ -37,9 +37,3 @@ createApp(App)
   .directive('tooltip', Tooltip as unknown as Directive)
   .directive('ripple', Ripple as unknown as Directive)
   .mount('#app');
-
-const envStore = useEnvStore();
-envStore.populate();
-
-// TODO: I think this may need to be in the App component or something
-useTheme();

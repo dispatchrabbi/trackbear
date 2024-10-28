@@ -28,6 +28,10 @@ type TrackbearCommonEnv = {
   EMAIL_URL_PREFIX: string;
 
   UPLOADS_PATH: string;
+
+  ENABLE_METRICS: boolean;
+  PLAUSIBLE_HOST: string;
+  PLAUSIBLE_DOMAIN: string;
 };
 
 type TrackbearTlsEnv =
@@ -45,6 +49,7 @@ type TrackbearTlsEnv =
 
 export type TrackbearEnv = TrackbearCommonEnv & TrackbearTlsEnv;
 
+// TODO: turn this into a Zod schema
 async function normalizeEnv(): Promise<TrackbearEnv> {
   // first step is to check for valid values and supply defaults
 
@@ -120,6 +125,13 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
 
   process.env.UPLOADS_PATH = process.env.UPLOADS_PATH || '/uploads';
 
+  if(!['', '0', '1'].includes(process.env.ENABLE_METRICS)) { throw new Error('ENABLE_METRICS should only be either `0` or `1`'); }
+  process.env.ENABLE_METRICS = process.env.ENABLE_METRICS || "0";
+
+  if(process.env.ENABLE_METRICS && !process.env.PLAUSIBLE_HOST) { throw new Error('Missing PLAUSIBLE_HOST value in .env'); }
+
+  if(process.env.ENABLE_METRICS && !process.env.PLAUSIBLE_DOMAIN) { throw new Error('Missing PLAUSIBLE_DOMAIN value in .env'); }
+
   // second step is to parse the values into more usable types
   return {
     NODE_ENV:               process.env.NODE_ENV,
@@ -148,6 +160,10 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
     EMAIL_URL_PREFIX:       process.env.EMAIL_URL_PREFIX,
 
     UPLOADS_PATH:           process.env.UPLOADS_PATH,
+
+    ENABLE_METRICS:         process.env.ENABLE_METRICS === '1',
+    PLAUSIBLE_HOST:         process.env.PLAUSIBLE_HOST,
+    PLAUSIBLE_DOMAIN:       process.env.PLAUSIBLE_DOMAIN,
   };
 }
 

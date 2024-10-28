@@ -5,14 +5,22 @@ async function middleware() {
   const env = await getNormalizedEnv();
 
   if(env.NODE_ENV === 'development') {
-    // These allow the Vite server to do HMR
+    // These are more lenient in order to allow the Vite server to do HMR and enable other local dev needs
     return helmet({
       contentSecurityPolicy: {
         directives: {
-          "default-src": ["'self'", "ws://localhost:24678", "wss://localhost:24678", "http://localhost:24678", "https://localhost:24678"],
+          "default-src": [
+            "'self'", // ourselves
+            "ws://localhost:24678", "wss://localhost:24678", "http://localhost:24678", "https://localhost:24678" // HMR
+          ],
           "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
           "img-src": ["'self'", "blob:"],
-          "connect-src": ["'self'", "ws://localhost:24678", "wss://localhost:24678", "http://localhost:24678", "https://localhost:24678", "https://api.nanowrimo.org"],
+          "connect-src": [
+            "'self'", // the api
+            "ws://localhost:24678", "wss://localhost:24678", "http://localhost:24678", "https://localhost:24678", // HMR
+            ...(env.ENABLE_METRICS ? [env.PLAUSIBLE_HOST] : []),
+            "https://api.nanowrimo.org" // NaNoWriMo importing
+          ],
         },
       },
     });
@@ -22,7 +30,11 @@ async function middleware() {
         directives: {
           "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
           "img-src": ["'self'", "blob:"],
-          "connect-src": ["'self'", "https://api.nanowrimo.org"],
+          "connect-src": [
+            "'self'", // the api
+            ...(env.ENABLE_METRICS ? [env.PLAUSIBLE_HOST] : []),
+            "https://api.nanowrimo.org" // NaNoWriMo importing
+          ],
         },
       },
     });

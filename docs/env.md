@@ -65,3 +65,11 @@ These are only needed for working with the Docker Compose files.
 | Variable | Default | Notes |
 | --- | --- | --- |
 | `UPLOADS_PATH` | `/uploads` | The directory where uploaded files go. Don't set this unless you're running outside a container for some reason. |
+
+## Metrics
+
+| Variable | Default | Notes |
+| --- | --- | --- |
+| `ENABLE_METRICS` | `0` | Set to `0` to disable collecting metrics. |
+| `PLAUSIBLE_HOST` | (not set) |  The host to send metrics to. Example: `https://metrics.trackbear.app`. |
+| `PLAUSIBLE_DOMAIN` | (not set) |  The domain in Plausible to associate metrics with. Example: `trackbear.app`. |

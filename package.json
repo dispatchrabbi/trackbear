@@ -63,6 +63,7 @@
     "natural-orderby": "^4.0.0",
     "pg": "^8.11.3",
     "pinia": "^2.1.7",
+    "plausible-tracker": "^0.3.9",
     "postcss": "^8.4.32",
     "primeicons": "^7.0.0",
     "primevue": "^3.53.0",

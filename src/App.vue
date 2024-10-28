@@ -1,8 +1,9 @@
 <script setup lang="ts">
-
 import Toast from 'primevue/toast';
 import ConfirmPopup from 'primevue/confirmpopup';
 
+import { useTheme } from './lib/theme.ts';
+useTheme();
 </script>
 
 <template>
