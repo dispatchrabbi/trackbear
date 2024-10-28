@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 0.17.1
+
 - CHANGED: I have updated the [Privacy](/privacy) page to be more specific about what data is collected and how it's used. I have not begun collecting new or different data, but I am using the data I already collect in different ways. This update also adds some technical details for the curious.
 
 ## 0.17.0
