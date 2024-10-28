@@ -1,14 +1,12 @@
 import Plausible from 'plausible-tracker';
-import ENV from '../env.ts';
 
 let plausible: ReturnType<typeof Plausible>;
 
-export function initPlausible() {
-  if(ENV.ENABLE_METRICS) {
+export function initPlausible(enable: boolean, apiHost: string, domain: string) {
+  if(enable) {
     plausible = Plausible({
-      domain: ENV.PLAUSIBLE_DOMAIN,
-      trackLocalhost: !import.meta.env.PROD,
-      apiHost: ENV.PLAUSIBLE_HOST,
+      domain,
+      apiHost,
     });
   
     plausible.enableAutoPageviews();

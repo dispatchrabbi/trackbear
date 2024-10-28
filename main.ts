@@ -157,7 +157,7 @@ async function main() {
     try {
       await handleGracefulShutdown('SIGINT', server);
       process.exit(0);
-    } catch(err) {
+    } catch {
       process.exit(1);
     }
   });

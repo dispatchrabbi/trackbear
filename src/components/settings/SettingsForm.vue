@@ -6,7 +6,8 @@ import { useUserStore } from 'src/stores/user.ts';
 const userStore = useUserStore();
 await userStore.populate();
 
-import ENV from 'src/env.ts';
+import { useEnvStore } from 'src/stores/env';
+const envStore = useEnvStore();
 
 import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
@@ -96,9 +97,10 @@ async function handleSubmit() {
       <template #help>
         Your public profile shows your avatar, username, display name, lifetime stats, and any projects or goals you add to your profile.
         If enabled, your profile will be accessible at <a
+          class="underline text-primary-500 dark:text-primary-400"
           target="_blank"
-          :href="`${ENV.URL_PREFIX}/@${userStore.user.username}`"
-        >{{ ENV.URL_PREFIX }}/@{{ userStore.user.username }}</a>.
+          :href="`${envStore.env.URL_PREFIX}/@${userStore.user.username}`"
+        >{{ envStore.env.URL_PREFIX }}/@{{ userStore.user.username }}</a>.
       </template>
     </FieldWrapper>
     <FieldWrapper
