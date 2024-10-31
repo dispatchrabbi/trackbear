@@ -32,27 +32,29 @@ const toggleSidebar = function() {
 
 const userMenu = ref(null);
 const userMenuItems = computed(() => {
-  return [
+  const items = [
     {
-      label: 'Account',
+      label: 'Your Account',
       items: [
         { icon: PrimeIcons.USER, label: 'Account', to: { name: 'account' } },
         { icon: PrimeIcons.COG, label: 'Settings', to: { name: 'settings' } },
         { icon: PrimeIcons.TAG, label: 'Manage Tags', to: { name: 'tags' } },
       ] ,
     },
+    { separator: true },
     {
       label: 'TrackBear',
       items: [
-        { icon: PrimeIcons.INFO_CIRCLE, label: 'About', to: { name: 'about' } },
+        { icon: PrimeIcons.QUESTION_CIRCLE, label: 'Help', href: 'https://help.trackbear.app/', target: '_blank' },
         { icon: PrimeIcons.WRENCH, label: 'Changelog', to: { name: 'changelog' }, tag: flagUpdates.value ? { text: 'Updates!', icon: PrimeIcons.SPARKLES } : undefined },
-        { icon: PrimeIcons.SHIELD, label: 'Privacy', to: { name: 'privacy' } },
         { icon: PrimeIcons.HEART_FILL, label: 'Support the Dev', href: '/ko-fi', target: '_blank', iconColor: 'text-primary-500 dark:text-primary-400' },
       ]
     },
     { separator: true },
     { icon: PrimeIcons.SIGN_OUT, label: 'Log Out', to: { name: 'logout' } },
   ] as MenuItem[];
+
+  return items;
 });
 const toggleUserMenu = ev => userMenu.value.toggle(ev);
 

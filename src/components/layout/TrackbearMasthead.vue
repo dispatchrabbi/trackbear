@@ -14,7 +14,9 @@ const { computedTheme } = useTheme();
 </script>
 
 <template>
-  <RouterLink :to="{ name: linkTo ?? 'home' }">
+  <RouterLink
+    :to="{ name: linkTo ?? 'home' }"
+  >
     <div :class="['masthead flex gap-1 items-center text-2xl leading-1 font-heading font-black']">
       <div
         v-if="!props.hideLogo"
@@ -23,10 +25,7 @@ const { computedTheme } = useTheme();
         <img :src="LOGO[computedTheme] ?? LOGO['light']">
       </div>
       <div class="app-name mt-1">
-        <span class="uppercase">TrackBear</span><span
-          v-if="!props.hideStage"
-          class="disclaimer text-sm text-primary-500 dark:text-primary-400"
-        >BETA</span>
+        <span class="uppercase"><span class="text-primary-500 dark:text-primary-400">Track</span>Bear</span>
       </div>
     </div>
   </RouterLink>

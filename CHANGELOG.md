@@ -12,6 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: TrackBear is no longer in beta! The "beta" tag has been removed from the masthead. A huge thank you to everyone who has been using TrackBear, sending suggestions and bug reports, posting about it on social media, and supporting me on Ko-Fi. Your support and enthusiasm means the world to me. 💜💜💜 ʕᵔᴥᵔʔ
+- NEW: TrackBear has help docs now! You can find them at https://help.trackbear.app/, and there's also a link in the user menu. Thank you to RiddleRose for writing the Getting Started guide. (h/t RiddleRose)
+
 ## 0.17.1
 
 - CHANGED: I have updated the [Privacy](/privacy) page to be more specific about what data is collected and how it's used. I have not begun collecting new or different data, but I am using the data I already collect in different ways. This update also adds some technical details for the curious.

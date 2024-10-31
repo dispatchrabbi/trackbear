@@ -5,10 +5,10 @@ import TextBlurb from 'src/components/layout/TextBlurb.vue';
 
 <template>
   <PorchLayout>
+    <!-- eslint-disable vue/html-indent vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
     <TextBlurb
       title="About TrackBear"
     >
-      <!-- eslint-disable vue/html-indent vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
       <p>
         It all started with a spreadsheet. My partner wondered aloud if there was some way she could track her
         yearly writing goal in a spreadsheet, with nice graphs and stats and things. Then, frustration vented, she
@@ -34,8 +34,32 @@ import TextBlurb from 'src/components/layout/TextBlurb.vue';
         consider supporting the site</a>. Any money I collect goes directly toward server costs (and also coffee for
         while I'm writing new features for the site).
       </p>
-      <!-- eslint-enable vue/html-indent vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
     </TextBlurb>
+    <TextBlurb
+      title="Acknowledgements"
+    >
+      <p>
+        First of all, a mighty thank you to my alpha testers at the Overachievers (AngelDreamer, aquamoon, Athena,
+        Bäumchen, blasionpeach, cardan, cenlyra, einhornlasagne, Elluna, Etlu-Yume, Fiona15351, grav, Kathryn, kdskid007,
+        murphy, RavenOFiernan, River, Robot_lurker, sootfire, and SylvirAshe), without whom this site would be very
+        different and a whole lot worse.
+      </p>
+      <p>
+        Thank you also to everyone who has written in with a bug, a feature request, or even just a question. If your name
+        is on the <RouterLink class="underline text-primary-500 dark:text-primary-400" :to="{ name: 'changelog' }">Changelog</RouterLink>,
+        you helped make this site a better experience for everyone!
+      </p>
+      <p>
+        If you are one of the five thousand-odd people (!!!) who gave TrackBear a try before it was even out of
+        beta: thank you for taking a chance on a new piece of software. No matter how you're using it, I am glad you found
+        it useful enough to stick with.
+      </p>
+      <p>
+        And lastly, a thousand thank yous to my wonderful partner, without whom TrackBear wouldn't even exist. (She even
+        suggested the name!) Thank you for the inspiration! It's taken us on a very cool journey.
+      </p>
+    </TextBlurb>
+    <!-- eslint-enable vue/html-indent vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
   </PorchLayout>
 </template>
 
