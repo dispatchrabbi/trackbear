@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.0.3
+
 - FIXED: The "last updated" sort for projects now sorts the last updated project to the *top*. Whoops.
 
 ## 1.0.2
