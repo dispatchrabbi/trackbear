@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: The "last updated" sort for projects now sorts the last updated project to the *top*. Whoops.
+
 ## 1.0.2
 
 - FIXED: Fixed an issue that caused profiles not to display if they would have shown a habit with no progress.

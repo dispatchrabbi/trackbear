@@ -56,5 +56,5 @@ function cmpLatestTally(a: WithLastUpdated, b: WithLastUpdated) {
   return a.lastUpdated === b.lastUpdated ? 0 : // we do the equals case first to also catch when `lastUpdated` is both null
     a.lastUpdated === null ? 1 : // null goes after
     b.lastUpdated === null ? -1 : // null goes after
-    a.lastUpdated < b.lastUpdated ? -1 : 1;
+    a.lastUpdated > b.lastUpdated ? -1 : 1; // more recently updated goes before
 }
