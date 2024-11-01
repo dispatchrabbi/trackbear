@@ -16,6 +16,11 @@ export type WeeklyStat = {
   count: number;
 };
 
+export type DailyStat = {
+  date: string;
+  count: number;
+};
+
 statsRouter.get('/weekly-active-users',
   requireAdminUser,
   h(async (req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) =>
@@ -37,6 +42,24 @@ GROUP BY "weekNumber"
   });
 
   return res.status(200).send(success(activeUsersByWeek));
+}));
+
+statsRouter.get('/daily-active-users',
+  requireAdminUser,
+  h(async (req: RequestWithUser, res: ApiResponse<DailyStat[]>) =>
+{
+  const results: { date: string; activeUsers: number }[] = await dbClient.$queryRaw`
+SELECT
+	EXTRACT(ISOYEAR FROM "createdAt") || '-' || lpad(EXTRACT(MONTH FROM "createdAt")::text, 2, '0') || '-' || lpad(EXTRACT(DAY FROM "createdAt")::text, 2, '0') AS "date",
+	COUNT(DISTINCT "agentId") AS "activeUsers"
+FROM public."AuditEvent"
+GROUP BY "date"
+;
+  `;
+
+  const activeUsersByDay = results.map(({ date, activeUsers }) => ({ date, count: Number(activeUsers) }));
+
+  return res.status(200).send(success(activeUsersByDay));
 }));
 
 statsRouter.get('/weekly-logins',
@@ -109,4 +132,23 @@ GROUP BY "weekNumber"
   });
 
   return res.status(200).send(success(signupsByWeek));
+}));
+
+statsRouter.get('/daily-signups',
+  requireAdminUser,
+  h(async (req: RequestWithUser, res: ApiResponse<DailyStat[]>) =>
+{
+  const results: { date: string; signups: number }[] = await dbClient.$queryRaw`
+SELECT
+	EXTRACT(ISOYEAR FROM "createdAt") || '-' || lpad(EXTRACT(MONTH FROM "createdAt")::text, 2, '0') || '-' || lpad(EXTRACT(DAY FROM "createdAt")::text, 2, '0') AS "date",
+  COUNT(DISTINCT "agentId") AS "signups"
+FROM public."AuditEvent"
+WHERE "eventType" = 'user:signup'
+GROUP BY "date"
+;
+  `;
+
+  const signupsByDay = results.map(({ date, signups }) => ({ date, count: Number(signups) } ));
+
+  return res.status(200).send(success(signupsByDay));
 }));
