@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.0.2
+
 - FIXED: Fixed an issue that caused profiles not to display if they would have shown a habit with no progress.
 
 ## 1.0.0
