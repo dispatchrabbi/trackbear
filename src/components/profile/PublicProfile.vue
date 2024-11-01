@@ -17,7 +17,7 @@ import UserAvatar from '../UserAvatar.vue';
 import SectionTitle from '../layout/SectionTitle.vue';
 import StatTile from '../goal/StatTile.vue';
 import DayCountHeatmap from '../stats/DayCountHeatmap.vue';
-import TargetLineChart from '../goal/TargetLineChart.vue';
+import TargetLineChart, { Goalish } from '../goal/TargetLineChart.vue';
 import ProfileHabitGauge from './ProfileHabitGauge.vue';
 
 </script>
@@ -97,7 +97,7 @@ import ProfileHabitGauge from './ProfileHabitGauge.vue';
           <div class="success-rate">
             <StatTile
               :top-legend="`Success rate`"
-              :highlight="`${formatPercent(habitSummary.successfulRanges, habitSummary.totalRanges)}%`"
+              :highlight="`${habitSummary.totalRanges > 0 ? formatPercent(habitSummary.successfulRanges, habitSummary.totalRanges) : 0}%`"
               :bottom-legend="`or ${habitSummary.successfulRanges} / ${habitSummary.totalRanges}`"
             />
           </div>
@@ -111,7 +111,7 @@ import ProfileHabitGauge from './ProfileHabitGauge.vue';
         <SectionTitle :title="targetSummary.title" />
         <div class="target-chart mb-4">
           <TargetLineChart
-            :goal="targetSummary"
+            :goal="targetSummary as Goalish"
             :tallies="targetSummary.dayCounts"
           />
         </div>

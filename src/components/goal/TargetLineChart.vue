@@ -8,7 +8,7 @@ import { normalizeTallies, accumulateTallies, listEachDayOfData, Tallyish } from
 import PlotProgressChart from 'src/components/chart/PlotProgressChart.vue';
 import { GoalTargetParameters } from 'server/lib/models/goal.ts';
 
-type Goalish = Pick<Goal, 'title' | 'parameters' | 'startDate' | 'endDate'>;
+export type Goalish = Pick<Goal, 'title' | 'parameters' | 'startDate' | 'endDate'>;
 const props = defineProps<{
   goal: Goalish;
   tallies: Tallyish[];

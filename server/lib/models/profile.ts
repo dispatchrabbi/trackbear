@@ -300,7 +300,7 @@ async function getProfileHabitSummaries(userId: number): Promise<ProfileHabitSum
       habit.startDate, habit.endDate
     );
 
-    const currentRange = isRangeCurrent(ranges.at(-1)) ? ranges.at(-1) : null;
+    const currentRange = (ranges.length > 0 && isRangeCurrent(ranges.at(-1))) ? ranges.at(-1) : null;
     const successfulRanges = ranges.filter(range => range.isSuccess).length;
     const totalRanges = ranges.length;
     
