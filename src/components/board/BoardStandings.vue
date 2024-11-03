@@ -28,9 +28,25 @@ const getGoalCount = function(participant) {
   return props.measure === 'percent' ? participant.goal.count : props.board.goal[props.measure];
 };
 
+const hasGoal = computed(() => {
+  return props.measure in props.board.goal;
+});
+
 const hasPar = computed(() => {
   return (props.measure === 'percent') || (props.measure in props.board.goal && !props.board.fundraiserMode);
 });
+
+const cmpByRawProgress = function (a, b) {
+  return a.progress === b.progress ?
+    (a.lastActivity < b.lastActivity ? -1 : a.lastActivity > b.lastActivity ? 1 : 0) :
+    (b.progress - a.progress);
+}
+
+const cmpByGoalPercent = function(a, b) {
+  return a.percent === b.percent ?
+    (a.lastActivity < b.lastActivity ? -1 : a.lastActivity > b.lastActivity ? 1 : 0) :
+    (a.percent < b.percent ? -1 : a.percent > b.percent ? 1 : 0);
+}
 
 const tableData = computed(() => {
   const [ earliestDate, latestDate ] = props.participants
@@ -52,6 +68,7 @@ const tableData = computed(() => {
 
   type StandingsDataRow = {
     uuid: string;
+    position: number;
     displayName: string;
     avatar: string;
     progress: number;
@@ -89,6 +106,7 @@ const tableData = computed(() => {
     if(lastRelevantTally) {
       data.push({
         uuid: participant.uuid,
+        position: 0,
         displayName: participant.displayName,
         avatar: participant.avatar,
         progress: lastRelevantTally.accumulated,
@@ -101,13 +119,39 @@ const tableData = computed(() => {
     }
   }
 
-  return data.sort((a, b) => b.progress - a.progress);
+  const sorted = data.sort(props.measure === 'percent' ? cmpByGoalPercent : cmpByRawProgress);
+  // forEach, not map, because I need access to the modified previous elements
+  sorted.forEach((el, ix, arr) => {
+    let position = ix + 1;
+    
+    if(ix !== 0) {
+      const prevEl = arr[ix - 1];
+      const total = props.measure === 'percent' ? el.percent : el.progress;
+      const prevTotal = props.measure === 'percent' ? prevEl.percent : prevEl.progress;
+      if(total === prevTotal) {
+        const lastActivity = el.lastActivity;
+        const prevLastActivity = prevEl.lastActivity;
+        if(lastActivity === prevLastActivity) {
+          position = prevEl.position;
+        }
+      }
+    }
+
+    el.position = position;
+  });
+  return sorted;
 });
 
 </script>
 
 <template>
   <DataTable :value="tableData">
+    <Column
+      header="#"
+      field="position"
+      sortable
+      class="whitespace-nowrap text-right"
+    />
     <Column
       header="Participant"
       field="displayName"
@@ -126,6 +170,7 @@ const tableData = computed(() => {
       </template>
     </Column>
     <Column
+      v-if="hasGoal"
       header="Percent"
       field="percent"
       sortable

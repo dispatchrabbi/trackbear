@@ -12,9 +12,12 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: Leaderboards now have a standings number for easy reference. (h/t frenchkey)
+- CHANGED: The first month on a heatmap is now a bit to the left, to avoid collisions. The font is also a bit smaller. (h/t Misupstairs)
+
 ## 1.0.3
 
-- FIXED: The "last updated" sort for projects now sorts the last updated project to the *top*. Whoops.
+- FIXED: The "last updated" sort for projects now sorts the last updated project to the *top*. Whoops. (h/t AngelDreamer)
 
 ## 1.0.2
 
