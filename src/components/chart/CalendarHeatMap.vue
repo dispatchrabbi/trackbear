@@ -186,9 +186,10 @@ onMounted(() => {
 
     // add the month name above the top of the month
     month.append("text")
-      .attr("x", (d, i) => (i === 0 ? 1 : timeWeek.count(firstWeek, timeWeek.ceil(d)) + 1) * cellSize + 2)
+      .attr("x", (d, i) => (i === 0 ? 0 : timeWeek.count(firstWeek, timeWeek.ceil(d)) + 1) * cellSize + 2)
       .attr("y", -5)
       .style("fill", preferredColorScheme === 'dark' ? themeColors.surface[50] : themeColors.surface[950])
+      .style('font', '8px sans-serif')
       .text((d, i) => (formatMonth(d) + (i === 0 || isJanuary(d)  ? ` '${formatYear(d)}` : '')));
   });
 });
