@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.0.5
+
 - NEW: Leaderboards now have a standings number for easy reference. (h/t frenchkey, cenlyra, Jenai)
 
 ## 1.0.4
