@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.0.4
+
 - NEW: Leaderboards now have a standings number for easy reference. (h/t frenchkey)
 - CHANGED: The first month on a heatmap is now a bit to the left, to avoid collisions. The font is also a bit smaller. (h/t Misupstairs)
 
