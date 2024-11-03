@@ -29,7 +29,7 @@ const getGoalCount = function(participant) {
 };
 
 const hasGoal = computed(() => {
-  return props.measure in props.board.goal;
+  return (props.measure === 'percent') || props.measure in props.board.goal;
 });
 
 const hasPar = computed(() => {
@@ -42,10 +42,10 @@ const cmpByRawProgress = function (a, b) {
     (b.progress - a.progress);
 }
 
-const cmpByGoalPercent = function(a, b) {
-  return a.percent === b.percent ?
+const cmpByRawPercent = function(a, b) {
+  return a.percentRaw === b.percentRaw ?
     (a.lastActivity < b.lastActivity ? -1 : a.lastActivity > b.lastActivity ? 1 : 0) :
-    (a.percent < b.percent ? -1 : a.percent > b.percent ? 1 : 0);
+    (a.percentRaw > b.percentRaw ? -1 : a.percentRaw < b.percentRaw ? 1 : 0);
 }
 
 const tableData = computed(() => {
@@ -75,6 +75,7 @@ const tableData = computed(() => {
     measure: TallyMeasure;
     versusPar: number | null;
     goal: number;
+    percentRaw: number;
     percent: string;
     lastActivity: string;
   };
@@ -113,13 +114,14 @@ const tableData = computed(() => {
         measure: getMeasure(participant),
         versusPar: hasPar.value ? lastRelevantTally.accumulated - getPar(participant) : null,
         goal: getGoalCount(participant),
+        percentRaw: lastRelevantTally.accumulated / getGoalCount(participant),
         percent: formatPercent(lastRelevantTally.accumulated, getGoalCount(participant)) + '%',
         lastActivity: lastRelevantTally.date,
       });
     }
   }
 
-  const sorted = data.sort(props.measure === 'percent' ? cmpByGoalPercent : cmpByRawProgress);
+  const sorted = data.sort(props.measure === 'percent' ? cmpByRawPercent : cmpByRawProgress);
   // forEach, not map, because I need access to the modified previous elements
   sorted.forEach((el, ix, arr) => {
     let position = ix + 1;
