@@ -39,6 +39,8 @@ const emit = defineEmits(['tally:create', 'formSuccess']);
 
 // save the last measure we used for the next time
 const lastTallyMeasure = useLocalStorage('last-tally-measure', TALLY_MEASURE.WORD);
+// save the last state of the update/total toggle
+const lastSetTotal = useLocalStorage('last-set-total', false);
 
 const formModel = reactive({
   date: new Date(), // default to today
@@ -46,7 +48,7 @@ const formModel = reactive({
   tags: [],
   count: null,
   measure: lastTallyMeasure.value,
-  setTotal: false,
+  setTotal: lastSetTotal.value,
   note: '',
 });
 
@@ -95,6 +97,8 @@ async function handleSubmit() {
 
     // save the measure for next time
     lastTallyMeasure.value = data.measure;
+    // save the setTotal for next time
+    lastSetTotal.value = data.setTotal;
 
     // clear out the form
     formModel.workId = null;
@@ -104,7 +108,7 @@ async function handleSubmit() {
 
     await wait(1 * 1000);
     emit('formSuccess');
-  } catch(err) {
+  } catch {
     errorMessage.value = 'Could not log your progress: something went wrong server-side.'
 
     return;

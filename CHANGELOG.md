@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: The _Set new project total?_ toggle on the Add Progress dialog will now save the last setting you used. (h/t Courtney)
+
 ## 1.0.5
 
 - NEW: Leaderboards now have a standings number for easy reference. (h/t frenchkey, cenlyra, Jenai)
