@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.0.6
+
 - CHANGED: The _Set new project total?_ toggle on the Add Progress dialog will now save the last setting you used. (h/t Courtney)
 - FIXED: The Upload Cover dialog now correctly is titled "Upload Cover" instead of "Upload Avatar".
 
