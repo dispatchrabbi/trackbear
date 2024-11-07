@@ -127,7 +127,7 @@ onMounted(() => loadWork());
           <template #header>
             <h2 class="font-heading font-semibold uppercase">
               <span :class="PrimeIcons.UPLOAD" />
-              Upload Avatar
+              Upload Cover
             </h2>
           </template>
           <UploadCoverForm
