@@ -119,6 +119,13 @@ async function handleSubmit() {
     >
       Don't have an account yet?
     </RouterLink>
+    <div>|</div>
+    <RouterLink
+      to="https://help.trackbear.app/settings/account"
+      class="underline text-primary-500 dark:text-primary-400"
+    >
+      Locked out?
+    </RouterLink>
   </div>
 </template>
 
