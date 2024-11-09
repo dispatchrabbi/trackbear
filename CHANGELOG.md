@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.0.7
+
 - NEW: There is now a link to the help site in the footer on the homepage and other logged-out pages.
 - NEW: There is now a "Locked out?" link to the help site on the login page.
 - CHANGED: The links to the About, Privacy, and Contact pages have been returned to the user menu.
