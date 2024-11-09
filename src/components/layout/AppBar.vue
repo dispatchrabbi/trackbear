@@ -45,8 +45,11 @@ const userMenuItems = computed(() => {
     {
       label: 'TrackBear',
       items: [
-        { icon: PrimeIcons.QUESTION_CIRCLE, label: 'Help', href: 'https://help.trackbear.app/', target: '_blank' },
+        { icon: PrimeIcons.BOOK, label: 'About', to: { name: 'about' } },
         { icon: PrimeIcons.WRENCH, label: 'Changelog', to: { name: 'changelog' }, tag: flagUpdates.value ? { text: 'Updates!', icon: PrimeIcons.SPARKLES } : undefined },
+        { icon: PrimeIcons.SHIELD, label: 'Privacy', to: { name: 'privacy' } },
+        { icon: PrimeIcons.QUESTION_CIRCLE, label: 'Help', href: 'https://help.trackbear.app/', target: '_blank' },
+        { icon: PrimeIcons.ENVELOPE, label: 'Contact', to: { name: 'contact' } },
         { icon: PrimeIcons.HEART_FILL, label: 'Support the Dev', href: '/ko-fi', target: '_blank', iconColor: 'text-primary-500 dark:text-primary-400' },
       ]
     },

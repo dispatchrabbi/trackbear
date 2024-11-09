@@ -20,7 +20,7 @@ import TrackbearMasthead from './TrackbearMasthead.vue';
     </div>
     <div class="links flex flex-col md:flex-row flex-wrap md:justify-start md:items-baseline md:gap-2 text-sm">
       <div>
-        <RouterLink to="/">
+        <RouterLink :to="{ name: 'home' }">
           Home
         </RouterLink>
       </div>
@@ -28,7 +28,7 @@ import TrackbearMasthead from './TrackbearMasthead.vue';
         /
       </div>
       <div>
-        <RouterLink to="/about">
+        <RouterLink :to="{ name: 'about' }">
           About
         </RouterLink>
       </div>
@@ -36,7 +36,7 @@ import TrackbearMasthead from './TrackbearMasthead.vue';
         /
       </div>
       <div>
-        <RouterLink to="/changelog">
+        <RouterLink :to="{ name: 'changelog' }">
           Changelog
         </RouterLink>
       </div>
@@ -44,7 +44,7 @@ import TrackbearMasthead from './TrackbearMasthead.vue';
         /
       </div>
       <div>
-        <RouterLink to="/privacy">
+        <RouterLink :to="{ name: 'privacy' }">
           Privacy
         </RouterLink>
       </div>
@@ -52,7 +52,18 @@ import TrackbearMasthead from './TrackbearMasthead.vue';
         /
       </div>
       <div>
-        <RouterLink to="/contact">
+        <a
+          href="https://help.trackbear.app"
+          target="_blank"
+        >
+          Help
+        </a>
+      </div>
+      <div class="hidden md:block">
+        /
+      </div>
+      <div>
+        <RouterLink :to="{ name: 'contact' }">
           Contact
         </RouterLink>
       </div>
