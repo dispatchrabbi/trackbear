@@ -186,7 +186,6 @@ meRouter.post('/avatar',
 );
 export async function handleUploadAvatar(req: RequestWithUser, res: ApiResponse<User>) {
 // make sure the file uploads correctly and is under limits and such
-console.log(getAvatarUploadFn);
 const uploadAvatar = getAvatarUploadFn();
 try{
   await uploadAvatar(req, res);

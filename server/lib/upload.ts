@@ -6,6 +6,7 @@ import multer from 'multer';
 import { getNormalizedEnv } from './env.ts';
 
 import { MAX_AVATAR_SIZE_IN_BYTES } from './models/user.ts';
+import { MAX_COVER_SIZE_IN_BYTES } from './models/work.ts';
 
 export async function getAvatarUploadPath() {
   const env = await getNormalizedEnv();
@@ -13,7 +14,25 @@ export async function getAvatarUploadPath() {
   return avatarPath;
 }
 
+export async function getCoverUploadPath() {
+  const env = await getNormalizedEnv();
+  const avatarPath = path.join(env.UPLOADS_PATH, 'covers');
+  return avatarPath;
+}
+
 export async function createAvatarUploadDirectory() {
+  const avatarUploadPath = await getAvatarUploadPath();
+  // create the avatar directory if it doesn't exist
+  try {
+    await fs.mkdir(avatarUploadPath);
+  } catch(err) {
+    if(err.code !== 'EEXIST') {
+      throw err;
+    } // else EEXIST means it exists and we're good
+  }
+}
+
+export async function createCoverUploadDirectory() {
   const avatarUploadPath = await getAvatarUploadPath();
   // create the avatar directory if it doesn't exist
   try {
@@ -51,4 +70,13 @@ export function getAvatarUploadFn() {
       fileSize: MAX_AVATAR_SIZE_IN_BYTES,
     },
   }).single('avatar'));
+}
+
+export function getCoverUploadFn() {
+  return promisify(multer({
+    storage: getMulterStorage(),
+    limits: {
+      fileSize: MAX_COVER_SIZE_IN_BYTES,
+    },
+  }).single('cover'));
 }

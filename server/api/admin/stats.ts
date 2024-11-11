@@ -42,12 +42,13 @@ GROUP BY "weekNumber"
   });
 
   return res.status(200).send(success(activeUsersByWeek));
-}));
+}
 
 statsRouter.get('/daily-active-users',
   requireAdminUser,
-  h(async (req: RequestWithUser, res: ApiResponse<DailyStat[]>) =>
-{
+  h(handleGetDailyActiveUsers)
+);
+export async function handleGetDailyActiveUsers(req: RequestWithUser, res: ApiResponse<DailyStat[]>) {
   const results: { date: string; activeUsers: number }[] = await dbClient.$queryRaw`
 SELECT
 	EXTRACT(ISOYEAR FROM "createdAt") || '-' || lpad(EXTRACT(MONTH FROM "createdAt")::text, 2, '0') || '-' || lpad(EXTRACT(DAY FROM "createdAt")::text, 2, '0') AS "date",
@@ -60,12 +61,13 @@ GROUP BY "date"
   const activeUsersByDay = results.map(({ date, activeUsers }) => ({ date, count: Number(activeUsers) }));
 
   return res.status(200).send(success(activeUsersByDay));
-}));
+};
 
 statsRouter.get('/weekly-logins',
   requireAdminUser,
-  h(async (req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) =>
-{
+  h(handleGetWeeklyLogins)
+);  
+export async function handleGetWeeklyLogins(req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) {
   const results: { weekNumber: string; activeUsers: number }[] = await dbClient.$queryRaw`
 SELECT
 	EXTRACT(ISOYEAR FROM "createdAt") || '-' || lpad(EXTRACT(WEEK FROM "createdAt")::text, 2, '0') AS "weekNumber",
@@ -84,12 +86,13 @@ GROUP BY "weekNumber"
   });
 
   return res.status(200).send(success(activeUsersByWeek));
-}));
+}
 
 statsRouter.get('/weekly-tallies',
   requireAdminUser,
-  h(async (req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) =>
-{
+  h(handleGetWeeklyTallies)
+);
+export async function handleGetWeeklyTallies(req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) {
   const results: { weekNumber: string; activeUsers: number }[] = await dbClient.$queryRaw`
 SELECT
 	EXTRACT(ISOYEAR FROM "createdAt") || '-' || lpad(EXTRACT(WEEK FROM "createdAt")::text, 2, '0') AS "weekNumber",
@@ -108,7 +111,7 @@ GROUP BY "weekNumber"
   });
 
   return res.status(200).send(success(activeUsersByWeek));
-}));
+}
 
 statsRouter.get('/weekly-signups',
   requireAdminUser,
@@ -133,12 +136,13 @@ GROUP BY "weekNumber"
   });
 
   return res.status(200).send(success(signupsByWeek));
-}));
+}
 
 statsRouter.get('/daily-signups',
   requireAdminUser,
-  h(async (req: RequestWithUser, res: ApiResponse<DailyStat[]>) =>
-{
+  h(handleGetDailySignups)
+);
+export async function handleGetDailySignups(req: RequestWithUser, res: ApiResponse<DailyStat[]>) {
   const results: { date: string; signups: number }[] = await dbClient.$queryRaw`
 SELECT
 	EXTRACT(ISOYEAR FROM "createdAt") || '-' || lpad(EXTRACT(MONTH FROM "createdAt")::text, 2, '0') || '-' || lpad(EXTRACT(DAY FROM "createdAt")::text, 2, '0') AS "date",
@@ -152,4 +156,4 @@ GROUP BY "date"
   const signupsByDay = results.map(({ date, signups }) => ({ date, count: Number(signups) } ));
 
   return res.status(200).send(success(signupsByDay));
-}));
+}

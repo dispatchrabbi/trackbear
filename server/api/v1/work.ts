@@ -5,13 +5,10 @@ import winston from "winston";
 
 import { requireUser, RequestWithUser } from '../../lib/auth.ts';
 
-import { promisify } from 'node:util';
-import { tmpdir } from 'node:os';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
-import multer from 'multer';
-import { getNormalizedEnv } from '../../lib/env.ts';
+import { getCoverUploadFn, getCoverUploadPath } from "server/lib/upload.ts";
 
 import { z } from 'zod';
 import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
@@ -19,7 +16,7 @@ import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
 import type { Work as PrismaWork, Tally, Tag } from "@prisma/client";
-import { WORK_PHASE, WORK_STATE, MAX_COVER_SIZE_IN_BYTES, ALLOWED_COVER_FORMATS } from '../../lib/models/work.ts';
+import { WORK_PHASE, WORK_STATE, ALLOWED_COVER_FORMATS } from '../../lib/models/work.ts';
 import { TALLY_MEASURE, TALLY_STATE } from "../../lib/models/tally.ts";
 import { TAG_STATE } from "../../lib/models/tag.ts";
 
@@ -206,25 +203,11 @@ export async function handleDeleteWork(req: RequestWithUser, res: ApiResponse<Wo
   return res.status(200).send(success(work));
 }
 
-const storage = multer.diskStorage({
-  destination: async (req, file, cb) => {
-    // store the file in a temporary directory for now
-    const tbTmpDir = await fs.mkdtemp(path.join(tmpdir(), 'trackbear-'));
-    cb(null, tbTmpDir);
-  }
-})
-// const storage = multer.memoryStorage();
-const upload = promisify(multer({
-  storage,
-  limits: {
-    fileSize: MAX_COVER_SIZE_IN_BYTES,
-  },
-}).single('cover'));
-
 workRouter.post('/:id/cover',
   requireUser,
-  h(async (req: RequestWithUser, res: ApiResponse<Work>) => 
-{
+  h(handlePostCover)
+);
+export async function handlePostCover(req: RequestWithUser, res: ApiResponse<Work>) {
   // quickly check to see if the work exists
   const user = req.user;
 
@@ -241,33 +224,25 @@ workRouter.post('/:id/cover',
   }
 
   // make sure the file uploads correctly and is under limits and such
+  const uploadCover = getCoverUploadFn();
   try{
-    await upload(req, res);
+    await uploadCover(req, res);
   } catch(err) {
     return res.status(400).send(failure(err.code, err.message));
   }
 
-  // is this a file format we accept for avatars?
+  // is this a file format we accept for covers?
   const isAllowedFormat = Object.keys(ALLOWED_COVER_FORMATS).includes(req.file.mimetype);
   if(!isAllowedFormat) {
     return res.status(400).send(failure('INVALID_FILE_TYPE', `Covers of type ${req.file.mimetype} are not allowed. Allowed types are: ${Object.keys(ALLOWED_COVER_FORMATS).join(', ')}`));
   }
 
-  const env = await getNormalizedEnv();
-  const coverPath = path.join(env.UPLOADS_PATH, 'covers');
-  // create the covers directory if it doesn't exist
-  try {
-    await fs.mkdir(coverPath);
-  } catch(err) {
-    if(err.code !== 'EEXIST') {
-      throw err;
-    } // else EEXIST means it exists and we're good
-  }
+  const coverUploadPath = await getCoverUploadPath();
 
   // move the uploaded file over to the avatar directory
   const oldPath = req.file.path;
   const filename = randomUUID() + '.' + ALLOWED_COVER_FORMATS[req.file.mimetype];
-  const newPath = path.join(coverPath, filename);
+  const newPath = path.join(coverUploadPath, filename);
   try {
     await fs.copyFile(oldPath, newPath);
   } catch(err) {
@@ -302,12 +277,13 @@ workRouter.post('/:id/cover',
   await logAuditEvent('work:cover', req.user.id, work.id, null, changeRecord, req.sessionID);
 
   return res.status(200).send(success(updated));
-}));
+}
 
 workRouter.delete('/:id/cover',
   requireUser,
-  h(async (req: RequestWithUser, res: ApiResponse<Work>) =>
-{
+  h(handleDeleteCover)
+);  
+export async function handleDeleteCover(req: RequestWithUser, res: ApiResponse<Work>) {
   const user = req.user;
 
   const work = await dbClient.work.findUnique({
@@ -342,4 +318,4 @@ workRouter.delete('/:id/cover',
   await logAuditEvent('work:cover', req.user.id, req.user.id, null, changeRecord, req.sessionID);
 
   return res.status(200).send(success(updated));
-}));
+}
