@@ -2,139 +2,121 @@
 
 These are in no particular order. Which isn't to say they _aren't_ in any order. But it would be wise not to read too far into the order they _are_ in.
 
-## Before November
-- [ ] Help
-  - [ ] Create help section
-  - [ ] Write a guide/introduction to each piece of TrackBear
-- [ ] Features
-  - [ ] Goals: Make it clearer when a (target?) goal has been met (h/t Liv)
-  - [X] Leaderboards: Add "everyone has their own goal" mode
-  - [X] Graphs: Convert all graphs from chart.js to Plot
-  - [X] Graphs: Add "save as image" functionality
-  - [X] Profiles: Add opt-in public-facing profile
-  - [X] Profiles: Add ability to put projects and goals on your profile
-  - [X] General: Make TrackBear a PWA
-  - [X] General: Implement theme switcher
-- [X] Bug fixes
-  - [X] Fix small-number (scene/page/chapter) issues in goal stats
-  - [X] Ensure that project starting balances are counted in lifetime stats
-  - [X] Fix the double-tooltip overlap bug
-- [ ] Admin Help
-  - [ ] Create staging server
-  - [ ] Implement telemetry
-  - [ ] Double-check backups
-  - [X] Improve ability to judge app usage
-
-## User-Facing Features
-- [ ] Help
-  - [ ] Create help documentation
-  - [ ] Introduction to TrackBear
-  - [ ] Deep dive into each bit of functionality
-- [ ] Tallies
-  - [ ] Allow logging half-pages (but only for pages probably) (h/t Alex)
-  - [ ] Consider the ability to add more than one type of progress at once (h/t Alice)
-- [ ] Projects
-  - [ ] The project page could be nicer/more informative
-  - [X] Better project organization (added sort order) (h/t Ren the Ghost)
-  - [ ] Implement project tags (maybe)
-  - [ ] Make it clearer on mobile that the edit and delete buttons for tallies are offscreen (or more likely, rejigger the table so it's way more mobile-friendly) (h/t lailah)
-- [ ] Goals
-  - [ ] Target goal pages could be nicer/more informative
-  - [ ] Multiple goals (a la "stretch goals")
-  - [ ] Goal pages could be more fun
-  - [ ] Split targets and habits
-  - [ ] Habit progress gauges need a UI revamp
-  - [ ] Make it clearer when a goal has been met (h/t Liv)
-- [ ] Leaderboards
-  - [ ] Allow owners to remove (or ban?) participants from leaderboards
-  - [X] Progress to individual goals
-  - [ ] Multiple goals (a la "stretch goals")
-  - [ ] Add yourself more than once
-  - [ ] Allow board owners to rotate the join code
-  - [ ] Group participants into teams and compare team totals (h/t Asha)
-  - [ ] Make sure each participant has their own, consistent color and marker across the graph and the progress bar (h/t Arden)
-- [ ] Dashboard
-  - [ ] Dashboard could be more fun/welcoming
-  - [ ] Show starred leaderboards on dashboard
-  - [X] Show starred projects on dashboard
-  - [ ] Show lifetime counts on dashboard
-- [X] Grand Totals page
-  - [X] Overall total
-  - [ ] Totals by tag
-  - [ ] Ability to exempt tags/projects from total
-  - [X] Heatmap by year
-  - [ ] Totals by year (h/t Deerna)
-  - [ ] Graph lifetime progress
-- [ ] User settings
-  - [ ] Implement theme switcher (including light/dark/system)
-    - [ ] Make a strategy for actual color systems: changelog, project phase, goal type, tag color, streak length
-    - [X] Change hard-coded danger/warning/help/info/secondary/etc.
-    - [X] Make the auto/light/dark version
-    - [ ] Need to figure out accent vs success vs completion
-    - [ ] Should convert text-white to text-surface-0 probably
-    - [ ] Definitely need to figure out chart colors somehow
-    - [ ] Investigate 'progress-spinner-circle' (might need to look at colors on /progressspinner)
-    - [X] remove primvevue.css
-
-  - [ ] TinyPNG-ify avatar files to save on space
-  - [ ] Implement data export
-- [ ] Embeds
-  - [ ] Project progress embed (h/t Laura)
-  - [ ] Grand Totals embed (h/t Laura)
-  - [ ] Progress update widget (h/t Laura)
-- [ ] Charts
-  - [ ] Rewrite the heatmap to use Plot
-- [ ] Improve tag inputs
-
-## Admin Console Features
-- [ ] Admin landing page
+## Admin
+- [ ] Allow admins to rename user/displayName
+- [ ] Allow admins to force password reset
+- [ ] Improve audit event retrieval/listings
 - [ ] Improve user management
-  - [ ] Rename user/displayName
-  - [X] Force password reset
-  - [ ] Improved audit event retrieval/listings
 - [ ] Manage projects, goals, leaderboards
-- [ ] Add link to admin console from app UI (maybe)
+- [ ] Allow admins to view any project, goal, leaderboard in-situ
+- [ ] Revamp stats on the Users page
 
-## Security
+## Back-End
+- [ ] Sharp-ify covers and avatar files to save on space
+- [ ] Implement data export
+- [ ] Convert the API to consistently use PATCH
+- [ ] Build out a full model layer so it can be used by scripts/workers/queues as well as endpoints
 - [ ] Make rate-limiting better
 - [ ] Lock-out multiple wrong sign-in attempts
 - [ ] Add optional TOTP setup
+- [ ] Double-check [Node.js Security Checklist](https://blog.risingstack.com/node-js-security-checklist/)
 
-> [Node.js Security Checklist](https://blog.risingstack.com/node-js-security-checklist/)
+## Charts
+- [ ] Fix the leaderboard tooltips
+- [ ] Graph widget overhaul: lines/bars toggle, full-screen, download
+- [ ] Rewrite the heatmap to use Plot
 
-## Tech Debt/Code Quality
-- [ ] Actually write some tests
-- [ ] Fix the required-auth page architecture
-- [ ] Improve the worker architecture
-- [ ] Improve the queue architecture
-- [ ] Figure out how to make 'server/*' work on back end imports
-- [ ] Make the API more consistent w/r/t PUT, POST, and PATCH
-- [ ] Do a better job with shared data/functions
-- [ ] De-duplicate form components
-- [ ] Expand the model layer in the backend to be used for all db access
-- [ ] Create better seed data for testing
-- [ ] Use 'omit' in prisma schema to protect password and other secret fields
-- [ ] Update date-fns to 4.0
-  - [ ] Simplify createDateRanges when this happens
+## Dashboard
+- [ ] Dashboard could be more fun/welcoming/helpful
+- [ ] Show starred leaderboards on dashboard
+
+## Developers
+- [ ] Implement API keys
+- [ ] Create Swagger/OpenAPI docs + other developer docs
+
+## Goals
+- [ ] Revamp goal details pages (and goal list page) to better handle achieved and ended goals (h/t Liv)
+- [ ] Habit progress gauges need a UI revamp
+- [ ] Target goal details pages should be nicer/more informative
+- [ ] Goal pages could be more fun
+- [ ] Multiple goal points (a la "stretch goals")
+- [ ] Split targets and habits #maybe
+
+## Help
+- [ ] Goals
+- [ ] Leaderboards
+- [ ] Settings
+- [ ] Tags
+- [ ] ...anything else I missed
+
+## Leaderboards
+- [ ] Separate join code from UUID and allow rolling the code
+- [ ] Give board owners much more control over participants (change goals, remove/ban)
+- [ ] Allow more than one board owner
+- [ ] Group participants into teams and compare team totals (h/t Asha)
+- [ ] Make sure each participant has their own, consistent color and marker across the graph and the progress bar (h/t Arden)
+- [ ] Allow viewing leaderboards without logging in
 
 ## Observability
 - [ ] Create ping check
-- [ ] Ship logs somewhere
-- [ ] Ship metrics/telemetry somewhere
+- [ ] Ship logs somewhere (Greylog? Uptrace?)
+- [ ] Ship metrics/telemetry somewhere (Uptrace? Jaeger?)
+
+## Projects
+- [ ] The project details page should show more info about the project/look nicer
+- [ ] Implement project tags (h/t someone from ko-fi go look it up)
+
+## Public
+- [ ] Project progress embed (h/t Laura)
+- [ ] Grand Totals embed (h/t Laura)
+- [ ] Progress update widget (h/t Laura)
+
+## Stats
+- [ ] Totals by tag
+- [ ] Totals by year (h/t Deerna)
+- [ ] Graph lifetime progress
+- [ ] Ability to exempt tags/projects from total #maybe
+
+## Tags
+- [ ] Improve tag inputs
+
+## Tallies
+- [ ] Make the tally table more mobile-friendly (h/t lailah)
+- [ ] Default the Enter Progress dialog on a project page to the last measure entered
+- [ ] Allow logging half-pages (but only for pages probably) (h/t Alex) #maybe
+- [ ] Consider the ability to add more than one type of progress at once (h/t Alice) #maybe
+
+## Themes
+- [ ] Make a strategy for actual color systems: changelog, project phase, goal type, tag color, streak length
+- [ ] Need to figure out accent vs success vs completion
+- [ ] Should convert text-white to text-surface-0 probably
+- [ ] Definitely need to figure out themed chart colors somehow
+- [ ] Investigate 'progress-spinner-circle' (might need to look at colors on /progressspinner)
 
 ## Branding
 - [ ] Create/commission logo and assets
 - [ ] Improve home page
-- [ ] Rewrite copy on "outside" pages
 
-## Developer Access
-- [ ] API access
-  - [ ] Swagger/OpenAPI docs
-  - [ ] API tokens
+## Tech Debt/Code Quality
+- [ ] Increase code coverage
+- [ ] Fix the required-auth page architecture
+- [ ] Improve the worker architecture
+- [ ] Improve the queue architecture
+- [ ] Figure out how to make 'server/*' work on back end imports
+- [ ] Do a better job with shared data/functions
+- [ ] De-duplicate add/edit forms
+- [ ] Create better seed data for testing
+- [ ] Use 'omit' in prisma schema to protect password and other secret fields
+- [ ] Update date-fns to 4.0
+- [ ] Simplify createDateRanges when date-fns hits 4.0
 
-## Deployment/Reliability
+## Deployment
 - [ ] Create staging instance
-- [ ] Improve deployment process
-  - [ ] Better diagnostics if something isn't right?
-  - [ ] Remote deploys?
+- [ ] Better diagnostics on deploy if something isn't right
+- [ ] Implement remote deploys
 - [ ] Zero- or minimal-downtime deploys
+- [ ] Investigate Docker Swarm
+
+## Wishlist
+- [ ] Pull data from prod back to local for reproducing bugs
+- [ ] Publish usage metrics
