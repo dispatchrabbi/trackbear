@@ -48,7 +48,11 @@ export const useUserStore = defineStore('user', {
     },
     async populate(force = false) {
       if(force || this.user === null) {
-        this.user = await getMe();
+        try {
+          this.user = await getMe();
+        } catch {
+          this.user = null;
+        }
       }
     }
   },
