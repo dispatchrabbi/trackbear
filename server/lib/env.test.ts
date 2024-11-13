@@ -32,7 +32,11 @@ describe('getNormalizedEnv', () => {
       MAILERSEND_API_KEY: 'fake',
       EMAIL_URL_PREFIX: 'localhost:3000',
     
-      UPLOADS_PATH: './uploads'
+      UPLOADS_PATH: './uploads',
+
+      ENABLE_METRICS: '0',
+      PLAUSIBLE_HOST: 'http://localhost:8000',
+      PLAUSIBLE_DOMAIN: 'trackbear.example',
     };
     
     process.env = {
