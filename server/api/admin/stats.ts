@@ -2,13 +2,13 @@ import { Router } from "express";
 
 import { parse, format } from 'date-fns';
 
+import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, h } from '../../lib/api-response.ts';
 import { requireAdminUser, RequestWithUser } from '../../lib/auth.ts';
 
 import dbClient from "../../lib/db.ts";
 
-const statsRouter = Router();
-export default statsRouter;
+export const statsRouter = Router();
 
 export type WeeklyStat = {
   weekStart: string;
@@ -157,3 +157,44 @@ GROUP BY "date"
 
   return res.status(200).send(success(signupsByDay));
 }
+
+const routes: RouteConfig[] = [
+  {
+    path: '/weekly-active-users',
+    method: HTTP_METHODS.GET,
+    handler: handleGetWeeklyActiveUsers,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+  },
+  {
+    path: '/daily-active-users',
+    method: HTTP_METHODS.GET,
+    handler: handleGetDailyActiveUsers,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+  },
+  {
+    path: '/weekly-logins',
+    method: HTTP_METHODS.GET,
+    handler: handleGetWeeklyLogins,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+  },
+  {
+    path: '/weekly-tallies',
+    method: HTTP_METHODS.GET,
+    handler: handleGetWeeklyTallies,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+  },
+  {
+    path: '/weekly-signups',
+    method: HTTP_METHODS.GET,
+    handler: handleGetWeeklySignups,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+  },
+  {
+    path: '/daily-signups',
+    method: HTTP_METHODS.GET,
+    handler: handleGetDailySignups,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+  },
+];
+
+export default routes;

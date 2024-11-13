@@ -1,7 +1,8 @@
 import { Router } from "express";
 import winston from "winston";
-import { ApiResponse, success, h } from '../../lib/api-response.ts';
 
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
+import { ApiResponse, success, h } from '../../lib/api-response.ts';
 import { requireAdminUser, RequestWithUser } from '../../lib/auth.ts';
 
 import { z } from 'zod';
@@ -14,7 +15,7 @@ import type { Banner } from "@prisma/client";
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
 
-const bannerRouter = Router();
+export const bannerRouter = Router();
 
 bannerRouter.get('/',
   requireAdminUser,
@@ -116,4 +117,35 @@ export async function handleDeleteBanner(req: RequestWithUser, res: ApiResponse<
   return res.status(200).send(success(banner));
 }
 
-export default bannerRouter;
+const routes: RouteConfig[] = [
+  {
+    path: '/',
+    method: HTTP_METHODS.GET,
+    handler: handleGetBanners,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+  },
+  {
+    path: '/',
+    method: HTTP_METHODS.POST,
+    handler: handleCreateBanner,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+    bodySchema: zBannerPayload,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.PUT,
+    handler: handleUpdateBanner,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+    paramsSchema: zIdParam(),
+    bodySchema: zBannerPayload,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.DELETE,
+    handler: handleDeleteBanner,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+    paramsSchema: zIdParam(),
+  },
+];
+
+export default routes;

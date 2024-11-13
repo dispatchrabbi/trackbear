@@ -1,19 +1,17 @@
-import { Router } from "express";
-const adminRouter = Router();
+import { prefixRoutes, type RouteConfig } from "server/lib/api.ts";
 
-import pingRouter from './ping.ts';
-adminRouter.use('/ping', pingRouter);
+import pingRoutes from './ping.ts';
+import meRoutes from './me.ts';
+import bannerRoutes from './banner.ts';
+import statsRoutes from './stats.ts';
+import userRoutes from './user.ts';
 
-import meRouter from './me.ts';
-adminRouter.use('/me', meRouter);
+const adminRoutes: RouteConfig[] = [
+  ...prefixRoutes('/ping', pingRoutes),
+  ...prefixRoutes('/me', meRoutes),
+  ...prefixRoutes('/banner', bannerRoutes),
+  ...prefixRoutes('/stats', statsRoutes),
+  ...prefixRoutes('/user', userRoutes),
+];
 
-import bannerRouter from './banner.ts';
-adminRouter.use('/banner', bannerRouter);
-
-import statsRouter from './stats.ts';
-adminRouter.use('/stats', statsRouter);
-
-import userRouter from './user.ts';
-adminRouter.use('/user', userRouter);
-
-export default adminRouter;
+export default adminRoutes;

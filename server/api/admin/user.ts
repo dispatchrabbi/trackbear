@@ -2,6 +2,7 @@ import { Router } from "express";
 import winston from "winston";
 import { addMinutes, addDays } from 'date-fns';
 
+import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, h, failure } from '../../lib/api-response.ts';
 import { requireAdminUser, RequestWithUser } from '../../lib/auth.ts';
 
@@ -23,7 +24,7 @@ import { logAuditEvent, buildChangeRecord } from '../../lib/audit-events.ts';
 
 type EmptyObject = Record<string, never>;
 
-const userRouter = Router();
+export const userRouter = Router();
 
 userRouter.get('/',
   requireAdminUser,
@@ -246,4 +247,50 @@ export async function handleSendPasswordResetEmail(req: RequestWithUser, res: Ap
   return res.status(201).send(success({}));
 }
 
-export default userRouter;
+const routes: RouteConfig[] = [
+  {
+    path: '/',
+    method: HTTP_METHODS.GET,
+    handler: handleGetUsers,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.GET,
+    handler: handleGetUser,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+    paramsSchema: zIdParam(),
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.PUT,
+    handler: handleUpdateUser,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+    paramsSchema: zIdParam(),
+    bodySchema: zUserUpdatePayload,
+  },
+  {
+    path: '/:id/state',
+    method: HTTP_METHODS.PUT,
+    handler: handleUpdateUserState,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+    paramsSchema: zIdParam(),
+    bodySchema: zUserStatePayload,
+  },
+  {
+    path: '/:id/verify-email',
+    method: HTTP_METHODS.POST,
+    handler: handleSendUserVerifyEmail,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+    paramsSchema: zIdParam(),
+  },
+  {
+    path: '/:id/reset-password',
+    method: HTTP_METHODS.POST,
+    handler: handleSendPasswordResetEmail,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+    paramsSchema: zIdParam(),
+  },
+];
+
+export default routes;

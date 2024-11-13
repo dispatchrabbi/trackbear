@@ -10,7 +10,7 @@ import bannersRoutes from './banners.ts';
 import infoRoutes from './info.ts';
 import pingRoutes from './ping.ts';
 
-import adminRouter from './admin/index.ts';
+import adminRoutes from './admin/index.ts';
 import v1Router from "./v1/index.ts";
 
 const apiRouter = Router();
@@ -25,7 +25,8 @@ mountEndpoints(apiRouter, prefixRoutes('/banners', bannersRoutes));
 mountEndpoints(apiRouter, prefixRoutes('/info', infoRoutes));
 mountEndpoints(apiRouter, prefixRoutes('/ping', pingRoutes));
 
-apiRouter.use('/admin', adminRouter);
+mountEndpoints(apiRouter, prefixRoutes('/admin', adminRoutes));
+
 apiRouter.use('/v1', v1Router);
 
 // handle any API errors
