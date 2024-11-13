@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
 
 import winston from "winston";
@@ -36,8 +37,7 @@ export type SummarizedWork = Work & {
 export type TallyWithTags = Tally & { tags: Tag[] };
 export type WorkWithTallies = Work & { tallies: TallyWithTags[] };
 
-const workRouter = Router();
-export default workRouter;
+export const workRouter = Router();
 
 workRouter.get('/',
   requireUser,
@@ -319,3 +319,57 @@ export async function handleDeleteCover(req: RequestWithUser, res: ApiResponse<W
 
   return res.status(200).send(success(updated));
 }
+
+const routes: RouteConfig[] = [
+  {
+    path: '/',
+    method: HTTP_METHODS.GET,
+    handler: handleGetWorks,
+    accessLevel: ACCESS_LEVEL.USER,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.GET,
+    handler: handleGetWork,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+  },
+  {
+    path: '/',
+    method: HTTP_METHODS.POST,
+    handler: handleCreateWork,
+    accessLevel: ACCESS_LEVEL.USER,
+    bodySchema: zWorkCreatePayload,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.PUT,
+    handler: handleUpdateWork,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+    bodySchema: zWorkUpdatePayload,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.DELETE,
+    handler: handleDeleteWork,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+  },
+  {
+    path: '/:id/cover',
+    method: HTTP_METHODS.POST,
+    handler: handlePostCover,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+  },
+  {
+    path: '/:id/cover',
+    method: HTTP_METHODS.DELETE,
+    handler: handleDeleteCover,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+  }
+];
+
+export default routes;

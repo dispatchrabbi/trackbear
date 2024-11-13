@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
 import { RequestWithUser } from '../../lib/auth.ts';
 
@@ -9,8 +10,7 @@ import { validateParams } from "../../lib/middleware/validate.ts";
 import { getUserProfile, PublicProfile } from "../../lib/models/profile.ts";
 export type { PublicProfile };
 
-const profileRouter = Router();
-export default profileRouter;
+export const profileRouter = Router();
 
 // GET /:username - get the public profile for a user, assuming one exists
 const zUsernameParam = z.object({
@@ -28,3 +28,15 @@ export async function handleGetProfile(req: RequestWithUser, res: ApiResponse<Pu
 
   return res.status(200).send(success(profile));
 }
+
+const routes: RouteConfig[] = [
+  {
+    path: '/:username',
+    method: HTTP_METHODS.GET,
+    handler: handleGetProfile,
+    accessLevel: ACCESS_LEVEL.PUBLIC,
+    paramsSchema: zUsernameParam,
+  },
+];
+
+export default routes;

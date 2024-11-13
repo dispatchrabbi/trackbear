@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
 
 import winston from "winston";
@@ -29,7 +30,7 @@ import sendUsernameChangedEmail from "../../lib/tasks/send-username-changed-emai
 import sendAccountDeletedEmail from "../../lib/tasks/send-account-deleted-email.ts";
 import { getAvatarUploadFn, getAvatarUploadPath } from "server/lib/upload.ts";
 
-const meRouter = Router();
+export const meRouter = Router();
 
 export type FullUser = User & {
   userSettings: UserSettings;
@@ -320,4 +321,46 @@ export async function handleUpdateSettings(req: RequestWithUser, res: ApiRespons
   return res.status(200).send(success(updated));
 }
 
-export default meRouter;
+const routes: RouteConfig[] = [
+  {
+    path: '/',
+    method: HTTP_METHODS.GET,
+    handler: handleGetMe,
+    accessLevel: ACCESS_LEVEL.USER,
+  },
+  {
+    path: '/',
+    method: HTTP_METHODS.PATCH,
+    handler: handlePatchMe,
+    accessLevel: ACCESS_LEVEL.USER,
+    bodySchema: zMeEditPayload,
+  },
+  {
+    path: '/',
+    method: HTTP_METHODS.DELETE,
+    handler: handleDeleteMe,
+    accessLevel: ACCESS_LEVEL.USER,
+  },
+  {
+    path: '/avatar',
+    method: HTTP_METHODS.POST,
+    handler: handleUploadAvatar,
+    accessLevel: ACCESS_LEVEL.USER,
+    bodySchema: zMeEditPayload,
+  },
+  {
+    path: '/avatar',
+    method: HTTP_METHODS.DELETE,
+    handler: handleDeleteAvatar,
+    accessLevel: ACCESS_LEVEL.USER,
+  },
+  {
+    path: '/settings',
+    method: HTTP_METHODS.PATCH,
+    handler: handleUpdateSettings,
+    accessLevel: ACCESS_LEVEL.USER,
+    bodySchema: zSettingsEditPayload,
+  },
+];
+
+export default routes;

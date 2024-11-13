@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
 
 import { requireUser, RequestWithUser } from '../../lib/auth.ts';
@@ -26,8 +27,7 @@ export type GoalAndTallies = {
   tallies: TallyWithWorkAndTags[]
 };
 
-const goalRouter = Router();
-export default goalRouter;
+export const goalRouter = Router();
 
 goalRouter.get('/',
   requireUser,
@@ -153,9 +153,11 @@ export async function handleCreateGoal(req: RequestWithUser, res: ApiResponse<Go
   return res.status(201).send(success({ goal, tallies }));
 }
 
+const zBatchGoalCreatePayload = z.array(zGoalCreatePayload);
+
 goalRouter.post('/batch',
   requireUser,
-  validateBody(z.array(zGoalCreatePayload)),
+  validateBody(zBatchGoalCreatePayload),
   h(handleCreateGoals)
 );
 export async function handleCreateGoals(req: RequestWithUser, res: ApiResponse<Goal[]>) {
@@ -254,3 +256,50 @@ export async function handleDeleteGoal(req: RequestWithUser, res: ApiResponse<Go
 
   return res.status(200).send(success(goal));
 }
+
+const routes: RouteConfig[] = [
+  {
+    path: '/',
+    method: HTTP_METHODS.GET,
+    handler: handleGetGoals,
+    accessLevel: ACCESS_LEVEL.USER,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.GET,
+    handler: handleGetGoal,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+  },
+  {
+    path: '/',
+    method: HTTP_METHODS.POST,
+    handler: handleCreateGoal,
+    accessLevel: ACCESS_LEVEL.USER,
+    bodySchema: zGoalCreatePayload,
+  },
+  {
+    path: '/batch',
+    method: HTTP_METHODS.POST,
+    handler: handleCreateGoals,
+    accessLevel: ACCESS_LEVEL.USER,
+    bodySchema: zBatchGoalCreatePayload,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.PUT,
+    handler: handleUpdateGoal,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+    bodySchema: zGoalUpdatePayload,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.DELETE,
+    handler: handleDeleteGoal,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+  },
+];
+
+export default routes;

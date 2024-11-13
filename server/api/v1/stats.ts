@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, h } from '../../lib/api-response.ts';
 
 import { requireUser, RequestWithUser } from '../../lib/auth.ts';
@@ -20,8 +21,7 @@ export type DayCount = {
   counts: Record<TallyMeasure, number>,
 };
 
-const statsRouter = Router();
-export default statsRouter;
+export const statsRouter = Router();
 
 const DATE_STRING_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 const zDaysQuery = z.object({
@@ -40,3 +40,15 @@ export async function handleGetDays(req: RequestWithUser, res: ApiResponse<DayCo
 
   return res.status(200).send(success(dayCounts));
 }
+
+const routes: RouteConfig[] = [
+  {
+    path: '/days',
+    method: HTTP_METHODS.GET,
+    handler: handleGetDays,
+    accessLevel: ACCESS_LEVEL.USER,
+    querySchema: zDaysQuery,
+  }
+];
+
+export default routes;

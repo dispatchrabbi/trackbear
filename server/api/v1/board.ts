@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
 import { requireUser, RequestWithUser } from '../../lib/auth.ts';
 
@@ -19,8 +20,7 @@ import { TAG_STATE } from "../../lib/models/tag.ts";
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
 
-const boardRouter = Router();
-export default boardRouter;
+export const boardRouter = Router();
 
 // GET / - get boards you have access to, either as an owner or a participant
 boardRouter.get('/',
@@ -398,3 +398,73 @@ export async function handleDeleteBoardParticipation(req: RequestWithUser, res: 
 
   return res.status(200).send(success(participant));
 }
+
+const routes: RouteConfig[] = [
+  {
+    path: '/',
+    method: HTTP_METHODS.GET,
+    handler: handleGetBoards,
+    accessLevel: ACCESS_LEVEL.USER,
+  },
+  {
+    path: '/:uuid',
+    method: HTTP_METHODS.GET,
+    handler: handleGetBoard,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidParam(),
+  },
+  {
+    path: '/',
+    method: HTTP_METHODS.POST,
+    handler: handleCreateBoard,
+    accessLevel: ACCESS_LEVEL.USER,
+    bodySchema: zBoardCreatePayload,
+  },
+  {
+    path: '/:uuid',
+    method: HTTP_METHODS.PATCH,
+    handler: handleUpdateBoard,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidParam(),
+    bodySchema: zBoardUpdatePayload,
+  },
+  {
+    path: '/:uuid/star',
+    method: HTTP_METHODS.PATCH,
+    handler: handleStarBoard,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidParam(),
+    bodySchema: zBoardStarUpdatePayload,
+  },
+  {
+    path: '/:uuid',
+    method: HTTP_METHODS.DELETE,
+    handler: handleDeleteBoard,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidParam(),
+  },
+  {
+    path: '/:uuid/participation',
+    method: HTTP_METHODS.GET,
+    handler: handleGetBoardParticipation,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidParam(),
+  },
+  {
+    path: '/:uuid/participation',
+    method: HTTP_METHODS.POST,
+    handler: handleUpdateBoardParticipation,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidParam(),
+    bodySchema: zBoardParticipantPayload,
+  },
+  {
+    path: '/:uuid/participation',
+    method: HTTP_METHODS.DELETE,
+    handler: handleDeleteBoardParticipation,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidParam(),
+  },
+];
+
+export default routes;

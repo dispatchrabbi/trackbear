@@ -1,31 +1,25 @@
-import { Router } from "express";
-const v1Router = Router();
+import { prefixRoutes, type RouteConfig } from "server/lib/api.ts";
 
-import boardRouter from "./board.ts";
-v1Router.use('/board', boardRouter);
+import boardRoutes from "./board.ts";
+import goalRoutes from './goal.ts';
+import meRoutes from './me.ts';
+import pingRoutes from './ping.ts';
+import profileRoutes from './profile.ts';
+import statsRoutes from './stats.ts';
+import tagRoutes from './tag.ts';
+import tallyRoutes from './tally.ts';
+import workRoutes from './work.ts';
 
-import goalRouter from './goal.ts';
-v1Router.use('/goal', goalRouter);
+const v1Routes: RouteConfig[] = [
+  ...prefixRoutes('/board', boardRoutes),
+  ...prefixRoutes('/goal', goalRoutes),
+  ...prefixRoutes('/me', meRoutes),
+  ...prefixRoutes('/ping', pingRoutes),
+  ...prefixRoutes('/profile', profileRoutes),
+  ...prefixRoutes('/stats', statsRoutes),
+  ...prefixRoutes('/tag', tagRoutes),
+  ...prefixRoutes('/tally', tallyRoutes),
+  ...prefixRoutes('/work', workRoutes),
+];
 
-import meRouter from './me.ts';
-v1Router.use('/me', meRouter);
-
-import pingRouter from './ping.ts';
-v1Router.use('/ping', pingRouter);
-
-import profileRouter from './profile.ts';
-v1Router.use('/profile', profileRouter);
-
-import statsRouter from './stats.ts';
-v1Router.use('/stats', statsRouter);
-
-import tagRouter from './tag.ts';
-v1Router.use('/tag', tagRouter);
-
-import tallyRouter from './tally.ts';
-v1Router.use('/tally', tallyRouter);
-
-import workRouter from './work.ts';
-v1Router.use('/work', workRouter);
-
-export default v1Router;
+export default v1Routes;

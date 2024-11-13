@@ -25,7 +25,7 @@ import session from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import rateLimit from 'server/lib/middleware/rate-limit.ts';
 
-import apiRouter from 'server/api/index.ts';
+import { mountApiEndpoints } from 'server/api/index.ts';
 import spaRoutes from 'server/lib/middleware/spa-routes.ts';
 import { createServer } from 'vite';
 
@@ -102,11 +102,10 @@ async function main() {
 
   // /api: mount the API routes
   if(env.NODE_ENV !== 'development') {
-    // add rate-limiting for production
-    app.use('/api', rateLimit(), apiRouter);
-  } else {
-    app.use('/api', apiRouter);
+    // add rate-limiting for the API for production
+    app.use('/api', rateLimit());
   }
+  mountApiEndpoints(app);
 
   // Serve the front-end - either statically or out of the vite server, depending
   if(env.NODE_ENV === 'production') {

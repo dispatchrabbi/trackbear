@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
 
 import { requireUser, RequestWithUser } from '../../lib/auth.ts';
@@ -13,8 +14,7 @@ import { TAG_STATE } from '../../lib/models/tag.ts';
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
 
-const tagRouter = Router();
-export default tagRouter;
+export const tagRouter = Router();
 
 tagRouter.get('/',
   requireUser,
@@ -151,3 +151,43 @@ export async function handleDeleteTag(req: RequestWithUser, res: ApiResponse<Tag
 
   return res.status(200).send(success(tag));
 }
+
+const routes: RouteConfig[] = [
+  {
+    path: '/',
+    method: HTTP_METHODS.GET,
+    handler: handleGetTags,
+    accessLevel: ACCESS_LEVEL.USER,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.GET,
+    handler: handleGetTag,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+  },
+  {
+    path: '/',
+    method: HTTP_METHODS.POST,
+    handler: handleCreateTag,
+    accessLevel: ACCESS_LEVEL.USER,
+    bodySchema: zTagPayload,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.PUT,
+    handler: handleUpdateTag,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+    bodySchema: zTagPayload,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.DELETE,
+    handler: handleDeleteTag,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+  },
+];
+
+export default routes;

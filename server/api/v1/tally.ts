@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, failure, h } from 'server/lib/api-response.ts';
 
 import { requireUser, RequestWithUser } from 'server/lib/auth.ts';
@@ -15,8 +16,7 @@ import { TAG_STATE, TAG_DEFAULT_COLOR } from 'server/lib/models/tag.ts';
 import { logAuditEvent } from '../../lib/audit-events.ts';
 import { WORK_STATE } from "server/lib/models/work.ts";
 
-const tallyRouter = Router();
-export default tallyRouter;
+export const tallyRouter = Router();
 
 export type TallyWithWorkAndTags = Tally & { work: Work } & { tags: Tag[] };
 
@@ -175,7 +175,7 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
   return res.status(201).send(success(tally));
 }
 
-const zBatchTallyPayload = z.object({
+const zBatchTallyPayload = z.array(z.object({
   date: zDateStr(),
   measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
   count: z.number().int(),
@@ -183,11 +183,11 @@ const zBatchTallyPayload = z.object({
   note: z.string(), // this CAN be empty
   workId: z.number().int().nullable(),
   tags: z.array(z.string()).length(0), // no tags yet either, sorry // TODO: allow this in future
-});
+}));
 
 tallyRouter.post('/batch',
   requireUser,
-  validateBody(z.array(zBatchTallyPayload)),
+  validateBody(zBatchTallyPayload),
   h(handleCreateTallies)
 );
 export async function handleCreateTallies(req: RequestWithUser, res: ApiResponse<Tally[]>) {
@@ -339,3 +339,50 @@ export async function handleDeleteTally(req: RequestWithUser, res: ApiResponse<T
 
   return res.status(200).send(success(tally));
 }
+
+const routes: RouteConfig[] = [
+  {
+    path: '/',
+    method: HTTP_METHODS.GET,
+    handler: handleGetTallies,
+    accessLevel: ACCESS_LEVEL.USER,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.GET,
+    handler: handleGetTally,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+  },
+  {
+    path: '/',
+    method: HTTP_METHODS.POST,
+    handler: handleCreateTally,
+    accessLevel: ACCESS_LEVEL.USER,
+    bodySchema: zTallyPayload,
+  },
+  {
+    path: '/batch',
+    method: HTTP_METHODS.POST,
+    handler: handleCreateTallies,
+    accessLevel: ACCESS_LEVEL.USER,
+    bodySchema: zBatchTallyPayload,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.PUT,
+    handler: handleUpdateTally,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+    bodySchema: zTallyPayload,
+  },
+  {
+    path: '/:id',
+    method: HTTP_METHODS.DELETE,
+    handler: handleDeleteTally,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zIdParam(),
+  },
+];
+
+export default routes;
