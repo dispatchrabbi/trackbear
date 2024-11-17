@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, defineProps, defineEmits } from 'vue';
+import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 
@@ -22,6 +23,7 @@ const props = defineProps<{
   work: Work;
 }>();
 const emit = defineEmits(['work:edit', 'formSuccess']);
+const eventBus = useEventBus<{ work: Work }>('work:edit');
 
 const formModel = reactive({
   title: props.work.title,
@@ -66,6 +68,7 @@ async function handleSubmit() {
     const updatedWork = await updateWork(props.work.id, data as WorkUpdatePayload);
 
     emit('work:edit', { work: updatedWork });
+    eventBus.emit({ work: updatedWork });
     successMessage.value = `${updatedWork.title} has been edited.`;
     await wait(1 * 1000);
     emit('formSuccess');

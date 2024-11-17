@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: Projects that are On Hold, Finished, or Abandoned will no longer be listed in the Project dropdown of the Add Progress dialog, unless you are on that project's page. This should make it easier to find the project you're working on if you have lots of past projects. (h/t Dutchnano)
+
 ## 1.0.7
 
 - NEW: There is now a link to the help site in the footer on the homepage and other logged-out pages.

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, defineProps, defineEmits } from 'vue';
+import { useEventBus } from '@vueuse/core';
 
 import { uploadCover, type Work } from 'src/lib/api/work.ts';
 import { ALLOWED_COVER_FORMATS, MAX_COVER_SIZE_IN_BYTES } from 'server/lib/models/work.ts';
@@ -11,6 +12,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['work:cover', 'formSuccess']);
+const eventBus = useEventBus<{ work: Work }>('work:cover');
 
 const isLoading = ref<boolean>(false);
 const successMessage = ref<string | null>(null);
@@ -27,8 +29,9 @@ async function handleUpload(ev: FileUploadUploaderEvent) {
     const formData = new FormData();
     formData.append('cover', cover);
 
-    await uploadCover(props.work.id, formData);
+    const updatedWork = await uploadCover(props.work.id, formData);
     emit('work:cover', { id: props.work.id });
+    eventBus.emit({ work: updatedWork });
 
     successMessage.value = `Your new cover has been uploaded.`;
     emit('formSuccess');

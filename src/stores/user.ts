@@ -1,14 +1,18 @@
 import { defineStore } from 'pinia';
 import { logIn, logOut } from 'src/lib/api/auth.ts';
-import { getMe } from 'src/lib/api/me.ts';
+import { getMe, type FullUser } from 'src/lib/api/me.ts';
 
 import { useWorkStore } from 'src/stores/work.ts';
 import { useTagStore } from 'src/stores/tag.ts';
 import { useGoalStore } from 'src/stores/goal.ts';
 import { useBoardStore } from 'src/stores/board.ts';
 
+type UserStoreState = {
+  user: FullUser | null;
+};
+
 export const useUserStore = defineStore('user', {
-  state: () => {
+  state: (): UserStoreState => {
     return {
       user: null,
     };

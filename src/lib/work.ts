@@ -12,6 +12,16 @@ export const WORK_PHASE_ORDER = [
   WORK_PHASE.ABANDONED,
 ];
 
+export const DORMANT_WORK_PHASES = [
+  WORK_PHASE.ON_HOLD,
+  WORK_PHASE.FINISHED,
+  WORK_PHASE.ABANDONED,
+];
+
+export function isDormant(work: Work) {
+  return DORMANT_WORK_PHASES.includes(work.phase);
+}
+
 export function cmpWorkByPhase(a: Work, b: Work) {
   return cmpStarred(a, b) || cmpPhase(a, b) || cmpTitle(a, b) || -cmpCreated(a, b);
 }

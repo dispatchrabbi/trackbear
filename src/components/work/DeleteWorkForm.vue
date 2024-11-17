@@ -10,11 +10,13 @@ import { deleteWork, Work } from 'src/lib/api/work.ts';
 import InputText from 'primevue/inputtext';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
+import { useEventBus } from '@vueuse/core';
 
 const props = defineProps<{
   work: Work;
 }>();
 const emit = defineEmits(['work:delete', 'formSuccess']);
+const eventBus = useEventBus<{ work: Work }>('work:delete');
 
 const formModel = reactive({
   deleteConfirmation: '',
@@ -42,6 +44,8 @@ async function handleSubmit() {
     const deletedWork = await deleteWork(props.work.id);
 
     emit('work:delete', { work: deletedWork });
+    eventBus.emit({ work: deletedWork });
+
     successMessage.value = `${deletedWork.title} has been deleted.`;
     await wait(1 * 1000);
     emit('formSuccess');

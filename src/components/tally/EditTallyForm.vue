@@ -12,14 +12,15 @@ const tagStore = useTagStore();
 tagStore.populate();
 
 import { z } from 'zod';
-import { NonEmptyArray } from 'server/lib/validators.ts';
+import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe, parseDateStringSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { TallyPayload } from 'server/api/v1/tally.ts';
-import { updateTally, Tally, TallyWithTags } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally.ts';
+import type { TallyPayload } from 'server/api/v1/tally.ts';
+import { updateTally, type Tally, type TallyWithTags } from 'src/lib/api/tally.ts';
+import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally.ts';
 import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally.ts';
+import { cmpWorkByTitle } from 'src/lib/work';
 
 const props = defineProps<{
   tally: TallyWithTags;
@@ -61,14 +62,26 @@ const validations = z.object({
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
 
+const workOptions = computed(() => {
+  const options = workStore.nonDormantWorks;
+
+  // if we're on a work's page and that work is dormant, it won't be an option, so we need to add it
+  if(!options.find(work => work.id === formModel.workId)) {
+    const selectedWork = workStore.allWorks.find(work => work.id === formModel.workId);
+    if(selectedWork) {
+      return [ ...options, selectedWork ].sort(cmpWorkByTitle);
+    }
+  }
+
+  return options;
+});
+
 const measureOptions = computed(() => {
   return Object.values(TALLY_MEASURE).map(measure => ({
     id: measure,
     label: TALLY_MEASURE_INFO[measure].label.plural,
   }));
 });
-
-// always keep the real count up to date
 
 const onMeasureChange = function() {
   formModel.count = null;
@@ -145,7 +158,7 @@ async function handleSubmit() {
         <Dropdown
           id="tally-form-work"
           v-model="formModel.workId"
-          :options="workStore.works"
+          :options="workOptions"
           option-label="title"
           option-value="id"
           placeholder="Select a project..."

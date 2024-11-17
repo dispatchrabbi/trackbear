@@ -16,14 +16,15 @@ const tagStore = useTagStore();
 tagStore.populate();
 
 import { z } from 'zod';
-import { NonEmptyArray } from 'server/lib/validators.ts';
+import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { TallyPayload } from 'server/api/v1/tally.ts';
-import { createTally, Tally } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally.ts';
+import type { TallyPayload } from 'server/api/v1/tally.ts';
+import { createTally, type Tally } from 'src/lib/api/tally.ts';
+import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally.ts';
 import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally.ts';
+import { cmpWorkByTitle } from 'src/lib/work';
 
 import Calendar from 'primevue/calendar';
 import Dropdown from 'primevue/dropdown';
@@ -36,6 +37,7 @@ import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 // import TbTag from 'src/components/tag/TbTag.vue';
 
 const emit = defineEmits(['tally:create', 'formSuccess']);
+const eventBus = useEventBus<{ tally: Tally }>('tally:create');
 
 // save the last measure we used for the next time
 const lastTallyMeasure = useLocalStorage('last-tally-measure', TALLY_MEASURE.WORD);
@@ -66,6 +68,20 @@ const validations = z.object({
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
 
+const workOptions = computed(() => {
+  const options = workStore.nonDormantWorks;
+
+  // if we're on a work's page and that work is dormant, it won't be an option, so we need to add it
+  if(!options.find(work => work.id === formModel.workId)) {
+    const selectedWork = workStore.allWorks.find(work => work.id === formModel.workId);
+    if(selectedWork) {
+      return [ ...options, selectedWork ].sort(cmpWorkByTitle);
+    }
+  }
+
+  return options;
+});
+
 const measureOptions = computed(() => {
   return Object.values(TALLY_MEASURE).map(measure => ({
     id: measure,
@@ -90,8 +106,8 @@ async function handleSubmit() {
     const data = formData();
     const createdTally = await createTally(data as TallyPayload);
 
-    const tallyEventBus = useEventBus<{ tally: Tally }>('tally:create');
-    tallyEventBus.emit({ tally: createdTally });
+    emit('tally:create', { tally: createdTally });
+    eventBus.emit({ tally: createdTally });
 
     successMessage.value = `Progress logged!`;
 
@@ -158,7 +174,7 @@ async function handleSubmit() {
         <Dropdown
           id="tally-form-work"
           v-model="formModel.workId"
-          :options="workStore.works"
+          :options="workOptions"
           option-label="title"
           option-value="id"
           placeholder="Select a project..."

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, defineProps, defineEmits } from 'vue';
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
+import { breakpointsTailwind, useBreakpoints, useEventBus } from '@vueuse/core';
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
-import { SummarizedWork, starWork } from 'src/lib/api/work.ts';
+import { type Work, type SummarizedWork, starWork } from 'src/lib/api/work.ts';
 import { WORK_PHASE } from 'server/lib/models/work.ts';
 
 const props = defineProps<{
@@ -11,6 +11,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['work:star']);
+const eventBus = useEventBus<{ work: Work }>('work:star');
 
 import { formatCount } from 'src/lib/tally.ts';
 
@@ -37,6 +38,7 @@ async function onStarClick() {
   isStarLoading.value = false;
 
   emit('work:star', { id: props.work.id, starred: newStarVal });
+  eventBus.emit({ work: props.work });
 }
 
 const isNotMobile = computed(() => {

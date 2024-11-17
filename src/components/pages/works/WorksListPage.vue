@@ -6,7 +6,7 @@ import { RouterLink } from 'vue-router';
 import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
 
-import { getWorks, type SummarizedWork } from 'src/lib/api/work.ts';
+import { type SummarizedWork } from 'src/lib/api/work.ts';
 import { cmpWorkByTitle, cmpWorkByPhase, cmpWorkByLastUpdate } from 'src/lib/work.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
@@ -36,17 +36,12 @@ const loadWorks = async function() {
   errorMessage.value = null;
 
   try {
-    works.value = await getWorks();
+    await workStore.populate();
   } catch(err) {
     errorMessage.value = err.message;
   } finally {
     isLoading.value = false;
   }
-}
-
-const reloadWorks = async function() {
-  workStore.populate(true);
-  loadWorks();
 }
 
 const WORK_SORTS = {
@@ -58,7 +53,7 @@ const WORK_SORTS = {
 const worksFilter = ref<string>('');
 const worksSort = useLocalStorage('works-sort', 'phase');
 const filteredWorks = computed(() => {
-  const sortedWorks = works.value.toSorted(WORK_SORTS[worksSort.value].cmpFn);
+  const sortedWorks = workStore.allWorks.toSorted(WORK_SORTS[worksSort.value].cmpFn);
   const searchTerm = worksFilter.value.toLowerCase();
   return sortedWorks.filter(work => work.title.toLowerCase().includes(searchTerm) || work.description.toLowerCase().includes(searchTerm));
 });
@@ -126,7 +121,6 @@ onMounted(async () => {
       <RouterLink :to="{ name: 'work', params: { workId: work.id } }">
         <WorkTile
           :work="work"
-          @work:star="reloadWorks()"
         />
       </RouterLink>
     </div>
@@ -147,7 +141,6 @@ onMounted(async () => {
         </h2>
       </template>
       <CreateWorkForm
-        @work:create="reloadWorks()"
         @form-success="isCreateFormVisible = false"
       />
     </Dialog>

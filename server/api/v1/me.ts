@@ -10,7 +10,7 @@ import fs from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 
 import dbClient from "../../lib/db.ts";
-import type { User, UserSettings } from "@prisma/client";
+import type { User, UserSettings as PrismaUserSettings } from "@prisma/client";
 import { USERNAME_REGEX, USER_STATE, ALLOWED_AVATAR_FORMATS } from "../../lib/models/user.ts";
 import { TALLY_MEASURE } from "../../lib/models/tally.ts";
 import CONFIG from '../../config.ts';
@@ -32,6 +32,9 @@ import { getAvatarUploadFn, getAvatarUploadPath } from "server/lib/upload.ts";
 
 export const meRouter = Router();
 
+type UserSettings = Omit<PrismaUserSettings, 'lifetimeStartingBalance'> & {
+  lifetimeStartingBalance: Record<string, number>;
+};
 export type FullUser = User & {
   userSettings: UserSettings;
 };
@@ -50,7 +53,7 @@ export async function handleGetMe(req: RequestWithUser, res: ApiResponse<FullUse
     include: {
       userSettings: true,
     }
-  });
+  }) as FullUser;
 
   // this should only happen if a user is logged in, gets suspended, and tries to find their data
   if(!me) {
@@ -132,7 +135,7 @@ export async function handlePatchMe(req: RequestWithUser, res: ApiResponse<FullU
     include: {
       userSettings: true,
     }
-  });
+  }) as FullUser;
 
   // this should only happen if a user is logged in, gets suspended, and tries to update their info
   if(!updated) {
@@ -286,7 +289,7 @@ export async function handleUpdateSettings(req: RequestWithUser, res: ApiRespons
   const current = await dbClient.userSettings.findUnique({ where: {
     userId: req.user.id,
     user: { state: USER_STATE.ACTIVE },
-  }});
+  }}) as UserSettings;
 
   // This should basically never happen. If it does, something screwed up on user creation
   if(!current) {
@@ -308,7 +311,7 @@ export async function handleUpdateSettings(req: RequestWithUser, res: ApiRespons
       userId: req.user.id,
       user: { state: USER_STATE.ACTIVE },
     },
-  });
+  }) as UserSettings;
 
   // this should only happen if a user is logged in, gets suspended, and tries to update their settings
   if(!updated) {

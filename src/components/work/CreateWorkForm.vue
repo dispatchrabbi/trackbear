@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { createWork, WorkCreatePayload } from 'src/lib/api/work.ts';
+import { createWork, type WorkCreatePayload, type Work } from 'src/lib/api/work.ts';
 import { WORK_PHASE } from 'server/lib/models/work.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
@@ -17,8 +17,10 @@ import Dropdown from 'primevue/dropdown';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import MultiMeasureInput from 'src/components/work/MultiMeasureInput.vue';
+import { useEventBus } from '@vueuse/core';
 
 const emit = defineEmits(['work:create', 'formSuccess']);
+const eventBus = useEventBus<{ work: Work }>('work:create');
 
 const formModel = reactive({
   title: '',
@@ -63,7 +65,9 @@ async function handleSubmit() {
     const createdWork = await createWork(data as WorkCreatePayload);
 
     emit('work:create', { work: createdWork });
+    eventBus.emit({ work: createdWork }); 
     successMessage.value = `${createdWork.title} has been created.`;
+    
     await wait(1 * 1000);
     emit('formSuccess');
   } catch {

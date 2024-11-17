@@ -21,10 +21,20 @@ describe('/api/info', () => {
 
     it.skip('gets a slice of the env', async () => {
       getNormalizedEnvSpy.mockImplementation(async () => {
-        return mockObject<env.TrackbearEnv>({ EMAIL_URL_PREFIX: 'https://trackbear.test' });
+        return mockObject<env.TrackbearEnv>({
+          EMAIL_URL_PREFIX: 'https://trackbear.test',
+          ENABLE_METRICS: true,
+          PLAUSIBLE_HOST: 'http://plausible.trackbear.test',
+          PLAUSIBLE_DOMAIN: 'trackbear.test',
+        });
       });
       
-      const expected: EnvInfo = { URL_PREFIX: 'https://trackbear.test' };
+      const expected: EnvInfo = {
+        URL_PREFIX: 'https://trackbear.test',
+        ENABLE_METRICS: true,
+        PLAUSIBLE_HOST: 'http://plausible.trackbear.test',
+        PLAUSIBLE_DOMAIN: 'trackbear.test',
+      };
 
       const { req, res } = getHandlerMocks();
       await handleGetEnv(req, res);

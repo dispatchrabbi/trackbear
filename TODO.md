@@ -35,6 +35,11 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] Implement API keys
 - [ ] Create Swagger/OpenAPI docs + other developer docs
 
+## Friends/Following
+- [ ] Implement a following system
+- [ ] Change the public and friend profile choices to be a settings page
+- [ ] Add a Following page under the Dashboard section
+
 ## Goals
 - [ ] Revamp goal details pages (and goal list page) to better handle achieved and ended goals (h/t Liv)
 - [ ] Habit progress gauges need a UI revamp
@@ -57,7 +62,8 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] Group participants into teams and compare team totals (h/t Asha)
 - [ ] Make sure each participant has their own, consistent color and marker across the graph and the progress bar (h/t Arden)
 - [ ] Allow viewing leaderboards without logging in
-- [ ] Cyclical leaderboards (renews or does new standings every week/month/yearh) (h/t Becca Stargazer)
+- [ ] Cyclical leaderboards (renews or does new standings every week/month/year) (h/t Becca Stargazer)
+- [ ] Add +/- rank changes from the previous day into the standings
 
 ## Observability
 - [ ] Create ping check
@@ -67,6 +73,7 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 ## Projects
 - [ ] The project details page should show more info about the project/look nicer
 - [ ] Implement project tags (h/t someone from ko-fi go look it up)
+- [ ] Redo the upload UI so it's more intuitive
 
 ## Public
 - [ ] Project progress embed (h/t Laura)
@@ -78,6 +85,10 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] Totals by year (h/t Deerna)
 - [ ] Graph lifetime progress
 - [ ] Ability to exempt tags/projects from total #maybe
+
+# Settings
+- [ ] Change the settings pages to a Settings section with its own sidebar
+- [ ] Allow users to turn off displaying covers (h/t Liv)
 
 ## Tags
 - [ ] Improve tag inputs
@@ -132,16 +143,12 @@ These are in no particular order. Which isn't to say they _aren't_ in any order.
 - [ ] Improve home page
 - [ ] Rewrite copy on "outside" pages
 
-## Developer Access
-- [ ] API access
-  - [ ] Swagger/OpenAPI docs
-  - [ ] API tokens
-
 ## Deployment
 - [ ] Create staging instance
 - [ ] Better diagnostics on deploy if something isn't right
 - [ ] Implement remote deploys
 - [ ] Zero- or minimal-downtime deploys
+- [ ] Do some load testing to see if multiple containers is better
 - [ ] Investigate Docker Swarm
 
 ## Wishlist
