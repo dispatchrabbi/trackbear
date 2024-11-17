@@ -1,7 +1,7 @@
 {
   "name": "trackbear",
   "private": true,
-  "version": "1.0.8",
+  "version": "1.0.9",
   "type": "module",
   "engines": {
     "node": ">=22.0.0 <23.0.0"
