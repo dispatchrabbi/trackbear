@@ -1,0 +1,96 @@
+(A) Allow admins to force password reset @admin dif:5
+(A) Separate join code from UUID and allow rolling the code @boards dif:3
+(A) Give board owners much more control over participants (change goals, remove/ban) @boards dif:5
+(A) Allow viewing leaderboards without logging in @boards dif:2
+(A) Fix the leaderboard tooltips @charts dif:3
+(A) Graph widget overhaul: lines/bars toggle, full-screen, download @charts dif:3
+(A) Rewrite the heatmap to use Plot @charts dif:3
+(A) Implement API keys @devex @api +integrations dif:3
+(A) De-duplicate add/edit forms +techdebt @frontend dif:3
+(A) Revamp goal details pages (and goal list page) to better handle achieved and ended goals (h/t Liv) @goals @ux dif:2
+(A) Instrument the API @o11y +tracing dif:3
+(A) Ship metrics/telemetry somewhere (Uptrace? Jaeger? That third thing?) @o11y +tracing dif:5
+(A) Create tracing middleware (because the express tracing doesn't like Router) @o11y +tracing dif:2
+(A) Add Prisma tracing @o11y +tracing dif:1
+(A) Enrich via @opentelemetry/semantic-conventions / https://opentelemetry.io/docs/specs/semconv/resource/#service @o11y +tracing dif:2
+(A) Make the tally table more mobile-friendly (h/t lailah) @projects @ux +delight dif:2
+(A) Change the settings pages to a Settings section with its own sidebar @settings dif:5
+(B) Allow admins to rename user/displayName @admin dif:2
+(B) Improve audit event retrieval/listings @admin dif:2
+(B) Allow admins to view any project, goal, leaderboard in-situ @admin dif:3
+(B) Implement data export @backend +importexport dif:5
+(B) Convert the API to consistently use PATCH @backend @api +integrations dif:5
+(B) Sharp-ify covers and avatar files to save on space @backend dif:2
+(B) Build out a full model layer so it can be used by scripts/workers/queues as well as endpoints @backend @testing dif:5
+(B) Add (+/-) rank changes from the previous day into the standings @boards +delight dif:1
+(B) Allow more than one board owner (do this through roles, implies owner must join board) @boards dif:5
+(B) Group participants into teams and compare team totals (h/t Asha) @boards dif:5
+(B) Cyclical leaderboards (renews or does new standings every week/month/year) (h/t Becca Stargazer) @boards dif:5
+(B) Create/commission logo and assets @brand dif:?
+(B) Publish usage metrics @community dif:2
+(B) Show starred leaderboards on dashboard @dashboard dif:2
+(B) Do some load testing to see if multiple containers is better @deploy dif:3
+(B) Investigate Docker Swarm if it turns out multiple containers is better @deploy dif:?
+(B) Create Swagger/OpenAPI docs + other developer docs @devex @api +integrations dif:5
+(B) Implement a following system @followers dif:5
+(B) Change the public and friend profile choices to be a settings page instead of being in the configure pages @followers @settings dif:3
+(B) Add a Following page under the Dashboard section @followers @dashboard dif:3
+(B) Fix the required-auth page architecture +techdebt @frontend dif:5
+(B) Habit progress gauges need a UI revamp @goals @ux dif:?
+(B) Write help page for leaderboards @help dif:2
+(B) Write help page for settings @help dif:2
+(B) Write help page for tags @help dif:2
+(B) Create a generic importer (h/t Trax) @import +importexport dif:5
+(B) Create ping check @o11y dif:8
+(B) Ship logs somewhere (Greylog? Uptrace?) @o11y dif:5
+(B) Redo the upload UI so it's more intuitive @projects @ux +delight dif:2
+(B) Default the Enter Progress dialog on a project page to the last measure entered @projects @ux +delight dif:3
+(B) Project progress embed (h/t Laura) @public +embed dif:3
+(B) Grand Totals embed (h/t Laura) @public +embed dif:1
+(B) Progress update widget (h/t Laura) @public +embed importance:considering dif:2
+(B) Allow users to turn off displaying covers (h/t Liv) @settings @projects +delight dif:2
+(B) Totals by year (h/t Deerna) @stats +delight dif:1
+(B) Graph lifetime progress @stats +delight dif:1
+(B) Improve tag inputs @tags @projects @goals @boards dif:?
+(B) Create better seed data for testing +techdebt @testing dif:?
+(B) Make a strategy for actual color systems: changelog, project phase, goal type, tag color, streak length +themes @ux dif:3
+(B) Should convert text-white to text-surface-0 probably +themes dif:1
+(B) Definitely need to figure out themed chart colors somehow +themes dif:2
+(C) Let admins manage projects @admin dif:5
+(C) Let admins manage goals @admin dif:3
+(C) Let admins manage leaderboards @admin dif:3
+(C) Revamp stats on the Users page @admin dif:1
+(C) Improve the worker architecture +techdebt @backend dif:5
+(C) Improve the queue architecture +techdebt @backend dif:5
+(C) Figure out how to make 'server/*' work on back end imports +techdebt @backend dif:?
+(C) Make rate-limiting better @backend @security dif:2
+(C) Lock-out multiple wrong sign-in attempts @backend @security dif:2
+(C) Add optional TOTP setup @backend @security dif:8
+(C) Double-check [Node.js Security Checklist](https://blog.risingstack.com/node-js-security-checklist/) @backend @security dif:5
+(C) Fix winston warnings by creating a non-default logger to use and exporting that (which can be silenced during unit tests) @backend @testing @techdebt dif:2
+(C) Make sure each participant has their own, consistent color and marker across the graph and the progress bar (h/t Arden) @boards importance:considering dif:3
+(C) Dashboard could be more fun/welcoming/helpful @dashboard dif:?
+(C) Target goal details pages should be nicer/more informative @goals dif:?
+(C) Goal pages could be more fun @goals dif:?
+(C) Multiple goal points (a la "stretch goals") @goals dif:5
+(C) The project details page should show more info about the project/look nicer @projects dif:?
+(C) Implement project tags (h/t someone from ko-fi go look it up, Trax) @projects @tags dif:3
+(C) Totals by tag @stats dif:2
+(C) Increase code coverage @testing dif:34
+(C) Need to figure out accent vs success vs completion +themes dif:3
+(C) Investigate 'progress-spinner-circle' (might need to look at colors on /progressspinner) +themes dif:?
+(C) Actually make several themes +themes dif:5
+(D) Improve home page @brand dif:?
+(D) Rewrite copy on "outside" pages @brand dif:?
+(D) Create staging instance @deploy dif:8
+(D) Better diagnostics on deploy if something isn't right @deploy dif:5
+(D) Implement remote deploys @deploy dif:3
+(D) Zero- or minimal-downtime deploys @deploy dif:?
+(D) Pull data from prod back to local for reproducing bugs @deploy @testing dif:5
+(D) Do a better job with shared FE/BE data/functions +techdebt dif:?
+(D) Simplify createDateRanges now that we're on date-fns v4.0 +techdebt dif:2
+Use 'omit' in prisma schema to protect password and other secret fields +techdebt importance:considering dif:?
+Split targets and habits @goals importance:considering dif:13
+Ability to exempt tags/projects from total @stats importance:considering dif:3
+Allow logging half-pages (but only for pages probably) (h/t Alex) @tallies importance:considering
+Consider the ability to add more than one type of progress at once (h/t Alice) @tallies importance:considering
