@@ -31,17 +31,20 @@ function handleMenuNavigation() {
 }
 
 const isLoading = ref<boolean>(true);
-// attempt to populate the user, but only care about failing
-try {
-  await userStore.populate();
-  isLoading.value = false;
-} catch {
-  router.push({ name: 'login', query: { redirectTo: router.currentRoute.value.fullPath } });
-}
 
 const showPage = computed(() => {
   return isLoading.value === false && userStore.user != null;
 });
+
+async function checkForUser() {
+  await userStore.populate();
+  if(userStore.user === null) {
+    router.push({ name: 'login', query: { redirectTo: router.currentRoute.value.fullPath } });
+  } else {
+    isLoading.value = false;
+  }
+}
+await checkForUser();
 
 </script>
 

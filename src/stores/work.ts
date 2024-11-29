@@ -8,6 +8,10 @@ import { computed, ref } from 'vue';
 export const useWorkStore = defineStore('work', () => {
   const works = ref<SummarizedWork[] | null>(null);
 
+  function $reset() {
+    works.value = null;
+  }
+
   const allWorks = computed(() => works.value ?? []);
   const nonDormantWorks = computed(() => allWorks.value.filter(work => !isDormant(work)));
   const starredWorks = computed(() => allWorks.value.filter(work => work.starred));
@@ -31,5 +35,6 @@ export const useWorkStore = defineStore('work', () => {
     nonDormantWorks,
     starredWorks,
     populate,
+    $reset,
   };
 });

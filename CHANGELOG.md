@@ -12,6 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Users will now be correctly redirected to the login page when attempting to access a page that requires you to be logged in instead of seeing a blank page. (h/t Taylor)
+- FIXED: Fixed a bug that would prevent login when redirecting to the Projects page.
+
 ## 1.0.9
 
 - CHANGED: Projects that are On Hold, Finished, or Abandoned will no longer be listed in the Project dropdown of the Add Progress dialog, unless you are on that project's page. This should make it easier to find the project you're working on if you have lots of past projects. (h/t Dutchnano)
