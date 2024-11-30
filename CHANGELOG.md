@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: Target goal pages now display information about how much you've contributed toward the goal that day. (h/t Matt Granger)
+- CHANGED: The information on target goal pages is now more context-aware, and will change once a goal has completed or ended.
 - FIXED: Users will now be correctly redirected to the login page when attempting to access a page that requires you to be logged in instead of seeing a blank page. (h/t Taylor)
 - FIXED: Fixed a bug that would prevent login when redirecting to the Projects page.
 

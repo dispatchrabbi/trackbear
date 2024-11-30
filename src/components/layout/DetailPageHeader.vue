@@ -6,7 +6,12 @@ const props = defineProps<{
 </script>
 
 <template>
-  <header class="mb-4 flex flex-row-reverse md:flex-row gap-4 items-start justify-between md:justify-start">
+  <header
+    :class="[
+      'mb-4 flex md:flex-row gap-4 items-start justify-between md:justify-start',
+      {'flex-row-reverse': $slots.image}
+    ]"
+  >
     <div
       v-if="$slots.image"
       class="work-cover flex-none max-h-48 max-w-32"

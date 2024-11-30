@@ -22,6 +22,17 @@ export function commaify(n: number): string {
   return (isNegative ? '-' : '') + commaizedArr.join('') + (decimalStr ? '.' + decimalStr : '');
 }
 
+export function commaifyWithPrecision(n: number, precision: number): string {
+  const [int, decimal] = n.toFixed(precision).split('.');
+  const commaified = commaify(+int);
+
+  if(precision === 0 || n === Infinity || n === -Infinity) {
+    return commaified;
+  } else {
+    return [commaified, decimal].join('.');
+  }
+}
+
 export function kify(n: number): string {
   const na = Math.abs(n);
   if(na >= 1000000 && (na % 10000 === 0)) {
