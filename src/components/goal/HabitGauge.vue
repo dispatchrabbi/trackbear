@@ -4,9 +4,9 @@ import { computed, defineProps } from 'vue';
 import type { Goal } from 'src/lib/api/goal.ts';
 import type { GoalHabitParameters, HabitRange } from 'server/lib/models/goal.ts';
 import { formatDateRange } from 'src/lib/date.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { formatCount } from 'src/lib/tally';
 
-import Knob from 'primevue/knob';
+import FullCircleGauge from '../stats/FullCircleGauge.vue';
 
 type Goalish = Pick<Goal, 'title' | 'parameters'>;
 const props = defineProps<{
@@ -15,27 +15,18 @@ const props = defineProps<{
   highlight?: boolean;
 }>();
 
-// We need to work around the fact that Knob won't (yet) let us format the label
-// see https://github.com/primefaces/primevue/pull/5569
-const total = computed(() => {
-  const params = props.goal.parameters as GoalHabitParameters;
-  let value;
-
-  if(params.threshold && params.threshold.measure === TALLY_MEASURE.TIME) {
-    value = parseFloat((props.range.total / 60).toFixed(2));
-  } else {
-    value = props.range.total;
-  }
-
-  return value;
-});
 const max = computed(() => {
   const params = props.goal.parameters as GoalHabitParameters;
-  const count = params.threshold === null ? -Infinity :  params.threshold.measure === TALLY_MEASURE.TIME ? parseFloat((params.threshold.count / 60).toFixed(2)) : params.threshold.count;
-  return Math.max(
-    count,
-    Math.abs(total.value),
-  );
+  return params.threshold?.count ?? 1;
+});
+
+const text = computed(() => {
+  const params = props.goal.parameters as GoalHabitParameters;
+  if(params.threshold === null) {
+    return `${props.range.tallies.length} time${props.range.tallies.length === 1 ? '' : 's'}`;
+  } else {
+    return formatCount(props.range.total, params.threshold.measure);
+  }
 });
 </script>
 
@@ -47,20 +38,13 @@ const max = computed(() => {
     ]"
   >
     <div>
-      <Knob
-        v-model="total"
-        :min="0"
-        :max="max"
-        readonly
-        :pt="{
-          value: { class: {
-            '!stroke-accent-400 dark:!stroke-accent-500': total >= max,
-            '!stroke-rose-400 dark:!stroke-rose-400': total < 0,
-          } },
-          range: { class: { '!stroke-surface-400 dark:!stroke-surface-500': highlight }}
-        }"
-        :pt-options="{ mergeProps: true, mergeSections: true }"
-      />
+      <div class="w-24 h-24">
+        <FullCircleGauge
+          :max="max"
+          :value="props.range.total"
+          :text="text"
+        />
+      </div>
     </div>
     <div class="whitespace-nowrap">
       {{ formatDateRange(range.startDate, range.endDate, 'MMM d') }}
