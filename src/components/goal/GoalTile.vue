@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, defineProps, defineEmits } from 'vue';
-import { Goal, starGoal } from 'src/lib/api/goal.ts';
-import { GOAL_TYPE } from 'server/lib/models/goal.ts';
+import { GoalWithAchievement, starGoal } from 'src/lib/api/goal.ts';
 
 const props = defineProps<{
-  goal: Goal;
+  goal: GoalWithAchievement;
 }>();
 
 const emit = defineEmits(['goal:star']);
@@ -12,11 +11,20 @@ const emit = defineEmits(['goal:star']);
 import Card from 'primevue/card';
 import Tag from 'primevue/tag';
 import { PrimeIcons } from 'primevue/api';
-import { describeGoal } from 'src/lib/goal.ts';
+import { describeGoal, getGoalProgress, GOAL_PROGRESS } from 'src/lib/goal.ts';
 
-const GOAL_TYPE_TAG_COLORS = {
-  [GOAL_TYPE.TARGET]: 'warning',
-  [GOAL_TYPE.HABIT]: 'success',
+const GOAL_STATUS_TAG_COLORS = {
+  [GOAL_PROGRESS.UPCOMING]: 'info',
+  [GOAL_PROGRESS.ONGOING]: 'success',
+  [GOAL_PROGRESS.ENDED]: 'secondary',
+  [GOAL_PROGRESS.ACHIEVED]: 'accent',
+};
+
+const GOAL_STATUS_TAG_TEXT = {
+  [GOAL_PROGRESS.UPCOMING]: 'Upcoming',
+  [GOAL_PROGRESS.ONGOING]: 'Ongoing',
+  [GOAL_PROGRESS.ENDED]: 'Ended',
+  [GOAL_PROGRESS.ACHIEVED]: 'Achieved!',
 };
 
 const isStarLoading = ref<boolean>(false);
@@ -49,8 +57,8 @@ async function onStarClick() {
         <div>{{ props.goal.title }}</div>
         <div class="spacer flex-auto" />
         <Tag
-          :value="props.goal.type"
-          :severity="GOAL_TYPE_TAG_COLORS[props.goal.type]"
+          :value="GOAL_STATUS_TAG_TEXT[getGoalProgress(props.goal)]"
+          :severity="GOAL_STATUS_TAG_COLORS[getGoalProgress(props.goal)]"
           :pt="{ root: { class: 'font-normal uppercase' } }"
           :pt-options="{ mergeSections: true, mergeProps: true }"
         />

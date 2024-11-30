@@ -5,8 +5,8 @@ import { RouterLink } from 'vue-router';
 import { useGoalStore } from 'src/stores/goal.ts';
 const goalStore = useGoalStore();
 
-import { getGoals, Goal } from 'src/lib/api/goal.ts';
-import { cmpGoal } from 'src/lib/goal.ts';
+import { getGoals, GoalWithAchievement } from 'src/lib/api/goal.ts';
+import { cmpGoalByProgress } from 'src/lib/goal.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
@@ -23,7 +23,7 @@ const breadcrumbs: MenuItem[] = [
   { label: 'Goals', url: '/goals' },
 ];
 
-const goals = ref<Goal[]>([]);
+const goals = ref<GoalWithAchievement[]>([]);
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string | null>(null);
 
@@ -47,7 +47,7 @@ const reloadGoals = async function() {
 
 const goalsFilter = ref<string>('');
 const filteredGoals = computed(() => {
-  const sortedGoals = goals.value.toSorted(cmpGoal);
+  const sortedGoals = goals.value.toSorted(cmpGoalByProgress);
   const searchTerm = goalsFilter.value.toLowerCase();
   return sortedGoals.filter(goal => goal.title.toLowerCase().includes(searchTerm) || goal.description.toLowerCase().includes(searchTerm));
 });

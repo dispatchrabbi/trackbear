@@ -8,7 +8,7 @@ import { cmpWorkByTitle } from 'src/lib/work.ts';
 const workStore = useWorkStore();
 
 import { useGoalStore } from 'src/stores/goal.ts';
-import { cmpGoal } from 'src/lib/goal.ts';
+import { cmpGoalByProgress } from 'src/lib/goal.ts';
 const goalStore = useGoalStore();
 
 import { useBoardStore } from 'src/stores/board.ts';
@@ -51,7 +51,7 @@ const items = computed(() => {
       to: { name: 'goals' },
       header: true,
     },
-    ...(goalStore.starredGoals ?? []).toSorted(cmpGoal).map(goal => ({
+    ...(goalStore.starredGoals ?? []).toSorted(cmpGoalByProgress).map(goal => ({
       key: `goal-${goal.id}`,
       label: goal.title,
       to: { name: 'goal', params: { goalId: goal.id } },

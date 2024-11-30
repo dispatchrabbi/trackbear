@@ -12,10 +12,13 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: Goals now display whether they are upcoming, ongoing, achieved, or ended (time ran out but the target was not hit) on the Goals page. (h/t Liv)
+- CHANGED: Goals are now sorted by progress (upcoming, ongoing, achieved, or ended) on the Goals page, Dashboard, and sidebar.
+
 ## 1.1.0
 
 - NEW: Target goal pages now display information about how much you've contributed toward the goal that day. (h/t Matt Granger)
-- CHANGED: The information on target goal pages is now more context-aware, and will change once a goal has completed or ended.
+- CHANGED: The information on target goal pages is now more context-aware, and will change once a goal has completed or ended. (h/t Liv)
 - FIXED: Users will now be correctly redirected to the login page when attempting to access a page that requires you to be logged in instead of seeing a blank page. (h/t Taylor)
 - FIXED: Fixed a bug that would prevent login when redirecting to the Projects page.
 

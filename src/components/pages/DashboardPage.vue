@@ -15,7 +15,7 @@ const goalStore = useGoalStore();
 import { getTallies, Tally } from 'src/lib/api/tally.ts';
 import { getGoal, GoalAndTallies } from 'src/lib/api/goal.ts';
 import { GOAL_TYPE } from 'server/lib/models/goal.ts';
-import { cmpGoal } from 'src/lib/goal.ts';
+import { cmpGoalByDate } from 'src/lib/goal.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
@@ -63,7 +63,8 @@ const loadGoals = async function() {
   try {
     // could we do this one-by-one or with a specific API call? Sure! But this is fine for now
     const goalsAndTallies = await Promise.all(goalStore.starredGoals.map(goal => getGoal(goal.id)));
-    goals.value = goalsAndTallies.toSorted((a, b) => cmpGoal(a.goal, b.goal));
+    // goals.value = goalsAndTallies.toSorted((a, b) => cmpGoalByDate(a.goal, b.goal));
+    goals.value = goalsAndTallies;
   } catch(err) {
     goalsErrorMessage.value = err.message;
   } finally {

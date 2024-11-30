@@ -11,7 +11,7 @@ import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 import dbClient from "../../lib/db.ts";
 import type { Goal } from "@prisma/client";
 import { GOAL_STATE, GOAL_TYPE, GOAL_CADENCE_UNIT, getTalliesForGoal } from "../../lib/models/goal.ts";
-import type { GoalParameters, GoalWithWorksAndTags } from "../../lib/models/goal.ts"
+import type { GoalParameters, GoalTargetParameters, GoalWithWorksAndTags } from "../../lib/models/goal.ts"
 import { TallyWithWorkAndTags } from "./tally.ts";
 import { WORK_STATE } from '../../lib/models/work.ts';
 import { TALLY_MEASURE } from "../../lib/models/tally.ts";
@@ -27,21 +27,51 @@ export type GoalAndTallies = {
   tallies: TallyWithWorkAndTags[]
 };
 
+export type GoalWithAchievement = Goal & {
+  achieved: boolean;
+}
+
 export const goalRouter = Router();
 
 goalRouter.get('/',
   requireUser,
   h(handleGetGoals)
 );
-export async function handleGetGoals(req: RequestWithUser, res: ApiResponse<Goal[]>) {
+export async function handleGetGoals(req: RequestWithUser, res: ApiResponse<GoalWithAchievement[]>) {
   const goals = await dbClient.goal.findMany({
     where: {
       ownerId: req.user.id,
       state: GOAL_STATE.ACTIVE,
     },
+    include: {
+      worksIncluded: {
+        where: { state: WORK_STATE.ACTIVE },
+      },
+      tagsIncluded: {
+        where: { state: TAG_STATE.ACTIVE },
+      },
+    },
   });
 
-  return res.status(200).send(success(goals))
+  const goalsWithCompletion: GoalWithAchievement[] = await Promise.all(goals.map(async (goal) => {
+    if(goal.type === GOAL_TYPE.HABIT) {
+      return {
+        ...goal,
+        achieved: false,
+      };
+    }
+    
+    const tallies = await getTalliesForGoal(goal);
+    const total = tallies.reduce((sum, tally) => sum + tally.count, 0);
+    const goalCount = (goal.parameters as GoalTargetParameters).threshold.count;
+
+    return {
+      ...goal,
+      achieved: total >= goalCount,
+    };
+  }));
+
+  return res.status(200).send(success(goalsWithCompletion))
 }
 
 goalRouter.get('/:id',

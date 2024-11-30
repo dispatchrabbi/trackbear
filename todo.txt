@@ -7,7 +7,7 @@
 (A) Rewrite the heatmap to use Plot @charts dif:3
 (A) Implement API keys @devex @api +integrations dif:3
 (A) De-duplicate add/edit forms +techdebt @frontend dif:3
-(A) Revamp goal details pages (and goal list page) to better handle achieved and ended goals (h/t Liv) @goals @ux dif:2
+x (A) Revamp goal details pages (and goal list page) to better handle achieved and ended goals (h/t Liv) @goals @ux dif:2
 (A) Instrument the API @o11y +tracing dif:3
 (A) Ship metrics/telemetry somewhere (Uptrace? Jaeger? That third thing?) @o11y +tracing dif:5
 (A) Create tracing middleware (because the express tracing doesn't like Router) @o11y +tracing dif:2
@@ -36,7 +36,7 @@
 (B) Change the public and friend profile choices to be a settings page instead of being in the configure pages @followers @settings dif:3
 (B) Add a Following page under the Dashboard section @followers @dashboard dif:3
 (B) Fix the required-auth page architecture +techdebt @frontend dif:5
-(B) Habit progress gauges need a UI revamp @goals @ux dif:?
+x (B) Habit progress gauges need a UI revamp @goals @ux dif:?
 (B) Write help page for leaderboards @help dif:2
 (B) Write help page for settings @help dif:2
 (B) Write help page for tags @help dif:2
@@ -71,7 +71,7 @@
 (C) Make sure each participant has their own, consistent color and marker across the graph and the progress bar (h/t Arden) @boards importance:considering dif:3
 (C) Dashboard could be more fun/welcoming/helpful @dashboard dif:?
 (C) Target goal details pages should be nicer/more informative @goals dif:?
-(C) Goal pages could be more fun @goals dif:?
+x (C) Goal pages could be more fun @goals dif:?
 (C) Multiple goal points (a la "stretch goals") @goals dif:5
 (C) The project details page should show more info about the project/look nicer @projects dif:?
 (C) Implement project tags (h/t someone from ko-fi go look it up, Trax) @projects @tags dif:3

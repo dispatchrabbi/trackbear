@@ -1,14 +1,14 @@
 import { callApiV1 } from "./api.ts";
 
 import type { Goal } from "@prisma/client";
-import type { GoalAndTallies, GoalWithWorksAndTags, GoalCreatePayload, GoalUpdatePayload } from "server/api/v1/goal.ts";
+import type { GoalWithAchievement, GoalAndTallies, GoalWithWorksAndTags, GoalCreatePayload, GoalUpdatePayload } from "server/api/v1/goal.ts";
 
-export type { Goal, GoalWithWorksAndTags, GoalAndTallies, GoalCreatePayload, GoalUpdatePayload };
+export type { Goal, GoalWithAchievement, GoalWithWorksAndTags, GoalAndTallies, GoalCreatePayload, GoalUpdatePayload };
 
 const ENDPOINT = '/api/v1/goal';
 
 export async function getGoals() {
-  return callApiV1<Goal[]>(ENDPOINT, 'GET');
+  return callApiV1<GoalWithAchievement[]>(ENDPOINT, 'GET');
 }
 
 export async function getGoal(id: number) {
