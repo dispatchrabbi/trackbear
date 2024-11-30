@@ -11,20 +11,20 @@ const emit = defineEmits(['goal:star']);
 import Card from 'primevue/card';
 import Tag from 'primevue/tag';
 import { PrimeIcons } from 'primevue/api';
-import { describeGoal, getGoalProgress, GOAL_PROGRESS } from 'src/lib/goal.ts';
+import { describeGoal, getGoalProgress, GOAL_COMPLETION } from 'src/lib/goal.ts';
 
 const GOAL_STATUS_TAG_COLORS = {
-  [GOAL_PROGRESS.UPCOMING]: 'info',
-  [GOAL_PROGRESS.ONGOING]: 'success',
-  [GOAL_PROGRESS.ENDED]: 'secondary',
-  [GOAL_PROGRESS.ACHIEVED]: 'accent',
+  [GOAL_COMPLETION.UPCOMING]: 'info',
+  [GOAL_COMPLETION.ONGOING]: 'success',
+  [GOAL_COMPLETION.ENDED]: 'secondary',
+  [GOAL_COMPLETION.ACHIEVED]: 'accent',
 };
 
 const GOAL_STATUS_TAG_TEXT = {
-  [GOAL_PROGRESS.UPCOMING]: 'Upcoming',
-  [GOAL_PROGRESS.ONGOING]: 'Ongoing',
-  [GOAL_PROGRESS.ENDED]: 'Ended',
-  [GOAL_PROGRESS.ACHIEVED]: 'Achieved!',
+  [GOAL_COMPLETION.UPCOMING]: 'Upcoming',
+  [GOAL_COMPLETION.ONGOING]: 'Ongoing',
+  [GOAL_COMPLETION.ENDED]: 'Ended',
+  [GOAL_COMPLETION.ACHIEVED]: 'Achieved!',
 };
 
 const isStarLoading = ref<boolean>(false);

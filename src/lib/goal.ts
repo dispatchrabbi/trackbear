@@ -4,18 +4,18 @@ import { GOAL_CADENCE_UNIT_INFO, GOAL_TYPE, GoalHabitParameters, GoalTargetParam
 import { formatCount } from './tally.ts';
 import { formatDate, formatDateSafe, parseDateStringSafe } from './date.ts';
 
-export const GOAL_PROGRESS = {
+export const GOAL_COMPLETION = {
   UPCOMING: 'upcoming',
   ONGOING: 'ongoing',
   ACHIEVED: 'achieved',
   ENDED: 'ended',
 };
 
-export const GOAL_PROGRESS_ORDER = [
-  GOAL_PROGRESS.UPCOMING,
-  GOAL_PROGRESS.ONGOING,
-  GOAL_PROGRESS.ACHIEVED,
-  GOAL_PROGRESS.ENDED,
+export const GOAL_COMPLETION_ORDER = [
+  GOAL_COMPLETION.UPCOMING,
+  GOAL_COMPLETION.ONGOING,
+  GOAL_COMPLETION.ACHIEVED,
+  GOAL_COMPLETION.ENDED,
 ]
 
 interface WithProgress {
@@ -27,13 +27,13 @@ export function getGoalProgress(goal: WithProgress) {
   const today = formatDate(new Date());
 
   if(goal.achieved) {
-    return GOAL_PROGRESS.ACHIEVED;
+    return GOAL_COMPLETION.ACHIEVED;
   } else if(goal.endDate && goal.endDate < today) {
-    return GOAL_PROGRESS.ENDED;
+    return GOAL_COMPLETION.ENDED;
   } else if(goal.startDate && goal.startDate > today) {
-    return GOAL_PROGRESS.UPCOMING;
+    return GOAL_COMPLETION.UPCOMING;
   } else {
-    return GOAL_PROGRESS.ONGOING;
+    return GOAL_COMPLETION.ONGOING;
   };
 }
 
@@ -41,8 +41,8 @@ export function cmpGoalByDate(a: Goal, b: Goal) {
   return cmpStarred(a, b) || cmpTimebounds(a, b) || cmpTitle(a, b) || -cmpCreated(a, b);
 }
 
-export function cmpGoalByProgress(a: GoalWithAchievement, b: GoalWithAchievement) {
-  return cmpStarred(a, b) || cmpProgress(a, b) || cmpTimebounds(a, b) || cmpTitle(a, b) || -cmpCreated(a, b);
+export function cmpGoalByCompletion(a: GoalWithAchievement, b: GoalWithAchievement) {
+  return cmpStarred(a, b) || cmpCompletion(a, b) || cmpTimebounds(a, b) || cmpTitle(a, b) || -cmpCreated(a, b);
 }
 
 interface Starred { starred: boolean; }
@@ -55,11 +55,11 @@ interface WithProgress {
   startDate?: string;
   endDate?: string;
 }
-function cmpProgress(a: WithProgress, b: WithProgress) {
-  const aProgressIndex = GOAL_PROGRESS_ORDER.indexOf(getGoalProgress(a));
-  const bProgressIndex = GOAL_PROGRESS_ORDER.indexOf(getGoalProgress(b));
+function cmpCompletion(a: WithProgress, b: WithProgress) {
+  const aCompletionIndex = GOAL_COMPLETION_ORDER.indexOf(getGoalProgress(a));
+  const bCompletionIndex = GOAL_COMPLETION_ORDER.indexOf(getGoalProgress(b));
 
-  return aProgressIndex - bProgressIndex;
+  return aCompletionIndex - bCompletionIndex;
 }
 
 interface TimeBound {

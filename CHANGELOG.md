@@ -12,8 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-- NEW: Goals now display whether they are upcoming, ongoing, achieved, or ended (time ran out but the target was not hit) on the Goals page. (h/t Liv)
-- CHANGED: Goals are now sorted by progress (upcoming, ongoing, achieved, or ended) on the Goals page, Dashboard, and sidebar.
+## 1.1.1
+
+- NEW: Goals now display whether they are upcoming, ongoing, achieved, or ended (which means that time ran out but the target was not hit) on the Goals page. (h/t Liv)
+- CHANGED: Goals are now sorted by completion status (upcoming, ongoing, achieved, or ended) on the Goals page, Dashboard, and sidebar.
 
 ## 1.1.0
 
