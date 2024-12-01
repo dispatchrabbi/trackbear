@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.1.3
+
 - FIXED: Target goal meters on the Dashboard now once again span the whole width of the screen. (h/t Etlu-Yume)
 
 ## 1.1.2
