@@ -12,6 +12,12 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Target goal meters on the Dashboard now once again span the whole width of the screen. (h/t Etlu-Yume)
+
+## 1.1.2
+
+- FIXED: Fixed a situation where slow response times (due to waiting on a database pool connection) were causing users to be logged out. While the site may still load a bit slow in places (notably the Dashboard and Goals pages), at least it won't kick people out now. (h/t callmecayce)
+
 ## 1.1.1
 
 - NEW: Goals now display whether they are upcoming, ongoing, achieved, or ended (which means that time ran out but the target was not hit) on the Goals page. (h/t Liv)

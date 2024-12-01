@@ -53,14 +53,12 @@ const targetStats = computed(() => {
       </div>
     </template>
     <template #content>
-      <div class="flex gap-2">
-        <TargetMeter
-          :measure="targetStats.measure"
-          :goal="targetStats.goal"
-          :past="targetStats.beforeToday"
-          :today="targetStats.today"
-        />
-      </div>
+      <TargetMeter
+        :measure="targetStats.measure"
+        :goal="targetStats.goal"
+        :past="targetStats.beforeToday"
+        :today="targetStats.today"
+      />
     </template>
   </GoalCard>
 </template>
