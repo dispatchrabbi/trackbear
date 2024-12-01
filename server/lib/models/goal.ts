@@ -101,9 +101,7 @@ export type GoalWithWorksAndTags = Goal & {
   tagsIncluded: Tag[]
 };
 export async function getTalliesForGoal(goal: GoalWithWorksAndTags): Promise<TallyWithWorkAndTags[]> {
-  const measure = goal.type === GOAL_TYPE.TARGET ?
-    (goal.parameters as GoalTargetParameters).threshold.measure : // targets always have an associated measure
-    (goal.parameters as GoalHabitParameters).threshold?.measure;  // habits sometimes have an associated measure
+  const measure = getMeasureFromGoal(goal);
 
   return dbClient.tally.findMany({
     where: {
@@ -126,6 +124,93 @@ export async function getTalliesForGoal(goal: GoalWithWorksAndTags): Promise<Tal
       work: true,
       tags: true,
     },
+  });
+}
+
+export async function getTalliesForGoals(goals: GoalWithWorksAndTags[]): Promise<Record<number, TallyWithWorkAndTags[]>> {
+  if(goals.length === 0) {
+    return {};
+  }
+
+  const ownerIds = new Set(goals.map(goal => goal.ownerId));
+  if(ownerIds.size > 1) { throw new Error('Cannot getTalliesForGoals when the goals have more than one owner'); }
+  const ownerId = goals[0].ownerId;
+
+  const allMeasures = goals.map(getMeasureFromGoal);
+  const measures = allMeasures.some(m => m === null || m === undefined) ? undefined : new Set(allMeasures);
+  
+  const workIdsIncluded = goals.some(goal => goal.worksIncluded.length === 0) ? undefined : new Set(goals.flatMap(goal => goal.worksIncluded.map(work => work.id)));
+  const tagsIdsIncluded = goals.some(goal => goal.tagsIncluded.length === 0) ? undefined : new Set(goals.flatMap(goal => goal.tagsIncluded.map(tag => tag.id)));
+  
+  const startDate = goals.some(goal => goal.startDate === null) ? undefined : goals.reduce((earliest, goal) => earliest <= goal.startDate ? earliest : goal.startDate, '9999-12-31');
+  const endDate = goals.some(goal => goal.endDate === null) ? undefined : goals.reduce((latest, goal) => latest >= goal.endDate ? latest : goal.endDate, '0000-01-01');
+
+  const allPossibleTallies = await dbClient.tally.findMany({
+    where: {
+      ownerId,
+      state: TALLY_STATE.ACTIVE,
+
+      // only include tallies from works specified in the goals (if any were)
+      workId: workIdsIncluded !== undefined ? { in: Array.from(workIdsIncluded) } : undefined,
+      // only include tallies with at least one tag specified in the goals (if any were)
+      tags: tagsIdsIncluded !== undefined ? { some: { id: { in: Array.from(tagsIdsIncluded) } } } : undefined,
+      // only include tallies within the time range (if one exists)
+      date: {
+        gte: startDate,
+        lte: endDate,
+      },
+      // only include tallies of the appropriate measure, if it exists
+      measure: measures !== undefined ? { in: Array.from(measures) } : undefined,
+    },
+    include: {
+      work: true,
+      tags: true,
+    },
+  });
+
+  const talliesForGoals = goals.reduce((obj, goal) => {
+    obj[goal.id] = filterTalliesForGoal(allPossibleTallies, goal);
+    return obj;
+  }, {});
+  return talliesForGoals;
+}
+
+function getMeasureFromGoal(goal: Goal): string | null | undefined {
+  const measure = goal.type === GOAL_TYPE.TARGET ?
+    (goal.parameters as GoalTargetParameters).threshold.measure : // targets always have an associated measure
+    (goal.parameters as GoalHabitParameters).threshold?.measure;  // habits sometimes have an associated measure
+  
+  return measure;
+}
+
+function filterTalliesForGoal(tallies: TallyWithWorkAndTags[], goal: GoalWithWorksAndTags) {
+  const goalMeasure = getMeasureFromGoal(goal);
+  const workIdsIncluded = goal.worksIncluded.map(work => work.id);
+  const tagsIdsIncluded = goal.tagsIncluded.map(tag => tag.id);
+  
+  return tallies.filter(tally => {
+    if(goalMeasure !== null && tally.measure !== goalMeasure) {
+      return false;
+    }
+
+    if(goal.startDate !== null && tally.date < goal.startDate) {
+      return false;
+    }
+
+    if(goal.endDate !== null && tally.date > goal.endDate) {
+      return false;
+    }
+
+    if(workIdsIncluded.length > 0 && !workIdsIncluded.includes(tally.workId)) {
+      return false;
+    }
+
+    const tallyTagIds = tally.tags.map(tag => tag.id);
+    if(tagsIdsIncluded.length > 0 && !tagsIdsIncluded.some(goalTagId => tallyTagIds.includes(goalTagId))) {
+      return false;
+    }
+
+    return true;
   });
 }
 

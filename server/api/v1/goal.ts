@@ -10,7 +10,7 @@ import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
 import type { Goal } from "@prisma/client";
-import { GOAL_STATE, GOAL_TYPE, GOAL_CADENCE_UNIT, getTalliesForGoal } from "../../lib/models/goal.ts";
+import { GOAL_STATE, GOAL_TYPE, GOAL_CADENCE_UNIT, getTalliesForGoal, getTalliesForGoals } from "../../lib/models/goal.ts";
 import type { GoalParameters, GoalTargetParameters, GoalWithWorksAndTags } from "../../lib/models/goal.ts"
 import { TallyWithWorkAndTags } from "./tally.ts";
 import { WORK_STATE } from '../../lib/models/work.ts';
@@ -53,6 +53,8 @@ export async function handleGetGoals(req: RequestWithUser, res: ApiResponse<Goal
     },
   });
 
+  const talliesForGoals = await getTalliesForGoals(goals);
+
   const goalsWithCompletion: GoalWithAchievement[] = await Promise.all(goals.map(async (goal) => {
     if(goal.type === GOAL_TYPE.HABIT) {
       return {
@@ -61,7 +63,7 @@ export async function handleGetGoals(req: RequestWithUser, res: ApiResponse<Goal
       };
     }
     
-    const tallies = await getTalliesForGoal(goal);
+    const tallies = talliesForGoals[goal.id];
     const total = tallies.reduce((sum, tally) => sum + tally.count, 0);
     const goalCount = (goal.parameters as GoalTargetParameters).threshold.count;
 
