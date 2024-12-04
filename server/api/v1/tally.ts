@@ -2,7 +2,7 @@ import { Router } from "express";
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, failure, h } from 'server/lib/api-response.ts';
 
-import { requireUser, RequestWithUser } from 'server/lib/auth.ts';
+import { requireUser, RequestWithUser } from 'server/lib/middleware/access.ts';
 
 import { z } from 'zod';
 import { zIdParam, zDateStr, NonEmptyArray } from 'server/lib/validators.ts';

@@ -3,7 +3,7 @@ import winston from "winston";
 
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, h } from '../../lib/api-response.ts';
-import { requireAdminUser, RequestWithUser } from '../../lib/auth.ts';
+import { requireAdminUser, RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
 import { zIdParam } from '../../lib/validators.ts';

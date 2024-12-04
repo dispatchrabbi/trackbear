@@ -5,7 +5,7 @@ import { HTTP_METHODS, ACCESS_LEVEL, RouteConfig } from "server/lib/api.ts";
 import dbClient from "../../lib/db.ts";
 import type { AdminPerms } from "@prisma/client";
 
-import { requireAdminUser, RequestWithUser } from "../../lib/auth.ts";
+import { requireAdminUser, type RequestWithUser } from "../../lib/middleware/access.ts";
 
 export const meRouter = Router();
 

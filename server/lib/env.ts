@@ -32,6 +32,9 @@ type TrackbearCommonEnv = {
   ENABLE_METRICS: boolean;
   PLAUSIBLE_HOST: string;
   PLAUSIBLE_DOMAIN: string;
+
+  ENABLE_INSTRUMENTATION: boolean;
+  OTLP_URL: string;
 };
 
 type TrackbearTlsEnv =
@@ -132,6 +135,11 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
 
   if(process.env.ENABLE_METRICS && !process.env.PLAUSIBLE_DOMAIN) { throw new Error('Missing PLAUSIBLE_DOMAIN value in .env'); }
 
+  if(!['', '0', '1'].includes(process.env.ENABLE_INSTRUMENTATION)) { throw new Error('ENABLE_METRICS should only be either `0` or `1`'); }
+  process.env.ENABLE_INSTRUMENTATION = process.env.ENABLE_INSTRUMENTATION || "0";
+
+  if(process.env.ENABLE_INSTRUMENTATION && !process.env.OTLP_URL) { throw new Error('Missing PLAUSIBLE_HOST value in .env'); }
+
   // second step is to parse the values into more usable types
   return {
     NODE_ENV:               process.env.NODE_ENV,
@@ -164,6 +172,9 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
     ENABLE_METRICS:         process.env.ENABLE_METRICS === '1',
     PLAUSIBLE_HOST:         process.env.PLAUSIBLE_HOST,
     PLAUSIBLE_DOMAIN:       process.env.PLAUSIBLE_DOMAIN,
+
+    ENABLE_INSTRUMENTATION: process.env.ENABLE_INSTRUMENTATION === '1',
+    OTLP_URL:               process.env.OTLP_URL,
   };
 }
 

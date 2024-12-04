@@ -38,7 +38,6 @@ export function h<T>(handler: ApiHandler<T>) {
     try {
       await handler(req, res);
     } catch(err) {
-      console.error(err.code);
       if(err.code === 'P2025') { // P2025 means we tried to update or delete a db record that doesn't exist
         const model = err.meta.modelName;
         const cause = err.meta.cause;

@@ -20,7 +20,7 @@ import { NonEmptyArray } from '../../lib/validators.ts';
 import { validateBody } from "../../lib/middleware/validate.ts";
 import { logAuditEvent, buildChangeRecord } from '../../lib/audit-events.ts';
 import { pick } from '../../lib/obj.ts';
-import { requireUser, RequestWithUser } from "../../lib/auth.ts";
+import { requireUser, RequestWithUser } from "../../lib/middleware/access.ts";
 
 import deepEql from 'deep-eql';
 

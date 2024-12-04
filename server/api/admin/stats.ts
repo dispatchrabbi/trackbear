@@ -4,7 +4,7 @@ import { parse, format } from 'date-fns';
 
 import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, h } from '../../lib/api-response.ts';
-import { requireAdminUser, RequestWithUser } from '../../lib/auth.ts';
+import { requireAdminUser, RequestWithUser } from '../../lib/middleware/access.ts';
 
 import dbClient from "../../lib/db.ts";
 

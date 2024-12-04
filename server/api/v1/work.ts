@@ -4,7 +4,7 @@ import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
 
 import winston from "winston";
 
-import { requireUser, RequestWithUser } from '../../lib/auth.ts';
+import { requireUser, RequestWithUser } from '../../lib/middleware/access.ts';
 
 import path from 'node:path';
 import fs from 'node:fs/promises';

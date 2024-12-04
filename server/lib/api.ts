@@ -1,7 +1,8 @@
 import type { Application, Router } from "express";
 import type { ZodSchema } from "zod";
 import { h, type ApiHandler } from "./api-response";
-import { requirePublic, requireUser, requireAdminUser, requirePrivate } from "./auth";
+import { decorateApiCallSpan, instrumentMiddleware } from "./middleware/decorate-span";
+import { requirePublic, requireUser, requireAdminUser, requirePrivate } from "./middleware/access";
 import { validateBody, validateParams, validateQuery } from "./middleware/validate";
 
 export const HTTP_METHODS = {
@@ -85,9 +86,10 @@ export function mountEndpoint(app: Application | Router, route: RouteConfig) {
 
   app[method](
     route.path,
-    accessMiddleware,
-    ...validators,
-    h(route.handler),
+    decorateApiCallSpan({ method, routePath: route.path }),
+    instrumentMiddleware(accessMiddleware.name, accessMiddleware),
+    ...validators.map(valFn => instrumentMiddleware(valFn.name, valFn)),
+    instrumentMiddleware(route.handler.name, h(route.handler)),
   );
 }
 

@@ -11,8 +11,8 @@ processors:
 
 exporters:
   debug:
-  otlp/jaeger: # Jaeger supports OTLP directly
-    endpoint: trackbear-jaeger-all-in-one-1:4317
+  otlp/signoz: # Signoz supports OTLP directly
+    endpoint: signoz-otel-collector:4317
     tls:
       insecure: true
       insecure_skip_verify: true
@@ -29,16 +29,16 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/jaeger]
-    # traces/debug:
-    #   receivers: [otlp]
-    #   processors: [batch]
-    #   exporters: [debug]
+      exporters: [otlp/signoz]
+    traces/debug:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]
     # metrics:
     #   receivers: [otlp]
     #   processors: [batch]
     #   exporters: [otlp]
-    # logs:
-    #   receivers: [otlp]
-    #   processors: [batch]
-    #   exporters: [otlp]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/signoz]

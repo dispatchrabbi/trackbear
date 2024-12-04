@@ -5,12 +5,12 @@ import { getNormalizedEnv } from 'server/lib/env.ts';
 import winston from 'winston';
 import { initLoggers, closeLoggers } from 'server/lib/logger.ts';
 
-import { createAvatarUploadDirectory } from 'server/lib/upload';
+import { createAvatarUploadDirectory, createCoverUploadDirectory } from 'server/lib/upload';
+
+import dbClient, { testDatabaseConnection } from 'server/lib/db.ts';
 
 import { initQueue } from 'server/lib/queue.ts';
 import initWorkers from 'server/lib/workers.ts';
-
-import dbClient from 'server/lib/db.ts';
 
 import http from 'http';
 import https from 'https';
@@ -34,11 +34,28 @@ async function main() {
   const env = await getNormalizedEnv();
 
   await initLoggers();
+  winston.info('TrackBear is starting up and logs are online!');
   // use `winston` just as the general logger
   const accessLogger = winston.loggers.get('access');
-
+  
   // make sure all the directories we need exist
   await createAvatarUploadDirectory();
+  await createCoverUploadDirectory();
+  winston.info('Avatar and cover upload directories exist');
+
+  // test the database connection
+  try {
+    await testDatabaseConnection();
+    winston.info('Database connection established');
+  } catch(err) {
+    console.error(`Could not connect to the database: ${err.message}`);
+    winston.error(`${err.message}`, {
+      message: err.message,
+      stack: err.stack.split('\n'),
+    });
+
+    process.exit(2);
+  }
 
   // initialize the queue
   await initQueue();
@@ -110,14 +127,14 @@ async function main() {
   // Serve the front-end - either statically or out of the vite server, depending
   if(env.NODE_ENV === 'production') {
     // serve the front-end statically out of dist/
-    winston.debug('Serving the front-end out of dist/');
+    winston.info('Serving the front-end out of dist/');
     app.use(spaRoutes(['/assets', '/images', '/uploads', '/manifest.json']));
     app.use('/uploads', express.static(env.UPLOADS_PATH));
     app.use(express.static('./dist'));
   } else {
     // Serve the front end using the schmancy HMR vite server.
     // This middleware has a catch-all route
-    winston.debug('Serving the front-end dynamically using vite');
+    winston.info('Serving the front-end dynamically using vite');
     const vite = await createServer({
       server: {
         middlewareMode: true,
