@@ -3,7 +3,7 @@ import type { User } from "@prisma/client";
 
 import { vi, Mock } from 'vitest';
 import { mockObject } from '../../../testing-support/util';
-import { RequestWithUser } from '../auth';
+import { RequestWithUser } from '../middleware/access';
 
 type MockRequest = {
   sessionID: string;
