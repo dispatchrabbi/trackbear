@@ -15,9 +15,8 @@
   },
   "scripts": {
     "start": "node --run start:dev",
-    "start:dev": "NODE_ENV=development node --import tsx ./main.ts",
-    "start:dev:instrumented": "NODE_ENV=development node --import tsx --import ./instrumentation.ts ./main.ts",
-    "start:prod": "NODE_ENV=production node --import tsx ./main.ts",
+    "start:dev": "NODE_ENV=development node --import tsx --import ./instrumentation.ts ./main.ts",
+    "start:prod": "NODE_ENV=production node --import tsx --import ./instrumentation.ts ./main.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:webui": "vitest --ui",
