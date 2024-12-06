@@ -8,11 +8,11 @@
 (A) Implement API keys @devex @api +integrations dif:3
 (A) De-duplicate add/edit forms +techdebt @frontend dif:3
 x (A) Revamp goal details pages (and goal list page) to better handle achieved and ended goals (h/t Liv) @goals @ux dif:2
-(A) Instrument the API @o11y +tracing dif:3
-(A) Ship metrics/telemetry somewhere (Uptrace? Jaeger? That third thing?) @o11y +tracing dif:5
-(A) Create tracing middleware (because the express tracing doesn't like Router) @o11y +tracing dif:2
-(A) Add Prisma tracing @o11y +tracing dif:1
-(A) Enrich via @opentelemetry/semantic-conventions / https://opentelemetry.io/docs/specs/semconv/resource/#service @o11y +tracing dif:2
+x (A) Instrument the API @o11y +tracing dif:3
+x (A) Ship metrics/telemetry to Signoz @o11y +tracing dif:5
+x (A) Create tracing middleware (because the express tracing doesn't like Router) @o11y +tracing dif:2
+x (A) Add Prisma tracing @o11y +tracing dif:1
+x (A) Enrich via @opentelemetry/semantic-conventions / https://opentelemetry.io/docs/specs/semconv/resource/#service @o11y +tracing dif:2
 (A) Make the tally table more mobile-friendly (h/t lailah) @projects @ux +delight dif:2
 (A) Change the settings pages to a Settings section with its own sidebar @settings dif:5
 (B) Allow admins to rename user/displayName @admin dif:2
@@ -42,7 +42,7 @@ x (B) Habit progress gauges need a UI revamp @goals @ux dif:?
 (B) Write help page for tags @help dif:2
 (B) Create a generic importer (h/t Trax) @import +importexport dif:5
 (B) Create ping check @o11y dif:8
-(B) Ship logs somewhere (Greylog? Uptrace?) @o11y dif:5
+x (B) Ship logs somewhere (Signoz) @o11y dif:5
 (B) Redo the upload UI so it's more intuitive @projects @ux +delight dif:2
 (B) Default the Enter Progress dialog on a project page to the last measure entered @projects @ux +delight dif:3
 (B) Project progress embed (h/t Laura) @public +embed dif:3
