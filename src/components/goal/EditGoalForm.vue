@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, defineEmits } from 'vue';
+import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 
@@ -16,7 +17,7 @@ import { NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe, parseDateStringSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { updateGoal, GoalUpdatePayload, GoalWithWorksAndTags } from 'src/lib/api/goal.ts';
+import { updateGoal, type GoalUpdatePayload, type GoalWithWorksAndTags, type Goal } from 'src/lib/api/goal.ts';
 import { GOAL_TYPE, GOAL_CADENCE_UNIT, GoalParameters } from 'server/lib/models/goal.ts';
 import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
@@ -39,6 +40,7 @@ const props = defineProps<{
   goal: GoalWithWorksAndTags;
 }>();
 const emit = defineEmits(['goal:edit', 'formSuccess', 'formCancel']);
+const eventBus = useEventBus<{ goal: Goal }>('goal:edit');
 
 const formModel = reactive({
   title: props.goal.title,
@@ -202,8 +204,11 @@ async function handleSubmit() {
     const updatedGoal = await updateGoal(props.goal.id, data);
 
     emit('goal:edit', { goal: updatedGoal.goal });
+    eventBus.emit({ goal: updatedGoal.goal });
+    
     successMessage.value = `${updatedGoal.goal.title} has been updated.`;
     await wait(1 * 1000);
+    
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not update the goal: something went wrong server-side.';

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, defineProps, defineEmits } from 'vue';
-import { ExtendedBoard, starBoard } from 'src/lib/api/board.ts';
+import { useEventBus } from '@vueuse/core';
+import { type ExtendedBoard, type Board, starBoard } from 'src/lib/api/board.ts';
 
 const props = defineProps<{
   board: ExtendedBoard;
 }>();
 
 const emit = defineEmits(['board:star']);
+const eventBus = useEventBus<{ board: Board }>('board:star');
 
 import Card from 'primevue/card';
 import UserAvatarGroup from '../UserAvatarGroup.vue';
@@ -21,6 +23,7 @@ async function onStarClick() {
   isStarLoading.value = false;
 
   emit('board:star', { uuid: props.board.uuid, starred: newStarVal });
+  eventBus.emit({ board: props.board });
 }
 
 </script>

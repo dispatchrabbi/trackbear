@@ -69,8 +69,10 @@ async function handleSubmit() {
 
     emit('work:edit', { work: updatedWork });
     eventBus.emit({ work: updatedWork });
+
     successMessage.value = `${updatedWork.title} has been edited.`;
     await wait(1 * 1000);
+    
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not edit the project: something went wrong server-side.';

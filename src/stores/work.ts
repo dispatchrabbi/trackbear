@@ -1,9 +1,9 @@
+import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { useEventBus } from '@vueuse/core';
 
 import { getWorks, type Work, type SummarizedWork } from 'src/lib/api/work.ts';
 import { cmpWorkByTitle, isDormant } from 'src/lib/work';
-import { computed, ref } from 'vue';
 
 export const useWorkStore = defineStore('work', () => {
   const works = ref<SummarizedWork[] | null>(null);

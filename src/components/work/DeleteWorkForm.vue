@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, defineProps, defineEmits } from 'vue';
+import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 
 import { z } from 'zod';
@@ -10,7 +11,6 @@ import { deleteWork, Work } from 'src/lib/api/work.ts';
 import InputText from 'primevue/inputtext';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
-import { useEventBus } from '@vueuse/core';
 
 const props = defineProps<{
   work: Work;
@@ -48,6 +48,7 @@ async function handleSubmit() {
 
     successMessage.value = `${deletedWork.title} has been deleted.`;
     await wait(1 * 1000);
+    
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not delete the project: something went wrong server-side.';

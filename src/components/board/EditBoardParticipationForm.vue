@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, defineProps, withDefaults, defineEmits } from 'vue';
+import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 
 import { useWorkStore } from 'src/stores/work.ts';
@@ -17,7 +18,7 @@ import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 import type { ParticipantGoal } from 'server/lib/models/board';
 
-import { joinBoard, BoardParticipantPayload, Board, ExtendedBoardParticipant } from 'src/lib/api/board.ts';
+import { joinBoard, BoardParticipantPayload, Board, ExtendedBoardParticipant, BoardParticipant } from 'src/lib/api/board.ts';
 
 import MultiSelect from 'primevue/multiselect';
 import Dropdown from 'primevue/dropdown';
@@ -32,7 +33,9 @@ const props = withDefaults(defineProps<{
 }>(), {
   participant: null,
 });
-const emit = defineEmits(['participation:edit', 'formSuccess', 'formCancel']);
+
+const emit = defineEmits(['board:edit-participation', 'formSuccess', 'formCancel']);
+const eventBus = useEventBus<{ board: Board; participant: BoardParticipant }>('board:edit-participation');
 
 const isJoin = computed(() => {
   return props.participant === null;
@@ -89,10 +92,12 @@ async function handleSubmit() {
 
     const updated = await joinBoard(props.board.uuid, payload);
 
-    emit('participation:edit', { participation: updated });
+    emit('board:edit-participation', { participant: updated });
+    eventBus.emit({ board: props.board, participant: updated });
+    
     successMessage.value = `You have ${isJoin.value ? 'joined' : 'changed your selections for'} ${props.board.title}!`;
-
     await wait(1 * 1000);
+
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not submit: something went wrong server-side.'

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, defineEmits } from 'vue';
+import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 
@@ -16,7 +17,7 @@ import { NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { createGoal, GoalCreatePayload } from 'src/lib/api/goal.ts';
+import { createGoal, type GoalCreatePayload, type Goal } from 'src/lib/api/goal.ts';
 import { GOAL_TYPE, GOAL_CADENCE_UNIT, GoalParameters } from 'server/lib/models/goal.ts';
 import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
@@ -36,6 +37,7 @@ import TallyCountInput from '../tally/TallyCountInput.vue';
 // import TbTag from 'src/components/tag/TbTag.vue';
 
 const emit = defineEmits(['goal:create', 'formSuccess', 'formCancel']);
+const eventBus = useEventBus<{ goal: Goal }>('goal:create');
 
 const formModel = reactive({
   title: '',
@@ -199,8 +201,11 @@ async function handleSubmit() {
     const createdGoal = await createGoal(data);
 
     emit('goal:create', { goal: createdGoal.goal });
+    eventBus.emit({ goal: createdGoal.goal });
+    
     successMessage.value = `${createdGoal.goal.title} has been created.`;
     await wait(1 * 1000);
+    
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not create the goal: something went wrong server-side.';

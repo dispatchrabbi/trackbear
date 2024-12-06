@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, defineEmits } from 'vue';
+import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 
@@ -17,7 +18,6 @@ import Dropdown from 'primevue/dropdown';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import MultiMeasureInput from 'src/components/work/MultiMeasureInput.vue';
-import { useEventBus } from '@vueuse/core';
 
 const emit = defineEmits(['work:create', 'formSuccess']);
 const eventBus = useEventBus<{ work: Work }>('work:create');
@@ -65,10 +65,11 @@ async function handleSubmit() {
     const createdWork = await createWork(data as WorkCreatePayload);
 
     emit('work:create', { work: createdWork });
-    eventBus.emit({ work: createdWork }); 
-    successMessage.value = `${createdWork.title} has been created.`;
+    eventBus.emit({ work: createdWork });
     
+    successMessage.value = `${createdWork.title} has been created.`;
     await wait(1 * 1000);
+
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not create the project: something went wrong server-side.';

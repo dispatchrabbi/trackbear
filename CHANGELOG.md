@@ -12,6 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: The erroneous "You haven't made any projects yet. Click the New button to get started!" message at the bottom of the Projects page has been removed. (h/t AngelDragon, James)
+- FIXED: A loading message should now appear on the Projects, Goals, and Leaderboards pages when those pages are loading data.
+
 ## 1.1.3
 
 - FIXED: Target goal meters on the Dashboard now once again span the whole width of the screen. (h/t Etlu-Yume)

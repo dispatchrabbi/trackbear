@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, reactive, defineProps, defineEmits } from 'vue';
-import { toTitleCase } from 'src/lib/str.ts';
+import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
+import { toTitleCase } from 'src/lib/str.ts';
 
 import { useBoardStore } from 'src/stores/board.ts';
 const boardStore = useBoardStore();
@@ -32,7 +33,8 @@ import MultiMeasureInput from 'src/components/work/MultiMeasureInput.vue';
 const props = defineProps<{
   board: Board;
 }>();
-const emit = defineEmits(['board:update', 'formSuccess', 'formCancel']);
+const emit = defineEmits(['board:edit', 'formSuccess', 'formCancel']);
+const eventBus = useEventBus<{ board: Board }>('board:edit');
 
 const formModel = reactive({
   title: props.board.title,
@@ -102,9 +104,12 @@ async function handleSubmit() {
     
     const updatedBoard = await updateBoard(props.board.uuid, data as BoardUpdatePayload);
 
-    emit('board:update', { board: updatedBoard });
+    emit('board:edit', { board: updatedBoard });
+    eventBus.emit({ board: updatedBoard });
+
     successMessage.value = `${updatedBoard.title} has been updated.`;
     await wait(1 * 1000);
+    
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not update the leaderboard: something went wrong server-side.';

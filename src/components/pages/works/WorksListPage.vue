@@ -27,7 +27,6 @@ const breadcrumbs: MenuItem[] = [
 
 const isCreateFormVisible = ref<boolean>(false);
 
-const works = ref<SummarizedWork[]>([]);
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string | null>(null);
 
@@ -113,22 +112,24 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+    <div v-if="isLoading">
+      Loading projects...
+    </div>
+    <div v-else-if="workStore.allWorks.length === 0">
+      You haven't made any projects yet. Click the <span class="font-bold">New</span> button to get started!
+    </div>
+    <div v-else-if="filteredWorks.length === 0">
+      No matching projects found.
+    </div>
     <div
+      v-else
       v-for="work in filteredWorks"
       :key="work.id"
       class="mb-2"
     >
       <RouterLink :to="{ name: 'work', params: { workId: work.id } }">
-        <WorkTile
-          :work="work"
-        />
+        <WorkTile :work="work" />
       </RouterLink>
-    </div>
-    <div v-if="filteredWorks.length === 0 && works.length > 0">
-      No matching projects found.
-    </div>
-    <div v-if="works.length === 0">
-      You haven't made any projects yet. Click the <span class="font-bold">New</span> button to get started!
     </div>
     <Dialog
       v-model:visible="isCreateFormVisible"

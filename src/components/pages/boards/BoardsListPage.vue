@@ -4,11 +4,13 @@ import { useRouter, RouterLink } from 'vue-router';
 const router = useRouter();
 
 import { useBoardStore } from 'src/stores/board.ts';
-import { cmpBoard } from 'src/lib/board.ts';
 const boardStore = useBoardStore();
+
+import { cmpBoard } from 'src/lib/board.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
+
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
@@ -41,23 +43,23 @@ const loadBoards = async function(force = false) {
   }
 }
 
-const reloadBoards = async function() {
-  loadBoards(true);
-}
+// const reloadBoards = async function() {
+//   loadBoards(true);
+// }
 
-const boards = computed(() => {
-  return boardStore.boards === null ? [] : boardStore.boards;
-})
+// const boards = computed(() => {
+//   return boardStore.boards === null ? [] : boardStore.boards;
+// })
 
 const boardsFilter = ref<string>('');
 const filteredBoards = computed(() => {
-  const sortedGoals = boards.value.toSorted(cmpBoard);
+  const sortedGoals = boardStore.allBoards.toSorted(cmpBoard);
   const searchTerm = boardsFilter.value.toLowerCase();
   return sortedGoals.filter(board => board.title.toLowerCase().includes(searchTerm) || board.description.toLowerCase().includes(searchTerm));
 });
 
-onMounted(() => {
-  loadBoards();
+onMounted(async () => {
+  await loadBoards();
 });
 
 </script>
@@ -98,7 +100,17 @@ onMounted(() => {
         </IconField>
       </div>
     </div>
+    <div v-if="isLoading">
+      Loading leaderboards...
+    </div>
+    <div v-else-if="boardStore.allBoards.length === 0">
+      You haven't made any leaderboards yet. Click the <span class="font-bold">New</span> button to get started!
+    </div>
+    <div v-else-if="filteredBoards.length === 0">
+      No matching leaderboards found.
+    </div>
     <div
+      v-else
       v-for="board in filteredBoards"
       :key="board.id"
       class="mb-2"
@@ -106,15 +118,8 @@ onMounted(() => {
       <RouterLink :to="{ name: 'board', params: { boardUuid: board.uuid } }">
         <BoardTile
           :board="board"
-          @board:star="reloadBoards()"
         />
       </RouterLink>
-    </div>
-    <div v-if="filteredBoards.length === 0 && boards.length > 0">
-      No matching leaderboards found.
-    </div>
-    <div v-if="boards.length === 0">
-      You haven't made any leaderboards yet. Click the <span class="font-bold">New</span> button to get started!
     </div>
     <Dialog
       v-model:visible="isJoinFormVisible"

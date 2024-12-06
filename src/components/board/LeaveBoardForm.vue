@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, defineProps, defineEmits } from 'vue';
+import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 
 import { useUserStore } from 'src/stores/user.ts';
@@ -8,7 +9,7 @@ const userStore = useUserStore();
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
-import { leaveBoard, Board } from 'src/lib/api/board.ts';
+import { leaveBoard, Board, BoardParticipant } from 'src/lib/api/board.ts';
 
 import InputText from 'primevue/inputtext';
 import TbForm from 'src/components/form/TbForm.vue';
@@ -18,6 +19,7 @@ const props = defineProps<{
   board: Board;
 }>();
 const emit = defineEmits(['board:leave', 'formSuccess']);
+const eventBus = useEventBus<{ board: Board; participant: BoardParticipant }>('board:leave');
 
 const formModel = reactive({
   leaveConfirmation: '',
@@ -45,8 +47,11 @@ async function handleSubmit() {
     const leftParticipant = await leaveBoard(props.board.uuid);
 
     emit('board:leave', { participant: leftParticipant, board: props.board });
+    eventBus.emit({ board: props.board, participant: leftParticipant });
+    
     successMessage.value = `You have left ${props.board.title}.`;
     await wait(1 * 1000);
+    
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not leave the leaderboard: something went wrong server-side.';

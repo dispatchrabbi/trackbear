@@ -5,7 +5,6 @@ import { RouterLink } from 'vue-router';
 import { useGoalStore } from 'src/stores/goal.ts';
 const goalStore = useGoalStore();
 
-import { getGoals, GoalWithAchievement } from 'src/lib/api/goal.ts';
 import { cmpGoalByCompletion } from 'src/lib/goal.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
@@ -23,7 +22,6 @@ const breadcrumbs: MenuItem[] = [
   { label: 'Goals', url: '/goals' },
 ];
 
-const goals = ref<GoalWithAchievement[]>([]);
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string | null>(null);
 
@@ -32,7 +30,7 @@ const loadGoals = async function() {
   errorMessage.value = null;
 
   try {
-    goals.value = await getGoals();
+    await goalStore.populate();
   } catch(err) {
     errorMessage.value = err.message;
   } finally {
@@ -40,20 +38,15 @@ const loadGoals = async function() {
   }
 }
 
-const reloadGoals = async function() {
-  goalStore.populate(true);
-  loadGoals();
-}
-
 const goalsFilter = ref<string>('');
 const filteredGoals = computed(() => {
-  const sortedGoals = goals.value.toSorted(cmpGoalByCompletion);
+  const sortedGoals = goalStore.allGoals.toSorted(cmpGoalByCompletion);
   const searchTerm = goalsFilter.value.toLowerCase();
   return sortedGoals.filter(goal => goal.title.toLowerCase().includes(searchTerm) || goal.description.toLowerCase().includes(searchTerm));
 });
 
-onMounted(() => {
-  loadGoals();
+onMounted(async () => {
+  await loadGoals();
 });
 
 </script>
@@ -84,24 +77,26 @@ onMounted(() => {
         </RouterLink>
       </div>
     </div>
+    <div v-if="isLoading">
+      Loading goals...
+    </div>
+    <div v-else-if="goalStore.allGoals.length === 0">
+      You haven't made any goals yet. Click the <span class="font-bold">New</span> button to get started!
+    </div>
+    <div v-else-if="filteredGoals.length === 0">
+      No matching goals found.
+    </div>
     <div
+      v-else
       v-for="goal in filteredGoals"
       :key="goal.id"
       class="mb-2"
     >
       <RouterLink :to="{ name: 'goal', params: { goalId: goal.id } }">
-        <GoalTile
-          :goal="goal"
-          @goal:star="reloadGoals()"
-        />
+        <GoalTile :goal="goal" />
       </RouterLink>
     </div>
-    <div v-if="filteredGoals.length === 0 && goals.length > 0">
-      No matching goals found.
-    </div>
-    <div v-if="goals.length === 0">
-      You haven't made any goals yet. Click the <span class="font-bold">New</span> button to get started!
-    </div>
+    
   </ApplicationLayout>
 </template>
 

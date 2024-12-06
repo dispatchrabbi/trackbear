@@ -87,7 +87,7 @@ onMounted(async () => {
         <EditBoardParticipationForm
           :board="board"
           :participant="board.participants[0] ?? null"
-          @participation:edit="boardStore.populate(true)"
+          @board:edit-participation="boardStore.populate(true)"
           @form-success="router.push({ name: 'board', params: { boardUuid: board.uuid } })"
           @form-cancel="board.isPublic ? router.push({ name: 'board', params: { boardUuid: board.uuid } }) : router.push({ name: 'boards' })"
         />

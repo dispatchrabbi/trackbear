@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, defineProps, defineEmits } from 'vue';
+import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 
 import { z } from 'zod';
@@ -15,6 +16,7 @@ const props = defineProps<{
   board: Board;
 }>();
 const emit = defineEmits(['board:delete', 'formSuccess']);
+const eventBus = useEventBus<{ board: Board }>('board:delete');
 
 const formModel = reactive({
   deleteConfirmation: '',
@@ -42,8 +44,11 @@ async function handleSubmit() {
     const deletedBoard = await deleteBoard(props.board.uuid);
 
     emit('board:delete', { board: deletedBoard });
+    eventBus.emit({ board: deletedBoard})
+    
     successMessage.value = `${deletedBoard.title} has been deleted.`;
     await wait(1 * 1000);
+    
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not delete the leaderboard: something went wrong server-side.';

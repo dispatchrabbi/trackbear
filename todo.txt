@@ -56,6 +56,7 @@ x (B) Habit progress gauges need a UI revamp @goals @ux dif:?
 (B) Make a strategy for actual color systems: changelog, project phase, goal type, tag color, streak length +themes @ux dif:3
 (B) Should convert text-white to text-surface-0 probably +themes dif:1
 (B) Definitely need to figure out themed chart colors somehow +themes dif:2
+(B) Display positive (written) and negative (removed) word counts separately @stats dif:3
 (C) Let admins manage projects @admin dif:5
 (C) Let admins manage goals @admin dif:3
 (C) Let admins manage leaderboards @admin dif:3

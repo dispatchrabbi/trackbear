@@ -1,22 +1,15 @@
 <script setup lang="ts">
 import { ref, reactive, defineEmits } from 'vue';
+import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
-
-import { useBoardStore } from 'src/stores/board.ts';
-const boardStore = useBoardStore();
-boardStore.populate();
-
-import { useTagStore } from 'src/stores/tag.ts';
-const tagStore = useTagStore();
-tagStore.populate();
 
 import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { createBoard, BoardCreatePayload } from 'src/lib/api/board.ts';
+import { createBoard, type BoardCreatePayload, type Board } from 'src/lib/api/board.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
@@ -27,9 +20,9 @@ import InputSwitch from 'primevue/inputswitch';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import MultiMeasureInput from 'src/components/work/MultiMeasureInput.vue';
-// import TbTag from 'src/components/tag/TbTag.vue';
 
 const emit = defineEmits(['board:create', 'formSuccess', 'formCancel']);
+const eventBus = useEventBus<{ board: Board }>('board:create');
 
 const formModel = reactive({
   title: '',
@@ -100,8 +93,11 @@ async function handleSubmit() {
     const createdBoard = await createBoard(data as BoardCreatePayload);
 
     emit('board:create', { board: createdBoard });
+    eventBus.emit({ board: createdBoard });
+    
     successMessage.value = `${createdBoard.title} has been created.`;
     await wait(1 * 1000);
+    
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not create the leaderboard: something went wrong server-side.';

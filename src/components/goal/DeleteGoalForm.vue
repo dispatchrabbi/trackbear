@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, reactive, defineProps, defineEmits } from 'vue';
+import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
-import { deleteGoal, Goal } from 'src/lib/api/goal.ts';
+import { deleteGoal, type Goal } from 'src/lib/api/goal.ts';
 
 import InputText from 'primevue/inputtext';
 import TbForm from 'src/components/form/TbForm.vue';
@@ -15,6 +16,7 @@ const props = defineProps<{
   goal: Goal;
 }>();
 const emit = defineEmits(['goal:delete', 'formSuccess']);
+const eventBus = useEventBus<{ goal: Goal }>('goal:delete');
 
 const formModel = reactive({
   deleteConfirmation: '',
@@ -42,8 +44,11 @@ async function handleSubmit() {
     const deletedGoal = await deleteGoal(props.goal.id);
 
     emit('goal:delete', { goal: deletedGoal });
+    eventBus.emit({ goal: deletedGoal });
+    
     successMessage.value = `${deletedGoal.title} has been deleted.`;
     await wait(1 * 1000);
+    
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not delete the goal: something went wrong server-side.';

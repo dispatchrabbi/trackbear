@@ -71,7 +71,7 @@ onMounted(() => loadBoard());
       <template #content>
         <EditBoardForm
           :board="board"
-          @board:update="boardStore.populate(true)"
+          @board:edit="boardStore.populate(true)"
           @form-success="router.push(`/leaderboards/${board.uuid}`)"
           @form-cancel="router.push(`/leaderboards/${board.uuid}`)"
         />

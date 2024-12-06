@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, defineProps, defineEmits } from 'vue';
-import { GoalWithAchievement, starGoal } from 'src/lib/api/goal.ts';
+import { useEventBus } from '@vueuse/core';
+import { type GoalWithAchievement, type Goal, starGoal } from 'src/lib/api/goal.ts';
 
 const props = defineProps<{
   goal: GoalWithAchievement;
 }>();
 
 const emit = defineEmits(['goal:star']);
+const eventBus = useEventBus<{ goal: Goal }>('goal:star');
 
 import Card from 'primevue/card';
 import Tag from 'primevue/tag';
@@ -36,6 +38,7 @@ async function onStarClick() {
   isStarLoading.value = false;
 
   emit('goal:star', { id: props.goal.id, starred: newStarVal });
+  eventBus.emit({ goal: props.goal });
 }
 
 </script>
