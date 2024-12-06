@@ -44,8 +44,8 @@ export async function createCoverUploadDirectory() {
   }
 }
 
-let multerStorage = null;
-function getMulterStorage(useMemoryStorage = false) {
+let multerStorage: multer.StorageEngine | null = null;
+function getMulterStorage(useMemoryStorage = false): multer.StorageEngine {
   if(multerStorage === null) {
     if(useMemoryStorage) {
       multerStorage = multer.memoryStorage();
@@ -60,7 +60,7 @@ function getMulterStorage(useMemoryStorage = false) {
     }
   }
 
-  return multerStorage;
+  return multerStorage!;
 }
 
 export function getAvatarUploadFn() {

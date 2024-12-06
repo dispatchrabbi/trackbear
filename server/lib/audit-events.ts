@@ -1,8 +1,9 @@
 import winston from 'winston';
 import dbClient from "./db.ts";
+import { Prisma } from '@prisma/client';
 
 export const TRACKBEAR_SYSTEM_ID = -1;
-export async function logAuditEvent(eventType: string, agentId: number, patientId?: number, goalId?: number, auxInfo: Record<string, unknown> = {}, sessionId?: string) {
+export async function logAuditEvent(eventType: string, agentId: number, patientId?: number | null, goalId?: number | null, auxInfo: Record<string, unknown> = {}, sessionId?: string | null) {
   try {
     await dbClient.auditEvent.create({
       data: {

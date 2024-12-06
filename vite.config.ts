@@ -37,12 +37,4 @@ export default defineConfig({
       },
     },
   },
-  // pass env variables to the front-end (see https://vite.dev/config/shared-options.html#envprefix)
-  envPrefix: ['FE'],
-  define: {
-    'import.meta.env.URL_PREFIX':       JSON.stringify(process.env.EMAIL_URL_PREFIX),
-    'import.meta.env.ENABLE_METRICS':   JSON.stringify(process.env.ENABLE_METRICS),
-    'import.meta.env.PLAUSIBLE_HOST':   JSON.stringify(process.env.PLAUSIBLE_HOST),
-    'import.meta.env.PLAUSIBLE_DOMAIN': JSON.stringify(process.env.PLAUSIBLE_DOMAIN),
-  },
 });

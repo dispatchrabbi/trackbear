@@ -4,7 +4,7 @@
   "version": "1.1.5",
   "type": "module",
   "engines": {
-    "node": ">=22.0.0 <23.0.0"
+    "node": ">=22.11.0 <23.0.0"
   },
   "imports": {
     "src/*": "./src/*",
@@ -52,10 +52,10 @@
     "@opentelemetry/sdk-trace-node": "^1.26.0",
     "@opentelemetry/semantic-conventions": "^1.27.0",
     "@opentelemetry/winston-transport": "^0.8.0",
-    "@prisma/client": "^5.19.1",
+    "@prisma/client": "^6.0.1",
     "@prisma/instrumentation": "^5.20.0",
     "@quixo3/prisma-session-store": "^3.1.13",
-    "@vitejs/plugin-vue": "^4.5.0",
+    "@vitejs/plugin-vue": "^5.2.1",
     "@vueuse/core": "^11.1.0",
     "autoprefixer": "^10.4.16",
     "better-queue": "^3.8.12",
@@ -86,15 +86,14 @@
     "postcss": "^8.4.32",
     "primeicons": "^7.0.0",
     "primevue": "^3.53.0",
-    "prisma": "^5.19.1",
     "tailwindcss": "^3.4.13",
     "tsx": "^4.11.0",
-    "vite": "^5.0.0",
-    "vue": "^3.5.10",
-    "vue-router": "^4.2.5",
-    "vue-tsc": "^2.0.21",
-    "winston": "^3.11.0",
-    "zod": "^3.22.4"
+    "vite": "^6.0.3",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "vue-tsc": "^2.1.10",
+    "winston": "^3.17.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
@@ -118,8 +117,9 @@
     "eslint-plugin-vue": "^9.32.0",
     "husky": "^8.0.3",
     "prettier": "3.3.3",
+    "prisma": "^6.0.1",
     "rollup-plugin-visualizer": "^5.11.0",
-    "typescript": "^5.5.0",
+    "typescript": "^5.7.2",
     "typescript-eslint": "^8.11.0",
     "vitest": "^2.1.2",
     "vitest-mock-extended": "^2.0.2"
