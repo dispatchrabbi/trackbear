@@ -13,6 +13,7 @@ const CHUNKS_MAP = {
   'primevue-datatable': 'node_modules/primevue/datatable',
   'primevue': 'node_modules/primevue',
   'themes': 'src/themes',
+  'vue': 'node_modules/@vue',
   'zod': 'node_modules/zod',
 };
 
