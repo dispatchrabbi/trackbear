@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { Resource } from '@opentelemetry/resources';
 
-import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node';
+// import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import Prisma from '@prisma/instrumentation';

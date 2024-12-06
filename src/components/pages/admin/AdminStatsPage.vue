@@ -21,7 +21,7 @@ const weeklyActiveUsers = ref<WeeklyStat[]>([]);
 const loadWeeklyActiveUsers = async function() {
   try {
     weeklyActiveUsers.value = await getWeeklyActiveUsers();
-  } catch(err) { }
+  } catch(err) { console.log(err); }
 }
 
 const weeklyActiveUsersData = computed(() => {
@@ -36,7 +36,7 @@ const weeklySignups = ref<WeeklyStat[]>([]);
 const loadWeeklySignups = async function() {
   try {
     weeklySignups.value = await getWeeklySignups();
-  } catch(err) { }
+  } catch(err) { console.log(err); }
 }
 
 const weeklySignupsData = computed(() => {
@@ -51,7 +51,7 @@ const dailyActiveUsers = ref<DailyStat[]>([]);
 const loadDailyActiveUsers = async function() {
   try {
     dailyActiveUsers.value = await getDailyActiveUsers();
-  } catch(err) { }
+  } catch(err) { console.log(err); }
 }
 
 const dailyActiveUsersData = computed(() => {
@@ -66,7 +66,7 @@ const dailySignups = ref<DailyStat[]>([]);
 const loadDailySignups = async function() {
   try {
     dailySignups.value = await getDailySignups();
-  } catch(err) { }
+  } catch(err) { console.log(err); }
 }
 
 const dailySignupsData = computed(() => {

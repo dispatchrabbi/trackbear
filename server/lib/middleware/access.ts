@@ -1,4 +1,3 @@
-import { promisify } from 'node:util';
 import type { User } from "@prisma/client";
 import type { Request, Response, NextFunction } from "express";
 

@@ -17,6 +17,7 @@ import {
 	error
 } from './src/themes/primevue.ts';
 
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 function invert(colorSet) {
 	return Object.keys(colorSet).reduce((inverted, level) => {
 		inverted[1000 - level] = colorSet[level];

@@ -25,7 +25,7 @@ type AccessLevel = typeof ACCESS_LEVEL[keyof typeof ACCESS_LEVEL];
 export type RouteConfig = {
   method: HttpMethod;
   path: string;
-  handler: ApiHandler<any>
+  handler: ApiHandler<unknown>
   accessLevel: AccessLevel;
   paramsSchema?: ZodSchema;
   querySchema?: ZodSchema;

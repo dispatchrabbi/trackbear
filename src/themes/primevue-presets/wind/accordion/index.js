@@ -16,6 +16,7 @@ export default {
                 { 'select-none pointer-events-none cursor-default opacity-60': props?.disabled }
             ]
         }),
+        /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         headerAction: ({ context }) => ({
             class: [
                 //Font

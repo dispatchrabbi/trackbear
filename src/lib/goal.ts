@@ -2,7 +2,7 @@ import { compare } from 'natural-orderby';
 import { Goal, GoalWithAchievement } from 'src/lib/api/goal.ts';
 import { GOAL_CADENCE_UNIT_INFO, GOAL_TYPE, GoalHabitParameters, GoalTargetParameters } from 'server/lib/models/goal.ts';
 import { formatCount } from './tally.ts';
-import { formatDate, formatDateSafe, parseDateStringSafe } from './date.ts';
+import { formatDate } from './date.ts';
 
 export const GOAL_COMPLETION = {
   UPCOMING: 'upcoming',
@@ -69,8 +69,6 @@ interface TimeBound {
 // This function is probably not exactly correct, but it's close enough for now, and stable
 // TODO: base this off of the number of days between the dates and today
 function cmpTimebounds(a: TimeBound, b: TimeBound) {
-  const today = formatDate(new Date());
-
   if(a.endDate !== b.endDate) {
     if(a.endDate === null) {
       return 1;

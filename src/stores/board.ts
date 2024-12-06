@@ -4,7 +4,6 @@ import { useEventBus } from '@vueuse/core';
 
 import { cmpBoard } from 'src/lib/board.ts';
 import { getBoards, ExtendedBoard } from 'src/lib/api/board.ts';
-import wait from 'src/lib/wait';
 
 export const useBoardStore = defineStore('board', () => {
   const boards = ref<ExtendedBoard[] | null>(null);

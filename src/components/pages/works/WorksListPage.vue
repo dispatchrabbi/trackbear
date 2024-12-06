@@ -6,7 +6,6 @@ import { RouterLink } from 'vue-router';
 import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
 
-import { type SummarizedWork } from 'src/lib/api/work.ts';
 import { cmpWorkByTitle, cmpWorkByPhase, cmpWorkByLastUpdate } from 'src/lib/work.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
@@ -122,8 +121,8 @@ onMounted(async () => {
       No matching projects found.
     </div>
     <div
-      v-else
       v-for="work in filteredWorks"
+      v-else
       :key="work.id"
       class="mb-2"
     >

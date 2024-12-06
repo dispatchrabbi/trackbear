@@ -12,8 +12,7 @@ import { TALLY_MEASURE_INFO, compileTallies, formatCount } from 'src/lib/tally.t
 import SubsectionTitle from '../layout/SubsectionTitle.vue';
 import StatLine from './StatLine.vue';
 
-import StatTile from './StatTile.vue';
-import { formatDuration, parseDateString } from 'src/lib/date.ts';
+import { parseDateString } from 'src/lib/date.ts';
 import { commaifyWithPrecision, formatPercent } from 'src/lib/number.ts';
 import FullCircleGauge from '../stats/FullCircleGauge.vue';
 import { getRandomElement } from 'src/lib/arr';

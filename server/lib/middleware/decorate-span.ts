@@ -26,13 +26,13 @@ export function decorateApiCallSpan(config: DecorateSpanConfig) {
   }
 }
 
-type MiddlewareFunction<R extends Request = Request> = (req: R, res: Response, next: NextFunction) => any;
+type MiddlewareFunction<R extends Request = Request> = (req: R, res: Response, next: NextFunction) => unknown;
 
 export function instrumentMiddleware<R extends Request = Request>(spanName: string, middlewareFn: MiddlewareFunction<R>): MiddlewareFunction<R> {
   return function wrappedMiddleware(req: R, res: Response, next: NextFunction) {
     const tracer = getTracer(); 
     return tracer.startActiveSpan(spanName, async (span: Span) => {
-      const _next: NextFunction = function(err?: any) {
+      const _next: NextFunction = function(err?: unknown) {
         span.end();
         next(err);
       };

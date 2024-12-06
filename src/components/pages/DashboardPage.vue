@@ -5,7 +5,6 @@ import { useEventBus } from '@vueuse/core';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import { User } from '@prisma/client';
 import { useUserStore } from 'src/stores/user.ts';
 const userStore = useUserStore();
 
@@ -15,7 +14,6 @@ const goalStore = useGoalStore();
 import { getTallies, Tally } from 'src/lib/api/tally.ts';
 import { getGoal, GoalAndTallies } from 'src/lib/api/goal.ts';
 import { GOAL_TYPE } from 'server/lib/models/goal.ts';
-import { cmpGoalByDate } from 'src/lib/goal.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';

@@ -87,8 +87,8 @@ onMounted(async () => {
       No matching goals found.
     </div>
     <div
-      v-else
       v-for="goal in filteredGoals"
+      v-else
       :key="goal.id"
       class="mb-2"
     >
@@ -96,7 +96,6 @@ onMounted(async () => {
         <GoalTile :goal="goal" />
       </RouterLink>
     </div>
-    
   </ApplicationLayout>
 </template>
 

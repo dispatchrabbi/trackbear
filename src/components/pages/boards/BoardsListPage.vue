@@ -110,8 +110,8 @@ onMounted(async () => {
       No matching leaderboards found.
     </div>
     <div
-      v-else
       v-for="board in filteredBoards"
+      v-else
       :key="board.id"
       class="mb-2"
     >

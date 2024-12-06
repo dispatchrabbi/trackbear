@@ -17,7 +17,9 @@ import sendAccountDeletedEmail from "../../lib/tasks/send-account-deleted-email.
 
 import {
   handleGetMe, handlePatchMe, handleDeleteMe,
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   handleUploadAvatar, handleDeleteAvatar,
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   handleUpdateSettings,
   type FullUser
 } from './me.ts';

@@ -9,14 +9,14 @@ import SelectButton from 'primevue/selectbutton';
 <template>
   <SelectButton
     id="theme-form-theme"
+    v-model="theme"
     :options="THEME_OPTIONS"
     option-label="label"
     option-value="value"
-    v-model="theme"
   >
     <template #option="slotProps">
       <div class="flex gap-2">
-        <i :class="slotProps.option.icon"></i>
+        <i :class="slotProps.option.icon" />
         <div>{{ slotProps.option.label }}</div>
       </div>
     </template>

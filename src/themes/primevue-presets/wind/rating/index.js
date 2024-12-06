@@ -68,6 +68,7 @@ export default {
             'transition duration-200 ease-in'
         ]
     }),
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     onicon: ({ props }) => ({
         class: [
             // Size
