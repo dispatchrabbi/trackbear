@@ -432,7 +432,6 @@ const routes: RouteConfig[] = [
     method: HTTP_METHODS.POST,
     handler: handleSendEmailVerification,
     accessLevel: ACCESS_LEVEL.USER,
-    bodySchema: zCreateUserPayload,
   },
   {
     path: '/verify-email/:uuid',

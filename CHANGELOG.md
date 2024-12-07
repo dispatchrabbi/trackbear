@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Fixed a bug that prevented users from requesting additional verification links. (h/t kweikel)
+
 ## 1.1.6
 
 - FIXED: The erroneous "You haven't made any projects yet. Click the New button to get started!" message at the bottom of the Projects page has been removed. (h/t AngelDragon, James)
