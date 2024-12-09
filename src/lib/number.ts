@@ -44,10 +44,29 @@ export function kify(n: number): string {
   }
 }
 
+/**
+ * Math.floor(), but aware of negative numbers
+ * @param n The number to round
+ * @returns n, rounded to the nearest integer in the direction toward zero
+ */
 export function roundTowardZero(n: number) {
   return Math.sign(n) * Math.floor(Math.abs(n));
 }
 
+/**
+ * Math.ceil(), but aware of negative numbers
+ * @param n The number to round
+ * @returns n, rounded to the nearest integer in the opposite direction from zero
+ */
+export function roundAwayFromZero(n: number) {
+  return Math.sign(n) * Math.ceil(Math.abs(n));
+}
+
+/**
+ * Math.sign(), but it returns 1 for 0
+ * @param n The number to decide the sign of
+ * @returns -1 if n is negative, 1 otherwise
+ */
 export function decisiveSign(n: number) {
   return n < 0 ? -1 : 1;
 }

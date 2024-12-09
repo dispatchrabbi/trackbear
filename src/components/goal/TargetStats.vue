@@ -13,7 +13,7 @@ import SubsectionTitle from '../layout/SubsectionTitle.vue';
 import StatLine from './StatLine.vue';
 
 import { parseDateString } from 'src/lib/date.ts';
-import { commaifyWithPrecision, formatPercent } from 'src/lib/number.ts';
+import { commaifyWithPrecision, formatPercent, roundAwayFromZero } from 'src/lib/number.ts';
 import FullCircleGauge from '../stats/FullCircleGauge.vue';
 import { getRandomElement } from 'src/lib/arr';
 import { NonEmptyArray } from 'server/lib/validators';
@@ -28,31 +28,44 @@ const measure = computed(() => {
   return params.threshold.measure;
 });
 
+const isSmallMeasure = computed(() => {
+  return [TALLY_MEASURE.CHAPTER, TALLY_MEASURE.PAGE, TALLY_MEASURE.SCENE].includes(measure.value);
+});
+
+const thresholdCount = computed(() => {
+  const params = props.goal.parameters as GoalTargetParameters;
+  return params.threshold.count;
+})
+
 const compiledTallies = computed(() => {
   const compiled = compileTallies(props.tallies);
   return compiled;
 });
 
 const overallStats = computed(() => {
-  const params = props.goal.parameters as GoalTargetParameters;
   const today = formatDate(new Date());
 
-  const lastTally = compiledTallies.value.at(-1);
-  const lastTallyIsToday = lastTally?.date === today;
-
-  return {
-    goalCount: params.threshold.count,
-    totalCount: lastTally.total[measure.value],
-    isComplete: lastTally.total[measure.value] >= params.threshold.count,
-    todayCount: lastTallyIsToday ? lastTally.count[measure.value] : 0,
-    beforeTodayCount: lastTallyIsToday ? lastTally.total[measure.value] - lastTally.count[measure.value] : lastTally.total[measure.value],
+  const stats = {
+    totalCount: 0,
+    isComplete: 0 >= thresholdCount.value,
+    todayCount: 0,
+    beforeTodayCount: 0,
   };
+
+  if(compiledTallies.value.length > 0) {
+    const lastTally = compiledTallies.value.at(-1);
+    const lastTallyIsToday = lastTally?.date === today;
+
+    stats.totalCount = lastTally.total[measure.value];
+    stats.isComplete = lastTally.total[measure.value] >= thresholdCount.value;
+    stats.todayCount = lastTallyIsToday ? lastTally.count[measure.value] : 0;
+    stats.beforeTodayCount = lastTallyIsToday ? lastTally.total[measure.value] - lastTally.count[measure.value] : lastTally.total[measure.value];
+  }
+
+  return stats;
 });
 
-const isSmallMeasure = computed(() => {
-  return [TALLY_MEASURE.CHAPTER, TALLY_MEASURE.PAGE, TALLY_MEASURE.SCENE].includes(measure.value);
-});
-
+// this is the number of days since the start of the target, including today
 const daysSoFar = computed(() => {
   const today = new Date();
 
@@ -67,6 +80,7 @@ const daysSoFar = computed(() => {
   }
 });
 
+// this is the number of days until the end date of the target, not including today
 const daysToGo = computed(() => {
   if(props.goal.endDate === null) {
     return Infinity;
@@ -76,10 +90,10 @@ const daysToGo = computed(() => {
   const endDate = parseDateString(props.goal.endDate);
 
   const days = differenceInCalendarDays(endDate, today);
-
   return days;
 });
 
+// this is the number of days total in the target
 const totalDays = computed(() => {
   if(props.goal.endDate === null) {
     return Infinity;
@@ -97,54 +111,58 @@ const totalDays = computed(() => {
   }
 });
 
-const totalSoFar = computed(() => {
-  const parameters = props.goal.parameters as GoalTargetParameters;
-  return compiledTallies.value[compiledTallies.value.length - 1].total[parameters.threshold.measure];
-});
-
+// how much further there is to go (or 0 if the goal has been met)
 const totalToGo = computed(() => {
-  const parameters = props.goal.parameters as GoalTargetParameters;
-  return Math.max(parameters.threshold.count - totalSoFar.value, 0);
-});
-
-const paceSoFar = computed(() => {
-  if(totalSoFar.value === 0) {
-    return 0;
-  } else if(daysSoFar.value === 0) {
-    return totalSoFar.value;
+  if(thresholdCount.value < 0) {
+    return Math.min(thresholdCount.value - overallStats.value.totalCount, 0);
   } else {
-    const precision = isSmallMeasure.value ? 2 : 0;
-    // yeah, yeah, this will be a bit inaccurate. That's okay.
-    return +(totalSoFar.value / daysSoFar.value).toFixed(precision);
+    return Math.max(thresholdCount.value - overallStats.value.totalCount, 0);
   }
 });
 
+// how much you've done per day, including today
+const paceSoFar = computed(() => {
+  if(overallStats.value.totalCount === 0) {
+    return 0;
+  } else if(daysSoFar.value === 0) {
+    return 0;
+  } else {
+    const precision = isSmallMeasure.value ? 2 : 0;
+    return +(overallStats.value.totalCount / daysSoFar.value).toFixed(precision);
+  }
+});
+
+// how many days it'll take you to get to your goal at your current pace
 const daysAtPace = computed(() => {
   if(paceSoFar.value === 0) {
     return Infinity;
   } else {
-    return Math.ceil(totalToGo.value / paceSoFar.value);
+    return roundAwayFromZero(totalToGo.value / paceSoFar.value);
   }
 });
 
+// how much you have to do every day in order to hit your goal (not counting any progress today)
 const paceToGo = computed(() => {
   if(totalToGo.value === 0) {
     return 0;
   } else if(daysToGo.value === Infinity) {
     return 0;
   } else {
+    // don't count any progress made today, so that this stat can be used to answer
+    // the question "how many words do I need to write today to stay on pace?"
+    const totalToGoNotCountingToday = thresholdCount.value - overallStats.value.beforeTodayCount;
+    const daysToGoCountingToday = daysToGo.value + 1;
+    
     const precision = isSmallMeasure.value ? 2 : 0;
-    // yeah, yeah, this will be a bit inaccurate. That's okay.
-    const toGoNotCountingToday = overallStats.value.goalCount - overallStats.value.beforeTodayCount;
-    return +(toGoNotCountingToday / (daysToGo.value + 1)).toFixed(precision);
+    return +(totalToGoNotCountingToday / daysToGoCountingToday).toFixed(precision);
   }
 });
 
 const yetToDoToday = computed(() => {
   if(props.goal.endDate === null) {
-    return Math.ceil(paceSoFar.value - overallStats.value.todayCount);
+    return roundAwayFromZero(paceSoFar.value - overallStats.value.todayCount);
   } else {
-    return Math.ceil(paceToGo.value - overallStats.value.todayCount);
+    return roundAwayFromZero(paceToGo.value - overallStats.value.todayCount);
   }
 });
 
@@ -177,12 +195,12 @@ const funPaceFact = computed(() => {
   const fact = getRandomElement(FUN_FACTS as NonEmptyArray<typeof FUN_FACTS[number]>);
   
   const daysAtPace = totalToGo.value / paceSoFar.value;
-  const num = daysAtPace * fact.factor;
-  const counter = num === 1 ? fact.counter[0] : fact.counter[1];
+  const funPace = daysAtPace * fact.factor;
+  const counter = funPace === 1 ? fact.counter[0] : fact.counter[1];
 
   return {
     description: fact.description,
-    stat: `${commaifyWithPrecision(num, fact.precision)} ${counter}`,
+    stat: `${commaifyWithPrecision(funPace, fact.precision)} ${counter}`,
   };
 });
 
@@ -195,34 +213,26 @@ const isGoalFinished = computed(() => {
   }
 });
 
-const finishedTallies = computed(() => {
-  if(!isGoalFinished.value) {
-    return [];
-  }
-
-  const completingTally = compiledTallies.value.find(tally => tally.total[measure.value] >= overallStats.value.goalCount);
-  if(completingTally) {
-    return compiledTallies.value.filter(tally => tally.date <= completingTally.date);
-  } else {
-    return compiledTallies.value;
-  }
-});
-
-const totalFinishedDays = computed(() => {
-  const startDate = props.goal.startDate ?? finishedTallies.value[0].date;
-  const endDate = props.goal.endDate ?? finishedTallies.value.at(-1).date;
-
-  return differenceInCalendarDays(endDate, startDate) + 1;
-});
-
 const finishedDailyPace = computed(() => {
-  if(!isGoalFinished.value) {
-    return NaN;
+  const precision = isSmallMeasure.value ? 2 : 0;
+  return +(overallStats.value.totalCount / totalDays.value).toFixed(precision);
+});
+
+const daysToHitGoal = computed(() => {
+  if(!overallStats.value.isComplete) {
+    return Infinity;
   }
 
-  const precision = isSmallMeasure.value ? 2 : 0;
-  // yeah, yeah, this will be a bit inaccurate. That's okay.
-  return +(finishedTallies.value.at(-1).total[measure.value] / totalFinishedDays.value).toFixed(precision);
+  if(compiledTallies.value.length === 0) {
+    return 0;
+  }
+
+  const completingTally = compiledTallies.value.find(tally => tally.total[measure.value] >= thresholdCount.value);
+  const completionDate = completingTally.date;
+  
+  const startDate = props.goal.startDate ?? compiledTallies.value[0].date;
+
+  return differenceInCalendarDays(completionDate, startDate) + 1;
 });
 </script>
 
@@ -233,12 +243,12 @@ const finishedDailyPace = computed(() => {
       <div class="flex gap-4 p-2">
         <div class="w-32 h-32">
           <FullCircleGauge
-            :max="overallStats.goalCount"
+            :max="thresholdCount"
             :value="overallStats.totalCount"
           >
             <div class="flex flex-col text-center">
               <div>{{ formatCount(overallStats.totalCount, measure) }}</div>
-              <div>{{ formatPercent(overallStats.totalCount, overallStats.goalCount) }}%</div>
+              <div>{{ formatPercent(overallStats.totalCount, thresholdCount) }}%</div>
             </div>
           </FullCircleGauge>
         </div>
@@ -280,7 +290,7 @@ const finishedDailyPace = computed(() => {
           <StatLine
             v-if="overallStats.isComplete"
             description="You hit your goal after"
-            :stat="`${totalFinishedDays} day${totalFinishedDays === 1 ? '' : 's'}`"
+            :stat="`${daysToHitGoal} day${daysToHitGoal === 1 ? '' : 's'}`"
           />
         </div>
       </div>

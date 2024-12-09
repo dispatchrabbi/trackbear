@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: The stats on finished target goals were off by a bit; they've now been fixed. (h/t galaxygnc)
+
+## 1.1.7
+
 - FIXED: Fixed a bug that prevented users from requesting additional verification links. (h/t kweikel)
 
 ## 1.1.6
