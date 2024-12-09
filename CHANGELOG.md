@@ -12,6 +12,7 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: Added some new fun pace conversions to the target goal stats.
 - FIXED: The stats on finished target goals were off by a bit; they've now been fixed. (h/t galaxygnc)
 - FIXED: The ratio of Mars Sols to Earth days has been corrected.
 

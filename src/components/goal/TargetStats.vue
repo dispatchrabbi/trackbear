@@ -188,8 +188,15 @@ const paceEval = computed(() => {
 
 const FUN_FACTS = [
   { description: 'Which on Mars would be', factor: 1.02749125, precision: 2, counter: ['Sol', 'Sols'] },
+  { description: 'Which works out to', factor: 1/14, precision: 2, counter: ['fortnight', 'fortnights'] },
   { description: 'During which your nails will grow', factor: 0.12, precision: 2, counter: ['mm', 'mm'] },
   { description: 'During which the Earth will travel', factor: 2572992, precision: 0, counter: ['km', 'km'] },
+  { description: 'During which you could walk about', factor: 3.18 * 24, precision: 2, counter: ['mile', 'miles'] },
+  // { description: 'During which you could walk about', factor: 5.12 * 24, precision: 2, counter: ['km', 'km'] },
+  // { description: 'During which Usain Bolt could run', factor: 27.79 * 24, precision: 2, counter: ['mile', 'miles'] },
+  { description: 'During which Usain Bolt could run', factor: 44.72 * 24, precision: 2, counter: ['km', 'km'] },
+  { description: 'Enough time to play Free Bird', factor: 86400 / 548, precision: 0, counter: ['time', 'times'] },
+  // { description: 'Enough time to listen to Bohemian Rhapsody', factor: 86400 / 355, precision: 0, counter: ['time', 'times'] },
 ];
 const funPaceFact = computed(() => {
   const fact = getRandomElement(FUN_FACTS as NonEmptyArray<typeof FUN_FACTS[number]>);
