@@ -187,7 +187,7 @@ const paceEval = computed(() => {
 });
 
 const FUN_FACTS = [
-  { description: 'Which on Mars would be', factor: 1, precision: 2, counter: ['Sol', 'Sols'] },
+  { description: 'Which on Mars would be', factor: 1.02749125, precision: 2, counter: ['Sol', 'Sols'] },
   { description: 'During which your nails will grow', factor: 0.12, precision: 2, counter: ['mm', 'mm'] },
   { description: 'During which the Earth will travel', factor: 2572992, precision: 0, counter: ['km', 'km'] },
 ];
