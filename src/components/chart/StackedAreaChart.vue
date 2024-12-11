@@ -110,6 +110,9 @@ type ChartDataPoint = {
 }
 
 function renderChart() {
+  // determine the order of the series
+  const seriesOrder = getSeriesOrder(props.data);
+
   // we will need to add anything that needs a tooltip to this
   const tooltipData: ChartDataPoint[] = [];
   
@@ -129,7 +132,7 @@ function renderChart() {
     x: 'date',
     y: 'value',
     z: 'series',
-    order: 'series',
+    order: seriesOrder,
     reverse: true,
     // sort: 'date',
     fill: 'series',
@@ -163,6 +166,9 @@ function renderChart() {
   const tooltipPointerMark = Plot.tip(tooltipData, Plot.pointer(Plot.stackY2({
     x: 'date',
     y: 'value',
+    z: 'series',
+    order: ['Par', ...seriesOrder],
+    reverse: true,
     channels: {
       date: { label: '', value: 'date' },
       series: { label: '', value: 'series', scale: 'color', },
@@ -180,7 +186,6 @@ function renderChart() {
 
   marks.push(tooltipPointerMark);
 
-  const seriesOrder = getSeriesOrder(props.data);
   const chart = Plot.plot({
     style: {
       fontFamily: 'Jost, sans-serif',
