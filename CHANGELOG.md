@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.1.9
+
 - CHANGED: The base color on calendar heatmaps now doesn't stand out so much.
 - FIXED: The tooltips on leaderboards in Fundraiser Mode now show up at the correct place. In fact, tooltips in general are looking much better.
 - FIXED: The order of participants in the graph, the progress meter, and the standings should all now be stable on leaderboards in Fundraiser mode. The participant with the highest contribution will be at the bottom of the graph, the front of the progress meter, and the top of the standings.
