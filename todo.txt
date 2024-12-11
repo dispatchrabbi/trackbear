@@ -2,8 +2,8 @@
 (A) Separate join code from UUID and allow rolling the code @boards dif:3
 (A) Give board owners much more control over participants (change goals, remove/ban) @boards dif:5
 (A) Allow viewing leaderboards without logging in @boards dif:2
-(A) Fix the leaderboard tooltips @charts dif:3
-(A) Graph widget overhaul: lines/bars toggle, full-screen, download @charts dif:3
+x (A) Fix the leaderboard tooltips @charts dif:3
+(B) Graph widget overhaul: lines/bars toggle, full-screen, download @charts dif:3
 (A) Rewrite the heatmap to use Plot @charts dif:3
 (A) Implement API keys @devex @api +integrations dif:3
 (A) De-duplicate add/edit forms +techdebt @frontend dif:3

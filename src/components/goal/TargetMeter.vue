@@ -16,7 +16,7 @@ const props = defineProps<{
 }>();
 
 const meterStats = computed(() => {
-  const preferredColorScheme = useTheme().computedTheme.value;
+  const preferredColorScheme = useTheme().theme.value;
 
   const isComplete = props.past + props.today >= props.goal;
   const pastColor = isComplete ? themeColors.accent : themeColors.surface;

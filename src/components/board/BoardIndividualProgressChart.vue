@@ -5,7 +5,7 @@ import type { Board, ParticipantWithTallies } from 'src/lib/api/board.ts';
 
 import { normalizeTallies, accumulateTallies, listEachDayOfData } from '../chart/chart-functions.ts';
 
-import PlotProgressChart from 'src/components/chart/PlotProgressChart.vue';
+import LineChart from '../chart/LineChart.vue';
 import { densifyTallies } from '../chart/chart-functions.ts';
 import { formatPercent } from 'src/lib/number.ts';
 
@@ -76,16 +76,10 @@ const chartData = computed(() => {
 </script>
 
 <template>
-  <PlotProgressChart
+  <LineChart
     :data="chartData.tallies"
     :par="chartData.par"
-    :is-stacked="isFundraiserMode"
-    :config="{
-      measureHint: 'percent',
-      seriesTitle: 'Participant',
-      showLegend: true,
-    }"
-    :value-format-fn="d => `${d}%`"
+    measure-hint="percent"
   />
 </template>
 

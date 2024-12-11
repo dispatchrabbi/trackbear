@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTheme, THEME_OPTIONS } from 'src/lib/theme.ts';
-const { theme } = useTheme();
+const { rawTheme } = useTheme();
 
 import SelectButton from 'primevue/selectbutton';
 
@@ -9,7 +9,7 @@ import SelectButton from 'primevue/selectbutton';
 <template>
   <SelectButton
     id="theme-form-theme"
-    v-model="theme"
+    v-model="rawTheme"
     :options="THEME_OPTIONS"
     option-label="label"
     option-value="value"

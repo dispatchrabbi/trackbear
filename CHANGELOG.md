@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: The tooltips on leaderboards in Fundraiser Mode now show up at the correct place. In fact, tooltips in general are looking much better.
+
 ## 1.1.8
 
 - CHANGED: Added some new fun pace conversions to the target goal stats.

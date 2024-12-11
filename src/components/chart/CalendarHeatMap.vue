@@ -52,7 +52,7 @@ const sortedData = computed(() => {
 });
 
 const colorScale = computed(() => {
-  const preferredColorScheme = useTheme().computedTheme.value;
+  const preferredColorScheme = useTheme().theme.value;
   const start = preferredColorScheme === 'dark' ? themeColors.surface[950] : themeColors.surface[50];
   const end = preferredColorScheme === 'dark' ? themeColors.primary[400] : themeColors.primary[500];
 
@@ -110,7 +110,7 @@ onMounted(() => {
       props.anchor === 'end' ? lastDataWeek : minDate(timeWeek.offset(firstDataWeek, weeksVisible), lastDataWeek) :
       lastDataWeek;
 
-    const preferredColorScheme = useTheme().computedTheme.value;
+    const preferredColorScheme = useTheme().theme.value;
 
     // Helper to compute the color of a data point
     const quantileColor = (normalizedValue: number) => {

@@ -42,7 +42,7 @@ const DEFAULT_LINE_COLORS = {
   },
 };
 const colorCycle = computed(() => {
-  const preferredColorScheme = useTheme().computedTheme.value;
+  const preferredColorScheme = useTheme().theme.value;
   return DEFAULT_LINE_COLORS.cycle[preferredColorScheme];
 });
 

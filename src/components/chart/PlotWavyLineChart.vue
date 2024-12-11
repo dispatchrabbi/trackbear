@@ -39,7 +39,7 @@ const DEFAULT_LINE_COLORS = {
   },
 };
 const colorScheme = computed(() => {
-  const preferredColorScheme = useTheme().computedTheme.value;
+  const preferredColorScheme = useTheme().theme.value;
   return {
     text: DEFAULT_LINE_COLORS.text[preferredColorScheme],
     secondaryText: DEFAULT_LINE_COLORS.secondaryText[preferredColorScheme],

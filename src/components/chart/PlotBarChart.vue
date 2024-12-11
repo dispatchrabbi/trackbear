@@ -43,7 +43,7 @@ const DEFAULT_BAR_COLORS = {
   },
 };
 const colorScheme = computed(() => {
-  const preferredColorScheme = useTheme().computedTheme.value;
+  const preferredColorScheme = useTheme().theme.value;
   return {
     text: DEFAULT_BAR_COLORS.text[preferredColorScheme],
     secondaryText: DEFAULT_BAR_COLORS.secondaryText[preferredColorScheme],

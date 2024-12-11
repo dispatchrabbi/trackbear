@@ -2,11 +2,9 @@
 import { computed, defineProps } from 'vue';
 import type { Goal } from 'src/lib/api/goal.ts';
 
-import { formatCount } from 'src/lib/tally.ts';
-
 import { normalizeTallies, accumulateTallies, listEachDayOfData, Tallyish } from '../chart/chart-functions.ts';
-import PlotProgressChart from 'src/components/chart/PlotProgressChart.vue';
 import { GoalTargetParameters } from 'server/lib/models/goal.ts';
+import LineChart from '../chart/LineChart.vue';
 
 export type Goalish = Pick<Goal, 'title' | 'parameters' | 'startDate' | 'endDate'>;
 const props = defineProps<{
@@ -45,15 +43,11 @@ const data = computed(() => {
 </script>
 
 <template>
-  <PlotProgressChart
+  <LineChart
     :data="data.progress"
     :par="data.par"
-    :config="{
-      showLegend: false,
-      measureHint: measure,
-      seriesTitle: 'Goal',
-    }"
-    :value-format-fn="d => formatCount(d, measure)"
+    :measure-hint="measure"
+    :show-legend="false"
   />
 </template>
 

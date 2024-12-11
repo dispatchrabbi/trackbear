@@ -5,10 +5,10 @@ import type { Board, ParticipantWithTallies } from 'src/lib/api/board.ts';
 
 import { normalizeTallies, accumulateTallies, listEachDayOfData } from '../chart/chart-functions.ts';
 import { TallyMeasure } from 'server/lib/models/tally.ts';
-import { formatCount } from 'src/lib/tally.ts';
 
-import PlotProgressChart from 'src/components/chart/PlotProgressChart.vue';
 import { densifyTallies } from '../chart/chart-functions.ts';
+import StackedAreaChart from '../chart/StackedAreaChart.vue';
+import LineChart from '../chart/LineChart.vue';
 
 const props = defineProps<{
   board: Board;
@@ -74,16 +74,17 @@ const chartData = computed(() => {
 </script>
 
 <template>
-  <PlotProgressChart
+  <StackedAreaChart
+    v-if="props.board.fundraiserMode"
     :data="chartData.tallies"
     :par="chartData.par"
-    :is-stacked="props.board.fundraiserMode"
-    :config="{
-      measureHint: props.measure,
-      seriesTitle: 'Participant',
-      showLegend: true,
-    }"
-    :value-format-fn="d => formatCount(d, props.measure)"
+    :measure-hint="props.measure"
+  />
+  <LineChart
+    v-else
+    :data="chartData.tallies"
+    :par="chartData.par"
+    :measure-hint="props.measure"
   />
 </template>
 

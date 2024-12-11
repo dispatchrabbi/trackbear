@@ -3,14 +3,13 @@ import { ref, computed, watch, defineProps } from 'vue';
 import type { Work } from 'src/lib/api/work.ts';
 import type { TallyWithTags } from 'src/lib/api/tally.ts';
 
-import { formatCount } from 'src/lib/tally.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import { normalizeTallies, accumulateTallies } from '../chart/chart-functions.ts';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import PlotProgressChart from 'src/components/chart/PlotProgressChart.vue';
+import LineChart from '../chart/LineChart.vue';
 
 const props = defineProps<{
   work: Work;
@@ -56,14 +55,10 @@ const data = computed(() => {
       :key="measure"
       :header="toTitleCase(TALLY_MEASURE_INFO[measure].label.plural)"
     >
-      <PlotProgressChart
+      <LineChart
         :data="data"
-        :config="{
-          showLegend: false,
-          measureHint: measure,
-          seriesTitle: 'Project',
-        }"
-        :value-format-fn="d => formatCount(d, measure)"
+        :measure-hint="measure"
+        :show-legend="false"
       />
     </TabPanel>
   </TabView>

@@ -13,20 +13,29 @@ export const LOGO = {
   dark: '/images/polar-bear.png',
 };
 
-const theme = useLocalStorage('theme', 'auto');
+const rawTheme = useLocalStorage('theme', 'auto');
 const systemTheme = usePreferredColorScheme();
 
-const computedTheme = computed(() => {
-  return theme.value === 'auto' ? systemTheme.value === 'no-preference' ? 'light' : systemTheme.value : theme.value;
+const theme = computed(() => {
+  return rawTheme.value === 'auto' ? systemTheme.value === 'no-preference' ? 'light' : systemTheme.value : rawTheme.value;
 });
 
 watchEffect(() => {
-  window.document.body.dataset.theme = computedTheme.value;
-  (window.document.querySelector('link[rel="icon"]') as HTMLLinkElement).href = LOGO[computedTheme.value] ?? LOGO['light'];
+  window.document.body.dataset.theme = theme.value;
+  (window.document.querySelector('link[rel="icon"]') as HTMLLinkElement).href = LOGO[theme.value] ?? LOGO['light'];
 });
 
 export function useTheme() {
-  return { theme, computedTheme };
+  return {
+    /**
+     * The user's theme selection in settings (can be `auto`)
+     */
+    rawTheme,
+    /**
+     * The theme resolved to either `light` or `dark`
+     */
+    theme
+  };
 }
 
 export type LegacyTheme_DEPRECATED = {

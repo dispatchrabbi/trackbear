@@ -9,7 +9,7 @@ const props = defineProps<{
   linkTo?: string;
 }>();
 
-const { computedTheme } = useTheme();
+const { theme } = useTheme();
 
 </script>
 
@@ -22,7 +22,7 @@ const { computedTheme } = useTheme();
         v-if="!props.hideLogo"
         class="logo flex-none"
       >
-        <img :src="LOGO[computedTheme] ?? LOGO['light']">
+        <img :src="LOGO[theme] ?? LOGO['light']">
       </div>
       <div class="app-name mt-1">
         <span class="uppercase"><span class="text-primary-500 dark:text-primary-400">Track</span>Bear</span>

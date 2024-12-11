@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 
 import { useTheme } from 'src/lib/theme';
-const { computedTheme } = useTheme();
+const { theme } = useTheme();
 
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -113,7 +113,7 @@ const imagePt = {
       >
         <div class="w-full md:w-1/3">
           <Image
-            :src="`images/${section.image}-${computedTheme}-${size}.png`"
+            :src="`images/${section.image}-${theme}-${size}.png`"
             alt=""
             preview
             :pt="imagePt"
