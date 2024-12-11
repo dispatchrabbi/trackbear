@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 
-import { useTheme } from 'src/lib/theme';
-import twColors from 'tailwindcss/colors.js';
-import themeColors from 'src/themes/primevue.ts';
+import { useChartColors } from '../chart/chart-colors';
 
 import type { Board, ParticipantWithTallies } from 'src/lib/api/board.ts';
 import { TallyMeasure } from "server/lib/models/tally.ts";
@@ -32,26 +30,14 @@ const contributions = computed(() => {
   return participantContributions;
 });
 
-const DEFAULT_LINE_COLORS = {
-  text: { light: themeColors.surface[900], dark: themeColors.surface[50] },
-  secondaryText: { light: themeColors.surface[300], dark: themeColors.surface[600] },
-
-  cycle: {
-    light: [ twColors.red[500], twColors.orange[500], twColors.yellow[500], twColors.green[500], twColors.blue[500], twColors.purple[500] ],
-    dark: [ twColors.red[400], twColors.orange[400], twColors.yellow[400], twColors.green[400], twColors.blue[400], twColors.purple[400] ],
-  },
-};
-const colorCycle = computed(() => {
-  const preferredColorScheme = useTheme().theme.value;
-  return DEFAULT_LINE_COLORS.cycle[preferredColorScheme];
-});
+const chartColors = useChartColors();
 
 const meterValue = computed(() => {
   const value = contributions.value.map((total, ix) => {
     return {
       label: total.participant.displayName,
       value: total.total,
-      color: colorCycle.value[ix % colorCycle.value.length],
+      color: chartColors.value.data[ix % chartColors.value.data.length],
     } as MeterItem;
   });
 

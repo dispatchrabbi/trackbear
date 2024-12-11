@@ -53,7 +53,7 @@ const sortedData = computed(() => {
 
 const colorScale = computed(() => {
   const preferredColorScheme = useTheme().theme.value;
-  const start = preferredColorScheme === 'dark' ? themeColors.surface[950] : themeColors.surface[50];
+  const start = preferredColorScheme === 'dark' ? themeColors.surface[900] : themeColors.surface[100];
   const end = preferredColorScheme === 'dark' ? themeColors.primary[400] : themeColors.primary[500];
 
   const scale = d3.interpolateLab(start, end);
