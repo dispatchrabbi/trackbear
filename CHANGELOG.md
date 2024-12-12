@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.1.11
+
 - FIXED: On leaderboards in Fundraiser mode, the participant with the highest contribution is now actually at the bottom of the graph, instead of at the top. (h/t Arden)
 
 ## 1.1.9
