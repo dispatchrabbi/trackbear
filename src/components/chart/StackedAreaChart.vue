@@ -133,8 +133,6 @@ function renderChart() {
     y: 'value',
     z: 'series',
     order: seriesOrder,
-    reverse: true,
-    // sort: 'date',
     fill: 'series',
   }));
 
@@ -168,7 +166,6 @@ function renderChart() {
     y: 'value',
     z: 'series',
     order: ['Par', ...seriesOrder],
-    reverse: true,
     channels: {
       date: { label: '', value: 'date' },
       series: { label: '', value: 'series', scale: 'color', },

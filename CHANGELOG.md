@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: On leaderboards in Fundraiser mode, the participant with the highest contribution is now actually at the bottom of the graph, instead of at the top. (h/t Arden)
+
 ## 1.1.9
 
 - CHANGED: The base color on calendar heatmaps now doesn't stand out so much.

@@ -38,6 +38,7 @@ const grandTotal = computed(() => {
 <template>
   <StatTile
     class="mb-2"
+    top-legend="Your combined total is"
     :highlight="formatCountValue(grandTotal, props.measure)"
     :suffix="formatCountCounter(grandTotal, props.measure)"
   />
