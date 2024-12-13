@@ -20,8 +20,7 @@ import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import type { TallyPayload } from 'server/api/v1/tally.ts';
-import { createTally, type Tally } from 'src/lib/api/tally.ts';
+import { createTally, type Tally, type TallyCreatePayload } from 'src/lib/api/tally.ts';
 import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally.ts';
 import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally.ts';
 import { cmpWorkByTitle } from 'src/lib/work';
@@ -104,7 +103,7 @@ async function handleSubmit() {
 
   try {
     const data = formData();
-    const createdTally = await createTally(data as TallyPayload);
+    const createdTally = await createTally(data as TallyCreatePayload);
 
     emit('tally:create', { tally: createdTally });
     eventBus.emit({ tally: createdTally });

@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { createTag, TagPayload } from 'src/lib/api/tag.ts';
+import { createTag, TagCreatePayload } from 'src/lib/api/tag.ts';
 import { TAG_COLORS, TAG_DEFAULT_COLOR } from 'server/lib/models/tag.ts';
 // import { TAG_COLOR_CLASSES } from 'src/components/tag/tag-color-classes.ts';
 
@@ -53,7 +53,7 @@ async function handleSubmit() {
 
   try {
     const data = formData();
-    const updatedTag = await createTag(data as TagPayload);
+    const updatedTag = await createTag(data as TagCreatePayload);
 
     emit('tag:create', { tag: updatedTag });
     successMessage.value = `#${updatedTag.name} has been created.`;

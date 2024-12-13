@@ -12,7 +12,7 @@ const workStore = useWorkStore();
 
 import { createWork, WorkCreatePayload } from 'src/lib/api/work.ts';
 import { WORK_PHASE } from 'server/lib/models/work.ts';
-import { batchCreateTallies, TallyPayload } from 'src/lib/api/tally.ts';
+import { batchCreateTallies, type TallyCreatePayload } from 'src/lib/api/tally.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 import { formatCount, cmpTallies } from 'src/lib/tally.ts';
 
@@ -222,7 +222,7 @@ async function handleImportClick() {
   // batch upload the tallies
   progressMessage.value = `Importing progress`;
 
-  const talliesToCreate: TallyPayload[] = parsedCountsData.value.map(tally => ({
+  const talliesToCreate: TallyCreatePayload[] = parsedCountsData.value.map(tally => ({
     date: tally.date,
     measure: tally.measure,
     count: tally.count,

@@ -12,7 +12,7 @@ import NaNoWriMo, { NaNoWriMoProject, NaNoWriMoChallenge, NaNoWriMoSession } fro
 
 import { createWork } from 'src/lib/api/work.ts';
 import { WORK_PHASE } from 'server/lib/models/work.ts';
-import { batchCreateTallies, TallyPayload } from 'src/lib/api/tally.ts';
+import { batchCreateTallies, type TallyCreatePayload } from 'src/lib/api/tally.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
 import { formatCount } from 'src/lib/tally.ts';
 import { createGoal, GoalCreatePayload } from 'src/lib/api/goal.ts';
@@ -220,7 +220,7 @@ async function importNanoProject(target: ImportTarget) {
 
   // batch upload the tallies
   try {
-    const batchTallyPayload: TallyPayload[] = nanoData.value.sessions.filter(session => session.projectId === result.nanoId).map(session => ({
+    const batchTallyPayload: TallyCreatePayload[] = nanoData.value.sessions.filter(session => session.projectId === result.nanoId).map(session => ({
       date: session.date,
       measure: TALLY_MEASURE.WORD,
       count: session.count,

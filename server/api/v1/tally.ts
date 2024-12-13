@@ -13,7 +13,7 @@ import type { Tally, Work, Tag } from "@prisma/client";
 import { TALLY_STATE, TALLY_MEASURE } from 'server/lib/models/tally.ts';
 import { TAG_STATE, TAG_DEFAULT_COLOR } from 'server/lib/models/tag.ts';
 
-import { logAuditEvent } from '../../lib/audit-events.ts';
+import { buildChangeRecord, logAuditEvent } from '../../lib/audit-events.ts';
 import { WORK_STATE } from "server/lib/models/work.ts";
 
 export const tallyRouter = Router();
@@ -76,7 +76,7 @@ export async function handleGetTally(req: RequestWithUser, res: ApiResponse<Tall
   }
 }
 
-export type TallyPayload = {
+export type TallyCreatePayload = {
   date: string;
   measure: string;
   count: number;
@@ -85,7 +85,7 @@ export type TallyPayload = {
   workId: number | null;
   tags: string[];
 };
-const zTallyPayload = z.object({
+const zTallyCreatePayload = z.object({
   date: zDateStr(),
   measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
   count: z.number().int(),
@@ -93,19 +93,20 @@ const zTallyPayload = z.object({
   note: z.string(), // this CAN be empty
   workId: z.number().int().nullable(),
   tags: z.array(z.string().min(1)), // tags are specified by name, because you might create a new one here
-});
+}).strict();
 
 tallyRouter.post('/',
   requireUser,
-  validateBody(zTallyPayload),
+  validateBody(zTallyCreatePayload),
   h(handleCreateTally)
 );
 export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) {
   const user = req.user;
+  const payload = req.body as TallyCreatePayload;
 
-  let count = req.body.count;
-  if(req.body.setTotal) {
-    if(req.body.workId === null) {
+  let count = payload.count;
+  if(payload.setTotal) {
+    if(payload.workId === null) {
       // need a work to set a total, otherwise this doesn't make any sense
       return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total when no project is specified.'));
     }
@@ -114,7 +115,7 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
       where: {
         state: WORK_STATE.ACTIVE,
         ownerId: user.id,
-        id: req.body.workId,
+        id: payload.workId,
       },
     });
     if(!work) {
@@ -125,13 +126,13 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
       where: {
         state: TALLY_STATE.ACTIVE,
         ownerId: user.id,
-        workId: req.body.workId,
-        measure: req.body.measure,
-        date: { lte: req.body.date },
+        workId: payload.workId,
+        measure: payload.measure,
+        date: { lte: payload.date },
       },
     });
 
-    const startingBalance = req.body.measure in (work.startingBalance as Record<string, number>) ? work.startingBalance[req.body.measure] : 0;
+    const startingBalance = payload.measure in (work.startingBalance as Record<string, number>) ? work.startingBalance[payload.measure] : 0;
     const currentTotal = startingBalance + tallies.reduce((total, tally) => total + tally.count, 0);
     const difference = count - currentTotal;
     count = difference;
@@ -142,15 +143,15 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
       state: TALLY_STATE.ACTIVE,
       ownerId: user.id,
 
-      date: req.body.date,
-      measure: req.body.measure,
+      date: payload.date,
+      measure: payload.measure,
       count: count,
-      note: req.body.note,
+      note: payload.note,
 
-      workId: req.body.workId, // could be null
+      workId: payload.workId, // could be null
 
       tags: {
-        connectOrCreate: req.body.tags.map((tagName: string) => ({
+        connectOrCreate: payload.tags.map((tagName: string) => ({
           where: {
             state: TAG_STATE.ACTIVE,
             ownerId_name: { ownerId: user.id, name: tagName },
@@ -175,7 +176,7 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
   return res.status(201).send(success(tally));
 }
 
-const zBatchTallyPayload = z.array(z.object({
+const zBatchTallyCreatePayload = z.array(z.object({
   date: zDateStr(),
   measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
   count: z.number().int(),
@@ -187,7 +188,7 @@ const zBatchTallyPayload = z.array(z.object({
 
 tallyRouter.post('/batch',
   requireUser,
-  validateBody(zBatchTallyPayload),
+  validateBody(zBatchTallyCreatePayload),
   h(handleCreateTallies)
 );
 export async function handleCreateTallies(req: RequestWithUser, res: ApiResponse<Tally[]>) {
@@ -212,14 +213,18 @@ export async function handleCreateTallies(req: RequestWithUser, res: ApiResponse
   return res.status(201).send(success(createdTallies));
 }
 
-tallyRouter.put('/:id',
+export type TallyUpdatePayload = Partial<TallyCreatePayload>;
+const zTallyUpdatePayload = zTallyCreatePayload.partial();
+
+tallyRouter.patch('/:id',
   requireUser,
   validateParams(zIdParam()),
-  validateBody(zTallyPayload),
+  validateBody(zTallyUpdatePayload),
   h(handleUpdateTally)
 );
 export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) {
   const user = req.user;
+  const payload = req.body as TallyUpdatePayload;
 
   const existingTally = await dbClient.tally.findUnique({
     where: {
@@ -235,12 +240,12 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
     return res.status(404).send(failure('NOT_FOUND', `Did not find any tally with id ${req.params.id}.`));
   }
 
-  const tagNamesToConnectOrCreate = req.body.tags.filter(incomingTag => !existingTally.tags.includes(incomingTag));
-  const tagsToDisconnect = existingTally.tags.filter(existingTag => !req.body.tags.includes(existingTag.name));
+  const tagNamesToConnectOrCreate = payload.tags.filter(incomingTag => !existingTally.tags.some(existingTag => existingTag.name === incomingTag));
+  const tagsToDisconnect = existingTally.tags.filter(existingTag => !payload.tags.includes(existingTag.name));
 
-  let count = req.body.count;
-  if(req.body.setTotal) {
-    if(req.body.workId === null) {
+  let count = payload.count;
+  if(payload.setTotal) {
+    if(payload.workId === null) {
       // need a work to set a total, otherwise this doesn't make any sense
       return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total when no project is specified.'));
     }
@@ -249,7 +254,7 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
       where: {
         state: WORK_STATE.ACTIVE,
         ownerId: user.id,
-        id: req.body.workId,
+        id: payload.workId,
       },
     });
     if(!work) {
@@ -260,14 +265,14 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
       where: {
         state: TALLY_STATE.ACTIVE,
         ownerId: user.id,
-        workId: req.body.workId,
-        measure: req.body.measure,
-        date: { lte: req.body.date },
+        workId: payload.workId,
+        measure: payload.measure,
+        date: { lte: payload.date },
         id: { notIn: [ +req.params.id ] },
       },
     });
 
-    const startingBalance = req.body.measure in (work.startingBalance as Record<string, number>) ? work.startingBalance[req.body.measure] : 0;
+    const startingBalance = payload.measure in (work.startingBalance as Record<string, number>) ? work.startingBalance[payload.measure] : 0;
     const currentTotal = startingBalance + tallies.reduce((total, tally) => total + tally.count, 0);
     const difference = count - currentTotal;
     count = difference;
@@ -280,12 +285,12 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
       state: TALLY_STATE.ACTIVE,
     },
     data: {
-      date: req.body.date,
-      measure: req.body.measure,
+      date: payload.date,
+      measure: payload.measure,
       count: count,
-      note: req.body.note,
+      note: payload.note,
 
-      workId: req.body.workId, // could be null
+      workId: payload.workId, // could be null
 
       tags: {
         connectOrCreate: tagNamesToConnectOrCreate.map((tagName: string) => ({
@@ -309,7 +314,8 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
     },
   });
 
-  await logAuditEvent('tally:update', user.id, tally.id, null, null, req.sessionID);
+  const changes = buildChangeRecord(existingTally, tally);
+  await logAuditEvent('tally:update', user.id, tally.id, null, changes, req.sessionID);
 
   return res.status(200).send(success(tally));
 }
@@ -359,22 +365,22 @@ const routes: RouteConfig[] = [
     method: HTTP_METHODS.POST,
     handler: handleCreateTally,
     accessLevel: ACCESS_LEVEL.USER,
-    bodySchema: zTallyPayload,
+    bodySchema: zTallyCreatePayload,
   },
   {
     path: '/batch',
     method: HTTP_METHODS.POST,
     handler: handleCreateTallies,
     accessLevel: ACCESS_LEVEL.USER,
-    bodySchema: zBatchTallyPayload,
+    bodySchema: zBatchTallyCreatePayload,
   },
   {
     path: '/:id',
-    method: HTTP_METHODS.PUT,
+    method: HTTP_METHODS.PATCH,
     handler: handleUpdateTally,
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zIdParam(),
-    bodySchema: zTallyPayload,
+    bodySchema: zTallyUpdatePayload,
   },
   {
     path: '/:id',

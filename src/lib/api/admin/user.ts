@@ -19,7 +19,7 @@ export async function getUser(id: number) {
 }
 
 export async function updateUser(id: number, data: UserUpdatePayload) {
-  return callApiV1<User>(ENDPOINT + `/${id}`, 'PUT', data);
+  return callApiV1<User>(ENDPOINT + `/${id}`, 'PATCH', data);
 }
 
 export async function updateUserState(id: number, data: UserStatePayload) {

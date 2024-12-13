@@ -29,14 +29,14 @@ export async function handleGetBanners(req: RequestWithUser, res: ApiResponse<Ba
   return res.status(200).send(success(banners));
 }
 
-export type BannerPayload = {
+export type BannerCreatePayload = {
   enabled?: boolean;
   message: string;
   icon?: string;
   color?: string;
   showUntil?: string;
 };
-const zBannerPayload = z.object({
+const zBannerCreatePayload = z.object({
   enabled: z.boolean().nullable(),
   message: z.string().min(1),
   icon: z.string().min(1).nullable(),
@@ -46,12 +46,12 @@ const zBannerPayload = z.object({
 
 bannerRouter.post('/',
   requireAdminUser,
-  validateBody(zBannerPayload),
+  validateBody(zBannerCreatePayload),
   h(handleCreateBanner)
 );
 export async function handleCreateBanner(req: RequestWithUser, res: ApiResponse<Banner>) {
   const user = req.user;
-  const payload = req.body as BannerPayload;
+  const payload = req.body as BannerCreatePayload;
 
   const banner = await dbClient.banner.create({
     data: {
@@ -69,15 +69,18 @@ export async function handleCreateBanner(req: RequestWithUser, res: ApiResponse<
   return res.status(201).send(success(banner));
 }
 
-bannerRouter.put('/:id',
+export type BannerUpdatePayload = Partial<BannerCreatePayload>;
+const zBannerUpdatePayload = zBannerCreatePayload.partial();
+
+bannerRouter.patch('/:id',
   requireAdminUser,
   validateParams(zIdParam()),
-  validateBody(zBannerPayload),
+  validateBody(zBannerUpdatePayload),
   h(handleUpdateBanner)
 );
 export async function handleUpdateBanner(req: RequestWithUser, res: ApiResponse<Banner>) {
   const user = req.user;
-  const payload = req.body as BannerPayload;
+  const payload = req.body as BannerUpdatePayload;
 
   const banner = await dbClient.banner.update({
     where: {
@@ -129,15 +132,15 @@ const routes: RouteConfig[] = [
     method: HTTP_METHODS.POST,
     handler: handleCreateBanner,
     accessLevel: ACCESS_LEVEL.ADMIN,
-    bodySchema: zBannerPayload,
+    bodySchema: zBannerCreatePayload,
   },
   {
     path: '/:id',
-    method: HTTP_METHODS.PUT,
+    method: HTTP_METHODS.PATCH,
     handler: handleUpdateBanner,
     accessLevel: ACCESS_LEVEL.ADMIN,
     paramsSchema: zIdParam(),
-    bodySchema: zBannerPayload,
+    bodySchema: zBannerUpdatePayload,
   },
   {
     path: '/:id',

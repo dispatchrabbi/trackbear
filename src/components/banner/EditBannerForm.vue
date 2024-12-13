@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { updateBanner, Banner, BannerPayload } from 'src/lib/api/admin/banner.ts';
+import { updateBanner, Banner, BannerUpdatePayload } from 'src/lib/api/admin/banner.ts';
 
 import Textarea from 'primevue/textarea';
 import Calendar from 'primevue/calendar';
@@ -57,7 +57,7 @@ async function handleSubmit() {
 
   try {
     const data = formData();
-    const updatedBanner = await updateBanner(props.banner.id, data as BannerPayload);
+    const updatedBanner = await updateBanner(props.banner.id, data as BannerUpdatePayload);
 
     emit('banner:edit', { banner: updatedBanner });
     successMessage.value = `Banner has been updated.`;

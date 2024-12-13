@@ -24,7 +24,7 @@ export async function batchCreateGoals(data: GoalCreatePayload[]) {
 }
 
 export async function updateGoal(id: number, data: GoalUpdatePayload) {
-  return callApiV1<GoalAndTallies>(ENDPOINT + `/${id}`, 'PUT', data);
+  return callApiV1<GoalAndTallies>(ENDPOINT + `/${id}`, 'PATCH', data);
 }
 
 export async function starGoal(id: number, starred: boolean) {

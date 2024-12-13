@@ -222,7 +222,7 @@ export async function handleCreateGoals(req: RequestWithUser, res: ApiResponse<G
 export type GoalUpdatePayload = Partial<GoalCreatePayload>;
 const zGoalUpdatePayload = zGoalCreatePayload.partial();
 
-goalRouter.put('/:id',
+goalRouter.patch('/:id',
   requireUser,
   validateParams(zIdParam()),
   validateBody(zGoalUpdatePayload),
@@ -319,7 +319,7 @@ const routes: RouteConfig[] = [
   },
   {
     path: '/:id',
-    method: HTTP_METHODS.PUT,
+    method: HTTP_METHODS.PATCH,
     handler: handleUpdateGoal,
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zIdParam(),

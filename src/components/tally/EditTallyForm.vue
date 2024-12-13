@@ -16,8 +16,7 @@ import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe, parseDateStringSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import type { TallyPayload } from 'server/api/v1/tally.ts';
-import { updateTally, type Tally, type TallyWithTags } from 'src/lib/api/tally.ts';
+import { updateTally, type Tally, type TallyUpdatePayload, type TallyWithTags } from 'src/lib/api/tally.ts';
 import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally.ts';
 import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally.ts';
 import { cmpWorkByTitle } from 'src/lib/work';
@@ -98,7 +97,7 @@ async function handleSubmit() {
 
   try {
     const data = formData();
-    const updated = await updateTally(props.tally.id, data as TallyPayload);
+    const updated = await updateTally(props.tally.id, data as TallyUpdatePayload);
 
     emit('tally:edit', { tally: updated });
     const tallyEventBus = useEventBus<{ tally: Tally }>('tally:edit');

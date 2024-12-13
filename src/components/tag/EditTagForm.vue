@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { updateTag, Tag, TagPayload } from 'src/lib/api/tag.ts';
+import { updateTag, Tag, TagUpdatePayload } from 'src/lib/api/tag.ts';
 import { TAG_COLORS } from 'server/lib/models/tag.ts';
 // import { TAG_COLOR_CLASSES } from 'src/components/tag/tag-color-classes.ts';
 
@@ -56,7 +56,7 @@ async function handleSubmit() {
 
   try {
     const data = formData();
-    const updatedTag = await updateTag(props.tag.id, data as TagPayload);
+    const updatedTag = await updateTag(props.tag.id, data as TagUpdatePayload);
 
     emit('tag:edit', { tag: updatedTag });
     successMessage.value = `#${updatedTag.name} has been edited.`;

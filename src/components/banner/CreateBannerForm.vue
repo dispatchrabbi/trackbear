@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { createBanner, BannerPayload } from 'src/lib/api/admin/banner.ts';
+import { createBanner, BannerCreatePayload } from 'src/lib/api/admin/banner.ts';
 
 import Textarea from 'primevue/textarea';
 import Calendar from 'primevue/calendar';
@@ -55,7 +55,7 @@ async function handleSubmit() {
 
   try {
     const data = formData();
-    const createdBanner = await createBanner(data as BannerPayload);
+    const createdBanner = await createBanner(data as BannerCreatePayload);
 
     emit('banner:create', { banner: createdBanner });
     successMessage.value = `Banner has been created.`;

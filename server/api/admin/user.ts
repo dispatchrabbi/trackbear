@@ -86,7 +86,7 @@ const zUserUpdatePayload = z.object({
   isEmailVerified: z.boolean(),
 }).partial().strict();
 
-userRouter.put('/:id',
+userRouter.patch('/:id',
   requireAdminUser,
   validateParams(zIdParam()),
   validateBody(zUserUpdatePayload),
@@ -132,9 +132,9 @@ export async function handleUpdateUser(req: RequestWithUser, res: ApiResponse<Us
   return res.status(200).send(success(updated));
 }
 
-export type UserStatePayload = Partial<{
+export type UserStatePayload = {
   state: string;
-}>;
+};
 const zUserStatePayload = z.object({
   state: z.enum([USER_STATE.ACTIVE, USER_STATE.SUSPENDED, USER_STATE.DELETED]),
 }).strict();
@@ -263,7 +263,7 @@ const routes: RouteConfig[] = [
   },
   {
     path: '/:id',
-    method: HTTP_METHODS.PUT,
+    method: HTTP_METHODS.PATCH,
     handler: handleUpdateUser,
     accessLevel: ACCESS_LEVEL.ADMIN,
     paramsSchema: zIdParam(),

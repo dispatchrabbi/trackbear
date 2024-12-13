@@ -142,7 +142,7 @@ export async function handleCreateWork(req: RequestWithUser, res: ApiResponse<Wo
 export type WorkUpdatePayload = Partial<WorkCreatePayload>;
 const zWorkUpdatePayload = zWorkCreatePayload.partial();
 
-workRouter.put('/:id',
+workRouter.patch('/:id',
   requireUser,
   validateParams(zIdParam()),
   validateBody(zWorkUpdatePayload),
@@ -343,7 +343,7 @@ const routes: RouteConfig[] = [
   },
   {
     path: '/:id',
-    method: HTTP_METHODS.PUT,
+    method: HTTP_METHODS.PATCH,
     handler: handleUpdateWork,
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zIdParam(),

@@ -52,23 +52,23 @@ export async function handleGetTag(req: RequestWithUser, res: ApiResponse<Tag>) 
   }
 }
 
-export type TagPayload = {
+export type TagCreatePayload = {
   name: string;
   color: string;
 };
-const zTagPayload = z.object({
+const zTagCreatePayload = z.object({
   name: z.string().min(1),
   color: z.string().min(1),
 });
 
 tagRouter.post('/',
   requireUser,
-  validateBody(zTagPayload),
+  validateBody(zTagCreatePayload),
   h(handleCreateTag)
 );
 export async function handleCreateTag(req: RequestWithUser, res: ApiResponse<Tag>) {
   const user = req.user;
-  const payload = req.body as TagPayload;
+  const payload = req.body as TagCreatePayload;
 
   const existingTags = await dbClient.tag.findMany({
     where: {
@@ -94,15 +94,18 @@ export async function handleCreateTag(req: RequestWithUser, res: ApiResponse<Tag
   return res.status(201).send(success(tag));
 }
 
+export type TagUpdatePayload = Partial<TagCreatePayload>;
+const zTagUpdatePayload = zTagCreatePayload.partial();
+
 tagRouter.put('/:id',
   requireUser,
   validateParams(zIdParam()),
-  validateBody(zTagPayload),
+  validateBody(zTagUpdatePayload),
   h(handleUpdateTag)
 );
 export async function handleUpdateTag(req: RequestWithUser, res: ApiResponse<Tag>) {
   const user = req.user;
-  const payload = req.body as TagPayload;
+  const payload = req.body as TagUpdatePayload;
 
   const existingTags = await dbClient.tag.findMany({
     where: {
@@ -171,15 +174,15 @@ const routes: RouteConfig[] = [
     method: HTTP_METHODS.POST,
     handler: handleCreateTag,
     accessLevel: ACCESS_LEVEL.USER,
-    bodySchema: zTagPayload,
+    bodySchema: zTagCreatePayload,
   },
   {
     path: '/:id',
-    method: HTTP_METHODS.PUT,
+    method: HTTP_METHODS.PATCH,
     handler: handleUpdateTag,
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zIdParam(),
-    bodySchema: zTagPayload,
+    bodySchema: zTagUpdatePayload,
   },
   {
     path: '/:id',

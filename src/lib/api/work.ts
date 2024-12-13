@@ -26,7 +26,7 @@ export async function createWork(data: WorkCreatePayload) {
 }
 
 export async function updateWork(id: number, data: WorkUpdatePayload) {
-  return callApiV1<Work>(ENDPOINT + `/${id}`, 'PUT', data);
+  return callApiV1<Work>(ENDPOINT + `/${id}`, 'PATCH', data);
 }
 
 export async function starWork(id: number, starred: boolean) {
