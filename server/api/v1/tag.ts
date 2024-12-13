@@ -1,12 +1,10 @@
-import { Router } from "express";
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
-import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
+import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 
-import { requireUser, RequestWithUser } from '../../lib/middleware/access.ts';
+import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
 import { zIdParam } from '../../lib/validators.ts';
-import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
 import type { Tag } from "@prisma/client";
@@ -14,12 +12,6 @@ import { TAG_STATE } from '../../lib/models/tag.ts';
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
 
-export const tagRouter = Router();
-
-tagRouter.get('/',
-  requireUser,
-  h(handleGetTags)
-);
 export async function handleGetTags(req: RequestWithUser, res: ApiResponse<Tag[]>) {
   const tags = await dbClient.tag.findMany({
     where: {
@@ -31,11 +23,6 @@ export async function handleGetTags(req: RequestWithUser, res: ApiResponse<Tag[]
   return res.status(200).send(success(tags));
 }
 
-tagRouter.get('/:id',
-  requireUser,
-  validateParams(zIdParam()),
-  h(handleGetTag)
-);
 export async function handleGetTag(req: RequestWithUser, res: ApiResponse<Tag>) {
   const tag = await dbClient.tag.findUnique({
     where: {
@@ -61,11 +48,6 @@ const zTagCreatePayload = z.object({
   color: z.string().min(1),
 });
 
-tagRouter.post('/',
-  requireUser,
-  validateBody(zTagCreatePayload),
-  h(handleCreateTag)
-);
 export async function handleCreateTag(req: RequestWithUser, res: ApiResponse<Tag>) {
   const user = req.user;
   const payload = req.body as TagCreatePayload;
@@ -97,12 +79,6 @@ export async function handleCreateTag(req: RequestWithUser, res: ApiResponse<Tag
 export type TagUpdatePayload = Partial<TagCreatePayload>;
 const zTagUpdatePayload = zTagCreatePayload.partial();
 
-tagRouter.put('/:id',
-  requireUser,
-  validateParams(zIdParam()),
-  validateBody(zTagUpdatePayload),
-  h(handleUpdateTag)
-);
 export async function handleUpdateTag(req: RequestWithUser, res: ApiResponse<Tag>) {
   const user = req.user;
   const payload = req.body as TagUpdatePayload;
@@ -133,11 +109,6 @@ export async function handleUpdateTag(req: RequestWithUser, res: ApiResponse<Tag
   return res.status(200).send(success(tag));
 }
 
-tagRouter.delete('/:id',
-  requireUser,
-  validateParams(zIdParam()),
-  h(handleDeleteTag)
-);
 export async function handleDeleteTag(req: RequestWithUser, res: ApiResponse<Tag>) {
   const user = req.user;
 

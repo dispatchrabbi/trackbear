@@ -1,14 +1,11 @@
-import { Router } from "express";
 
 import { parse, format } from 'date-fns';
 
 import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from "server/lib/api.ts";
-import { ApiResponse, success, h } from '../../lib/api-response.ts';
-import { requireAdminUser, RequestWithUser } from '../../lib/middleware/access.ts';
+import { ApiResponse, success } from '../../lib/api-response.ts';
+import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import dbClient from "../../lib/db.ts";
-
-export const statsRouter = Router();
 
 export type WeeklyStat = {
   weekStart: string;
@@ -20,10 +17,6 @@ export type DailyStat = {
   count: number;
 };
 
-statsRouter.get('/weekly-active-users',
-  requireAdminUser,
-  h(handleGetWeeklyActiveUsers)
-);
 export async function handleGetWeeklyActiveUsers(req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) {
   const results: { weekNumber: string; activeUsers: number }[] = await dbClient.$queryRaw`
 SELECT
@@ -44,10 +37,6 @@ GROUP BY "weekNumber"
   return res.status(200).send(success(activeUsersByWeek));
 }
 
-statsRouter.get('/daily-active-users',
-  requireAdminUser,
-  h(handleGetDailyActiveUsers)
-);
 export async function handleGetDailyActiveUsers(req: RequestWithUser, res: ApiResponse<DailyStat[]>) {
   const results: { date: string; activeUsers: number }[] = await dbClient.$queryRaw`
 SELECT
@@ -63,10 +52,6 @@ GROUP BY "date"
   return res.status(200).send(success(activeUsersByDay));
 };
 
-statsRouter.get('/weekly-logins',
-  requireAdminUser,
-  h(handleGetWeeklyLogins)
-);  
 export async function handleGetWeeklyLogins(req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) {
   const results: { weekNumber: string; activeUsers: number }[] = await dbClient.$queryRaw`
 SELECT
@@ -88,10 +73,6 @@ GROUP BY "weekNumber"
   return res.status(200).send(success(activeUsersByWeek));
 }
 
-statsRouter.get('/weekly-tallies',
-  requireAdminUser,
-  h(handleGetWeeklyTallies)
-);
 export async function handleGetWeeklyTallies(req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) {
   const results: { weekNumber: string; activeUsers: number }[] = await dbClient.$queryRaw`
 SELECT
@@ -113,10 +94,6 @@ GROUP BY "weekNumber"
   return res.status(200).send(success(activeUsersByWeek));
 }
 
-statsRouter.get('/weekly-signups',
-  requireAdminUser,
-  h(handleGetWeeklySignups)
-);
 export async function handleGetWeeklySignups(req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) {
   const results: { weekNumber: string; signups: number }[] = await dbClient.$queryRaw`
 SELECT
@@ -138,10 +115,6 @@ GROUP BY "weekNumber"
   return res.status(200).send(success(signupsByWeek));
 }
 
-statsRouter.get('/daily-signups',
-  requireAdminUser,
-  h(handleGetDailySignups)
-);
 export async function handleGetDailySignups(req: RequestWithUser, res: ApiResponse<DailyStat[]>) {
   const results: { date: string; signups: number }[] = await dbClient.$queryRaw`
 SELECT

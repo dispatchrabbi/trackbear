@@ -1,13 +1,11 @@
-import { Router } from "express";
 import winston from "winston";
 
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
-import { ApiResponse, success, h } from '../../lib/api-response.ts';
-import { requireAdminUser, RequestWithUser } from '../../lib/middleware/access.ts';
+import { ApiResponse, success } from '../../lib/api-response.ts';
+import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
 import { zIdParam } from '../../lib/validators.ts';
-import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 import { addDays } from 'date-fns';
 
 import dbClient from "../../lib/db.ts";
@@ -15,12 +13,6 @@ import type { Banner } from "@prisma/client";
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
 
-export const bannerRouter = Router();
-
-bannerRouter.get('/',
-  requireAdminUser,
-  h(handleGetBanners)
-);
 export async function handleGetBanners(req: RequestWithUser, res: ApiResponse<Banner[]>) {
   const banners = await dbClient.banner.findMany({
     orderBy: { updatedAt: 'asc' },
@@ -44,11 +36,6 @@ const zBannerCreatePayload = z.object({
   showUntil: z.coerce.date().nullable(),
 }).strict();
 
-bannerRouter.post('/',
-  requireAdminUser,
-  validateBody(zBannerCreatePayload),
-  h(handleCreateBanner)
-);
 export async function handleCreateBanner(req: RequestWithUser, res: ApiResponse<Banner>) {
   const user = req.user;
   const payload = req.body as BannerCreatePayload;
@@ -72,12 +59,6 @@ export async function handleCreateBanner(req: RequestWithUser, res: ApiResponse<
 export type BannerUpdatePayload = Partial<BannerCreatePayload>;
 const zBannerUpdatePayload = zBannerCreatePayload.partial();
 
-bannerRouter.patch('/:id',
-  requireAdminUser,
-  validateParams(zIdParam()),
-  validateBody(zBannerUpdatePayload),
-  h(handleUpdateBanner)
-);
 export async function handleUpdateBanner(req: RequestWithUser, res: ApiResponse<Banner>) {
   const user = req.user;
   const payload = req.body as BannerUpdatePayload;
@@ -101,11 +82,6 @@ export async function handleUpdateBanner(req: RequestWithUser, res: ApiResponse<
   return res.status(200).send(success(banner));
 }
 
-bannerRouter.delete('/:id',
-  requireAdminUser,
-  validateParams(zIdParam()),
-  h(handleDeleteBanner)
-);
 export async function handleDeleteBanner(req: RequestWithUser, res: ApiResponse<Banner>) {
   const user = req.user;
 

@@ -1,12 +1,10 @@
-import { Router } from "express";
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
-import { ApiResponse, success, failure, h } from 'server/lib/api-response.ts';
+import { ApiResponse, success, failure } from 'server/lib/api-response.ts';
 
-import { requireUser, RequestWithUser } from 'server/lib/middleware/access.ts';
+import { RequestWithUser } from 'server/lib/middleware/access.ts';
 
 import { z } from 'zod';
 import { zIdParam, zDateStr, NonEmptyArray } from 'server/lib/validators.ts';
-import { validateBody, validateParams, validateQuery } from "server/lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
 import type { Tally, Work, Tag } from "@prisma/client";
@@ -15,8 +13,6 @@ import { TAG_STATE, TAG_DEFAULT_COLOR } from 'server/lib/models/tag.ts';
 
 import { buildChangeRecord, logAuditEvent } from '../../lib/audit-events.ts';
 import { WORK_STATE } from "server/lib/models/work.ts";
-
-export const tallyRouter = Router();
 
 export type TallyWithWorkAndTags = Tally & { work: Work } & { tags: Tag[] };
 
@@ -27,11 +23,6 @@ const zTallyQuery = z.object({
 
 export type TallyQuery = z.infer<typeof zTallyQuery>;
 
-tallyRouter.get('/',
-  requireUser,
-  validateQuery(zTallyQuery),
-  h(handleGetTallies)
-);
 export async function handleGetTallies(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags[]>) {
   const query = req.query as TallyQuery;
 
@@ -51,11 +42,6 @@ export async function handleGetTallies(req: RequestWithUser, res: ApiResponse<Ta
   return res.status(200).send(success(tallies));
 }
 
-tallyRouter.get('/:id',
-  requireUser,
-  validateParams(zIdParam()),
-  h(handleGetTally)
-);
 export async function handleGetTally(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) {
   const tally = await dbClient.tally.findUnique({
     where: {
@@ -95,11 +81,6 @@ const zTallyCreatePayload = z.object({
   tags: z.array(z.string().min(1)), // tags are specified by name, because you might create a new one here
 }).strict();
 
-tallyRouter.post('/',
-  requireUser,
-  validateBody(zTallyCreatePayload),
-  h(handleCreateTally)
-);
 export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) {
   const user = req.user;
   const payload = req.body as TallyCreatePayload;
@@ -186,11 +167,6 @@ const zBatchTallyCreatePayload = z.array(z.object({
   tags: z.array(z.string()).length(0), // no tags yet either, sorry // TODO: allow this in future
 }));
 
-tallyRouter.post('/batch',
-  requireUser,
-  validateBody(zBatchTallyCreatePayload),
-  h(handleCreateTallies)
-);
 export async function handleCreateTallies(req: RequestWithUser, res: ApiResponse<Tally[]>) {
   const user = req.user;
 
@@ -216,12 +192,6 @@ export async function handleCreateTallies(req: RequestWithUser, res: ApiResponse
 export type TallyUpdatePayload = Partial<TallyCreatePayload>;
 const zTallyUpdatePayload = zTallyCreatePayload.partial();
 
-tallyRouter.patch('/:id',
-  requireUser,
-  validateParams(zIdParam()),
-  validateBody(zTallyUpdatePayload),
-  h(handleUpdateTally)
-);
 export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) {
   const user = req.user;
   const payload = req.body as TallyUpdatePayload;
@@ -315,16 +285,12 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
   });
 
   const changes = buildChangeRecord(existingTally, tally);
+  console.log(existingTally, tally, changes);
   await logAuditEvent('tally:update', user.id, tally.id, null, changes, req.sessionID);
 
   return res.status(200).send(success(tally));
 }
 
-tallyRouter.delete('/:id',
-  requireUser,
-  validateParams(zIdParam()),
-  h(handleDeleteTally)
-);
 export async function handleDeleteTally(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) {
   const user = req.user;
 
@@ -352,6 +318,7 @@ const routes: RouteConfig[] = [
     method: HTTP_METHODS.GET,
     handler: handleGetTallies,
     accessLevel: ACCESS_LEVEL.USER,
+    querySchema: zTallyQuery,
   },
   {
     path: '/:id',

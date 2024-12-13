@@ -1,18 +1,17 @@
-import { Router, Request } from "express";
+import { Request } from "express";
 import { z } from 'zod';
 import winston from "winston";
 import { addMinutes, addDays } from 'date-fns';
 
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
-import { validateBody, validateParams } from "../lib/middleware/validate.ts";
 import { zUuidParam } from "server/lib/validators.ts";
-import { ApiResponse, success, failure, h } from '../lib/api-response.ts';
+import { ApiResponse, success, failure } from '../lib/api-response.ts';
 
 import dbClient from '../lib/db.ts';
 import type { User } from "@prisma/client";
 import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut } from "../lib/auth.ts";
-import { requireUser, WithUser } from "server/lib/middleware/access.ts";
+import { WithUser } from "server/lib/middleware/access.ts";
 import { PASSWORD_RESET_LINK_STATE } from "../lib/models/password-reset-link.ts";
 import { USER_STATE, USERNAME_REGEX } from "../lib/models/user.ts";
 import CONFIG from '../config.ts';
@@ -25,8 +24,6 @@ import sendPwchangeEmail from "../lib/tasks/send-pwchange-email.ts";
 
 import { logAuditEvent } from '../lib/audit-events.ts';
 
-export const authRouter = Router();
-
 export type LoginPayload = {
   username: string;
   password: string;
@@ -36,10 +33,6 @@ const zLoginPayload = z.object({
   password: z.string()
 });
 
-authRouter.post('/login',
-  validateBody(zLoginPayload),
-  h(handleLogin)
-);
 export async function handleLogin(req: Request, res: ApiResponse<User>) {
   const { username, password } = req.body;
 
@@ -79,9 +72,6 @@ export async function handleLogin(req: Request, res: ApiResponse<User>) {
 // logout ought to requireUser but since all it does is remove that user,
 // it's okay to just... let anyone log out at any time, even if they're not logged in.
 type EmptyObject = Record<string, never>;
-authRouter.post('/logout',
-  h(handleLogout)
-);
 export async function handleLogout(req, res: ApiResponse<EmptyObject>) {
   try {
     await logOut(req);
@@ -107,10 +97,6 @@ const zCreateUserPayload = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
 });
 
-authRouter.post('/signup',
-  validateBody(zCreateUserPayload),
-  h(handleSignup)
-);
 export async function handleSignup(req, res: ApiResponse<User>) {
   const { username: submittedUsername, password, email } = req.body as CreateUserPayload;
 
@@ -175,10 +161,6 @@ export async function handleSignup(req, res: ApiResponse<User>) {
   return res.status(201).send(success(user));
 }
 
-authRouter.post('/verify-email',
-  requireUser,
-  h(handleSendEmailVerification)
-);
 export async function handleSendEmailVerification(req: WithUser<Request>, res: ApiResponse<EmptyObject>) {
   const user: User = req.user;
 
@@ -202,10 +184,6 @@ export async function handleSendEmailVerification(req: WithUser<Request>, res: A
   return res.status(201).send(success({}));
 }
 
-authRouter.post('/verify-email/:uuid',
-  validateParams(zUuidParam()),
-  h(handleVerifyEmail)
-);
 export async function handleVerifyEmail(req: Request, res: ApiResponse<EmptyObject>) {
   const uuid = req.params.uuid;
   const verification = await dbClient.pendingEmailVerification.findUnique({
@@ -252,11 +230,6 @@ const zChangePasswordPayload = z.object({
   newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
 });
 
-authRouter.post('/password',
-  requireUser,
-  validateBody(zChangePasswordPayload),
-  h(handleChangePassword)
-);
 export async function handleChangePassword(req: WithUser<Request>, res: ApiResponse<EmptyObject>) {
   const { currentPassword, newPassword } = req.body;
 
@@ -305,10 +278,6 @@ const zRequestPasswordResetPayload = z.object({
     .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
 });
 
-authRouter.post('/reset-password',
-  validateBody(zRequestPasswordResetPayload),
-  h(handleSendPasswordResetEmail)
-);
 export async function handleSendPasswordResetEmail(req: Request, res: ApiResponse<EmptyObject>) {
   const username = req.body.username;
 
@@ -347,11 +316,6 @@ const zPasswordResetPayload = z.object({
   newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
 });
 
-authRouter.post('/reset-password/:uuid',
-  validateParams(zUuidParam()),
-  validateBody(zPasswordResetPayload),
-  h(handlePasswordReset)
-);
 export async function handlePasswordReset(req: Request, res: ApiResponse<EmptyObject>) {
   const uuid = req.params.uuid;
   const passwordResetLink = await dbClient.passwordResetLink.findUnique({

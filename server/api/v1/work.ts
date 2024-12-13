@@ -1,10 +1,9 @@
-import { Router } from "express";
 import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from "server/lib/api.ts";
-import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
+import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 
 import winston from "winston";
 
-import { requireUser, RequestWithUser } from '../../lib/middleware/access.ts';
+import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import path from 'node:path';
 import fs from 'node:fs/promises';
@@ -13,7 +12,6 @@ import { getCoverUploadFn, getCoverUploadPath } from "server/lib/upload.ts";
 
 import { z } from 'zod';
 import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
-import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
 import type { Work as PrismaWork, Tally, Tag } from "@prisma/client";
@@ -37,12 +35,6 @@ export type SummarizedWork = Work & {
 export type TallyWithTags = Tally & { tags: Tag[] };
 export type WorkWithTallies = Work & { tallies: TallyWithTags[] };
 
-export const workRouter = Router();
-
-workRouter.get('/',
-  requireUser,
-  h(handleGetWorks)
-);
 export async function handleGetWorks(req: RequestWithUser, res: ApiResponse<SummarizedWork[]>) {
   const worksWithTallies = await dbClient.work.findMany({
     where: {
@@ -74,11 +66,6 @@ export async function handleGetWorks(req: RequestWithUser, res: ApiResponse<Summ
   return res.status(200).send(success(works));
 }
 
-workRouter.get('/:id',
-  requireUser,
-  validateParams(zIdParam()),
-  h(handleGetWork)
-);
 export async function handleGetWork(req: RequestWithUser, res: ApiResponse<WorkWithTallies>) {
   const work = await dbClient.work.findUnique({
     where: {
@@ -118,11 +105,6 @@ const zWorkCreatePayload = z.object({
   displayOnProfile: z.boolean().nullable().default(false),
 }).strict();
 
-workRouter.post('/',
-  requireUser,
-  validateBody(zWorkCreatePayload),
-  h(handleCreateWork)
-);
 export async function handleCreateWork(req: RequestWithUser, res: ApiResponse<Work>) {
   const user = req.user;
 
@@ -142,12 +124,6 @@ export async function handleCreateWork(req: RequestWithUser, res: ApiResponse<Wo
 export type WorkUpdatePayload = Partial<WorkCreatePayload>;
 const zWorkUpdatePayload = zWorkCreatePayload.partial();
 
-workRouter.patch('/:id',
-  requireUser,
-  validateParams(zIdParam()),
-  validateBody(zWorkUpdatePayload),
-  h(handleUpdateWork)
-);
 export async function handleUpdateWork(req: RequestWithUser, res: ApiResponse<Work>) {
   const user = req.user;
   const payload = req.body as WorkUpdatePayload;
@@ -168,11 +144,6 @@ export async function handleUpdateWork(req: RequestWithUser, res: ApiResponse<Wo
   return res.status(200).send(success(work));
 }
 
-workRouter.delete('/:id',
-  requireUser,
-  validateParams(zIdParam()),
-  h(handleDeleteWork)
-)
 export async function handleDeleteWork(req: RequestWithUser, res: ApiResponse<Work>) {
   const user = req.user;
 
@@ -203,10 +174,6 @@ export async function handleDeleteWork(req: RequestWithUser, res: ApiResponse<Wo
   return res.status(200).send(success(work));
 }
 
-workRouter.post('/:id/cover',
-  requireUser,
-  h(handlePostCover)
-);
 export async function handlePostCover(req: RequestWithUser, res: ApiResponse<Work>) {
   // quickly check to see if the work exists
   const user = req.user;
@@ -279,10 +246,6 @@ export async function handlePostCover(req: RequestWithUser, res: ApiResponse<Wor
   return res.status(200).send(success(updated));
 }
 
-workRouter.delete('/:id/cover',
-  requireUser,
-  h(handleDeleteCover)
-);  
 export async function handleDeleteCover(req: RequestWithUser, res: ApiResponse<Work>) {
   const user = req.user;
 

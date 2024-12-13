@@ -1,12 +1,10 @@
-import { Router } from "express";
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
-import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
+import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 
-import { requireUser, RequestWithUser } from '../../lib/middleware/access.ts';
+import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
 import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
-import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
 import type { Goal } from "@prisma/client";
@@ -31,12 +29,6 @@ export type GoalWithAchievement = Goal & {
   achieved: boolean;
 }
 
-export const goalRouter = Router();
-
-goalRouter.get('/',
-  requireUser,
-  h(handleGetGoals)
-);
 export async function handleGetGoals(req: RequestWithUser, res: ApiResponse<GoalWithAchievement[]>) {
   const goals = await dbClient.goal.findMany({
     where: {
@@ -76,10 +68,6 @@ export async function handleGetGoals(req: RequestWithUser, res: ApiResponse<Goal
   return res.status(200).send(success(goalsWithCompletion))
 }
 
-goalRouter.get('/:id',
-  requireUser,
-  validateParams(zIdParam()),
-  h(handleGetGoal));
 export async function handleGetGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
   const goal = await dbClient.goal.findUnique({
     where: {
@@ -146,11 +134,6 @@ const zGoalCreatePayload = z.object({
   tags: z.array(z.number().int()),
 }).strict();
 
-goalRouter.post('/',
-  requireUser,
-  validateBody(zGoalCreatePayload),
-  h(handleCreateGoal)
-);
 export async function handleCreateGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
   const user = req.user;
   const payload = req.body as GoalCreatePayload;
@@ -187,11 +170,6 @@ export async function handleCreateGoal(req: RequestWithUser, res: ApiResponse<Go
 
 const zBatchGoalCreatePayload = z.array(zGoalCreatePayload);
 
-goalRouter.post('/batch',
-  requireUser,
-  validateBody(zBatchGoalCreatePayload),
-  h(handleCreateGoals)
-);
 export async function handleCreateGoals(req: RequestWithUser, res: ApiResponse<Goal[]>) {
   const user = req.user;
 
@@ -222,12 +200,6 @@ export async function handleCreateGoals(req: RequestWithUser, res: ApiResponse<G
 export type GoalUpdatePayload = Partial<GoalCreatePayload>;
 const zGoalUpdatePayload = zGoalCreatePayload.partial();
 
-goalRouter.patch('/:id',
-  requireUser,
-  validateParams(zIdParam()),
-  validateBody(zGoalUpdatePayload),
-  h(handleUpdateGoal)
-);
 export async function handleUpdateGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
   const user = req.user;
   const payload = req.body as GoalUpdatePayload;
@@ -264,11 +236,6 @@ export async function handleUpdateGoal(req: RequestWithUser, res: ApiResponse<Go
   return res.status(200).send(success({ goal, tallies }));
 }
 
-goalRouter.delete('/:id',
-  requireUser,
-  validateParams(zIdParam()),
-  h(handleDeleteGoal)
-);
 export async function handleDeleteGoal(req: RequestWithUser, res: ApiResponse<Goal>) {
   const user = req.user;
 

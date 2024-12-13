@@ -1,6 +1,5 @@
-import { Router } from "express";
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
-import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
+import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 
 import winston from "winston";
 import { addDays } from "date-fns";
@@ -17,10 +16,9 @@ import CONFIG from '../../config.ts';
 
 import { z } from 'zod';
 import { NonEmptyArray } from '../../lib/validators.ts';
-import { validateBody } from "../../lib/middleware/validate.ts";
 import { logAuditEvent, buildChangeRecord } from '../../lib/audit-events.ts';
 import { pick } from '../../lib/obj.ts';
-import { requireUser, RequestWithUser } from "../../lib/middleware/access.ts";
+import { RequestWithUser } from "../../lib/middleware/access.ts";
 
 import deepEql from 'deep-eql';
 
@@ -30,8 +28,6 @@ import sendUsernameChangedEmail from "../../lib/tasks/send-username-changed-emai
 import sendAccountDeletedEmail from "../../lib/tasks/send-account-deleted-email.ts";
 import { getAvatarUploadFn, getAvatarUploadPath } from "server/lib/upload.ts";
 
-export const meRouter = Router();
-
 type UserSettings = Omit<PrismaUserSettings, 'lifetimeStartingBalance'> & {
   lifetimeStartingBalance: Record<string, number>;
 };
@@ -40,10 +36,6 @@ export type FullUser = User & {
 };
 
 // GET /me - get your own user information
-meRouter.get('/',
-  requireUser,
-  h(handleGetMe)
-);
 export async function handleGetMe(req: RequestWithUser, res: ApiResponse<FullUser>) {
   const me = await dbClient.user.findUnique({
     where: {
@@ -80,11 +72,6 @@ const zMeEditPayload = z.object({
 }).strict().partial();
 
 // PATCH /me - modify your own user information
-meRouter.patch('/',
-  requireUser,
-  validateBody(zMeEditPayload),
-  h(handlePatchMe)
-);
 export async function handlePatchMe(req: RequestWithUser, res: ApiResponse<FullUser>) {
   const current = {
     username: req.user.username,
@@ -161,10 +148,6 @@ export async function handlePatchMe(req: RequestWithUser, res: ApiResponse<FullU
   return res.status(200).send(success(updated));
 }
 
-meRouter.delete('/',
-  requireUser,
-  h(handleDeleteMe)
-);
 export async function handleDeleteMe(req: RequestWithUser, res: ApiResponse<User>) {
   const deleted = await dbClient.user.update({
     data: {
@@ -184,10 +167,6 @@ export async function handleDeleteMe(req: RequestWithUser, res: ApiResponse<User
 }
 
 // POST /me/avatar - upload a new avatar
-meRouter.post('/avatar',
-  requireUser,
-  h(handleUploadAvatar)
-);
 export async function handleUploadAvatar(req: RequestWithUser, res: ApiResponse<User>) {
 // make sure the file uploads correctly and is under limits and such
 const uploadAvatar = getAvatarUploadFn();
@@ -245,10 +224,6 @@ return res.status(200).send(success(req.user));
 }
 
 // DELETE /me/avatar - delete your avatar
-meRouter.delete('/avatar',
-  requireUser,
-  h(handleDeleteAvatar)
-);
 export async function handleDeleteAvatar(req: RequestWithUser, res: ApiResponse<User>) {
   const updated = await dbClient.user.update({
     where: { id: req.user.id },
@@ -280,11 +255,6 @@ const zSettingsEditPayload = z.object({
 }).strict().partial();
 
 // PATCH /me/settings - patch your settings
-meRouter.patch('/settings',
-  requireUser,
-  validateBody(zSettingsEditPayload),
-  h(handleUpdateSettings)
-);
 export async function handleUpdateSettings(req: RequestWithUser, res: ApiResponse<UserSettings>) {
   const current = await dbClient.userSettings.findUnique({ where: {
     userId: req.user.id,

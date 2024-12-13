@@ -1,14 +1,12 @@
-import { Router } from "express";
 import winston from "winston";
 import { addMinutes, addDays } from 'date-fns';
 
 import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from "server/lib/api.ts";
-import { ApiResponse, success, h, failure } from '../../lib/api-response.ts';
-import { requireAdminUser, RequestWithUser } from '../../lib/middleware/access.ts';
+import { ApiResponse, success, failure } from '../../lib/api-response.ts';
+import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
 import { zIdParam } from '../../lib/validators.ts';
-import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
 import type { User, AuditEvent } from "@prisma/client";
@@ -24,12 +22,7 @@ import { logAuditEvent, buildChangeRecord } from '../../lib/audit-events.ts';
 
 type EmptyObject = Record<string, never>;
 
-export const userRouter = Router();
 
-userRouter.get('/',
-  requireAdminUser,
-  h(handleGetUsers)
-);
 export async function handleGetUsers(req: RequestWithUser, res: ApiResponse<User[]>) {
   const users = await dbClient.user.findMany({
     orderBy: { username: 'asc' },
@@ -38,11 +31,6 @@ export async function handleGetUsers(req: RequestWithUser, res: ApiResponse<User
   return res.status(200).send(success(users));
 }
 
-userRouter.get('/:id',
-  requireAdminUser,
-  validateParams(zIdParam()),
-  h(handleGetUser)
-);
 export async function handleGetUser(req: RequestWithUser, res: ApiResponse<{ user: User; auditEvents: AuditEvent[]; }>) {
   const user = await dbClient.user.findUnique({
     where: {
@@ -86,12 +74,6 @@ const zUserUpdatePayload = z.object({
   isEmailVerified: z.boolean(),
 }).partial().strict();
 
-userRouter.patch('/:id',
-  requireAdminUser,
-  validateParams(zIdParam()),
-  validateBody(zUserUpdatePayload),
-  h(handleUpdateUser)
-);
 export async function handleUpdateUser(req: RequestWithUser, res: ApiResponse<User>) {
   const admin = req.user;
   const payload = req.body as UserUpdatePayload;
@@ -139,12 +121,6 @@ const zUserStatePayload = z.object({
   state: z.enum([USER_STATE.ACTIVE, USER_STATE.SUSPENDED, USER_STATE.DELETED]),
 }).strict();
 
-userRouter.put('/:id/state',
-  requireAdminUser,
-  validateParams(zIdParam()),
-  validateBody(zUserStatePayload),
-  h(handleUpdateUserState)
-);
 export async function handleUpdateUserState(req: RequestWithUser, res: ApiResponse<User>) {
   const admin = req.user;
   const payload = req.body as UserStatePayload;
@@ -183,11 +159,6 @@ export async function handleUpdateUserState(req: RequestWithUser, res: ApiRespon
   return res.status(200).send(success(updated));
 }
 
-userRouter.post('/:id/verify-email',
-  requireAdminUser,
-  validateParams(zIdParam()),
-  h(handleSendUserVerifyEmail)
-);
 export async function handleSendUserVerifyEmail(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
   const admin = req.user;
 
@@ -215,11 +186,6 @@ export async function handleSendUserVerifyEmail(req: RequestWithUser, res: ApiRe
   return res.status(201).send(success({}));
 }
 
-userRouter.post('/:id/reset-password',
-  requireAdminUser,
-  validateParams(zIdParam()),
-  h(handleSendPasswordResetEmail)
-);
 export async function handleSendPasswordResetEmail(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
   const admin = req.user;
 

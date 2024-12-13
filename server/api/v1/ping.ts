@@ -1,12 +1,7 @@
-import { Router, Request } from "express";
+import { Request } from "express";
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
-import { ApiResponse, success, h } from '../../lib/api-response.ts';
+import { ApiResponse, success } from '../../lib/api-response.ts';
 
-export const pingRouter = Router();
-
-pingRouter.get('/',
-  h(handleGetPing)
-);
 export async function handleGetPing(req: Request, res: ApiResponse<'pong'>) {
   return res.status(200).send(success('pong'));
 }

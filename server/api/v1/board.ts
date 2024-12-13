@@ -1,13 +1,11 @@
-import { Router } from "express";
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
-import { ApiResponse, success, failure, h } from '../../lib/api-response.ts';
-import { requireUser, RequestWithUser } from '../../lib/middleware/access.ts';
+import { ApiResponse, success, failure } from '../../lib/api-response.ts';
+import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import winston from "winston";
 
 import { z } from 'zod';
 import { zUuidParam, NonEmptyArray } from '../../lib/validators.ts';
-import { validateBody, validateParams } from "../../lib/middleware/validate.ts";
 
 import dbClient from "../../lib/db.ts";
 import type { BoardParticipant } from "@prisma/client";
@@ -20,25 +18,12 @@ import { TAG_STATE } from "../../lib/models/tag.ts";
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
 
-export const boardRouter = Router();
-
-// GET / - get boards you have access to, either as an owner or a participant
-boardRouter.get('/',
-  requireUser,
-  h(handleGetBoards)
-);
 export async function handleGetBoards(req: RequestWithUser, res: ApiResponse<ExtendedBoard[]>) {
   const boards = await getExtendedBoardsForUser(req.user.id);
 
   return res.status(200).send(success(boards));
 }
 
-// GET /:uuid - get all the info about a board, including participant info
-boardRouter.get('/:uuid',
-  requireUser,
-  validateParams(zUuidParam()),
-  h(handleGetBoard)
-);
 export async function handleGetBoard(req: RequestWithUser, res: ApiResponse<FullBoard>) {
   const board = await getFullBoard(req.params.uuid);
 
@@ -83,11 +68,6 @@ const zBoardCreatePayload = z.object({
   isPublic: z.boolean().nullable().default(false),
 }).strict();
 
-boardRouter.post('/',
-  requireUser,
-  validateBody(zBoardCreatePayload),
-  h(handleCreateBoard)
-);
 export async function handleCreateBoard(req: RequestWithUser, res: ApiResponse<Board>) {
   const user = req.user;
   const payload = req.body as BoardCreatePayload;
@@ -118,12 +98,6 @@ export async function handleCreateBoard(req: RequestWithUser, res: ApiResponse<B
 export type BoardUpdatePayload = Partial<BoardCreatePayload>;
 const zBoardUpdatePayload = zBoardCreatePayload.partial();
 
-boardRouter.patch('/:uuid',
-  requireUser,
-  validateParams(zUuidParam()),
-  validateBody(zBoardUpdatePayload),
-  h(handleUpdateBoard)
-);
 export async function handleUpdateBoard(req: RequestWithUser, res: ApiResponse<Board>) {
   const user = req.user;
   const payload = req.body as BoardUpdatePayload;
@@ -165,12 +139,6 @@ export type BoardStarUpdateResponse = {
   participant: boolean;
 };
 
-boardRouter.patch('/:uuid/star',
-  requireUser,
-  validateParams(zUuidParam()),
-  validateBody(zBoardStarUpdatePayload),
-  h(handleStarBoard)
-);
 export async function handleStarBoard(req: RequestWithUser, res: ApiResponse<BoardStarUpdateResponse>) {
   const user = req.user;
   const payload = req.body as BoardStarUpdatePayload;
@@ -227,11 +195,6 @@ export async function handleStarBoard(req: RequestWithUser, res: ApiResponse<Boa
 }
 
 // DELETE /:uuid - delete a board
-boardRouter.delete('/:uuid',
-  requireUser,
-  validateParams(zUuidParam()),
-  h(handleDeleteBoard)
-);
 export async function handleDeleteBoard(req: RequestWithUser, res: ApiResponse<Board>) {
   const user = req.user;
 
@@ -253,11 +216,6 @@ export async function handleDeleteBoard(req: RequestWithUser, res: ApiResponse<B
 };
 
 // GET /:uuid/participation - get basic info about a board, to check if you can join it
-boardRouter.get('/:uuid/participation',
-  requireUser,
-  validateParams(zUuidParam()),
-  h(handleGetBoardParticipation)
-);
 export async function handleGetBoardParticipation(req: RequestWithUser, res: ApiResponse<BoardWithParticipants>) {
   // TODO: if invites or bans are implemented, this will need to be changed
   const board = await getBoardParticipationForUser(req.params.uuid, req.user.id);
@@ -284,12 +242,6 @@ const zBoardParticipantPayload = z.object({
   tags: z.array(z.number().int()),
 }).strict();
 
-boardRouter.post('/:uuid/participation',
-  requireUser,
-  validateParams(zUuidParam()),
-  validateBody(zBoardParticipantPayload),
-  h(handleUpdateBoardParticipation)
-);
 export async function handleUpdateBoardParticipation(req: RequestWithUser, res: ApiResponse<BoardParticipant>) {
   const user = req.user;
   const payload = req.body as BoardParticipantPayload;
@@ -370,11 +322,6 @@ export async function handleUpdateBoardParticipation(req: RequestWithUser, res: 
 }
 
 // DELETE /:uuid/participation - leave a board
-boardRouter.delete('/:uuid/participation',
-  requireUser,
-  validateParams(zUuidParam()),
-  h(handleDeleteBoardParticipation)
-);
 export async function handleDeleteBoardParticipation(req: RequestWithUser, res: ApiResponse<BoardParticipant>) {
   const user = req.user;
 

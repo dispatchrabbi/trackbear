@@ -1,16 +1,14 @@
 import path from 'path';
 const ROOT_DIR = path.resolve(import.meta.url.replace('file://', ''), '../../..');
 
-import { Router, Request } from "express";
-import { ApiHandler, ApiResponse, success, h } from '../lib/api-response.ts';
+import { Request } from "express";
+import { ApiHandler, ApiResponse, success } from '../lib/api-response.ts';
 
 import { readFile } from 'fs/promises';
 import { parseChangelog, Changelog } from '../lib/parse-changelog.ts';
 
 import { getNormalizedEnv } from 'server/lib/env.ts';
 import { HTTP_METHODS, ACCESS_LEVEL, RouteConfig } from 'server/lib/api.ts';
-
-export const infoRouter = Router();
 
 export type { Changelog };
 export const handleGetChangelog: ApiHandler<Changelog> = (function() {
@@ -25,9 +23,7 @@ export const handleGetChangelog: ApiHandler<Changelog> = (function() {
     return res.status(200).send(success(memoizedParsedChangelog));
   };
 })();
-infoRouter.get('/changelog', h(handleGetChangelog));
 
-infoRouter.get('/env', handleGetEnv);
 export type EnvInfo = {
   URL_PREFIX: string;
   ENABLE_METRICS: boolean;
