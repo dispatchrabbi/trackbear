@@ -1,29 +1,23 @@
-import winston from "winston";
-
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success } from '../../lib/api-response.ts';
 import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
 import { zIdParam } from '../../lib/validators.ts';
-import { addDays } from 'date-fns';
 
-import dbClient from "../../lib/db.ts";
-import type { Banner } from "@prisma/client";
-
-import { logAuditEvent } from '../../lib/audit-events.ts';
+import { reqCtx } from "server/lib/request-context.ts";
+import { transformPayload } from "server/lib/transform-payload.ts";
+import { BannerModel, type Banner, type BannerData } from "server/lib/models/banner.ts";
 
 export async function handleGetBanners(req: RequestWithUser, res: ApiResponse<Banner[]>) {
-  const banners = await dbClient.banner.findMany({
-    orderBy: { updatedAt: 'asc' },
-  });
+  const banners = await BannerModel.getBanners();
 
   return res.status(200).send(success(banners));
 }
 
 export type BannerCreatePayload = {
-  enabled?: boolean;
   message: string;
+  enabled?: boolean;
   icon?: string;
   color?: string;
   showUntil?: string;
@@ -37,63 +31,38 @@ const zBannerCreatePayload = z.object({
 }).strict();
 
 export async function handleCreateBanner(req: RequestWithUser, res: ApiResponse<Banner>) {
-  const user = req.user;
   const payload = req.body as BannerCreatePayload;
 
-  const banner = await dbClient.banner.create({
-    data: {
-      enabled: payload.enabled || false,
-      message: payload.message,
-      icon: payload.icon ?? 'campaign',
-      color: payload.color ?? 'info',
-      showUntil: payload.showUntil ?? addDays(new Date(), 7),
-    }
-  });
+  const created = await BannerModel.createBanner({
+    message: payload.message,
+    enabled: payload.enabled,
+    showUntil: new Date(payload.showUntil),
+    icon: payload.icon,
+    color: payload.color,
+  }, reqCtx(req));
 
-  winston.debug(`Created banner ${banner.id} with message ${banner.message}`);
-  await logAuditEvent('banner:create', user.id, banner.id, null, null, req.sessionID);
-
-  return res.status(201).send(success(banner));
+  return res.status(201).send(success(created));
 }
 
 export type BannerUpdatePayload = Partial<BannerCreatePayload>;
 const zBannerUpdatePayload = zBannerCreatePayload.partial();
 
 export async function handleUpdateBanner(req: RequestWithUser, res: ApiResponse<Banner>) {
-  const user = req.user;
   const payload = req.body as BannerUpdatePayload;
 
-  const banner = await dbClient.banner.update({
-    where: {
-      id: +req.params.id,
-    },
-    data: {
-      enabled: payload.enabled || false,
-      message: payload.message,
-      icon: payload.icon ?? 'campaign',
-      color: payload.color ?? 'info',
-      showUntil: payload.showUntil ?? undefined,
-    }
+  const data: Partial<BannerData> = transformPayload(payload, {
+    showUntil: (val) => new Date(val),
   });
 
-  winston.debug(`Edited banner ${banner.id}`);
-  await logAuditEvent('banner:update', user.id, banner.id, null, null, req.sessionID);
+  const updated = await BannerModel.updateBanner(+req.params.id, data, reqCtx(req));
 
-  return res.status(200).send(success(banner));
+  return res.status(200).send(success(updated));
 }
 
 export async function handleDeleteBanner(req: RequestWithUser, res: ApiResponse<Banner>) {
-  const user = req.user;
-
-  const banner = await dbClient.banner.delete({
-    where: {
-      id: +req.params.id,
-    }
-  });
-
-  await logAuditEvent('banner:delete', user.id, banner.id, null, null, req.sessionID);
-
-  return res.status(200).send(success(banner));
+  const deleted = await BannerModel.deleteBanner(+req.params.id, reqCtx(req));
+  
+  return res.status(200).send(success(deleted));
 }
 
 const routes: RouteConfig[] = [

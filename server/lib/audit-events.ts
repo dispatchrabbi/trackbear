@@ -1,14 +1,27 @@
 import winston from 'winston';
 import dbClient from "./db.ts";
 
+export const AUDIT_EVENT = {
+  BANNER_CREATE: 'banner:create',
+  BANNER_UPDATE: 'banner:update',
+  BANNER_DELETE: 'banner:delete',
+};
+
 export const TRACKBEAR_SYSTEM_ID = -1;
 export async function logAuditEvent(eventType: string, agentId: number, patientId?: number | null, goalId?: number | null, auxInfo: Record<string, unknown> = {}, sessionId?: string | null) {
+  winston.debug(`${eventType}`, {
+    agentId,
+    patientId,
+    goalId,
+    auxInfo: JSON.stringify(auxInfo),
+  });
+  
   try {
     await dbClient.auditEvent.create({
       data: {
         eventType,
         agentId, patientId, goalId,
-        auxInfo: JSON.stringify(auxInfo ?? {}),
+        auxInfo: JSON.stringify(auxInfo),
         sessionId,
       },
     });

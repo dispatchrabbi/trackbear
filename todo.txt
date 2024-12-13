@@ -19,9 +19,9 @@ x (A) Enrich via @opentelemetry/semantic-conventions / https://opentelemetry.io/
 (B) Improve audit event retrieval/listings @admin dif:2
 (B) Allow admins to view any project, goal, leaderboard in-situ @admin dif:3
 (B) Implement data export @backend +importexport dif:5
-(B) Convert the API to consistently use PATCH @backend @api +integrations dif:5
+x (B) Convert the API to consistently use PATCH @backend @api +integrations dif:5
 (B) Sharp-ify covers and avatar files to save on space @backend dif:2
-(B) Build out a full model layer so it can be used by scripts/workers/queues as well as endpoints @backend @testing dif:5
+(A) Build out a full model layer so it can be used by scripts/workers/queues as well as endpoints @backend @testing dif:5
 (B) Add (+/-) rank changes from the previous day into the standings @boards +delight dif:1
 (B) Allow more than one board owner (do this through roles, implies owner must join board) @boards dif:5
 (B) Group participants into teams and compare team totals (h/t Asha) @boards dif:5
@@ -57,6 +57,7 @@ x (B) Ship logs somewhere (Signoz) @o11y dif:5
 (B) Should convert text-white to text-surface-0 probably +themes dif:1
 (B) Definitely need to figure out themed chart colors somehow +themes dif:2
 (B) Display positive (written) and negative (removed) word counts separately @stats dif:3
+(C) Instrument session spans @backend +o11y dif:1
 (C) Let admins manage projects @admin dif:5
 (C) Let admins manage goals @admin dif:3
 (C) Let admins manage leaderboards @admin dif:3
@@ -68,7 +69,7 @@ x (B) Ship logs somewhere (Signoz) @o11y dif:5
 (C) Lock-out multiple wrong sign-in attempts @backend @security dif:2
 (C) Add optional TOTP setup @backend @security dif:8
 (C) Double-check [Node.js Security Checklist](https://blog.risingstack.com/node-js-security-checklist/) @backend @security dif:5
-(C) Fix winston warnings by creating a non-default logger to use and exporting that (which can be silenced during unit tests) @backend @testing @techdebt dif:2
+(A) Fix winston warnings by creating a non-default logger to use and exporting that (which can be silenced during unit tests) @backend @testing @techdebt dif:2
 (C) Make sure each participant has their own, consistent color and marker across the graph and the progress bar (h/t Arden) @boards importance:considering dif:3
 (C) Dashboard could be more fun/welcoming/helpful @dashboard dif:?
 (C) Target goal details pages should be nicer/more informative @goals dif:?
