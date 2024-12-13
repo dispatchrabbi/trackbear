@@ -1,10 +1,20 @@
 import * as auditEvents from '../audit-events';
-import { vi, beforeEach } from 'vitest';
+import { vi, beforeEach, afterEach } from 'vitest';
 import { mockReset } from 'vitest-mock-extended';
 
-const mockLogAuditEvent = vi.spyOn(auditEvents, 'logAuditEvent');
-export default mockLogAuditEvent;
+const logAuditEventMock = vi.spyOn(auditEvents, 'logAuditEvent');
+const buildChangeRecordMock = vi.spyOn(auditEvents, 'buildChangeRecord');
 
 beforeEach(() => {
-  mockReset(mockLogAuditEvent);
+  buildChangeRecordMock.mockImplementation(() => ({}))
 });
+
+afterEach(() => {
+  mockReset(logAuditEventMock);
+  mockReset(buildChangeRecordMock);
+});
+
+export {
+  logAuditEventMock,
+  buildChangeRecordMock,
+};

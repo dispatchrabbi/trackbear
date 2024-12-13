@@ -7,7 +7,7 @@ vi.mock('../../lib/db.ts');
 import dbClientMock from '../../lib/__mocks__/db.ts';
 
 vi.mock('../../lib/audit-events.ts', { spy: true });
-import logAuditEventMock from '../../lib/__mocks__/audit-events.ts';
+import { logAuditEventMock } from '../../lib/__mocks__/audit-events.ts';
 
 import * as boardModel from "../../lib/models/board.ts";
 

@@ -9,7 +9,7 @@ vi.mock('../../lib/db.ts');
 import dbClientMock from '../../lib/__mocks__/db.ts';
 
 vi.mock('../../lib/audit-events.ts', { spy: true });
-import logAuditEventMock from '../../lib/__mocks__/audit-events.ts';
+import { logAuditEventMock } from 'server/lib/__mocks__/audit-events.ts';
 
 import { handleGetTallies, handleGetTally, handleCreateTally, handleCreateTallies, handleUpdateTally, handleDeleteTally } from './tally';
 
@@ -180,7 +180,7 @@ describe('tally api v1', () => {
       expect(dbClientMock.work.findUnique).not.toHaveBeenCalled();
       expect(dbClientMock.tally.findMany).not.toHaveBeenCalled();
       expect(dbClientMock.tally.update).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('tally:update', MOCK_USER_ID, TALLY_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tally:update', MOCK_USER_ID, TALLY_ID, null, expect.anything(), TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
@@ -222,7 +222,7 @@ describe('tally api v1', () => {
       expect(dbClientMock.tally.update).toHaveBeenCalledWith(expect.objectContaining({
         data: expect.objectContaining({ count: 150 })
       }));
-      expect(logAuditEventMock).toHaveBeenCalledWith('tally:update', MOCK_USER_ID, TALLY_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tally:update', MOCK_USER_ID, TALLY_ID, null, expect.anything(), TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
