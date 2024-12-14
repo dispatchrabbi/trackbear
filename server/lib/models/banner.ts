@@ -9,6 +9,7 @@ import { RecordNotFoundError } from "./errors.ts";
 
 import { traced } from "../tracer.ts";
 
+export type { Banner };
 export type BannerData = {
   message: string;
   enabled?: boolean;
@@ -16,8 +17,6 @@ export type BannerData = {
   icon?: string;
   color?: string;
 };
-
-export type { Banner };
 
 export class BannerModel {
 
