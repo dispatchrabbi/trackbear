@@ -13,7 +13,7 @@ import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut } from "../lib/auth.ts";
 import { WithUser } from "server/lib/middleware/access.ts";
 import { PASSWORD_RESET_LINK_STATE } from "../lib/models/password-reset-link.ts";
-import { USER_STATE, USERNAME_REGEX } from "../lib/models/user.ts";
+import { USER_STATE, USERNAME_REGEX } from "../lib/models/user/consts.ts";
 import CONFIG from '../config.ts';
 
 import { pushTask } from "../lib/queue.ts";

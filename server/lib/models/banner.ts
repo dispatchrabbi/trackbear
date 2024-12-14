@@ -91,7 +91,7 @@ export class BannerModel {
   }
 
   @traced
-  static async deleteBanner(id: number, reqCtx: RequestContext) {
+  static async deleteBanner(id: number, reqCtx: RequestContext): Promise<Banner> {
     const deleted = await dbClient.banner.delete({ where: { id } });
 
     await logAuditEvent(AUDIT_EVENT.BANNER_DELETE, reqCtx.userId, deleted.id, null, null, reqCtx.sessionId);

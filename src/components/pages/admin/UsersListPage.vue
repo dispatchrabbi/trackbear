@@ -4,7 +4,7 @@ import { watchDebounced } from '@vueuse/core';
 import { parseISO, addDays, addMonths, startOfDay } from 'date-fns';
 
 import { getUsers, User } from 'src/lib/api/admin/user.ts'
-import { USER_STATE } from 'server/lib/models/user.ts';
+import { USER_STATE } from 'server/lib/models/user/consts';
 import { USER_STATE_INFO } from 'src/lib/user.ts';
 
 import AdminLayout from 'src/layouts/AdminLayout.vue';

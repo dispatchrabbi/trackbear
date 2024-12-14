@@ -1,6 +1,3 @@
-import winston from "winston";
-import { addMinutes, addDays } from 'date-fns';
-
 import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from "server/lib/api.ts";
 import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 import { RequestWithUser } from '../../lib/middleware/access.ts';
@@ -9,39 +6,30 @@ import { z } from 'zod';
 import { zIdParam } from '../../lib/validators.ts';
 
 import dbClient from "../../lib/db.ts";
-import type { User, AuditEvent } from "@prisma/client";
-import { USER_STATE, USERNAME_REGEX } from "../../lib/models/user.ts";
-import { PASSWORD_RESET_LINK_STATE } from "../../lib/models/password-reset-link.ts";
-import CONFIG from '../../config.ts';
+import type { AuditEvent } from "@prisma/client";
+import {
+  USER_STATE,
+  USERNAME_REGEX, type UserState
+} from "../../lib/models/user/consts.ts";
+import {
+  UserModel, type User,
+} from "../../lib/models/user/user.ts";
 
-import { pushTask } from "../../lib/queue.ts";
-import sendEmailverificationEmail from "../../lib/tasks/send-emailverification-email.ts";
-import sendPwresetEmail from "../../lib/tasks/send-pwreset-email.ts";
-
-import { logAuditEvent, buildChangeRecord } from '../../lib/audit-events.ts';
+import { reqCtx } from "server/lib/request-context.ts";
+import { CollisionError, ValidationError } from "server/lib/models/errors.ts";
 
 type EmptyObject = Record<string, never>;
 
-
 export async function handleGetUsers(req: RequestWithUser, res: ApiResponse<User[]>) {
-  const users = await dbClient.user.findMany({
-    orderBy: { username: 'asc' },
-  });
+  const users = await UserModel.getUsers();
 
   return res.status(200).send(success(users));
 }
 
 export async function handleGetUser(req: RequestWithUser, res: ApiResponse<{ user: User; auditEvents: AuditEvent[]; }>) {
-  const user = await dbClient.user.findUnique({
-    where: {
-      id: +req.params.id,
-    },
-  });
+  const user = await UserModel.getUser(+req.params.id);
 
-  if(!user) {
-    return res.status(404).send(failure('NOT_FOUND', `No user found with id ${req.params.id}.`));
-  }
-
+  // TODO: replace when the audit event model exists
   const auditEvents = await dbClient.auditEvent.findMany({
     where: {
       OR: [
@@ -72,44 +60,23 @@ const zUserUpdatePayload = z.object({
   displayName: z.string(),
   email: z.string().email(),
   isEmailVerified: z.boolean(),
-}).partial().strict();
+}).strict().partial();
 
 export async function handleUpdateUser(req: RequestWithUser, res: ApiResponse<User>) {
-  const admin = req.user;
   const payload = req.body as UserUpdatePayload;
 
-  const current = await dbClient.user.findUnique({
-    where: {
-      id: +req.params.id
-    },
-  });
-  if(!current) {
-    return res.status(404).send(failure('NOT_FOUND', `No user found with id ${req.params.id}.`));
-  }
-
-  if('username' in payload) {
-    const existingUserWithThisUsername = await dbClient.user.findUnique({
-      where: { username: payload.username },
-    });
-    if(existingUserWithThisUsername) {
+  let updated;
+  try {
+    updated = await UserModel.updateUser(+req.params.id, payload, reqCtx(req))
+  } catch(err) {
+    if(err instanceof ValidationError) {
+      return res.status(400).send(failure('VALIDATION_FAILED', err.meta.reason));
+    } else if(err instanceof CollisionError) {
       return res.status(409).send(failure('USERNAME_EXISTS', 'A user with that username already exists.'));
+    } else {
+      throw err;
     }
   }
-
-  const updated = await dbClient.user.update({
-    where: {
-      id: +req.params.id,
-    },
-    data: {
-      ...payload,
-    },
-  });
-  if(!updated) {
-    return res.status(404).send(failure('NOT_FOUND', `No user found with id ${req.params.id}.`));
-  }
-
-  const changes = buildChangeRecord<UserUpdatePayload>(current, updated);
-  await logAuditEvent('user:update', admin.id, updated.id, null, changes, req.sessionID);
 
   return res.status(200).send(success(updated));
 }
@@ -122,93 +89,21 @@ const zUserStatePayload = z.object({
 }).strict();
 
 export async function handleUpdateUserState(req: RequestWithUser, res: ApiResponse<User>) {
-  const admin = req.user;
   const payload = req.body as UserStatePayload;
 
-  const current = await dbClient.user.findUnique({
-    where: {
-      id: +req.params.id
-    },
-  });
-  if(!current) {
-    return res.status(404).send(failure('NOT_FOUND', `No user found with id ${req.params.id}.`));
-  }
-
-  const updated = await dbClient.user.update({
-    where: {
-      id: +req.params.id,
-    },
-    data: {
-      ...payload,
-    },
-  });
-  if(!updated) {
-    return res.status(404).send(failure('NOT_FOUND', `No user found with id ${req.params.id}.`));
-  }
-
-  let event = 'state-change';
-  if(payload.state === USER_STATE.ACTIVE) {
-    event = 'activate';
-  } else if(payload.state === USER_STATE.SUSPENDED) {
-    event = 'suspend';
-  } else if(payload.state === USER_STATE.DELETED) {
-    event = 'delete';
-  }
-  await logAuditEvent(`user:${event}`, admin.id, updated.id, null, { source: 'admin console' }, req.sessionID);
+  const updated = await UserModel.updateUserState(+req.params.id, payload.state as UserState, reqCtx(req));
 
   return res.status(200).send(success(updated));
 }
 
 export async function handleSendUserVerifyEmail(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
-  const admin = req.user;
-
-  const user = await dbClient.user.findUnique({
-    where: {
-      id: +req.params.id,
-    },
-  });
-  if(!user) {
-    return res.status(404).send(failure('NOT_FOUND', `No user found with id ${req.params.id}.`));
-  }
-
-  // normally we'd make sure the user isn't already verified, but this is admin-town, Jake, so if the admin wants to send an email, we'll send an email
-  const pendingEmailVerification = await dbClient.pendingEmailVerification.create({
-    data: {
-      userId: user.id,
-      newEmail: user.email,
-      expiresAt: addDays(new Date(), CONFIG.EMAIL_VERIFICATION_TIMEOUT_IN_DAYS),
-    }
-  });
-  pushTask(sendEmailverificationEmail.makeTask(pendingEmailVerification.uuid));
-  winston.debug(`EMAIL: ${admin.id} requested a verification link for ${user.id} and got ${pendingEmailVerification.uuid}`);
-  await logAuditEvent('user:verifyemailreq', admin.id, user.id, null, { verificationUuid: pendingEmailVerification.uuid }, req.sessionID);
+  await UserModel.sendEmailVerificationLink(+req.params.id, { force: true }, reqCtx(req));
 
   return res.status(201).send(success({}));
 }
 
 export async function handleSendPasswordResetEmail(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
-  const admin = req.user;
-
-  const user = await dbClient.user.findUnique({
-    where: {
-      id: +req.params.id,
-    },
-  });
-  if(!user) {
-    return res.status(404).send(failure('NOT_FOUND', `No user found with id ${req.params.id}.`));
-  }
-
-  const resetLink = await dbClient.passwordResetLink.create({
-    data: {
-      userId: user.id,
-      state: PASSWORD_RESET_LINK_STATE.ACTIVE,
-      expiresAt: addMinutes(new Date(), CONFIG.PASSWORD_RESET_LINK_TIMEOUT_IN_MINUTES),
-    }
-  });
-
-  winston.debug(`PASSWORD: ${admin.id} requested a reset link for ${user.id} and got ${resetLink.uuid}`);
-  await logAuditEvent('user:pwresetreq', admin.id, user.id, null, { resetLinkUuid: resetLink.uuid }, req.sessionID);
-  pushTask(sendPwresetEmail.makeTask(resetLink.uuid));
+  await UserModel.sendPasswordResetLink(+req.params.id, {}, reqCtx(req));
 
   return res.status(201).send(success({}));
 }

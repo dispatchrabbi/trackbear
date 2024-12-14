@@ -7,7 +7,7 @@ import { initLoggers } from '../server/lib/logger.ts';
 
 import dbClient from '../server/lib/db.ts';
 import { Tally, User, Work } from '@prisma/client';
-import { USER_STATE } from '../server/lib/models/user.ts';
+import { USER_STATE } from '../server/lib/models/user/consts.ts';
 import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from '../server/lib/audit-events.ts';
 
 import { eachDayOfInterval } from 'date-fns';

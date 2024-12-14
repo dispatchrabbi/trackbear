@@ -7,7 +7,7 @@ import { PASSWORD_RESET_LINK_STATE } from '../models/password-reset-link.ts';
 
 import { getNormalizedEnv } from '../env.ts';
 import { logAuditEvent, TRACKBEAR_SYSTEM_ID } from '../audit-events.ts';
-import { USER_STATE } from '../models/user.ts';
+import { USER_STATE } from '../models/user/consts.ts';
 
 async function handler(task) {
   let resetLink: PasswordResetLink & { user: User };

@@ -3,7 +3,7 @@ import type { User } from "@prisma/client";
 import type { Request } from "express";
 
 import dbClient from './db.ts';
-import { USER_STATE } from "./models/user.ts";
+import { USER_STATE } from "./models/user/consts.ts";
 
 type SessionWithAuth = { session: { auth?: null | { id: number } } };
 export type WithSessionAuth<R> = R & SessionWithAuth;

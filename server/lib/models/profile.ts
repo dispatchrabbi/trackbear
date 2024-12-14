@@ -1,4 +1,4 @@
-import { USER_STATE } from "./user.ts";
+import { USER_STATE } from "./user/consts.ts";
 import dbClient from "../db.ts";
 
 import { add } from "date-fns";

@@ -1,4 +1,4 @@
-import { USER_STATE } from "server/lib/models/user.ts";
+import { USER_STATE } from "server/lib/models/user/consts";
 
 export const USER_STATE_INFO = {
   [USER_STATE.ACTIVE]: {

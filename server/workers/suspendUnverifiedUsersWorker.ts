@@ -1,7 +1,7 @@
 import type { User, PendingEmailVerification } from "@prisma/client";
 import dbClient from "../lib/db.ts";
 import winston from "winston";
-import { USER_STATE } from "../lib/models/user.ts";
+import { USER_STATE } from "../lib/models/user/consts.ts";
 import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from "../lib/audit-events.ts";
 
 type UserWithVerifications = User & { pendingEmailVerifications: PendingEmailVerification[] }

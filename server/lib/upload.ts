@@ -5,7 +5,7 @@ import fs from 'node:fs/promises';
 import multer from 'multer';
 import { getNormalizedEnv } from './env.ts';
 
-import { MAX_AVATAR_SIZE_IN_BYTES } from './models/user.ts';
+import { MAX_AVATAR_SIZE_IN_BYTES } from './models/user/consts.ts';
 import { MAX_COVER_SIZE_IN_BYTES } from './models/work.ts';
 
 export async function getAvatarUploadPath() {

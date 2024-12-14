@@ -16,7 +16,7 @@ import SendResetPasswordPage from 'src/components/pages/SendResetPasswordPage.vu
 import ResetPasswordPage from 'src/components/pages/ResetPasswordPage.vue';
 
 import ProfilePage from 'src/components/pages/public/ProfilePage.vue';
-import { USERNAME_REGEX } from 'server/lib/models/user.ts';
+import { USERNAME_REGEX } from 'server/lib/models/user/consts.ts';
 const ROUTER_PARAM_USERNAME_REGEX = USERNAME_REGEX.source.replace('^', '').replace('$', '');
 
 import SettingsPage from './components/pages/settings/SettingsPage.vue';

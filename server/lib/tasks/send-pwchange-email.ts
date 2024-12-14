@@ -5,7 +5,7 @@ import type { User } from '@prisma/client';
 import dbClient from '../db.ts';
 
 import { logAuditEvent, TRACKBEAR_SYSTEM_ID } from '../audit-events.ts';
-import { USER_STATE } from '../models/user.ts';
+import { USER_STATE } from '../models/user/consts.ts';
 
 async function handler(task) {
   let user: User;

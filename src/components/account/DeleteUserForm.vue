@@ -10,7 +10,7 @@ import { useValidation } from 'src/lib/form.ts';
 
 import { deleteMe } from 'src/lib/api/me.ts';
 import { updateUserState } from 'src/lib/api/admin/user.ts';
-import { USER_STATE } from 'server/lib/models/user.ts';
+import { USER_STATE } from 'server/lib/models/user/consts.ts';
 
 import InputText from 'primevue/inputtext';
 import TbForm from 'src/components/form/TbForm.vue';

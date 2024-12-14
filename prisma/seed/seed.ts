@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient();
 
 import { hash } from '../../server/lib/hash.ts';
-import { USER_STATE } from "../../server/lib/models/user.ts";
+import { USER_STATE } from '../../server/lib/models/user/consts.ts';
 import { WORK_STATE, WORK_PHASE } from "../../server/lib/models/work.ts";
 import { TALLY_STATE, TALLY_MEASURE } from "../../server/lib/models/tally.ts";
 import { TAG_STATE, TAG_DEFAULT_COLOR } from "../../server/lib/models/tag.ts";
