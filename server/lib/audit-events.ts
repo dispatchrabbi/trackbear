@@ -1,18 +1,5 @@
 import winston from 'winston';
-import dbClient from "./db.ts";
-
-export const AUDIT_EVENT = {
-  BANNER_CREATE: 'banner:create',
-  BANNER_UPDATE: 'banner:update',
-  BANNER_DELETE: 'banner:delete',
-  USER_CREATE: 'user:create',
-  USER_UPDATE: 'user:update',
-  USER_ACTIVATE: 'user:activate',
-  USER_SUSPEND: 'user:suspend',
-  USER_DELETE: 'user:delete',
-  USER_REQUEST_EMAIL_VERIFICATION: 'user:verifyemailreq',
-  USER_REQUEST_PASSWORD_RESET: 'user:pwresetreq',
-};
+import { AuditEventModel } from './models/audit-events.ts';
 
 export const TRACKBEAR_SYSTEM_ID = -1;
 
@@ -29,14 +16,7 @@ export async function logAuditEvent(eventType: string, agentId: number, patientI
   });
   
   try {
-    await dbClient.auditEvent.create({
-      data: {
-        eventType,
-        agentId, patientId, goalId,
-        auxInfo: JSON.stringify(auxInfo),
-        sessionId,
-      },
-    });
+    await AuditEventModel.createAuditEvent(eventType, agentId, patientId, goalId, auxInfo, sessionId);
   } catch(err) {
     // log an error but don't do anything. failure to record an audit event shouldn't tank a request
     winston.error(err);

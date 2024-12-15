@@ -4,7 +4,8 @@ import dbClient from "../db.ts";
 import { type Banner } from "@prisma/client";
 
 import { type RequestContext } from "../request-context.ts";
-import { AUDIT_EVENT, buildChangeRecord, logAuditEvent } from '../../lib/audit-events.ts';
+import { buildChangeRecord, logAuditEvent } from '../../lib/audit-events.ts';
+import { AUDIT_EVENT_TYPE } from '../../lib/models/audit-events.ts';
 import { RecordNotFoundError } from "./errors.ts";
 
 import { traced } from "../tracer.ts";
@@ -70,7 +71,7 @@ export class BannerModel {
     });
 
     const changes = buildChangeRecord({}, created);
-    await logAuditEvent(AUDIT_EVENT.BANNER_CREATE, reqCtx.userId, created.id, null, changes, reqCtx.sessionId);
+    await logAuditEvent(AUDIT_EVENT_TYPE.BANNER_CREATE, reqCtx.userId, created.id, null, changes, reqCtx.sessionId);
 
     return created;
   }
@@ -85,7 +86,7 @@ export class BannerModel {
     });
 
     const changes = buildChangeRecord(original, updated);
-    await logAuditEvent(AUDIT_EVENT.BANNER_UPDATE, reqCtx.userId, updated.id, null, changes, reqCtx.sessionId);
+    await logAuditEvent(AUDIT_EVENT_TYPE.BANNER_UPDATE, reqCtx.userId, updated.id, null, changes, reqCtx.sessionId);
 
     return updated;
   }
@@ -94,7 +95,7 @@ export class BannerModel {
   static async deleteBanner(id: number, reqCtx: RequestContext): Promise<Banner> {
     const deleted = await dbClient.banner.delete({ where: { id } });
 
-    await logAuditEvent(AUDIT_EVENT.BANNER_DELETE, reqCtx.userId, deleted.id, null, null, reqCtx.sessionId);
+    await logAuditEvent(AUDIT_EVENT_TYPE.BANNER_DELETE, reqCtx.userId, deleted.id, null, null, reqCtx.sessionId);
 
     return deleted;
   }

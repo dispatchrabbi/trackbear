@@ -5,7 +5,8 @@ import dbClient from "../../db.ts";
 import type { PasswordResetLink, PendingEmailVerification, User } from "@prisma/client";
 
 import { type RequestContext } from "../../request-context.ts";
-import { AUDIT_EVENT, buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
+import { buildChangeRecord, logAuditEvent } from '../../../lib/audit-events.ts';
+import { AUDIT_EVENT_TYPE } from '../../../lib/models/audit-events.ts';
 import { CollisionError, RecordNotFoundError, ValidationError } from "../errors.ts";
 
 import {
@@ -62,12 +63,12 @@ export class UserModel {
   }
 
   @traced
-  static async getUserByUsername(username: string): Promise<User> {
+  static async isUsernameTaken(username: string): Promise<boolean> {
     const user = await dbClient.user.findUnique({
       where: { username: username },
     });
 
-    return user;
+    return !!user;
   }
 
   @traced
@@ -101,8 +102,8 @@ export class UserModel {
       }
 
       // refuse to change the username to an existing username
-      const existingUserWithThisUsername = await this.getUserByUsername(data.username);
-      if(existingUserWithThisUsername) {
+      const isUsernameTaken = await this.isUsernameTaken(data.username);
+      if(isUsernameTaken) {
         throw new CollisionError('user', 'username', data.username);
       }
     }
@@ -122,7 +123,7 @@ export class UserModel {
     });
 
     const changes = buildChangeRecord(original, updated);
-    await logAuditEvent(AUDIT_EVENT.USER_UPDATE, reqCtx.userId, updated.id, null, changes, reqCtx.sessionId);
+    await logAuditEvent(AUDIT_EVENT_TYPE.USER_UPDATE, reqCtx.userId, updated.id, null, changes, reqCtx.sessionId);
 
     return updated;
   }
@@ -137,9 +138,9 @@ export class UserModel {
     });
 
     const event = {
-      [USER_STATE.ACTIVE]: AUDIT_EVENT.USER_ACTIVATE,
-      [USER_STATE.SUSPENDED]: AUDIT_EVENT.USER_SUSPEND,
-      [USER_STATE.DELETED]: AUDIT_EVENT.USER_DELETE,
+      [USER_STATE.ACTIVE]: AUDIT_EVENT_TYPE.USER_ACTIVATE,
+      [USER_STATE.SUSPENDED]: AUDIT_EVENT_TYPE.USER_SUSPEND,
+      [USER_STATE.DELETED]: AUDIT_EVENT_TYPE.USER_DELETE,
     }[state];
 
     await logAuditEvent(event, reqCtx.userId, updated.id, null, null, reqCtx.sessionId);
@@ -170,7 +171,7 @@ export class UserModel {
     pushTask(sendEmailverificationEmail.makeTask(pending.uuid));
 
     winston.debug(`EMAIL: ${reqCtx.userId} requested a verification link for ${userId} and got ${pending.uuid}`);
-    await logAuditEvent(AUDIT_EVENT.USER_REQUEST_EMAIL_VERIFICATION, reqCtx.userId, userId, null, { verificationUuid: pending.uuid }, reqCtx.sessionId);
+    await logAuditEvent(AUDIT_EVENT_TYPE.USER_REQUEST_EMAIL_VERIFICATION, reqCtx.userId, userId, null, { verificationUuid: pending.uuid }, reqCtx.sessionId);
 
     return pending;
   }
@@ -193,7 +194,7 @@ export class UserModel {
     pushTask(sendPwresetEmail.makeTask(resetLink.uuid));
 
     winston.debug(`EMAIL: ${reqCtx.userId} requested a reset link for ${user.id} and got ${resetLink.uuid}`);
-    await logAuditEvent(AUDIT_EVENT.USER_REQUEST_PASSWORD_RESET, reqCtx.userId, user.id, null, { resetLinkUuid: resetLink.uuid }, reqCtx.sessionId);
+    await logAuditEvent(AUDIT_EVENT_TYPE.USER_REQUEST_PASSWORD_RESET, reqCtx.userId, user.id, null, { resetLinkUuid: resetLink.uuid }, reqCtx.sessionId);
 
     return resetLink;
   }

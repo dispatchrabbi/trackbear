@@ -5,8 +5,6 @@ import { RequestWithUser } from '../../lib/middleware/access.ts';
 import { z } from 'zod';
 import { zIdParam } from '../../lib/validators.ts';
 
-import dbClient from "../../lib/db.ts";
-import type { AuditEvent } from "@prisma/client";
 import {
   USER_STATE,
   USERNAME_REGEX, type UserState
@@ -14,6 +12,7 @@ import {
 import {
   UserModel, type User,
 } from "../../lib/models/user/user.ts";
+import { AUDIT_EVENT_ENTITIES, AuditEventModel, type AuditEvent } from "server/lib/models/audit-events.ts";
 
 import { reqCtx } from "server/lib/request-context.ts";
 import { CollisionError, ValidationError } from "server/lib/models/errors.ts";
@@ -29,19 +28,7 @@ export async function handleGetUsers(req: RequestWithUser, res: ApiResponse<User
 export async function handleGetUser(req: RequestWithUser, res: ApiResponse<{ user: User; auditEvents: AuditEvent[]; }>) {
   const user = await UserModel.getUser(+req.params.id);
 
-  // TODO: replace when the audit event model exists
-  const auditEvents = await dbClient.auditEvent.findMany({
-    where: {
-      OR: [
-        { agentId: user.id },
-        { patientId: user.id },
-        { goalId: user.id },
-      ],
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
+  const auditEvents = await AuditEventModel.getAuditEvents(user.id, AUDIT_EVENT_ENTITIES.USER);
 
   return res.status(200).send(success({ user, auditEvents }));
 }
