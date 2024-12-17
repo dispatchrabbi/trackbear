@@ -1,13 +1,16 @@
-import { RequestWithUser } from "./middleware/access";
-
 export type RequestContext = {
   userId: number | null;
-  sessionId: string | null;
+  sessionId: string;
 };
 
-export function reqCtx(req: RequestWithUser): RequestContext {
+interface RequestWithOrWithoutUser {
+  sessionID: string;
+  user?: { id: number };
+}
+
+export function reqCtx(req: RequestWithOrWithoutUser): RequestContext {
   return {
-    userId: req.user.id,
+    userId: ('user' in req) ? req.user.id : null,
     sessionId: req.sessionID,
   };
 }

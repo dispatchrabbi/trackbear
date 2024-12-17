@@ -1,5 +1,5 @@
 export class RecordNotFoundError extends Error {
-  constructor(model: string, id: number, ...args) {
+  constructor(model: string, id: unknown, idField: string = 'id', ...args) {
     const message = `Did not find any ${model} with id ${id}`;
     super(message, ...args);
 
@@ -10,11 +10,16 @@ export class RecordNotFoundError extends Error {
     this.name = this.constructor.name;
     this.meta = {
       model,
-      id
+      idField,
+      id: JSON.stringify(id),
     };
   }
 
-  meta: { model: string; id: number };
+  meta: { 
+    model: string;
+    idField: string;
+    id: string;
+  };
 }
 
 export class CollisionError extends Error {

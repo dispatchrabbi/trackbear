@@ -1,28 +1,21 @@
 import { Request } from "express";
 import { z } from 'zod';
 import winston from "winston";
-import { addMinutes, addDays } from 'date-fns';
 
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
 import { zUuidParam } from "server/lib/validators.ts";
 import { ApiResponse, success, failure } from '../lib/api-response.ts';
 
-import dbClient from '../lib/db.ts';
 import type { User } from "@prisma/client";
-import { hash, verifyHash } from "../lib/hash.ts";
 import { logIn, logOut } from "../lib/auth.ts";
-import { WithUser } from "server/lib/middleware/access.ts";
-import { PASSWORD_RESET_LINK_STATE } from "../lib/models/password-reset-link.ts";
+import { RequestWithUser } from "server/lib/middleware/access.ts";
 import { USER_STATE, USERNAME_REGEX } from "../lib/models/user/consts.ts";
-import CONFIG from '../config.ts';
-
-import { pushTask } from "../lib/queue.ts";
-import sendSignupEmailTask from '../lib/tasks/send-signup-email.ts';
-import sendEmailverificationEmail from "../lib/tasks/send-emailverification-email.ts";
-import sendPwresetEmail from "../lib/tasks/send-pwreset-email.ts";
-import sendPwchangeEmail from "../lib/tasks/send-pwchange-email.ts";
+import { CollisionError, RecordNotFoundError } from "../lib/models/errors.ts";
 
 import { logAuditEvent } from '../lib/audit-events.ts';
+import { UserModel } from "server/lib/models/user/user.ts";
+import { AUDIT_EVENT_TYPE } from "server/lib/models/audit-events.ts";
+import { reqCtx } from "server/lib/request-context.ts";
 
 export type LoginPayload = {
   username: string;
@@ -36,35 +29,34 @@ const zLoginPayload = z.object({
 export async function handleLogin(req: Request, res: ApiResponse<User>) {
   const { username, password } = req.body;
 
-  let userAuth;
-  const user = await dbClient.user.findUnique({ where: { username } });
-  if(user) {
-    userAuth = await dbClient.userAuth.findUnique({ where: { userId: user.id } });
+  let user;
+  try {
+    user = await UserModel.getUserByUsername(username);
+  } catch(err) {
+    if(err instanceof RecordNotFoundError) {
+      winston.info(`LOGIN: ${username} attempted to log in but does not exist`);
+      return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
+    } else {
+      throw err;
+    }
   }
 
-  if(!user) {
-    winston.info(`LOGIN: ${username} attempted to log in but does not exist`);
-    return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
-  } else if(!userAuth) {
-    winston.error(`LOGIN: ${username} attempted to log in but does not have userauth!`);
-    return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
-  }
-
+  // you can only log in if your user is active
   if(user.state !== USER_STATE.ACTIVE) {
     winston.info(`LOGIN: ${username} attempted to log in but account state is ${user.state}`);
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
 
-  const verified = await verifyHash(userAuth.password, password, userAuth.salt);
-
-  if(!verified) {
-    winston.debug(`LOGIN: ${username} had the incorrect password`);
+  const passwordMatches = await UserModel.checkUserPassword(user.id, password);
+  if(!passwordMatches) {
+    winston.debug(`LOGIN: ${username} attempted to log in with an incorrect password`);
+    await logAuditEvent(AUDIT_EVENT_TYPE.USER_FAILED_LOGIN, user.id, null, null, null, req.sessionID);
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
 
   logIn(req, user);
   winston.debug(`LOGIN: ${username} successfully logged in`);
-  await logAuditEvent('user:login', user.id, null, null, null, req.sessionID);
+  await logAuditEvent(AUDIT_EVENT_TYPE.USER_LOGIN, user.id, null, null, null, req.sessionID);
 
   return res.status(200).send(success(user));
 }
@@ -100,124 +92,44 @@ const zCreateUserPayload = z.object({
 export async function handleSignup(req, res: ApiResponse<User>) {
   const { username: submittedUsername, password, email } = req.body as CreateUserPayload;
 
-  // validate the username: must start with a letter and only contain letters, numbers, and underscore/dash
-  const username = submittedUsername.trim().toLowerCase();
-  if(!USERNAME_REGEX.test(username)) {
-    return res.status(409).send(failure('INVALID_USERNAME', 'Your username must begin with a letter and consist only of letters, numbers, dashes, and underscores.'));
+  let created;
+  try {
+    created = await UserModel.signUpUser({
+      username: submittedUsername,
+      password: password,
+      email: email,
+    }, reqCtx(req));
+  } catch(err) {
+    if(err instanceof CollisionError && err.meta.collidingField === 'username') {
+      return res.status(409).send(failure('USERNAME_EXISTS', 'A user with that username already exists.'));
+    } else {
+      throw err;
+    }
   }
 
-  // check username for uniqueness
-  const existingUserWithThisUsername = await dbClient.user.findUnique({
-    where: { username }
-  });
-  if(existingUserWithThisUsername) {
-    return res.status(409).send(failure('USERNAME_EXISTS', 'A user with that username already exists.'));
-  }
-
-  const { hashedPassword, salt } = await hash(password);
-
-  const userData = {
-    state: USER_STATE.ACTIVE,
-    username: username,
-    displayName: username,
-    email: email,
-    isEmailVerified: false,
-  };
-
-  const userAuthData = {
-    password: hashedPassword,
-    salt: salt,
-  };
-
-  const userSettingsData = {
-    lifetimeStartingBalance: {},
-  };
-
-  const pendingEmailVerificationData = {
-    newEmail: userData.email,
-    expiresAt: addDays(new Date(), CONFIG.EMAIL_VERIFICATION_TIMEOUT_IN_DAYS),
-  };
-
-  const user = await dbClient.user.create({
-    data: {
-      ...userData,
-      userAuth: { create: userAuthData },
-      userSettings: { create: userSettingsData },
-      pendingEmailVerifications: { create: pendingEmailVerificationData },
-    },
-    include: {
-      pendingEmailVerifications: {
-        orderBy: { createdAt: 'desc' },
-        take: 1,
-      },
-    },
-  });
-  await logAuditEvent('user:signup', user.id, user.id, null, null, req.sessionID);
-  winston.debug(`SIGNUP: ${user.id} just signed up`);
-
-  pushTask(sendSignupEmailTask.makeTask(user.id));
-  pushTask(sendEmailverificationEmail.makeTask(user.pendingEmailVerifications[0].uuid));
-
-  return res.status(201).send(success(user));
+  return res.status(201).send(success(created));
 }
 
-export async function handleSendEmailVerification(req: WithUser<Request>, res: ApiResponse<EmptyObject>) {
+export async function handleSendEmailVerification(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
   const user: User = req.user;
 
-  if(user.isEmailVerified) {
-    // if the user is already verified, no-op and send a 200 (instead of 201)
+  const pending = await UserModel.sendEmailVerificationLink(user.id, {}, reqCtx(req));
+  if(!pending) {
+    // the user is already verified, so no-op and send a 200 (instead of 201)
     return res.status(200).send(success({}));
   }
-
-  const pendingEmailVerificationData = {
-    userId: user.id,
-    newEmail: user.email,
-    expiresAt: addDays(new Date(), CONFIG.EMAIL_VERIFICATION_TIMEOUT_IN_DAYS),
-  };
-
-  const pendingEmailVerification = await dbClient.pendingEmailVerification.create({
-    data: pendingEmailVerificationData,
-  });
-  pushTask(sendEmailverificationEmail.makeTask(pendingEmailVerification.uuid));
-  await logAuditEvent('user:verifyemailreq', user.id, user.id, null, { verificationUuid: pendingEmailVerification.uuid }, req.sessionID);
 
   return res.status(201).send(success({}));
 }
 
 export async function handleVerifyEmail(req: Request, res: ApiResponse<EmptyObject>) {
   const uuid = req.params.uuid;
-  const verification = await dbClient.pendingEmailVerification.findUnique({
-    where: {
-      uuid,
-      expiresAt: { gt: new Date() },
-    },
-    include: {
-      user: true,
-    },
-  });
-
-  const user = verification?.user;
-
-  if(!(
-    verification && // we found a non-expired verification for this uuid
-    verification.newEmail === user.email && // it's for the current email
-    user.isEmailVerified === false // the email hasn't already been verified
-  )) {
+  
+  const verified = await UserModel.verifyUserEmail(uuid, reqCtx(req));
+  if(!verified) {
     return res.status(404).send(failure('NOT_FOUND', 'Could not verify your email. This verification link is either expired, already used, or invalid. Check your link and try again.'));
   }
-
-  // now we mark the email verified and delete all pending verifications for this email
-  await dbClient.user.update({
-    data: {
-      isEmailVerified: true,
-      pendingEmailVerifications: { deleteMany: {} },
-    },
-    where: { id: user.id },
-  });
-
-  await logAuditEvent('user:verifyemail', user.id, user.id, null, { verificationUuid: verification.uuid, email: verification.newEmail }, req.sessionID);
-  winston.debug(`VERIFY: ${user.id} just verified their email`);
-
+  
   return res.status(200).send(success({}));
 }
 
@@ -230,40 +142,16 @@ const zChangePasswordPayload = z.object({
   newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
 });
 
-export async function handleChangePassword(req: WithUser<Request>, res: ApiResponse<EmptyObject>) {
+export async function handleChangePassword(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
   const { currentPassword, newPassword } = req.body;
 
-  // first make sure that we know that the userauth exists
-  let userAuth = await dbClient.userAuth.findUnique({ where: { userId: req.user.id } });
-
-  if(!userAuth) {
-    winston.error(`LOGIN: ${req.user.id} attempted to change their password but they were not found!`);
-    return res.status(403).send(failure('INVALID_USER', 'Invalid user.'));
-  }
-
-  // then validate the password
-  const verified = await verifyHash(userAuth.password, currentPassword, userAuth.salt);
-
-  if(!verified) {
+  const currentPasswordMatches = await UserModel.checkUserPassword(req.user.id, currentPassword);
+  if(!currentPasswordMatches) {
     winston.debug(`LOGIN: ${req.user.id} had the incorrect password`);
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect password.'));
   }
 
-  // now, change out the password
-  const { hashedPassword, salt } = await hash(newPassword);
-  userAuth = await dbClient.userAuth.update({
-    data: {
-      password: hashedPassword,
-      salt: salt,
-    },
-    where: {
-      userId: req.user.id,
-    },
-  });
-
-  winston.debug(`PASSWORD: ${req.user.id} has changed their password`);
-  await logAuditEvent('user:pwchange', req.user.id, req.user.id, null, null, req.sessionID);
-  pushTask(sendPwchangeEmail.makeTask(req.user.id));
+  await UserModel.setUserPassword(req.user.id, newPassword, reqCtx(req));
 
   return res.status(200).send(success({}));
 }
@@ -281,30 +169,12 @@ const zRequestPasswordResetPayload = z.object({
 export async function handleSendPasswordResetEmail(req: Request, res: ApiResponse<EmptyObject>) {
   const username = req.body.username;
 
-  const user = await dbClient.user.findUnique({
-    where: {
-      username,
-      state: USER_STATE.ACTIVE,
-    },
-  });
-
-  if(!user) {
+  const resetLink = await UserModel.sendPasswordResetLink(username, {}, reqCtx(req))
+  if(!resetLink) {
+    // TODO: rethink this stance
     // Even though there was no user found, we send back success so that we don't leak which usernames do and don't exist
-    winston.warn(`PWRESET: Attempted reset for nonexistent username ${username}`);
     return res.status(200).send(success({}));
   }
-
-  const resetLink = await dbClient.passwordResetLink.create({
-    data: {
-      userId: user.id,
-      state: PASSWORD_RESET_LINK_STATE.ACTIVE,
-      expiresAt: addMinutes(new Date(), CONFIG.PASSWORD_RESET_LINK_TIMEOUT_IN_MINUTES),
-    }
-  });
-
-  winston.debug(`PASSWORD: ${user.id} requested a reset link and got ${resetLink.uuid}`);
-  await logAuditEvent('user:pwresetreq', user.id, user.id, null, { resetLinkUuid: resetLink.uuid }, req.sessionID);
-  pushTask(sendPwresetEmail.makeTask(resetLink.uuid));
 
   return res.status(201).send(success({}));
 }
@@ -317,53 +187,18 @@ const zPasswordResetPayload = z.object({
 });
 
 export async function handlePasswordReset(req: Request, res: ApiResponse<EmptyObject>) {
-  const uuid = req.params.uuid;
-  const passwordResetLink = await dbClient.passwordResetLink.findUnique({
-    where: {
-      uuid,
-      expiresAt: { gt: new Date() },
-      state: PASSWORD_RESET_LINK_STATE.ACTIVE,
-    },
-  });
-
-  if(!passwordResetLink) {
-    return res.status(404).send(failure('NOT_FOUND', 'This reset link is either expired or bogus. You should request a new one.'));
-  }
-
-  // now, change out the password
+  const resetUuid = req.params.uuid;
   const newPassword = req.body.newPassword;
-  const { hashedPassword, salt } = await hash(newPassword);
 
-  const userAuth = await dbClient.userAuth.update({
-    data: {
-      password: hashedPassword,
-      salt: salt,
-    },
-    where: {
-      userId: passwordResetLink.userId,
-    },
-    include: { user: true },
-  });
-
-  await dbClient.passwordResetLink.update({
-    data: {
-      state: PASSWORD_RESET_LINK_STATE.USED,
-    },
-    where: {
-      uuid: passwordResetLink.uuid,
-    },
-  });
-
-  // this should basically never happen...
-  if(!userAuth) {
-    winston.error(`PASSWORD: User ${passwordResetLink.userId} attempted to reset their password but no UserAuth record was found!`);
-    return res.status(403).send(failure('INVALID_USER', 'Invalid user.'));
+  try {
+    await UserModel.resetPassword(resetUuid, newPassword, reqCtx(req));
+  } catch(err) {
+    if(err instanceof RecordNotFoundError) {
+      return res.status(404).send(failure('NOT_FOUND', 'This reset link is either expired or bogus. You should request a new one.'));
+    } else {
+      throw err;
+    }
   }
-
-  const user = userAuth.user;
-  winston.debug(`PASSWORD: ${user.id} has reset their password`);
-  await logAuditEvent('user:pwreset', user.id, user.id, null, null, req.sessionID);
-  pushTask(sendPwchangeEmail.makeTask(user.id));
 
   return res.status(200).send(success({}));
 }
