@@ -8,7 +8,8 @@ export const USER_STATE = {
 } as const;
 export type UserState = typeof USER_STATE[keyof typeof USER_STATE];
 
-export const USERNAME_REGEX = /^[a-z][a-z0-9_-]+$/;
+// usernames must be between 3 and 24 characters
+export const USERNAME_REGEX = /^[a-z][a-z0-9_-]{2,23}$/;
 export const EMAIL_REGEX = /^.+@.+\..+$/;
 
 export const ALLOWED_AVATAR_FORMATS = {

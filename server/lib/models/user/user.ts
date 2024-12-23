@@ -3,13 +3,13 @@ import { addDays, addMinutes } from "date-fns";
 
 import dbClient from "../../db.ts";
 import type { PasswordResetLink, PendingEmailVerification, User, UserAuth } from "@prisma/client";
-import { hash, verifyHash } from "../../../lib/hash.ts";
+import { hash, verifyHash } from "../../hash.ts";
 
 import { type RequestContext } from "../../request-context.ts";
-import { buildChangeRecord, logAuditEvent, UNKNOWN_ACTOR_ID } from '../../../lib/audit-events.ts';
-import { AUDIT_EVENT_TYPE } from '../../../lib/models/audit-events.ts';
+import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
+import { AUDIT_EVENT_TYPE } from '../../models/audit-events.ts';
 import { PASSWORD_RESET_LINK_STATE } from "../password-reset-link.ts";
-import { CollisionError, RecordNotFoundError, ValidationError } from "../errors.ts";
+import { ValidationError } from "../errors.ts";
 
 import {
   USER_STATE, type UserState,
@@ -68,80 +68,42 @@ export class UserModel {
   }
 
   @traced
-  static async getUser(id: number): Promise<User> {
+  static async getUser(id: number): Promise<User | null> {
     const user = await dbClient.user.findUnique({
       where: { id }
     });
 
-    if(!user) {
-      throw new RecordNotFoundError('user', id);
-    }
-
     return user;
   }
 
   @traced
-  static async getUserAuth(userId: number): Promise<UserAuth> {
-    const userAuth = await dbClient.userAuth.findUnique({
-      where: { userId },
-    });
-    if(!userAuth) {
-      throw new RecordNotFoundError('userAuth', userId);
-    }
-
-
-    return userAuth;
-  }
-
-  @traced
-  static async getUserByUsername(username: string): Promise<User> {
+  static async getUserByUsername(username: string): Promise<User | null> {
     const user = await dbClient.user.findUnique({
-      where: { username: username },
+      where: { username: username.toLowerCase() },
     });
-
-    if(!user) {
-      throw new RecordNotFoundError('user', username, 'username');
-    }
 
     return user;
   }
 
-  /**
-   * Validates a potential username by checking if it exists and
-   * conforms to username requirements.
-   * 
-   * @param username the username to validate
-   * @returns the validated username (which may have changed)
-   * 
-   * @throws ValidationError if the username is not valid
-   * @throws CollisionError if the username is already taken
-   */
   @traced
   static async validateUsername(username: string): Promise<string> {
-    // normalize the username to lowercase
     username = username.toLowerCase();
-
-    // refuse the change the username if it doesn't conform to the regex
     if(!username.match(USERNAME_REGEX)) {
-      throw new ValidationError('user', 'username', 'username must consist only of alphanumeric characters, dashes, and underscores, and must start with a letter');
+      throw new ValidationError('user', 'username', 'Usernames must be alphanumeric, start with a letter, and be 3-24 characters long.');
+    } else if(await this.getUserByUsername(username)) {
+      throw new ValidationError('user', 'username', 'A user with that username already exists.');
     }
 
-    // refuse to change the username to an existing username
-    let user;
-    try {
-      user = await this.getUserByUsername(username);
-    } catch(err) {
-      if(!(err instanceof RecordNotFoundError)) {
-        throw err;
-      } // else let's keep going
-    }
-
-    // the username already exists
-    if(user) {
-      throw new CollisionError('user', 'username', username);
-    }
-    
     return username;
+  }
+
+  @traced
+  static async getUserAuth(user: User): Promise<UserAuth | null> {
+    const userAuth = await dbClient.userAuth.findUnique({
+      where: { userId: user.id },
+    });
+    
+    return userAuth;
   }
 
   @traced
@@ -163,17 +125,20 @@ export class UserModel {
       ...reqCtx,
       userId: created.id,
     };
-    await this.sendSignupEmail(created.id, { force: true }, reqCtx);
-    await this.sendEmailVerificationLink(created.id, { force: true }, reqCtx);
+    await this.sendSignupEmail(created, { force: true }, reqCtx);
+    await this.sendEmailVerificationLink(created, { force: true }, reqCtx);
 
     return created;
   }
 
   @traced
   static async createUser(data: CreateUserData, reqCtx: RequestContext) {
+    // first, validate the username
+    const username = await this.validateUsername(data.username);
+
     const userData = {
       state: USER_STATE.ACTIVE,
-      username: data.username,
+      username: username,
       displayName: data.displayName ?? data.username,
       email: data.email,
       isEmailVerified: data.isEmailVerified ?? false,
@@ -197,14 +162,14 @@ export class UserModel {
       },
     });
 
-    await logAuditEvent(AUDIT_EVENT_TYPE.USER_SIGNUP, created.id, created.id, null, null, reqCtx.sessionId);
+    await logAuditEvent(AUDIT_EVENT_TYPE.USER_CREATE, created.id, created.id, null, null, reqCtx.sessionId);
 
     return created;
   }
 
   @traced
-  static async updateUser(id: number, data: UpdateUserData, reqCtx: RequestContext): Promise<User> {
-    const original = await this.getUser(id);
+  static async updateUser(user: User, data: UpdateUserData, reqCtx: RequestContext): Promise<User> {
+    const original = user;
 
     if('username' in data) {
       data.username = await this.validateUsername(data.username);
@@ -218,7 +183,7 @@ export class UserModel {
     }
 
     const updated = await dbClient.user.update({
-      where: { id },
+      where: { id: user.id },
       data: {
         ...data
       },
@@ -231,9 +196,11 @@ export class UserModel {
   }
 
   @traced
-  static async updateUserState(id: number, state: UserState, reqCtx: RequestContext): Promise<User> {
+  static async setUserState(user: User, state: UserState, reqCtx: RequestContext): Promise<User> {
+    const original = user;
+
     const updated = await dbClient.user.update({
-      where: { id },
+      where: { id: user.id },
       data: {
         state
       },
@@ -245,13 +212,21 @@ export class UserModel {
       [USER_STATE.DELETED]: AUDIT_EVENT_TYPE.USER_DELETE,
     }[state];
 
-    await logAuditEvent(event, reqCtx.userId, updated.id, null, null, reqCtx.sessionId);
+    const changes = buildChangeRecord(original, updated);
+    await logAuditEvent(event, reqCtx.userId, updated.id, null, changes, reqCtx.sessionId);
 
     return updated;
   }
 
+  /**
+   * Marks a user's email address as verified via verification link.
+   * 
+   * @param verificationUuid The UUID contained in the email verification link
+   * @param reqCtx The request context
+   * @returns Whether the verification succeeded
+   */
   @traced
-  static async verifyUserEmail(verificationUuid: string, reqCtx: RequestContext) {
+  static async verifyEmail(verificationUuid: string, reqCtx: RequestContext): Promise<boolean> {
     const verification = await dbClient.pendingEmailVerification.findUnique({
       where: {
         uuid: verificationUuid,
@@ -288,15 +263,23 @@ export class UserModel {
     await logAuditEvent(
       AUDIT_EVENT_TYPE.USER_VERIFY_EMAIL,
       reqCtx.userId, verification.user.id, null,
-      { verificationUuid: verification.uuid, email: verification.newEmail },
+      { method: 'link', verificationUuid: verification.uuid, email: verification.newEmail },
       reqCtx.sessionId
     );
 
     return true;
   }
 
+  /**
+   * Resets a user's password as set via password reset link.
+   * 
+   * @param passwordResetUuid The UUID contained in the password reset link
+   * @param newPassword The user's new password
+   * @param reqCtx The request context
+   * @returns Whether the reset succeeded
+   */
   @traced
-  static async resetPassword(passwordResetUuid: string, newPassword: string, reqCtx: RequestContext) {
+  static async resetPassword(passwordResetUuid: string, newPassword: string, reqCtx: RequestContext): Promise<boolean> {
     // first make sure the link is valid
     const resetLink = await dbClient.passwordResetLink.findUnique({
       where: {
@@ -304,14 +287,17 @@ export class UserModel {
         expiresAt: { gt: new Date() },
         state: PASSWORD_RESET_LINK_STATE.ACTIVE,
       },
+      include: {
+        user: true,
+      }
     });
 
     if(!resetLink) {
-      throw new RecordNotFoundError('passwordResetLink', passwordResetUuid, 'uuid');
+      return false;
     }
 
     // then change the password
-    await this.setUserPassword(resetLink.userId, newPassword, reqCtx);
+    await this.setPassword(resetLink.user, newPassword, reqCtx);
 
     // lastly, mark this link as used
     await dbClient.passwordResetLink.update({
@@ -326,46 +312,45 @@ export class UserModel {
     winston.debug(`PASSWORD: ${resetLink.userId} has reset their password using link ${resetLink.uuid}`);
     await logAuditEvent(
       AUDIT_EVENT_TYPE.USER_PASSWORD_RESET,
-      resetLink.userId, resetLink.userId, null,
-      { resetLinkUuid: resetLink.uuid },
+      resetLink.user.id, resetLink.user.id, null,
+      { method: 'link', resetLinkUuid: resetLink.uuid },
       reqCtx.sessionId
     );
 
-    await this.sendPasswordChangedEmail(resetLink.userId, reqCtx);
+    await this.sendPasswordChangedEmail(resetLink.user, reqCtx);
+
+    return true;
   }
 
   @traced
-  static async checkUserPassword(userId: number, password: string) {
-    const userAuth = await this.getUserAuth(userId);
+  static async checkPassword(user: User, password: string): Promise<boolean> {
+    const userAuth = await this.getUserAuth(user);
     
-    const matches = await verifyHash(userAuth.password, password, userAuth.salt);
+    const matches = await verifyHash(password, userAuth.password, userAuth.salt);
     return matches;
   }
 
   @traced
-  static async setUserPassword(userId: number, newPassword: string, reqCtx: RequestContext) {
+  static async setPassword(user: User, newPassword: string, reqCtx: RequestContext): Promise<void> {
     const { hashedPassword, salt } = await hash(newPassword);
     await dbClient.userAuth.update({
       data: {
         password: hashedPassword,
         salt: salt,
       },
-      where: { userId }
+      where: { userId: user.id }
     });
 
-    winston.debug(`PASSWORD: ${userId} has changed their password`);
-    await logAuditEvent(AUDIT_EVENT_TYPE.USER_PASSWORD_CHANGE, reqCtx.userId, userId, null, null, reqCtx.sessionId);
-
-    await this.sendPasswordChangedEmail(userId, reqCtx);
+    winston.debug(`PASSWORD: ${user.id} has changed their password`);
+    await logAuditEvent(AUDIT_EVENT_TYPE.USER_PASSWORD_CHANGE, reqCtx.userId, user.id, null, null, reqCtx.sessionId);
   }
 
   @traced
-  static async sendSignupEmail(userId: number, options: SendSignupEmailOptions, reqCtx: RequestContext): Promise<boolean> {
+  static async sendSignupEmail(user: User, options: SendSignupEmailOptions, reqCtx: RequestContext): Promise<boolean> {
     options = Object.assign({
       force: false,
     }, options);
 
-    const user = await this.getUser(userId);
     if(user.state !== USER_STATE.ACTIVE && !options.force) {
       return false;
     }
@@ -377,22 +362,20 @@ export class UserModel {
   }
   
   @traced
-  static async sendPasswordChangedEmail(userId: number, reqCtx: RequestContext): Promise<boolean> {
-    pushTask(sendPasswordChangeEmail.makeTask(userId));
-    winston.debug(`EMAIL: ${reqCtx.userId} queued a task to send a password change email for ${userId}`);
+  static async sendPasswordChangedEmail(user: User, reqCtx: RequestContext): Promise<boolean> {
+    pushTask(sendPasswordChangeEmail.makeTask(user.id));
+    winston.debug(`EMAIL: ${reqCtx.userId} queued a task to send a password change email for ${user.id}`);
 
     return true;
   }
 
   @traced
-  static async sendEmailVerificationLink(userId: number, options: SendEmailVerificationLinkOptions, reqCtx: RequestContext): Promise<PendingEmailVerification> {
+  static async sendEmailVerificationLink(user: User, options: SendEmailVerificationLinkOptions, reqCtx: RequestContext): Promise<PendingEmailVerification | null> {
     options = Object.assign({
       expiresAt: addDays(new Date(), CONFIG.EMAIL_VERIFICATION_TIMEOUT_IN_DAYS),
       force: false,
     }, options);
     
-    const user = await this.getUser(userId);
-
     if(user.isEmailVerified && !options.force) {
       return null;
     }
@@ -406,28 +389,20 @@ export class UserModel {
     });
     pushTask(sendEmailVerificationEmail.makeTask(pending.uuid));
 
-    winston.debug(`EMAIL: ${reqCtx.userId} requested a verification link for ${userId} and got ${pending.uuid}`);
-    await logAuditEvent(AUDIT_EVENT_TYPE.USER_REQUEST_EMAIL_VERIFICATION, reqCtx.userId, userId, null, { verificationUuid: pending.uuid }, reqCtx.sessionId);
+    winston.debug(`EMAIL: ${reqCtx.userId} requested a verification link for ${user.id} and got ${pending.uuid}`);
+    await logAuditEvent(AUDIT_EVENT_TYPE.USER_REQUEST_EMAIL_VERIFICATION, reqCtx.userId, user.id, null, { verificationUuid: pending.uuid }, reqCtx.sessionId);
 
     return pending;
   }
 
   @traced
-  static async sendPasswordResetLink(username: string, options: SendPasswordResetLinkOptions, reqCtx: RequestContext): Promise<PasswordResetLink> {
+  static async sendPasswordResetLink(user: User, options: SendPasswordResetLinkOptions, reqCtx: RequestContext): Promise<PasswordResetLink | null> {
     options = Object.assign({
       expiresAt: addMinutes(new Date(), CONFIG.PASSWORD_RESET_LINK_TIMEOUT_IN_MINUTES),
     }, options);
 
-    let user;
-    try {
-      user = await this.getUserByUsername(username);
-    } catch(err) {
-      if(err instanceof RecordNotFoundError) {
-        winston.warn(`PWRESET: Attempted reset for nonexistent username ${username}`);
-        return null;
-      } else {
-        throw err;
-      }
+    if(user.state !== USER_STATE.ACTIVE) {
+      return null;
     }
 
     const resetLink = await dbClient.passwordResetLink.create({
@@ -442,7 +417,7 @@ export class UserModel {
     winston.debug(`EMAIL: A reset link was requested for ${user.id} and got ${resetLink.uuid}`);
     await logAuditEvent(
       AUDIT_EVENT_TYPE.USER_REQUEST_PASSWORD_RESET,
-      UNKNOWN_ACTOR_ID, user.id, null,
+      reqCtx.userId, user.id, null,
       { resetLinkUuid: resetLink.uuid },
       reqCtx.sessionId
     );

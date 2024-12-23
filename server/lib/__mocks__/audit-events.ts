@@ -14,7 +14,12 @@ afterEach(() => {
   mockReset(buildChangeRecordMock);
 });
 
+const logAuditEvent = logAuditEventMock;
+const buildChangeRecord = buildChangeRecordMock;
+
 export {
   logAuditEventMock,
   buildChangeRecordMock,
+  logAuditEvent,
+  buildChangeRecord,
 };

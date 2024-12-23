@@ -15,7 +15,7 @@ import {
 import { AUDIT_EVENT_ENTITIES, AuditEventModel, type AuditEvent } from "server/lib/models/audit-events.ts";
 
 import { reqCtx } from "server/lib/request-context.ts";
-import { CollisionError, ValidationError } from "server/lib/models/errors.ts";
+import { ValidationError } from "server/lib/models/errors.ts";
 
 type EmptyObject = Record<string, never>;
 
@@ -27,6 +27,9 @@ export async function handleGetUsers(req: RequestWithUser, res: ApiResponse<User
 
 export async function handleGetUser(req: RequestWithUser, res: ApiResponse<{ user: User; auditEvents: AuditEvent[]; }>) {
   const user = await UserModel.getUser(+req.params.id);
+  if(!user) {
+    return res.status(404).send(failure('NOT_FOUND', `Could not find a user with id ${req.params.id}`));
+  }
 
   const auditEvents = await AuditEventModel.getAuditEvents(user.id, AUDIT_EVENT_ENTITIES.USER);
 
@@ -50,16 +53,19 @@ const zUserUpdatePayload = z.object({
 }).strict().partial();
 
 export async function handleUpdateUser(req: RequestWithUser, res: ApiResponse<User>) {
+  const user = await UserModel.getUser(+req.params.id);
+  if(!user) {
+    return res.status(404).send(failure('NOT_FOUND', `Could not find a user with id ${req.params.id}`));
+  }
+
   const payload = req.body as UserUpdatePayload;
 
   let updated;
   try {
-    updated = await UserModel.updateUser(+req.params.id, payload, reqCtx(req))
+    updated = await UserModel.updateUser(user, payload, reqCtx(req))
   } catch(err) {
     if(err instanceof ValidationError) {
       return res.status(400).send(failure('VALIDATION_FAILED', err.meta.reason));
-    } else if(err instanceof CollisionError) {
-      return res.status(409).send(failure('USERNAME_EXISTS', 'A user with that username already exists.'));
     } else {
       throw err;
     }
@@ -76,21 +82,35 @@ const zUserStatePayload = z.object({
 }).strict();
 
 export async function handleUpdateUserState(req: RequestWithUser, res: ApiResponse<User>) {
-  const payload = req.body as UserStatePayload;
+  const user = await UserModel.getUser(+req.params.id);
+  if(!user) {
+    return res.status(404).send(failure('NOT_FOUND', `Could not find a user with id ${req.params.id}`));
+  }
 
-  const updated = await UserModel.updateUserState(+req.params.id, payload.state as UserState, reqCtx(req));
+  const payload = req.body as UserStatePayload;
+  const updated = await UserModel.setUserState(user, payload.state as UserState, reqCtx(req));
 
   return res.status(200).send(success(updated));
 }
 
 export async function handleSendUserVerifyEmail(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
-  await UserModel.sendEmailVerificationLink(+req.params.id, { force: true }, reqCtx(req));
+  const user = await UserModel.getUser(+req.params.id);
+  if(!user) {
+    return res.status(404).send(failure('NOT_FOUND', `Could not find a user with id ${req.params.id}`));
+  }
+
+  await UserModel.sendEmailVerificationLink(user, { force: true }, reqCtx(req));
 
   return res.status(201).send(success({}));
 }
 
 export async function handleSendPasswordResetEmail(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
-  await UserModel.sendPasswordResetLink(+req.params.id, {}, reqCtx(req));
+  const user = await UserModel.getUser(+req.params.id);
+  if(!user) {
+    return res.status(404).send(failure('NOT_FOUND', `Could not find a user with id ${req.params.id}`));
+  }
+
+  await UserModel.sendPasswordResetLink(user, {}, reqCtx(req));
 
   return res.status(201).send(success({}));
 }

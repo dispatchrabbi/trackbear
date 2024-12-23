@@ -47,7 +47,7 @@ export async function handleLogin(req: Request, res: ApiResponse<User>) {
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
 
-  const passwordMatches = await UserModel.checkUserPassword(user.id, password);
+  const passwordMatches = await UserModel.checkPassword(user.id, password);
   if(!passwordMatches) {
     winston.debug(`LOGIN: ${username} attempted to log in with an incorrect password`);
     await logAuditEvent(AUDIT_EVENT_TYPE.USER_FAILED_LOGIN, user.id, null, null, null, req.sessionID);
@@ -125,7 +125,7 @@ export async function handleSendEmailVerification(req: RequestWithUser, res: Api
 export async function handleVerifyEmail(req: Request, res: ApiResponse<EmptyObject>) {
   const uuid = req.params.uuid;
   
-  const verified = await UserModel.verifyUserEmail(uuid, reqCtx(req));
+  const verified = await UserModel.verifyEmail(uuid, reqCtx(req));
   if(!verified) {
     return res.status(404).send(failure('NOT_FOUND', 'Could not verify your email. This verification link is either expired, already used, or invalid. Check your link and try again.'));
   }
@@ -145,13 +145,13 @@ const zChangePasswordPayload = z.object({
 export async function handleChangePassword(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
   const { currentPassword, newPassword } = req.body;
 
-  const currentPasswordMatches = await UserModel.checkUserPassword(req.user.id, currentPassword);
+  const currentPasswordMatches = await UserModel.checkPassword(req.user.id, currentPassword);
   if(!currentPasswordMatches) {
     winston.debug(`LOGIN: ${req.user.id} had the incorrect password`);
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect password.'));
   }
 
-  await UserModel.setUserPassword(req.user.id, newPassword, reqCtx(req));
+  await UserModel.setPassword(req.user.id, newPassword, reqCtx(req));
 
   return res.status(200).send(success({}));
 }
