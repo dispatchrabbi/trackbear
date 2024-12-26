@@ -1,10 +1,3 @@
-import dbClient from "../db.ts";
-import { type AuditEvent } from "@prisma/client";
-
-import { traced } from "../tracer.ts";
-
-export type { AuditEvent };
-
 export const AUDIT_EVENT_TYPE = {
   BANNER_CREATE: 'banner:create',
   BANNER_UPDATE: 'banner:update',
@@ -22,6 +15,7 @@ export const AUDIT_EVENT_TYPE = {
   USER_REQUEST_PASSWORD_RESET: 'user:pwresetreq',
   USER_LOGIN: 'user:login',
   USER_FAILED_LOGIN: 'user:failedlogin',
+  SYSTEM_NOOP: 'system:noop',
 };
 export type AuditEventType = typeof AUDIT_EVENT_TYPE[keyof typeof AUDIT_EVENT_TYPE];
 
@@ -31,7 +25,7 @@ export const AUDIT_EVENT_ENTITIES = {
 } as const;
 export type AuditEventEntity = typeof AUDIT_EVENT_ENTITIES[keyof typeof AUDIT_EVENT_ENTITIES];
 
-const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
+export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
   agent: AuditEventEntity;
   patient: AuditEventEntity;
   goal: AuditEventEntity;
@@ -92,67 +86,3 @@ const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
     goal: null
   },
 };
-
-export class AuditEventModel {
-
-  @traced
-  static async getAuditEvents(id: number, entity: AuditEventEntity): Promise<AuditEvent[]> {
-    const tuples = this.buildAuditEventTypeTuples(entity);
-    if(tuples.length === 0) {
-      return [];
-    }
-
-    const events = dbClient.auditEvent.findMany({
-      where: {
-        OR: tuples.map(([eventType, field]) => ({
-          eventType,
-          [field]: id,
-        })),
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    return events;
-  }
-
-  private static buildAuditEventTypeTuples(entity: AuditEventEntity) {
-    const query = [];
-    for(const eventType of Object.keys(AUDIT_EVENT_TYPE_ARGUMENTS)) {
-      if(AUDIT_EVENT_TYPE_ARGUMENTS[eventType].agent === entity) {
-        query.push([eventType, 'agentId']);
-      }
-
-      if(AUDIT_EVENT_TYPE_ARGUMENTS[eventType].patient === entity) {
-        query.push([eventType, 'patientId']);
-      }
-
-      if(AUDIT_EVENT_TYPE_ARGUMENTS[eventType].goal === entity) {
-        query.push([eventType, 'goalId']);
-      }
-    }
-
-    return query;
-  }
-
-  @traced
-  static async createAuditEvent(
-    eventType: AuditEventType,
-    agentId: number | null, patientId: number | null, goalId: number | null,
-    auxInfo: Record<string, unknown> = {}, sessionId: string | null
-  ) {
-    const stringifiedAuxInfo = JSON.stringify(auxInfo ?? {});
-
-    const created = await dbClient.auditEvent.create({
-      data: {
-        eventType,
-        agentId, patientId, goalId,
-        auxInfo: stringifiedAuxInfo,
-        sessionId,
-      }
-    });
-
-    return created;
-  }
-}

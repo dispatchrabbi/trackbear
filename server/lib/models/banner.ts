@@ -5,7 +5,7 @@ import { type Banner } from "@prisma/client";
 
 import { type RequestContext } from "../request-context.ts";
 import { buildChangeRecord, logAuditEvent } from '../../lib/audit-events.ts';
-import { AUDIT_EVENT_TYPE } from '../../lib/models/audit-events.ts';
+import { AUDIT_EVENT_TYPE } from './audit-events/consts.ts';
 import { RecordNotFoundError } from "./errors.ts";
 
 import { traced } from "../tracer.ts";

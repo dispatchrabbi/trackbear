@@ -1,5 +1,5 @@
 import winston from 'winston';
-import { AuditEventModel } from './models/audit-events.ts';
+import { AuditEventModel } from './models/audit-events/audit-events.ts';
 
 export const UNKNOWN_ACTOR_ID = 0;
 export const TRACKBEAR_SYSTEM_ID = -1;

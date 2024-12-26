@@ -12,7 +12,7 @@ import {
 import {
   UserModel, type User,
 } from "../../lib/models/user/user.ts";
-import { AUDIT_EVENT_ENTITIES, AuditEventModel, type AuditEvent } from "server/lib/models/audit-events.ts";
+import { AUDIT_EVENT_ENTITIES, AuditEventModel, type AuditEvent } from "server/lib/models/audit-events/audit-events.ts";
 
 import { reqCtx } from "server/lib/request-context.ts";
 import { ValidationError } from "server/lib/models/errors.ts";

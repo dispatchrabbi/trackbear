@@ -14,7 +14,7 @@ import { CollisionError, RecordNotFoundError } from "../lib/models/errors.ts";
 
 import { logAuditEvent } from '../lib/audit-events.ts';
 import { UserModel } from "server/lib/models/user/user.ts";
-import { AUDIT_EVENT_TYPE } from "server/lib/models/audit-events.ts";
+import { AUDIT_EVENT_TYPE } from "server/lib/models/audit-events/audit-events.ts";
 import { reqCtx } from "server/lib/request-context.ts";
 
 export type LoginPayload = {

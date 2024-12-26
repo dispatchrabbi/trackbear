@@ -7,7 +7,7 @@ import { hash, verifyHash } from "../../hash.ts";
 
 import { type RequestContext } from "../../request-context.ts";
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
-import { AUDIT_EVENT_TYPE } from '../../models/audit-events.ts';
+import { AUDIT_EVENT_TYPE } from '../audit-events/consts.ts';
 import { PASSWORD_RESET_LINK_STATE } from "../password-reset-link.ts";
 import { ValidationError } from "../errors.ts";
 

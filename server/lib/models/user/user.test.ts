@@ -1,11 +1,11 @@
 import { vi, expect, describe, it, afterEach, beforeEach, MockInstance } from 'vitest';
 import { getTestReqCtx, mockObject, mockObjects, TEST_SESSION_ID, TEST_USER_ID, TEST_UUID } from 'testing-support/util';
 
-import { hash } from '../../hash.ts';
 import { CreateUserData, UpdateUserData, UserModel } from './user.ts';
+import { hash } from '../../hash.ts';
 import type { PasswordResetLink, PendingEmailVerification, User, UserAuth } from '@prisma/client';
 import { ValidationError } from '../errors.ts';
-import { AUDIT_EVENT_TYPE } from '../audit-events.ts';
+import { AUDIT_EVENT_TYPE } from '../audit-events/consts.ts';
 import { USER_STATE } from './consts.ts';
 import { PASSWORD_RESET_LINK_STATE } from '../password-reset-link.ts';
 
@@ -25,7 +25,7 @@ const pushTask = vi.mocked(_pushTask);
 
 import * as _hash from '../../hash.ts';
 
-describe('UserModel', () => {
+describe(UserModel, () => {
   afterEach(() => {
     vi.resetAllMocks();
   });
