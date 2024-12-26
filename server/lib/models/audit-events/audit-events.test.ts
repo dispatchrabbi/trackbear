@@ -4,6 +4,8 @@ import { mockObject, mockObjects, TEST_SESSION_ID, TEST_USER_ID } from 'testing-
 import { AuditEvent, AuditEventModel } from './audit-events';
 import { AUDIT_EVENT_ENTITIES, AUDIT_EVENT_TYPE, AuditEventEntity } from './consts';
 
+vi.mock('../../tracer.ts');
+
 import _dbClient from '../../db.ts';
 vi.mock('../../db.ts');
 const dbClient = vi.mocked(_dbClient, { deep: true });
