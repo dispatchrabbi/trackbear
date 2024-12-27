@@ -36,7 +36,7 @@ describe(AdminPermsModel, () => {
     it('throws if there are no perms to get', async () => {
       dbClient.adminPerms.findUnique.mockResolvedValue(null);
 
-      expect(
+      await expect(
         async () => await AdminPermsModel.getAdminPerms(TEST_USER_ID)
       ).rejects.toThrow(RecordNotFoundError);
     });

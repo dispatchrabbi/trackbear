@@ -1,5 +1,5 @@
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
-import { ApiResponse, success } from '../../lib/api-response.ts';
+import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
@@ -55,12 +55,18 @@ export async function handleUpdateBanner(req: RequestWithUser, res: ApiResponse<
   });
 
   const updated = await BannerModel.updateBanner(+req.params.id, data, reqCtx(req));
+  if(!updated) {
+    return res.status(404).send(failure('NOT_FOUND', `Could not find a banner with id ${req.params.id}`));
+  }
 
   return res.status(200).send(success(updated));
 }
 
 export async function handleDeleteBanner(req: RequestWithUser, res: ApiResponse<Banner>) {
   const deleted = await BannerModel.deleteBanner(+req.params.id, reqCtx(req));
+  if(!deleted) {
+    return res.status(404).send(failure('NOT_FOUND', `Could not find a banner with id ${req.params.id}`));
+  }
   
   return res.status(200).send(success(deleted));
 }

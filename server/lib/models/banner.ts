@@ -6,7 +6,6 @@ import { type Banner } from "@prisma/client";
 import { type RequestContext } from "../request-context.ts";
 import { buildChangeRecord, logAuditEvent } from '../../lib/audit-events.ts';
 import { AUDIT_EVENT_TYPE } from './audit-events/consts.ts';
-import { RecordNotFoundError } from "./errors.ts";
 
 import { traced } from "../tracer.ts";
 
@@ -45,13 +44,13 @@ export class BannerModel {
   }
 
   @traced
-  static async getBanner(id: number): Promise<Banner> {
+  static async getBanner(id: number): Promise<Banner | null> {
     const banner: Banner = await dbClient.banner.findUnique({
       where: { id }
     });
 
     if(!banner) {
-      throw new RecordNotFoundError('banner', id);
+      return null;
     }
 
     return banner;
@@ -77,8 +76,11 @@ export class BannerModel {
   }
 
   @traced
-  static async updateBanner(id: number, data: Partial<BannerData>, reqCtx: RequestContext): Promise<Banner> {
+  static async updateBanner(id: number, data: Partial<BannerData>, reqCtx: RequestContext): Promise<Banner | null> {
     const original = await BannerModel.getBanner(id);
+    if(!original) {
+      return null;
+    }
 
     const updated = await dbClient.banner.update({
       where: { id },
@@ -92,7 +94,12 @@ export class BannerModel {
   }
 
   @traced
-  static async deleteBanner(id: number, reqCtx: RequestContext): Promise<Banner> {
+  static async deleteBanner(id: number, reqCtx: RequestContext): Promise<Banner | null> {
+    const original = await BannerModel.getBanner(id);
+    if(!original) {
+      return null;
+    }
+    
     const deleted = await dbClient.banner.delete({ where: { id } });
 
     await logAuditEvent(AUDIT_EVENT_TYPE.BANNER_DELETE, reqCtx.userId, deleted.id, null, null, reqCtx.sessionId);
