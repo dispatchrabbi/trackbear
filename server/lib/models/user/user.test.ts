@@ -5,7 +5,7 @@ import { CreateUserData, UpdateUserData, UserModel } from './user.ts';
 import { hash } from '../../hash.ts';
 import type { PasswordResetLink, PendingEmailVerification, User, UserAuth } from '@prisma/client';
 import { ValidationError } from '../errors.ts';
-import { AUDIT_EVENT_TYPE } from '../audit-events/consts.ts';
+import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 import { USER_STATE } from './consts.ts';
 import { PASSWORD_RESET_LINK_STATE } from '../password-reset-link.ts';
 

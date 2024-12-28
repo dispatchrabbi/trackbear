@@ -10,11 +10,11 @@ import type { User } from "@prisma/client";
 import { logIn, logOut } from "../lib/auth.ts";
 import { RequestWithUser } from "server/lib/middleware/access.ts";
 import { USER_STATE, USERNAME_REGEX } from "../lib/models/user/consts.ts";
-import { CollisionError, RecordNotFoundError } from "../lib/models/errors.ts";
+import { RecordNotFoundError, ValidationError } from "../lib/models/errors.ts";
 
 import { logAuditEvent } from '../lib/audit-events.ts';
 import { UserModel } from "server/lib/models/user/user.ts";
-import { AUDIT_EVENT_TYPE } from "server/lib/models/audit-events/audit-events.ts";
+import { AUDIT_EVENT_TYPE } from "server/lib/models/audit-event/consts.ts";
 import { reqCtx } from "server/lib/request-context.ts";
 
 export type LoginPayload = {
@@ -29,7 +29,7 @@ const zLoginPayload = z.object({
 export async function handleLogin(req: Request, res: ApiResponse<User>) {
   const { username, password } = req.body;
 
-  let user;
+  let user: User;
   try {
     user = await UserModel.getUserByUsername(username);
   } catch(err) {
@@ -47,7 +47,7 @@ export async function handleLogin(req: Request, res: ApiResponse<User>) {
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
 
-  const passwordMatches = await UserModel.checkPassword(user.id, password);
+  const passwordMatches = await UserModel.checkPassword(user, password);
   if(!passwordMatches) {
     winston.debug(`LOGIN: ${username} attempted to log in with an incorrect password`);
     await logAuditEvent(AUDIT_EVENT_TYPE.USER_FAILED_LOGIN, user.id, null, null, null, req.sessionID);
@@ -64,7 +64,7 @@ export async function handleLogin(req: Request, res: ApiResponse<User>) {
 // logout ought to requireUser but since all it does is remove that user,
 // it's okay to just... let anyone log out at any time, even if they're not logged in.
 type EmptyObject = Record<string, never>;
-export async function handleLogout(req, res: ApiResponse<EmptyObject>) {
+export async function handleLogout(req: Request, res: ApiResponse<EmptyObject>) {
   try {
     await logOut(req);
   } catch(err) {
@@ -89,10 +89,10 @@ const zCreateUserPayload = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
 });
 
-export async function handleSignup(req, res: ApiResponse<User>) {
+export async function handleSignup(req: Request, res: ApiResponse<User>) {
   const { username: submittedUsername, password, email } = req.body as CreateUserPayload;
 
-  let created;
+  let created: User;
   try {
     created = await UserModel.signUpUser({
       username: submittedUsername,
@@ -100,8 +100,8 @@ export async function handleSignup(req, res: ApiResponse<User>) {
       email: email,
     }, reqCtx(req));
   } catch(err) {
-    if(err instanceof CollisionError && err.meta.collidingField === 'username') {
-      return res.status(409).send(failure('USERNAME_EXISTS', 'A user with that username already exists.'));
+    if(err instanceof ValidationError) {
+      return res.status(400).send(failure('USERNAME_EXISTS', 'A user with that username already exists.'));
     } else {
       throw err;
     }
@@ -113,7 +113,7 @@ export async function handleSignup(req, res: ApiResponse<User>) {
 export async function handleSendEmailVerification(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
   const user: User = req.user;
 
-  const pending = await UserModel.sendEmailVerificationLink(user.id, {}, reqCtx(req));
+  const pending = await UserModel.sendEmailVerificationLink(user, {}, reqCtx(req));
   if(!pending) {
     // the user is already verified, so no-op and send a 200 (instead of 201)
     return res.status(200).send(success({}));
@@ -145,13 +145,13 @@ const zChangePasswordPayload = z.object({
 export async function handleChangePassword(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
   const { currentPassword, newPassword } = req.body;
 
-  const currentPasswordMatches = await UserModel.checkPassword(req.user.id, currentPassword);
+  const currentPasswordMatches = await UserModel.checkPassword(req.user, currentPassword);
   if(!currentPasswordMatches) {
     winston.debug(`LOGIN: ${req.user.id} had the incorrect password`);
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect password.'));
   }
 
-  await UserModel.setPassword(req.user.id, newPassword, reqCtx(req));
+  await UserModel.setPassword(req.user, newPassword, reqCtx(req));
 
   return res.status(200).send(success({}));
 }

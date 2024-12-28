@@ -15,6 +15,7 @@ export const TAG_COLORS = [
   'white',
   'black',
   'gray',
-];
+] as const;
+export type TagColor = typeof TAG_COLORS[number];
 
-export const TAG_DEFAULT_COLOR = 'default';
+export const TAG_DEFAULT_COLOR: TagColor = 'default';

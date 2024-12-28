@@ -13,7 +13,7 @@ import {
   isRangeCurrent
 } from "./goal.ts";
 import { getDayCounts, DayCount } from "./stats.ts";
-import { TAG_STATE } from "./tag.ts";
+import { TAG_STATE } from "./tag/consts.ts";
 
 type ProfileWorkSummary = {
   uuid: string;

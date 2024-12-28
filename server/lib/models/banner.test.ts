@@ -10,7 +10,7 @@ vi.mock('../db.ts');
 const dbClient = vi.mocked(_dbClient, { deep: true });
 
 import { logAuditEvent as _logAuditEvent } from '../audit-events.ts';
-import { AUDIT_EVENT_TYPE } from "./audit-events/consts.ts";
+import { AUDIT_EVENT_TYPE } from "./audit-event/consts.ts";
 vi.mock('../audit-events.ts');
 const logAuditEvent = vi.mocked(_logAuditEvent);
 

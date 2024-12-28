@@ -2,6 +2,7 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { visualizer } from 'rollup-plugin-visualizer';
+import viteTsconfigPaths from 'vite-tsconfig-paths';
 
 const CHUNKS_MAP = {
   'chart.js': 'node_modules/chart.js',
@@ -27,7 +28,11 @@ export default defineConfig({
       ".prisma/client/index-browser": "./node_modules/.prisma/client/index-browser.js"
     },
   },
-  plugins: [ vue(), visualizer() ],
+  plugins: [
+    viteTsconfigPaths(),
+    vue(),
+    visualizer(),
+  ],
   build: {
     outDir: 'dist',
     rollupOptions: {

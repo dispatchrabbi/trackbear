@@ -2,7 +2,7 @@
 import { computed, defineProps } from 'vue';
 
 import { Tag } from 'src/lib/api/tag.ts';
-import { TAG_COLORS, TAG_DEFAULT_COLOR } from 'server/lib/models/tag.ts';
+import { TAG_COLORS, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts';
 import { TAG_COLOR_CLASSES } from 'src/components/tag/tag-color-classes.ts';
 
 import Chip from 'primevue/chip';

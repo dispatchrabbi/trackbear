@@ -2,6 +2,9 @@ export const AUDIT_EVENT_TYPE = {
   BANNER_CREATE: 'banner:create',
   BANNER_UPDATE: 'banner:update',
   BANNER_DELETE: 'banner:delete',
+  TAG_CREATE: 'tag:create',
+  TAG_UPDATE: 'tag:update',
+  TAG_DELETE: 'tag:delete',
   USER_SIGNUP: 'user:signup',
   USER_CREATE: 'user:create',
   USER_UPDATE: 'user:update',
@@ -21,6 +24,7 @@ export type AuditEventType = typeof AUDIT_EVENT_TYPE[keyof typeof AUDIT_EVENT_TY
 
 export const AUDIT_EVENT_ENTITIES = {
   BANNER: 'banner',
+  TAG: 'tag',
   USER: 'user',
 } as const;
 export type AuditEventEntity = typeof AUDIT_EVENT_ENTITIES[keyof typeof AUDIT_EVENT_ENTITIES];
@@ -43,6 +47,21 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
   [AUDIT_EVENT_TYPE.BANNER_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.BANNER,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.TAG_CREATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.TAG,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.TAG_UPDATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.TAG,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.TAG_DELETE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.TAG,
     goal: null
   },
   [AUDIT_EVENT_TYPE.USER_SIGNUP]: {

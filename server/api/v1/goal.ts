@@ -13,7 +13,7 @@ import type { GoalParameters, GoalTargetParameters, GoalWithWorksAndTags } from 
 import { TallyWithWorkAndTags } from "./tally.ts";
 import { WORK_STATE } from '../../lib/models/work.ts';
 import { TALLY_MEASURE } from "../../lib/models/tally.ts";
-import { TAG_STATE } from "../../lib/models/tag.ts";
+import { TAG_STATE } from "../../lib/models/tag/consts.ts";
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
 

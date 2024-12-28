@@ -68,7 +68,7 @@ describe('tag api v1', () => {
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.tag.create).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('tag:create', MOCK_USER_ID, TAG_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tag:create', MOCK_USER_ID, TAG_ID, null, expect.any(Object), TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalled();
     });
@@ -83,7 +83,7 @@ describe('tag api v1', () => {
       await handleCreateTag(req, res);
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-      expect(dbClientMock.tag.update).not.toHaveBeenCalled();
+      expect(dbClientMock.tag.create).not.toHaveBeenCalled();
       expect(logAuditEventMock).not.toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.send).toHaveBeenCalled();
@@ -92,30 +92,31 @@ describe('tag api v1', () => {
 
   describe('handleUpdateTag', () => {
     it('updates a tag', async () => {
-      dbClientMock.tag.findMany.mockResolvedValue([]);
-
       const TAG_ID = -10;
+      dbClientMock.tag.findUnique.mockResolvedValue(mockObject<Tag>({ id: TAG_ID }));
+      dbClientMock.tag.findMany.mockResolvedValue([]);
       dbClientMock.tag.update.mockResolvedValue(mockObject<Tag>({ id: TAG_ID }));
 
-      const { req, res } = getHandlerMocksWithUser();
+      const { req, res } = getHandlerMocksWithUser({ params: { id: String(TAG_ID) } });
       await handleUpdateTag(req, res);
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.tag.update).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('tag:update', MOCK_USER_ID, TAG_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tag:update', MOCK_USER_ID, TAG_ID, null, expect.any(Object), TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
 
     it('returns 400 if the proposed tag name already exists', async () => {
-      dbClientMock.tag.findMany.mockResolvedValue([mockObject<Tag>()]);
-
       const TAG_ID = -10;
-      dbClientMock.tag.update.mockResolvedValue(
-        mockObject<Tag>({ id: TAG_ID })
-      );
+      dbClientMock.tag.findUnique.mockResolvedValue(mockObject<Tag>({ id: TAG_ID }));
+      dbClientMock.tag.findMany.mockResolvedValue([mockObject<Tag>({ id: TAG_ID - 1 })]);
+      dbClientMock.tag.update.mockResolvedValue(mockObject<Tag>({ id: TAG_ID }));
 
-      const { req, res } = getHandlerMocksWithUser();
+      const { req, res } = getHandlerMocksWithUser({
+        params: { id: String(TAG_ID) },
+        body: { name: 'already exists' },
+      });
       await handleUpdateTag(req, res);
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
@@ -129,14 +130,17 @@ describe('tag api v1', () => {
   describe('handleDeleteTag', () => {
     it('deletes a tag', async () => {
       const TAG_ID = -10;
+      dbClientMock.tag.findUnique.mockResolvedValue(mockObject<Tag>({ id: TAG_ID }));
       dbClientMock.tag.delete.mockResolvedValue(mockObject<Tag>({ id: TAG_ID }));
 
-      const { req, res } = getHandlerMocksWithUser();
+      const { req, res } = getHandlerMocksWithUser({
+        params: { id: String(TAG_ID) },
+      });
       await handleDeleteTag(req, res);
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.tag.delete).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('tag:delete', MOCK_USER_ID, TAG_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tag:delete', MOCK_USER_ID, TAG_ID, null, expect.any(Object), TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });

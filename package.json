@@ -24,7 +24,9 @@
     "build": "node --run build:prod",
     "build:prod": "docker build -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t dispatchrabbi/trackbear:latest --target prod .",
     "build:prod:progress": "docker build --progress=plain -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t dispatchrabbi/trackbear:latest --target prod .",
-    "lint": "npx eslint .",
+    "lint": "npm run type-check && npm run eslint",
+    "eslint": "npx eslint .",
+    "type-check": "npx vue-tsc --noEmit",
     "precompile": "node --run test",
     "compile": "node --run compile:db && node --run compile:client",
     "compile:db": "npx prisma generate",
@@ -121,6 +123,7 @@
     "rollup-plugin-visualizer": "^5.11.0",
     "typescript": "5.6.3",
     "typescript-eslint": "^8.11.0",
+    "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^2.1.2",
     "vitest-mock-extended": "^2.0.2"
   }

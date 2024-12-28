@@ -12,8 +12,8 @@ import {
 import {
   UserModel, type User,
 } from "../../lib/models/user/user.ts";
-import { AuditEventModel, type AuditEvent } from "server/lib/models/audit-events/audit-events.ts";
-import { AUDIT_EVENT_ENTITIES } from "server/lib/models/audit-events/consts.ts";
+import { AuditEventModel, type AuditEvent } from "server/lib/models/audit-event/audit-event.ts";
+import { AUDIT_EVENT_ENTITIES } from "server/lib/models/audit-event/consts.ts";
 
 import { reqCtx } from "server/lib/request-context.ts";
 import { ValidationError } from "server/lib/models/errors.ts";

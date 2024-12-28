@@ -1,4 +1,4 @@
-import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "../../lib/api.ts";
 import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 
 import { RequestWithUser } from '../../lib/middleware/access.ts';
@@ -6,31 +6,20 @@ import { RequestWithUser } from '../../lib/middleware/access.ts';
 import { z } from 'zod';
 import { zIdParam } from '../../lib/validators.ts';
 
-import dbClient from "../../lib/db.ts";
-import type { Tag } from "@prisma/client";
-import { TAG_STATE } from '../../lib/models/tag.ts';
+import { TagModel, type Tag, type TagData } from "../../lib/models/tag/tag.ts";
+import { TAG_COLORS } from '../../lib/models/tag/consts.ts';
 
-import { logAuditEvent } from '../../lib/audit-events.ts';
+import { reqCtx } from "../../lib/request-context.ts";
+import { ValidationError } from "server/lib/models/errors.ts";
 
 export async function handleGetTags(req: RequestWithUser, res: ApiResponse<Tag[]>) {
-  const tags = await dbClient.tag.findMany({
-    where: {
-      ownerId: req.user.id,
-      state: TAG_STATE.ACTIVE,
-    }
-  });
+  const tags = await TagModel.getTags(req.user);
 
   return res.status(200).send(success(tags));
 }
 
 export async function handleGetTag(req: RequestWithUser, res: ApiResponse<Tag>) {
-  const tag = await dbClient.tag.findUnique({
-    where: {
-      id: +req.params.id,
-      ownerId: req.user.id,
-      state: TAG_STATE.ACTIVE,
-    }
-  });
+  const tag = await TagModel.getTag(req.user, +req.params.id);
 
   if(tag) {
     return res.status(200).send(success(tag));
@@ -45,35 +34,26 @@ export type TagCreatePayload = {
 };
 const zTagCreatePayload = z.object({
   name: z.string().min(1),
-  color: z.string().min(1),
+  color: z.enum(TAG_COLORS),
 });
 
 export async function handleCreateTag(req: RequestWithUser, res: ApiResponse<Tag>) {
   const user = req.user;
   const payload = req.body as TagCreatePayload;
 
-  const existingTags = await dbClient.tag.findMany({
-    where: {
-      name: payload.name,
-      ownerId: user.id,
-      state: TAG_STATE.ACTIVE,
+  let created;
+  try {
+    created = await TagModel.createTag(user, payload as TagData, reqCtx(req));
+  } catch(err) {
+    console.log(ValidationError, err.constructor, err.constructor === ValidationError, err instanceof ValidationError);
+    if(err instanceof ValidationError) {
+      return res.status(400).send(failure('TAG_EXISTS', `There is already a tag called ${payload.name}`));
+    } else {
+      throw err;
     }
-  });
-  if(existingTags.length > 0) {
-    return res.status(400).send(failure('TAG_EXISTS', `There is already a tag called ${payload.name}`));
   }
 
-  const tag = await dbClient.tag.create({
-    data: {
-      ...payload,
-      state: TAG_STATE.ACTIVE,
-      ownerId: user.id,
-    }
-  });
-
-  await logAuditEvent('tag:create', user.id, tag.id, null, null, req.sessionID);
-
-  return res.status(201).send(success(tag));
+  return res.status(201).send(success(created));
 }
 
 export type TagUpdatePayload = Partial<TagCreatePayload>;
@@ -83,47 +63,36 @@ export async function handleUpdateTag(req: RequestWithUser, res: ApiResponse<Tag
   const user = req.user;
   const payload = req.body as TagUpdatePayload;
 
-  const existingTags = await dbClient.tag.findMany({
-    where: {
-      name: payload.name,
-      ownerId: user.id,
-      state: TAG_STATE.ACTIVE,
-      id: { notIn: [ +req.params.id ] },
-    }
-  });
-  if(existingTags.length > 0) {
-    return res.status(400).send(failure('TAG_EXISTS', `There is already a tag called ${payload.name}`));
+  const original = await TagModel.getTag(user, +req.params.id);
+  if(!original) {
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any tag with id ${req.params.id}.`));
   }
 
-  const tag = await dbClient.tag.update({
-    where: {
-      id: +req.params.id,
-      ownerId: req.user.id,
-      state: TAG_STATE.ACTIVE,
-    },
-    data: { ...payload },
-  });
+  let updated;
+  try {
+    updated = await TagModel.updateTag(user, original, payload as Partial<TagData>, reqCtx(req));
+  } catch(err) {
+    if(err instanceof ValidationError) {
+      return res.status(400).send(failure('TAG_EXISTS', `There is already a tag called ${payload.name}`));
+    } else {
+      throw err;
+    }
+  }
 
-  await logAuditEvent('tag:update', user.id, tag.id, null, null, req.sessionID);
-
-  return res.status(200).send(success(tag));
+  return res.status(200).send(success(updated));
 }
 
 export async function handleDeleteTag(req: RequestWithUser, res: ApiResponse<Tag>) {
   const user = req.user;
 
-  // tags actually get deleted instead of a status change
-  const tag = await dbClient.tag.delete({
-    where: {
-      id: +req.params.id,
-      ownerId: req.user.id,
-      state: TAG_STATE.ACTIVE,
-    },
-  });
+  const original = await TagModel.getTag(user, +req.params.id);
+  if(!original) {
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any tag with id ${req.params.id}.`));
+  }
 
-  await logAuditEvent('tag:delete', user.id, tag.id, null, null, req.sessionID);
-
-  return res.status(200).send(success(tag));
+  const deleted = await TagModel.deleteTag(user, original, reqCtx(req));
+  
+  return res.status(200).send(success(deleted));
 }
 
 const routes: RouteConfig[] = [

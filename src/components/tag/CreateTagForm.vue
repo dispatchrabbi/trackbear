@@ -8,7 +8,7 @@ import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createTag, TagCreatePayload } from 'src/lib/api/tag.ts';
-import { TAG_COLORS, TAG_DEFAULT_COLOR } from 'server/lib/models/tag.ts';
+import { TAG_COLORS, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts';
 // import { TAG_COLOR_CLASSES } from 'src/components/tag/tag-color-classes.ts';
 
 import IconField from 'primevue/iconfield';

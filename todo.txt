@@ -15,6 +15,7 @@ x (A) Add Prisma tracing @o11y +tracing dif:1
 x (A) Enrich via @opentelemetry/semantic-conventions / https://opentelemetry.io/docs/specs/semconv/resource/#service @o11y +tracing dif:2
 (A) Make the tally table more mobile-friendly (h/t lailah) @projects @ux +delight dif:2
 (A) Change the settings pages to a Settings section with its own sidebar @settings dif:5
+(B) Rename /api/banners endpoint to singular @devex @api dif:1
 (B) Allow admins to rename user/displayName @admin dif:2
 (B) Improve audit event retrieval/listings @admin dif:2
 (B) Allow admins to view any project, goal, leaderboard in-situ @admin dif:3

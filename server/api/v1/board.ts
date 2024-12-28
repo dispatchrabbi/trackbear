@@ -14,7 +14,7 @@ import type { Board, BoardGoal, ParticipantGoal } from "../../lib/models/board.t
 import { BOARD_PARTICIPANT_STATE, BOARD_STATE, getFullBoard, FullBoard, getExtendedBoardsForUser, ExtendedBoard, getBoardParticipationForUser, BoardWithParticipants } from "../../lib/models/board.ts";
 import { TALLY_MEASURE, TallyMeasure } from "../../lib/models/tally.ts";
 import { WORK_STATE } from '../../lib/models/work.ts';
-import { TAG_STATE } from "../../lib/models/tag.ts";
+import { TAG_STATE } from "../../lib/models/tag/consts.ts";
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
 
