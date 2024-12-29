@@ -1,15 +1,16 @@
 import { vi, expect, describe, it, afterEach } from "vitest";
 import { mockObject, TEST_USER_ID } from "testing-support/util";
 
-import { USER_STATE } from "./user/consts.ts";
-import { RecordNotFoundError } from "./errors.ts";
+import _dbClient from '../../db.ts';
 
-import { AdminPermsModel, type AdminPerms } from "./admin-perms";
+import { USER_STATE } from "../user/consts.ts";
+import { RecordNotFoundError } from "../errors.ts";
+
+import { AdminPermsModel, type AdminPerms } from "./admin-perms-model.ts";
 
 vi.mock('../tracer.ts');
 
-import _dbClient from '../db.ts';
-vi.mock('../db.ts');
+vi.mock('../../db.ts');
 const dbClient = vi.mocked(_dbClient, { deep: true });
 
 describe(AdminPermsModel, () => {

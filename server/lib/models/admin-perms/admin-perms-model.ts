@@ -1,10 +1,10 @@
-import dbClient from "../db.ts";
+import dbClient from "../../db.ts";
 import { type AdminPerms } from "@prisma/client";
 
-import { RecordNotFoundError } from "./errors.ts";
+import { RecordNotFoundError } from "../errors.ts";
 
-import { traced } from "../tracer.ts";
-import { USER_STATE } from "./user/consts.ts";
+import { traced } from "../../tracer.ts";
+import { USER_STATE } from "../user/consts.ts";
 
 export type { AdminPerms };
 

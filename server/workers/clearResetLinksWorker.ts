@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import dbClient from "../lib/db.ts";
 import winston from "winston";
-import { PASSWORD_RESET_LINK_STATE } from "../lib/models/password-reset-link.ts";
+import { PASSWORD_RESET_LINK_STATE } from "../lib/models/user/consts.ts";
 
 const NAME = 'clearResetLinksWorker';
 

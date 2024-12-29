@@ -3,7 +3,7 @@ import { sendEmail } from '../email.ts';
 
 import type { User, PasswordResetLink } from '@prisma/client';
 import dbClient from '../db.ts';
-import { PASSWORD_RESET_LINK_STATE } from '../models/password-reset-link.ts';
+import { PASSWORD_RESET_LINK_STATE } from '../models/user/consts.ts';
 
 import { getNormalizedEnv } from '../env.ts';
 import { logAuditEvent, TRACKBEAR_SYSTEM_ID } from '../audit-events.ts';

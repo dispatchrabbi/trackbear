@@ -6,8 +6,7 @@ import { hash } from '../../hash.ts';
 import type { PasswordResetLink, PendingEmailVerification, User, UserAuth } from '@prisma/client';
 import { ValidationError } from '../errors.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
-import { USER_STATE } from './consts.ts';
-import { PASSWORD_RESET_LINK_STATE } from '../password-reset-link.ts';
+import { USER_STATE, PASSWORD_RESET_LINK_STATE } from './consts.ts';
 
 vi.mock('../../tracer.ts');
 

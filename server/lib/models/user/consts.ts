@@ -7,6 +7,13 @@ export const USER_STATE = {
 } as const;
 export type UserState = ValueEnum<typeof USER_STATE>;
 
+export const PASSWORD_RESET_LINK_STATE = {
+  ACTIVE:   'active',
+  USED:     'used',
+  // no DELETED because we only hard-delete these
+};
+export type PasswordResetLinkState = ValueEnum<typeof PASSWORD_RESET_LINK_STATE>;
+
 // usernames must be between 3 and 24 characters
 export const USERNAME_REGEX = /^[a-z][a-z0-9_-]{2,23}$/;
 export const EMAIL_REGEX = /^.+@.+\..+$/;

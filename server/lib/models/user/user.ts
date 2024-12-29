@@ -8,11 +8,11 @@ import { hash, verifyHash } from "../../hash.ts";
 import { type RequestContext } from "../../request-context.ts";
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
-import { PASSWORD_RESET_LINK_STATE } from "../password-reset-link.ts";
 import { ValidationError } from "../errors.ts";
 
 import {
   USER_STATE, type UserState,
+  PASSWORD_RESET_LINK_STATE,
   USERNAME_REGEX, EMAIL_REGEX,
 } from "./consts.ts";
 import CONFIG from "server/config.ts";

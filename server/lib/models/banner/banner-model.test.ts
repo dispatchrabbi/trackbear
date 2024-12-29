@@ -1,17 +1,19 @@
 import { vi, expect, describe, it, afterEach, beforeEach, MockInstance } from "vitest";
 import { mockObject, mockObjects, TEST_OBJECT_ID, getTestReqCtx } from "testing-support/util";
 
-import { BannerModel, type Banner, type BannerData } from "./banner.ts";
+import _dbClient from '../../db.ts';
+import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
+
+import { BannerModel, type Banner, type BannerData } from "./banner-model.ts";
+import { AUDIT_EVENT_TYPE } from "../audit-event/consts.ts";
 
 vi.mock('../tracer.ts');
 
-import _dbClient from '../db.ts';
-vi.mock('../db.ts');
+vi.mock('../../db.ts');
 const dbClient = vi.mocked(_dbClient, { deep: true });
 
-import { logAuditEvent as _logAuditEvent } from '../audit-events.ts';
-import { AUDIT_EVENT_TYPE } from "./audit-event/consts.ts";
-vi.mock('../audit-events.ts');
+
+vi.mock('../../audit-events.ts');
 const logAuditEvent = vi.mocked(_logAuditEvent);
 
 describe(BannerModel, () => {
