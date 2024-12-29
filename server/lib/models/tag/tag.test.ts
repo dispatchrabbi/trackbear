@@ -230,10 +230,10 @@ describe(TagModel, () => {
       const updated = await TagModel.updateTag(testOwner, testTag, testData, testReqCtx);
 
       expect(updated).toBe(testTag);
-      // expect(validateTagNameMock).toBeCalledWith(testOwner, testData.name);
       expect(dbClient.tag.update).toBeCalledWith({
         where: {
           id: testTag.id,
+          ownerId: testOwner.id,
         },
         data: {
           color: testData.color,
@@ -255,7 +255,7 @@ describe(TagModel, () => {
 
       await TagModel.updateTag(testOwner, testTag, testData, testReqCtx);
 
-      expect(validateTagNameMock).toBeCalledWith(testOwner, testData.name);
+      expect(validateTagNameMock).toBeCalledWith(testOwner, testData.name, testTag.id);
     });
   });
 
@@ -268,7 +268,10 @@ describe(TagModel, () => {
 
       expect(deleted).toBe(testTag);
       expect(dbClient.tag.delete).toBeCalledWith({
-        where: { id: testTag.id }
+        where: {
+          id: testTag.id,
+          ownerId: testOwner.id,
+        }
       });
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.TAG_DELETE,

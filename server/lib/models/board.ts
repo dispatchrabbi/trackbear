@@ -1,5 +1,5 @@
 import type { Board as PrismaBoard, BoardParticipant, User, Tally, Work, Tag } from "@prisma/client";
-import { TALLY_STATE, TallyMeasure } from "./tally.ts";
+import { TALLY_STATE, TallyMeasure } from "./tally/consts.ts";
 import { USER_STATE } from "./user/consts.ts";
 
 import dbClient from "../db.ts";

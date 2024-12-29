@@ -1,10 +1,11 @@
 import dbClient from "../../lib/db.ts";
-import { WORK_STATE } from '../../lib/models/work.ts';
-import { MeasureRecord, TALLY_STATE } from "../../lib/models/tally.ts";
+import { WORK_STATE } from './work/consts.ts';
+import { TALLY_STATE } from "./tally/consts.ts";
+import { MeasureCounts } from "./tally/types.ts";
 
 export type DayCount = {
   date: string;
-  counts: MeasureRecord<number>,
+  counts: MeasureCounts,
 };
 
 export async function getDayCounts(userId: number, startDate?: string, endDate?: string): Promise<DayCount[]> {

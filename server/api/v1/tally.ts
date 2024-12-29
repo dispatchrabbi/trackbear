@@ -8,11 +8,11 @@ import { zIdParam, zDateStr, NonEmptyArray } from 'server/lib/validators.ts';
 
 import dbClient from "../../lib/db.ts";
 import type { Tally, Work, Tag } from "@prisma/client";
-import { TALLY_STATE, TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { TALLY_STATE, TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 import { TAG_STATE, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts.ts';
 
 import { buildChangeRecord, logAuditEvent } from '../../lib/audit-events.ts';
-import { WORK_STATE } from "server/lib/models/work.ts";
+import { WORK_STATE } from "server/lib/models/work/consts.ts";
 
 export type TallyWithWorkAndTags = Tally & { work: Work } & { tags: Tag[] };
 

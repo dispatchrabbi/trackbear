@@ -4,6 +4,7 @@ import { h, type ApiHandler } from "./api-response";
 import { decorateApiCallSpan, instrumentMiddleware } from "./middleware/decorate-span";
 import { requirePublic, requireUser, requireAdminUser, requirePrivate } from "./middleware/access";
 import { validateBody, validateParams, validateQuery } from "./middleware/validate";
+import { ValueEnum } from "./obj";
 
 export const HTTP_METHODS = {
   GET: 'GET',
@@ -12,7 +13,7 @@ export const HTTP_METHODS = {
   PATCH: 'PATCH',
   DELETE: 'DELETE',
 } as const;
-type HttpMethod = typeof HTTP_METHODS[keyof typeof HTTP_METHODS];
+type HttpMethod = ValueEnum<typeof HTTP_METHODS>;
 
 export const ACCESS_LEVEL = {
   PUBLIC: 'public',
@@ -20,7 +21,7 @@ export const ACCESS_LEVEL = {
   ADMIN: 'admin',
   NONE: 'none',
 } as const;
-type AccessLevel = typeof ACCESS_LEVEL[keyof typeof ACCESS_LEVEL];
+type AccessLevel = ValueEnum<typeof ACCESS_LEVEL>;
 
 export type RouteConfig = {
   method: HttpMethod;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineModel, defineProps } from 'vue';
 import { roundTowardZero, decisiveSign } from 'src/lib/number.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 const model = defineModel<number | null>();

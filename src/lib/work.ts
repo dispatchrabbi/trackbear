@@ -1,6 +1,6 @@
 import { compare } from 'natural-orderby';
 import type { SummarizedWork, Work } from './api/work.ts';
-import { WORK_PHASE } from 'server/lib/models/work.ts';
+import { WORK_PHASE } from 'server/lib/models/work/consts.ts';
 
 export const WORK_PHASE_ORDER = [
   WORK_PHASE.PLANNING,

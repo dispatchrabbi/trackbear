@@ -11,9 +11,9 @@ const workStore = useWorkStore();
 import NaNoWriMo, { NaNoWriMoProject, NaNoWriMoChallenge, NaNoWriMoSession } from 'src/lib/nanowrimo/nanowrimo.ts';
 
 import { createWork } from 'src/lib/api/work.ts';
-import { WORK_PHASE } from 'server/lib/models/work.ts';
+import { WORK_PHASE } from 'server/lib/models/work/consts';
 import { batchCreateTallies, type TallyCreatePayload } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { formatCount } from 'src/lib/tally.ts';
 import { createGoal, GoalCreatePayload } from 'src/lib/api/goal.ts';
 import { GOAL_TYPE } from 'server/lib/models/goal.ts';

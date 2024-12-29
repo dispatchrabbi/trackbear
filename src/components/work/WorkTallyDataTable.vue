@@ -3,7 +3,7 @@ import { ref, computed, defineProps } from 'vue';
 
 import type { Work } from 'src/lib/api/work.ts';
 import type { TallyWithTags } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { formatCount } from 'src/lib/tally.ts';
 
 // TODO: maybe switch to DataView at some point?

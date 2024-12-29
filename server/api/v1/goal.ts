@@ -11,8 +11,8 @@ import type { Goal } from "@prisma/client";
 import { GOAL_STATE, GOAL_TYPE, GOAL_CADENCE_UNIT, getTalliesForGoal, getTalliesForGoals } from "../../lib/models/goal.ts";
 import type { GoalParameters, GoalTargetParameters, GoalWithWorksAndTags } from "../../lib/models/goal.ts"
 import { TallyWithWorkAndTags } from "./tally.ts";
-import { WORK_STATE } from '../../lib/models/work.ts';
-import { TALLY_MEASURE } from "../../lib/models/tally.ts";
+import { WORK_STATE } from '../../lib/models/work/consts.ts';
+import { TALLY_MEASURE } from "../../lib/models/tally/consts.ts";
 import { TAG_STATE } from "../../lib/models/tag/consts.ts";
 
 import { logAuditEvent } from '../../lib/audit-events.ts';

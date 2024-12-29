@@ -4,8 +4,9 @@ import dbClient from "../db.ts";
 import { add } from "date-fns";
 import { formatDate } from "src/lib/date.ts";
 
-import { WORK_STATE } from "./work.ts";
-import { MeasureRecord, TALLY_MEASURE, TALLY_STATE } from "./tally.ts";
+import { WORK_STATE } from "./work/consts.ts";
+import { TALLY_MEASURE, TALLY_STATE } from "./tally/consts.ts";
+import { MeasureCounts } from "./tally/types.ts";
 import {
   GOAL_STATE, GOAL_TYPE,
   GoalTargetParameters, GoalHabitParameters,
@@ -18,7 +19,7 @@ import { TAG_STATE } from "./tag/consts.ts";
 type ProfileWorkSummary = {
   uuid: string;
   title: string;
-  totals: MeasureRecord<number>,
+  totals: MeasureCounts,
   recentActivity: DayCount[],
 };
 
@@ -48,7 +49,7 @@ export type PublicProfile = {
   username: string;
   displayName: string;
   avatar: string;
-  lifetimeTotals: MeasureRecord<number>;
+  lifetimeTotals: MeasureCounts;
   recentActivity: DayCount[];
   workSummaries: ProfileWorkSummary[];
   targetSummaries: ProfileTargetSummary[];
@@ -77,7 +78,7 @@ export async function getUserProfile(username): Promise<PublicProfile> {
 
   // next, get their lifetime totals
   // lifetime totals are: lifetime starting balance + work starting balances + total of tallies
-  const lifetimeStartingBalance = user.userSettings.lifetimeStartingBalance as MeasureRecord<number>;
+  const lifetimeStartingBalance = user.userSettings.lifetimeStartingBalance as MeasureCounts;
   const works = await getWorksWithStartingBalances(user.id);
   const tallyTotals = await getTallyTotals(user.id);
   const lifetimeTotals = Object.values(TALLY_MEASURE).reduce((obj, measure) => {
@@ -132,7 +133,7 @@ export async function getUserProfile(username): Promise<PublicProfile> {
 
 type WorkStartingBalance = {
   id: number;
-  startingBalance: MeasureRecord<number>;
+  startingBalance: MeasureCounts;
 };
 async function getWorksWithStartingBalances(userId: number): Promise<WorkStartingBalance[]> {
   const works = await dbClient.work.findMany({
@@ -149,7 +150,7 @@ async function getWorksWithStartingBalances(userId: number): Promise<WorkStartin
   return works as WorkStartingBalance[];
 }
 
-async function getTallyTotals(userId: number): Promise<MeasureRecord<number>> {
+async function getTallyTotals(userId: number): Promise<MeasureCounts> {
   const totalsResult = await dbClient.tally.groupBy({
     by: [ 'measure' ],
     where: {

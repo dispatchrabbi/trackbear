@@ -4,7 +4,7 @@ import { computed, defineProps } from 'vue';
 import { useChartColors } from '../chart/chart-colors';
 
 import type { Board, ParticipantWithTallies } from 'src/lib/api/board.ts';
-import { TallyMeasure } from "server/lib/models/tally.ts";
+import { TallyMeasure } from "server/lib/models/tally/consts";
 
 import MeterGroup, { MeterItem } from 'primevue/metergroup';
 

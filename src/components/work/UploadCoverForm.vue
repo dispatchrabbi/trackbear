@@ -3,7 +3,7 @@ import { ref, defineProps, defineEmits } from 'vue';
 import { useEventBus } from '@vueuse/core';
 
 import { uploadCover, type Work } from 'src/lib/api/work.ts';
-import { ALLOWED_COVER_FORMATS, MAX_COVER_SIZE_IN_BYTES } from 'server/lib/models/work.ts';
+import { ALLOWED_COVER_FORMATS, MAX_COVER_SIZE_IN_BYTES } from 'server/lib/models/work/consts';
 
 import FileUpload, { FileUploadUploaderEvent } from 'primevue/fileupload';
 

@@ -110,7 +110,10 @@ export class TagModel {
     }
 
     const updated = await dbClient.tag.update({
-      where: { id: tag.id },
+      where: {
+        id: tag.id,
+        ownerId: owner.id,
+      },
       data: { ...data },
     });
 
@@ -123,7 +126,10 @@ export class TagModel {
   @traced
   static async deleteTag(owner: User, tag: Tag, reqCtx: RequestContext): Promise<Tag> {
     const deleted = await dbClient.tag.delete({
-      where: { id: tag.id },
+      where: {
+        id: tag.id,
+        ownerId: owner.id,
+      },
     });
 
     const changes = buildChangeRecord(tag, deleted);

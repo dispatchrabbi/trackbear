@@ -2,7 +2,7 @@
 import { computed, defineProps } from 'vue';
 
 import type { Board, ParticipantWithTallies } from 'src/lib/api/board.ts';
-import { TallyMeasure } from "server/lib/models/tally.ts";
+import { TallyMeasure } from "server/lib/models/tally/consts";
 import { formatCountValue, formatCountCounter } from 'src/lib/tally.ts'; // TODO: change percentage to formatted count? or both?
 
 import StatTile from '../goal/StatTile.vue';

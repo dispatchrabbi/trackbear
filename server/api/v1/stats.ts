@@ -6,7 +6,7 @@ import { RequestWithUser } from '../../lib/middleware/access.ts';
 import { z } from 'zod';
 
 import type { Work, Tally, Tag } from "@prisma/client";
-import { TallyMeasure } from "../../lib/models/tally.ts";
+import { TallyMeasure } from "../../lib/models/tally/consts.ts";
 import { getDayCounts } from "server/lib/models/stats.ts";
 
 export type WorkWithTotals = Work & { totals: Record<string, number> };

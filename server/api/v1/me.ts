@@ -11,7 +11,7 @@ import { randomUUID } from 'node:crypto';
 import dbClient from "../../lib/db.ts";
 import type { User, UserSettings as PrismaUserSettings } from "@prisma/client";
 import { USERNAME_REGEX, USER_STATE, ALLOWED_AVATAR_FORMATS } from "../../lib/models/user/consts.ts";
-import { TALLY_MEASURE } from "../../lib/models/tally.ts";
+import { TALLY_MEASURE } from "../../lib/models/tally/consts.ts";
 import CONFIG from '../../config.ts';
 
 import { z } from 'zod';

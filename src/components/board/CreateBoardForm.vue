@@ -10,7 +10,7 @@ import { formatDateSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createBoard, type BoardCreatePayload, type Board } from 'src/lib/api/board.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import Calendar from 'primevue/calendar';

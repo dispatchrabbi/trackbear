@@ -17,7 +17,7 @@ import { formatDateSafe, parseDateStringSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { updateTally, type Tally, type TallyUpdatePayload, type TallyWithTags } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally.ts';
+import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally.ts';
 import { cmpWorkByTitle } from 'src/lib/work';
 

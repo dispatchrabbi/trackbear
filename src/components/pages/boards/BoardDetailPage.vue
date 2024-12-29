@@ -16,7 +16,7 @@ import { getBoard, FullBoard } from 'src/lib/api/board.ts';
 import { Tally } from 'src/lib/api/tally.ts';
 
 import { toTitleCase } from 'src/lib/str.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import { PrimeIcons } from 'primevue/api';

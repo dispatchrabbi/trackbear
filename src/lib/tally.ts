@@ -1,6 +1,6 @@
 import { addDays, eachDayOfInterval } from "date-fns";
 
-import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 import type { Tally } from 'src/lib/api/tally.ts';
 import { formatDuration, formatDate, parseDateString } from "src/lib/date.ts";
 import { commaify } from './number.ts';

@@ -3,7 +3,7 @@ import { mockObject, mockObjects, TEST_SESSION_ID } from '../../../testing-suppo
 import { getHandlerMocksWithUser, MOCK_USER_ID } from '../../lib/__mocks__/express.ts';
 import { Work, type Tally } from "@prisma/client";
 import type { TallyWithWorkAndTags } from './tally.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 
 vi.mock('../../lib/db.ts');
 import dbClientMock from '../../lib/__mocks__/db.ts';

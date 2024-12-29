@@ -10,7 +10,7 @@ import { useChartColors } from './chart-colors';
 
 import { kify } from 'src/lib/number';
 import { formatDate, formatDuration, parseDateString } from 'src/lib/date';
-import { TallyMeasure, TALLY_MEASURE } from 'server/lib/models/tally';
+import { TallyMeasure, TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally';
 import { addMilliseconds } from 'date-fns';
 

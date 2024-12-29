@@ -1,10 +1,27 @@
+import { ValueEnum } from "../../obj";
+
+export const AUDIT_EVENT_ENTITIES = {
+  BANNER: 'banner',
+  TAG: 'tag',
+  TALLY: 'tally',
+  USER: 'user',
+} as const;
+export type AuditEventEntity = ValueEnum<typeof AUDIT_EVENT_ENTITIES>;
+
+// TODO: extract CUD events and base them off the entities enum
 export const AUDIT_EVENT_TYPE = {
   BANNER_CREATE: 'banner:create',
   BANNER_UPDATE: 'banner:update',
   BANNER_DELETE: 'banner:delete',
+  
   TAG_CREATE: 'tag:create',
   TAG_UPDATE: 'tag:update',
   TAG_DELETE: 'tag:delete',
+  
+  TALLY_CREATE: 'tally:create',
+  TALLY_UPDATE: 'tally:update',
+  TALLY_DELETE: 'tally:delete',
+  
   USER_SIGNUP: 'user:signup',
   USER_CREATE: 'user:create',
   USER_UPDATE: 'user:update',
@@ -18,16 +35,15 @@ export const AUDIT_EVENT_TYPE = {
   USER_REQUEST_PASSWORD_RESET: 'user:pwresetreq',
   USER_LOGIN: 'user:login',
   USER_FAILED_LOGIN: 'user:failedlogin',
+  
+  WORK_CREATE: 'work:create',
+  WORK_UPDATE: 'work:update',
+  WORK_DELETE: 'work:delete',
+  WORK_UNDELETE: 'work:undelete',
+  
   SYSTEM_NOOP: 'system:noop',
 };
-export type AuditEventType = typeof AUDIT_EVENT_TYPE[keyof typeof AUDIT_EVENT_TYPE];
-
-export const AUDIT_EVENT_ENTITIES = {
-  BANNER: 'banner',
-  TAG: 'tag',
-  USER: 'user',
-} as const;
-export type AuditEventEntity = typeof AUDIT_EVENT_ENTITIES[keyof typeof AUDIT_EVENT_ENTITIES];
+export type AuditEventType = ValueEnum<typeof AUDIT_EVENT_TYPE>;
 
 export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
   agent: AuditEventEntity;
@@ -62,6 +78,21 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
   [AUDIT_EVENT_TYPE.TAG_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.TAG,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.TALLY_CREATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.TALLY,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.TALLY_UPDATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.TALLY,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.TALLY_DELETE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.TALLY,
     goal: null
   },
   [AUDIT_EVENT_TYPE.USER_SIGNUP]: {

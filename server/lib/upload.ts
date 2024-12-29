@@ -6,7 +6,7 @@ import multer from 'multer';
 import { getNormalizedEnv } from './env.ts';
 
 import { MAX_AVATAR_SIZE_IN_BYTES } from './models/user/consts.ts';
-import { MAX_COVER_SIZE_IN_BYTES } from './models/work.ts';
+import { MAX_COVER_SIZE_IN_BYTES } from './models/work/consts.ts';
 
 export async function getAvatarUploadPath() {
   const env = await getNormalizedEnv();

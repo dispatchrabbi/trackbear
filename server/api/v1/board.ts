@@ -12,8 +12,8 @@ import type { BoardParticipant } from "@prisma/client";
 import type { Board, BoardGoal, ParticipantGoal } from "../../lib/models/board.ts";
 
 import { BOARD_PARTICIPANT_STATE, BOARD_STATE, getFullBoard, FullBoard, getExtendedBoardsForUser, ExtendedBoard, getBoardParticipationForUser, BoardWithParticipants } from "../../lib/models/board.ts";
-import { TALLY_MEASURE, TallyMeasure } from "../../lib/models/tally.ts";
-import { WORK_STATE } from '../../lib/models/work.ts';
+import { TALLY_MEASURE, TallyMeasure } from "../../lib/models/tally/consts.ts";
+import { WORK_STATE } from '../../lib/models/work/consts.ts';
 import { TAG_STATE } from "../../lib/models/tag/consts.ts";
 
 import { logAuditEvent } from '../../lib/audit-events.ts';

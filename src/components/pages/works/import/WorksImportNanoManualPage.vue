@@ -11,9 +11,9 @@ import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
 
 import { createWork, WorkCreatePayload } from 'src/lib/api/work.ts';
-import { WORK_PHASE } from 'server/lib/models/work.ts';
+import { WORK_PHASE } from 'server/lib/models/work/consts';
 import { batchCreateTallies, type TallyCreatePayload } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { formatCount, cmpTallies } from 'src/lib/tally.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';

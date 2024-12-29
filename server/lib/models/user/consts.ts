@@ -1,9 +1,11 @@
+import { ValueEnum } from "../../obj";
+
 export const USER_STATE = {
   ACTIVE:     'active',
   SUSPENDED:  'suspended',
   DELETED:    'deleted',
 } as const;
-export type UserState = typeof USER_STATE[keyof typeof USER_STATE];
+export type UserState = ValueEnum<typeof USER_STATE>;
 
 // usernames must be between 3 and 24 characters
 export const USERNAME_REGEX = /^[a-z][a-z0-9_-]{2,23}$/;

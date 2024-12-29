@@ -10,8 +10,9 @@ import { formatDate, parseDateString } from 'src/lib/date.ts';
 import type { Goal, Work, Tag } from "@prisma/client";
 import dbClient from "../db.ts";
 
-import { TALLY_STATE, TallyMeasure } from "./tally.ts";
+import { TALLY_STATE, TallyMeasure } from "./tally/consts.ts";
 import type { TallyWithWorkAndTags } from "../../api/v1/tally.ts";
+import { ValueEnum } from '../obj.ts';
 
 export const GOAL_STATE = {
   ACTIVE:   'active',
@@ -19,11 +20,13 @@ export const GOAL_STATE = {
   // PAUSED:   'paused',
   DELETED:  'deleted',
 };
+export type GoalState = ValueEnum<typeof GOAL_STATE>;
 
 export const GOAL_TYPE = {
   TARGET: 'target',
   HABIT: 'habit',
 };
+export type GoalType = ValueEnum<typeof GOAL_TYPE>;
 
 export const GOAL_CADENCE_UNIT = {
   DAY: 'day',
@@ -31,8 +34,7 @@ export const GOAL_CADENCE_UNIT = {
   MONTH: 'month',
   YEAR: 'year',
 };
-
-export type GoalCadenceUnit = typeof GOAL_CADENCE_UNIT[keyof typeof GOAL_CADENCE_UNIT];
+export type GoalCadenceUnit = ValueEnum<typeof GOAL_CADENCE_UNIT>;
 
 export const GOAL_CADENCE_UNIT_INFO = {
   [GOAL_CADENCE_UNIT.DAY]: {

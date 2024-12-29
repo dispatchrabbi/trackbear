@@ -9,7 +9,7 @@ import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createWork, type WorkCreatePayload, type Work } from 'src/lib/api/work.ts';
-import { WORK_PHASE } from 'server/lib/models/work.ts';
+import { WORK_PHASE } from 'server/lib/models/work/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import InputText from 'primevue/inputtext';

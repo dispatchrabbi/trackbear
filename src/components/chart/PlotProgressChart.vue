@@ -12,7 +12,7 @@ import themeColors from 'src/themes/primevue.ts';
 
 import { kify } from 'src/lib/number';
 import { formatDuration } from 'src/lib/date';
-import { TallyMeasure, TALLY_MEASURE } from 'server/lib/models/tally';
+import { TallyMeasure, TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally';
 
 export type LineChartDataPoint = {

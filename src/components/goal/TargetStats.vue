@@ -6,7 +6,7 @@ import type { Goal } from 'src/lib/api/goal.ts';
 import { formatDate } from 'src/lib/date.ts';
 import { GoalTargetParameters } from 'server/lib/models/goal.ts';
 import type { Tally } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO, compileTallies, formatCount } from 'src/lib/tally.ts';
 
 import SubsectionTitle from '../layout/SubsectionTitle.vue';

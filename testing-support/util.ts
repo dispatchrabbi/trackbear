@@ -10,8 +10,9 @@ export function mockObject<T extends object>(partial: Partial<T> = {}): T {
   return partial as T;
 }
 
-export function mockObjects<T extends object>(count: number, propFn: () => Partial<T> = () => ({})): T[] {
-  return Array(count).fill(null).map(propFn) as T[];
+type PropFn<T> = (ix?: number) => Partial<T>;
+export function mockObjects<T extends object>(count: number, propFn: PropFn<T> = () => ({})): T[] {
+  return Array(count).fill(null).map((_, ix) => propFn(ix)) as T[];
 }
 
 export function getTestReqCtx(): RequestContext {

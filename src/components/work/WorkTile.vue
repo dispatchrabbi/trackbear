@@ -4,7 +4,7 @@ import { breakpointsTailwind, useBreakpoints, useEventBus } from '@vueuse/core';
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 import { type Work, type SummarizedWork, starWork } from 'src/lib/api/work.ts';
-import { WORK_PHASE } from 'server/lib/models/work.ts';
+import { WORK_PHASE } from 'server/lib/models/work/consts';
 
 const props = defineProps<{
   work: SummarizedWork;

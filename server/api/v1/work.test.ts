@@ -10,7 +10,7 @@ vi.mock('../../lib/audit-events.ts', { spy: true });
 import { logAuditEventMock } from '../../lib/__mocks__/audit-events.ts';
 
 import { handleGetWorks, handleGetWork, handleCreateWork, handleUpdateWork, handleDeleteWork } from './work.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 
 describe('work api v1', () => {
   afterEach(() => {

@@ -11,7 +11,7 @@ import { normalizeTallies, accumulateTallies, determineChartStartDate, determine
 import UserAvatar from 'src/components/UserAvatar.vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import { TallyMeasure } from 'server/lib/models/tally.ts';
+import { TallyMeasure } from 'server/lib/models/tally/consts.ts';
 import { formatPercent } from 'src/lib/number.ts';
 
 const props = defineProps<{
