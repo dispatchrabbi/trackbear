@@ -3,7 +3,7 @@ import { computed, defineProps } from 'vue';
 import type { Goal } from 'src/lib/api/goal.ts';
 
 import { normalizeTallies, accumulateTallies, listEachDayOfData, Tallyish } from '../chart/chart-functions.ts';
-import { GoalTargetParameters } from 'server/lib/models/goal.ts';
+import { TargetGoalParameters } from 'server/lib/models/goal/types.ts';
 import LineChart from '../chart/LineChart.vue';
 
 export type Goalish = Pick<Goal, 'title' | 'parameters' | 'startDate' | 'endDate'>;
@@ -12,7 +12,7 @@ const props = defineProps<{
   tallies: Tallyish[];
 }>();
 
-const measure = computed(() => (props.goal.parameters as GoalTargetParameters).threshold.measure);
+const measure = computed(() => (props.goal.parameters as TargetGoalParameters).threshold.measure);
 
 const data = computed(() => {
   // first we'll figure out the user's progress
@@ -27,7 +27,7 @@ const data = computed(() => {
 
   // now we'll calculate par
   const eachDay = listEachDayOfData(props.goal.startDate, props.goal.endDate, normalizedTallies[0].date, normalizedTallies[normalizedTallies.length - 1].date);
-  const goalCount = (props.goal.parameters as GoalTargetParameters).threshold.count;
+  const goalCount = (props.goal.parameters as TargetGoalParameters).threshold.count;
   const parData = eachDay.map((date, ix) => ({
     series: 'Par',
     date,

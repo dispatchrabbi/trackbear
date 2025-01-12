@@ -1,7 +1,7 @@
 import { vi, expect, describe, it, afterEach, beforeEach, MockInstance } from 'vitest';
 import { getTestReqCtx, mockObject, mockObjects, TEST_SESSION_ID, TEST_USER_ID, TEST_UUID } from 'testing-support/util';
 
-import { CreateUserData, UpdateUserData, UserModel } from './user.ts';
+import { CreateUserData, UpdateUserData, UserModel } from './user-model.ts';
 import { hash } from '../../hash.ts';
 import type { PasswordResetLink, PendingEmailVerification, User, UserAuth } from '@prisma/client';
 import { ValidationError } from '../errors.ts';

@@ -1,8 +1,8 @@
 import { vi, describe, it, expect, afterEach } from 'vitest';
-import { mockObject, TEST_SESSION_ID } from '../../../testing-support/util.ts';
+import { mockObject, mockObjects, TEST_OBJECT_ID, TEST_SESSION_ID } from '../../../testing-support/util.ts';
 import { getHandlerMocksWithUser, MOCK_USER_ID } from '../../lib/__mocks__/express.ts';
-import type { Goal } from "@prisma/client";
-import type { TallyWithWorkAndTags } from './tally.ts';
+
+import { success } from 'server/lib/api-response.ts';
 
 vi.mock('../../lib/db.ts');
 import dbClientMock from '../../lib/__mocks__/db.ts';
@@ -10,7 +10,9 @@ import dbClientMock from '../../lib/__mocks__/db.ts';
 vi.mock('../../lib/audit-events.ts', { spy: true });
 import { logAuditEventMock } from '../../lib/__mocks__/audit-events.ts';
 
-import * as goalModel from "../../lib/models/goal.ts";
+vi.mock('../../lib/models/goal/goal-model.ts');
+import { GoalModel as _GoalModel, type Goal } from "../../lib/models/goal/goal-model.ts";
+const GoalModel = vi.mocked(_GoalModel);
 
 import { handleGetGoals, handleGetGoal, handleCreateGoal, handleCreateGoals, handleUpdateGoal, handleDeleteGoal } from './goal';
 
@@ -19,59 +21,51 @@ describe('goal api v1', () => {
     vi.resetAllMocks();
   });
 
-  describe('getGoals', () => {
-    it.skip('returns goals', async () => {
-      // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-      dbClientMock.goal.findMany.mockResolvedValue([
-        mockObject<Goal>(),
-        mockObject<Goal>(),
-      ]);
+  describe(handleGetGoals, () => {
+    it('returns goals', async () => {
+      const testGoals = mockObjects<Goal>(3);
+      GoalModel.getGoals.mockResolvedValue(testGoals);
 
       const { req, res } = getHandlerMocksWithUser();
       await handleGetGoals(req, res);
 
-      expect(dbClientMock.goal.findMany).toHaveBeenCalled();
+      expect(GoalModel.getGoals).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.send).toHaveBeenCalled();
+      expect(res.send).toHaveBeenCalledWith(success(testGoals));
     });
   });
 
-  describe('getGoal', () => {
+  describe(handleGetGoal, () => {
     it('returns a goal if it finds one', async () => {
-      dbClientMock.goal.findUnique.mockResolvedValue(mockObject<Goal>());
-      vi.spyOn(goalModel, 'getTalliesForGoal').mockResolvedValue([mockObject<TallyWithWorkAndTags>()]);
+      const testGoal = mockObject<Goal>();
+      GoalModel.getGoal.mockResolvedValue(testGoal);
 
       const { req, res } = getHandlerMocksWithUser();
       await handleGetGoal(req, res);
 
-      expect(dbClientMock.goal.findUnique).toHaveBeenCalled();
-      expect(goalModel.getTalliesForGoal).toHaveBeenCalled();
+      expect(GoalModel.getGoal).toHaveBeenCalled();
+      
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.send).toHaveBeenCalled();
+      expect(res.send).toHaveBeenCalledWith(success(testGoal));
     });
 
     it(`returns a 404 if the goal doesn't exist`, async () => {
-      dbClientMock.goal.findUnique.mockResolvedValue(null);
-      const getTalliesForGoalMock = vi.spyOn(goalModel, 'getTalliesForGoal');
+      GoalModel.getGoal.mockResolvedValue(null);
 
       const { req, res } = getHandlerMocksWithUser();
       await handleGetGoal(req, res);
 
-      expect(dbClientMock.goal.findUnique).toHaveBeenCalled();
-      expect(getTalliesForGoalMock).not.toHaveBeenCalled();
+      expect(GoalModel.getGoal).toHaveBeenCalled();
+      
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.send).toHaveBeenCalled();
     });
   });
 
-  describe('createGoal', () => {
+  describe(handleCreateGoal, () => {
     it('creates a goal', async() => {
-      const GOAL_ID = -10;
-      // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-      dbClientMock.goal.create.mockResolvedValue(mockObject<Goal>({
-        id: GOAL_ID,
-      }));
-      vi.spyOn(goalModel, 'getTalliesForGoal').mockResolvedValue([mockObject<TallyWithWorkAndTags>()]);
+      const testGoal = mockObject<Goal>({ id: TEST_OBJECT_ID });
+      GoalModel.createGoal.mockResolvedValue(testGoal);
 
       const { req, res } = getHandlerMocksWithUser({
         body: {
@@ -81,16 +75,13 @@ describe('goal api v1', () => {
       });
       await handleCreateGoal(req, res);
 
-      // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-      expect(dbClientMock.goal.create).toHaveBeenCalled();
-      expect(goalModel.getTalliesForGoal).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', MOCK_USER_ID, GOAL_ID, null, null, TEST_SESSION_ID);
+      expect(GoalModel.createGoal).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalled();
     });
   });
 
-  describe('createGoals', () => {
+  describe(handleCreateGoals, () => {
     it('creates multiple goals', async() => {
       const GOAL_IDS = [-10, -11, -12];
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
@@ -98,8 +89,6 @@ describe('goal api v1', () => {
         GOAL_IDS.map(id => mockObject<Goal>({ id }))
       );
       
-
-
       const { req, res } = getHandlerMocksWithUser({
         body: [
           { works: [], tags: [] },
@@ -112,50 +101,74 @@ describe('goal api v1', () => {
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.goal.createManyAndReturn).toHaveBeenCalled();
       expect(logAuditEventMock).toHaveBeenCalledTimes(3);
-      expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', MOCK_USER_ID, GOAL_IDS[0], null, null, TEST_SESSION_ID);
-      expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', MOCK_USER_ID, GOAL_IDS[1], null, null, TEST_SESSION_ID);
-      expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', MOCK_USER_ID, GOAL_IDS[2], null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', MOCK_USER_ID, GOAL_IDS[0], null, { source: 'batch create' }, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', MOCK_USER_ID, GOAL_IDS[1], null, { source: 'batch create' }, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', MOCK_USER_ID, GOAL_IDS[2], null, { source: 'batch create' }, TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalled();
     });
   });
 
   describe('updateGoal', () => {
-    it('updates a goal', async () => {
-      const GOAL_ID = -10;
-      dbClientMock.goal.update.mockResolvedValue(
-        mockObject<Goal>({ id: GOAL_ID,})
-      );
-      vi.spyOn(goalModel, 'getTalliesForGoal').mockResolvedValue(
-        [mockObject<TallyWithWorkAndTags>()]
-      );
+    it(`updates a goal if it exists`, async () => {
+      const testGoal = mockObject<Goal>({ id: TEST_OBJECT_ID });
+      GoalModel.getGoal.mockResolvedValue(testGoal);
+      GoalModel.updateGoal.mockResolvedValue(testGoal);
 
-      const { req, res } = getHandlerMocksWithUser();
+      const { req, res } = getHandlerMocksWithUser({
+        params: { id: String(TEST_OBJECT_ID) },
+      });
       await handleUpdateGoal(req, res);
 
-      // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-      expect(dbClientMock.goal.update).toHaveBeenCalled();
-      expect(goalModel.getTalliesForGoal).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('goal:update', MOCK_USER_ID, GOAL_ID, null, null, TEST_SESSION_ID);
+      expect(GoalModel.getGoal).toHaveBeenCalledWith(req.user, +req.params.id);
+      expect(GoalModel.updateGoal).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.send).toHaveBeenCalled();
+    });
+
+    it(`returns 404 when updating a goal that doesn't exist`, async () => {
+      GoalModel.getGoal.mockResolvedValue(null);
+
+      const { req, res } = getHandlerMocksWithUser({
+        params: { id: String(TEST_OBJECT_ID) },
+      });
+      await handleUpdateGoal(req, res);
+
+      expect(GoalModel.getGoal).toHaveBeenCalledWith(req.user, +req.params.id);
+      expect(GoalModel.updateGoal).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(404);
       expect(res.send).toHaveBeenCalled();
     });
   });
 
-  describe('deleteGoal', () => {
-    it('deletes a goal', async () => {
-      const GOAL_ID = -10;
-      dbClientMock.goal.update.mockResolvedValue(
-        mockObject<Goal>({ id: GOAL_ID })
-      );
+  describe(handleDeleteGoal, () => {
+    it(`deletes a goal if it exists`, async () => {
+      const testGoal = mockObject<Goal>({ id: TEST_OBJECT_ID });
+      GoalModel.getGoal.mockResolvedValue(testGoal);
+      GoalModel.deleteGoal.mockResolvedValue(testGoal);
 
-      const { req, res } = getHandlerMocksWithUser();
+      const { req, res } = getHandlerMocksWithUser({
+        params: { id: String(TEST_OBJECT_ID) },
+      });
       await handleDeleteGoal(req, res);
 
-      // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-      expect(dbClientMock.goal.update).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('goal:delete', MOCK_USER_ID, GOAL_ID, null, null, TEST_SESSION_ID);
+      expect(GoalModel.getGoal).toHaveBeenCalledWith(req.user, +req.params.id);
+      expect(GoalModel.deleteGoal).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.send).toHaveBeenCalled();
+    });
+
+    it(`returns 404 when deleting a goal that doesn't exist`, async () => {
+      GoalModel.getGoal.mockResolvedValue(null);
+
+      const { req, res } = getHandlerMocksWithUser({
+        params: { id: String(TEST_OBJECT_ID) },
+      });
+      await handleDeleteGoal(req, res);
+
+      expect(GoalModel.getGoal).toHaveBeenCalledWith(req.user, +req.params.id);
+      expect(GoalModel.deleteGoal).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(404);
       expect(res.send).toHaveBeenCalled();
     });
   });

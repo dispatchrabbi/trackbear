@@ -9,7 +9,7 @@ const props = defineProps<{
 
 import { formatCountValue, formatCountCounter } from 'src/lib/tally.ts';
 import { commaify, formatPercent } from 'src/lib/number.ts';
-import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal.ts';
+import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal/consts';
 
 import Card from 'primevue/card';
 import Divider from 'primevue/divider';

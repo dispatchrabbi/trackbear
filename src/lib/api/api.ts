@@ -66,7 +66,7 @@ export function makeCrudFns<Entity extends object, CreatePayload extends Record<
       return callApiV1<Entity>(path, 'POST', data);
     },
     update: async function(id: number, data: UpdatePayload) {
-      return callApiV1<Entity>(path + `/${id}`, 'PUT', data);
+      return callApiV1<Entity>(path + `/${id}`, 'PATCH', data);
     },
     delete: async function(id: number) {
       return callApiV1<Entity>(path + `/${id}`, 'DELETE');

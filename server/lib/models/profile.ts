@@ -7,12 +7,10 @@ import { formatDate } from "src/lib/date.ts";
 import { WORK_STATE } from "./work/consts.ts";
 import { TALLY_MEASURE, TALLY_STATE } from "./tally/consts.ts";
 import { MeasureCounts } from "./tally/types.ts";
-import {
-  GOAL_STATE, GOAL_TYPE,
-  GoalTargetParameters, GoalHabitParameters,
-  getTalliesForGoal, analyzeStreaksForHabit, HabitRange,
-  isRangeCurrent
-} from "./goal.ts";
+import { GOAL_STATE, GOAL_TYPE } from "./goal/consts.ts";
+import { analyzeStreaksForHabit, HabitRange, isRangeCurrent } from "./goal/helpers.ts";
+import type { TargetGoalParameters, HabitGoalParameters, GoalWithWorksAndTags } from "./goal/types.ts";
+import { GoalModel } from "./goal/goal-model.ts";
 import { getDayCounts, DayCount } from "./stats.ts";
 import { TAG_STATE } from "./tag/consts.ts";
 
@@ -27,17 +25,16 @@ type SimpleDayCount = { date: string; count: number; };
 type ProfileTargetSummary = {
   uuid: string;
   title: string;
-  parameters: GoalTargetParameters;
+  parameters: TargetGoalParameters;
   dayCounts: SimpleDayCount[];
   startDate: string | null;
   endDate: string | null;
 };
 
-
 type ProfileHabitSummary = {
   uuid: string;
   title: string;
-  parameters: GoalHabitParameters;
+  parameters: HabitGoalParameters;
   currentRange: HabitRange | null;
   currentStreakLength: number | null;
   longestStreakLength: number | null;
@@ -237,17 +234,19 @@ async function getProfileTargetSummaries(userId: number): Promise<ProfileTargetS
     include: {
       worksIncluded: {
         where: { state: WORK_STATE.ACTIVE },
+        select: { id: true },
       },
       tagsIncluded: {
         where: { state: TAG_STATE.ACTIVE },
+        select: { id: true },
       },
     },
-  });
+  }) as GoalWithWorksAndTags[];
 
   const summaries = [];
   for(const target of eligibleTargets) {
     // not happy about hitting the db once for every target but anything else is way too complicated
-    const talliesForTarget = await getTalliesForGoal(target);
+    const talliesForTarget = await GoalModel.DEPRECATED_getTalliesForGoal(target);
     
     const dayCounts = Object.values(talliesForTarget.reduce((obj: Record<string, SimpleDayCount>, tally) => {
       if(!(tally.date in obj)) {
@@ -293,7 +292,7 @@ async function getProfileHabitSummaries(userId: number): Promise<ProfileHabitSum
   const summaries = [];
   for(const habit of eligibleHabits) {
 
-    const parameters = habit.parameters as GoalHabitParameters;
+    const parameters = habit.parameters as HabitGoalParameters;
     const talliesForHabit = await getTalliesForGoal(habit);
 
     const { ranges, streaks } = analyzeStreaksForHabit(

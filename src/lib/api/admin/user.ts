@@ -23,7 +23,7 @@ export async function updateUser(id: number, data: UserUpdatePayload) {
 }
 
 export async function updateUserState(id: number, data: UserStatePayload) {
-  return callApiV1<User>(ENDPOINT + `/${id}/state`, 'PUT', data);
+  return callApiV1<User>(ENDPOINT + `/${id}/state`, 'PATCH', data);
 }
 
 export async function sendEmailVerificationEmail(id: number) {

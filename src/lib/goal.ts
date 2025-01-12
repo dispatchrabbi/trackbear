@@ -1,6 +1,7 @@
 import { compare } from 'natural-orderby';
 import { Goal, GoalWithAchievement } from 'src/lib/api/goal.ts';
-import { GOAL_CADENCE_UNIT_INFO, GOAL_TYPE, GoalHabitParameters, GoalTargetParameters } from 'server/lib/models/goal.ts';
+import { GOAL_CADENCE_UNIT_INFO, GOAL_TYPE } from 'server/lib/models/goal/consts.ts';
+import { HabitGoalParameters, TargetGoalParameters } from 'server/lib/models/goal/types.ts';
 import { formatCount } from './tally.ts';
 import { formatDate } from './date.ts';
 
@@ -103,7 +104,7 @@ function cmpCreated(a: Created, b: Created) {
 
 export function describeGoal(goal: Goal) {
   if(goal.type === GOAL_TYPE.TARGET) {
-    const params = goal.parameters as GoalTargetParameters;
+    const params = goal.parameters as TargetGoalParameters;
 
     let description = `Reach ${formatCount(params.threshold.count, params.threshold.measure)}`;
     if(goal.endDate) {
@@ -112,7 +113,7 @@ export function describeGoal(goal: Goal) {
 
     return description;
   } else if(goal.type === GOAL_TYPE.HABIT) {
-    const params = goal.parameters as GoalHabitParameters;
+    const params = goal.parameters as HabitGoalParameters;
 
     const threshold = params.threshold ? formatCount(params.threshold.count, params.threshold.measure) : 'something';
     const cadence = params.cadence.period === 1 ? GOAL_CADENCE_UNIT_INFO[params.cadence.unit].label.singular : `${params.cadence.period} ${GOAL_CADENCE_UNIT_INFO[params.cadence.unit].label.plural}`;

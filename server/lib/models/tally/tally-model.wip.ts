@@ -5,7 +5,7 @@ import { type RequestContext } from "../../request-context.ts";
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
-import type { User } from '../user/user.ts';
+import type { User } from '../user/user-model.ts';
 import { TALLY_STATE, TallyMeasure } from "./consts.ts";
 
 import { traced } from "../../tracer.ts";
@@ -23,6 +23,8 @@ export type BatchTallyData = Omit<TallyData, 'tags'>;
 
 export type TallyFilter = {
   measure?: TallyMeasure;
+  startDate?: string;
+  endDate?: string;
   workIds?: number[];
   tagIds?: number[];
 }
@@ -35,7 +37,12 @@ export class TallyModel {
       where: {
         ownerId: owner.id,
         state: TALLY_STATE.ACTIVE,
+
         measure: filter.measure ?? undefined,
+        date: {
+          gte: filter.startDate ?? undefined,
+          lte: filter.endDate ?? undefined,
+        },
         workId: filter.workIds.length > 0 ? { in: filter.workIds } : undefined,
         tags: filter.tagIds ? { some: { id: { in: filter.tagIds } } } : undefined,
       },

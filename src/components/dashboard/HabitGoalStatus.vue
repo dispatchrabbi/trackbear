@@ -5,7 +5,9 @@ import { isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { Goal } from 'src/lib/api/goal.ts';
 import { Tally } from 'src/lib/api/tally.ts';
 
-import { GOAL_CADENCE_UNIT_INFO, analyzeStreaksForHabit, GoalHabitParameters } from 'server/lib/models/goal.ts';
+import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal/consts';
+import type { HabitGoalParameters } from 'server/lib/models/goal/types';
+import { analyzeStreaksForHabit } from 'server/lib/models/goal/helpers';
 import { streakColors } from 'src/lib/tally.ts';
 import { formatDate, parseDateStringSafe } from 'src/lib/date.ts';
 import { commaify, formatPercent } from 'src/lib/number.ts';
@@ -21,7 +23,7 @@ const props = defineProps<{
 }>();
 
 const parameters = computed(() => {
-  return props.goal.parameters as GoalHabitParameters;
+  return props.goal.parameters as HabitGoalParameters;
 })
 
 const habitStats = computed(() => {

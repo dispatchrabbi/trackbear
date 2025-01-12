@@ -6,7 +6,7 @@ import { Tally } from 'src/lib/api/tally.ts';
 
 import { compileTallies } from 'src/lib/tally.ts';
 import { formatDate } from 'src/lib/date.ts';
-import { GoalTargetParameters } from 'server/lib/models/goal.ts';
+import { type TargetGoalParameters } from 'server/lib/models/goal/types';
 
 import GoalCard from 'src/components/dashboard/GoalCard.vue';
 import TargetMeter from 'src/components/goal/TargetMeter.vue';
@@ -17,7 +17,7 @@ const props = defineProps<{
 }>();
 
 const targetStats = computed(() => {
-  const params = props.goal.parameters as GoalTargetParameters;
+  const params = props.goal.parameters as TargetGoalParameters;
   const today = formatDate(new Date());
 
   const compiled = compileTallies(props.tallies);

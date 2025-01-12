@@ -7,10 +7,9 @@ import { z } from 'zod';
 import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
 
 import dbClient from "../../lib/db.ts";
-import type { Goal } from "@prisma/client";
-import { GOAL_STATE, GOAL_TYPE, GOAL_CADENCE_UNIT, getTalliesForGoal, getTalliesForGoals } from "../../lib/models/goal.ts";
-import type { GoalParameters, GoalTargetParameters, GoalWithWorksAndTags } from "../../lib/models/goal.ts"
-import { TallyWithWorkAndTags } from "./tally.ts";
+import { GOAL_TYPE, GOAL_CADENCE_UNIT } from "../../lib/models/goal/consts.ts";
+import type { HabitGoalParameters, TargetGoalParameters } from "server/lib/models/goal/types.ts";
+import { Tally } from "../../lib/models/tally/tally-model.wip.ts";
 import { WORK_STATE } from '../../lib/models/work/consts.ts';
 import { TALLY_MEASURE } from "../../lib/models/tally/consts.ts";
 import { TAG_STATE } from "../../lib/models/tag/consts.ts";
@@ -18,11 +17,13 @@ import { TAG_STATE } from "../../lib/models/tag/consts.ts";
 import { logAuditEvent } from '../../lib/audit-events.ts';
 
 import { omit } from '../../lib/obj.ts';
+import { GoalModel, type Goal } from "server/lib/models/goal/goal-model.ts";
+import { isTargetAchieved, isTargetGoal } from "server/lib/models/goal/helpers.ts";
+import { reqCtx } from "server/lib/request-context.ts";
 
-export type { GoalWithWorksAndTags, GoalParameters };
 export type GoalAndTallies = {
-  goal: GoalWithWorksAndTags;
-  tallies: TallyWithWorkAndTags[]
+  goal: Goal;
+  tallies: Tally[]
 };
 
 export type GoalWithAchievement = Goal & {
@@ -30,80 +31,42 @@ export type GoalWithAchievement = Goal & {
 }
 
 export async function handleGetGoals(req: RequestWithUser, res: ApiResponse<GoalWithAchievement[]>) {
-  const goals = await dbClient.goal.findMany({
-    where: {
-      ownerId: req.user.id,
-      state: GOAL_STATE.ACTIVE,
-    },
-    include: {
-      worksIncluded: {
-        where: { state: WORK_STATE.ACTIVE },
-      },
-      tagsIncluded: {
-        where: { state: TAG_STATE.ACTIVE },
-      },
-    },
-  });
+  const goals = await GoalModel.getGoals(req.user) as GoalWithAchievement[];
+  
+  const targetTotals = await GoalModel.getTargetTotals(req.user);
 
-  const talliesForGoals = await getTalliesForGoals(goals);
-
-  const goalsWithCompletion: GoalWithAchievement[] = await Promise.all(goals.map(async (goal) => {
-    if(goal.type === GOAL_TYPE.HABIT) {
-      return {
-        ...goal,
-        achieved: false,
-      };
+  for(const goal of goals) {
+    if(isTargetGoal(goal)) {
+      goal.achieved = isTargetAchieved(goal, targetTotals.get(goal.id));
+    } else {
+      goal.achieved = false;
     }
-    
-    const tallies = talliesForGoals[goal.id];
-    const total = tallies.reduce((sum, tally) => sum + tally.count, 0);
-    const goalCount = (goal.parameters as GoalTargetParameters).threshold.count;
+  }
 
-    return {
-      ...goal,
-      achieved: total >= goalCount,
-    };
-  }));
-
-  return res.status(200).send(success(goalsWithCompletion))
+  return res.status(200).send(success(goals))
 }
 
-export async function handleGetGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
-  const goal = await dbClient.goal.findUnique({
-    where: {
-      id: +req.params.id,
-      ownerId: req.user.id,
-      state: GOAL_STATE.ACTIVE,
-    },
-    include: {
-      worksIncluded: { where: { ownerId: req.user.id, state: WORK_STATE.ACTIVE } },
-      tagsIncluded: { where: { ownerId: req.user.id, state: TAG_STATE.ACTIVE } },
-    },
-  });
+export async function handleGetGoal(req: RequestWithUser, res: ApiResponse<Goal>) {
+  const goal = await GoalModel.getGoal(req.user, +req.params.id);
 
   if(!goal) {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any goal with id ${req.params.id}.`));
   }
 
-  const tallies = await getTalliesForGoal(goal);
-
-  return res.status(200).send(success({
-    goal,
-    tallies,
-  }));
+  return res.status(200).send(success(goal));
 }
 
 export type GoalCreatePayload = {
   title: string;
   description: string;
   type: string;
-  parameters: GoalParameters; // I could enforce this more strictly with a discriminated union, but it's fine for now
-  startDate?: string;
-  endDate?: string;
+  parameters: TargetGoalParameters | HabitGoalParameters; // I could enforce this more strictly with a discriminated union, but it's fine for now
+  startDate: string | null;
+  endDate: string | null;
   starred?: boolean;
   displayOnProfile?: boolean;
-  works: number[];
-  tags: number[];
+  workIds: number[];
+  tagIds: number[];
 };
 const zTargetGoalParameters = z.object({
   threshold: z.object({
@@ -130,46 +93,24 @@ const zGoalCreatePayload = z.object({
   endDate: z.string().nullable(),
   starred: z.boolean().nullable().default(false),
   displayOnProfile: z.boolean().nullable().default(false),
-  works: z.array(z.number().int()),
-  tags: z.array(z.number().int()),
+  workIds: z.array(z.number().int()),
+  tagIds: z.array(z.number().int()),
 }).strict();
 
 export async function handleCreateGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
   const user = req.user;
   const payload = req.body as GoalCreatePayload;
 
-  const goal = await dbClient.goal.create({
-    data: {
-      state: WORK_STATE.ACTIVE,
-      ownerId: user.id,
+  const goal = await GoalModel.createGoal(user, payload, reqCtx(req));
 
-      ...omit(payload, ['works', 'tags']),
-      worksIncluded: { connect: payload.works.map(workId => ({
-        id: workId,
-        ownerId: user.id,
-        state: WORK_STATE.ACTIVE,
-      })) },
-      tagsIncluded: { connect: payload.tags.map(workId => ({
-        id: workId,
-        ownerId: user.id,
-        state: TAG_STATE.ACTIVE,
-      })) },
-    },
-    include: {
-      worksIncluded: { where: { ownerId: req.user.id, state: WORK_STATE.ACTIVE } },
-      tagsIncluded: { where: { ownerId: req.user.id, state: TAG_STATE.ACTIVE } },
-    },
-  });
-
-  await logAuditEvent('goal:create', user.id, goal.id, null, null, req.sessionID);
-
-  const tallies = await getTalliesForGoal(goal);
+  const tallies = await GoalModel.DEPRECATED_getTalliesForGoal(goal);
 
   return res.status(201).send(success({ goal, tallies }));
 }
 
 const zBatchGoalCreatePayload = z.array(zGoalCreatePayload);
 
+// TODO: this is a mess, we need to handle it differently
 export async function handleCreateGoals(req: RequestWithUser, res: ApiResponse<Goal[]>) {
   const user = req.user;
 
@@ -178,7 +119,7 @@ export async function handleCreateGoals(req: RequestWithUser, res: ApiResponse<G
       state: WORK_STATE.ACTIVE,
       ownerId: user.id,
 
-      ...omit(goalData, ['works', 'tags']),
+      ...omit(goalData, ['workIds', 'tagIds']),
       worksIncluded: { connect: goalData.works.map(workId => ({
         id: workId,
         ownerId: user.id,
@@ -190,9 +131,9 @@ export async function handleCreateGoals(req: RequestWithUser, res: ApiResponse<G
         state: TAG_STATE.ACTIVE,
       })) },
     })),
-  });
+  }) as Goal[]; // cannot createManyAndReturn and also { include: foreign objs }
 
-  await Promise.all(createdGoals.map(createdGoal => logAuditEvent('goal:create', user.id, createdGoal.id, null, null, req.sessionID)));
+  await Promise.all(createdGoals.map(createdGoal => logAuditEvent('goal:create', user.id, createdGoal.id, null, { source: 'batch create' }, req.sessionID)));
 
   return res.status(201).send(success(createdGoals));
 }
@@ -204,34 +145,13 @@ export async function handleUpdateGoal(req: RequestWithUser, res: ApiResponse<Go
   const user = req.user;
   const payload = req.body as GoalUpdatePayload;
 
-  const goal = await dbClient.goal.update({
-    where: {
-      id: +req.params.id,
-      ownerId: req.user.id,
-      state: WORK_STATE.ACTIVE,
-    },
-    data: {
-      ...omit(payload, ['works', 'tags']),
-      worksIncluded: payload.works ? { set: payload.works.map(workId => ({
-        id: workId,
-        ownerId: user.id,
-        state: WORK_STATE.ACTIVE,
-      })) } : undefined,
-      tagsIncluded: payload.tags ? { set: payload.tags.map(workId => ({
-        id: workId,
-        ownerId: user.id,
-        state: TAG_STATE.ACTIVE,
-      })) } : undefined,
-    },
-    include: {
-      worksIncluded: { where: { ownerId: req.user.id, state: WORK_STATE.ACTIVE } },
-      tagsIncluded: { where: { ownerId: req.user.id, state: TAG_STATE.ACTIVE } },
-    },
-  });
+  const original = await GoalModel.getGoal(user, +req.params.id);
+  if(!original) {
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any goal with id ${req.params.id}.`));
+  }
 
-  await logAuditEvent('goal:update', user.id, goal.id, null, null, req.sessionID);
-
-  const tallies = await getTalliesForGoal(goal);
+  const goal = await GoalModel.updateGoal(user, original, payload, reqCtx(req));
+  const tallies = await GoalModel.DEPRECATED_getTalliesForGoal(goal);
 
   return res.status(200).send(success({ goal, tallies }));
 }
@@ -239,19 +159,12 @@ export async function handleUpdateGoal(req: RequestWithUser, res: ApiResponse<Go
 export async function handleDeleteGoal(req: RequestWithUser, res: ApiResponse<Goal>) {
   const user = req.user;
 
-  // Don't actually delete the goal; set the status instead
-  const goal = await dbClient.goal.update({
-    data: {
-      state: GOAL_STATE.DELETED,
-    },
-    where: {
-      id: +req.params.id,
-      ownerId: req.user.id,
-      state: GOAL_STATE.ACTIVE,
-    },
-  });
+  const original = await GoalModel.getGoal(user, +req.params.id);
+  if(!original) {
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any goal with id ${req.params.id}.`));
+  }
 
-  await logAuditEvent('goal:delete', user.id, goal.id, null, null, req.sessionID);
+  const goal = await GoalModel.deleteGoal(user, original, reqCtx(req));
 
   return res.status(200).send(success(goal));
 }

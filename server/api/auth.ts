@@ -13,7 +13,7 @@ import { USER_STATE, USERNAME_REGEX } from "../lib/models/user/consts.ts";
 import { RecordNotFoundError, ValidationError } from "../lib/models/errors.ts";
 
 import { logAuditEvent } from '../lib/audit-events.ts';
-import { UserModel } from "server/lib/models/user/user.ts";
+import { UserModel } from "server/lib/models/user/user-model.ts";
 import { AUDIT_EVENT_TYPE } from "server/lib/models/audit-event/consts.ts";
 import { reqCtx } from "server/lib/request-context.ts";
 

@@ -18,8 +18,8 @@ import { formatDateSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createGoal, type GoalCreatePayload, type Goal } from 'src/lib/api/goal.ts';
-import { GOAL_TYPE, GOAL_CADENCE_UNIT, GoalParameters } from 'server/lib/models/goal.ts';
-import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal.ts';
+import { GOAL_TYPE, GOAL_CADENCE_UNIT, GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal/consts';
+import { type GoalParameters } from 'server/lib/models/goal/types';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
@@ -44,7 +44,7 @@ const formModel = reactive({
   description: '',
   displayOnProfile: false,
 
-  type: GOAL_TYPE.TARGET,
+  type: GOAL_TYPE.TARGET as string,
   measure: TALLY_MEASURE.WORD,
   count: null,
   unit: GOAL_CADENCE_UNIT.DAY,
@@ -194,8 +194,8 @@ async function handleSubmit() {
       startDate: rawData.startDate,
       endDate: rawData.endDate,
 
-      works: rawData.works,
-      tags: rawData.tags,
+      workIds: rawData.works,
+      tagIds: rawData.tags,
     };
 
     const createdGoal = await createGoal(data);

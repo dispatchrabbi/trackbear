@@ -28,7 +28,7 @@ export async function updateGoal(id: number, data: GoalUpdatePayload) {
 }
 
 export async function starGoal(id: number, starred: boolean) {
-  return callApiV1<Goal>(ENDPOINT + `/${id}`, 'PUT', { starred });
+  return callApiV1<Goal>(ENDPOINT + `/${id}`, 'PATCH', { starred });
 }
 
 export async function deleteGoal(id: number) {

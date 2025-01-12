@@ -16,7 +16,7 @@ import { batchCreateTallies, type TallyCreatePayload } from 'src/lib/api/tally.t
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { formatCount } from 'src/lib/tally.ts';
 import { createGoal, GoalCreatePayload } from 'src/lib/api/goal.ts';
-import { GOAL_TYPE } from 'server/lib/models/goal.ts';
+import { GOAL_TYPE } from 'server/lib/models/goal/consts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';

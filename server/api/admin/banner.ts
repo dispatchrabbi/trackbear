@@ -7,7 +7,7 @@ import { zIdParam } from '../../lib/validators.ts';
 
 import { reqCtx } from "server/lib/request-context.ts";
 import { transformPayload } from "server/lib/transform-payload.ts";
-import { BannerModel, type Banner, type BannerData } from "server/lib/models/banner.ts";
+import { BannerModel, type Banner, type BannerData } from "server/lib/models/banner/banner-model.ts";
 
 export async function handleGetBanners(req: RequestWithUser, res: ApiResponse<Banner[]>) {
   const banners = await BannerModel.getBanners();

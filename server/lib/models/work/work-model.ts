@@ -8,7 +8,7 @@ import { type RequestContext } from "../../request-context.ts";
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
-import type { User } from '../user/user.ts';
+import type { User } from '../user/user-model.ts';
 import { WORK_PHASE, WORK_STATE, type WorkPhase } from "./consts.ts";
 import type { Tally } from '../tally/tally-model.wip.ts';
 import { TALLY_STATE } from "../tally/consts.ts";
@@ -29,7 +29,7 @@ export type WorkWithTallies = Work & {
 }
 
 type OptionalWorkFields = 'description' | 'phase' | 'startingBalance' | 'cover';
-export type CreateWorkData = Create<Work, OptionalWorkFields, never>;
+export type CreateWorkData = Create<Work, OptionalWorkFields>;
 export type UpdateWorkData = Update<Work>;
 
 export class WorkModel {

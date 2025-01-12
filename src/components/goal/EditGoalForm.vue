@@ -18,8 +18,8 @@ import { formatDateSafe, parseDateStringSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { updateGoal, type GoalUpdatePayload, type GoalWithWorksAndTags, type Goal } from 'src/lib/api/goal.ts';
-import { GOAL_TYPE, GOAL_CADENCE_UNIT, GoalParameters } from 'server/lib/models/goal.ts';
-import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal.ts';
+import { GOAL_TYPE, GOAL_CADENCE_UNIT, GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal/consts';
+import { type GoalParameters } from 'server/lib/models/goal/types';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
@@ -197,8 +197,8 @@ async function handleSubmit() {
       startDate: rawData.startDate,
       endDate: rawData.endDate,
 
-      works: rawData.works,
-      tags: rawData.tags,
+      workIds: rawData.works,
+      tagIds: rawData.tags,
     };
 
     const updatedGoal = await updateGoal(props.goal.id, data);

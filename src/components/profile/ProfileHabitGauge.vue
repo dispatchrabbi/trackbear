@@ -2,7 +2,8 @@
 import { computed, defineProps } from 'vue';
 
 import type { Goal } from 'src/lib/api/goal.ts';
-import type { GoalHabitParameters, HabitRange } from 'server/lib/models/goal.ts';
+import type { HabitGoalParameters } from 'server/lib/models/goal/types';
+import type { HabitRange } from 'server/lib/models/goal/consts';
 import { formatDateRange } from 'src/lib/date.ts';
 import { formatCount } from 'src/lib/tally';
 
@@ -16,12 +17,12 @@ const props = defineProps<{
 }>();
 
 const max = computed(() => {
-  const params = props.goal.parameters as GoalHabitParameters;
+  const params = props.goal.parameters as HabitGoalParameters;
   return params.threshold?.count ?? 1;
 });
 
 const text = computed(() => {
-  const params = props.goal.parameters as GoalHabitParameters;
+  const params = props.goal.parameters as HabitGoalParameters;
   if(params.threshold === null) {
     return `${props.range.tallies.length} time${props.range.tallies.length === 1 ? '' : 's'}`;
   } else {

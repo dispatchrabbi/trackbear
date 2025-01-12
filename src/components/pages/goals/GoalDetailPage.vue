@@ -24,7 +24,7 @@ import TargetLineChart from 'src/components/goal/TargetLineChart.vue';
 import HabitStats from 'src/components/goal/HabitStats.vue';
 import HabitHistory from 'src/components/goal/HabitHistory.vue';
 import DeleteGoalForm from 'src/components/goal/DeleteGoalForm.vue';
-import { GOAL_TYPE } from 'server/lib/models/goal.ts';
+import { GOAL_TYPE } from 'server/lib/models/goal/consts';
 
 const goalId = ref<number>(+route.params.goalId);
 watch(() => route.params.goalId, newId => {

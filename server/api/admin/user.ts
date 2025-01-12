@@ -11,7 +11,7 @@ import {
 } from "../../lib/models/user/consts.ts";
 import {
   UserModel, type User,
-} from "../../lib/models/user/user.ts";
+} from "../../lib/models/user/user-model.ts";
 import { AuditEventModel, type AuditEvent } from "server/lib/models/audit-event/audit-event.ts";
 import { AUDIT_EVENT_ENTITIES } from "server/lib/models/audit-event/consts.ts";
 

@@ -1,8 +1,8 @@
 import { vi, expect, describe, it, afterEach, beforeEach, MockInstance } from 'vitest';
 import { getTestReqCtx, mockObject, mockObjects, TEST_OBJECT_ID, TEST_SESSION_ID, TEST_USER_ID } from 'testing-support/util';
 
-import { TagModel, type Tag, type TagData } from './tag';
-import { type User } from '../user/user.ts';
+import { TagModel, type Tag, type TagData } from './tag-model.ts';
+import { type User } from '../user/user-model.ts';
 import { ValidationError } from '../errors.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 import { TAG_DEFAULT_COLOR, TAG_STATE } from './consts.ts';

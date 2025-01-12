@@ -13,7 +13,7 @@ const goalStore = useGoalStore();
 
 import { getTallies, Tally } from 'src/lib/api/tally.ts';
 import { getGoal, GoalAndTallies } from 'src/lib/api/goal.ts';
-import { GOAL_TYPE } from 'server/lib/models/goal.ts';
+import { GOAL_TYPE } from 'server/lib/models/goal/consts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';

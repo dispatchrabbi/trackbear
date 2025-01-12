@@ -6,7 +6,7 @@ import { RequestWithUser } from '../../lib/middleware/access.ts';
 import { z } from 'zod';
 import { zIdParam } from '../../lib/validators.ts';
 
-import { TagModel, type Tag, type TagData } from "../../lib/models/tag/tag.ts";
+import { TagModel, type Tag, type TagData } from "../../lib/models/tag/tag-model.ts";
 import { TAG_COLORS } from '../../lib/models/tag/consts.ts';
 
 import { reqCtx } from "../../lib/request-context.ts";
@@ -45,7 +45,6 @@ export async function handleCreateTag(req: RequestWithUser, res: ApiResponse<Tag
   try {
     created = await TagModel.createTag(user, payload as TagData, reqCtx(req));
   } catch(err) {
-    console.log(ValidationError, err.constructor, err.constructor === ValidationError, err instanceof ValidationError);
     if(err instanceof ValidationError) {
       return res.status(400).send(failure('TAG_EXISTS', `There is already a tag called ${payload.name}`));
     } else {

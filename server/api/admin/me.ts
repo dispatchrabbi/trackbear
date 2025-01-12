@@ -2,7 +2,7 @@ import { ApiResponse, success } from '../../lib/api-response.ts';
 import { HTTP_METHODS, ACCESS_LEVEL, RouteConfig } from "server/lib/api.ts";
 
 import { type RequestWithUser } from "../../lib/middleware/access.ts";
-import { type AdminPerms, AdminPermsModel } from 'server/lib/models/admin-perms.ts';
+import { type AdminPerms, AdminPermsModel } from 'server/lib/models/admin-perms/admin-perms-model.ts';
 
 export async function handleGetPerms(req: RequestWithUser, res: ApiResponse<AdminPerms>) {
   const adminPerms = await AdminPermsModel.getAdminPerms(req.user.id);

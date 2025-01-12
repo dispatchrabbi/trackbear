@@ -6,7 +6,7 @@ import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
 
 import { CreateWorkData, SummarizedWork, UpdateWorkData, WorkModel, WorkWithTallies, type Work } from './work-model.ts';
 import { WORK_PHASE, WORK_STATE } from './consts.ts';
-import { type User } from '../user/user.ts';
+import { type User } from '../user/user-model.ts';
 import { type Tally } from '../tally/tally-model.wip.ts';
 import { TALLY_MEASURE, TALLY_STATE } from '../tally/consts.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
@@ -151,7 +151,7 @@ describe(WorkModel, () => {
         starred: true,
         displayOnProfile: true,
       };
-      const testWork = mockObject<Work>( { id: TEST_OBJECT_ID });
+      const testWork = mockObject<Work>({ id: TEST_OBJECT_ID });
       dbClient.work.create.mockResolvedValue(testWork);
 
       const created = await WorkModel.createWork(testOwner, testData, testReqCtx);
@@ -232,6 +232,7 @@ describe(WorkModel, () => {
       dbClient.work.update.mockResolvedValue(testWork);
 
       const deleted = await WorkModel.deleteWork(testOwner, testWork, testReqCtx);
+      
       expect(deleted).toBe(testWork);
       expect(dbClient.work.update).toBeCalledWith({
         where: {

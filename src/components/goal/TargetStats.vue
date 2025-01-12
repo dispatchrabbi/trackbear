@@ -4,7 +4,7 @@ import { differenceInCalendarDays } from 'date-fns';
 
 import type { Goal } from 'src/lib/api/goal.ts';
 import { formatDate } from 'src/lib/date.ts';
-import { GoalTargetParameters } from 'server/lib/models/goal.ts';
+import { TargetGoalParameters } from 'server/lib/models/goal/types';
 import type { Tally } from 'src/lib/api/tally.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO, compileTallies, formatCount } from 'src/lib/tally.ts';
@@ -24,7 +24,7 @@ const props = defineProps<{
 }>();
 
 const measure = computed(() => {
-  const params = props.goal.parameters as GoalTargetParameters;
+  const params = props.goal.parameters as TargetGoalParameters;
   return params.threshold.measure;
 });
 
@@ -33,7 +33,7 @@ const isSmallMeasure = computed(() => {
 });
 
 const thresholdCount = computed(() => {
-  const params = props.goal.parameters as GoalTargetParameters;
+  const params = props.goal.parameters as TargetGoalParameters;
   return params.threshold.count;
 })
 

@@ -4,11 +4,12 @@ import { computed, defineProps } from 'vue';
 import { Goal } from 'src/lib/api/goal.ts';
 import { Tally } from 'src/lib/api/tally.ts';
 
-import { analyzeStreaksForHabit } from 'server/lib/models/goal.ts';
+import { analyzeStreaksForHabit } from 'server/lib/models/goal/helpers';
 
 import StatTile from 'src/components/goal/StatTile.vue';
 import { commaify } from 'src/lib/number.ts';
-import { GoalHabitParameters, GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal.ts';
+import { type HabitGoalParameters } from 'server/lib/models/goal/types';
+import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal/consts';
 
 const props = defineProps<{
   goal: Goal,
@@ -16,7 +17,7 @@ const props = defineProps<{
 }>();
 
 const habitStats = computed(() => {
-  const parameters = props.goal.parameters as GoalHabitParameters;
+  const parameters = props.goal.parameters as HabitGoalParameters;
   const stats = analyzeStreaksForHabit(
     props.tallies,
     parameters.cadence,
@@ -29,7 +30,7 @@ const habitStats = computed(() => {
 });
 
 const periodUnit = computed(() => {
-  const params = props.goal.parameters as GoalHabitParameters;
+  const params = props.goal.parameters as HabitGoalParameters;
   return params.cadence.unit;
 });
 

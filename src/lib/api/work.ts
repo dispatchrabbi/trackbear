@@ -30,7 +30,7 @@ export async function updateWork(id: number, data: WorkUpdatePayload) {
 }
 
 export async function starWork(id: number, starred: boolean) {
-  return callApiV1<Work>(ENDPOINT + `/${id}`, 'PUT', { starred });
+  return callApiV1<Work>(ENDPOINT + `/${id}`, 'PATCH', { starred });
 }
 
 export async function deleteWork(id: number) {

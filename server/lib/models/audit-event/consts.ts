@@ -2,6 +2,7 @@ import { ValueEnum } from "../../obj";
 
 export const AUDIT_EVENT_ENTITIES = {
   BANNER: 'banner',
+  GOAL: 'goal',
   TAG: 'tag',
   TALLY: 'tally',
   USER: 'user',
@@ -13,6 +14,11 @@ export const AUDIT_EVENT_TYPE = {
   BANNER_CREATE: 'banner:create',
   BANNER_UPDATE: 'banner:update',
   BANNER_DELETE: 'banner:delete',
+
+  GOAL_CREATE: 'goal:create',
+  GOAL_UPDATE: 'goal:update',
+  GOAL_DELETE: 'goal:delete',
+  GOAL_UNDELETE: 'goal:undelete',
   
   TAG_CREATE: 'tag:create',
   TAG_UPDATE: 'tag:update',
@@ -63,6 +69,21 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
   [AUDIT_EVENT_TYPE.BANNER_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.BANNER,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.GOAL_CREATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.GOAL,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.GOAL_UPDATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.GOAL,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.GOAL_DELETE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.GOAL,
     goal: null
   },
   [AUDIT_EVENT_TYPE.TAG_CREATE]: {
