@@ -1,7 +1,7 @@
 import { vi, expect, describe, it, afterEach } from 'vitest';
 import { mockObject, mockObjects, TEST_SESSION_ID, TEST_USER_ID } from 'testing-support/util';
 
-import { AuditEvent, AuditEventModel } from './audit-event.ts';
+import { AuditEvent, AuditEventModel } from './audit-event-model.ts';
 import { AUDIT_EVENT_ENTITIES, AUDIT_EVENT_TYPE, AuditEventEntity } from './consts.ts';
 
 vi.mock('../../tracer.ts');
