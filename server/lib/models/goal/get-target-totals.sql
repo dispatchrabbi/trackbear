@@ -33,7 +33,7 @@ tallies AS (
 )
 SELECT
 	targets."goalId",
-	sum(tallies.count) AS total
+	sum(tallies.count)::int AS total
 FROM
 	targets
 	INNER JOIN tallies ON (
