@@ -4,3 +4,4 @@ Changes to make:
 - Create uploading domain/model
 - remove/replace getTalliesForGoal
 - exile GoalWithWorksAndTags and WorkWithTallies, etc
+- delete/undelete should immediately return if the state is already deleted/active

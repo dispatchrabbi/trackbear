@@ -9,7 +9,7 @@ import dbClientMock from '../../lib/__mocks__/db.ts';
 vi.mock('../../lib/audit-events.ts', { spy: true });
 import { logAuditEventMock } from '../../lib/__mocks__/audit-events.ts';
 
-import * as boardModel from "../../lib/models/board.ts";
+import * as boardModel from "../../lib/models/board-wip/consts.ts";
 
 import { handleGetBoards, handleGetBoard, handleCreateBoard, handleUpdateBoard, handleStarBoard, handleDeleteBoard, handleGetBoardParticipation, handleUpdateBoardParticipation, handleDeleteBoardParticipation } from './board';
 

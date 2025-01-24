@@ -2,10 +2,12 @@ import { ValueEnum } from "../../obj";
 
 export const AUDIT_EVENT_ENTITIES = {
   BANNER: 'banner',
+  BOARD: 'board',
   GOAL: 'goal',
   TAG: 'tag',
   TALLY: 'tally',
   USER: 'user',
+  WORK: 'work',
 } as const;
 export type AuditEventEntity = ValueEnum<typeof AUDIT_EVENT_ENTITIES>;
 
@@ -14,6 +16,11 @@ export const AUDIT_EVENT_TYPE = {
   BANNER_CREATE: 'banner:create',
   BANNER_UPDATE: 'banner:update',
   BANNER_DELETE: 'banner:delete',
+
+  BOARD_CREATE: 'board:create',
+  BOARD_UPDATE: 'board:update',
+  BOARD_DELETE: 'board:delete',
+  BOARD_UNDELETE: 'board:undelete',
 
   GOAL_CREATE: 'goal:create',
   GOAL_UPDATE: 'goal:update',
@@ -71,6 +78,26 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
     patient: AUDIT_EVENT_ENTITIES.BANNER,
     goal: null
   },
+  [AUDIT_EVENT_TYPE.BOARD_CREATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.BOARD,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.BOARD_UPDATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.BOARD,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.BOARD_DELETE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.BOARD,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.BOARD_UNDELETE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.BOARD,
+    goal: null
+  },
   [AUDIT_EVENT_TYPE.GOAL_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.GOAL,
@@ -82,6 +109,11 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
     goal: null
   },
   [AUDIT_EVENT_TYPE.GOAL_DELETE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.GOAL,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.GOAL_UNDELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.GOAL,
     goal: null
@@ -154,6 +186,26 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
   [AUDIT_EVENT_TYPE.USER_REQUEST_PASSWORD_RESET]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.WORK_CREATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.WORK,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.WORK_UPDATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.WORK,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.WORK_DELETE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.WORK,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.WORK_UNDELETE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.WORK,
     goal: null
   },
 };

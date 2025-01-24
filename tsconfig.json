@@ -17,6 +17,8 @@
     "isolatedModules": true,
     "noEmit": true,
 
+    "noErrorTruncation": true,
+
     /* Linting */
     // "strict": true,
     // "noUnusedLocals": true,

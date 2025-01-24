@@ -16,7 +16,7 @@ import { useValidation } from 'src/lib/form.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
-import type { ParticipantGoal } from 'server/lib/models/board';
+import type { ParticipantGoal } from 'server/lib/models/board-wip/consts';
 
 import { joinBoard, BoardParticipantPayload, Board, ExtendedBoardParticipant, BoardParticipant } from 'src/lib/api/board.ts';
 

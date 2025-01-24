@@ -1,9 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { TEST_OBJECT_ID } from 'testing-support/util';
+import { TEST_OBJECT_ID, TEST_USER_ID } from 'testing-support/util';
+
+import { WORK_STATE } from './work/consts';
+import { TAG_STATE } from './tag/consts';
 
 import {
   included2ids,
-  ids2included
+  ids2included,
+  makeIncludeWorkAndTagIds
 } from './helpers';
 
 describe('model helpers', () => {
@@ -68,4 +72,29 @@ describe('model helpers', () => {
       expect(actual).toBe(null);
     });
   });
+
+  describe(makeIncludeWorkAndTagIds, () => {
+    it('builds the include object', () => {
+      const expected = {
+        worksIncluded: {
+          where: {
+            ownerId: TEST_USER_ID,
+            state: WORK_STATE.ACTIVE,
+          },
+          select: { id: true },
+        },
+        tagsIncluded: {
+          where: {
+            ownerId: TEST_USER_ID,
+            state: TAG_STATE.ACTIVE,
+          },
+          select: { id: true },
+        }
+      };
+
+      const actual = makeIncludeWorkAndTagIds({ id: TEST_USER_ID });
+
+      expect(actual).toEqual(expected);
+    });
+  })
 });

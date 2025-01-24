@@ -1,10 +1,10 @@
-import type { Board as PrismaBoard, BoardParticipant, User, Tally, Work, Tag } from "@prisma/client";
-import { TALLY_STATE, TallyMeasure } from "./tally/consts.ts";
-import { USER_STATE } from "./user/consts.ts";
+import { TALLY_STATE } from "../tally/consts.ts";
+import { USER_STATE } from "../user/consts.ts";
 
-import dbClient from "../db.ts";
+import dbClient from "../../db.ts";
 
-import { pick } from "../obj.ts";
+import { pick } from "../../obj.ts";
+import type { Board, BoardWithParticipantBios, BoardWithParticipants, FullBoard, ParticipantGoal } from "./types.ts";
 
 export const BOARD_STATE = {
   ACTIVE:   'active',
@@ -16,28 +16,7 @@ export const BOARD_PARTICIPANT_STATE = {
   // I anticipate that we'll eventually want a BANNED or KICKED state of some kind
 };
 
-export type BoardGoal = null | Record<TallyMeasure, number>;
-export type Board = PrismaBoard & { goal: BoardGoal };
-
-export type ReducedTally = Pick<Tally, 'uuid' | 'date' | 'measure' | 'count'>;
-export type Participant = Pick<User, 'uuid' | 'displayName' | 'avatar'>;
-export type ParticipantGoal = null | {
-  measure: TallyMeasure;
-  count: number;
-};
-export type ParticipantWithTallies = Participant & {
-  goal: ParticipantGoal,
-  tallies: ReducedTally[];
-};
-
-export type ExtendedBoard = Board & {
-  participants: Participant[];
-};
-export type FullBoard = Board & {
-  participants: ParticipantWithTallies[];
-};
-
-export async function getExtendedBoardsForUser(userId: number): Promise<ExtendedBoard[]> {
+export async function getExtendedBoardsForUser(userId: number): Promise<BoardWithParticipantBios[]> {
   const boards = await dbClient.board.findMany({
     where: {
       state: BOARD_STATE.ACTIVE,
@@ -125,7 +104,7 @@ export async function getFullBoard(uuid: string): Promise<FullBoard | null> {
     }
   });
 
-  const fullBoard = {
+  const fullBoard: FullBoard = {
     ...board as Board,
     participants: board.participants.map(participant => ({
       ...pick(participant.user, ['uuid', 'displayName', 'avatar']),
@@ -142,15 +121,7 @@ export async function getFullBoard(uuid: string): Promise<FullBoard | null> {
   return fullBoard;
 }
 
-export type ExtendedBoardParticipant = BoardParticipant & {
-  worksIncluded: Work[];
-  tagsIncluded: Tag[];
-};
-export type BoardWithParticipants = Board & {
-  participants: ExtendedBoardParticipant[];
-};
-
-export async function getBoardParticipationForUser(uuid: string, userId: number) {
+export async function getBoardParticipationForUser(uuid: string, userId: number): Promise<BoardWithParticipants> {
   const board = await dbClient.board.findUnique({
     where: {
       state: BOARD_STATE.ACTIVE,
@@ -168,7 +139,7 @@ export async function getBoardParticipationForUser(uuid: string, userId: number)
         }
       },
     },
-  });
+  }) as BoardWithParticipants;
 
   return board;
 }

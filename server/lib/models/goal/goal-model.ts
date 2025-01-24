@@ -18,7 +18,7 @@ import type { Tally } from '../tally/tally-model.wip.ts';
 import { omit } from 'server/lib/obj.ts';
 import { WORK_STATE } from '../work/consts.ts';
 import { TAG_STATE } from '../tag/consts.ts';
-import { included2ids } from '../helpers.ts';
+import { makeIncludeWorkAndTagIds, included2ids } from '../helpers.ts';
 
 const getTargetTotalsRawSql = await importRawSql(path.resolve(import.meta.dirname, './get-target-totals.sql'));
 
@@ -31,23 +31,6 @@ type OptionalGoalFields = 'description';
 export type CreateGoalData = Create<Goal, OptionalGoalFields>;
 // this isn't 100% type-safe; if changing your type, you need to send the correct parameters as well
 export type UpdateGoalData = Partial<CreateGoalData>;
-
-const makeIncludeWorkAndTagIds = (owner: { id: number }) => ({
-  worksIncluded: {
-    where: {
-      ownerId: owner.id,
-      state: WORK_STATE.ACTIVE,
-    },
-    select: { id: true },
-  },
-  tagsIncluded: {
-    where: {
-      ownerId: owner.id,
-      state: TAG_STATE.ACTIVE,
-    },
-    select: { id: true },
-  }
-});
 
 export class GoalModel {
 

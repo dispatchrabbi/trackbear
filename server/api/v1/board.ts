@@ -9,16 +9,16 @@ import { zUuidParam, NonEmptyArray } from '../../lib/validators.ts';
 
 import dbClient from "../../lib/db.ts";
 import type { BoardParticipant } from "@prisma/client";
-import type { Board, BoardGoal, ParticipantGoal } from "../../lib/models/board.ts";
 
-import { BOARD_PARTICIPANT_STATE, BOARD_STATE, getFullBoard, FullBoard, getExtendedBoardsForUser, ExtendedBoard, getBoardParticipationForUser, BoardWithParticipants } from "../../lib/models/board.ts";
+import { BOARD_PARTICIPANT_STATE, BOARD_STATE, getFullBoard, getExtendedBoardsForUser, getBoardParticipationForUser } from "../../lib/models/board-wip/consts.ts";
+import type { Board, BoardWithParticipantBios, BoardWithParticipants, BoardGoal, ParticipantGoal, FullBoard } from '../../lib/models/board-wip/types.ts';
 import { TALLY_MEASURE, TallyMeasure } from "../../lib/models/tally/consts.ts";
 import { WORK_STATE } from '../../lib/models/work/consts.ts';
 import { TAG_STATE } from "../../lib/models/tag/consts.ts";
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
 
-export async function handleGetBoards(req: RequestWithUser, res: ApiResponse<ExtendedBoard[]>) {
+export async function handleGetBoards(req: RequestWithUser, res: ApiResponse<BoardWithParticipantBios[]>) {
   const boards = await getExtendedBoardsForUser(req.user.id);
 
   return res.status(200).send(success(boards));

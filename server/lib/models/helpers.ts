@@ -1,4 +1,6 @@
 import { omit } from "../obj";
+import { WORK_STATE } from "./work/consts";
+import { TAG_STATE } from "./tag/consts";
 
 type WorksAndTagsIncluded = {
   worksIncluded: { id: number }[],
@@ -35,4 +37,23 @@ export function ids2included<O extends WorksAndTagsIds>(obj: O): WithIncludedIns
       tagsIncluded: obj.tagIds.map(id => ({ id })),
     }
   );
+}
+
+export function makeIncludeWorkAndTagIds(owner: { id: number }) {
+  return {
+    worksIncluded: {
+      where: {
+        ownerId: owner.id,
+        state: WORK_STATE.ACTIVE,
+      },
+      select: { id: true },
+    },
+    tagsIncluded: {
+      where: {
+        ownerId: owner.id,
+        state: TAG_STATE.ACTIVE,
+      },
+      select: { id: true },
+    }
+  };
 }
