@@ -1,7 +1,7 @@
 import { compare } from 'natural-orderby';
-import { Goal, GoalWithAchievement } from 'src/lib/api/goal.ts';
+import type { Goal, GoalWithAchievement } from 'src/lib/api/goal.ts';
 import { GOAL_CADENCE_UNIT_INFO, GOAL_TYPE } from 'server/lib/models/goal/consts.ts';
-import { HabitGoalParameters, TargetGoalParameters } from 'server/lib/models/goal/types.ts';
+import type { HabitGoalParameters, TargetGoalParameters } from 'server/lib/models/goal/types.ts';
 import { formatCount } from './tally.ts';
 import { formatDate } from './date.ts';
 

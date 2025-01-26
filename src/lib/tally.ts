@@ -1,7 +1,7 @@
 import { addDays, eachDayOfInterval } from "date-fns";
 
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
-import type { Tally } from 'src/lib/api/tally.ts';
+import type { Tally, TallyWithWorkAndTags } from 'src/lib/api/tally.ts';
 import { formatDuration, formatDate, parseDateString } from "src/lib/date.ts";
 import { commaify } from './number.ts';
 
@@ -135,4 +135,18 @@ export function streakColors(streakLength) {
   } else {
     return 'bg-amber-400 dark:bg-amber-400 text-surface-950 dark:text-surface-950';
   }
+}
+
+export function filterTalliesForWorksAndTags(tallies: TallyWithWorkAndTags[], workIds: number[], tagIds: number[]) {
+  const workFilterFn: (tallyWorkId: number) => boolean = workIds.length > 0 ?
+    (tallyWorkId: number) => workIds.includes(tallyWorkId) :
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (tallyWorkId: number) => true; // do not filter by works if no workId is specified
+
+  const tagFilterFn: (tallyTagIds: number[]) => boolean = tagIds.length > 0 ?
+    (tallyTagIds: number[]) => tallyTagIds.some(tagId => tagIds.includes(tagId)) :
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (tallyTagIds: number[]) => true; // do not filter by tags if no tagIds are specified
+
+  return tallies.filter(tally => workFilterFn(tally.workId) && tagFilterFn(tally.tags.map(tag => tag.id)));
 }

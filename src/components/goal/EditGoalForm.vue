@@ -17,7 +17,7 @@ import { NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe, parseDateStringSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { updateGoal, type GoalUpdatePayload, type GoalWithWorksAndTags, type Goal } from 'src/lib/api/goal.ts';
+import { updateGoal, type GoalUpdatePayload, type Goal } from 'src/lib/api/goal.ts';
 import { GOAL_TYPE, GOAL_CADENCE_UNIT, GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal/consts';
 import { type GoalParameters } from 'server/lib/models/goal/types';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
@@ -37,7 +37,7 @@ import TallyCountInput from '../tally/TallyCountInput.vue';
 // import TbTag from 'src/components/tag/TbTag.vue';
 
 const props = defineProps<{
-  goal: GoalWithWorksAndTags;
+  goal: Goal;
 }>();
 const emit = defineEmits(['goal:edit', 'formSuccess', 'formCancel']);
 const eventBus = useEventBus<{ goal: Goal }>('goal:edit');
@@ -56,8 +56,8 @@ const formModel = reactive({
   startDate: parseDateStringSafe(props.goal.startDate),
   endDate: parseDateStringSafe(props.goal.endDate),
 
-  works: props.goal.worksIncluded.map(work => work.id),
-  tags: props.goal.tagsIncluded.map(tag => tag.id),
+  works: props.goal.workIds,
+  tags: props.goal.tagIds,
 });
 
 const validations = z

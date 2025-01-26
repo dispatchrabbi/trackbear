@@ -7,12 +7,12 @@ import { formatDate } from "src/lib/date.ts";
 import { WORK_STATE } from "./work/consts.ts";
 import { TALLY_MEASURE, TALLY_STATE } from "./tally/consts.ts";
 import { MeasureCounts } from "./tally/types.ts";
-import { GOAL_STATE, GOAL_TYPE } from "./goal/consts.ts";
+import { GOAL_TYPE } from "./goal/consts.ts";
 import { analyzeStreaksForHabit, HabitRange, isRangeCurrent } from "./goal/helpers.ts";
-import type { TargetGoalParameters, HabitGoalParameters, GoalWithWorksAndTags } from "./goal/types.ts";
+import type { TargetGoalParameters, HabitGoalParameters, HabitGoal, TargetGoal } from "./goal/types.ts";
+import type { User } from './user/user-model.ts';
 import { GoalModel } from "./goal/goal-model.ts";
 import { getDayCounts, DayCount } from "./stats.ts";
-import { TAG_STATE } from "./tag/consts.ts";
 
 type ProfileWorkSummary = {
   uuid: string;
@@ -224,24 +224,8 @@ async function getProfileWorkSummaries(userId: number): Promise<ProfileWorkSumma
 }
 
 async function getProfileTargetSummaries(userId: number): Promise<ProfileTargetSummary[]> {
-  const eligibleTargets = await dbClient.goal.findMany({
-    where: {
-      ownerId: userId,
-      state: GOAL_STATE.ACTIVE,
-      type: GOAL_TYPE.TARGET,
-      displayOnProfile: true,
-    },
-    include: {
-      worksIncluded: {
-        where: { state: WORK_STATE.ACTIVE },
-        select: { id: true },
-      },
-      tagsIncluded: {
-        where: { state: TAG_STATE.ACTIVE },
-        select: { id: true },
-      },
-    },
-  }) as GoalWithWorksAndTags[];
+  const allGoals = await GoalModel.getGoals({ id: userId } as User);
+  const eligibleTargets = allGoals.filter(goal => goal.type === GOAL_TYPE.TARGET && goal.displayOnProfile === true) as TargetGoal[];
 
   const summaries = [];
   for(const target of eligibleTargets) {
@@ -272,31 +256,16 @@ async function getProfileTargetSummaries(userId: number): Promise<ProfileTargetS
 }
 
 async function getProfileHabitSummaries(userId: number): Promise<ProfileHabitSummary[]> {
-  const eligibleHabits = await dbClient.goal.findMany({
-    where: {
-      ownerId: userId,
-      state: GOAL_STATE.ACTIVE,
-      type: GOAL_TYPE.HABIT,
-      displayOnProfile: true,
-    },
-    include: {
-      worksIncluded: {
-        where: { state: WORK_STATE.ACTIVE },
-      },
-      tagsIncluded: {
-        where: { state: TAG_STATE.ACTIVE },
-      },
-    },
-  });
+  const allGoals = await GoalModel.getGoals({ id: userId } as User);
+  const eligibleHabits = allGoals.filter(goal => goal.type === GOAL_TYPE.HABIT && goal.displayOnProfile === true) as HabitGoal[];
 
   const summaries = [];
   for(const habit of eligibleHabits) {
 
-    const parameters = habit.parameters as HabitGoalParameters;
-    const talliesForHabit = await getTalliesForGoal(habit);
+    const talliesForHabit = await GoalModel.DEPRECATED_getTalliesForGoal(habit);
 
     const { ranges, streaks } = analyzeStreaksForHabit(
-      talliesForHabit, parameters.cadence, parameters.threshold,
+      talliesForHabit, habit.parameters.cadence, habit.parameters.threshold,
       habit.startDate, habit.endDate
     );
 
@@ -307,7 +276,7 @@ async function getProfileHabitSummaries(userId: number): Promise<ProfileHabitSum
     summaries.push({
       uuid: habit.uuid,
       title: habit.title,
-      parameters: parameters,
+      parameters: habit.parameters,
       currentRange,
       currentStreakLength: streaks.current === null ? null : streaks.current.length,
       longestStreakLength: streaks.longest.length,

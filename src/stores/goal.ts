@@ -8,10 +8,6 @@ import { getGoals, Goal, GoalWithAchievement } from 'src/lib/api/goal.ts';
 export const useGoalStore = defineStore('goal', () => {
   const goals = ref<GoalWithAchievement[] | null>(null);
 
-  function $reset() {
-    goals.value = null;
-  }
-
   const allGoals = computed(() => goals.value ?? []);
   const starredGoals = computed(() => allGoals.value.filter(goal => goal.starred));
 
@@ -20,6 +16,14 @@ export const useGoalStore = defineStore('goal', () => {
       const fetchedWorks = await getGoals();
       goals.value = fetchedWorks.sort(cmpGoalByCompletion);
     }
+  }
+
+  function get(id: number): GoalWithAchievement | null {
+    return allGoals.value.find(goal => goal.id === id) as GoalWithAchievement ?? null;
+  }
+
+  function $reset() {
+    goals.value = null;
   }
 
   useEventBus<{ goal: Goal }>('goal:create').on(() => populate(true));
@@ -32,6 +36,7 @@ export const useGoalStore = defineStore('goal', () => {
     allGoals,
     starredGoals,
     populate,
+    get,
     $reset,
   };
 });

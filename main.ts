@@ -66,9 +66,8 @@ async function main() {
   // let's start up the server!
   const app = express();
 
-  // allow arrays in query strings with just commas
   // this must be set before anything else (see https://github.com/expressjs/express/issues/4979)
-  app.set('query parser', (str: string) => qs.parse(str, { comma: true }));
+  app.set('query parser', (str: string) => qs.parse(str));
 
   // add security headers
   app.use(await helmet());

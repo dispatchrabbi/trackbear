@@ -2,11 +2,10 @@
 import { computed, defineProps } from 'vue';
 import { isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 
-import { Goal } from 'src/lib/api/goal.ts';
 import { Tally } from 'src/lib/api/tally.ts';
 
 import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal/consts';
-import type { HabitGoalParameters } from 'server/lib/models/goal/types';
+import type { HabitGoal } from 'server/lib/models/goal/types';
 import { analyzeStreaksForHabit } from 'server/lib/models/goal/helpers';
 import { streakColors } from 'src/lib/tally.ts';
 import { formatDate, parseDateStringSafe } from 'src/lib/date.ts';
@@ -18,13 +17,9 @@ import HabitGauge from 'src/components/goal/HabitGauge.vue';
 import StatTile from 'src/components/goal/StatTile.vue';
 
 const props = defineProps<{
-  goal: Goal,
+  goal: HabitGoal,
   tallies: Tally[],
 }>();
-
-const parameters = computed(() => {
-  return props.goal.parameters as HabitGoalParameters;
-})
 
 const habitStats = computed(() => {
   const now = new Date();
@@ -33,8 +28,8 @@ const habitStats = computed(() => {
 
   const stats = analyzeStreaksForHabit(
     props.tallies,
-    parameters.value.cadence,
-    parameters.value.threshold,
+    props.goal.parameters.cadence,
+    props.goal.parameters.threshold,
     props.goal.startDate,
     formatDate(endDate),
   );
@@ -95,7 +90,7 @@ function rangeContainsToday(range) {
           <StatTile
             top-legend="Current streak"
             :highlight="commaify(habitStats.streaks.current.length)"
-            :suffix="GOAL_CADENCE_UNIT_INFO[parameters.cadence.unit].label[habitStats.streaks.current.length === 1 ? 'singular' : 'plural']"
+            :suffix="GOAL_CADENCE_UNIT_INFO[props.goal.parameters.cadence.unit].label[habitStats.streaks.current.length === 1 ? 'singular' : 'plural']"
             bottom-legend="in a row"
           />
         </div>
@@ -106,7 +101,7 @@ function rangeContainsToday(range) {
           <StatTile
             top-legend="Longest streak"
             :highlight="commaify(habitStats.streaks.longest.length)"
-            :suffix="GOAL_CADENCE_UNIT_INFO[parameters.cadence.unit].label[habitStats.streaks.longest.length === 1 ? 'singular' : 'plural']"
+            :suffix="GOAL_CADENCE_UNIT_INFO[props.goal.parameters.cadence.unit].label[habitStats.streaks.longest.length === 1 ? 'singular' : 'plural']"
             bottom-legend="in a row"
           />
         </div>

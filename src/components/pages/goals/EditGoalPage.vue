@@ -8,7 +8,7 @@ const router = useRouter();
 import { useGoalStore } from 'src/stores/goal.ts';
 const goalStore = useGoalStore();
 
-import { getGoal, GoalWithWorksAndTags } from 'src/lib/api/goal.ts';
+import type { Goal } from 'src/lib/api/goal.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
@@ -25,7 +25,28 @@ watch(() => route.params.goalId, newId => {
   }
 });
 
-const goal = ref<GoalWithWorksAndTags | null>(null);
+const goal = ref<Goal | null>(null);
+  const isGoalLoading = ref<boolean>(false);
+const goalErrorMessage = ref<string | null>(null);
+const loadGoal = async function() {
+  isGoalLoading.value = true;
+  goalErrorMessage.value = null;
+
+  try {
+    await goalStore.populate();
+    goal.value = goalStore.get(+goalId.value);
+  } catch(err) {
+    goalErrorMessage.value = err.message;
+    // the ApplicationLayout takes care of this. Otherwise, this will redirect to /goals before ApplicationLayout
+    // can redirect to /login.
+    // TODO: figure out a better way to ensure that there's no race condition here
+    if(err.code !== 'NOT_LOGGED_IN') {
+      router.push({ name: 'goals' });
+    }
+  } finally {
+    isGoalLoading.value = false;
+  }
+}
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
@@ -35,23 +56,6 @@ const breadcrumbs = computed(() => {
   ];
   return crumbs;
 });
-
-const isLoading = ref<boolean>(false);
-const errorMessage = ref<string | null>(null);
-const loadGoal = async function() {
-  isLoading.value = true;
-  errorMessage.value = null;
-
-  try {
-    const result = await getGoal(+goalId.value);
-    goal.value = result.goal;
-  } catch(err) {
-    errorMessage.value = err.message;
-    router.push('/goals');
-  } finally {
-    isLoading.value = false;
-  }
-}
 
 onMounted(() => loadGoal());
 
@@ -70,7 +74,7 @@ onMounted(() => loadGoal());
       </template>
       <template #content>
         <EditGoalForm
-          :goal="goal"
+          :goal="goal as Goal"
           @goal:edit="goalStore.populate(true)"
           @form-success="router.push(`/goals/${goal.id}`)"
           @form-cancel="router.push(`/goals/${goal.id}`)"

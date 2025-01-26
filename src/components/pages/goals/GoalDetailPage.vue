@@ -9,8 +9,9 @@ const router = useRouter();
 import { useGoalStore } from 'src/stores/goal.ts';
 const goalStore = useGoalStore();
 
-import { getGoal, GoalWithWorksAndTags } from 'src/lib/api/goal.ts';
-import { Tally, TallyWithWorkAndTags } from 'src/lib/api/tally.ts';
+import type { Goal } from 'src/lib/api/goal.ts';
+import type { TargetGoalParameters, HabitGoalParameters, TargetGoal, HabitGoal } from 'server/lib/models/goal/types';
+import { getTallies, Tally, TallyWithWorkAndTags } from 'src/lib/api/tally.ts';
 import { describeGoal } from 'src/lib/goal.ts';
 
 import { PrimeIcons } from 'primevue/api';
@@ -30,12 +31,9 @@ const goalId = ref<number>(+route.params.goalId);
 watch(() => route.params.goalId, newId => {
   if(newId !== undefined) {
     goalId.value = +newId;
-    reloadGoals(); // this isn't a great pattern - it should get changed
+    reloadData(); // this isn't a great pattern - it should get changed
   }
 });
-
-const goal = ref<GoalWithWorksAndTags | null>(null);
-const tallies = ref<TallyWithWorkAndTags[] | null>(null);
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
@@ -47,40 +45,68 @@ const breadcrumbs = computed(() => {
 
 const isDeleteFormVisible = ref<boolean>(false);
 
-const isLoading = ref<boolean>(false);
-const errorMessage = ref<string | null>(null);
+const goal = ref<Goal | null>(null);
+const isGoalLoading = ref<boolean>(false);
+const goalErrorMessage = ref<string | null>(null);
 const loadGoal = async function() {
-  isLoading.value = true;
-  errorMessage.value = null;
+  isGoalLoading.value = true;
+  goalErrorMessage.value = null;
 
   try {
-    const result = await getGoal(+goalId.value);
-    goal.value = result.goal;
-    tallies.value = result.tallies;
+    await goalStore.populate();
+    goal.value = goalStore.get(+goalId.value);
   } catch(err) {
-    errorMessage.value = err.message;
-    // the ApplicationLayout takes care of this. Otherwise, this will redirect to /works before ApplicationLayout
+    goalErrorMessage.value = err.message;
+    // the ApplicationLayout takes care of this. Otherwise, this will redirect to /goals before ApplicationLayout
     // can redirect to /login.
     // TODO: figure out a better way to ensure that there's no race condition here
     if(err.code !== 'NOT_LOGGED_IN') {
       router.push({ name: 'goals' });
     }
   } finally {
-    isLoading.value = false;
+    isGoalLoading.value = false;
   }
 }
 
-const reloadGoals = async function() {
-  goalStore.populate(true);
-  loadGoal();
+const tallies = ref<TallyWithWorkAndTags[]>([]);
+const isTalliesLoading = ref<boolean>(false);
+const talliesErrorMessage = ref<string | null>(null);
+const loadTallies = async function () {
+  isTalliesLoading.value = true;
+  talliesErrorMessage.value = null;
+
+  try {
+    const measure = goal.value.type === GOAL_TYPE.TARGET ?
+      (goal.value.parameters as TargetGoalParameters).threshold.measure : // targets always have an associated measure
+      (goal.value.parameters as HabitGoalParameters).threshold?.measure;  // habits sometimes have an associated measure
+
+    const talliesForGoal = await getTallies({
+      works: goal.value.workIds,
+      tags: goal.value.tagIds,
+      measure: measure,
+      startDate: goal.value.startDate,
+      endDate: goal.value.endDate,
+    });
+
+    tallies.value = talliesForGoal;
+  } catch(err) {
+    talliesErrorMessage.value = err.message;
+  } finally {
+    isTalliesLoading.value = false;
+  }
 }
 
-onMounted(() => {
-  useEventBus<{ tally: Tally }>('tally:create').on(reloadGoals);
-  useEventBus<{ tally: Tally }>('tally:edit').on(reloadGoals);
-  useEventBus<{ tally: Tally }>('tally:delete').on(reloadGoals);
+async function reloadData() {
+  await loadGoal();
+  await loadTallies();
+}
 
-  loadGoal();
+onMounted(async () => {
+  useEventBus<{ tally: Tally }>('tally:create').on(loadTallies);
+  useEventBus<{ tally: Tally }>('tally:edit').on(loadTallies);
+  useEventBus<{ tally: Tally }>('tally:delete').on(loadTallies);
+
+  await reloadData();
 });
 
 </script>
@@ -95,7 +121,7 @@ onMounted(() => {
     >
       <DetailPageHeader
         :title="goal.title"
-        :subtitle="goal.description || describeGoal(goal)"
+        :subtitle="goal.description || describeGoal(goal as Goal)"
       >
         <template #actions>
           <Button
@@ -126,13 +152,13 @@ onMounted(() => {
           <div class="mb-8">
             <TargetStats
               :tallies="tallies"
-              :goal="goal"
+              :goal="goal as TargetGoal"
             />
           </div>
           <TargetLineChart
             v-if="tallies.length > 0"
             :tallies="tallies"
-            :goal="goal"
+            :goal="goal as TargetGoal"
           />
           <div v-else>
             You haven't logged any progress on this goal. You want the cool graphs? Get writing!
@@ -141,12 +167,12 @@ onMounted(() => {
         <div v-if="goal.type === GOAL_TYPE.HABIT">
           <div class="mb-8">
             <HabitStats
-              :goal="goal"
+              :goal="goal as HabitGoal"
               :tallies="tallies"
             />
           </div>
           <HabitHistory
-            :goal="goal"
+            :goal="goal as HabitGoal"
             :tallies="tallies"
           />
         </div>
@@ -162,7 +188,7 @@ onMounted(() => {
           </h2>
         </template>
         <DeleteGoalForm
-          :goal="goal"
+          :goal="goal as Goal"
           @goal:delete="goalStore.populate(true)"
           @form-success="router.push('/goals')"
         />

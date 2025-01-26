@@ -21,6 +21,8 @@ import { GoalModel, type Goal } from "server/lib/models/goal/goal-model.ts";
 import { isTargetAchieved, isTargetGoal } from "server/lib/models/goal/helpers.ts";
 import { reqCtx } from "server/lib/request-context.ts";
 
+export type { Goal };
+
 export type GoalAndTallies = {
   goal: Goal;
   tallies: Tally[]

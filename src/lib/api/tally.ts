@@ -10,25 +10,25 @@ export type TallyWithTags = Tally & { tags: Tag[] };
 const ENDPOINT = '/api/v1/tally';
 
 export async function getTallies(query: TallyQuery = null) {
-  return callApiV1<Tally[]>(ENDPOINT, 'GET', null, query);
+  return callApiV1<TallyWithWorkAndTags[]>(ENDPOINT, 'GET', null, query);
 }
 
 export async function getTally(id: number) {
-  return callApiV1<Tally>(ENDPOINT + `/${id}`, 'GET');
+  return callApiV1<TallyWithWorkAndTags>(ENDPOINT + `/${id}`, 'GET');
 }
 
 export async function createTally(data: TallyCreatePayload) {
-  return callApiV1<Tally>(ENDPOINT, 'POST', data);
+  return callApiV1<TallyWithWorkAndTags>(ENDPOINT, 'POST', data);
 }
 
 export async function batchCreateTallies(data: TallyCreatePayload[]) {
-  return callApiV1<Tally[]>(ENDPOINT + `/batch`, 'POST', data);
+  return callApiV1<TallyWithWorkAndTags[]>(ENDPOINT + `/batch`, 'POST', data);
 }
 
 export async function updateTally(id: number, data: TallyUpdatePayload) {
-  return callApiV1<Tally>(ENDPOINT + `/${id}`, 'PATCH', data);
+  return callApiV1<TallyWithWorkAndTags>(ENDPOINT + `/${id}`, 'PATCH', data);
 }
 
 export async function deleteTally(id: number) {
-  return callApiV1<Tally>(ENDPOINT + `/${id}`, 'DELETE');
+  return callApiV1<TallyWithWorkAndTags>(ENDPOINT + `/${id}`, 'DELETE');
 }

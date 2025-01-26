@@ -26,7 +26,11 @@ export async function callApi<T>(path: string, method: string = 'GET', payload: 
   }
 
   if(query !== null) {
-    path += '?' + qs.stringify(query, { arrayFormat: 'comma', encode: false });
+    path += '?' + qs.stringify(query, {
+      encode: false,
+      arrayFormat: 'brackets',
+      skipNulls: true,
+    });
   }
 
   const response = await fetch(path, {

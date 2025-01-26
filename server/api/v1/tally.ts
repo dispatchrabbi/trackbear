@@ -8,7 +8,7 @@ import { zIdParam, zDateStr, NonEmptyArray } from 'server/lib/validators.ts';
 
 import dbClient from "../../lib/db.ts";
 import type { Tally, Work, Tag } from "@prisma/client";
-import { TALLY_STATE, TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
+import { TALLY_STATE, TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts.ts';
 import { TAG_STATE, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts.ts';
 
 import { buildChangeRecord, logAuditEvent } from '../../lib/audit-events.ts';
@@ -17,9 +17,12 @@ import { WORK_STATE } from "server/lib/models/work/consts.ts";
 export type TallyWithWorkAndTags = Tally & { work: Work } & { tags: Tag[] };
 
 const zTallyQuery = z.object({
-  works: z.array(z.coerce.number().int().positive()).optional(),
-  tags: z.array(z.coerce.number().int().positive()).optional(),
-});
+  works: z.array(z.coerce.number().int().positive()),
+  tags: z.array(z.coerce.number().int().positive()),
+  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<TallyMeasure>),
+  startDate: zDateStr(),
+  endDate: zDateStr(),
+}).partial();
 
 export type TallyQuery = z.infer<typeof zTallyQuery>;
 
@@ -30,6 +33,12 @@ export async function handleGetTallies(req: RequestWithUser, res: ApiResponse<Ta
     where: {
       ownerId: req.user.id,
       state: TALLY_STATE.ACTIVE,
+
+      measure: query.measure ?? undefined,
+      date: {
+        gte: query.startDate ?? undefined,
+        lte: query.endDate ?? undefined,
+      },
       workId: query.works ? { in: query.works } : undefined,
       tags: query.tags ? { some: { id: { in: query.tags } } } : undefined,
     },
