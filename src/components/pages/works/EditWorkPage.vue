@@ -9,7 +9,7 @@ const router = useRouter();
 import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
 
-import { getWork, deleteCover, type Work } from 'src/lib/api/work.ts';
+import { deleteCover, type Work } from 'src/lib/api/work.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import EditWorkForm from 'src/components/work/EditWorkForm.vue';
@@ -33,34 +33,24 @@ watch(() => route.params.workId, newId => {
 });
 
 const work = ref<Work | null>(null);
-
-const breadcrumbs = computed(() => {
-  const crumbs: MenuItem[] = [
-    { label: 'Projects', url: '/works' },
-    { label: work.value === null ? 'Loading...' : work.value.title, url: `/works/${workId.value}` },
-    { label: work.value === null ? 'Loading...' : 'Edit', url: `/works/${workId.value}/edit` },
-  ];
-  return crumbs;
-});
-
-const isUploadFormVisible = ref<boolean>(false);
-
-const isLoading = ref<boolean>(false);
-const errorMessage = ref<string | null>(null);
+const isWorkLoading = ref<boolean>(false);
+const workErrorMessage = ref<string | null>(null);
 const loadWork = async function() {
-  isLoading.value = true;
-  errorMessage.value = null;
+  isWorkLoading.value = true;
+  workErrorMessage.value = null;
 
   try {
-    const result = await getWork(workId.value);
-    work.value = result;
+    await workStore.populate();
+    work.value = workStore.get(workId.value);
   } catch(err) {
-    errorMessage.value = err.message;
+    workErrorMessage.value = err.message;
     router.push('/works');
   } finally {
-    isLoading.value = false;
+    isWorkLoading.value = false;
   }
 }
+
+const isUploadFormVisible = ref<boolean>(false);
 
 const eventBus = useEventBus<{ work: Work }>('work:cover');
 const handleRemoveCover = function(ev) {
@@ -77,6 +67,15 @@ const handleRemoveCover = function(ev) {
     },
   })
 };
+
+const breadcrumbs = computed(() => {
+  const crumbs: MenuItem[] = [
+    { label: 'Projects', url: '/works' },
+    { label: work.value === null ? 'Loading...' : work.value.title, url: `/works/${workId.value}` },
+    { label: work.value === null ? 'Loading...' : 'Edit', url: `/works/${workId.value}/edit` },
+  ];
+  return crumbs;
+});
 
 onMounted(() => loadWork());
 

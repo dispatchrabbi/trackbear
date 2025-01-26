@@ -5,6 +5,7 @@ import { RouterLink } from 'vue-router';
 import { useGoalStore } from 'src/stores/goal.ts';
 const goalStore = useGoalStore();
 
+import { type GoalWithAchievement } from 'server/api/v1/goal';
 import { cmpGoalByCompletion } from 'src/lib/goal.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
@@ -93,7 +94,7 @@ onMounted(async () => {
       class="mb-2"
     >
       <RouterLink :to="{ name: 'goal', params: { goalId: goal.id } }">
-        <GoalTile :goal="goal" />
+        <GoalTile :goal="goal as GoalWithAchievement" />
       </RouterLink>
     </div>
   </ApplicationLayout>

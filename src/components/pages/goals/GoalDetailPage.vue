@@ -35,14 +35,6 @@ watch(() => route.params.goalId, newId => {
   }
 });
 
-const breadcrumbs = computed(() => {
-  const crumbs: MenuItem[] = [
-    { label: 'Goals', url: '/goals' },
-    { label: goal.value === null ? 'Loading...' : goal.value.title, url: `/goals/${goalId.value}` },
-  ];
-  return crumbs;
-});
-
 const isDeleteFormVisible = ref<boolean>(false);
 
 const goal = ref<Goal | null>(null);
@@ -101,6 +93,14 @@ async function reloadData() {
   await loadTallies();
 }
 
+const breadcrumbs = computed(() => {
+  const crumbs: MenuItem[] = [
+    { label: 'Goals', url: '/goals' },
+    { label: goal.value === null ? 'Loading...' : goal.value.title, url: `/goals/${goalId.value}` },
+  ];
+  return crumbs;
+});
+
 onMounted(async () => {
   useEventBus<{ tally: Tally }>('tally:create').on(loadTallies);
   useEventBus<{ tally: Tally }>('tally:edit').on(loadTallies);
@@ -116,7 +116,7 @@ onMounted(async () => {
     :breadcrumbs="breadcrumbs"
   >
     <div
-      v-if="goal"
+      v-if="goal && !isTalliesLoading"
       class="max-w-screen-md"
     >
       <DetailPageHeader

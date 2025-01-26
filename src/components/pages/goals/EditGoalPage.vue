@@ -26,7 +26,7 @@ watch(() => route.params.goalId, newId => {
 });
 
 const goal = ref<Goal | null>(null);
-  const isGoalLoading = ref<boolean>(false);
+const isGoalLoading = ref<boolean>(false);
 const goalErrorMessage = ref<string | null>(null);
 const loadGoal = async function() {
   isGoalLoading.value = true;
@@ -34,7 +34,7 @@ const loadGoal = async function() {
 
   try {
     await goalStore.populate();
-    goal.value = goalStore.get(+goalId.value);
+    goal.value = goalStore.get(goalId.value);
   } catch(err) {
     goalErrorMessage.value = err.message;
     // the ApplicationLayout takes care of this. Otherwise, this will redirect to /goals before ApplicationLayout

@@ -9,8 +9,8 @@ const router = useRouter();
 import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
 
-import { getWork, type WorkWithTallies } from 'src/lib/api/work.ts';
-import type { Tally } from 'src/lib/api/tally.ts';
+import { type Work } from 'src/lib/api/work.ts';
+import { type TallyWithWorkAndTags, type Tally, getTallies } from 'src/lib/api/tally.ts';
 
 import { PrimeIcons } from 'primevue/api';
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
@@ -31,12 +31,61 @@ watch(
   newId => {
     if(newId !== undefined) {
       workId.value = +newId;
-      reloadWorks(); // this isn't a great pattern - it should get changed
+      reloadData(); // this isn't a great pattern - it should get changed
     }
   }
 );
 
-const work = ref<WorkWithTallies | null>(null);
+const isDeleteFormVisible = ref<boolean>(false);
+const isCoverFormVisible = ref<boolean>(false);
+
+const work = ref<Work | null>(null);
+const isWorkLoading = ref<boolean>(false);
+const workErrorMessage = ref<string | null>(null);
+const loadWork = async function() {
+  isWorkLoading.value = true;
+  workErrorMessage.value = null;
+
+  try {
+    await workStore.populate();
+    work.value = workStore.get(+workId.value);
+  } catch(err) {
+    workErrorMessage.value = err.message;
+    // the ApplicationLayout takes care of this. Otherwise, this will redirect to /works before ApplicationLayout
+    // can redirect to /login.
+    // TODO: figure out a better way to ensure that there's no race condition here
+    if(err.code !== 'NOT_LOGGED_IN') {
+      router.push({ name: 'works' });
+    }
+  } finally {
+    isWorkLoading.value = false;
+  }
+}
+
+const tallies = ref<TallyWithWorkAndTags[]>([]);
+const isTalliesLoading = ref<boolean>(false);
+const talliesErrorMessage = ref<string | null>(null);
+const loadTallies = async function () {
+  isTalliesLoading.value = true;
+  talliesErrorMessage.value = null;
+
+  try {
+    const talliesForWork = await getTallies({
+      works: [work.value.id],
+    });
+
+    tallies.value = talliesForWork;
+  } catch(err) {
+    talliesErrorMessage.value = err.message;
+  } finally {
+    isTalliesLoading.value = false;
+  }
+}
+
+const reloadData = async function() {
+  await loadWork();
+  await loadTallies();
+}
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
@@ -46,41 +95,12 @@ const breadcrumbs = computed(() => {
   return crumbs;
 });
 
-const isDeleteFormVisible = ref<boolean>(false);
-const isCoverFormVisible = ref<boolean>(false);
+onMounted(async () => {
+  useEventBus<{ tally: Tally }>('tally:create').on(loadTallies);
+  useEventBus<{ tally: Tally }>('tally:edit').on(loadTallies);
+  useEventBus<{ tally: Tally }>('tally:delete').on(loadTallies);
 
-const isLoading = ref<boolean>(false);
-const errorMessage = ref<string | null>(null);
-const loadWork = async function() {
-  isLoading.value = true;
-  errorMessage.value = null;
-
-  try {
-    work.value = await getWork(+workId.value);
-  } catch(err) {
-    errorMessage.value = err.message;
-    // the ApplicationLayout takes care of this. Otherwise, this will redirect to /works before ApplicationLayout
-    // can redirect to /login.
-    // TODO: figure out a better way to ensure that there's no race condition here
-    if(err.code !== 'NOT_LOGGED_IN') {
-      router.push({ name: 'works' });
-    }
-  } finally {
-    isLoading.value = false;
-  }
-}
-
-const reloadWorks = async function() {
-  workStore.populate(true);
-  loadWork();
-}
-
-onMounted(() => {
-  useEventBus<{ tally: Tally }>('tally:create').on(reloadWorks);
-  useEventBus<{ tally: Tally }>('tally:edit').on(reloadWorks);
-  useEventBus<{ tally: Tally }>('tally:delete').on(reloadWorks);
-
-  loadWork();
+  await reloadData();
 });
 
 </script>
@@ -90,7 +110,7 @@ onMounted(() => {
     :breadcrumbs="breadcrumbs"
   >
     <div
-      v-if="work"
+      v-if="work && !isTalliesLoading"
       class="max-w-screen-md"
     >
       <DetailPageHeader
@@ -116,24 +136,24 @@ onMounted(() => {
         </template>
       </DetailPageHeader>
       <div
-        v-if="work.tallies.length > 0"
+        v-if="tallies.length > 0"
         class="flex flex-col gap-2 max-w-screen-md"
       >
         <div class="w-full">
           <ActivityHeatmap
-            :tallies="work.tallies"
+            :tallies="tallies"
           />
         </div>
         <div class="w-full">
           <WorkTallyLineChart
             :work="work"
-            :tallies="work.tallies"
+            :tallies="tallies"
           />
         </div>
         <div class="w-full">
           <WorkTallyDataTable
             :work="work"
-            :tallies="work.tallies"
+            :tallies="tallies"
           />
         </div>
       </div>
