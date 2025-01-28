@@ -137,7 +137,7 @@ export function streakColors(streakLength) {
   }
 }
 
-export function filterTalliesForWorksAndTags(tallies: TallyWithWorkAndTags[], workIds: number[], tagIds: number[]) {
+export function filterTallies(tallies: TallyWithWorkAndTags[], workIds: number[], tagIds: number[], startDate: string | null, endDate: string | null) {
   const workFilterFn: (tallyWorkId: number) => boolean = workIds.length > 0 ?
     (tallyWorkId: number) => workIds.includes(tallyWorkId) :
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -148,5 +148,20 @@ export function filterTalliesForWorksAndTags(tallies: TallyWithWorkAndTags[], wo
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (tallyTagIds: number[]) => true; // do not filter by tags if no tagIds are specified
 
-  return tallies.filter(tally => workFilterFn(tally.workId) && tagFilterFn(tally.tags.map(tag => tag.id)));
+  const startDateFilterFn: (tallyDate: string) => boolean = startDate === null ?
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (tallyDate: string) => true :
+    (tallyDate: string) => tallyDate >= startDate;
+  
+  const endDateFilterFn: (tallyDate: string) => boolean = endDate === null ?
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (tallyDate: string) => true :
+    (tallyDate: string) => tallyDate <= endDate;
+
+  return tallies.filter(tally => (
+    workFilterFn(tally.workId) &&
+    tagFilterFn(tally.tags.map(tag => tag.id)) &&
+    startDateFilterFn(tally.date) &&
+    endDateFilterFn(tally.date)
+  ));
 }

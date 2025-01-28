@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Goals on the Dashboard now show progress correctly bounded by the start and end dates of the goals. (h/t EtluYume, Elluna)
+
 ## 1.1.13
 
 - FIXED: The current and new passwords in the Change Password section of the Account page now clear after you successfully change your password.

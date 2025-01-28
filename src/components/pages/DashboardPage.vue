@@ -22,7 +22,7 @@ import ActivityHeatmap from 'src/components/dashboard/ActivityHeatmap.vue';
 import StreakCounter from 'src/components/dashboard/StreakCounter.vue';
 import HabitGoalStatus from '../dashboard/HabitGoalStatus.vue';
 import TargetGoalStatus from '../dashboard/TargetGoalStatus.vue';
-import { filterTalliesForWorksAndTags } from 'src/lib/tally';
+import { filterTallies } from 'src/lib/tally';
 import { HabitGoal, TargetGoal } from 'server/lib/models/goal/types';
 
 const breadcrumbs: MenuItem[] = [
@@ -96,7 +96,10 @@ onMounted(async () => {
       >
         <UnverifiedEmailMessage />
       </div>
-      <div class="flex gap-4 flex-wrap items-top">
+      <div
+        v-if="!(allTalliesIsLoading || goalsIsLoading)"
+        class="flex gap-4 flex-wrap items-top"
+      >
         <div class="flex-grow">
           <SectionTitle title="Activity" />
           <ActivityHeatmap
@@ -110,20 +113,24 @@ onMounted(async () => {
           />
         </div>
       </div>
+      <div v-if="allTalliesIsLoading || goalsIsLoading">
+        Loading dashboard...
+      </div>
       <div
         v-for="goal of goalStore.starredGoals"
+        v-else
         :key="goal.id"
         class="mt-4"
       >
         <HabitGoalStatus
           v-if="goal.type === GOAL_TYPE.HABIT"
           :goal="goal as HabitGoal"
-          :tallies="filterTalliesForWorksAndTags(allTallies, goal.workIds, goal.tagIds)"
+          :tallies="filterTallies(allTallies, goal.workIds, goal.tagIds, goal.startDate, goal.endDate)"
         />
         <TargetGoalStatus
           v-if="goal.type === GOAL_TYPE.TARGET"
           :goal="goal as TargetGoal"
-          :tallies="filterTalliesForWorksAndTags(allTallies, goal.workIds, goal.tagIds)"
+          :tallies="filterTallies(allTallies, goal.workIds, goal.tagIds, goal.startDate, goal.endDate)"
         />
       </div>
     </div>
