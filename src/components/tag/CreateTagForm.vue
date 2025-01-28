@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { ref, reactive, computed, defineEmits } from 'vue';
+import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 
+import { useTagStore } from 'src/stores/tag.ts';
+const tagStore = useTagStore();
+tagStore.populate();
+
 import { z } from 'zod';
-import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { createTag, TagCreatePayload } from 'src/lib/api/tag.ts';
+import { createTag, type Tag, type TagCreatePayload } from 'src/lib/api/tag.ts';
 import { TAG_COLORS, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts';
 // import { TAG_COLOR_CLASSES } from 'src/components/tag/tag-color-classes.ts';
 
@@ -20,6 +24,7 @@ import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import { PrimeIcons } from 'primevue/api';
 
 const emit = defineEmits(['tag:create', 'formSuccess']);
+const eventBus = useEventBus<{ tag: Tag }>('tag:create');
 
 const formModel = reactive({
   name: '',
@@ -30,7 +35,8 @@ const validations = z.object({
   name: z.string()
     .min(1, { message: 'Please enter a tag name.' })
     .regex(/^[^#]/, { message: 'There is no need to type the #.'}),
-  color: z.enum(TAG_COLORS as NonEmptyArray<typeof TAG_COLORS[number]>, { required_error: 'Please pick a color.'}),
+    // TODO: add something that disallows current tag names
+  color: z.enum(TAG_COLORS, { required_error: 'Please pick a color.'}),
 });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
@@ -53,10 +59,12 @@ async function handleSubmit() {
 
   try {
     const data = formData();
-    const updatedTag = await createTag(data as TagCreatePayload);
+    const createdTag = await createTag(data as TagCreatePayload);
 
-    emit('tag:create', { tag: updatedTag });
-    successMessage.value = `#${updatedTag.name} has been created.`;
+    emit('tag:create', { tag: createdTag });
+    eventBus.emit({ tag: createdTag });
+
+    successMessage.value = `#${createdTag.name} has been created.`;
     await wait(1 * 1000);
     emit('formSuccess');
   } catch(err) {

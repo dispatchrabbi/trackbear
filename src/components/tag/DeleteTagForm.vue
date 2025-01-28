@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { ref, reactive, defineProps, defineEmits } from 'vue';
+import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
+
+import { useTagStore } from 'src/stores/tag.ts';
+const tagStore = useTagStore();
+tagStore.populate();
 
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
-import { deleteTag, Tag } from 'src/lib/api/tag.ts';
+import { deleteTag, type Tag } from 'src/lib/api/tag.ts';
 
 import InputText from 'primevue/inputtext';
 import TbForm from 'src/components/form/TbForm.vue';
@@ -15,6 +20,7 @@ const props = defineProps<{
   tag: Tag;
 }>();
 const emit = defineEmits(['tag:delete', 'formSuccess']);
+const eventBus = useEventBus<{ tag: Tag }>('tag:delete');
 
 const formModel = reactive({
   deleteConfirmation: '',
@@ -42,8 +48,11 @@ async function handleSubmit() {
     const deletedTag = await deleteTag(props.tag.id);
 
     emit('tag:delete', { work: deletedTag });
+    eventBus.emit({ tag: deletedTag });
+
     successMessage.value = `${deletedTag.name} has been deleted.`;
     await wait(1 * 1000);
+    
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not delete the tag: something went wrong server-side.';

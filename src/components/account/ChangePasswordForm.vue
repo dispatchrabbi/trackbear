@@ -34,7 +34,10 @@ async function handleSubmit() {
   try {
     const { currentPassword, newPassword } = formData();
     await changePassword(currentPassword, newPassword);
+    
     successMessage.value = 'Your password has been changed!';
+    formModel.currentPassword = '';
+    formModel.newPassword = '';
   } catch(err) {
     if(err.code === 'VALIDATION_FAILED') {
       errorMessage.value = err.message;

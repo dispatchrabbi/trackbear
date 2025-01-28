@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
-import { getTags, Tag } from 'src/lib/api/tag.ts';
+import { useTagStore } from 'src/stores/tag.ts';
+const tagStore = useTagStore();
+
+import { type Tag } from 'src/lib/api/tag.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
@@ -16,24 +19,20 @@ import Dialog from 'primevue/dialog';
 
 import type { MenuItem } from 'primevue/menuitem';
 import { PrimeIcons } from 'primevue/api';
+
 const breadcrumbs: MenuItem[] = [
   { label: 'Account' },
   { label: 'Tags', url: '/account/tags' },
 ];
 
-const tags = ref<Tag[]>(null);
 const errorMessage = ref<string | null>(null);
 async function loadTags() {
   try {
-    tags.value = await getTags();
+    await tagStore.populate();
   } catch {
     errorMessage.value = 'Could not get tags; something went wrong server-side.';
   }
 }
-
-const sortedTags = computed(() => {
-  return tags.value.toSorted((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
-});
 
 const isCreateFormVisible = ref<boolean>(false);
 
@@ -49,7 +48,9 @@ const isDeleteFormVisible = computed({
   set: () => currentlyDeletingTag.value = null, // nothing sensible to set it to unless it's null
 });
 
-loadTags();
+onMounted(async () => {
+  await loadTags();
+});
 
 </script>
 
@@ -63,14 +64,14 @@ loadTags();
       {{ errorMessage }}
     </div>
     <div
-      v-if="tags"
+      v-if="tagStore.tags"
       class="flex flex-col justify-center"
     >
       <SectionTitle
         title="Tags"
       />
       <DataTable
-        :value="sortedTags"
+        :value="tagStore.allTags"
         data-key="id"
       >
         <Column
