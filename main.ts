@@ -100,7 +100,7 @@ async function main() {
   // the combination of maxAge: 2 days & rolling: true means that you'll get logged out if you don't do _something_ every 2 days
   app.use(session({
     cookie: {
-      maxAge: 2 * 24 * 60 * 60 * 1000, // in ms
+      maxAge: (7 + 1) * 24 * 60 * 60 * 1000, // 7 days + 1 grace day in ms
       secure: true,
       sameSite: 'strict',
     },
@@ -110,7 +110,7 @@ async function main() {
     saveUninitialized: false,
     rolling: true,
     store: new PrismaSessionStore(dbClient, {
-      checkPeriod: 2 * 60 * 1000, // in ms, how often to delete expired sessions
+      checkPeriod: 2 * 60 * 1000, // 2 minutes in ms, how often to delete expired sessions
       dbRecordIdIsSessionId: true,
       dbRecordIdFunction: undefined,
     }),

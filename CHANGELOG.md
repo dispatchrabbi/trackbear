@@ -12,10 +12,11 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-## 1.1.12
+## 1.1.13
 
 - FIXED: The current and new passwords in the Change Password section of the Account page now clear after you successfully change your password.
 - CHANGED: A lot of behind-the-scenes things to hopefully make things a bit smoother and faster, and to prepare the backend for use via API key. More backend work to come, which should make it much easier to build in some of the most-requested feature requests (especially with regards to leaderboards).
+- SECURITY: TrackBear will no longer log you out unless you haven't visited for a whole week. If you get one day a week to write, this one's for you! (h/t Robot)
 
 ## 1.1.11
 
