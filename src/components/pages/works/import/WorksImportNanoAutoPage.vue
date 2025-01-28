@@ -252,8 +252,8 @@ async function importNanoProject(target: ImportTarget) {
       },
       startDate: challenge.startDate,
       endDate: challenge.endDate,
-      works: [ result.tbId ],
-      tags: [],
+      workIds: [ result.tbId ],
+      tagIds: [],
     }));
     await Promise.all(batchGoalPayload.map(payload => createGoal(payload)));
 

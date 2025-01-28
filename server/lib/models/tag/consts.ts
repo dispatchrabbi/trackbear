@@ -19,3 +19,7 @@ export const TAG_COLORS = [
 export type TagColor = typeof TAG_COLORS[number];
 
 export const TAG_DEFAULT_COLOR: TagColor = 'default';
+
+export function isTagColor(possibleTagColor: string): possibleTagColor is TagColor {
+  return TAG_COLORS.includes(possibleTagColor as TagColor);
+}

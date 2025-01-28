@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, defineProps, defineEmits } from 'vue';
 import { useEventBus } from '@vueuse/core';
-import { type ExtendedBoard, type Board, starBoard } from 'src/lib/api/board.ts';
+import { type BoardWithParticipantBios, type Board, starBoard } from 'src/lib/api/board.ts';
 
 const props = defineProps<{
-  board: ExtendedBoard;
+  board: BoardWithParticipantBios;
 }>();
 
 const emit = defineEmits(['board:star']);

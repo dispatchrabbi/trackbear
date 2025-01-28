@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 
-import type { Board, ParticipantWithTallies } from 'src/lib/api/board.ts';
+import type { Board, FullParticipant } from 'src/lib/api/board.ts';
 import { TallyMeasure } from "server/lib/models/tally/consts";
 import { formatCountValue, formatCountCounter } from 'src/lib/tally.ts'; // TODO: change percentage to formatted count? or both?
 
@@ -9,7 +9,7 @@ import StatTile from '../goal/StatTile.vue';
 
 const props = defineProps<{
   board: Board;
-  participants: ParticipantWithTallies[];
+  participants: FullParticipant[];
   measure: TallyMeasure;
 }>();
 

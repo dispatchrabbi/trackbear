@@ -3,7 +3,7 @@ import { computed, defineProps } from 'vue';
 
 import type { Goal } from 'src/lib/api/goal.ts';
 import type { HabitGoalParameters } from 'server/lib/models/goal/types';
-import type { HabitRange } from 'server/lib/models/goal/consts';
+import type { HabitRange } from 'server/lib/models/goal/helpers';
 import { formatDateRange } from 'src/lib/date.ts';
 import { formatCount } from 'src/lib/tally';
 

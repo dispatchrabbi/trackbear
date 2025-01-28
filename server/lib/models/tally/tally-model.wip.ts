@@ -64,8 +64,8 @@ export class TallyModel {
   }
 
   @traced
-  static async createTally(owner: User, data: TallyData, reqCtx: RequestContext): Promise<Tally> {
-
+  static async createTally(/*owner: User, data: TallyData, reqCtx: RequestContext*/): Promise<Tally> {
+    return null;
   }
 
   // TODO: move this to a batch creation domain
@@ -97,8 +97,8 @@ export class TallyModel {
   }
 
   @traced
-  static async updateTally(owner: User, tally: Tally, data: Partial<TallyData>, reqCtx: RequestContext): Promise<Tally> {
-
+  static async updateTally(/*owner: User, tally: Tally, data: Partial<TallyData>, reqCtx: RequestContext*/): Promise<Tally> {
+    return null;
   }
 
   @traced

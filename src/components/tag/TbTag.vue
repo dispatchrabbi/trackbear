@@ -2,7 +2,7 @@
 import { computed, defineProps } from 'vue';
 
 import { Tag } from 'src/lib/api/tag.ts';
-import { TAG_COLORS, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts';
+import { isTagColor, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts';
 import { TAG_COLOR_CLASSES } from 'src/components/tag/tag-color-classes.ts';
 
 import Chip from 'primevue/chip';
@@ -21,7 +21,7 @@ const name = computed(() => {
 
 const color = computed(() => {
   const givenColor = props.color || props.tag.color;
-  return TAG_COLORS.includes(givenColor) ? givenColor : TAG_DEFAULT_COLOR;
+  return isTagColor(givenColor) ? givenColor : TAG_DEFAULT_COLOR;
 });
 </script>
 

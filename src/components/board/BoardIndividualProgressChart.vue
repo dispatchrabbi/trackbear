@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 
-import type { Board, ParticipantWithTallies } from 'src/lib/api/board.ts';
+import type { Board, FullParticipant } from 'src/lib/api/board.ts';
 
 import { normalizeTallies, accumulateTallies, listEachDayOfData } from '../chart/chart-functions.ts';
 
@@ -11,7 +11,7 @@ import { formatPercent } from 'src/lib/number.ts';
 
 const props = defineProps<{
   board: Board;
-  participants: ParticipantWithTallies[];
+  participants: FullParticipant[];
 }>();
 
 const isFundraiserMode = computed(() => {

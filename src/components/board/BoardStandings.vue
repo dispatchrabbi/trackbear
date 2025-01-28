@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
-import type { Board, ParticipantWithTallies } from 'src/lib/api/board.ts';
+import type { Board, FullParticipant } from 'src/lib/api/board.ts';
 
 import { differenceInCalendarDays } from 'date-fns';
 
@@ -16,11 +16,11 @@ import { formatPercent } from 'src/lib/number.ts';
 
 const props = defineProps<{
   board: Board;
-  participants: ParticipantWithTallies[];
+  participants: FullParticipant[];
   measure: TallyMeasure | 'percent';
 }>();
 
-const getMeasure = function(participant: ParticipantWithTallies): TallyMeasure {
+const getMeasure = function(participant: FullParticipant): TallyMeasure {
   return props.measure === 'percent' ? participant.goal.measure : props.measure;
 };
 

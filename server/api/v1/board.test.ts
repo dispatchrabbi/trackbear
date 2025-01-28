@@ -9,9 +9,14 @@ import dbClientMock from '../../lib/__mocks__/db.ts';
 vi.mock('../../lib/audit-events.ts', { spy: true });
 import { logAuditEventMock } from '../../lib/__mocks__/audit-events.ts';
 
-import * as boardModel from "../../lib/models/board-wip/consts.ts";
+import * as boardConsts from "../../lib/models/board-wip/consts.ts";
+import type { BoardWithParticipantBios, FullBoard, FullParticipant, BoardWithParticipants } from "../../lib/models/board-wip/types.ts";
 
-import { handleGetBoards, handleGetBoard, handleCreateBoard, handleUpdateBoard, handleStarBoard, handleDeleteBoard, handleGetBoardParticipation, handleUpdateBoardParticipation, handleDeleteBoardParticipation } from './board';
+import {
+  handleGetBoards, handleGetBoard,
+  handleCreateBoard, handleUpdateBoard, handleStarBoard, handleDeleteBoard,
+  handleGetBoardParticipation, handleUpdateBoardParticipation, handleDeleteBoardParticipation
+} from './board';
 
 describe('board api v1', () => {
   afterEach(() => {
@@ -20,15 +25,15 @@ describe('board api v1', () => {
 
   describe('getBoards', () => {
     it('returns boards', async () => {
-      vi.spyOn(boardModel, 'getExtendedBoardsForUser').mockResolvedValue([
-        mockObject<boardModel.ExtendedBoard>(),
-        mockObject<boardModel.ExtendedBoard>(),
+      vi.spyOn(boardConsts, 'getExtendedBoardsForUser').mockResolvedValue([
+        mockObject<BoardWithParticipantBios>(),
+        mockObject<BoardWithParticipantBios>(),
       ]);
   
       const { req, res } = getHandlerMocksWithUser();
       await handleGetBoards(req, res);
 
-      expect(boardModel.getExtendedBoardsForUser).toHaveBeenCalled();
+      expect(boardConsts.getExtendedBoardsForUser).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
@@ -36,7 +41,7 @@ describe('board api v1', () => {
 
   describe('getBoard', () => {
     it('returns a private board you own', async () => {
-      vi.spyOn(boardModel, 'getFullBoard').mockResolvedValue(mockObject<boardModel.FullBoard>({
+      vi.spyOn(boardConsts, 'getFullBoard').mockResolvedValue(mockObject<FullBoard>({
         ownerId: MOCK_USER_ID,
         isPublic: false,
       }));
@@ -44,16 +49,16 @@ describe('board api v1', () => {
       const { req, res } = getHandlerMocksWithUser({ params: { uuid: NIL_UUID } });
       await handleGetBoard(req, res);
 
-      expect(boardModel.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
+      expect(boardConsts.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
 
     it('returns a private board you are part of', async () => {
-      vi.spyOn(boardModel, 'getFullBoard').mockResolvedValue(mockObject<boardModel.FullBoard>({
+      vi.spyOn(boardConsts, 'getFullBoard').mockResolvedValue(mockObject<FullBoard>({
         ownerId: MOCK_USER_ID + 1,
         isPublic: false,
-        participants: [mockObject<boardModel.ParticipantWithTallies>({ uuid: NIL_UUID })],
+        participants: [mockObject<FullParticipant>({ uuid: NIL_UUID })],
       }));
 
       const { req, res } = getHandlerMocksWithUser({
@@ -62,13 +67,13 @@ describe('board api v1', () => {
       });
       await handleGetBoard(req, res);
 
-      expect(boardModel.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
+      expect(boardConsts.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
 
     it(`returns a public board you don't own`, async () => {
-      vi.spyOn(boardModel, 'getFullBoard').mockResolvedValue(mockObject<boardModel.FullBoard>({
+      vi.spyOn(boardConsts, 'getFullBoard').mockResolvedValue(mockObject<FullBoard>({
         ownerId: MOCK_USER_ID + 1,
         isPublic: true,
       }));
@@ -76,13 +81,13 @@ describe('board api v1', () => {
       const { req, res } = getHandlerMocksWithUser({ params: { uuid: NIL_UUID } });
       await handleGetBoard(req, res);
 
-      expect(boardModel.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
+      expect(boardConsts.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
 
     it(`will not return a private board you aren't in and can't join`, async () => {
-      vi.spyOn(boardModel, 'getFullBoard').mockResolvedValue(mockObject<boardModel.FullBoard>({
+      vi.spyOn(boardConsts, 'getFullBoard').mockResolvedValue(mockObject<FullBoard>({
         ownerId: MOCK_USER_ID + 1,
         isPublic: false,
         isJoinable: false,
@@ -92,13 +97,13 @@ describe('board api v1', () => {
       const { req, res } = getHandlerMocksWithUser({ params: { uuid: NIL_UUID } });
       await handleGetBoard(req, res);
 
-      expect(boardModel.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
+      expect(boardConsts.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.send).toHaveBeenCalled();
     });
 
     it(`will tell you to join a private board you aren't in but can join`, async () => {
-      vi.spyOn(boardModel, 'getFullBoard').mockResolvedValue(mockObject<boardModel.FullBoard>({
+      vi.spyOn(boardConsts, 'getFullBoard').mockResolvedValue(mockObject<FullBoard>({
         ownerId: MOCK_USER_ID + 1,
         isPublic: false,
         isJoinable: true,
@@ -108,7 +113,7 @@ describe('board api v1', () => {
       const { req, res } = getHandlerMocksWithUser({ params: { uuid: NIL_UUID } });
       await handleGetBoard(req, res);
 
-      expect(boardModel.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
+      expect(boardConsts.getFullBoard).toHaveBeenCalledWith(NIL_UUID);
       expect(res.status).toHaveBeenCalledWith(428);
       expect(res.send).toHaveBeenCalled();
     });
@@ -200,12 +205,12 @@ describe('board api v1', () => {
 
   describe('getBoardParticipation', () => {
     it('gets information about a board', async () => {
-      vi.spyOn(boardModel, 'getBoardParticipationForUser').mockResolvedValue(mockObject<boardModel.BoardWithParticipants>());
+      vi.spyOn(boardConsts, 'getBoardParticipationForUser').mockResolvedValue(mockObject<BoardWithParticipants>());
   
       const { req, res } = getHandlerMocksWithUser();
       await handleGetBoardParticipation(req, res);
 
-      expect(boardModel.getBoardParticipationForUser).toHaveBeenCalled();
+      expect(boardConsts.getBoardParticipationForUser).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });

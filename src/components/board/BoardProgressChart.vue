@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 
-import type { Board, ParticipantWithTallies } from 'src/lib/api/board.ts';
+import type { Board, FullParticipant } from 'src/lib/api/board.ts';
 
 import { normalizeTallies, accumulateTallies, listEachDayOfData } from '../chart/chart-functions.ts';
 import { TallyMeasure } from 'server/lib/models/tally/consts.ts';
@@ -12,7 +12,7 @@ import LineChart from '../chart/LineChart.vue';
 
 const props = defineProps<{
   board: Board;
-  participants: ParticipantWithTallies[];
+  participants: FullParticipant[];
   measure: TallyMeasure;
 }>();
 
