@@ -311,7 +311,6 @@ onMounted(() => {
         </template>
         <LeaveBoardForm
           :board="board"
-          @board:leave="boardStore.populate(true)"
           @form-success="router.push({ name: 'boards' })"
         />
       </Dialog>
@@ -327,7 +326,6 @@ onMounted(() => {
         </template>
         <DeleteBoardForm
           :board="board"
-          @board:delete="boardStore.populate(true)"
           @form-success="router.push({ name: 'boards' })"
         />
       </Dialog>

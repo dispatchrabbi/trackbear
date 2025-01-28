@@ -5,8 +5,8 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
-import { useBoardStore } from 'src/stores/board.ts';
-const boardStore = useBoardStore();
+// import { useBoardStore } from 'src/stores/board.ts';
+// const boardStore = useBoardStore();
 
 import { getBoardParticipation, BoardWithParticipants } from 'src/lib/api/board.ts';
 
@@ -84,7 +84,6 @@ onMounted(async () => {
           <EditBoardParticipationForm
             :board="board"
             :participant="board.participants[0] ?? null"
-            @board:edit-participation="boardStore.populate(true)"
             @form-success="router.push({ name: 'board', params: { boardUuid: board.uuid } })"
             @form-cancel="board.isPublic ? router.push({ name: 'board', params: { boardUuid: board.uuid } }) : router.push({ name: 'boards' })"
           />

@@ -172,7 +172,6 @@ onMounted(async () => {
         </template>
         <DeleteWorkForm
           :work="work"
-          @work:delete="workStore.populate(true)"
           @form-success="router.push('/works')"
         />
       </Dialog>

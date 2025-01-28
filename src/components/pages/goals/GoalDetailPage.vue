@@ -189,7 +189,6 @@ onMounted(async () => {
         </template>
         <DeleteGoalForm
           :goal="goal as Goal"
-          @goal:delete="goalStore.populate(true)"
           @form-success="router.push('/goals')"
         />
       </Dialog>

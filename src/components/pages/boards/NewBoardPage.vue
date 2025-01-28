@@ -2,9 +2,6 @@
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import { useBoardStore } from 'src/stores/board.ts';
-const boardStore = useBoardStore();
-
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import type { MenuItem } from 'primevue/menuitem';
@@ -31,7 +28,6 @@ const breadcrumbs: MenuItem[] = [
       </template>
       <template #content>
         <CreateBoardForm
-          @board:create="boardStore.populate(true)"
           @form-success="router.push('/leaderboards')"
           @form-cancel="router.push('/leaderboards')"
         />

@@ -35,12 +35,16 @@ watch(() => route.params.workId, newId => {
 const work = ref<Work | null>(null);
 const isWorkLoading = ref<boolean>(false);
 const workErrorMessage = ref<string | null>(null);
-const loadWork = async function() {
+const loadWork = async function(force = false) {
   isWorkLoading.value = true;
   workErrorMessage.value = null;
 
   try {
-    await workStore.populate();
+    // we have to force a populate here because there's a race condition between
+    // the populate that happens after a cover is uploaded and the workStore.get()
+    // here. So we need the await to guarantee that a force-populate has happened.
+    // Not the best, but it'll work for now.
+    await workStore.populate(force);
     work.value = workStore.get(workId.value);
   } catch(err) {
     workErrorMessage.value = err.message;
@@ -95,7 +99,6 @@ onMounted(() => loadWork());
       >
         <EditWorkForm
           :work="work"
-          @work:update="workStore.populate(true)"
           @form-success="router.push(`/works/${work.id}`)"
           @form-cancel="router.push(`/works/${work.id}`)"
         />
@@ -135,7 +138,7 @@ onMounted(() => loadWork());
           </template>
           <UploadCoverForm
             :work="work"
-            @work:cover="() => loadWork()"
+            @work:cover="() => loadWork(true)"
             @form-success="isUploadFormVisible = false"
           />
         </Dialog>

@@ -5,8 +5,8 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
-import { useBoardStore } from 'src/stores/board.ts';
-const boardStore = useBoardStore();
+// import { useBoardStore } from 'src/stores/board.ts';
+// const boardStore = useBoardStore();
 
 import { getBoard, Board } from 'src/lib/api/board.ts';
 
@@ -26,16 +26,6 @@ watch(() => route.params.boardUuid, newUuid => {
 });
 
 const board = ref<Board | null>(null);
-
-const breadcrumbs = computed(() => {
-  const crumbs: MenuItem[] = [
-    { label: 'Leaderboards', url: '/leaderboards' },
-    { label: board.value === null ? 'Loading...' : board.value.title, url: `/leaderboards/${boardUuid.value}` },
-    { label: board.value === null ? 'Loading...' : 'Edit', url: `/leaderboards/${boardUuid.value}/edit` },
-    ];
-  return crumbs;
-});
-
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string | null>(null);
 const loadBoard = async function() {
@@ -52,6 +42,16 @@ const loadBoard = async function() {
     isLoading.value = false;
   }
 }
+
+const breadcrumbs = computed(() => {
+  const crumbs: MenuItem[] = [
+    { label: 'Leaderboards', url: '/leaderboards' },
+    { label: board.value === null ? 'Loading...' : board.value.title, url: `/leaderboards/${boardUuid.value}` },
+    { label: board.value === null ? 'Loading...' : 'Edit', url: `/leaderboards/${boardUuid.value}/edit` },
+    ];
+  return crumbs;
+});
+
 
 onMounted(() => loadBoard());
 
@@ -71,7 +71,6 @@ onMounted(() => loadBoard());
       <template #content>
         <EditBoardForm
           :board="board"
-          @board:edit="boardStore.populate(true)"
           @form-success="router.push(`/leaderboards/${board.uuid}`)"
           @form-cancel="router.push(`/leaderboards/${board.uuid}`)"
         />

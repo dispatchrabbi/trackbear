@@ -1,18 +1,18 @@
 import { callApiV1 } from "./api.ts";
 
 import type { BoardParticipant } from "@prisma/client";
-import type { Board, FullBoard, ExtendedBoard, Participant, ParticipantWithTallies, ReducedTally, BoardGoal, BoardWithParticipants, ExtendedBoardParticipant } from "server/lib/models/board-wip/consts.ts";
+import type { Board, BoardWithParticipantBios, FullBoard, BoardGoal, BoardWithParticipants, ExtendedBoardParticipant } from "server/lib/models/board-wip/types.ts";
 import type { BoardCreatePayload, BoardUpdatePayload, BoardStarUpdatePayload, BoardStarUpdateResponse, BoardParticipantPayload } from "server/api/v1/board.ts";
 
 export type {
-  Board, FullBoard, ExtendedBoard, Participant, ParticipantWithTallies, ReducedTally, BoardWithParticipants, BoardGoal, BoardParticipant, ExtendedBoardParticipant,
+  Board, BoardWithParticipantBios, FullBoard, BoardWithParticipants, BoardGoal, BoardParticipant, ExtendedBoardParticipant,
   BoardCreatePayload, BoardUpdatePayload, BoardParticipantPayload, BoardStarUpdatePayload, BoardStarUpdateResponse,
 };
 
 const ENDPOINT = '/api/v1/board';
 
 export async function getBoards() {
-  return callApiV1<ExtendedBoard[]>(ENDPOINT, 'GET');
+  return callApiV1<BoardWithParticipantBios[]>(ENDPOINT, 'GET');
 }
 
 export async function getBoard(uuid: string) {

@@ -2,8 +2,8 @@
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import { useGoalStore } from 'src/stores/goal.ts';
-const goalStore = useGoalStore();
+// import { useGoalStore } from 'src/stores/goal.ts';
+// const goalStore = useGoalStore();
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
@@ -31,7 +31,6 @@ const breadcrumbs: MenuItem[] = [
       </template>
       <template #content>
         <CreateGoalForm
-          @goal:create="goalStore.populate(true)"
           @form-success="router.push('/goals')"
           @form-cancel="router.push('/goals')"
         />
