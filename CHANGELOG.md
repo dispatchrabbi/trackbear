@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.1.14
+
 - FIXED: Goals on the Dashboard now show progress correctly bounded by the start and end dates of the goals. (h/t EtluYume, Elluna)
 
 ## 1.1.13
