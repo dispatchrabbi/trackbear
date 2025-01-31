@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.1.15
+
 - NEW: Yearly totals have been added to the Lifetime Stats page. (h/t Deerna, azaleavalaine)
 - NEW: Added a setting to hide project covers, so that you don't have "grey bears staring into my soul every time I open that page" (as one user put it) if you don't intend to upload covers. (h/t Liv)
 - NEW: Added a setting to hide streaks on the Dashboard, which is useful if breaking a streak is a demotivator for you. (h/t Elodie)
