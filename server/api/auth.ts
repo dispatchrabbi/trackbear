@@ -29,16 +29,10 @@ const zLoginPayload = z.object({
 export async function handleLogin(req: Request, res: ApiResponse<User>) {
   const { username, password } = req.body;
 
-  let user: User;
-  try {
-    user = await UserModel.getUserByUsername(username);
-  } catch(err) {
-    if(err instanceof RecordNotFoundError) {
-      winston.info(`LOGIN: ${username} attempted to log in but does not exist`);
-      return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
-    } else {
-      throw err;
-    }
+  const user: User = await UserModel.getUserByUsername(username);
+  if(!user) {
+    winston.info(`LOGIN: ${username} attempted to log in but does not exist`);
+    return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
 
   // you can only log in if your user is active
