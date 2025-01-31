@@ -106,7 +106,7 @@ onMounted(async () => {
             :tallies="allTallies"
           />
         </div>
-        <div>
+        <div v-if="userStore.user.userSettings.displayStreaks">
           <SectionTitle title="Streaks" />
           <StreakCounter
             :tallies="allTallies"

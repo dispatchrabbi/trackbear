@@ -3,6 +3,9 @@ import { ref, computed, onMounted } from 'vue';
 import { useLocalStorage } from '@vueuse/core';
 import { RouterLink } from 'vue-router';
 
+import { useUserStore } from 'src/stores/user.ts';
+const userStore = useUserStore();
+
 import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
 
@@ -57,6 +60,7 @@ const filteredWorks = computed(() => {
 });
 
 onMounted(async () => {
+  await userStore.populate();
   await loadWorks();
 });
 
@@ -127,7 +131,10 @@ onMounted(async () => {
       class="mb-2"
     >
       <RouterLink :to="{ name: 'work', params: { workId: work.id } }">
-        <WorkTile :work="work" />
+        <WorkTile
+          :work="work"
+          :show-cover="userStore.user.userSettings.displayCovers"
+        />
       </RouterLink>
     </div>
     <Dialog

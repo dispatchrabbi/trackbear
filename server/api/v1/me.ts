@@ -248,10 +248,14 @@ export async function handleDeleteAvatar(req: RequestWithUser, res: ApiResponse<
 export type SettingsEditPayload = Partial<{
   lifetimeStartingBalance: Record<string, number>;
   enablePublicProfile: boolean;
+  displayCovers: boolean;
+  displayStreaks: boolean;
 }>;
 const zSettingsEditPayload = z.object({
   lifetimeStartingBalance: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()),
   enablePublicProfile: z.boolean(),
+  displayCovers: z.boolean(),
+  displayStreaks: z.boolean(),
 }).strict().partial();
 
 // PATCH /me/settings - patch your settings

@@ -33,6 +33,8 @@ const validations = z.object({
     z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' })
   ),
   enablePublicProfile: z.boolean(),
+  displayCovers: z.boolean(),
+  displayStreaks: z.boolean(),
 });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
@@ -117,6 +119,48 @@ async function handleSubmit() {
           add-button-text="Add Another Total"
           @update:model-value="onUpdate"
         />
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      for="settings-form-display-covers"
+      label="Display project covers?"
+      :rule="ruleFor('displayCovers')"
+      help="Whether to display project covers in the projects list and on project pages."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <div class="flex gap-4 max-w-full items-center">
+          <InputSwitch
+            v-model="formModel.displayCovers"
+            :invalid="!isFieldValid"
+            @update:model-value="onUpdate"
+          />
+          <div
+            class="max-w-64 md:max-w-none"
+          >
+            {{ formModel.displayCovers ? 'Display project covers' : 'Hide project covers' }}
+          </div>
+        </div>
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      for="settings-form-display-streaks"
+      label="Display streaks?"
+      :rule="ruleFor('displayStreaks')"
+      help="Whether to display writing streaks on the dashboard."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <div class="flex gap-4 max-w-full items-center">
+          <InputSwitch
+            v-model="formModel.displayStreaks"
+            :invalid="!isFieldValid"
+            @update:model-value="onUpdate"
+          />
+          <div
+            class="max-w-64 md:max-w-none"
+          >
+            {{ formModel.displayStreaks ? 'Display streaks on the Dashboard' : 'Hide streaks on the Dashboard' }}
+          </div>
+        </div>
       </template>
     </FieldWrapper>
   </TbForm>

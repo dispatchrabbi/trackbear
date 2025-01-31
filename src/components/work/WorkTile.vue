@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { ref, computed, defineProps, defineEmits } from 'vue';
+import { ref, computed, defineProps, defineEmits, withDefaults } from 'vue';
 import { breakpointsTailwind, useBreakpoints, useEventBus } from '@vueuse/core';
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 import { type Work, type SummarizedWork, starWork } from 'src/lib/api/work.ts';
 import { WORK_PHASE } from 'server/lib/models/work/consts';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   work: SummarizedWork;
-}>();
+  showCover?: boolean;
+}>(), {
+  showCover: true,
+});
 
 const emit = defineEmits(['work:star']);
 const eventBus = useEventBus<{ work: Work }>('work:star');
@@ -50,7 +53,7 @@ const isNotMobile = computed(() => {
 <template>
   <div class="work-tile flex gap-3 rounded-lg shadow-md bg-surface-0 dark:bg-surface-900 mb-2">
     <div
-      v-if="isNotMobile"
+      v-if="props.showCover && isNotMobile"
       class="work-tile-cover self-center flex-none w-32 h-48 my-auto bg-surface-100 dark:bg-surface-950 rounded-s-lg"
     >
       <WorkCover
@@ -59,7 +62,12 @@ const isNotMobile = computed(() => {
         shadow="none"
       />
     </div>
-    <div class="work-tile-content flex-grow py-4 pr-4 pl-4 md:pl-0 flex flex-col gap-2">
+    <div
+      :class="[
+        'work-tile-content flex-grow py-4 pr-4 pl-4 flex flex-col gap-2',
+        { 'md:pl-0': props.showCover },
+      ]"
+    >
       <div class="flex gap-2 items-baseline">
         <!-- star, phase, title -->
         <span

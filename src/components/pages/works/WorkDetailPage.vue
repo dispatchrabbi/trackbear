@@ -6,6 +6,9 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
+import { useUserStore } from 'src/stores/user.ts';
+const userStore = useUserStore();
+
 import { useWorkStore } from 'src/stores/work.ts';
 const workStore = useWorkStore();
 
@@ -100,6 +103,7 @@ onMounted(async () => {
   useEventBus<{ tally: Tally }>('tally:edit').on(loadTallies);
   useEventBus<{ tally: Tally }>('tally:delete').on(loadTallies);
 
+  await userStore.populate();
   await reloadData();
 });
 
@@ -117,7 +121,10 @@ onMounted(async () => {
         :title="work.title"
         :subtitle="work.description"
       >
-        <template #image>
+        <template
+          v-if="userStore.user.userSettings.displayCovers"
+          #image
+        >
           <WorkCover :work="work" />
         </template>
         <template #actions>
