@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.1.16
+
 FIXED: Logging in with an incorrect username or password now shows the correct error. (h/t my_w)
 
 ## 1.1.15
