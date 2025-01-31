@@ -1,7 +1,7 @@
 import type { MeasureRecord } from "server/lib/models/tally/types";
 import type { DayCount } from "src/lib/api/stats.ts";
 
-type DailyStats = {
+export type DailyStats = {
   days: MeasureRecord<number>;
   totals: MeasureRecord<number>;
   averages: MeasureRecord<number>;

@@ -51,6 +51,13 @@ const sortedData = computed(() => {
   return props.data.toSorted((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
 });
 
+const dateBounds = computed(() => {
+  return {
+    startDate: sortedData.value[0].date,
+    endDate: sortedData.value[sortedData.value.length - 1].date,
+  };
+});
+
 const colorScale = computed(() => {
   const preferredColorScheme = useTheme().theme.value;
   const start = preferredColorScheme === 'dark' ? themeColors.surface[900] : themeColors.surface[100];
@@ -100,8 +107,8 @@ onMounted(() => {
     const height = (cellSize * 7) + 15; // 7 days + 15px for the month label
     const width = props.constrainWidth ? heatmapContainerWidth.value : (cellSize * 53);
 
-    const firstDataWeek = timeWeek(sortedData.value[0].date);
-    const lastDataWeek = timeWeek.ceil(sortedData.value[sortedData.value.length - 1].date);
+    const firstDataWeek = timeWeek(dateBounds.value.startDate);
+    const lastDataWeek = timeWeek.ceil(dateBounds.value.endDate);
     const weeksVisible = Math.floor(width / cellSize) - 1;
     const firstWeek = props.constrainWidth ?
       props.anchor === 'end' ? maxDate(timeWeek.offset(lastDataWeek, -weeksVisible), firstDataWeek) : firstDataWeek :

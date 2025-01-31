@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: Yearly totals have been added to the Lifetime Stats page. (h/t Deerna, azaleavalaine)
+
 ## 1.1.14
 
 - FIXED: Goals on the Dashboard now show progress correctly bounded by the start and end dates of the goals. (h/t EtluYume, Elluna)

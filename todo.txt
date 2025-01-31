@@ -52,7 +52,8 @@ x (B) Ship logs somewhere (Signoz) @o11y dif:5
 (B) Grand Totals embed (h/t Laura) @public +embed dif:1
 (B) Progress update widget (h/t Laura) @public +embed importance:considering dif:2
 (B) Allow users to turn off displaying covers (h/t Liv) @settings @projects +delight dif:2
-(B) Totals by year (h/t Deerna, azaleavalaine) @stats +delight dif:1
+(B) Allow users to turn off streaks (h/t Elodie) @settings @dashboard +delight dif:2
+x (B) Totals by year (h/t Deerna, azaleavalaine) @stats +delight dif:1
 (B) Graph lifetime progress @stats +delight dif:1
 (B) Improve tag inputs @tags @projects @goals @boards dif:?
 (B) Create better seed data for testing +techdebt @testing dif:?
