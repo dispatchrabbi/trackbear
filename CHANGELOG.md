@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.1.17
+
 FIXED: Fixed a bug in the password reset flow. (h/t Saski)
 
 ## 1.1.16
