@@ -140,7 +140,7 @@ const routes: RouteConfig[] = [
   },
   {
     path: '/:id/state',
-    method: HTTP_METHODS.PUT,
+    method: HTTP_METHODS.PATCH,
     handler: handleUpdateUserState,
     accessLevel: ACCESS_LEVEL.ADMIN,
     paramsSchema: zIdParam(),
