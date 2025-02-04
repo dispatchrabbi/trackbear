@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+FIXED: Fixed a bug in the password reset flow. (h/t Saski)
+
 ## 1.1.16
 
 FIXED: Logging in with an incorrect username or password now shows the correct error. (h/t my_w)

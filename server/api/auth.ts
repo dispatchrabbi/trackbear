@@ -163,7 +163,14 @@ const zRequestPasswordResetPayload = z.object({
 export async function handleSendPasswordResetEmail(req: Request, res: ApiResponse<EmptyObject>) {
   const username = req.body.username;
 
-  const resetLink = await UserModel.sendPasswordResetLink(username, {}, reqCtx(req))
+  const user = await UserModel.getUserByUsername(username);
+  if(!user) {
+    // TODO: rethink this stance
+    // Even though there was no user found, we send back success so that we don't leak which usernames do and don't exist
+    return res.status(200).send(success({}));
+  }
+
+  const resetLink = await UserModel.sendPasswordResetLink(user, {}, reqCtx(req))
   if(!resetLink) {
     // TODO: rethink this stance
     // Even though there was no user found, we send back success so that we don't leak which usernames do and don't exist
