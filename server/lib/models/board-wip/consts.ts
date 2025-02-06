@@ -20,23 +20,19 @@ export async function getExtendedBoardsForUser(userId: number): Promise<BoardWit
   const boards = await dbClient.board.findMany({
     where: {
       state: BOARD_STATE.ACTIVE,
-      OR: [
-        { ownerId: userId },
-        {
-          participants: {
-            some: {
-              userId: userId,
-              state: BOARD_PARTICIPANT_STATE.ACTIVE,
-            }
-          }
-        },
-      ],
+      participants: {
+        some: {
+          userId: userId,
+          state: BOARD_PARTICIPANT_STATE.ACTIVE,
+        }
+      },
     },
     include: {
       participants: {
         where: {
           state: BOARD_PARTICIPANT_STATE.ACTIVE,
-          user: { is: { state: USER_STATE.ACTIVE } }
+          user: { is: { state: USER_STATE.ACTIVE } },
+          isParticipant: true,
         },
         include: {
           user: true,
@@ -65,7 +61,8 @@ export async function getFullBoard(uuid: string): Promise<FullBoard | null> {
       participants: {
         where: {
           state: BOARD_PARTICIPANT_STATE.ACTIVE,
-          user: { is: { state: USER_STATE.ACTIVE } }
+          user: { is: { state: USER_STATE.ACTIVE } },
+          isParticipant: true,
         },
         include: {
           user: true,
@@ -131,7 +128,8 @@ export async function getBoardParticipationForUser(uuid: string, userId: number)
     include: {
       participants: {
         where: {
-          userId: { equals: userId },
+          userId: userId,
+          isParticipant: true,
         },
         include: {
           worksIncluded: true,

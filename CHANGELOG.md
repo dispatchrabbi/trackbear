@@ -12,13 +12,15 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: The way that leaderboard owners are represented in the database is changing a bit, and this is the first half of that change. Normally I don't put changes that are only on the backend and transparent to users on the changelog, but in this case, I want to be extra wary of any inadvertant bugs that my testing didn't catch. If you encounter a bug with leaderboards, whether that's creating, configuing, joining, leaving, deleting, or anything else, please send a bug report to the email address on the [Contact](/contact) page. Thank you!
+
 ## 1.1.17
 
-FIXED: Fixed a bug in the password reset flow. (h/t Saski)
+- FIXED: Fixed a bug in the password reset flow. (h/t Saski)
 
 ## 1.1.16
 
-FIXED: Logging in with an incorrect username or password now shows the correct error. (h/t my_w)
+- FIXED: Logging in with an incorrect username or password now shows the correct error. (h/t my_w)
 
 ## 1.1.15
 

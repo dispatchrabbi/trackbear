@@ -276,10 +276,14 @@ model BoardParticipant {
   boardId Int
   board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
-  goal Json?
+  starred Boolean @default(false)
+  isParticipant Boolean @default(true)
+  isOwner Boolean @default(false)
 
   worksIncluded Work[]
   tagsIncluded  Tag[]
 
-  starred Boolean @default(false)
+  goal Json?
+
+  @@unique([userId, boardId])
 }

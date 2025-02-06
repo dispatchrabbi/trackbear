@@ -85,6 +85,17 @@ export async function handleCreateBoard(req: RequestWithUser, res: ApiResponse<B
       ownerId: user.id,
 
       ...payload,
+
+      participants: {
+        create: [{
+          state: BOARD_PARTICIPANT_STATE.ACTIVE,
+
+          userId: user.id,
+
+          isParticipant: false,
+          isOwner: true,
+        }],
+      },
     },
   });
 
@@ -263,9 +274,7 @@ export async function handleUpdateBoardParticipation(req: RequestWithUser, res: 
     payload.goal = null;
   }
 
-  // we can't do an upsert because the combination of user and board isn't actually unique
-  // this is on purpose: we may want someone in the future to be able to join a board multiple times
-  // of course, that would probably mean we need a new set of endpoints but... baby steps
+  // TODO: turn this into an upsert now that the combo of board and user are unique
   const existingParticipantRecord = await dbClient.boardParticipant.findFirst({
     where: {
       state: BOARD_PARTICIPANT_STATE.ACTIVE,
@@ -283,6 +292,8 @@ export async function handleUpdateBoardParticipation(req: RequestWithUser, res: 
         id: existingParticipantRecord.id,
       },
       data: {
+        isParticipant: true,
+        
         goal: payload.goal,
         worksIncluded: payload.works ? { set: payload.works.map(workId => ({
           id: workId,
@@ -302,6 +313,7 @@ export async function handleUpdateBoardParticipation(req: RequestWithUser, res: 
         state: BOARD_PARTICIPANT_STATE.ACTIVE,
         user: { connect: { id: user.id }},
         board: { connect: { uuid: req.params.uuid } },
+        isParticipant: true,
 
         goal: payload.goal,
         worksIncluded: payload.works ? { connect: payload.works.map(workId => ({
@@ -325,9 +337,8 @@ export async function handleUpdateBoardParticipation(req: RequestWithUser, res: 
 export async function handleDeleteBoardParticipation(req: RequestWithUser, res: ApiResponse<BoardParticipant>) {
   const user = req.user;
 
-  // we can't do a delete because the combination of user and board isn't actually unique
-  // this is on purpose: we may want someone in the future to be able to join a board multiple times
-  // of course, that would probably mean we need a new set of endpoints but... baby steps
+  // Only delete if they aren't an owner; otherwise, just remove the participant flag
+  // TODO: redo this whole situation so it's less awkward
   const existingParticipantRecord = await dbClient.boardParticipant.findFirst({
     where: {
       state: BOARD_PARTICIPANT_STATE.ACTIVE,
@@ -336,12 +347,25 @@ export async function handleDeleteBoardParticipation(req: RequestWithUser, res: 
     },
   });
 
-  const participant = await dbClient.boardParticipant.delete({
-    where: {
-      state: BOARD_PARTICIPANT_STATE.ACTIVE,
-      id: existingParticipantRecord.id,
-    },
-  });
+  let participant;
+  if(existingParticipantRecord.isOwner) {
+    participant = await dbClient.boardParticipant.update({
+      where: {
+        state: BOARD_PARTICIPANT_STATE.ACTIVE,
+        id: existingParticipantRecord.id,
+      },
+      data: {
+        isParticipant: false,
+      },
+    });
+  } else {
+    participant = await dbClient.boardParticipant.delete({
+      where: {
+        state: BOARD_PARTICIPANT_STATE.ACTIVE,
+        id: existingParticipantRecord.id,
+      },
+    });
+  }
 
   return res.status(200).send(success(participant));
 }
