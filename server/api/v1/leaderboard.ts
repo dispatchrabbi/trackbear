@@ -10,6 +10,10 @@ import type { Leaderboard, LeaderboardSummary, Member, Participant, Participatio
 import { TALLY_MEASURE } from "server/lib/models/tally/consts.ts";
 import { reqCtx } from "server/lib/request-context.ts";
 
+export type {
+  LeaderboardSummary, Leaderboard, Member, Participant, Participation,
+};
+
 export async function handleList(req: RequestWithUser, res: ApiResponse<LeaderboardSummary[]>) {
   const summaries = await LeaderboardModel.list(req.user.id);
 
@@ -77,10 +81,13 @@ export async function handleUpdate(req: RequestWithUser, res: ApiResponse<Leader
 export type LeaderboardStarPayload = {
   starred: boolean;
 };
+export type LeaderboardStarResponse = {
+  starred: boolean;
+};
 const zLeaderboardStarPayload = z.object({
   starred: z.boolean(),
 }).strict();
-export async function handleStar(req: RequestWithUser, res: ApiResponse<{ starred: boolean }>) {
+export async function handleStar(req: RequestWithUser, res: ApiResponse<LeaderboardStarResponse>) {
   const leaderboardUuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { ownerUserId: req.user.id });
   if(!leaderboard) {
@@ -330,7 +337,7 @@ const routes: RouteConfig[] = [
   },
   // PATCH /:uuid/star - update an existing board's star status (though this is secretly per-user)
   {
-    path: '/:uuid',
+    path: '/:uuid/star',
     method: HTTP_METHODS.PATCH,
     handler: handleStar,
     accessLevel: ACCESS_LEVEL.USER,
