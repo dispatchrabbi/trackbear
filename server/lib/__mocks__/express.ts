@@ -2,17 +2,17 @@ import { Request, Response } from 'express';
 import type { User } from "@prisma/client";
 
 import { vi, Mock } from 'vitest';
-import { mockObject } from '../../../testing-support/util';
+import { mockObject, TEST_USER_ID } from '../../../testing-support/util';
 import { RequestWithUser } from '../middleware/access';
 
-type MockRequest = {
+type MockRequest = Request & {
   sessionID: string;
   user: null | User;
   params: Record<string, string>;
   query: Record<string, string>;
   body: unknown;
 };
-export function getMockRequest(overrides?: Partial<MockRequest>): Request {
+export function getMockRequest(overrides?: Partial<MockRequest>): MockRequest {
   const req = {
     sessionID: 'mocked',
     user: null,
@@ -22,20 +22,20 @@ export function getMockRequest(overrides?: Partial<MockRequest>): Request {
     ...overrides,
   };
 
-  return req as unknown as Request;
+  return req as MockRequest;
 }
 
-type MockResponse = {
+export type MockResponse = Response & {
   status: Mock<(code: number) => MockResponse>,
   send: Mock<(payload: unknown) => MockResponse>,
 };
-export function getMockResponse(): Response {
+export function getMockResponse(): MockResponse {
   const res = {
     status: vi.fn(() => res),
     send: vi.fn(() => res)
   } as MockResponse;
 
-  return res as unknown as Response;
+  return res;
 }
 
 export function getHandlerMocks(reqOverrides?: Partial<MockRequest>) {
@@ -46,13 +46,19 @@ export function getHandlerMocks(reqOverrides?: Partial<MockRequest>) {
   };
 }
 
-export const MOCK_USER_ID = -100;
-export function getHandlerMocksWithUser(reqOverrides?: Partial<MockRequest>) {
+type MockRequestWithUser = RequestWithUser & {
+  sessionID: string;
+  user: null | User;
+  params: Record<string, string>;
+  query: Record<string, string>;
+  body: unknown;
+};
+export function getHandlerMocksWithUser(reqOverrides?: Partial<MockRequestWithUser>) {
   return {
     req: getMockRequest({
-      user: mockObject<User>({ id: MOCK_USER_ID }),
+      user: mockObject<User>({ id: TEST_USER_ID }),
       ...reqOverrides,
-    }) as RequestWithUser,
+    }) as MockRequestWithUser,
     res: getMockResponse(),
     next: vi.fn(),
   };

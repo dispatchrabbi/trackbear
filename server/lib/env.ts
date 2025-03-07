@@ -56,7 +56,7 @@ export type TrackbearEnv = TrackbearCommonEnv & TrackbearTlsEnv;
 async function normalizeEnv(): Promise<TrackbearEnv> {
   // first step is to check for valid values and supply defaults
 
-  if(!['', 'development', 'production'].includes(process.env.NODE_ENV)) { throw new Error('NODE_ENV should only be either `development` or `production`'); }
+  if(!['', 'development', 'test', 'production'].includes(process.env.NODE_ENV)) { throw new Error(`NODE_ENV should only be either 'development', 'test', or 'production'; '${process.env.NODE_ENV}' given`); }
   if(process.env.NODE_ENV === '') {
     console.info('No NODE_ENV provided; defaulting to `development`');
   }
@@ -179,8 +179,8 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
 }
 
 let env = null;
-async function getNormalizedEnv(): Promise<TrackbearEnv> {
-  if(env === null) {
+async function getNormalizedEnv(force: boolean = false): Promise<TrackbearEnv> {
+  if(force === true || env === null) {
     env = await normalizeEnv();
   }
 

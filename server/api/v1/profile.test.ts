@@ -14,7 +14,7 @@ describe('profile api v1', () => {
     vi.resetAllMocks();
   });
 
-  describe('handleGetProfile', () => {
+  describe(handleGetProfile, () => {
     it('returns a profile if the user has profiles turned on', async () => {
       getUserProfileSpy.mockResolvedValue(mockObject<profileModel.PublicProfile>());
 

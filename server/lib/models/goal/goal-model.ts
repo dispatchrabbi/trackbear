@@ -16,11 +16,9 @@ import { Goal, HabitGoal, TargetGoal, HabitGoalParameters, TargetGoalParameters 
 import { TALLY_STATE } from "../tally/consts.ts";
 import type { Tally } from '../tally/tally-model.wip.ts';
 import { omit } from 'server/lib/obj.ts';
-import { WORK_STATE } from '../work/consts.ts';
-import { TAG_STATE } from '../tag/consts.ts';
-import { makeIncludeWorkAndTagIds, included2ids } from '../helpers.ts';
+import { makeIncludeWorkAndTagIds, included2ids, makeSetWorksAndTagsIncluded, makeConnectWorksAndTagsIncluded } from '../helpers.ts';
 
-const getTargetTotalsRawSql = await importRawSql(path.resolve(import.meta.dirname, './get-target-totals.sql'));
+const getTargetTotalsRawSql = await importRawSql(path.resolve(import.meta.dirname, './sql/get-target-totals.sql'));
 
 export type {
   Goal, HabitGoal, TargetGoal,
@@ -41,7 +39,7 @@ export class GoalModel {
         ownerId: owner.id,
         state: GOAL_STATE.ACTIVE,
       },
-      include: makeIncludeWorkAndTagIds(owner),
+      include: makeIncludeWorkAndTagIds(owner.id),
     });
 
     const goals = dbGoals.map(included2ids) as Goal[];
@@ -56,7 +54,7 @@ export class GoalModel {
         ownerId: owner.id,
         state: GOAL_STATE.ACTIVE,
       },
-      include: makeIncludeWorkAndTagIds(owner),
+      include: makeIncludeWorkAndTagIds(owner.id),
     });
 
     const goal = included2ids(dbGoal) as Goal;
@@ -77,22 +75,9 @@ export class GoalModel {
         ownerId: owner.id,
         
         ...omit(dataWithDefaults, ['workIds', 'tagIds']),
-        worksIncluded: {
-          connect: dataWithDefaults.workIds.map(id => ({
-            id,
-            ownerId: owner.id,
-            state: WORK_STATE.ACTIVE,
-          })),
-        },
-        tagsIncluded: {
-          connect: dataWithDefaults.tagIds.map(id => ({
-            id,
-            ownerId: owner.id,
-            state: TAG_STATE.ACTIVE,
-          })),
-        }
+        ...makeConnectWorksAndTagsIncluded(dataWithDefaults, owner.id),
       },
-      include: makeIncludeWorkAndTagIds(owner),
+      include: makeIncludeWorkAndTagIds(owner.id),
     });
     const created = included2ids(dbCreated) as Goal;
 
@@ -116,22 +101,9 @@ export class GoalModel {
       },
       data: {
         ...omit(data, ['workIds', 'tagIds']),
-        worksIncluded: data.workIds ? {
-          set: data.workIds.map(id => ({
-            id,
-            ownerId: owner.id,
-            state: WORK_STATE.ACTIVE,
-          })),
-        } : undefined,
-        tagsIncluded: data.tagIds ? {
-          set: data.tagIds.map(id => ({
-            id,
-            ownerId: owner.id,
-            state: TAG_STATE.ACTIVE,
-          })),
-        } : undefined,
+        ...makeSetWorksAndTagsIncluded(data, owner.id),
       },
-      include: makeIncludeWorkAndTagIds(owner),
+      include: makeIncludeWorkAndTagIds(owner.id),
     });
     const updated = included2ids(dbUpdated) as Goal;
 
@@ -156,7 +128,7 @@ export class GoalModel {
       data: {
         state: GOAL_STATE.DELETED,
       },
-      include: makeIncludeWorkAndTagIds(owner),
+      include: makeIncludeWorkAndTagIds(owner.id),
     });
     const deleted = included2ids(dbDeleted) as Goal;
 
@@ -181,7 +153,7 @@ export class GoalModel {
       data: {
         state: GOAL_STATE.ACTIVE,
       },
-      include: makeIncludeWorkAndTagIds(owner),
+      include: makeIncludeWorkAndTagIds(owner.id),
     });
     const undeleted = included2ids(dbUndeleted) as Goal;
 

@@ -11,15 +11,18 @@
     "server/*": "./server/*"
   },
   "prisma": {
+    "schema": "prisma/schema.prisma",
     "seed": "node --import tsx ./prisma/seed/seed.ts"
   },
   "scripts": {
     "start": "node --run start:dev",
     "start:dev": "NODE_ENV=development node --import tsx --import ./instrumentation.ts ./main.ts",
     "start:prod": "NODE_ENV=production node --import tsx --import ./instrumentation.ts ./main.ts",
-    "test": "vitest run",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "vitest run",
     "test:watch": "vitest",
     "test:webui": "vitest --ui",
+    "test:integration": "vitest run --config ./vitest.integration.config.js",
     "coverage": "vitest run --coverage",
     "build": "node --run build:prod",
     "build:prod": "docker build -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t dispatchrabbi/trackbear:latest --target prod .",
@@ -99,6 +102,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
+    "@types/better-queue": "^3.8.6",
     "@types/color": "^3.0.6",
     "@types/compression": "^1.7.5",
     "@types/d3": "^7.4.3",
@@ -123,6 +127,7 @@
     "rollup-plugin-visualizer": "^5.11.0",
     "typescript": "5.6.3",
     "typescript-eslint": "^8.11.0",
+    "uuid": "^11.1.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.4",
     "vitest-mock-extended": "^2.0.2"

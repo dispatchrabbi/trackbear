@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, afterEach } from 'vitest';
-import { mockObject, mockObjects, TEST_SESSION_ID } from '../../../testing-support/util.ts';
-import { getHandlerMocksWithUser, MOCK_USER_ID } from '../../lib/__mocks__/express.ts';
+import { mockObject, mockObjects, TEST_SESSION_ID, TEST_USER_ID } from '../../../testing-support/util.ts';
+import { getHandlerMocksWithUser } from '../../lib/__mocks__/express.ts';
 import type { Tag } from "@prisma/client";
 
 vi.mock('../../lib/db.ts');
@@ -16,7 +16,7 @@ describe('tag api v1', () => {
     vi.resetAllMocks();
   });
 
-  describe('handleGetTags', () => {
+  describe(handleGetTags, () => {
     it('returns tags', async () => {
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       dbClientMock.tag.findMany.mockResolvedValue(
@@ -32,7 +32,7 @@ describe('tag api v1', () => {
     });
   });
 
-  describe('handleGetTag', () => {
+  describe(handleGetTag, () => {
     it('returns a tag if it finds one', async () => {
       dbClientMock.tag.findUnique.mockResolvedValue(mockObject<Tag>());
 
@@ -56,7 +56,7 @@ describe('tag api v1', () => {
     });
   });
 
-  describe('handleCreateTag', () => {
+  describe(handleCreateTag, () => {
     it('creates a tag', async() => {
       dbClientMock.tag.findMany.mockResolvedValue([]);
       const TAG_ID = -10;
@@ -68,7 +68,7 @@ describe('tag api v1', () => {
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.tag.create).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('tag:create', MOCK_USER_ID, TAG_ID, null, expect.any(Object), TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tag:create', TEST_USER_ID, TAG_ID, null, expect.any(Object), TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalled();
     });
@@ -90,7 +90,7 @@ describe('tag api v1', () => {
     });
   });
 
-  describe('handleUpdateTag', () => {
+  describe(handleUpdateTag, () => {
     it('updates a tag', async () => {
       const TAG_ID = -10;
       dbClientMock.tag.findUnique.mockResolvedValue(mockObject<Tag>({ id: TAG_ID }));
@@ -102,7 +102,7 @@ describe('tag api v1', () => {
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.tag.update).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('tag:update', MOCK_USER_ID, TAG_ID, null, expect.any(Object), TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tag:update', TEST_USER_ID, TAG_ID, null, expect.any(Object), TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
@@ -127,7 +127,7 @@ describe('tag api v1', () => {
     });
   });
 
-  describe('handleDeleteTag', () => {
+  describe(handleDeleteTag, () => {
     it('deletes a tag', async () => {
       const TAG_ID = -10;
       dbClientMock.tag.findUnique.mockResolvedValue(mockObject<Tag>({ id: TAG_ID }));
@@ -140,7 +140,7 @@ describe('tag api v1', () => {
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.tag.delete).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('tag:delete', MOCK_USER_ID, TAG_ID, null, expect.any(Object), TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tag:delete', TEST_USER_ID, TAG_ID, null, expect.any(Object), TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });

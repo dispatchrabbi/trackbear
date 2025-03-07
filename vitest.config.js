@@ -3,6 +3,13 @@ import viteTsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   test: {
+    setupFiles: [
+      'testing-support/custom-matchers/api-response.ts',
+    ],
+    exclude: [
+      'testing-support/**',
+      'server/integration-tests/**',
+    ],
     coverage: {
       enabled: true,
       // TODO: slowly remove these as coverage expands
@@ -12,6 +19,7 @@ export default defineConfig({
         'prisma/**',
         'public/**',
         'scripts/**',
+        'server/integration-tests/**',
         'server/workers/**',
         'src/**',
         '*.{js,ts}',

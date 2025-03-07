@@ -2,12 +2,12 @@ import { omit } from "../obj";
 import { WORK_STATE } from "./work/consts";
 import { TAG_STATE } from "./tag/consts";
 
-type WorksAndTagsIncluded = {
+export type WorksAndTagsIncluded = {
   worksIncluded: { id: number }[],
   tagsIncluded: { id: number }[],
 }
 
-type WorksAndTagsIds = {
+export type WorksAndTagsIds = {
   workIds: number[],
   tagIds: number[],
 }
@@ -39,18 +39,56 @@ export function ids2included<O extends WorksAndTagsIds>(obj: O): WithIncludedIns
   );
 }
 
-export function makeIncludeWorkAndTagIds(owner: { id: number }) {
+export function makeConnectWorksAndTagsIncluded<D extends WorksAndTagsIds>(data: D, ownerId: number) {
+  return {
+    worksIncluded: {
+      connect: data.workIds.map(id => ({
+        id,
+        ownerId: ownerId,
+        state: WORK_STATE.ACTIVE,
+      })),
+    },
+    tagsIncluded: {
+      connect: data.tagIds.map(id => ({
+        id,
+        ownerId: ownerId,
+        state: TAG_STATE.ACTIVE,
+      })),
+    },
+  };
+}
+
+export function makeSetWorksAndTagsIncluded<D extends Partial<WorksAndTagsIds>>(data: D, ownerId: number) {
+  return {
+    worksIncluded: data.workIds ? {
+      set: data.workIds.map(id => ({
+        id,
+        ownerId: ownerId,
+        state: WORK_STATE.ACTIVE,
+      })),
+    } : undefined,
+    tagsIncluded: data.tagIds ? {
+      set: data.tagIds.map(id => ({
+        id,
+        ownerId: ownerId,
+        state: TAG_STATE.ACTIVE,
+      })),
+    } : undefined,
+  };
+}
+
+export function makeIncludeWorkAndTagIds(ownerId: number) {
   return {
     worksIncluded: {
       where: {
-        ownerId: owner.id,
+        ownerId: ownerId,
         state: WORK_STATE.ACTIVE,
       },
       select: { id: true },
     },
     tagsIncluded: {
       where: {
-        ownerId: owner.id,
+        ownerId: ownerId,
         state: TAG_STATE.ACTIVE,
       },
       select: { id: true },

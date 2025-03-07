@@ -57,6 +57,7 @@ async function initQueue() {
   q.on('task_started', (taskId, task) => queueLogger.info('Task started', {taskId, ...task}));
   q.on('task_finish', (taskId, result) => queueLogger.info('Task finished', {taskId, result}));
   q.on('task_failed', (taskId, err) => queueLogger.warn('Task failed', {taskId, err}));
+  // @ts-expect-error this actually does get emitted but the types aren't updated for it
   q.on('task_retry', (taskId, retries) => queueLogger.info('Retrying task', {taskId, retries}));
   q.on('empty', () => queueLogger.debug('Queue is empty but tasks may be in progress'));
   q.on('drain', () => queueLogger.debug('Queue has been drained'));

@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, afterEach } from 'vitest';
-import { mockObject, mockObjects, TEST_SESSION_ID } from '../../../testing-support/util.ts';
-import { getHandlerMocksWithUser, MOCK_USER_ID } from '../../lib/__mocks__/express.ts';
+import { mockObject, mockObjects, TEST_SESSION_ID, TEST_USER_ID } from '../../../testing-support/util.ts';
+import { getHandlerMocksWithUser } from '../../lib/__mocks__/express.ts';
 import { Work, type Tally } from "@prisma/client";
 import type { TallyWithWorkAndTags } from './tally.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
@@ -18,7 +18,7 @@ describe('tally api v1', () => {
     vi.resetAllMocks();
   });
 
-  describe('handleGetTallies', () => {
+  describe(handleGetTallies, () => {
     it('returns tallies', async () => {
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       dbClientMock.tally.findMany.mockResolvedValue(mockObjects<TallyWithWorkAndTags>(2));
@@ -32,7 +32,7 @@ describe('tally api v1', () => {
     });
   });
 
-  describe('handleGetTally', () => {
+  describe(handleGetTally, () => {
     it('returns a tally if it finds one', async () => {
       dbClientMock.tally.findUnique.mockResolvedValue(mockObject<TallyWithWorkAndTags>());
 
@@ -56,7 +56,7 @@ describe('tally api v1', () => {
     });
   });
 
-  describe('handleCreateTally', () => {
+  describe(handleCreateTally, () => {
     it('creates a tally that increments the total', async() => {
       const TALLY_ID = -10;
       const WORK_ID = -20;
@@ -78,7 +78,7 @@ describe('tally api v1', () => {
       expect(dbClientMock.work.findUnique).not.toHaveBeenCalled();
       expect(dbClientMock.tally.findMany).not.toHaveBeenCalled();
       expect(dbClientMock.tally.create).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('tally:create', MOCK_USER_ID, TALLY_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tally:create', TEST_USER_ID, TALLY_ID, null, null, TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalled();
     });
@@ -114,7 +114,7 @@ describe('tally api v1', () => {
       expect(dbClientMock.tally.create).toHaveBeenCalledWith(expect.objectContaining({
         data: expect.objectContaining({ count: 150 })
       }));
-      expect(logAuditEventMock).toHaveBeenCalledWith('tally:create', MOCK_USER_ID, TALLY_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tally:create', TEST_USER_ID, TALLY_ID, null, null, TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalled();
     });
@@ -124,7 +124,7 @@ describe('tally api v1', () => {
     it.todo('sends 400 if it cannot find the work when setting the total');
   });
 
-  describe('handleCreateTallies', () => {
+  describe(handleCreateTallies, () => {
     it('creates multiple tallies', async() => {
       const TALLY_IDS = [-10, -11, -12];
       const WORK_ID = -20;
@@ -145,15 +145,15 @@ describe('tally api v1', () => {
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.tally.createManyAndReturn).toHaveBeenCalled();
       expect(logAuditEventMock).toHaveBeenCalledTimes(3);
-      expect(logAuditEventMock).toHaveBeenCalledWith('tally:create', MOCK_USER_ID, TALLY_IDS[0], null, null, TEST_SESSION_ID);
-      expect(logAuditEventMock).toHaveBeenCalledWith('tally:create', MOCK_USER_ID, TALLY_IDS[1], null, null, TEST_SESSION_ID);
-      expect(logAuditEventMock).toHaveBeenCalledWith('tally:create', MOCK_USER_ID, TALLY_IDS[2], null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tally:create', TEST_USER_ID, TALLY_IDS[0], null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tally:create', TEST_USER_ID, TALLY_IDS[1], null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tally:create', TEST_USER_ID, TALLY_IDS[2], null, null, TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalled();
     });
   });
 
-  describe('handleUpdateTally', () => {
+  describe(handleUpdateTally, () => {
     it('updates a tally that increments the total', async() => {
       const TALLY_ID = -10;
       const WORK_ID = -20;
@@ -180,7 +180,7 @@ describe('tally api v1', () => {
       expect(dbClientMock.work.findUnique).not.toHaveBeenCalled();
       expect(dbClientMock.tally.findMany).not.toHaveBeenCalled();
       expect(dbClientMock.tally.update).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('tally:update', MOCK_USER_ID, TALLY_ID, null, expect.anything(), TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tally:update', TEST_USER_ID, TALLY_ID, null, expect.anything(), TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
@@ -222,7 +222,7 @@ describe('tally api v1', () => {
       expect(dbClientMock.tally.update).toHaveBeenCalledWith(expect.objectContaining({
         data: expect.objectContaining({ count: 150 })
       }));
-      expect(logAuditEventMock).toHaveBeenCalledWith('tally:update', MOCK_USER_ID, TALLY_ID, null, expect.anything(), TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tally:update', TEST_USER_ID, TALLY_ID, null, expect.anything(), TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
@@ -234,7 +234,7 @@ describe('tally api v1', () => {
     it.todo('sends 400 if it cannot find the work when setting the total');
   });
 
-  describe('handleDeleteTally', () => {
+  describe(handleDeleteTally, () => {
     it('deletes a tally', async () => {
       const TALLY_ID = -10;
       dbClientMock.tally.delete.mockResolvedValue(
@@ -246,7 +246,7 @@ describe('tally api v1', () => {
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.tally.delete).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('tally:delete', MOCK_USER_ID, TALLY_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('tally:delete', TEST_USER_ID, TALLY_ID, null, null, TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });

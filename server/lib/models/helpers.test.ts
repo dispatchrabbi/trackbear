@@ -7,7 +7,9 @@ import { TAG_STATE } from './tag/consts';
 import {
   included2ids,
   ids2included,
-  makeIncludeWorkAndTagIds
+  makeIncludeWorkAndTagIds,
+  makeSetWorksAndTagsIncluded,
+  makeConnectWorksAndTagsIncluded
 } from './helpers';
 
 describe('model helpers', () => {
@@ -73,6 +75,94 @@ describe('model helpers', () => {
     });
   });
 
+  describe(makeConnectWorksAndTagsIncluded, () => {
+    it('builds the connect object', () => {
+      const expected = {
+        worksIncluded: {
+          connect: [
+            { id: -20, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+            { id: -21, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+          ],
+        },
+        tagsIncluded: {
+          connect: [
+            { id: -22, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+            { id: -23, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+          ],
+        }
+      };
+
+      const actual = makeConnectWorksAndTagsIncluded({
+        workIds: [-20, -21],
+        tagIds: [-22, -23],
+      }, TEST_USER_ID);
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  describe(makeSetWorksAndTagsIncluded, () => {
+    it('builds the set object', () => {
+      const expected = {
+        worksIncluded: {
+          set: [
+            { id: -20, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+            { id: -21, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+          ],
+        },
+        tagsIncluded: {
+          set: [
+            { id: -22, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+            { id: -23, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+          ],
+        }
+      };
+
+      const actual = makeSetWorksAndTagsIncluded({
+        workIds: [-20, -21],
+        tagIds: [-22, -23],
+      }, TEST_USER_ID);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it(`sets worksIncluded to undefined when it's not passed`, () => {
+      const expected = {
+        worksIncluded: undefined,
+        tagsIncluded: {
+          set: [
+            { id: -22, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+            { id: -23, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+          ],
+        }
+      };
+
+      const actual = makeSetWorksAndTagsIncluded({
+        tagIds: [-22, -23],
+      }, TEST_USER_ID);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it(`sets tagsIncluded to undefined when it's not passed`, () => {
+      const expected = {
+        worksIncluded: {
+          set: [
+            { id: -20, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+            { id: -21, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+          ],
+        },
+        tagsIncluded: undefined
+      };
+
+      const actual = makeSetWorksAndTagsIncluded({
+        workIds: [-20, -21],
+      }, TEST_USER_ID);
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
   describe(makeIncludeWorkAndTagIds, () => {
     it('builds the include object', () => {
       const expected = {
@@ -92,7 +182,7 @@ describe('model helpers', () => {
         }
       };
 
-      const actual = makeIncludeWorkAndTagIds({ id: TEST_USER_ID });
+      const actual = makeIncludeWorkAndTagIds(TEST_USER_ID);
 
       expect(actual).toEqual(expected);
     });

@@ -1,6 +1,7 @@
 import { vi, expect, describe, it, afterEach, beforeEach, MockInstance } from 'vitest';
 import { getTestReqCtx, mockObject, mockObjects, TEST_SESSION_ID, TEST_USER_ID, TEST_UUID } from 'testing-support/util';
 
+import { Ticket } from 'better-queue';
 import { CreateUserData, UpdateUserData, UserModel } from './user-model.ts';
 import { hash } from '../../hash.ts';
 import type { PasswordResetLink, PendingEmailVerification, User, UserAuth } from '@prisma/client';
@@ -663,6 +664,7 @@ describe(UserModel, () => {
         id: TEST_USER_ID,
         state: USER_STATE.ACTIVE,
       });
+      pushTask.mockReturnValue(mockObject<Ticket>());
 
       const wasSent = await UserModel.sendSignupEmail(testUser, {}, getTestReqCtx());
 
@@ -693,6 +695,7 @@ describe(UserModel, () => {
         id: TEST_USER_ID,
         state,
       });
+      pushTask.mockReturnValue(mockObject<Ticket>());
 
       const wasSent = await UserModel.sendSignupEmail(testUser, { force: true }, getTestReqCtx());
 
@@ -704,6 +707,7 @@ describe(UserModel, () => {
   describe(UserModel.sendPasswordChangedEmail, () => {
     it(`sends a password changed email`, async () => {
       const testUser = mockObject<User>({ id: TEST_USER_ID });
+      pushTask.mockReturnValue(mockObject<Ticket>());
 
       const wasSent = await UserModel.sendPasswordChangedEmail(testUser, getTestReqCtx());
 
@@ -719,6 +723,7 @@ describe(UserModel, () => {
         email: 'alice@example.com',
         isEmailVerified: false,
       });
+      pushTask.mockReturnValue(mockObject<Ticket>());
       
       const testPendingVerification = mockObject<PendingEmailVerification>({ uuid: TEST_UUID });
       dbClient.pendingEmailVerification.create.mockResolvedValue(testPendingVerification);
@@ -769,6 +774,7 @@ describe(UserModel, () => {
         email: 'alice@example.com',
         isEmailVerified: true,
       });
+      pushTask.mockReturnValue(mockObject<Ticket>());
       
       const testPendingVerification = mockObject<PendingEmailVerification>({ uuid: TEST_UUID });
       dbClient.pendingEmailVerification.create.mockResolvedValue(testPendingVerification);
@@ -802,6 +808,7 @@ describe(UserModel, () => {
         id: TEST_USER_ID,
         state: USER_STATE.ACTIVE,
       });
+      pushTask.mockReturnValue(mockObject<Ticket>());
       
       const testPasswordResetLink = mockObject<PasswordResetLink>({ uuid: TEST_UUID });
       dbClient.passwordResetLink.create.mockResolvedValue(testPasswordResetLink);

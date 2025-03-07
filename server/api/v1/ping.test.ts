@@ -6,7 +6,7 @@ import { success } from '../../lib/api-response.ts';
 import { handleGetPing } from "./ping.ts";
 
 describe('ping api v1', () => {
-  describe('ping', () => {
+  describe(handleGetPing, () => {
     beforeEach(() => {
       vi.resetAllMocks();
     });

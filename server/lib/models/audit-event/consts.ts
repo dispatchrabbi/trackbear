@@ -4,6 +4,8 @@ export const AUDIT_EVENT_ENTITIES = {
   BANNER: 'banner',
   BOARD: 'board',
   GOAL: 'goal',
+  LEADERBOARD: 'leaderboard',
+  LEADERBOARD_MEMBER: 'leaderboard-member',
   TAG: 'tag',
   TALLY: 'tally',
   USER: 'user',
@@ -11,7 +13,6 @@ export const AUDIT_EVENT_ENTITIES = {
 } as const;
 export type AuditEventEntity = ValueEnum<typeof AUDIT_EVENT_ENTITIES>;
 
-// TODO: extract CUD events and base them off the entities enum
 export const AUDIT_EVENT_TYPE = {
   BANNER_CREATE: 'banner:create',
   BANNER_UPDATE: 'banner:update',
@@ -26,6 +27,16 @@ export const AUDIT_EVENT_TYPE = {
   GOAL_UPDATE: 'goal:update',
   GOAL_DELETE: 'goal:delete',
   GOAL_UNDELETE: 'goal:undelete',
+
+  LEADERBOARD_CREATE: 'leaderboard:create',
+  LEADERBOARD_UPDATE: 'leaderboard:update',
+  LEADERBOARD_DELETE: 'leaderboard:delete',
+  LEADERBOARD_JOIN: 'leaderboard:join',
+  LEADERBOARD_LEAVE: 'leaderboard:leave',
+
+  LEADERBOARD_MEMBER_CREATE: 'leaderboard-member:create',
+  LEADERBOARD_MEMBER_UPDATE: 'leaderboard-member:update',
+  LEADERBOARD_MEMBER_DELETE: 'leaderboard-member:delete',
   
   TAG_CREATE: 'tag:create',
   TAG_UPDATE: 'tag:update',
@@ -117,6 +128,46 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.GOAL,
     goal: null
+  },
+  [AUDIT_EVENT_TYPE.LEADERBOARD_CREATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.LEADERBOARD,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.LEADERBOARD_UPDATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.LEADERBOARD,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.LEADERBOARD_DELETE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.LEADERBOARD,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.LEADERBOARD_JOIN]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.USER,
+    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD
+  },
+  [AUDIT_EVENT_TYPE.LEADERBOARD_LEAVE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.USER,
+    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD
+  },
+  [AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_CREATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.LEADERBOARD_MEMBER,
+    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD
+  },
+  [AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_UPDATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.LEADERBOARD_MEMBER,
+    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD
+  },
+  [AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_DELETE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.LEADERBOARD_MEMBER,
+    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD
   },
   [AUDIT_EVENT_TYPE.TAG_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,

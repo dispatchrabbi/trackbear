@@ -1,0 +1,193 @@
+import { vi, expect, describe, it, afterEach } from 'vitest';
+import { getTestReqCtx, mockObject, TEST_OBJECT_ID, TEST_USER_ID, TEST_UUID } from 'testing-support/util';
+
+import _dbClient from '../../db.ts';
+import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
+
+import { LeaderboardModel } from './leaderboard-model.ts';
+import { Leaderboard, LeaderboardParticipant, LeaderboardSummary } from './types.ts';
+import { LEADERBOARD_STATE, LEADERBOARD_PARTICIPANT_STATE } from './consts.ts';
+import { type User } from '../user/user-model.ts';
+import { USER_STATE } from '../user/consts.ts';
+import { WORK_STATE } from '../work/consts.ts';
+import { TAG_STATE } from '../tag/consts.ts';
+
+vi.mock('../../tracer.ts');
+
+vi.mock('../../db.ts');
+const dbClient = vi.mocked(_dbClient, { deep: true });
+
+vi.mock('../../audit-events.ts');
+const logAuditEvent = vi.mocked(_logAuditEvent);
+
+describe(LeaderboardModel, () => {
+  const testOwner = mockObject<User>({ id: TEST_USER_ID });
+  const testReqCtx = getTestReqCtx();
+
+  const includeWorkAndTagIds = {
+    worksIncluded: {
+      where: {
+        ownerId: testOwner.id,
+        state: WORK_STATE.ACTIVE,
+      },
+      select: { id: true },
+    },
+    tagsIncluded: {
+      where: {
+        ownerId: testOwner.id,
+        state: TAG_STATE.ACTIVE,
+      },
+      select: { id: true },
+    }
+  };
+
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
+  describe(LeaderboardModel.list, () => {
+    it('gets a list of leaderboard summaries', async () => {
+      const testDbLeaderboards = [
+        {
+          ...mockObject<Leaderboard>(),
+          participants: [
+            {
+              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: false}),
+              user: mockObject<User>({ id: TEST_USER_ID, displayName: 'test0', avatar: null })
+            },
+            {
+              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID - 1, userId: TEST_USER_ID - 1, starred: true}),
+              user: mockObject<User>({ id: TEST_USER_ID - 1, displayName: 'test1', avatar: null })
+            }
+          ]
+        },
+        {
+          ...mockObject<Leaderboard>(),
+          participants: [
+            {
+              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: true}),
+              user: mockObject<User>({ id: TEST_USER_ID, displayName: 'test0', avatar: null })
+            },
+            {
+              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID - 2, userId: TEST_USER_ID -2, starred: false}),
+              user: mockObject<User>({ id: TEST_USER_ID - 2, displayName: 'test2', avatar: null })
+            }
+          ]
+        }
+      ];
+      dbClient.board.findMany.mockResolvedValue(testDbLeaderboards);
+
+      const expected: LeaderboardSummary[] = [
+        {
+          ...mockObject<Leaderboard>(),
+          starred: false,
+          participants: [
+            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null },
+            { id: TEST_OBJECT_ID - 1, displayName: 'test1', avatar: null },
+          ]
+        },
+        {
+          ...mockObject<Leaderboard>(),
+          starred: true,
+          participants: [
+            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null },
+            { id: TEST_OBJECT_ID - 2, displayName: 'test2', avatar: null },
+          ],
+        },
+      ];
+
+      const actual = await LeaderboardModel.list(TEST_USER_ID);
+
+      expect(actual).toEqual(expected);
+      expect(dbClient.board.findMany).toBeCalledWith({
+        where: {
+          state: LEADERBOARD_STATE.ACTIVE,
+          participants: {
+            some: {
+              userId: TEST_USER_ID,
+              state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
+            }
+          },
+        },
+        include: {
+          participants: {
+            where: {
+              state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
+              user: { state: USER_STATE.ACTIVE }
+            },
+            include: {
+              user: true,
+            }
+          }
+        },
+      });
+    });
+  });
+
+  describe(LeaderboardModel.get, () => {
+    it('gets a leaderboard by id', async () => {
+      const testLeaderboard = mockObject<Leaderboard>();
+      dbClient.board.findUnique.mockResolvedValue(testLeaderboard);
+
+      const actual = await LeaderboardModel.get(TEST_OBJECT_ID);
+
+      expect(actual).toBe(testLeaderboard);
+      expect(dbClient.board.findUnique).toBeCalledWith({
+        where: {
+          id: TEST_OBJECT_ID,
+          state: LEADERBOARD_STATE.ACTIVE,
+        }
+      });
+    });
+  });
+
+  describe(LeaderboardModel.getByUuid, () => {
+    it('gets a leaderboard by uuid', async () => {
+      const testLeaderboard = mockObject<Leaderboard>();
+      dbClient.board.findUnique.mockResolvedValue(testLeaderboard);
+
+      const actual = await LeaderboardModel.getByUuid(TEST_UUID, { memberUserId: TEST_USER_ID });
+
+      expect(actual).toBe(testLeaderboard);
+      expect(dbClient.board.findUnique).toBeCalledWith({
+        where: {
+          uuid: TEST_UUID,
+          state: LEADERBOARD_STATE.ACTIVE,
+          OR: [
+            {
+              participants: {
+                some: {
+                  userId: TEST_USER_ID,
+                  state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
+                }
+              },
+            }  
+          ]
+        }
+      });
+    });
+  });
+
+  describe.skip(LeaderboardModel.create, () => {});
+
+  describe.skip(LeaderboardModel.update, () => {});
+
+  describe.skip(LeaderboardModel.delete, () => {});
+
+  describe.skip(LeaderboardModel.listParticipants, () => {});
+
+  describe.skip(LeaderboardModel.getMemberParticipation, () => {});
+
+  describe.skip(LeaderboardModel.removeMemberParticipation, () => {});
+
+  describe.skip(LeaderboardModel.listMembers, () => {});
+
+  describe.skip(LeaderboardModel.getMember, () => {});
+
+  describe.skip(LeaderboardModel.createMember, () => {});
+
+  describe.skip(LeaderboardModel.updateMember, () => {});
+
+  describe.skip(LeaderboardModel.removeMember, () => {});
+
+});

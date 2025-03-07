@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, afterEach } from 'vitest';
-import { mockObject, mockObjects, TEST_SESSION_ID } from '../../../testing-support/util.ts';
-import { getHandlerMocksWithUser, MOCK_USER_ID } from '../../lib/__mocks__/express.ts';
+import { mockObject, mockObjects, TEST_SESSION_ID, TEST_USER_ID } from '../../../testing-support/util.ts';
+import { getHandlerMocksWithUser } from '../../lib/__mocks__/express.ts';
 import type { Work, Tally } from "@prisma/client";
 
 vi.mock('../../lib/db.ts');
@@ -17,7 +17,7 @@ describe('work api v1', () => {
     vi.resetAllMocks();
   });
 
-  describe('getWorks', () => {
+  describe(handleGetWorks, () => {
     it('returns works', async () => {
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       dbClientMock.work.findMany.mockResolvedValue(
@@ -35,7 +35,7 @@ describe('work api v1', () => {
     });
   });
 
-  describe('getWork', () => {
+  describe(handleGetWork, () => {
     it('returns a work if it finds one', async () => {
       dbClientMock.work.findUnique.mockResolvedValue(mockObject<Work>());
 
@@ -59,7 +59,7 @@ describe('work api v1', () => {
     });
   });
 
-  describe('createGoal', () => {
+  describe(handleCreateWork, () => {
     it('creates a goal', async() => {
       const WORK_ID = -10;
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
@@ -72,13 +72,13 @@ describe('work api v1', () => {
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.work.create).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('work:create', MOCK_USER_ID, WORK_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('work:create', TEST_USER_ID, WORK_ID, null, null, TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalled();
     });
   });
 
-  describe('updateWork', () => {
+  describe(handleUpdateWork, () => {
     it('updates a work', async () => {
       const WORK_ID = -10;
       dbClientMock.work.update.mockResolvedValue(
@@ -90,13 +90,13 @@ describe('work api v1', () => {
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.work.update).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('work:update', MOCK_USER_ID, WORK_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('work:update', TEST_USER_ID, WORK_ID, null, null, TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
   });
 
-  describe('deleteWork', () => {
+  describe(handleDeleteWork, () => {
     it('deletes a work', async () => {
       const WORK_ID = -10;
       dbClientMock.work.update.mockResolvedValue(
@@ -108,7 +108,7 @@ describe('work api v1', () => {
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.work.update).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('work:delete', MOCK_USER_ID, WORK_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('work:delete', TEST_USER_ID, WORK_ID, null, null, TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });

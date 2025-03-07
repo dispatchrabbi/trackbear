@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, afterEach } from 'vitest';
-import { mockObject, NIL_UUID, TEST_SESSION_ID } from '../../../testing-support/util.ts';
-import { getHandlerMocksWithUser, MOCK_USER_ID } from '../../lib/__mocks__/express.ts';
+import { mockObject, NIL_UUID, TEST_SESSION_ID, TEST_USER_ID } from '../../../testing-support/util.ts';
+import { getHandlerMocksWithUser } from '../../lib/__mocks__/express.ts';
 import { type User, type Board, BoardParticipant } from "@prisma/client";
 
 vi.mock('../../lib/db.ts');
@@ -42,7 +42,7 @@ describe('board api v1', () => {
   describe('getBoard', () => {
     it('returns a private board you own', async () => {
       vi.spyOn(boardConsts, 'getFullBoard').mockResolvedValue(mockObject<FullBoard>({
-        ownerId: MOCK_USER_ID,
+        ownerId: TEST_USER_ID,
         isPublic: false,
       }));
   
@@ -56,13 +56,13 @@ describe('board api v1', () => {
 
     it('returns a private board you are part of', async () => {
       vi.spyOn(boardConsts, 'getFullBoard').mockResolvedValue(mockObject<FullBoard>({
-        ownerId: MOCK_USER_ID + 1,
+        ownerId: TEST_USER_ID + 1,
         isPublic: false,
         participants: [mockObject<FullParticipant>({ uuid: NIL_UUID })],
       }));
 
       const { req, res } = getHandlerMocksWithUser({
-        user: mockObject<User>({ id: MOCK_USER_ID, uuid: NIL_UUID }),
+        user: mockObject<User>({ id: TEST_USER_ID, uuid: NIL_UUID }),
         params: { uuid: NIL_UUID }
       });
       await handleGetBoard(req, res);
@@ -74,7 +74,7 @@ describe('board api v1', () => {
 
     it(`returns a public board you don't own`, async () => {
       vi.spyOn(boardConsts, 'getFullBoard').mockResolvedValue(mockObject<FullBoard>({
-        ownerId: MOCK_USER_ID + 1,
+        ownerId: TEST_USER_ID + 1,
         isPublic: true,
       }));
 
@@ -88,7 +88,7 @@ describe('board api v1', () => {
 
     it(`will not return a private board you aren't in and can't join`, async () => {
       vi.spyOn(boardConsts, 'getFullBoard').mockResolvedValue(mockObject<FullBoard>({
-        ownerId: MOCK_USER_ID + 1,
+        ownerId: TEST_USER_ID + 1,
         isPublic: false,
         isJoinable: false,
         participants: [],
@@ -104,7 +104,7 @@ describe('board api v1', () => {
 
     it(`will tell you to join a private board you aren't in but can join`, async () => {
       vi.spyOn(boardConsts, 'getFullBoard').mockResolvedValue(mockObject<FullBoard>({
-        ownerId: MOCK_USER_ID + 1,
+        ownerId: TEST_USER_ID + 1,
         isPublic: false,
         isJoinable: true,
         participants: [],
@@ -132,7 +132,7 @@ describe('board api v1', () => {
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.board.create).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('board:create', MOCK_USER_ID, BOARD_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('board:create', TEST_USER_ID, BOARD_ID, null, null, TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalled();
     });
@@ -150,7 +150,7 @@ describe('board api v1', () => {
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.board.update).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('board:update', MOCK_USER_ID, BOARD_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('board:update', TEST_USER_ID, BOARD_ID, null, null, TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
@@ -179,7 +179,7 @@ describe('board api v1', () => {
       expect(dbClientMock.board.updateMany).toHaveBeenCalled();
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.boardParticipant.updateMany).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('board:star', MOCK_USER_ID, BOARD_ID, null, summary, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('board:star', TEST_USER_ID, BOARD_ID, null, summary, TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
@@ -197,7 +197,7 @@ describe('board api v1', () => {
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.board.update).toHaveBeenCalled();
-      expect(logAuditEventMock).toHaveBeenCalledWith('board:delete', MOCK_USER_ID, BOARD_ID, null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('board:delete', TEST_USER_ID, BOARD_ID, null, null, TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });

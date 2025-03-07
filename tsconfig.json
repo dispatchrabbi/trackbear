@@ -32,6 +32,7 @@
     },
   },
   "include": [
+    "vitest-custom-matchers.d.ts",
     "src/**/*.ts", "src/**/*.js", "src/**/*.vue",
     "server/**/*.ts",
     "main.ts", "testing-support/util.ts",
