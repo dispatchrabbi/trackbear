@@ -1,5 +1,6 @@
 import type { Application, Router } from "express";
 import type { ZodSchema } from "zod";
+import winston from "winston";
 import { h, type ApiHandler } from "./api-response";
 import { decorateApiCallSpan, instrumentMiddleware } from "./middleware/decorate-span";
 import { requirePublic, requireUser, requireAdminUser, requirePrivate } from "./middleware/access";
@@ -63,6 +64,7 @@ export function mountEndpoints(app: Application | Router, routes: RouteConfig[])
   }
 }
 
+const mountedEndpoints = new Set();
 export function mountEndpoint(app: Application | Router, route: RouteConfig) {
   if(!validatePath(route.path)) {
     throw new Error(`Attempted to mount endpoint on invalid path '${route.path}'`);
@@ -84,6 +86,13 @@ export function mountEndpoint(app: Application | Router, route: RouteConfig) {
     route.querySchema && validateQuery(route.querySchema),
     route.bodySchema && validateBody(route.bodySchema)
   ].filter(fn => !!fn);
+
+  const routeKey = `${route.method} ${route.path}`;
+  if(mountedEndpoints.has(routeKey)) {
+    winston.warn(`${routeKey} is already mounted! Overwriting...`);
+  } else {
+    mountedEndpoints.add(routeKey);
+  }
 
   app[method](
     route.path,
