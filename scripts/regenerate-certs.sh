@@ -9,7 +9,7 @@ fi
 
 cd ./certs
 
-if [ ! -e ./certs/ca.crt ]; then
+if [ ! -e ./certs/root-ca.crt ]; then
   echo "Creating CA key and certificate..."
   openssl req -x509 -nodes \
     -newkey RSA:2048       \
