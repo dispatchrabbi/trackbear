@@ -1,4 +1,4 @@
-import { callApiV1 } from "./api.ts";
+import { callApiV1 } from "../api.ts";
 
 import type { BoardParticipant } from "@prisma/client";
 import type { Board, BoardWithParticipantBios, FullBoard, BoardGoal, BoardWithParticipants, ExtendedBoardParticipant, FullParticipant, ParticipantGoal } from "server/lib/models/board-wip/types.ts";

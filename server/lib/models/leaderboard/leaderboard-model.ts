@@ -46,7 +46,7 @@ export class LeaderboardModel {
 
   @traced
   static async list(participantUserId: number): Promise<LeaderboardSummary[]> {
-    const leaderboardsWithParticipants = await dbClient.board.findMany({
+    const leaderboardsWithMembers = await dbClient.board.findMany({
       where: {
         state: LEADERBOARD_STATE.ACTIVE,
         participants: {
@@ -60,7 +60,7 @@ export class LeaderboardModel {
         participants: {
           where: {
             state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-            user: { state: USER_STATE.ACTIVE }
+            user: { state: USER_STATE.ACTIVE },
           },
           include: {
             user: true,
@@ -69,7 +69,7 @@ export class LeaderboardModel {
       },
     });
 
-    const summaries = leaderboardsWithParticipants.map(board => ({
+    const summaries = leaderboardsWithMembers.map(board => ({
       ...pick(board, [
         'id', 'uuid', 'state', 'ownerId', 'createdAt', 'updatedAt',
         'title', 'description',
@@ -79,8 +79,9 @@ export class LeaderboardModel {
       ]),
       // use the starred property from the participant, not the leaderboard
       starred: board.participants.find(p => p.userId === participantUserId).starred,
-      participants: board.participants.map(participant => ({
+      members: board.participants.map(participant => ({
         id: participant.id,
+        isParticipant: participant.isParticipant,
         // TODO: this will change when we have per-board display names
         displayName: participant.user.displayName,
         avatar: participant.user.avatar,
@@ -291,7 +292,7 @@ export class LeaderboardModel {
       },
     });
 
-    const members = dbMembers.map(this.db2member);
+    const members = dbMembers.map(dbMember => this.db2member(dbMember));
 
     return members;
   };

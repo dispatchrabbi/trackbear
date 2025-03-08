@@ -1,4 +1,4 @@
-import { callApiV1, RoundTrip } from "src/lib/api/api.ts";
+import { callApiV1, RoundTrip } from "src/lib/api";
 
 import type { User as PrismaUser, AuditEvent as PrismaAuditEvent } from "@prisma/client";
 import { UserUpdatePayload, UserStatePayload } from "server/api/admin/user.ts";

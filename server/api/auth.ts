@@ -27,7 +27,7 @@ const zLoginPayload = z.object({
 });
 
 export async function handleLogin(req: Request, res: ApiResponse<User>) {
-  const { username, password } = req.body;
+  const { username, password } = req.body as LoginPayload;
 
   const user: User = await UserModel.getUserByUsername(username);
   if(!user) {
@@ -137,7 +137,7 @@ const zChangePasswordPayload = z.object({
 });
 
 export async function handleChangePassword(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
-  const { currentPassword, newPassword } = req.body;
+  const { currentPassword, newPassword } = req.body as ChangePasswordPayload;
 
   const currentPasswordMatches = await UserModel.checkPassword(req.user, currentPassword);
   if(!currentPasswordMatches) {
@@ -161,7 +161,7 @@ const zRequestPasswordResetPayload = z.object({
 });
 
 export async function handleSendPasswordResetEmail(req: Request, res: ApiResponse<EmptyObject>) {
-  const username = req.body.username;
+  const { username } = req.body as RequestPasswordResetPayload;
 
   const user = await UserModel.getUserByUsername(username);
   if(!user) {
@@ -189,7 +189,7 @@ const zPasswordResetPayload = z.object({
 
 export async function handlePasswordReset(req: Request, res: ApiResponse<EmptyObject>) {
   const resetUuid = req.params.uuid;
-  const newPassword = req.body.newPassword;
+  const { newPassword } = req.body as PasswordResetPayload;
 
   try {
     await UserModel.resetPassword(resetUuid, newPassword, reqCtx(req));

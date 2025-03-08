@@ -1,4 +1,4 @@
-import type { Application, Router } from "express";
+import type { Application, IRouter, Router } from "express";
 import type { ZodSchema } from "zod";
 import winston from "winston";
 import { h, type ApiHandler } from "./api-response";
@@ -34,7 +34,8 @@ export type RouteConfig = {
   bodySchema?: ZodSchema;
 };
 
-const HTTP_METHODS_TO_EXPRESS_METHOD: Record<HttpMethod, string> = {
+type AllowedExpressMethods = keyof Pick<IRouter, 'get' | 'post' | 'put' | 'patch' | 'delete'>;
+const HTTP_METHODS_TO_EXPRESS_METHOD: Record<HttpMethod, AllowedExpressMethods> = {
   [HTTP_METHODS.GET]: 'get',
   [HTTP_METHODS.POST]: 'post',
   [HTTP_METHODS.PUT]: 'put',
@@ -98,6 +99,7 @@ export function mountEndpoint(app: Application | Router, route: RouteConfig) {
     route.path,
     decorateApiCallSpan({ method, routePath: route.path }),
     instrumentMiddleware(accessMiddleware.name, accessMiddleware),
+    // @ts-expect-error
     ...validators.map(valFn => instrumentMiddleware(valFn.name, valFn)),
     instrumentMiddleware(route.handler.name, h(route.handler)),
   );

@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { useEventBus } from '@vueuse/core';
-import { type BoardWithParticipantBios, type Board, starBoard } from 'src/lib/api/board.ts';
+import { type LeaderboardSummary, starLeaderboard } from 'src/lib/api/leaderboard.ts';
 
 const props = defineProps<{
-  board: BoardWithParticipantBios;
+  leaderboard: LeaderboardSummary;
 }>();
 
-const emit = defineEmits(['board:star']);
-const eventBus = useEventBus<{ board: Board }>('board:star');
+const eventBus = useEventBus<{ leaderboard: LeaderboardSummary }>('leaderboard:star');
 
 import Card from 'primevue/card';
 import UserAvatarGroup from '../UserAvatarGroup.vue';
@@ -18,14 +17,12 @@ const isStarLoading = ref<boolean>(false);
 async function onStarClick() {
   isStarLoading.value = true;
 
-  const newStarVal = !props.board.starred;
-  await starBoard(props.board.uuid, newStarVal);
+  const newStarVal = !props.leaderboard.starred;
+  await starLeaderboard(props.leaderboard.uuid, newStarVal);
   isStarLoading.value = false;
 
-  emit('board:star', { uuid: props.board.uuid, starred: newStarVal });
-  eventBus.emit({ board: props.board });
+  eventBus.emit({ leaderboard: props.leaderboard });
 }
-
 </script>
 
 <template>
@@ -37,22 +34,22 @@ async function onStarClick() {
       <div class="flex gap-2 items-baseline">
         <span
           :class="[
-            isStarLoading ? PrimeIcons.SPINNER + ' pi-spin' : props.board.starred ? PrimeIcons.STAR_FILL : PrimeIcons.STAR,
+            isStarLoading ? PrimeIcons.SPINNER + ' pi-spin' : props.leaderboard.starred ? PrimeIcons.STAR_FILL : PrimeIcons.STAR,
             'text-primary-500 dark:text-primary-400'
           ]"
           @click.prevent="onStarClick"
         />
-        <div>{{ props.board.title }}</div>
+        <div>{{ props.leaderboard.title }}</div>
       </div>
     </template>
     <template #content>
       <div class="flex flex-col md:flex-row md:h-8 md:items-end gap-2">
         <div class="font-light italic grow">
-          {{ props.board.description }}
+          {{ props.leaderboard.description }}
         </div>
         <div>
           <UserAvatarGroup
-            :users="props.board.participants"
+            :users="props.leaderboard.members.filter(member => member.isParticipant)"
             :limit="5"
           />
         </div>
@@ -60,7 +57,3 @@ async function onStarClick() {
     </template>
   </Card>
 </template>
-
-<style scoped>
-
-</style>

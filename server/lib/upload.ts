@@ -60,7 +60,7 @@ function getMulterStorage(useMemoryStorage = false): multer.StorageEngine {
     }
   }
 
-  return multerStorage!;
+  return multerStorage;
 }
 
 export function getAvatarUploadFn() {

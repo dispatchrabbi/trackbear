@@ -17,10 +17,10 @@ export type LeaderboardParticipant = Expand<Omit<PrismaBoardParticipant, 'goal'>
   goal: ParticipantGoal;
 }>;
 
-export type ParticipantBio = Pick<LeaderboardParticipant, 'id'> & Pick<User, 'displayName' | 'avatar'>;
+export type MemberBio = Pick<LeaderboardParticipant, 'id' | 'isParticipant'> & Pick<User, 'displayName' | 'avatar'>;
 
 export type LeaderboardSummary = Leaderboard & {
-  participants: ParticipantBio[];
+  members: MemberBio[];
 };
 
 export type LeaderboardTally = Pick<Tally, 'uuid' | 'date' | 'measure' | 'count'>;

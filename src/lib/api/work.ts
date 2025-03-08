@@ -1,4 +1,4 @@
-import { callApiV1 } from "./api.ts";
+import { callApiV1 } from "../api.ts";
 
 import type { Tally, Tag } from "@prisma/client";
 import type { Work, SummarizedWork } from "server/api/v1/work.ts";

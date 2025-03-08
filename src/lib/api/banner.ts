@@ -1,4 +1,4 @@
-import { callApi } from "./api.ts";
+import { callApi } from "../api.ts";
 import { Banner } from "server/api/banners.ts";
 
 async function getBanners() {

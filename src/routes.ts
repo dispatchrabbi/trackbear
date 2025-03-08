@@ -50,6 +50,13 @@ import EditBoardPage from './components/pages/boards/EditBoardPage.vue';
 import JoinBoardPage from './components/pages/boards/JoinBoardPage.vue';
 import EditBoardParticipationPage from './components/pages/boards/EditBoardParticipationPage.vue';
 
+import LeaderboardsListPage from 'src/components/pages/leaderboards/LeaderboardsListPage.vue';
+import LeaderboardDetailPage from 'src/components/pages/leaderboards/LeaderboardDetailPage.vue';
+import NewLeaderboardPage from './components/pages/leaderboards/NewLeaderboardPage.vue';
+// import EditLeaderboardPage from './components/pages/leaderboards/EditLeaderboardPage.vue';
+// import JoinLeaderboardPage from './components/pages/leaderboards/JoinLeaderboardPage.vue';
+// import EditLeaderboardParticipationPage from './components/pages/leaderboards/EditLeaderboardParticipationPage.vue';
+
 import LifetimeStatsPage from './components/pages/stats/LifetimeStats.vue';
 
 const routes = [
@@ -95,6 +102,13 @@ const routes = [
   { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/edit', name: 'edit-board', component: EditBoardPage },
   { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/join', name: 'join-board', component: JoinBoardPage },
   { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/filters', name: 'edit-board-filters', component: EditBoardParticipationPage },
+
+  // Hidden replacement Leaderboards section
+  { path: '/leaderboards2', name: 'leaderboards', component: LeaderboardsListPage },
+  { path: '/leaderboards2/new', name: 'new-leaderboard', component: NewLeaderboardPage },
+  { path: '/leaderboards2/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', name: 'leaderboard', component: LeaderboardDetailPage },
+  // { path: '/leaderboards2/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/edit', name: 'edit-leaderboard', component: EditLeaderboardPage },
+  // { path: '/leaderboards2/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/join', name: 'join-leaderboard', component: JoinLeaderboardPage },
 
   // Stats section
   { path: '/stats/lifetime', name: 'lifetime-stats', component: LifetimeStatsPage },

@@ -52,11 +52,11 @@ describe(LeaderboardModel, () => {
           ...mockObject<Leaderboard>(),
           participants: [
             {
-              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: false}),
+              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: false, isParticipant: false }),
               user: mockObject<User>({ id: TEST_USER_ID, displayName: 'test0', avatar: null })
             },
             {
-              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID - 1, userId: TEST_USER_ID - 1, starred: true}),
+              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID - 1, userId: TEST_USER_ID - 1, starred: true, isParticipant: true }),
               user: mockObject<User>({ id: TEST_USER_ID - 1, displayName: 'test1', avatar: null })
             }
           ]
@@ -65,11 +65,11 @@ describe(LeaderboardModel, () => {
           ...mockObject<Leaderboard>(),
           participants: [
             {
-              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: true}),
+              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: true, isParticipant: true }),
               user: mockObject<User>({ id: TEST_USER_ID, displayName: 'test0', avatar: null })
             },
             {
-              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID - 2, userId: TEST_USER_ID -2, starred: false}),
+              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID - 2, userId: TEST_USER_ID -2, starred: false, isParticipant: true }),
               user: mockObject<User>({ id: TEST_USER_ID - 2, displayName: 'test2', avatar: null })
             }
           ]
@@ -81,17 +81,17 @@ describe(LeaderboardModel, () => {
         {
           ...mockObject<Leaderboard>(),
           starred: false,
-          participants: [
-            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null },
-            { id: TEST_OBJECT_ID - 1, displayName: 'test1', avatar: null },
+          members: [
+            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, isParticipant: false },
+            { id: TEST_OBJECT_ID - 1, displayName: 'test1', avatar: null, isParticipant: true },
           ]
         },
         {
           ...mockObject<Leaderboard>(),
           starred: true,
-          participants: [
-            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null },
-            { id: TEST_OBJECT_ID - 2, displayName: 'test2', avatar: null },
+          members: [
+            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, isParticipant: true },
+            { id: TEST_OBJECT_ID - 2, displayName: 'test2', avatar: null, isParticipant: true },
           ],
         },
       ];
@@ -113,7 +113,7 @@ describe(LeaderboardModel, () => {
           participants: {
             where: {
               state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-              user: { state: USER_STATE.ACTIVE }
+              user: { state: USER_STATE.ACTIVE },
             },
             include: {
               user: true,

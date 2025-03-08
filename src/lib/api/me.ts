@@ -1,4 +1,4 @@
-import { callApiV1 } from "./api.ts";
+import { callApiV1 } from "../api.ts";
 import { UserSettings } from "@prisma/client";
 
 import type { FullUser, MeEditPayload, SettingsEditPayload } from "server/api/v1/me.ts";

@@ -1,4 +1,4 @@
-import { callApiV1 } from "./api.ts";
+import { callApiV1 } from "../api.ts";
 
 import type {
   LeaderboardSummary, Leaderboard, LeaderboardStarResponse, Member, Participant, Participation,
@@ -36,7 +36,8 @@ export async function updateLeaderboard(uuid: string, data: LeaderboardUpdatePay
   return callApiV1<Leaderboard>(ENDPOINT + `/${uuid}`, 'PATCH', data);
 }
 
-export async function starLeaderboard(uuid: string, data: LeaderboardStarPayload) {
+export async function starLeaderboard(uuid: string, starred: boolean) {
+  const data: LeaderboardStarPayload = { starred };
   return callApiV1<LeaderboardStarResponse>(ENDPOINT + `/${uuid}/star`, 'PATCH', data);
 }
 

@@ -1,4 +1,4 @@
-import { callApi } from "../api.ts";
+import { callApi } from "../../api.ts";
 import type { AdminPerms } from "@prisma/client";
 
 export type { AdminPerms };

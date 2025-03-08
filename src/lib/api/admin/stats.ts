@@ -1,4 +1,4 @@
-import { callApiV1 } from "src/lib/api/api.ts";
+import { callApiV1 } from "src/lib/api";
 
 import { WeeklyStat, DailyStat } from "server/api/admin/stats.ts";
 

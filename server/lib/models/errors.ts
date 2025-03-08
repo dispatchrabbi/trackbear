@@ -1,5 +1,5 @@
 export class RecordNotFoundError extends Error {
-  constructor(model: string, id: unknown, idField: string = 'id', ...args) {
+  constructor(model: string, id: number | string, idField: string = 'id', ...args: unknown[]) {
     const message = `Did not find any ${model} with id ${id}`;
     super(message, ...args);
 
@@ -23,7 +23,7 @@ export class RecordNotFoundError extends Error {
 }
 
 export class ValidationError extends Error {
-  constructor(model: string, invalidField: string, reason: string, ...args) {
+  constructor(model: string, invalidField: string, reason: string, ...args: unknown[]) {
     const message = `Invalid value on ${model} for ${invalidField}: ${reason}`;
     super(message, ...args);
 
