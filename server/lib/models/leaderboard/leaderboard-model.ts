@@ -473,6 +473,7 @@ export class LeaderboardModel {
         user: { state: USER_STATE.ACTIVE },
       },
       include: {
+        user: true,
         worksIncluded: true,
         tagsIncluded: true,
       }
@@ -482,6 +483,7 @@ export class LeaderboardModel {
 
     const participants = rawParticipants.map(participant => ({
       ...pick(participant, ['id', 'uuid', 'goal']),
+      displayName: participant.user.displayName,
       tallies: tallies.filter(tally => tally.ownerId === participant.userId).map(tally => pick(tally, ['uuid', 'date', 'measure', 'count'])),
     })) as Participant[];
 

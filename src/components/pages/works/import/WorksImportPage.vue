@@ -17,16 +17,22 @@ const importMethods = [
     sectionTitle: 'Import from NaNoWriMo',
     methods: [
       {
+        title: 'Automatic NaNoWriMo Import',
+        icon: PrimeIcons.SYNC,
+        details: [`Import all your NaNoWriMo projects at once by letting TrackBear log in on your behalf.`],
+        route: 'import-works-nano-auto',
+      },
+      {
+        title: 'Automatic Young Writers Program Import',
+        icon: PrimeIcons.SYNC,
+        details: [`Import all your NaNoWriMo Young Writers Program projects at once by letting TrackBear log in on your behalf.`],
+        route: 'import-works-ywp-auto',
+      },
+      {
         title: 'Manual Import',
         icon: PrimeIcons.COPY,
         details: [`Import a single project by copying and pasting data from NaNoWriMo's website.`],
         route: 'import-works-nano-manual',
-      },
-      {
-        title: 'Automatic Import',
-        icon: PrimeIcons.SYNC,
-        details: [`Import all your NaNoWriMo projects at once by letting TrackBear log in on your behalf.`],
-        route: 'import-works-nano-auto',
       },
     ],
   },
@@ -61,7 +67,7 @@ const importMethods = [
       class="mb-8"
     >
       <SectionTitle :title="section.sectionTitle" />
-      <div class="flex gap-4">
+      <div class="flex flex-col md:flex-row gap-4">
         <RouterLink
           v-for="(method, mindex) of section.methods"
           :key="mindex"

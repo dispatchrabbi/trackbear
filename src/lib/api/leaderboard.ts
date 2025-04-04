@@ -54,25 +54,25 @@ export async function updateMember(uuid: string, memberId: string, data: Leaderb
 }
 
 export async function removeMember(uuid: string, memberId: string) {
-  return callApiV1<Member[]>(ENDPOINT + `/${uuid}/members/${memberId}`, 'DELETE');
+  return callApiV1<null>(ENDPOINT + `/${uuid}/members/${memberId}`, 'DELETE');
 }
 
 export async function listParticipants(uuid: string) {
-  return callApiV1<Member[]>(ENDPOINT + `/${uuid}/participants`, 'GET');
+  return callApiV1<Participant[]>(ENDPOINT + `/${uuid}/participants`, 'GET');
 }
 
 export async function getMyParticipation(uuid: string) {
-  return callApiV1<Member[]>(ENDPOINT + `/${uuid}/me`, 'GET');
+  return callApiV1<Participation | null>(ENDPOINT + `/${uuid}/me`, 'GET');
 }
 
 export async function addMyParticipation(uuid: string, data: LeaderboardParticipationCreatePayload) {
-  return callApiV1<Member[]>(ENDPOINT + `/${uuid}/me`, 'POST', data);
+  return callApiV1<Participation>(ENDPOINT + `/${uuid}/me`, 'POST', data);
 }
 
 export async function updateMyParticipation(uuid: string, data: LeaderboardParticipationUpdatePayload) {
-  return callApiV1<Member[]>(ENDPOINT + `/${uuid}/me`, 'PATCH', data);
+  return callApiV1<Participation>(ENDPOINT + `/${uuid}/me`, 'PATCH', data);
 }
 
 export async function removeMyParticipation(uuid: string) {
-  return callApiV1<Member[]>(ENDPOINT + `/${uuid}/me`, 'DELETE');
+  return callApiV1<null>(ENDPOINT + `/${uuid}/me`, 'DELETE');
 }

@@ -94,3 +94,4 @@ Consider the ability to add more than one type of progress at once (h/t Alice) s
 Ensure that projects (etc.) on public profile have a consistent order (last updated?) (h/t K. A. J. Klok) @profile +delight
 Allow users to configure profile ordering (h/t K. A. J. Klok) @profile @settings
 Allow users to configure Dashboard more (h/t K. A. J. Klok) @dashboard @settings
+(B) Allow users to specify Sunday or Monday as the first day of the week (h/t Hester van Bork) @settings +localization +delight

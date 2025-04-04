@@ -12,6 +12,13 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: The backend rewrite mentioned below is part of a larger process to make the codebase more testable and prepare it for general API access. I know this is a highly-requested feature, so don't worry — it's on its way!
+- CHANGED: The backend for leaderboards is in the process of being rewritten, in order to make it easier to add some much-requested features like picking your own colors and having teams on leaderboards.
+
+## 1.1.20
+
+- NEW: Added an automatic importer for the NaNoWriMo Young Writers Program. Special thanks to Jenai for helping me with some of the context around YWP.
+
 ## 1.1.19
 
 - CHANGED: The way that leaderboard owners are represented in the database is changing a bit, and this is the first half of that change. Normally I don't put changes that are only on the backend and transparent to users on the changelog, but in this case, I want to be extra wary of any inadvertant bugs that my testing didn't catch. If you encounter a bug with leaderboards, whether that's creating, configuing, joining, leaving, deleting, or anything else, please send a bug report to the email address on the [Contact](/contact) page. Thank you!

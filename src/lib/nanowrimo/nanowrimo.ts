@@ -62,16 +62,16 @@ export default class NaNoWriMo {
     };
     const signInResponse = await this.callApi<{auth_token: string}>(NaNoWriMo.API_PREFIX + '/users/sign_in', 'POST', signInPayload);
     if(signInResponse.status === 401) {
-      throw new Error('Invalid credentials')
+      throw new Error('Invalid credentials');
     } else if(!signInResponse.ok) {
-      throw new Error(`An unknown error occurred: ${signInResponse.status}`)
+      throw new Error(`An unknown error occurred: ${signInResponse.status}`);
     }
 
     this.jwt = signInResponse.payload.auth_token;
 
     const currentUserResponse = await this.callApi<NaNoWriMoSingleResponse>(NaNoWriMo.API_PREFIX + '/users/current');
     if(!currentUserResponse.ok) {
-      throw new Error(`An unknown error occurred: ${signInResponse.status}`)
+      throw new Error(`An unknown error occurred: ${signInResponse.status}`);
     }
 
     this.userId = currentUserResponse.payload.data.id;
@@ -88,7 +88,7 @@ export default class NaNoWriMo {
     };
     const response = await this.callApi<NaNoWriMoCollectionResponse>(NaNoWriMo.API_PREFIX + '/projects', 'GET', null, query);
     if(!response.ok) {
-      throw new Error(`An unknown error occurred: ${response.status}`)
+      throw new Error(`An unknown error occurred: ${response.status}`);
     }
 
     const sessions = response.payload.included.filter(e => e.type === 'project-sessions').map(session => ({

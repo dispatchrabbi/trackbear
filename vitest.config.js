@@ -7,6 +7,7 @@ export default defineConfig({
       'testing-support/custom-matchers/api-response.ts',
     ],
     exclude: [
+      'node_modules/**',
       'testing-support/**',
       'server/integration-tests/**',
     ],

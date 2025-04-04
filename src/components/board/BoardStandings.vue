@@ -6,13 +6,13 @@ import { differenceInCalendarDays } from 'date-fns';
 
 import { formatDate, parseDateString } from "src/lib/date.ts";
 import { formatCount } from 'src/lib/tally.ts';
+import { formatPercent } from 'src/lib/number.ts';
 
 import { normalizeTallies, accumulateTallies, determineChartStartDate, determineChartEndDate } from '../chart/chart-functions.ts';
 import UserAvatar from 'src/components/UserAvatar.vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { TallyMeasure } from 'server/lib/models/tally/consts.ts';
-import { formatPercent } from 'src/lib/number.ts';
 
 const props = defineProps<{
   board: Board;

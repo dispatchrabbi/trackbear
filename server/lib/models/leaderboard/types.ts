@@ -28,6 +28,7 @@ export type LeaderboardTally = Pick<Tally, 'uuid' | 'date' | 'measure' | 'count'
 // TODO: later on this will have stuff like 'team' and 'color' and 'displayName'
 export type Participant = Expand<Pick<LeaderboardParticipant, 'id' | 'uuid' | 'goal'>
   & {
+    displayName: string;
     tallies: LeaderboardTally[];
   }>;
 

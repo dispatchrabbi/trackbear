@@ -78,6 +78,7 @@
     "express-rate-limit": "^7.1.5",
     "express-session": "^1.18.1",
     "helmet": "^7.1.0",
+    "libcurl.js": "^0.7.0",
     "mailersend": "^2.2.0",
     "markdown-it": "^14.0.0",
     "material-design-icons-iconfont": "^6.7.0",
@@ -98,6 +99,7 @@
     "vue-router": "^4.5.0",
     "vue-tsc": "^2.1.10",
     "winston": "^3.17.0",
+    "wisp-server-node": "^1.1.7",
     "zod": "^3.23.8"
   },
   "devDependencies": {

@@ -8,6 +8,7 @@ const CHUNKS_MAP = {
   'chart.js': 'node_modules/chart.js',
   'core-js': 'node_modules/core-js',
   'date-fns': 'node_modules/date-fns',
+  'libcurl': 'node_modules/libcurl.js',
   'markdown-it': 'node_modules/markdown-it',
   'observable-plot': 'node_modules/@observablehq/plot',
   'primevue-calendar': 'node_modules/primevue/calendar',

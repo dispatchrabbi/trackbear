@@ -29,6 +29,9 @@ import { mountApiEndpoints } from 'server/api/index.ts';
 import spaRoutes from 'server/lib/middleware/spa-routes.ts';
 import { createServer } from 'vite';
 
+import wisp from 'wisp-server-node';
+import { Socket } from 'net';
+
 async function main() {
   dotenv.config();
   const env = await getNormalizedEnv();
@@ -168,6 +171,21 @@ async function main() {
   } else {
     server = http.createServer(app);
   }
+
+  // handle WISP requests
+  server.on('upgrade', (req, socket, head) => {
+    // The docs say that this will always be a Socket (which is a subclass of Duplex): https://nodejs.org/docs/latest/api/http.html#event-upgrade
+    console.log('upgrade request:', req.url);
+    // please include thr trailing slash
+    if (req.url.endsWith("/wisp/")) {
+      console.log('wisped');
+      wisp.routeRequest(req, socket as Socket, head);
+    } else {
+      console.log('not wisped');
+      socket.end();
+    }
+  });
+
   server.listen(env.PORT, () => {
     winston.info(`TrackBear is now listening on ${env.ENABLE_TLS ? 'https' : 'http'}://localhost:${env.PORT}/`);
   });
