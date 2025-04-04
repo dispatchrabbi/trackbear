@@ -88,7 +88,7 @@ export default class YoungWritersProgram {
 
   async init() {
     await libcurl.load_wasm(libcurlWasm);
-    libcurl.set_websocket(`wss://${location.hostname}:3000/wisp/`);
+    libcurl.set_websocket(`wss://${location.hostname}${location.port ? ':' + location.port : ''}/wisp/`);
   }
 
   async login(username: string, password: string) {
