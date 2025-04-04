@@ -3,7 +3,7 @@
 
 ###############################################################################
 # base stage
-FROM node:22-slim AS base
+FROM node:22 AS base
 
 # Install the latest openssl (for HTTPS), and some other tools (for debugging)
 RUN apt update -y && apt install -y openssl curl postgresql-client nano
