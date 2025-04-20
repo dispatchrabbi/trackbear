@@ -15,6 +15,10 @@ Types of changes include:
 - NEW: The backend rewrite mentioned below is part of a larger process to make the codebase more testable and prepare it for general API access. I know this is a highly-requested feature, so don't worry — it's on its way!
 - CHANGED: The backend for leaderboards is in the process of being rewritten, in order to make it easier to add some much-requested features like picking your own colors and having teams on leaderboards.
 
+## 1.1.22
+
+- CHANGED: Added the ability for admins to force-verify accounts.
+
 ## 1.1.20
 
 - NEW: Added an automatic importer for the NaNoWriMo Young Writers Program. Special thanks to Jenai for helping me with some of the context around YWP.
