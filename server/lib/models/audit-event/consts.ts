@@ -229,6 +229,21 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
     patient: AUDIT_EVENT_ENTITIES.USER,
     goal: null
   },
+  [AUDIT_EVENT_TYPE.USER_VERIFY_EMAIL]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.USER,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.USER_PASSWORD_RESET]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.USER,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.USER_PASSWORD_CHANGE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.USER,
+    goal: null
+  },
   [AUDIT_EVENT_TYPE.USER_REQUEST_EMAIL_VERIFICATION]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
@@ -237,6 +252,16 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
   [AUDIT_EVENT_TYPE.USER_REQUEST_PASSWORD_RESET]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.USER_LOGIN]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: null,
+    goal: null
+  },
+  [AUDIT_EVENT_TYPE.USER_FAILED_LOGIN]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: null,
     goal: null
   },
   [AUDIT_EVENT_TYPE.WORK_CREATE]: {
