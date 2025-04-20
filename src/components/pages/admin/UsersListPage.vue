@@ -33,7 +33,8 @@ const loadUsers = async function() {
   errorMessage.value = null;
 
   try {
-    users.value = await getUsers();
+    const response = await getUsers();
+    users.value = response.users;
   } catch(err) {
     errorMessage.value = err.message;
   } finally {

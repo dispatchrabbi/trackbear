@@ -8,7 +8,7 @@ import dbClient from '../../server/lib/db.ts';
 import { addDays, isBefore } from "date-fns";
 import { parseDateString, formatDate } from '../../src/lib/date.ts';
 
-import { TALLY_STATE, TALLY_MEASURE } from "../../server/lib/models/tally.ts";
+import { TALLY_STATE, TALLY_MEASURE } from "../../server/lib/models/tally/consts.ts";
 
 const RANDOM_WORDS = [
   918, 2494, 1662, 1286, 2352, 886, 970, 558, 1425, 2089, 1808, 785, 1371, 2296, 1538,

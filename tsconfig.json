@@ -35,6 +35,7 @@
     "vitest-custom-matchers.d.ts",
     "src/**/*.ts", "src/**/*.js", "src/**/*.vue",
     "server/**/*.ts",
+    "scripts/**/*.ts",
     "main.ts", "testing-support/util.ts",
   ],
   "references": [

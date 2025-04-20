@@ -12,8 +12,8 @@ import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from '../server/lib/audit-events.t
 
 import { eachDayOfInterval } from 'date-fns';
 import { parseDateStringSafe, parseDateString, formatDate } from '../src/lib/date.ts';
-import { WORK_PHASE, WORK_STATE } from '../server/lib/models/work.ts';
-import { TALLY_MEASURE, TALLY_STATE } from '../server/lib/models/tally.ts';
+import { WORK_PHASE, WORK_STATE } from '../server/lib/models/work/consts.ts';
+import { TALLY_MEASURE, TALLY_STATE } from '../server/lib/models/tally/consts.ts';
 
 const RANGE_SPREAD = 0.15;
 const SKIP_CHANCE = 0.15;

@@ -260,3 +260,12 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
     goal: null
   },
 };
+
+export const AUDIT_EVENT_SOURCE = {
+  ADMIN_CONSOLE: 'admin console',
+  BATCH_CREATE: 'batch create',
+  LINK: 'link',
+  SCRIPT: 'script',
+  WORKER: 'worker',
+};
+export type AuditEventSource = ValueEnum<typeof AUDIT_EVENT_SOURCE>;

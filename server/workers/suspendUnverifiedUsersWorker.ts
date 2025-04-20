@@ -2,6 +2,7 @@ import type { User, PendingEmailVerification } from "@prisma/client";
 import dbClient from "../lib/db.ts";
 import winston from "winston";
 import { USER_STATE } from "../lib/models/user/consts.ts";
+import { AUDIT_EVENT_SOURCE } from "server/lib/models/audit-event/consts.ts";
 import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from "../lib/audit-events.ts";
 
 type UserWithVerifications = User & { pendingEmailVerifications: PendingEmailVerification[] }
@@ -52,7 +53,7 @@ async function run() {
       },
     });
 
-    await Promise.all(userIdsToSuspend.map(id => logAuditEvent('user:suspend', TRACKBEAR_SYSTEM_ID, id, null, { source: NAME })));
+    await Promise.all(userIdsToSuspend.map(id => logAuditEvent('user:suspend', TRACKBEAR_SYSTEM_ID, id, null, { source: AUDIT_EVENT_SOURCE.WORKER, workerName: NAME })));
   } catch(err) {
     workerLogger.error(`Error while suspending users with expired email verifications: ${err.message}`, { service: NAME });
     return;

@@ -101,9 +101,9 @@ describe('goal api v1', () => {
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       expect(dbClientMock.goal.createManyAndReturn).toHaveBeenCalled();
       expect(logAuditEventMock).toHaveBeenCalledTimes(3);
-      expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', TEST_USER_ID, GOAL_IDS[0], null, { source: 'batch create' }, TEST_SESSION_ID);
-      expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', TEST_USER_ID, GOAL_IDS[1], null, { source: 'batch create' }, TEST_SESSION_ID);
-      expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', TEST_USER_ID, GOAL_IDS[2], null, { source: 'batch create' }, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', TEST_USER_ID, GOAL_IDS[0], null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', TEST_USER_ID, GOAL_IDS[1], null, null, TEST_SESSION_ID);
+      expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', TEST_USER_ID, GOAL_IDS[2], null, null, TEST_SESSION_ID);
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalled();
     });

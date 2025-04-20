@@ -11,8 +11,8 @@ import { formatDate } from '../src/lib/date.ts';
 import dbClient from '../server/lib/db.ts';
 import { User, Work } from '@prisma/client';
 import { USER_STATE } from '../server/lib/models/user/consts.ts';
-import { WORK_STATE } from '../server/lib/models/work.ts';
-import { TALLY_MEASURE, TALLY_STATE } from '../server/lib/models/tally.ts';
+import { WORK_STATE } from '../server/lib/models/work/consts.ts';
+import { TALLY_MEASURE, TALLY_STATE } from '../server/lib/models/tally/consts.ts';
 import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from '../server/lib/audit-events.ts';
 
 type TallyData = {

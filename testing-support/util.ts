@@ -16,9 +16,9 @@ export function mockObjects<T extends object>(count: number, propFn: PropFn<T> =
   return Array(count).fill(null).map((_, ix) => propFn(ix)) as T[];
 }
 
-export function getTestReqCtx(): RequestContext {
+export function getTestReqCtx(overrideUserId: number = null): RequestContext {
   return {
-    userId: TEST_USER_ID,
+    userId: overrideUserId ?? TEST_USER_ID,
     sessionId: TEST_SESSION_ID,
   };
 };

@@ -7,7 +7,7 @@ import { hash, verifyHash } from "../../hash.ts";
 
 import { type RequestContext } from "../../request-context.ts";
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
-import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
+import { AUDIT_EVENT_TYPE, AUDIT_EVENT_SOURCE } from '../audit-event/consts.ts';
 import { ValidationError } from "../errors.ts";
 
 import {
@@ -59,13 +59,24 @@ type SendPasswordResetLinkOptions = Partial<{
 
 export class UserModel {
   @traced
-  static async getUsers(): Promise<User[]> {
+  static async getUsers(skip: number = 0, take: number = Infinity): Promise<User[]> {
     const users = await dbClient.user.findMany({
-      orderBy: { username: 'asc' },
+      orderBy: { createdAt: 'asc' },
+      skip,
+      take: take < Infinity ? take : undefined,
     });
 
     return users;
   }
+
+  @traced
+  static async getTotalUserCount(): Promise<number> {
+    const total = await dbClient.user.count();
+
+    return total;
+  }
+
+  
 
   @traced
   static async getUser(id: number): Promise<User | null> {
@@ -263,7 +274,38 @@ export class UserModel {
     await logAuditEvent(
       AUDIT_EVENT_TYPE.USER_VERIFY_EMAIL,
       reqCtx.userId, verification.user.id, null,
-      { method: 'link', verificationUuid: verification.uuid, email: verification.newEmail },
+      { method: AUDIT_EVENT_SOURCE.LINK, verificationUuid: verification.uuid, email: verification.newEmail },
+      reqCtx.sessionId
+    );
+
+    return true;
+  }
+
+  /**
+   * Marks a user's email address as verified by fiat (e.g., via the admin console or script)
+   * 
+   * @param verificationUuid The UUID contained in the email verification link
+   * @param reqCtx The request context
+   * @returns Whether the verification succeeded
+   */
+  @traced
+  static async verifyEmailByFiat(user: User, source: typeof AUDIT_EVENT_SOURCE.SCRIPT | typeof AUDIT_EVENT_SOURCE.ADMIN_CONSOLE, reqCtx: RequestContext): Promise<boolean> {
+    // mark the user as verified and delete all existing pending email verifications
+    await dbClient.user.update({
+      data: {
+        isEmailVerified: true,
+        pendingEmailVerifications: { deleteMany: [] },
+      },
+      where: {
+        id: user.id,
+      }
+    });
+
+    winston.debug(`VERIFY: ${user.id} just had their email verified via ${source}`);
+    await logAuditEvent(
+      AUDIT_EVENT_TYPE.USER_VERIFY_EMAIL,
+      reqCtx.userId, user.id, null,
+      { method: source, email: user.email },
       reqCtx.sessionId
     );
 

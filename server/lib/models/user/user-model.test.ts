@@ -1,12 +1,12 @@
 import { vi, expect, describe, it, afterEach, beforeEach, MockInstance } from 'vitest';
-import { getTestReqCtx, mockObject, mockObjects, TEST_SESSION_ID, TEST_USER_ID, TEST_UUID } from 'testing-support/util';
+import { getTestReqCtx, mockObject, mockObjects, TEST_SESSION_ID, TEST_SYSTEM_ID, TEST_USER_ID, TEST_UUID } from 'testing-support/util';
 
 import { Ticket } from 'better-queue';
 import { CreateUserData, UpdateUserData, UserModel } from './user-model.ts';
 import { hash } from '../../hash.ts';
 import type { PasswordResetLink, PendingEmailVerification, User, UserAuth } from '@prisma/client';
 import { ValidationError } from '../errors.ts';
-import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
+import { AUDIT_EVENT_TYPE, AUDIT_EVENT_SOURCE } from '../audit-event/consts.ts';
 import { USER_STATE, PASSWORD_RESET_LINK_STATE } from './consts.ts';
 
 vi.mock('../../tracer.ts');
@@ -493,6 +493,68 @@ describe(UserModel, () => {
       expect(dbClient.user.update).not.toBeCalled();
 
       expect(logAuditEvent).not.toBeCalled();
+    });
+  });
+
+  describe(UserModel.verifyEmailByFiat, () => {
+    it(`verifies the user's email address by admin console`, async () => {
+      const testUser = mockObject<User>({
+        id: TEST_USER_ID,
+        email: 'alice@example.com',
+      });
+      dbClient.user.update.mockResolvedValue(testUser);
+
+      const isVerified = await UserModel.verifyEmailByFiat(testUser, AUDIT_EVENT_SOURCE.ADMIN_CONSOLE, getTestReqCtx(TEST_SYSTEM_ID));
+      
+      expect(isVerified).toBe(true);
+
+      expect(dbClient.user.update).toBeCalledWith({
+        data: {
+          isEmailVerified: true,
+          pendingEmailVerifications: { deleteMany: [] },
+        },
+        where: { id: TEST_USER_ID }
+      });
+
+      expect(logAuditEvent).toBeCalledWith(
+        AUDIT_EVENT_TYPE.USER_VERIFY_EMAIL,
+        TEST_SYSTEM_ID, testUser.id, null,
+        {
+          method: AUDIT_EVENT_SOURCE.ADMIN_CONSOLE,
+          email: testUser.email,
+        },
+        TEST_SESSION_ID
+      );
+    });
+
+    it(`verifies the user's email address by script`, async () => {
+      const testUser = mockObject<User>({
+        id: TEST_USER_ID,
+        email: 'alice@example.com',
+      });
+      dbClient.user.update.mockResolvedValue(testUser);
+
+      const isVerified = await UserModel.verifyEmailByFiat(testUser, AUDIT_EVENT_SOURCE.SCRIPT, getTestReqCtx(TEST_SYSTEM_ID));
+      
+      expect(isVerified).toBe(true);
+
+      expect(dbClient.user.update).toBeCalledWith({
+        data: {
+          isEmailVerified: true,
+          pendingEmailVerifications: { deleteMany: [] },
+        },
+        where: { id: TEST_USER_ID }
+      });
+
+      expect(logAuditEvent).toBeCalledWith(
+        AUDIT_EVENT_TYPE.USER_VERIFY_EMAIL,
+        TEST_SYSTEM_ID, testUser.id, null,
+        {
+          method: AUDIT_EVENT_SOURCE.SCRIPT,
+          email: testUser.email,
+        },
+        TEST_SESSION_ID
+      );
     });
   });
 

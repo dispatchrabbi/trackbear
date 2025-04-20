@@ -13,17 +13,33 @@ import {
   UserModel, type User,
 } from "../../lib/models/user/user-model.ts";
 import { AuditEventModel, type AuditEvent } from "server/lib/models/audit-event/audit-event-model.ts";
-import { AUDIT_EVENT_ENTITIES } from "server/lib/models/audit-event/consts.ts";
+import { AUDIT_EVENT_ENTITIES, AUDIT_EVENT_SOURCE } from "server/lib/models/audit-event/consts.ts";
 
 import { reqCtx } from "server/lib/request-context.ts";
 import { ValidationError } from "server/lib/models/errors.ts";
 
 type EmptyObject = Record<string, never>;
 
-export async function handleGetUsers(req: RequestWithUser, res: ApiResponse<User[]>) {
-  const users = await UserModel.getUsers();
+const zUserQuery = z.object({
+  skip: z.number().int().nonnegative(),
+  take: z.number().int().positive(),
+}).partial();
+export type UserQuery = z.infer<typeof zUserQuery>;
+export type GetUsersResponsePayload = {
+  users: User[];
+  total: number;
+};
 
-  return res.status(200).send(success(users));
+export async function handleGetUsers(req: RequestWithUser, res: ApiResponse<GetUsersResponsePayload>) {
+  const query = req.query as UserQuery;
+  
+  const users = await UserModel.getUsers(query.skip ?? 0, query.take ?? Infinity);
+  const total = await UserModel.getTotalUserCount();
+
+  return res.status(200).send(success({
+    users,
+    total
+  }));
 }
 
 export async function handleGetUser(req: RequestWithUser, res: ApiResponse<{ user: User; auditEvents: AuditEvent[]; }>) {
@@ -94,6 +110,17 @@ export async function handleUpdateUserState(req: RequestWithUser, res: ApiRespon
   return res.status(200).send(success(updated));
 }
 
+export async function handleVerifyEmailByFiat(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
+  const user = await UserModel.getUser(+req.params.id);
+  if(!user) {
+    return res.status(404).send(failure('NOT_FOUND', `Could not find a user with id ${req.params.id}`));
+  }
+
+  await UserModel.verifyEmailByFiat(user, AUDIT_EVENT_SOURCE.ADMIN_CONSOLE, reqCtx(req));
+
+  return res.status(200).send(success({}));
+}
+
 export async function handleSendUserVerifyEmail(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
   const user = await UserModel.getUser(+req.params.id);
   if(!user) {
@@ -122,6 +149,7 @@ const routes: RouteConfig[] = [
     method: HTTP_METHODS.GET,
     handler: handleGetUsers,
     accessLevel: ACCESS_LEVEL.ADMIN,
+    querySchema: zUserQuery,
   },
   {
     path: '/:id',
@@ -146,15 +174,23 @@ const routes: RouteConfig[] = [
     paramsSchema: zIdParam(),
     bodySchema: zUserStatePayload,
   },
+
   {
-    path: '/:id/verify-email',
+    path: '/:id/verify-email-by-fiat',
+    method: HTTP_METHODS.POST,
+    handler: handleVerifyEmailByFiat,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+    paramsSchema: zIdParam(),
+  },
+  {
+    path: '/:id/send-verify-email',
     method: HTTP_METHODS.POST,
     handler: handleSendUserVerifyEmail,
     accessLevel: ACCESS_LEVEL.ADMIN,
     paramsSchema: zIdParam(),
   },
   {
-    path: '/:id/reset-password',
+    path: '/:id/send-password-reset-email',
     method: HTTP_METHODS.POST,
     handler: handleSendPasswordResetEmail,
     accessLevel: ACCESS_LEVEL.ADMIN,

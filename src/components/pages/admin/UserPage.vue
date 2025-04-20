@@ -6,7 +6,7 @@ const route = useRoute();
 
 import { parseISO, format } from 'date-fns';
 
-import { getUser, updateUserState, sendEmailVerificationEmail, sendResetPasswordEmail, User, AuditEvent } from 'src/lib/api/admin/user.ts'
+import { getUser, updateUserState, verifyEmailByFiat, sendEmailVerificationEmail, sendResetPasswordEmail, User, AuditEvent } from 'src/lib/api/admin/user.ts'
 import { USER_STATE } from 'server/lib/models/user/consts';
 import { USER_STATE_INFO } from 'src/lib/user.ts';
 
@@ -83,6 +83,18 @@ async function handleSuspendClick() {
   }
 }
 
+async function handleVerifyClick() {
+  toast.add({ summary: 'Verifying user...', severity: 'secondary', group: 'verify' });
+  try {
+    await verifyEmailByFiat(userId.value);
+    toast.removeGroup('verify');
+    toast.add({ summary: 'User verified', severity: 'success', life: 3000 });
+    loadUser(userId.value);
+  } catch(err) {
+    toast.add({ summary: `Error verifying user (${err.code})`, detail: err.message, severity: 'error', life: 3000 });
+  }
+}
+
 const isDeleteFormVisible = ref<boolean>(false);
 function handleDeleteClick() {
   isDeleteFormVisible.value = true;
@@ -134,6 +146,13 @@ async function handleSendEmailVerificationClick() {
       </RouterLink>
       <div class="spacer flex-grow" />
       <div class="flex flex-col md:flex-row gap-2">
+        <Button
+          v-if="user.state === USER_STATE.ACTIVE"
+          label="Verify"
+          :icon="PrimeIcons.CHECK_CIRCLE"
+          severity="success"
+          @click="handleVerifyClick"
+        />
         <Button
           v-if="user.state === USER_STATE.ACTIVE"
           label="Suspend"

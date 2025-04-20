@@ -135,7 +135,7 @@ export async function handleCreateGoals(req: RequestWithUser, res: ApiResponse<G
     })),
   }) as Goal[]; // cannot createManyAndReturn and also { include: foreign objs }
 
-  await Promise.all(createdGoals.map(createdGoal => logAuditEvent('goal:create', user.id, createdGoal.id, null, { source: 'batch create' }, req.sessionID)));
+  await Promise.all(createdGoals.map(createdGoal => logAuditEvent('goal:create', user.id, createdGoal.id, null, null, req.sessionID)));
 
   return res.status(201).send(success(createdGoals));
 }
