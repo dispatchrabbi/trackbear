@@ -1,0 +1,21 @@
+Structure for a general application page layout:
+<Content>
+  <Header
+    image=""
+    title=""
+    subtitle=""
+  />
+  <ButtonBar>
+    ...
+  </ButtonBar>
+  <!-- Section contents will flow horizontally if there's space -->
+  <!-- but Sections themselves do not -->
+  <Section>
+    <Item />
+    <Item />
+  </Section>
+  <Section>
+    <Item />
+    <Item />
+  </Section>
+</Content>

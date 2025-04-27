@@ -17,7 +17,9 @@ export type LeaderboardParticipant = Expand<Omit<PrismaBoardParticipant, 'goal'>
   goal: ParticipantGoal;
 }>;
 
-export type MemberBio = Pick<LeaderboardParticipant, 'id' | 'isParticipant'> & Pick<User, 'displayName' | 'avatar'>;
+export type MemberBio = Pick<LeaderboardParticipant, 'id' | 'isParticipant'> & Pick<User, 'displayName' | 'avatar'> & {
+  userUuid: string;
+};
 
 export type LeaderboardSummary = Leaderboard & {
   members: MemberBio[];
@@ -26,11 +28,13 @@ export type LeaderboardSummary = Leaderboard & {
 export type LeaderboardTally = Pick<Tally, 'uuid' | 'date' | 'measure' | 'count'>;
 
 // TODO: later on this will have stuff like 'team' and 'color' and 'displayName'
-export type Participant = Expand<Pick<LeaderboardParticipant, 'id' | 'uuid' | 'goal'>
+export type Participant = Expand<
+  Pick<LeaderboardParticipant, 'id' | 'uuid' | 'goal'>
+  & Pick<User, 'displayName' | 'avatar'>
   & {
-    displayName: string;
     tallies: LeaderboardTally[];
-  }>;
+  }
+>;
 
 // TODO: later on this will have stuff like 'team' and 'color' and 'displayName'
 export type Participation = Expand<Pick<LeaderboardParticipant, 'id' | 'goal'> & {

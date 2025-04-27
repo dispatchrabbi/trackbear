@@ -6,11 +6,17 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
+import { useUserStore } from 'src/stores/user.ts';
+const userStore = useUserStore();
+
 import { useLeaderboardStore } from 'src/stores/leaderboard';
 const leaderboardStore = useLeaderboardStore();
 
 import { LeaderboardSummary, listParticipants, Participant } from 'src/lib/api/leaderboard';
 import type { Tally } from 'src/lib/api/tally.ts';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
+import { TALLY_MEASURE_INFO } from 'src/lib/tally';
+import { toTitleCase } from 'src/lib/str';
 
 import { PrimeIcons } from 'primevue/api';
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
@@ -19,27 +25,23 @@ import Button from 'primevue/button';
 import UserAvatar from 'src/components/UserAvatar.vue';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import Dialog from 'primevue/dialog';
 
 import DetailPageHeader from 'src/components/layout/DetailPageHeader.vue';
 import SubsectionTitle from 'src/components/layout/SubsectionTitle.vue';
 import IndividualGoalProgressChart from 'src/components/leaderboard/IndividualGoalProgressChart.vue';
-// import BoardStats from 'src/components/board/BoardStats.vue';
-// import BoardProgressMeter from 'src/components/board/BoardProgressMeter.vue';
-// import BoardProgressChart from 'src/components/board/BoardProgressChart.vue';
-// import BoardIndividualProgressChart from 'src/components/board/BoardIndividualProgressChart.vue';
-// import BoardStandings from 'src/components/board/BoardStandings.vue';
+import LeaderboardStats from 'src/components/leaderboard/LeaderboardStats.vue';
+import ChallengeProgressChart from 'src/components/leaderboard/ChallengeProgressChart.vue';
+import FundraiserProgressChart from 'src/components/leaderboard/FundraiserProgressChart.vue';
+import FundraiserProgressMeter from 'src/components/leaderboard/FundraiserProgressMeter.vue';
+import LeaderboardStandings from 'src/components/leaderboard/LeaderboardStandings.vue';
+
+import { useToast } from 'primevue/usetoast';
+const toast = useToast();
 
 const leaderboard = ref<LeaderboardSummary>(null);
 const loadLeaderboard = async function() {
   leaderboard.value = leaderboardStore.get(route.params.boardUuid.toString());
 }
-watch(() => route.params.boardUuid, newUuid => {
-  if(newUuid !== undefined) {
-    console.log('switch!', newUuid);
-    reloadData();
-  }
-});
 
 const participants = ref<Participant[]>([]);
 const isParticipantsLoading = ref<boolean>(false);
@@ -69,6 +71,49 @@ async function reloadData() {
   await loadParticipants();
 }
 
+const measuresAvailable = computed(() => {
+  if(leaderboard.value === null) { return [ TALLY_MEASURE.WORD ]; }
+
+  const measuresPresent = new Set(participants.value.flatMap(participant => participant.tallies.map(tally => tally.measure)));
+  return leaderboard.value.measures.filter(measure => measuresPresent.has(measure));
+});
+
+const selectedMeasure = ref(TALLY_MEASURE.WORD);
+watch(measuresAvailable, (newMeasuresAvailable) => {
+  if(!newMeasuresAvailable.includes(selectedMeasure.value)) {
+    selectedMeasure.value = measuresAvailable.value[0];
+  }
+});
+
+const isUserAMember = computed(() => {
+  if(!leaderboard.value) {
+    return false;
+  }
+
+  return leaderboard.value.members.some(member => member.userUuid === userStore.user.uuid);
+});
+
+const { copy } = useClipboard({ legacy: true });
+const handleShareClick = function() {
+  if(leaderboard.value === null) { return; }
+
+  copy(leaderboard.value.uuid);
+  toast.add({
+    severity: 'success',
+    summary: 'Code copied!',
+    detail: 'The join code for this leaderboard has been copied to your clipboard.',
+    life: 3 * 1000,
+  });
+};
+
+const breadcrumbs = computed(() => {
+  const crumbs: MenuItem[] = [
+    { label: 'Leaderboards', url: '/leaderboards2' },
+    { label: leaderboard.value === null ? 'Loading...' : leaderboard.value.title, url: leaderboard.value === null ? '' : `/leaderboards2/${leaderboard.value.uuid}` },
+  ];
+  return crumbs;
+});
+
 onMounted(() => {
   useEventBus<{ tally: Tally }>('tally:create').on(reloadData);
   useEventBus<{ tally: Tally }>('tally:edit').on(reloadData);
@@ -77,12 +122,10 @@ onMounted(() => {
   reloadData();
 });
 
-const breadcrumbs = computed(() => {
-  const crumbs: MenuItem[] = [
-    { label: 'Leaderboards', url: '/leaderboards2' },
-    { label: leaderboard.value === null ? 'Loading...' : leaderboard.value.title, url: leaderboard.value === null ? '' : `/leaderboards2/${leaderboard.value.uuid}` },
-  ];
-  return crumbs;
+watch(() => route.params.boardUuid, newUuid => {
+  if(newUuid !== undefined) {
+    reloadData();
+  }
 });
 </script>
 
@@ -109,10 +152,24 @@ const breadcrumbs = computed(() => {
             @click="router.push({ name: 'edit-leaderboard', params: { boardUuid: leaderboard.uuid } })"
           /> -->
           <Button
+            v-if="isUserAMember"
             label="Configure Leaderboard"
             severity="info"
             :icon="PrimeIcons.COG"
             @click="console.log('configure!')"
+          />
+          <Button
+            v-if="leaderboard.isJoinable && !isUserAMember"
+            label="Join Leaderboard"
+            :icon="PrimeIcons.USER_PLUS"
+            @click="console.log('join!')"
+          />
+          <Button
+            v-if="leaderboard.isJoinable"
+            label="Copy Join Code"
+            severity="help"
+            :icon="PrimeIcons.COPY"
+            @click="handleShareClick"
           />
         </template>
       </DetailPageHeader>
@@ -138,18 +195,66 @@ const breadcrumbs = computed(() => {
             This leaderboard has no participants, so there's nothing to show.
           </div>
           <div v-else-if="leaderboard.individualGoalMode">
-            <div class="w-full">
+            <div class="w-full flex flex-col gap-4">
               <IndividualGoalProgressChart
+                class="w-full"
                 :leaderboard="leaderboard"
                 :participants="participants"
               />
-            </div>
-            <div class="w-full mt-4">
-              <div>standings here</div>
+              <LeaderboardStandings
+                :leaderboard="leaderboard"
+                :participants="participants"
+                measure="percent"
+              />
             </div>
           </div>
           <div v-else>
-            Let's show some tabs!
+            <TabView
+              :pt="{ tabpanel: { content: { class: [ 'px-0' ] } } }"
+              :pt-options="{ mergeSections: true, mergeProps: true }"
+              @update:active-index="index => selectedMeasure = measuresAvailable[index]"
+            >
+              <TabPanel
+                v-for="measure of measuresAvailable"
+                :key="measure"
+                :header="toTitleCase(TALLY_MEASURE_INFO[measure].label.plural)"
+              >
+                <div
+                  class="w-full flex flex-col gap-4"
+                >
+                  <LeaderboardStats
+                    v-if="leaderboard.fundraiserMode"
+                    :participants="participants"
+                    :measure="selectedMeasure"
+                  />
+                  <FundraiserProgressChart
+                    v-if="leaderboard.fundraiserMode"
+                    class="w-full"
+                    :leaderboard="leaderboard"
+                    :participants="participants"
+                    :measure="selectedMeasure"
+                  />
+                  <ChallengeProgressChart
+                    v-if="!leaderboard.fundraiserMode"
+                    class="w-full"
+                    :leaderboard="leaderboard"
+                    :participants="participants"
+                    :measure="selectedMeasure"
+                  />
+                  <FundraiserProgressMeter
+                    v-if="leaderboard.fundraiserMode"
+                    :leaderboard="leaderboard"
+                    :participants="participants"
+                    :measure="selectedMeasure"
+                  />
+                  <LeaderboardStandings
+                    :leaderboard="leaderboard"
+                    :participants="participants"
+                    :measure="selectedMeasure"
+                  />
+                </div>
+              </TabPanel>
+            </TabView>
           </div>
         </div>
       </div>

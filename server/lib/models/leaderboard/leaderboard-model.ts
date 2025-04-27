@@ -82,6 +82,7 @@ export class LeaderboardModel {
       members: board.participants.map(participant => ({
         id: participant.id,
         isParticipant: participant.isParticipant,
+        userUuid: participant.user.uuid,
         // TODO: this will change when we have per-board display names
         displayName: participant.user.displayName,
         avatar: participant.user.avatar,
@@ -483,6 +484,7 @@ export class LeaderboardModel {
 
     const participants = rawParticipants.map(participant => ({
       ...pick(participant, ['id', 'uuid', 'goal']),
+      avatar: participant.user.avatar,
       displayName: participant.user.displayName,
       tallies: tallies.filter(tally => tally.ownerId === participant.userId).map(tally => pick(tally, ['uuid', 'date', 'measure', 'count'])),
     })) as Participant[];
