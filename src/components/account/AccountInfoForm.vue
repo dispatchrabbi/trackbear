@@ -27,8 +27,8 @@ const formModel = reactive({
 const validations = z.object({
   username: z
     .string()
-    .min(3, { message: 'Username must be at least 3 characters long.'})
-    .max(24, { message: 'Username may not be longer than 24 characters.'})
+    .min(3, { message: 'Username must be at least 3 characters long.' })
+    .max(24, { message: 'Username may not be longer than 24 characters.' })
     .regex(/^[a-z][a-z0-9_-]+$/i, { message: 'Username must start with a letter and only use letters, numbers, underscores, and dashes.' }),
   displayName: z
     .string()
@@ -58,7 +58,7 @@ async function handleSubmit() {
     await userStore.populate(true);
 
     successMessage.value = 'Saved!';
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err.message;
   }
 

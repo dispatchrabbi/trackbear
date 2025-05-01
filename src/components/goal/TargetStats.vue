@@ -35,7 +35,7 @@ const isSmallMeasure = computed(() => {
 const thresholdCount = computed(() => {
   const params = props.goal.parameters as TargetGoalParameters;
   return params.threshold.count;
-})
+});
 
 const compiledTallies = computed(() => {
   const compiled = compileTallies(props.tallies);
@@ -152,7 +152,7 @@ const paceToGo = computed(() => {
     // the question "how many words do I need to write today to stay on pace?"
     const totalToGoNotCountingToday = thresholdCount.value - overallStats.value.beforeTodayCount;
     const daysToGoCountingToday = daysToGo.value + 1;
-    
+
     const precision = isSmallMeasure.value ? 2 : 0;
     return +(totalToGoNotCountingToday / daysToGoCountingToday).toFixed(precision);
   }
@@ -188,7 +188,7 @@ const paceEval = computed(() => {
 
 const FUN_FACTS = [
   { description: 'Which on Mars would be', factor: 1.02749125, precision: 2, counter: ['Sol', 'Sols'] },
-  { description: 'Which works out to', factor: 1/14, precision: 2, counter: ['fortnight', 'fortnights'] },
+  { description: 'Which works out to', factor: 1 / 14, precision: 2, counter: ['fortnight', 'fortnights'] },
   { description: 'During which your nails will grow', factor: 0.12, precision: 2, counter: ['mm', 'mm'] },
   { description: 'During which the Earth will travel', factor: 2572992, precision: 0, counter: ['km', 'km'] },
   { description: 'During which you could walk about', factor: 3.18 * 24, precision: 2, counter: ['mile', 'miles'] },
@@ -200,7 +200,7 @@ const FUN_FACTS = [
 ];
 const funPaceFact = computed(() => {
   const fact = getRandomElement(FUN_FACTS as NonEmptyArray<typeof FUN_FACTS[number]>);
-  
+
   const daysAtPace = totalToGo.value / paceSoFar.value;
   const funPace = daysAtPace * fact.factor;
   const counter = funPace === 1 ? fact.counter[0] : fact.counter[1];
@@ -236,7 +236,7 @@ const daysToHitGoal = computed(() => {
 
   const completingTally = compiledTallies.value.find(tally => tally.total[measure.value] >= thresholdCount.value);
   const completionDate = completingTally.date;
-  
+
   const startDate = props.goal.startDate ?? compiledTallies.value[0].date;
 
   return differenceInCalendarDays(completionDate, startDate) + 1;

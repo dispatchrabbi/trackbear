@@ -1,13 +1,13 @@
-import { addDays } from "date-fns";
+import { addDays } from 'date-fns';
 
-import dbClient from "../../db.ts";
-import { type Banner } from "@prisma/client";
+import dbClient from '../../db.ts';
+import { type Banner } from '@prisma/client';
 
-import { type RequestContext } from "../../request-context.ts";
+import { type RequestContext } from '../../request-context.ts';
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
-import { traced } from "../../tracer.ts";
+import { traced } from '../../tracer.ts';
 
 export type { Banner };
 export type BannerData = {
@@ -19,7 +19,6 @@ export type BannerData = {
 };
 
 export class BannerModel {
-
   @traced
   static async getBanners(): Promise<Banner[]> {
     const banners = await dbClient.banner.findMany({
@@ -46,7 +45,7 @@ export class BannerModel {
   @traced
   static async getBanner(id: number): Promise<Banner | null> {
     const banner: Banner = await dbClient.banner.findUnique({
-      where: { id }
+      where: { id },
     });
 
     if(!banner) {
@@ -62,11 +61,11 @@ export class BannerModel {
       enabled: false,
       showUntil: addDays(new Date(), 7),
       icon: 'campaign',
-      color: 'info'
+      color: 'info',
     }, data);
 
     const created = await dbClient.banner.create({
-      data: dataWithDefaults
+      data: dataWithDefaults,
     });
 
     const changes = buildChangeRecord({}, created);
@@ -99,12 +98,11 @@ export class BannerModel {
     if(!original) {
       return null;
     }
-    
+
     const deleted = await dbClient.banner.delete({ where: { id } });
 
     await logAuditEvent(AUDIT_EVENT_TYPE.BANNER_DELETE, reqCtx.userId, deleted.id, null, null, reqCtx.sessionId);
 
     return deleted;
   }
-
 }

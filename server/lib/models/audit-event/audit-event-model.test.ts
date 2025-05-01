@@ -19,7 +19,7 @@ describe(AuditEventModel, () => {
     it('gets audit events based on the given entity', async () => {
       const testAuditEvents = mockObjects<AuditEvent>(10);
       dbClient.auditEvent.findMany.mockResolvedValue(testAuditEvents);
-      
+
       const results = await AuditEventModel.getAuditEvents(TEST_USER_ID, AUDIT_EVENT_ENTITIES.USER);
 
       expect(results).toBe(testAuditEvents);
@@ -48,14 +48,14 @@ describe(AuditEventModel, () => {
       const testGoalId = TEST_USER_ID - 2;
       const testAuxInfo = { 'test': true };
       const testSessionId = TEST_SESSION_ID;
-      
+
       const testAuditEvent = mockObject<AuditEvent>();
       dbClient.auditEvent.create.mockResolvedValue(testAuditEvent);
 
       const created = await AuditEventModel.createAuditEvent(
         AUDIT_EVENT_TYPE.SYSTEM_NOOP,
         testAgentId, testPatientId, testGoalId,
-        testAuxInfo, testSessionId
+        testAuxInfo, testSessionId,
       );
 
       expect(created).toBe(testAuditEvent);
@@ -67,19 +67,19 @@ describe(AuditEventModel, () => {
           goalId: testGoalId,
           auxInfo: '{"test":true}',
           sessionId: testSessionId,
-        }
+        },
       });
     });
 
     it(`passes null for missing IDs and {} for missing auxInfo`, async () => {
       const testAgentId = TEST_USER_ID;
-      
+
       const testAuditEvent = mockObject<AuditEvent>();
       dbClient.auditEvent.create.mockResolvedValue(testAuditEvent);
 
       const created = await AuditEventModel.createAuditEvent(
         AUDIT_EVENT_TYPE.SYSTEM_NOOP,
-        testAgentId
+        testAgentId,
       );
 
       expect(created).toBe(testAuditEvent);
@@ -89,9 +89,9 @@ describe(AuditEventModel, () => {
           agentId: testAgentId,
           patientId: null,
           goalId: null,
-          auxInfo: "{}",
+          auxInfo: '{}',
           sessionId: null,
-        }
+        },
       });
     });
   });

@@ -23,7 +23,7 @@ async function main() {
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 
-  const [ message, days, icon, color ] = process.argv.slice(2);
+  const [message, days, icon, color] = process.argv.slice(2);
   const bannerData = {
     enabled: true,
     showUntil: addDays(new Date(), +days),
@@ -39,7 +39,7 @@ async function main() {
     });
 
     await logAuditEvent('banner:add', TRACKBEAR_SYSTEM_ID, banner.id, undefined, { source: 'add-banner script' });
-  } catch(err) {
+  } catch (err) {
     scriptLogger.error(`Error adding a banner: ${err.message}`);
     return;
   }

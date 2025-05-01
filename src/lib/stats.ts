@@ -1,16 +1,16 @@
-import type { MeasureRecord } from "server/lib/models/tally/types";
-import type { DayCount } from "src/lib/api/stats.ts";
+import type { MeasureRecord } from 'server/lib/models/tally/types';
+import type { DayCount } from 'src/lib/api/stats.ts';
 
 export type DailyStats = {
   days: MeasureRecord<number>;
   totals: MeasureRecord<number>;
   averages: MeasureRecord<number>;
-  mostProductiveDays: MeasureRecord<{ date: string; count: number; }>;
+  mostProductiveDays: MeasureRecord<{ date: string; count: number }>;
 };
 export function calculateDailyStats(dayCounts: DayCount[]): DailyStats {
-    const days = {};
-    const totals = {};
-    const mostProductiveDays = {};
+  const days = {};
+  const totals = {};
+  const mostProductiveDays = {};
 
   for(const dayCount of dayCounts) {
     for(const measure of Object.keys(dayCount.counts)) {
@@ -52,6 +52,6 @@ export function calculateDailyStats(dayCounts: DayCount[]): DailyStats {
     days,
     totals,
     averages,
-    mostProductiveDays
+    mostProductiveDays,
   };
 }

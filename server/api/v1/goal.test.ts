@@ -11,7 +11,7 @@ vi.mock('../../lib/audit-events.ts', { spy: true });
 import { logAuditEventMock } from '../../lib/__mocks__/audit-events.ts';
 
 vi.mock('../../lib/models/goal/goal-model.ts');
-import { GoalModel as _GoalModel, type Goal } from "../../lib/models/goal/goal-model.ts";
+import { GoalModel as _GoalModel, type Goal } from '../../lib/models/goal/goal-model.ts';
 const GoalModel = vi.mocked(_GoalModel);
 
 import { handleGetGoals, handleGetGoal, handleCreateGoal, handleCreateGoals, handleUpdateGoal, handleDeleteGoal } from './goal';
@@ -44,7 +44,7 @@ describe('goal api v1', () => {
       await handleGetGoal(req, res);
 
       expect(GoalModel.getGoal).toHaveBeenCalled();
-      
+
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalledWith(success(testGoal));
     });
@@ -56,14 +56,14 @@ describe('goal api v1', () => {
       await handleGetGoal(req, res);
 
       expect(GoalModel.getGoal).toHaveBeenCalled();
-      
+
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.send).toHaveBeenCalled();
     });
   });
 
   describe(handleCreateGoal, () => {
-    it('creates a goal', async() => {
+    it('creates a goal', async () => {
       const testGoal = mockObject<Goal>({ id: TEST_OBJECT_ID });
       GoalModel.createGoal.mockResolvedValue(testGoal);
 
@@ -82,13 +82,13 @@ describe('goal api v1', () => {
   });
 
   describe(handleCreateGoals, () => {
-    it('creates multiple goals', async() => {
+    it('creates multiple goals', async () => {
       const GOAL_IDS = [-10, -11, -12];
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       dbClientMock.goal.createManyAndReturn.mockResolvedValue(
-        GOAL_IDS.map(id => mockObject<Goal>({ id }))
+        GOAL_IDS.map(id => mockObject<Goal>({ id })),
       );
-      
+
       const { req, res } = getHandlerMocksWithUser({
         body: [
           { works: [], tags: [] },

@@ -3,7 +3,7 @@ import { vi, expect, describe, it, beforeAll, beforeEach } from 'vitest';
 import { disableEmail } from 'testing-support/env.ts';
 import _testDbClient from '../../testing-support/test-db.ts';
 vi.mock('../lib/db.ts', () => ({
-  default: _testDbClient
+  default: _testDbClient,
 }));
 
 import { LeaderboardModel } from 'server/lib/models/leaderboard/leaderboard-model.ts';
@@ -22,7 +22,7 @@ describe('leaderboards', () => {
   beforeAll(async () => {
     await disableEmail();
   });
-  
+
   beforeEach(async () => {
     testUser = await UserModel.createUser({
       username: 'leaderboard-test',
@@ -37,7 +37,7 @@ describe('leaderboards', () => {
   it('automatically adds the creator of a board as an owner after creation', async () => {
     const leaderboard = await LeaderboardModel.create({
       title: 'TEST automatically adds the creator of a board as an owner after creation',
-      measures: [ TALLY_MEASURE.WORD ],
+      measures: [TALLY_MEASURE.WORD],
       startDate: null,
       endDate: null,
       goal: { [TALLY_MEASURE.WORD]: 50000 },
@@ -64,7 +64,7 @@ describe('leaderboards', () => {
 
     const leaderboard = await LeaderboardModel.create({
       title: 'TEST does not remove an owner whose participation is removed',
-      measures: [ TALLY_MEASURE.WORD ],
+      measures: [TALLY_MEASURE.WORD],
       startDate: null,
       endDate: null,
       goal: { [TALLY_MEASURE.WORD]: 50000 },
@@ -79,11 +79,11 @@ describe('leaderboards', () => {
 
     const work1 = await WorkModel.createWork(testUser, { title: 'TEST work 1' }, reqCtx);
     const work2 = await WorkModel.createWork(testUser, { title: 'TEST work 2' }, reqCtx);
-    const tag1 = await TagModel.createTag(testUser, { name: 'TEST tag 1', }, reqCtx);
-    const tag2 = await TagModel.createTag(testUser, { name: 'TEST tag 2', }, reqCtx);
+    const tag1 = await TagModel.createTag(testUser, { name: 'TEST tag 1' }, reqCtx);
+    const tag2 = await TagModel.createTag(testUser, { name: 'TEST tag 2' }, reqCtx);
     await LeaderboardModel.updateMemberParticipation(beforeUpdate, {
-      workIds: [ work1.id, work2.id ],
-      tagIds: [ tag1.id, tag2.id ],
+      workIds: [work1.id, work2.id],
+      tagIds: [tag1.id, tag2.id],
     }, reqCtx);
 
     const afterUpdate = await LeaderboardModel.getMemberByUserId(leaderboard, testUser.id);
@@ -116,7 +116,7 @@ describe('leaderboards', () => {
   it('removes a non-owner member whose participation is removed', async () => {
     const leaderboard = await LeaderboardModel.create({
       title: 'TEST does not remove an owner whose participation is removed',
-      measures: [ TALLY_MEASURE.WORD ],
+      measures: [TALLY_MEASURE.WORD],
       startDate: null,
       endDate: null,
       goal: { [TALLY_MEASURE.WORD]: 50000 },
@@ -164,11 +164,11 @@ describe('leaderboards', () => {
 
     const work1 = await WorkModel.createWork(memberUser, { title: 'TEST work 1' }, reqCtx);
     const work2 = await WorkModel.createWork(memberUser, { title: 'TEST work 2' }, reqCtx);
-    const tag1 = await TagModel.createTag(memberUser, { name: 'TEST tag 1', }, reqCtx);
-    const tag2 = await TagModel.createTag(memberUser, { name: 'TEST tag 2', }, reqCtx);
+    const tag1 = await TagModel.createTag(memberUser, { name: 'TEST tag 1' }, reqCtx);
+    const tag2 = await TagModel.createTag(memberUser, { name: 'TEST tag 2' }, reqCtx);
     await LeaderboardModel.updateMemberParticipation(member, {
-      workIds: [ work1.id, work2.id ],
-      tagIds: [ tag1.id, tag2.id ],
+      workIds: [work1.id, work2.id],
+      tagIds: [tag1.id, tag2.id],
     }, reqCtx);
 
     const afterUpdateParticipation = await LeaderboardModel.getMemberParticipation(leaderboard.id, memberUser.id);

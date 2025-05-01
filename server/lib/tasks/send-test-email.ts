@@ -47,12 +47,12 @@ function makeTask(email: string, message?: string) {
   return {
     name: TASK_NAME,
     email,
-    message
+    message,
   };
 }
 
 export default {
   TASK_NAME,
   handler,
-  makeTask
+  makeTask,
 };

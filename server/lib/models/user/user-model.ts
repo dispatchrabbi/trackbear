@@ -1,29 +1,29 @@
-import winston from "winston";
-import { addDays, addMinutes } from "date-fns";
+import winston from 'winston';
+import { addDays, addMinutes } from 'date-fns';
 
-import dbClient from "../../db.ts";
-import type { PasswordResetLink, PendingEmailVerification, User, UserAuth } from "@prisma/client";
-import { hash, verifyHash } from "../../hash.ts";
+import dbClient from '../../db.ts';
+import type { PasswordResetLink, PendingEmailVerification, User, UserAuth } from '@prisma/client';
+import { hash, verifyHash } from '../../hash.ts';
 
-import { type RequestContext } from "../../request-context.ts";
+import { type RequestContext } from '../../request-context.ts';
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE, AUDIT_EVENT_SOURCE } from '../audit-event/consts.ts';
-import { ValidationError } from "../errors.ts";
+import { ValidationError } from '../errors.ts';
 
 import {
   USER_STATE, type UserState,
   PASSWORD_RESET_LINK_STATE,
   USERNAME_REGEX, EMAIL_REGEX,
-} from "./consts.ts";
-import CONFIG from "server/config.ts";
+} from './consts.ts';
+import CONFIG from 'server/config.ts';
 
-import { pushTask } from "../../queue.ts";
-import sendSignupEmail from "server/lib/tasks/send-signup-email.ts";
-import sendEmailVerificationEmail from "../../tasks/send-emailverification-email.ts";
-import sendPasswordResetEmail from "../../tasks/send-pwreset-email.ts";
-import sendPasswordChangeEmail from '../../tasks/send-pwchange-email.ts'
+import { pushTask } from '../../queue.ts';
+import sendSignupEmail from 'server/lib/tasks/send-signup-email.ts';
+import sendEmailVerificationEmail from '../../tasks/send-emailverification-email.ts';
+import sendPasswordResetEmail from '../../tasks/send-pwreset-email.ts';
+import sendPasswordChangeEmail from '../../tasks/send-pwchange-email.ts';
 
-import { traced } from "../../tracer.ts";
+import { traced } from '../../tracer.ts';
 
 export type { User };
 export type SignUpUserData = {
@@ -76,12 +76,10 @@ export class UserModel {
     return total;
   }
 
-  
-
   @traced
   static async getUser(id: number): Promise<User | null> {
     const user = await dbClient.user.findUnique({
-      where: { id }
+      where: { id },
     });
 
     return user;
@@ -113,7 +111,7 @@ export class UserModel {
     const userAuth = await dbClient.userAuth.findUnique({
       where: { userId: user.id },
     });
-    
+
     return userAuth;
   }
 
@@ -196,7 +194,7 @@ export class UserModel {
     const updated = await dbClient.user.update({
       where: { id: user.id },
       data: {
-        ...data
+        ...data,
       },
     });
 
@@ -213,7 +211,7 @@ export class UserModel {
     const updated = await dbClient.user.update({
       where: { id: user.id },
       data: {
-        state
+        state,
       },
     });
 
@@ -231,7 +229,7 @@ export class UserModel {
 
   /**
    * Marks a user's email address as verified via verification link.
-   * 
+   *
    * @param verificationUuid The UUID contained in the email verification link
    * @param reqCtx The request context
    * @returns Whether the verification succeeded
@@ -267,7 +265,7 @@ export class UserModel {
       },
       where: {
         id: verification.user.id,
-      }
+      },
     });
 
     winston.debug(`VERIFY: ${verification.user.id} just verified their email`);
@@ -275,7 +273,7 @@ export class UserModel {
       AUDIT_EVENT_TYPE.USER_VERIFY_EMAIL,
       reqCtx.userId, verification.user.id, null,
       { method: AUDIT_EVENT_SOURCE.LINK, verificationUuid: verification.uuid, email: verification.newEmail },
-      reqCtx.sessionId
+      reqCtx.sessionId,
     );
 
     return true;
@@ -283,7 +281,7 @@ export class UserModel {
 
   /**
    * Marks a user's email address as verified by fiat (e.g., via the admin console or script)
-   * 
+   *
    * @param verificationUuid The UUID contained in the email verification link
    * @param reqCtx The request context
    * @returns Whether the verification succeeded
@@ -298,7 +296,7 @@ export class UserModel {
       },
       where: {
         id: user.id,
-      }
+      },
     });
 
     winston.debug(`VERIFY: ${user.id} just had their email verified via ${source}`);
@@ -306,7 +304,7 @@ export class UserModel {
       AUDIT_EVENT_TYPE.USER_VERIFY_EMAIL,
       reqCtx.userId, user.id, null,
       { method: source, email: user.email },
-      reqCtx.sessionId
+      reqCtx.sessionId,
     );
 
     return true;
@@ -314,7 +312,7 @@ export class UserModel {
 
   /**
    * Resets a user's password as set via password reset link.
-   * 
+   *
    * @param passwordResetUuid The UUID contained in the password reset link
    * @param newPassword The user's new password
    * @param reqCtx The request context
@@ -331,7 +329,7 @@ export class UserModel {
       },
       include: {
         user: true,
-      }
+      },
     });
 
     if(!resetLink) {
@@ -347,7 +345,7 @@ export class UserModel {
         state: PASSWORD_RESET_LINK_STATE.USED,
       },
       where: {
-        uuid: resetLink.uuid
+        uuid: resetLink.uuid,
       },
     });
 
@@ -356,7 +354,7 @@ export class UserModel {
       AUDIT_EVENT_TYPE.USER_PASSWORD_RESET,
       resetLink.user.id, resetLink.user.id, null,
       { method: 'link', resetLinkUuid: resetLink.uuid },
-      reqCtx.sessionId
+      reqCtx.sessionId,
     );
 
     await this.sendPasswordChangedEmail(resetLink.user, reqCtx);
@@ -367,7 +365,7 @@ export class UserModel {
   @traced
   static async checkPassword(user: User, password: string): Promise<boolean> {
     const userAuth = await this.getUserAuth(user);
-    
+
     const matches = await verifyHash(password, userAuth.password, userAuth.salt);
     return matches;
   }
@@ -380,7 +378,7 @@ export class UserModel {
         password: hashedPassword,
         salt: salt,
       },
-      where: { userId: user.id }
+      where: { userId: user.id },
     });
 
     winston.debug(`PASSWORD: ${user.id} has changed their password`);
@@ -402,7 +400,7 @@ export class UserModel {
 
     return true;
   }
-  
+
   @traced
   static async sendPasswordChangedEmail(user: User, reqCtx: RequestContext): Promise<boolean> {
     pushTask(sendPasswordChangeEmail.makeTask(user.id));
@@ -417,7 +415,7 @@ export class UserModel {
       expiresAt: addDays(new Date(), CONFIG.EMAIL_VERIFICATION_TIMEOUT_IN_DAYS),
       force: false,
     }, options);
-    
+
     if(user.isEmailVerified && !options.force) {
       return null;
     }
@@ -461,7 +459,7 @@ export class UserModel {
       AUDIT_EVENT_TYPE.USER_REQUEST_PASSWORD_RESET,
       reqCtx.userId, user.id, null,
       { resetLinkUuid: resetLink.uuid },
-      reqCtx.sessionId
+      reqCtx.sessionId,
     );
 
     return resetLink;

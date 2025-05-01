@@ -6,7 +6,7 @@ import type { TallyMeasure } from 'server/lib/models/tally/consts.ts';
 
 import { addDays, differenceInCalendarDays } from 'date-fns';
 
-import { formatDate, parseDateString } from "src/lib/date.ts";
+import { formatDate, parseDateString } from 'src/lib/date.ts';
 import { formatCount } from 'src/lib/tally.ts';
 import { formatPercent } from 'src/lib/number.ts';
 
@@ -39,7 +39,7 @@ const determineStartAndEndDates = function(leaderboard: Leaderboard, participant
   }
 
   const sortedTallyDates = [...dateSet].sort();
-  const [ earliestDate, latestDate ] = [ sortedTallyDates.at(0) ?? null, sortedTallyDates.at(-1) ?? null ];
+  const [earliestDate, latestDate] = [sortedTallyDates.at(0) ?? null, sortedTallyDates.at(-1) ?? null];
 
   const startDate = determineChartStartDate(earliestDate, leaderboard.startDate);
   const endDate = determineChartEndDate(latestDate, leaderboard.endDate);
@@ -50,9 +50,9 @@ const determineStartAndEndDates = function(leaderboard: Leaderboard, participant
     startDate,
     endDate,
     daysAlong,
-    totalDays
+    totalDays,
   };
-}
+};
 
 const getParForToday = function(participant: Participant, daysAlong: number, totalDays: number) {
   const goalCount = getGoalCount(participant);
@@ -64,20 +64,24 @@ const getParForToday = function(participant: Participant, daysAlong: number, tot
     return goalCount;
   } else {
     // do the actual calculation
-    return Math.ceil((goalCount / totalDays) * daysAlong)
+    return Math.ceil((goalCount / totalDays) * daysAlong);
   }
-}
+};
 
 const determinePositions = function(standingsRows: StandingsDataRow[], field: keyof StandingsDataRow) {
-  const sorted = standingsRows.toSorted((a, b) => a[field] > b[field] ? -1 : a[field] < b[field] ? 1 : (
-    a.lastActivity < b.lastActivity ? -1 : a.lastActivity > b.lastActivity ? 1 : 0
-  ));
+  const sorted = standingsRows.toSorted((a, b) => a[field] > b[field] ?
+      -1 :
+    a[field] < b[field] ?
+      1 :
+        (
+          a.lastActivity < b.lastActivity ? -1 : a.lastActivity > b.lastActivity ? 1 : 0
+        ));
 
   const positions: Record<string, number> = {};
   for(let i = 0; i < sorted.length; ++i) {
     const row = sorted[i];
     const previous = sorted.at(i - 1);
-    
+
     if(i === 0) {
       positions[row.uuid] = i + 1;
     } else if(row[field] === previous[field] && row.lastActivity === previous.lastActivity) {
@@ -88,7 +92,7 @@ const determinePositions = function(standingsRows: StandingsDataRow[], field: ke
   }
 
   return positions;
-}
+};
 
 const hasGoal = computed(() => {
   return (props.measure === 'percent') || props.measure in props.leaderboard.goal;
@@ -102,17 +106,17 @@ type StandingsDataRow = {
   uuid: string;
   displayName: string;
   avatar: string;
-  
+
   measure: TallyMeasure;
   goal: number;
   lastActivity: string;
-  
+
   position: number;
-  yesterdayPosition: number,
-  
+  yesterdayPosition: number;
+
   progress: number;
   yesterdayProgress: number;
-  
+
   versusPar: number | null;
   percent: string;
   percentRaw: number;
@@ -143,17 +147,17 @@ const standingsRows = computed<StandingsDataRow[]>(() => {
       uuid: participant.uuid,
       displayName: participant.displayName,
       avatar: participant.avatar,
-      
+
       measure: getMeasure(participant),
       goal: getGoalCount(participant),
       lastActivity: todayTally.date,
-      
+
       position: 0,
       yesterdayPosition: 0,
-      
+
       progress: todayTally.accumulated,
       yesterdayProgress: yesterdayTally.accumulated,
-      
+
       versusPar: hasPar.value ? todayTally.accumulated - getParForToday(participant, daysAlong, totalDays) : null,
       percent: formatPercent(todayTally.accumulated, getGoalCount(participant)) + '%',
       percentRaw: todayTally.accumulated / getGoalCount(participant),
@@ -173,15 +177,15 @@ const standingsRows = computed<StandingsDataRow[]>(() => {
   return sortedRows;
 });
 
-const cmpByPosition = function (a: StandingsDataRow, b: StandingsDataRow) {
+const cmpByPosition = function(a: StandingsDataRow, b: StandingsDataRow) {
   return a.position === b.position ?
-    (a.displayName < b.displayName ? -1 : a.displayName > b.displayName ? 1 : 0) :
-    (a.position - b.position);
-}
+      (a.displayName < b.displayName ? -1 : a.displayName > b.displayName ? 1 : 0) :
+      (a.position - b.position);
+};
 
 const formatPositionChange = function(today: number, yesterday: number) {
   const change = yesterday - today;
-  
+
   if(change > 0) {
     return '↑' + Math.abs(change);
   } else if(change < 0) {
@@ -189,7 +193,7 @@ const formatPositionChange = function(today: number, yesterday: number) {
   } else {
     return '—'; // em-dash
   }
-}
+};
 
 </script>
 

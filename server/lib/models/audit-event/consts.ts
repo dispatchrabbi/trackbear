@@ -1,4 +1,4 @@
-import { ValueEnum } from "../../obj";
+import { ValueEnum } from '../../obj';
 
 export const AUDIT_EVENT_ENTITIES = {
   BANNER: 'banner',
@@ -37,15 +37,15 @@ export const AUDIT_EVENT_TYPE = {
   LEADERBOARD_MEMBER_CREATE: 'leaderboard-member:create',
   LEADERBOARD_MEMBER_UPDATE: 'leaderboard-member:update',
   LEADERBOARD_MEMBER_DELETE: 'leaderboard-member:delete',
-  
+
   TAG_CREATE: 'tag:create',
   TAG_UPDATE: 'tag:update',
   TAG_DELETE: 'tag:delete',
-  
+
   TALLY_CREATE: 'tally:create',
   TALLY_UPDATE: 'tally:update',
   TALLY_DELETE: 'tally:delete',
-  
+
   USER_SIGNUP: 'user:signup',
   USER_CREATE: 'user:create',
   USER_UPDATE: 'user:update',
@@ -59,12 +59,12 @@ export const AUDIT_EVENT_TYPE = {
   USER_REQUEST_PASSWORD_RESET: 'user:pwresetreq',
   USER_LOGIN: 'user:login',
   USER_FAILED_LOGIN: 'user:failedlogin',
-  
+
   WORK_CREATE: 'work:create',
   WORK_UPDATE: 'work:update',
   WORK_DELETE: 'work:delete',
   WORK_UNDELETE: 'work:undelete',
-  
+
   SYSTEM_NOOP: 'system:noop',
 };
 export type AuditEventType = ValueEnum<typeof AUDIT_EVENT_TYPE>;
@@ -77,212 +77,212 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
   [AUDIT_EVENT_TYPE.BANNER_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.BANNER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.BANNER_UPDATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.BANNER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.BANNER_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.BANNER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.BOARD_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.BOARD,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.BOARD_UPDATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.BOARD,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.BOARD_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.BOARD,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.BOARD_UNDELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.BOARD,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.GOAL_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.GOAL,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.GOAL_UPDATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.GOAL,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.GOAL_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.GOAL,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.GOAL_UNDELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.GOAL,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.LEADERBOARD_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.LEADERBOARD,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.LEADERBOARD_UPDATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.LEADERBOARD,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.LEADERBOARD_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.LEADERBOARD,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.LEADERBOARD_JOIN]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD
+    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD,
   },
   [AUDIT_EVENT_TYPE.LEADERBOARD_LEAVE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD
+    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD,
   },
   [AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.LEADERBOARD_MEMBER,
-    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD
+    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD,
   },
   [AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_UPDATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.LEADERBOARD_MEMBER,
-    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD
+    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD,
   },
   [AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.LEADERBOARD_MEMBER,
-    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD
+    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD,
   },
   [AUDIT_EVENT_TYPE.TAG_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.TAG,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.TAG_UPDATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.TAG,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.TAG_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.TAG,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.TALLY_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.TALLY,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.TALLY_UPDATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.TALLY,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.TALLY_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.TALLY,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.USER_SIGNUP]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.USER_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.USER_UPDATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.USER_ACTIVATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.USER_SUSPEND]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.USER_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.USER_VERIFY_EMAIL]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.USER_PASSWORD_RESET]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.USER_PASSWORD_CHANGE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.USER_REQUEST_EMAIL_VERIFICATION]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.USER_REQUEST_PASSWORD_RESET]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.USER_LOGIN]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: null,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.USER_FAILED_LOGIN]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: null,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.WORK_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.WORK,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.WORK_UPDATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.WORK,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.WORK_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.WORK,
-    goal: null
+    goal: null,
   },
   [AUDIT_EVENT_TYPE.WORK_UNDELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.WORK,
-    goal: null
+    goal: null,
   },
 };
 

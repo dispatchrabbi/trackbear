@@ -8,7 +8,7 @@ import { getStreakInfo } from 'src/lib/streak.ts';
 import StatTile from '../goal/StatTile.vue';
 
 const props = defineProps<{
-  tallies: Tally[],
+  tallies: Tally[];
 }>();
 
 const streakInfo = computed(() => {
@@ -64,7 +64,6 @@ const streakInfo = computed(() => {
 //     ]);
 //   }
 // });
-
 
 </script>
 

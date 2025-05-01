@@ -24,7 +24,7 @@ export default defineConfig({
         'server/workers/**',
         'src/**',
         '*.{js,ts}',
-      ]
+      ],
     },
   },
   plugins: [

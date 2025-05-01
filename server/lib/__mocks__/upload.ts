@@ -7,10 +7,10 @@ const getAvatarUploadFnMock = vi.spyOn(upload, 'getAvatarUploadFn');
 const getAvatarUploadPathMock = vi.spyOn(upload, 'getAvatarUploadPath');
 
 const makeMockUploadFn = function(path: string, mimetype: string) {
-  return vi.fn(async (req/*, res */) => {
+  return vi.fn(async (req/* , res */) => {
     req.file = mockObject<typeof req.file>({ path, mimetype });
   });
-}
+};
 
 export {
   getAvatarUploadFnMock,

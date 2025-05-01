@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineEmits, onMounted } from 'vue';
 
-const emit = defineEmits(['menu-navigation'])
+const emit = defineEmits(['menu-navigation']);
 
 import { useWorkStore } from 'src/stores/work.ts';
 import { cmpWorkByTitle } from 'src/lib/work.ts';

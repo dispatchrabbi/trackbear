@@ -47,7 +47,7 @@ const loadGoal = async function() {
   try {
     await goalStore.populate();
     goal.value = goalStore.get(+goalId.value);
-  } catch(err) {
+  } catch (err) {
     goalErrorMessage.value = err.message;
     // the ApplicationLayout takes care of this. Otherwise, this will redirect to /goals before ApplicationLayout
     // can redirect to /login.
@@ -58,19 +58,19 @@ const loadGoal = async function() {
   } finally {
     isGoalLoading.value = false;
   }
-}
+};
 
 const tallies = ref<TallyWithWorkAndTags[]>([]);
 const isTalliesLoading = ref<boolean>(false);
 const talliesErrorMessage = ref<string | null>(null);
-const loadTallies = async function () {
+const loadTallies = async function() {
   isTalliesLoading.value = true;
   talliesErrorMessage.value = null;
 
   try {
     const measure = goal.value.type === GOAL_TYPE.TARGET ?
-      (goal.value.parameters as TargetGoalParameters).threshold.measure : // targets always have an associated measure
-      (goal.value.parameters as HabitGoalParameters).threshold?.measure;  // habits sometimes have an associated measure
+        (goal.value.parameters as TargetGoalParameters).threshold.measure : // targets always have an associated measure
+        (goal.value.parameters as HabitGoalParameters).threshold?.measure; // habits sometimes have an associated measure
 
     const talliesForGoal = await getTallies({
       works: goal.value.workIds,
@@ -81,12 +81,12 @@ const loadTallies = async function () {
     });
 
     tallies.value = talliesForGoal;
-  } catch(err) {
+  } catch (err) {
     talliesErrorMessage.value = err.message;
   } finally {
     isTalliesLoading.value = false;
   }
-}
+};
 
 async function reloadData() {
   await loadGoal();

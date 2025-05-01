@@ -2,7 +2,7 @@ export function saveSvgAsPng(svgEl: SVGSVGElement, filename: string, backgroundC
   // first, get a data URL for the SVG contents
   const svgString = (new XMLSerializer()).serializeToString(svgEl);
   const svgBlob = new Blob([svgString], {
-    type: 'image/svg+xml;charset=utf-8'
+    type: 'image/svg+xml;charset=utf-8',
   });
   const svgUrl = URL.createObjectURL(svgBlob);
 
@@ -20,13 +20,13 @@ export function saveSvgAsPng(svgEl: SVGSVGElement, filename: string, backgroundC
 
 function makePngDataUriFromImage(imageEl: HTMLImageElement, backgroundColor?: string) {
   const canvasEl = document.createElement('canvas');
-  canvasEl.width =imageEl.width;
+  canvasEl.width = imageEl.width;
   canvasEl.height = imageEl.height;
 
   const ctx = canvasEl.getContext('2d');
   if(backgroundColor) {
     ctx.fillStyle = backgroundColor;
-    ctx.fillRect(0, 0, canvasEl.width, canvasEl.height)
+    ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
   }
   ctx.drawImage(imageEl, 0, 0);
 

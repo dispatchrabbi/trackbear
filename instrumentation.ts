@@ -35,14 +35,14 @@ const sdk = new NodeSDK({
     [ATTR_SERVICE_NAME]: packageJson.name,
     [ATTR_SERVICE_VERSION]: packageJson.version,
   }),
-  
+
   // logRecordProcessors: [
   //   // new SimpleLogRecordProcessor(new ConsoleLogRecordExporter()),
   //   new BatchLogRecordProcessor(new OTLPLogExporter({
   //     url: miniEnv.otlpUrl,
   //   })),
   // ],
-  
+
   traceExporter: new OTLPTraceExporter({
     url: miniEnv.otlpUrl,
   }),
@@ -53,14 +53,14 @@ const sdk = new NodeSDK({
   //     url: miniEnv.otlpUrl,
   //   }),
   // }),
-  
+
   instrumentations: [
     new WinstonInstrumentation(),
-    
+
     // fun fact: the express instrumentation doesn't play nicely with routers so... we can't use it!
     // so we are just going to do http instrumentation and then we'll have to do middleware for the rest
     new HttpInstrumentation(),
-    
+
     new Prisma.PrismaInstrumentation(),
   ],
 });

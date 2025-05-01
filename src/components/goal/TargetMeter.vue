@@ -23,7 +23,7 @@ const meterStats = computed(() => {
   const colors = {
     past: preferredColorScheme === 'dark' ? pastColor[400] : pastColor[500],
     today: preferredColorScheme === 'dark' ? themeColors.primary[400] : themeColors.primary[500],
-  }
+  };
 
   return {
     values: [

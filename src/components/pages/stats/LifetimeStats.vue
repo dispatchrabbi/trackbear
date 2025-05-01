@@ -66,7 +66,7 @@ const dayCountsByYear = computed<Record<string, DayCount[]>>(() => {
 
 const totalsByYear = computed<Record<string, MeasureCounts>>(() => {
   const byYear: Record<string, MeasureCounts> = {};
-  
+
   for(const year of Object.keys(dayCountsByYear.value)) {
     const counts = dayCountsByYear.value[year];
 

@@ -1,7 +1,7 @@
-import { addDays, eachDayOfInterval } from "date-fns";
-import { formatDate, parseDateString, maxDate } from "src/lib/date.ts";
+import { addDays, eachDayOfInterval } from 'date-fns';
+import { formatDate, parseDateString, maxDate } from 'src/lib/date.ts';
 
-import { cmpTallies } from "src/lib/tally.ts";
+import { cmpTallies } from 'src/lib/tally.ts';
 
 export interface Tallyish {
   date: string;
@@ -29,7 +29,7 @@ export function normalizeTallies(tallies: Tallyish[]): CountedTallyPoint[] {
   }
 
   const normalizedTallies = [];
-  for(const [ date, value ] of dateTotals) {
+  for(const [date, value] of dateTotals) {
     normalizedTallies.push({
       date,
       value,

@@ -59,7 +59,7 @@ const ywpData = ref({
   challenges: [] as YwpChallenge[],
   wordcounts: [] as YwpWordcount[],
 });
-type ImportTarget = { id: number; book: YwpBook; target: number; };
+type ImportTarget = { id: number; book: YwpBook; target: number };
 const importTargets = ref<ImportTarget[]>([]);
 
 // credentials form
@@ -69,8 +69,8 @@ const credentialsFormModel = reactive({
 });
 
 const credentialsValidations = z.object({
-  username: z.string().min(1, { message: 'Please enter your Young Writers Program username.'}),
-  password: z.string().min(1, { message: 'Please enter your Young Writers Program password.'}),
+  username: z.string().min(1, { message: 'Please enter your Young Writers Program username.' }),
+  password: z.string().min(1, { message: 'Please enter your Young Writers Program password.' }),
 });
 
 const { ruleFor, isValid } = useValidation(credentialsValidations, credentialsFormModel);
@@ -103,7 +103,7 @@ async function handleLoginClick(ev, nextCallback) {
   try {
     loginSignals.progressMessage = 'Logging in to the Young Writers Program...';
     await ywpApi.login(credentialsFormModel.username, credentialsFormModel.password);
-  } catch(err) {
+  } catch (err) {
     loginSignals.errorMessage = `Could not log in: ${err.message}`;
     loginSignals.progressMessage = null;
     loginSignals.isLoading = false;
@@ -124,7 +124,7 @@ async function handleLoginClick(ev, nextCallback) {
 
     loginSignals.successMessage = 'Successfully fetched all your projects from the Young Writers Program!';
     loginSignals.hasSucceeded = true;
-  } catch(err) {
+  } catch (err) {
     loginSignals.errorMessage = `Could not fetch your projects: ${err.message}`;
     return;
   } finally {
@@ -214,7 +214,7 @@ async function importYwpProject(target: ImportTarget) {
       result.tbName = createdWork.title;
 
       result.workCreated = true;
-    } catch(err) {
+    } catch (err) {
       result.workCreated = false;
       result.workError = `Could not create a new project: ${err.message}`;
       return result;
@@ -235,7 +235,7 @@ async function importYwpProject(target: ImportTarget) {
     await batchCreateTallies(batchTallyPayload);
 
     result.talliesImported = true;
-  } catch(err) {
+  } catch (err) {
     result.talliesImported = false;
     result.tallyError = `Could not import progress: ${err.message}`;
     return result;
@@ -255,13 +255,13 @@ async function importYwpProject(target: ImportTarget) {
       },
       startDate: challenge.startDatetime.substring(0, 10),
       endDate: challenge.endDatetime.substring(0, 10),
-      workIds: [ result.tbId ],
+      workIds: [result.tbId],
       tagIds: [],
     }));
     await Promise.all(batchGoalPayload.map(payload => createGoal(payload)));
 
     result.goalsCreated = true;
-  } catch(err) {
+  } catch (err) {
     result.goalsCreated = false;
     result.goalError = `Could not create goals: ${err.message}`;
     return result;

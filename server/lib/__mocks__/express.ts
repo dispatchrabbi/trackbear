@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import type { User } from "@prisma/client";
+import type { User } from '@prisma/client';
 
 import { vi, Mock } from 'vitest';
 import { mockObject, TEST_USER_ID } from '../../../testing-support/util';
@@ -26,13 +26,13 @@ export function getMockRequest(overrides?: Partial<MockRequest>): MockRequest {
 }
 
 export type MockResponse = Response & {
-  status: Mock<(code: number) => MockResponse>,
-  send: Mock<(payload: unknown) => MockResponse>,
+  status: Mock<(code: number) => MockResponse>;
+  send: Mock<(payload: unknown) => MockResponse>;
 };
 export function getMockResponse(): MockResponse {
   const res = {
     status: vi.fn(() => res),
-    send: vi.fn(() => res)
+    send: vi.fn(() => res),
   } as MockResponse;
 
   return res;

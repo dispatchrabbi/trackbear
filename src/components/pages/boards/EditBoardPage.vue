@@ -35,23 +35,22 @@ const loadBoard = async function() {
   try {
     const result = await getBoard(boardUuid.value);
     board.value = result;
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err.message;
     router.push('/leaderboards');
   } finally {
     isLoading.value = false;
   }
-}
+};
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
     { label: 'Leaderboards', url: '/leaderboards' },
     { label: board.value === null ? 'Loading...' : board.value.title, url: `/leaderboards/${boardUuid.value}` },
     { label: board.value === null ? 'Loading...' : 'Edit', url: `/leaderboards/${boardUuid.value}/edit` },
-    ];
+  ];
   return crumbs;
 });
-
 
 onMounted(() => loadBoard());
 

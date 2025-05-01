@@ -1,21 +1,21 @@
-import { Request } from "express";
+import { Request } from 'express';
 import { z } from 'zod';
-import winston from "winston";
+import winston from 'winston';
 
-import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
-import { zUuidParam } from "server/lib/validators.ts";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
+import { zUuidParam } from 'server/lib/validators.ts';
 import { ApiResponse, success, failure } from '../lib/api-response.ts';
 
-import type { User } from "@prisma/client";
-import { logIn, logOut } from "../lib/auth.ts";
-import { RequestWithUser } from "server/lib/middleware/access.ts";
-import { USER_STATE, USERNAME_REGEX } from "../lib/models/user/consts.ts";
-import { RecordNotFoundError, ValidationError } from "../lib/models/errors.ts";
+import type { User } from '@prisma/client';
+import { logIn, logOut } from '../lib/auth.ts';
+import { RequestWithUser } from 'server/lib/middleware/access.ts';
+import { USER_STATE, USERNAME_REGEX } from '../lib/models/user/consts.ts';
+import { RecordNotFoundError, ValidationError } from '../lib/models/errors.ts';
 
 import { logAuditEvent } from '../lib/audit-events.ts';
-import { UserModel } from "server/lib/models/user/user-model.ts";
-import { AUDIT_EVENT_TYPE } from "server/lib/models/audit-event/consts.ts";
-import { reqCtx } from "server/lib/request-context.ts";
+import { UserModel } from 'server/lib/models/user/user-model.ts';
+import { AUDIT_EVENT_TYPE } from 'server/lib/models/audit-event/consts.ts';
+import { reqCtx } from 'server/lib/request-context.ts';
 
 export type LoginPayload = {
   username: string;
@@ -23,7 +23,7 @@ export type LoginPayload = {
 };
 const zLoginPayload = z.object({
   username: z.string().toLowerCase(),
-  password: z.string()
+  password: z.string(),
 });
 
 export async function handleLogin(req: Request, res: ApiResponse<User>) {
@@ -61,11 +61,11 @@ type EmptyObject = Record<string, never>;
 export async function handleLogout(req: Request, res: ApiResponse<EmptyObject>) {
   try {
     await logOut(req);
-  } catch(err) {
+  } catch (err) {
     winston.error('An error occurred during logout', err);
-      // but let them log out anyway
+    // but let them log out anyway
   }
-  
+
   return res.status(200).send(success({}));
 }
 
@@ -76,8 +76,8 @@ export type CreateUserPayload = {
 };
 const zCreateUserPayload = z.object({
   username: z.string().trim().toLowerCase()
-    .min(3, { message: 'Username must be at least 3 characters long.'})
-    .max(24, { message: 'Username may not be longer than 24 characters.'})
+    .min(3, { message: 'Username must be at least 3 characters long.' })
+    .max(24, { message: 'Username may not be longer than 24 characters.' })
     .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
   password: z.string().min(8, { message: 'Password must be at least 8 characters long.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -93,7 +93,7 @@ export async function handleSignup(req: Request, res: ApiResponse<User>) {
       password: password,
       email: email,
     }, reqCtx(req));
-  } catch(err) {
+  } catch (err) {
     if(err instanceof ValidationError) {
       return res.status(400).send(failure('USERNAME_EXISTS', 'A user with that username already exists.'));
     } else {
@@ -118,12 +118,12 @@ export async function handleSendEmailVerification(req: RequestWithUser, res: Api
 
 export async function handleVerifyEmail(req: Request, res: ApiResponse<EmptyObject>) {
   const uuid = req.params.uuid;
-  
+
   const verified = await UserModel.verifyEmail(uuid, reqCtx(req));
   if(!verified) {
     return res.status(404).send(failure('NOT_FOUND', 'Could not verify your email. This verification link is either expired, already used, or invalid. Check your link and try again.'));
   }
-  
+
   return res.status(200).send(success({}));
 }
 
@@ -155,8 +155,8 @@ export type RequestPasswordResetPayload = {
 };
 const zRequestPasswordResetPayload = z.object({
   username: z.string().trim().toLowerCase()
-    .min(3, { message: 'Username must be at least 3 characters long.'})
-    .max(24, { message: 'Username may not be longer than 24 characters.'})
+    .min(3, { message: 'Username must be at least 3 characters long.' })
+    .max(24, { message: 'Username may not be longer than 24 characters.' })
     .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
 });
 
@@ -170,7 +170,7 @@ export async function handleSendPasswordResetEmail(req: Request, res: ApiRespons
     return res.status(200).send(success({}));
   }
 
-  const resetLink = await UserModel.sendPasswordResetLink(user, {}, reqCtx(req))
+  const resetLink = await UserModel.sendPasswordResetLink(user, {}, reqCtx(req));
   if(!resetLink) {
     // TODO: rethink this stance
     // Even though there was no user found, we send back success so that we don't leak which usernames do and don't exist
@@ -193,7 +193,7 @@ export async function handlePasswordReset(req: Request, res: ApiResponse<EmptyOb
 
   try {
     await UserModel.resetPassword(resetUuid, newPassword, reqCtx(req));
-  } catch(err) {
+  } catch (err) {
     if(err instanceof RecordNotFoundError) {
       return res.status(404).send(failure('NOT_FOUND', 'This reset link is either expired or bogus. You should request a new one.'));
     } else {

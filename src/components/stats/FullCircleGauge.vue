@@ -21,14 +21,14 @@ const aPath = computed(() => {
   const clockwise = clampedPercent < 0 ? 0 : 1;
 
   return { x, y, largeArc, clockwise };
-})
+});
 </script>
 
 <template>
   <div class="aspect-square max-w-full max-h-full relative flex justify-center items-center">
     <div class="absolute w-full h-full">
       <svg
-        xmlns="http://www.w3.org/2000/svg" 
+        xmlns="http://www.w3.org/2000/svg"
         viewBox="-180 -180 360 360"
         width="100%"
         height="100%"

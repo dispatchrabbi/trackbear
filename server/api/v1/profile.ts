@@ -1,16 +1,16 @@
-import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
 import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
-import { USERNAME_REGEX } from "../../lib/models/user/consts.ts";
+import { USERNAME_REGEX } from '../../lib/models/user/consts.ts';
 
-import { getUserProfile, PublicProfile } from "../../lib/models/profile.ts";
+import { getUserProfile, PublicProfile } from '../../lib/models/profile.ts';
 export type { PublicProfile };
 
 // GET /:username - get the public profile for a user, assuming one exists
 const zUsernameParam = z.object({
-  username: z.string().regex(USERNAME_REGEX, { message: 'username given is not a valid username'}),
+  username: z.string().regex(USERNAME_REGEX, { message: 'username given is not a valid username' }),
 });
 export async function handleGetProfile(req: RequestWithUser, res: ApiResponse<PublicProfile>) {
   const profile = await getUserProfile(req.params.username);

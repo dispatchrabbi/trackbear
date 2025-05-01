@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watchEffect, defineProps, withDefaults, onMounted, useTemplateRef } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
-import * as Plot from "@observablehq/plot";
-import { utcFormat } from 'd3-time-format'
+import * as Plot from '@observablehq/plot';
+import { utcFormat } from 'd3-time-format';
 
 import { saveSvgAsPng } from 'src/lib/image.ts';
 
@@ -83,34 +83,38 @@ function getSeriesOrder(data: LineChartDataPoint[]) {
 function getChartDomain(data: LineChartDataPoint[], par: LineChartParDataPoint[]) {
   const dataValues = data.map(el => el.value);
   const parValues = (par ?? []).map(el => el.value);
-  
+
   const onlyNegative = dataValues.every(total => total <= 0) && parValues.every(val => val <= 0);
 
-  const min = onlyNegative ? Math.min(
-    -getSuggestedYAxisMaximum(props.measureHint),
-    ...dataValues,
-    ...parValues,
-  ) : 0;
+  const min = onlyNegative ?
+      Math.min(
+        -getSuggestedYAxisMaximum(props.measureHint),
+        ...dataValues,
+        ...parValues,
+      ) :
+    0;
 
-  const max = onlyNegative ? 0 : Math.max(
-    getSuggestedYAxisMaximum(props.measureHint),
-    ...dataValues,
-    ...parValues,
-  );
+  const max = onlyNegative ?
+    0 :
+      Math.max(
+        getSuggestedYAxisMaximum(props.measureHint),
+        ...dataValues,
+        ...parValues,
+      );
 
-  return [ min, max ];
+  return [min, max];
 }
 
 type ChartDataPoint = {
   series: string;
   date: Date;
   value: number;
-}
+};
 
 function renderChart() {
   // we will need to add anything that needs a tooltip to this
   const tooltipData: ChartDataPoint[] = [];
-  
+
   const marks = [];
 
   // we need a zero axis
@@ -139,7 +143,7 @@ function renderChart() {
     const par = props.par.map(datapoint => ({
       series: 'Par',
       // we need to add 1 millisecond so that these are different from the dates in the main data stack
-      date:  addMilliseconds(parseDateString(datapoint.date), 1),
+      date: addMilliseconds(parseDateString(datapoint.date), 1),
       value: datapoint.value,
     }));
 
@@ -161,7 +165,7 @@ function renderChart() {
     y: 'value',
     channels: {
       date: { label: '', value: 'date' },
-      series: { label: '', value: 'series', scale: 'color', },
+      series: { label: '', value: 'series', scale: 'color' },
       value: { label: '', value: 'value' },
     },
     format: {
@@ -199,7 +203,7 @@ function renderChart() {
       nice: 'day',
       tickFormat: (d: Date) => {
         if(d.getUTCHours() === 0) {
-          return utcFormat("%-d\n%b")(d);
+          return utcFormat('%-d\n%b')(d);
         } else {
           return '';
         }
@@ -207,8 +211,10 @@ function renderChart() {
     },
     y: {
       tickFormat:
-        props.measureHint === TALLY_MEASURE.TIME ? tick => formatDuration(tick) :
-          props.measureHint === 'percent' ? tick => `${tick}%` :
+        props.measureHint === TALLY_MEASURE.TIME ?
+          tick => formatDuration(tick) :
+          props.measureHint === 'percent' ?
+            tick => `${tick}%` :
             tick => kify(tick),
       grid: true,
       domain: getChartDomain(props.data, props.par),
@@ -227,7 +233,7 @@ onMounted(() => {
   watchEffect(() => {
     const chart = renderChart();
     plotContainer.value.replaceChildren(chart);
-  })
+  });
 });
 
 </script>

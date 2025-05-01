@@ -24,7 +24,7 @@ import ChangePasswordForm from 'src/components/account/ChangePasswordForm.vue';
 import DeleteUserForm from 'src/components/account/DeleteUserForm.vue';
 import UserAvatar from 'src/components/UserAvatar.vue';
 
-import { useConfirm } from "primevue/useconfirm";
+import { useConfirm } from 'primevue/useconfirm';
 const confirm = useConfirm();
 
 const breadcrumbs: MenuItem[] = [
@@ -44,7 +44,7 @@ const handleRemoveAvatar = function(ev) {
       await deleteAvatar();
       userStore.populate(true);
     },
-  })
+  });
 };
 
 </script>

@@ -28,7 +28,7 @@ const validations = z.object({
     .min(3, { message: 'Username must be at least 3 characters long.' })
     .regex(/^[a-z][a-z0-9_-]+$/i, { message: 'Username must start with a letter and only use letters, numbers, underscores, and dashes.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters long.'}),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters long.' }),
 });
 
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
@@ -48,7 +48,7 @@ async function handleSubmit() {
     successMessage.value = 'Sign up successful! Redirecting to login...';
     await wait(1 * 1000);
     router.push({ name: 'login', query: router.currentRoute.value.query });
-  } catch(err) {
+  } catch (err) {
     if(err.code === 'VALIDATION_FAILED') {
       errorMessage.value = err.message;
     } else if(err.code === 'USERNAME_EXISTS') {

@@ -3,7 +3,7 @@ import { defineProps } from 'vue';
 
 import Avatar from 'primevue/avatar';
 
-import CLASSES from 'src/components/classes.ts'
+import CLASSES from 'src/components/classes.ts';
 
 export type UserWithAvatar = {
   avatar?: string;

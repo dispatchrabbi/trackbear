@@ -1,5 +1,5 @@
-import { callApi } from "../api.ts";
-import { Banner } from "server/api/banners.ts";
+import { callApi } from '../api.ts';
+import { Banner } from 'server/api/banners.ts';
 
 async function getBanners() {
   const response = await callApi<Banner[]>('/api/banners', 'GET');
@@ -12,5 +12,5 @@ async function getBanners() {
 }
 
 export {
-  getBanners
+  getBanners,
 };

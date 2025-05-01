@@ -8,7 +8,7 @@ type Change = {
 
 type Version = {
   version: string;
-  changes: Change[]
+  changes: Change[];
 };
 
 export type Changelog = Version[];

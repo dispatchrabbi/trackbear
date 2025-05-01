@@ -21,7 +21,7 @@ import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import { PrimeIcons } from 'primevue/api';
 
-import { useConfirm } from "primevue/useconfirm";
+import { useConfirm } from 'primevue/useconfirm';
 const confirm = useConfirm();
 
 const workId = ref<number>(+route.params.workId);
@@ -46,13 +46,13 @@ const loadWork = async function(force = false) {
     // Not the best, but it'll work for now.
     await workStore.populate(force);
     work.value = workStore.get(workId.value);
-  } catch(err) {
+  } catch (err) {
     workErrorMessage.value = err.message;
     router.push('/works');
   } finally {
     isWorkLoading.value = false;
   }
-}
+};
 
 const isUploadFormVisible = ref<boolean>(false);
 
@@ -69,7 +69,7 @@ const handleRemoveCover = function(ev) {
 
       work.value = updatedWork;
     },
-  })
+  });
 };
 
 const breadcrumbs = computed(() => {

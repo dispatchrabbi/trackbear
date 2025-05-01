@@ -59,26 +59,26 @@ const formModel = reactive({
 
 const validations = z
   .object({
-    title: z.string().min(1, { message: 'Please enter a title.'}),
+    title: z.string().min(1, { message: 'Please enter a title.' }),
     description: z.string(),
     displayOnProfile: z.boolean(),
 
-    type: z.enum(Object.values(GOAL_TYPE) as NonEmptyArray<typeof GOAL_TYPE[keyof typeof GOAL_TYPE]>, { required_error: 'Please pick a goal type.'}),
+    type: z.enum(Object.values(GOAL_TYPE) as NonEmptyArray<typeof GOAL_TYPE[keyof typeof GOAL_TYPE]>, { required_error: 'Please pick a goal type.' }),
     measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
     count: z
       .number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }).nullable()
-      .refine(v => formModel.type === GOAL_TYPE.TARGET ? v !== null : true, { message: 'A progress threshold is required for targets.'}),
+      .refine(v => formModel.type === GOAL_TYPE.TARGET ? v !== null : true, { message: 'A progress threshold is required for targets.' }),
     unit: z.enum(Object.values(GOAL_CADENCE_UNIT) as NonEmptyArray<string>),
     period: z
       .number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }).positive({ message: 'Please enter a positive number.' }).nullable()
-      .refine(v => formModel.type === GOAL_TYPE.HABIT ? v !== null : true, { message: 'A time period is required for habits.'}),
+      .refine(v => formModel.type === GOAL_TYPE.HABIT ? v !== null : true, { message: 'A time period is required for habits.' }),
 
     startDate: z
-      .date({ invalid_type_error:'Please select a valid start date or clear the field.' }).nullable()
-      .refine(v => v === null || formModel.endDate === null || v <= formModel.endDate, { message: 'Start date must be before end date.'}).transform(formatDateSafe),
+      .date({ invalid_type_error: 'Please select a valid start date or clear the field.' }).nullable()
+      .refine(v => v === null || formModel.endDate === null || v <= formModel.endDate, { message: 'Start date must be before end date.' }).transform(formatDateSafe),
     endDate: z
-      .date({ invalid_type_error:'Please select a valid end date or clear the field.' }).nullable()
-      .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.'}).transform(formatDateSafe),
+      .date({ invalid_type_error: 'Please select a valid end date or clear the field.' }).nullable()
+      .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.' }).transform(formatDateSafe),
 
     works: z.array(z.number({ invalid_type_error: 'Please select only valid projects.' }).int({ message: 'Please select only valid projects.' }).positive({ message: 'Please select only valid projects.' })),
     tags: z.array(z.number({ invalid_type_error: 'Please select only valid tags.' }).int({ message: 'Please select only valid tags.' }).positive({ message: 'Please select only valid tags.' })),
@@ -176,10 +176,12 @@ async function handleSubmit() {
           unit: rawData.unit,
           period: rawData.period,
         },
-        threshold: rawData.count === null ? null : {
-          count: rawData.count,
-          measure: rawData.measure,
-        },
+        threshold: rawData.count === null ?
+          null :
+            {
+              count: rawData.count,
+              measure: rawData.measure,
+            },
       };
     }
 
@@ -202,10 +204,10 @@ async function handleSubmit() {
 
     emit('goal:create', { goal: createdGoal.goal });
     eventBus.emit({ goal: createdGoal.goal });
-    
+
     successMessage.value = `${createdGoal.goal.title} has been created.`;
     await wait(1 * 1000);
-    
+
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not create the goal: something went wrong server-side.';

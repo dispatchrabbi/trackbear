@@ -68,10 +68,10 @@ const colorScale = computed(() => {
 });
 
 // Define formatting functions for the axes and tooltips.
-const formatDate = d3.timeFormat("%x");
-const formatDay = (i: number) => "SMTWTFS"[i];
-const formatMonth = d3.timeFormat("%b");
-const formatYear = d3.timeFormat("%y");
+const formatDate = d3.timeFormat('%x');
+const formatDay = (i: number) => 'SMTWTFS'[i];
+const formatMonth = d3.timeFormat('%b');
+const formatYear = d3.timeFormat('%y');
 
 // Helpers to compute a day’s position in the week.
 const timeWeek = d3.timeMonday;
@@ -92,7 +92,7 @@ const handleHeatmapDoubleclick = function(ev: MouseEvent) {
 
   const svgEl = heatmapSvg.value;
   saveSvgAsPng(svgEl, 'heatmap.png', themeColors.surface[50]);
-}
+};
 
 onMounted(() => {
   useResizeObserver(heatmapContainer, entries => {
@@ -122,82 +122,84 @@ onMounted(() => {
     // Helper to compute the color of a data point
     const quantileColor = (normalizedValue: number) => {
       return colorScale.value(normalizedValue);
-    }
+    };
 
     // Set up the SVG element
     svgEl
-      .attr("width", width)
-      .attr("height", height)
-      .attr("viewBox", [0, 0, width, height])
-      .attr("style", (props.constrainWidth ? "max-width: 100%; " : "overflow-x: scroll; ") + "height: auto; font: 10px sans-serif;");
+      .attr('width', width)
+      .attr('height', height)
+      .attr('viewBox', [0, 0, width, height])
+      .attr('style', (props.constrainWidth ? 'max-width: 100%; ' : 'overflow-x: scroll; ') + 'height: auto; font: 10px sans-serif;');
 
     // this is a weird way to do it, because it's kind of expecting there to be multiple timelines
     // but I'm not good enough yet at d3 to do it a different way, so for now, here it is
-    const timeline = svgEl.selectAll("g")
+    const timeline = svgEl.selectAll('g')
       .data([sortedData.value.map(datum => ({
         date: datum.date,
         value: datum.value,
         normalized: props.normalizerFn(datum, sortedData.value),
-      })).filter((d) => {
+      })).filter(d => {
         return width > 0 ? (d.date >= firstWeek && d.date <= lastWeek) : true;
       })])
-      .join("g")
+      .join('g')
       .attr('transform', 'translate(0, 13)');
 
     // Add the weekday legend on the left side
-    timeline.append("g")
-      .attr("text-anchor", "middle")
-    .selectAll()
-    .data(d3.range(0, 7))
-    .join("text")
-      .attr("x", 6)
-      .attr("y", i => (countDay(i) + 0.5) * cellSize)
-      .attr("dy", "0.31em")
-      .style("fill", preferredColorScheme === 'dark' ? themeColors.surface[50] : themeColors.surface[950])
+    timeline.append('g')
+      .attr('text-anchor', 'middle')
+      .selectAll()
+      .data(d3.range(0, 7))
+      .join('text')
+      .attr('x', 6)
+      .attr('y', i => (countDay(i) + 0.5) * cellSize)
+      .attr('dy', '0.31em')
+      .style('fill', preferredColorScheme === 'dark' ? themeColors.surface[50] : themeColors.surface[950])
       .text(formatDay);
 
     // Add the boxes for each day
-    timeline.append("g")
+    timeline.append('g')
       .selectAll()
       .data(d => d) // uses the parent group's (the timeline's) data, but we don't want to alter it at all
-      .join("rect")
-        .attr("width", cellSize - 1)
-        .attr("height", cellSize - 1)
-        .attr("x", d => timeWeek.count(firstWeek, d.date) * cellSize + 0.5 + cellSize)
-        .attr("y", d => countDay(d.date.getDay()) * cellSize + 0.5)
-        .attr("fill", d => quantileColor(d.normalized))
-      .append("title")
-        .text(d => [formatDate(d.date), props.valueFormatFn(d)].join('\n'));
+      .join('rect')
+      .attr('width', cellSize - 1)
+      .attr('height', cellSize - 1)
+      .attr('x', d => timeWeek.count(firstWeek, d.date) * cellSize + 0.5 + cellSize)
+      .attr('y', d => countDay(d.date.getDay()) * cellSize + 0.5)
+      .attr('fill', d => quantileColor(d.normalized))
+      .append('title')
+      .text(d => [formatDate(d.date), props.valueFormatFn(d)].join('\n'));
 
     // create a group for each month
-    const month = timeline.append("g")
+    const month = timeline.append('g')
       .selectAll()
-      .data((data) => d3.timeMonths(d3.timeMonth(data[0].date), data.at(-1).date))
-      .join("g");
+      .data(data => d3.timeMonths(d3.timeMonth(data[0].date), data.at(-1).date))
+      .join('g');
 
     // draw an overlay between months to give a little separation
-    month.filter((d, i) => i > 0).append("path")
-      .attr("fill", "none")
-      .attr("stroke", preferredColorScheme === 'dark' ? themeColors.surface[700] : themeColors.surface[200])
-      .attr("stroke-width", 2)
-      .attr("d", pathMonth);
+    month.filter((d, i) => i > 0).append('path')
+      .attr('fill', 'none')
+      .attr('stroke', preferredColorScheme === 'dark' ? themeColors.surface[700] : themeColors.surface[200])
+      .attr('stroke-width', 2)
+      .attr('d', pathMonth);
 
     // A function that draws a thin line to the left of each month.
     function pathMonth(t) {
       const d = Math.max(0, Math.min(7, countDay(t.getDay())));
       const w = timeWeek.count(firstWeek, t) + 1; // +1 to account for the weekday legend
-      return `${d === 0 ? `M${w * cellSize},0`
-          : d === 7 ? `M${(w + 1) * cellSize},0`
-          : `M${(w + 1) * cellSize},0V${d * cellSize}H${w * cellSize}`}V${7 * cellSize}`;
+      return `${d === 0 ?
+        `M${w * cellSize},0` :
+        d === 7 ?
+          `M${(w + 1) * cellSize},0` :
+          `M${(w + 1) * cellSize},0V${d * cellSize}H${w * cellSize}`}V${7 * cellSize}`;
     }
 
     // add the month name above the top of the month
-    month.append("text")
-      .attr("x", (d, i) => (i === 0 ? 0 : timeWeek.count(firstWeek, timeWeek.ceil(d)) + 1) * cellSize + 2)
-      .attr("y", -5)
-      .style("fill", preferredColorScheme === 'dark' ? themeColors.surface[50] : themeColors.surface[950])
+    month.append('text')
+      .attr('x', (d, i) => (i === 0 ? 0 : timeWeek.count(firstWeek, timeWeek.ceil(d)) + 1) * cellSize + 2)
+      .attr('y', -5)
+      .style('fill', preferredColorScheme === 'dark' ? themeColors.surface[50] : themeColors.surface[950])
       .style('font', '8px sans-serif')
-      .text((d, i) => (formatMonth(d) + (i === 0 || isJanuary(d)  ? ` '${formatYear(d)}` : '')));
+      .text((d, i) => (formatMonth(d) + (i === 0 || isJanuary(d) ? ` '${formatYear(d)}` : '')));
   });
 });
 

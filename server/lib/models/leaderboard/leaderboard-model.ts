@@ -1,30 +1,30 @@
-import { traced } from "../../tracer.ts";
+import { traced } from '../../tracer.ts';
 
-import dbClient from "../../db.ts";
-import type { Create, Update } from "../types.ts";
+import dbClient from '../../db.ts';
+import type { Create, Update } from '../types.ts';
 
-import { type RequestContext } from "../../request-context.ts";
+import { type RequestContext } from '../../request-context.ts';
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
-import { LEADERBOARD_STATE, LEADERBOARD_PARTICIPANT_STATE } from "./consts.ts";
-import type { LeaderboardSummary, Leaderboard, Participant, Participation, Member, LeaderboardParticipant } from "./types.ts";
-import { getTalliesForParticipants } from "./helpers.ts";
-import type { User } from "../user/user-model.ts";
-import { USER_STATE } from "../user/consts.ts";
+import { LEADERBOARD_STATE, LEADERBOARD_PARTICIPANT_STATE } from './consts.ts';
+import type { LeaderboardSummary, Leaderboard, Participant, Participation, Member, LeaderboardParticipant } from './types.ts';
+import { getTalliesForParticipants } from './helpers.ts';
+import type { User } from '../user/user-model.ts';
+import { USER_STATE } from '../user/consts.ts';
 import { makeIncludeWorkAndTagIds, included2ids, makeSetWorksAndTagsIncluded, type WorksAndTagsIncluded, makeConnectWorksAndTagsIncluded } from '../helpers.ts';
 
 import { omit, pick } from 'server/lib/obj.ts';
 
 // used for db2participation and db2member
-import { BoardParticipant as PrismaBoardParticipant, User as PrismaUser } from "@prisma/client";
+import { BoardParticipant as PrismaBoardParticipant, User as PrismaUser } from '@prisma/client';
 type DbParticipation = PrismaBoardParticipant & WorksAndTagsIncluded;
 type DbMember = PrismaBoardParticipant & { user: PrismaUser };
 
 type GetLeaderboardOptions = {
-  memberUserId?: number,
-  ownerUserId?: number,
-  includePublicLeaderboards?: boolean,
+  memberUserId?: number;
+  ownerUserId?: number;
+  includePublicLeaderboards?: boolean;
 };
 
 type OptionalLeaderboardFields = 'description' | 'isJoinable' | 'isPublic';
@@ -41,7 +41,6 @@ export type CreateParticipationData = Create<Participation>;
 export type UpdateParticipationData = Update<Participation>;
 
 export class LeaderboardModel {
-
   // Leaderboard methods
 
   @traced
@@ -53,7 +52,7 @@ export class LeaderboardModel {
           some: {
             userId: participantUserId,
             state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-          }
+          },
         },
       },
       include: {
@@ -64,8 +63,8 @@ export class LeaderboardModel {
           },
           include: {
             user: true,
-          }
-        }
+          },
+        },
       },
     });
 
@@ -98,7 +97,7 @@ export class LeaderboardModel {
       where: {
         id: id,
         state: LEADERBOARD_STATE.ACTIVE,
-      }
+      },
     }) as Leaderboard;
 
     return leaderboard;
@@ -114,7 +113,7 @@ export class LeaderboardModel {
           some: {
             userId: options.memberUserId,
             state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-          }
+          },
         },
       });
     }
@@ -126,7 +125,7 @@ export class LeaderboardModel {
             userId: options.memberUserId,
             state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
             isOwner: true,
-          }
+          },
         },
       });
     }
@@ -137,13 +136,12 @@ export class LeaderboardModel {
       });
     }
 
-
     const leaderboard = await dbClient.board.findUnique({
       where: {
         uuid: uuid,
         state: LEADERBOARD_STATE.ACTIVE,
         OR: extraWhereClauses,
-      }
+      },
     }) as Leaderboard;
 
     return leaderboard;
@@ -157,7 +155,7 @@ export class LeaderboardModel {
         uuid: joinCode,
         state: LEADERBOARD_STATE.ACTIVE,
         isJoinable: true,
-      }
+      },
     }) as Leaderboard;
 
     return leaderboard;
@@ -172,7 +170,7 @@ export class LeaderboardModel {
     }, data);
 
     const normalizedData = this.normalizeBoardData(dataWithDefaults);
-    const memberData: CreateMemberData & { userId: number, goal: null } = {
+    const memberData: CreateMemberData & { userId: number; goal: null } = {
       userId: ownerId,
       isParticipant: false,
       isOwner: true,
@@ -199,7 +197,7 @@ export class LeaderboardModel {
         participants: {
           include: { user: true },
         },
-      }
+      },
     });
 
     const created = omit(createdWithParticipants, ['participants']) as Leaderboard;
@@ -208,13 +206,13 @@ export class LeaderboardModel {
     const leaderboardChangeRecord = buildChangeRecord({}, created);
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_CREATE,
       reqCtx.userId, created.id, null,
-      leaderboardChangeRecord, reqCtx.sessionId
+      leaderboardChangeRecord, reqCtx.sessionId,
     );
 
     const leaderboardMemberChangeRecord = buildChangeRecord({}, createdParticipant);
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_CREATE,
       reqCtx.userId, createdParticipant.id, null,
-      leaderboardMemberChangeRecord, reqCtx.sessionId
+      leaderboardMemberChangeRecord, reqCtx.sessionId,
     );
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_JOIN,
       reqCtx.userId, ownerId, created.id,
@@ -239,7 +237,7 @@ export class LeaderboardModel {
     const changes = buildChangeRecord(leaderboard, updated);
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_UPDATE,
       reqCtx.userId, updated.id, null,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return updated;
@@ -254,13 +252,13 @@ export class LeaderboardModel {
       },
       data: {
         state: LEADERBOARD_STATE.DELETED,
-      }
+      },
     }) as Leaderboard;
 
     const changes = buildChangeRecord(leaderboard, deleted);
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_DELETE,
       reqCtx.userId, deleted.id, null,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return deleted;
@@ -286,7 +284,7 @@ export class LeaderboardModel {
         state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
         boardId: leaderboard.id,
         board: { state: LEADERBOARD_STATE.ACTIVE },
-        user: { state: USER_STATE.ACTIVE }
+        user: { state: USER_STATE.ACTIVE },
       },
       include: {
         user: true,
@@ -306,7 +304,7 @@ export class LeaderboardModel {
         id: id,
         boardId: leaderboard.id,
         board: { state: LEADERBOARD_STATE.ACTIVE },
-        user: { state: USER_STATE.ACTIVE }
+        user: { state: USER_STATE.ACTIVE },
       },
       include: {
         user: true,
@@ -327,7 +325,7 @@ export class LeaderboardModel {
           userId: userId,
         },
         board: { state: LEADERBOARD_STATE.ACTIVE },
-        user: { state: USER_STATE.ACTIVE }
+        user: { state: USER_STATE.ACTIVE },
       },
       include: {
         user: true,
@@ -376,7 +374,7 @@ export class LeaderboardModel {
       },
       include: {
         user: true,
-      }
+      },
     });
 
     const created = this.db2member(dbCreated);
@@ -384,11 +382,11 @@ export class LeaderboardModel {
     const changes = buildChangeRecord({}, created);
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_CREATE,
       reqCtx.userId, created.id, leaderboard.id,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_JOIN,
       reqCtx.userId, user.id, leaderboard.id,
-      { memberId: created.id }, reqCtx.sessionId
+      { memberId: created.id }, reqCtx.sessionId,
     );
 
     return created;
@@ -412,7 +410,7 @@ export class LeaderboardModel {
     const changes = buildChangeRecord(member, updated);
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_UPDATE,
       reqCtx.userId, updated.id, member.boardId,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return updated;
@@ -440,11 +438,11 @@ export class LeaderboardModel {
     const changes = buildChangeRecord(member, removed);
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_DELETE,
       reqCtx.userId, removed.id, member.boardId,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_LEAVE,
       reqCtx.userId, member.userId, member.boardId,
-      { memberId: removed.id }, reqCtx.sessionId
+      { memberId: removed.id }, reqCtx.sessionId,
     );
 
     return null;
@@ -454,7 +452,7 @@ export class LeaderboardModel {
     if(record === null) {
       return null;
     }
-    
+
     return {
       displayName: record.user.displayName,
       avatar: record.user.avatar,
@@ -477,7 +475,7 @@ export class LeaderboardModel {
         user: true,
         worksIncluded: true,
         tagsIncluded: true,
-      }
+      },
     });
 
     const tallies = await getTalliesForParticipants(leaderboard, rawParticipants);
@@ -534,7 +532,7 @@ export class LeaderboardModel {
     const changes = buildChangeRecord({}, created);
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_CREATE,
       reqCtx.userId, created.id, leaderboardId,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return created;
@@ -573,7 +571,7 @@ export class LeaderboardModel {
     const changes = buildChangeRecord(existing, updated);
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_UPDATE,
       reqCtx.userId, updated.id, member.boardId,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return updated;
@@ -627,7 +625,7 @@ export class LeaderboardModel {
     const changes = buildChangeRecord(existing, updated);
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_UPDATE,
       reqCtx.userId, member.id, member.boardId,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return null;
@@ -637,9 +635,9 @@ export class LeaderboardModel {
     if(record === null) {
       return null;
     }
-    
+
     return included2ids(pick(record, [
-      'id', 'goal', 'worksIncluded', 'tagsIncluded'
+      'id', 'goal', 'worksIncluded', 'tagsIncluded',
     ])) as Participation;
   }
 

@@ -5,10 +5,10 @@ import { initLoggers } from '../../server/lib/logger.ts';
 
 import dbClient from '../../server/lib/db.ts';
 
-import { addDays, isBefore } from "date-fns";
+import { addDays, isBefore } from 'date-fns';
 import { parseDateString, formatDate } from '../../src/lib/date.ts';
 
-import { TALLY_STATE, TALLY_MEASURE } from "../../server/lib/models/tally/consts.ts";
+import { TALLY_STATE, TALLY_MEASURE } from '../../server/lib/models/tally/consts.ts';
 
 const RANDOM_WORDS = [
   918, 2494, 1662, 1286, 2352, 886, 970, 558, 1425, 2089, 1808, 785, 1371, 2296, 1538,
@@ -31,7 +31,7 @@ const RANDOM_TIMES = [
   165, 257, 205, 198, 322, 362, 223, 49, 185, 161, 230, 259, 83, 261, 58, 86, 253, 32, 36, 123, 354, 326, 116, 123,
   311, 314, 60, 245, 194, 47, 186, 240, 332, 31, 69, 272, 348, 88, 348, 31, 281, 182, 332, 30, 202, 153, 347, 255, 272,
   88, 27, 72, 88, 231, 141, 202, 65, 307, 208, 345, 124, 109, 196, 40, 117, 113, 177, 348, 53, 53, 344, 370, 254, 283,
-  264, 215
+  264, 215,
 ];
 
 const DEMO_USER_ID = 39;
@@ -40,9 +40,9 @@ const SPY_NOVEL_ID = 113;
 const PATREON_BONUS_COMICS = 114;
 
 const DATA_TO_ADD = {
-  [ROMANTIC_DISASTER_ID]: { startDate: '2024-03-10', endDate: '2024-04-04', ratio: 7/8 },
-  [SPY_NOVEL_ID]: { startDate: '2024-01-12', endDate: '2024-03-25', ratio: 1/2 },
-  [PATREON_BONUS_COMICS]: { startDate: '2024-01-01', endDate: '2024-04-03', ratio: 1/4 },
+  [ROMANTIC_DISASTER_ID]: { startDate: '2024-03-10', endDate: '2024-04-04', ratio: 7 / 8 },
+  [SPY_NOVEL_ID]: { startDate: '2024-01-12', endDate: '2024-03-25', ratio: 1 / 2 },
+  [PATREON_BONUS_COMICS]: { startDate: '2024-01-01', endDate: '2024-04-03', ratio: 1 / 4 },
 };
 
 type TallyPayload = {
@@ -147,7 +147,7 @@ main()
   .then(async () => {
     await dbClient.$disconnect();
   })
-  .catch(async (e) => {
+  .catch(async e => {
     console.error(e);
     await dbClient.$disconnect();
     process.exit(1);

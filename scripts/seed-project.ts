@@ -32,7 +32,7 @@ async function main() {
 
   scriptLogger.info(`Script initialization complete`);
 
-  const [ userId, startDate, endDate, avgTally ] = process.argv.slice(2);
+  const [userId, startDate, endDate, avgTally] = process.argv.slice(2);
   if(isNaN(parseInt(userId, 10))) {
     scriptLogger.error(`Invalid user ID '${userId}'`);
     return;
@@ -64,7 +64,7 @@ async function main() {
         state: USER_STATE.ACTIVE,
       },
     });
-  } catch(err) {
+  } catch (err) {
     scriptLogger.error(`Error finding the user: ${err.message}`);
     return;
   }
@@ -86,12 +86,12 @@ async function main() {
         phase: WORK_PHASE.DRAFTING,
         startingBalance: {},
         starred: false,
-      }
+      },
     });
 
     await logAuditEvent('work:create', TRACKBEAR_SYSTEM_ID, work.id);
     scriptLogger.info(`Project created`);
-  } catch(err) {
+  } catch (err) {
     scriptLogger.error(`Error creating the project: ${err.message}`);
     return;
   }
@@ -120,11 +120,11 @@ async function main() {
           note: '',
 
           workId: work.id,
-        }
+        },
       });
       await logAuditEvent('tally:create', TRACKBEAR_SYSTEM_ID, tally.id);
       scriptLogger.info(`Tally created for ${formatDate(day)} with ${count}`);
-    } catch(err) {
+    } catch (err) {
       scriptLogger.error(`Error creating the tally for ${formatDate(day)}: ${err.message}`);
       return;
     }
@@ -147,11 +147,11 @@ async function main() {
             note: '',
 
             workId: work.id,
-          }
+          },
         });
         await logAuditEvent('tally:create', TRACKBEAR_SYSTEM_ID, butWhatAboutSecondTally.id);
         scriptLogger.info(`Tally #2 created for ${formatDate(day)} with ${count2}`);
-      } catch(err) {
+      } catch (err) {
         scriptLogger.error(`Error creating the second tally for ${formatDate(day)}: ${err.message}`);
         return;
       }

@@ -28,8 +28,7 @@ async function handleUpload(ev: FileUploadUploaderEvent) {
 
     successMessage.value = `Your new avatar has been uploaded.`;
     emit('formSuccess');
-
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = `Could not upload your avatar: ${err.message}.`;
     return;
   } finally {

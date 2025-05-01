@@ -7,7 +7,7 @@ import { describeGoal } from 'src/lib/goal.ts';
 import Card from 'primevue/card';
 
 const props = defineProps<{
-  goal: Goal,
+  goal: Goal;
 }>();
 </script>
 

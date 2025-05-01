@@ -40,7 +40,7 @@ async function main() {
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 
-  const [ userId, workId ] = process.argv.slice(2);
+  const [userId, workId] = process.argv.slice(2);
   if(isNaN(parseInt(userId, 10))) {
     scriptLogger.error(`Invalid user ID '${userId}'`);
     return;
@@ -59,7 +59,7 @@ async function main() {
         state: USER_STATE.ACTIVE,
       },
     });
-  } catch(err) {
+  } catch (err) {
     scriptLogger.error(`Error finding the user: ${err.message}`);
     return;
   }
@@ -78,7 +78,7 @@ async function main() {
         state: WORK_STATE.ACTIVE,
       },
     });
-  } catch(err) {
+  } catch (err) {
     scriptLogger.error(`Error finding the work: ${err.message}`);
     return;
   }
@@ -131,20 +131,20 @@ function getRandomTimeCount() {
 // copied shamelessly from https://stackoverflow.com/a/49434653
 function randn_bm(min, max, skew) {
   let u = 0, v = 0;
-  while(u === 0) u = Math.random() //Converting [0,1) to (0,1)
-  while(v === 0) v = Math.random()
-  let num = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v )
+  while(u === 0) u = Math.random(); // Converting [0,1) to (0,1)
+  while(v === 0) v = Math.random();
+  let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
 
-  num = num / 10.0 + 0.5 // Translate to 0 -> 1
-  if (num > 1 || num < 0)
-    num = randn_bm(min, max, skew) // resample between 0 and 1 if out of range
+  num = num / 10.0 + 0.5; // Translate to 0 -> 1
+  if(num > 1 || num < 0)
+    num = randn_bm(min, max, skew); // resample between 0 and 1 if out of range
 
-  else{
-    num = Math.pow(num, skew) // Skew
-    num *= max - min // Stretch to fill range
-    num += min // offset to min
+  else {
+    num = Math.pow(num, skew); // Skew
+    num *= max - min; // Stretch to fill range
+    num += min; // offset to min
   }
-  return num
+  return num;
 }
 
 function printUsage() {

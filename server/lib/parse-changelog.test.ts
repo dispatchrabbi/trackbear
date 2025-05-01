@@ -1,8 +1,7 @@
-import { expect, describe, it } from "vitest";
-import { parseChangelog } from "./parse-changelog";
+import { expect, describe, it } from 'vitest';
+import { parseChangelog } from './parse-changelog';
 
 describe('parseChangelog', () => {
-  
   it('returns an empty array if fed an empty string', () => {
     const expected = [];
 
@@ -31,24 +30,23 @@ Types of changes include:
     const actual = parseChangelog(contents);
 
     expect(actual).toEqual(expected);
-
   });
 
   it('parses a changelog', () => {
     const expected = [
-    {
-      version: 'Upcoming/Unreleased',
-      changes: [],
-    },
-    {
-      version: '0.15.5',
-      changes: [
-        { tag: 'NEW', entry: 'Things are even better.', credit: 'user1, user 2, userThree' },
-        { tag: 'FIXED', entry: 'That bug is gone.', credit: 'reporter' },
-        { tag: 'SECURITY', entry: 'I added passwords!', },
-      ]
-    }
-  ];
+      {
+        version: 'Upcoming/Unreleased',
+        changes: [],
+      },
+      {
+        version: '0.15.5',
+        changes: [
+          { tag: 'NEW', entry: 'Things are even better.', credit: 'user1, user 2, userThree' },
+          { tag: 'FIXED', entry: 'That bug is gone.', credit: 'reporter' },
+          { tag: 'SECURITY', entry: 'I added passwords!' },
+        ],
+      },
+    ];
 
     const contents = `
 # CHANGELOG

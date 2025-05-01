@@ -37,7 +37,7 @@ describe(TagModel, () => {
         where: {
           ownerId: testOwner.id,
           state: TAG_STATE.ACTIVE,
-        }
+        },
       });
     });
   });
@@ -55,7 +55,7 @@ describe(TagModel, () => {
           id: TEST_OBJECT_ID,
           ownerId: testOwner.id,
           state: TAG_STATE.ACTIVE,
-        }
+        },
       });
     });
 
@@ -82,7 +82,7 @@ describe(TagModel, () => {
           name: testName,
           ownerId: testOwner.id,
           state: TAG_STATE.ACTIVE,
-        }
+        },
       });
     });
 
@@ -134,7 +134,7 @@ describe(TagModel, () => {
       getTagByNameMock.mockResolvedValue(mockObject<Tag>({ id: TEST_OBJECT_ID, name: testName }));
 
       const name = await TagModel.validateTagName(testOwner, testName, TEST_OBJECT_ID);
-      
+
       expect(name).toBe(testName);
       expect(getTagByNameMock).toBeCalledWith(testOwner, testName);
     });
@@ -165,7 +165,7 @@ describe(TagModel, () => {
     it('creates a tag', async () => {
       const testData: TagData = {
         name: 'new tag',
-        color: 'purple'
+        color: 'purple',
       };
       const testTag = mockObject<Tag>({ id: TEST_OBJECT_ID });
       dbClient.tag.create.mockResolvedValue(testTag);
@@ -180,12 +180,12 @@ describe(TagModel, () => {
           color: testData.color,
           state: TAG_STATE.ACTIVE,
           ownerId: testOwner.id,
-        }
+        },
       });
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.TAG_CREATE,
         testReqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), TEST_SESSION_ID
+        expect.any(Object), TEST_SESSION_ID,
       );
     });
 
@@ -204,7 +204,7 @@ describe(TagModel, () => {
           color: TAG_DEFAULT_COLOR,
           state: TAG_STATE.ACTIVE,
           ownerId: testOwner.id,
-        }
+        },
       });
     });
   });
@@ -237,12 +237,12 @@ describe(TagModel, () => {
         },
         data: {
           color: testData.color,
-        }
+        },
       });
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.TAG_UPDATE,
         testReqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), TEST_SESSION_ID
+        expect.any(Object), TEST_SESSION_ID,
       );
     });
 
@@ -271,12 +271,12 @@ describe(TagModel, () => {
         where: {
           id: testTag.id,
           ownerId: testOwner.id,
-        }
+        },
       });
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.TAG_DELETE,
         testReqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), TEST_SESSION_ID
+        expect.any(Object), TEST_SESSION_ID,
       );
     });
   });

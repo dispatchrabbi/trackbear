@@ -1,11 +1,10 @@
-
 import { parse, format } from 'date-fns';
 
-import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from "server/lib/api.ts";
+import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from 'server/lib/api.ts';
 import { ApiResponse, success } from '../../lib/api-response.ts';
 import { RequestWithUser } from '../../lib/middleware/access.ts';
 
-import dbClient from "../../lib/db.ts";
+import dbClient from '../../lib/db.ts';
 
 export type WeeklyStat = {
   weekStart: string;
@@ -126,7 +125,7 @@ GROUP BY "date"
 ;
   `;
 
-  const signupsByDay = results.map(({ date, signups }) => ({ date, count: Number(signups) } ));
+  const signupsByDay = results.map(({ date, signups }) => ({ date, count: Number(signups) }));
 
   return res.status(200).send(success(signupsByDay));
 }

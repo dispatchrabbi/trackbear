@@ -9,11 +9,11 @@ import dbClientMock from '../../lib/__mocks__/db.ts';
 vi.mock('../../lib/audit-events.ts', { spy: true });
 import { logAuditEventMock } from '../../lib/__mocks__/audit-events.ts';
 
-import * as queue from "../../lib/queue.ts";
+import * as queue from '../../lib/queue.ts';
 vi.spyOn(queue, 'pushTask').mockReturnValue(void 0);
-import sendEmailverificationEmail from "../../lib/tasks/send-emailverification-email.ts";
-import sendUsernameChangedEmail from "../../lib/tasks/send-username-changed-email.ts";
-import sendAccountDeletedEmail from "../../lib/tasks/send-account-deleted-email.ts";
+import sendEmailverificationEmail from '../../lib/tasks/send-emailverification-email.ts';
+import sendUsernameChangedEmail from '../../lib/tasks/send-username-changed-email.ts';
+import sendAccountDeletedEmail from '../../lib/tasks/send-account-deleted-email.ts';
 
 import {
   handleGetMe, handlePatchMe, handleDeleteMe,
@@ -21,11 +21,10 @@ import {
   handleUploadAvatar, handleDeleteAvatar,
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   handleUpdateSettings,
-  type FullUser
+  type FullUser,
 } from './me.ts';
 
 describe('me api v1', () => {
-
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -67,7 +66,7 @@ describe('me api v1', () => {
     let req, res;
     beforeEach(() => {
       const handlerMocks = getHandlerMocksWithUser({
-        user: mockObject<User>(mockUserData)
+        user: mockObject<User>(mockUserData),
       });
       req = handlerMocks.req;
       res = handlerMocks.res;
@@ -122,7 +121,7 @@ describe('me api v1', () => {
 
       dbClientMock.user.update.mockResolvedValue(mockObject<User>({
         ...mockUserData,
-        displayName: NEW_DISPLAY_NAME
+        displayName: NEW_DISPLAY_NAME,
       }));
 
       await handlePatchMe(req, res);
@@ -153,7 +152,7 @@ describe('me api v1', () => {
       }));
       dbClientMock.pendingEmailVerification.findFirst.mockResolvedValue(mockObject<PendingEmailVerification>({
         uuid: NIL_UUID,
-        newEmail: NEW_EMAIL
+        newEmail: NEW_EMAIL,
       }));
 
       await handlePatchMe(req, res);
@@ -192,7 +191,7 @@ describe('me api v1', () => {
   describe(handleDeleteMe, () => {
     it('deletes the current user', async () => {
       dbClientMock.user.update.mockResolvedValue(
-        mockObject<User>({ id: TEST_USER_ID })
+        mockObject<User>({ id: TEST_USER_ID }),
       );
 
       const { req, res } = getHandlerMocksWithUser();

@@ -32,12 +32,12 @@ const loadGoals = async function() {
 
   try {
     await goalStore.populate();
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err.message;
   } finally {
     isLoading.value = false;
   }
-}
+};
 
 const goalsFilter = ref<string>('');
 const filteredGoals = computed(() => {

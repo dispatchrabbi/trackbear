@@ -33,7 +33,7 @@ async function handleSubmit() {
     const { username } = formData();
     await requestPasswordReset(username);
     successMessage.value = 'An email has been sent to your email address with a password reset link.';
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err;
   } finally {
     isLoading.value = false;

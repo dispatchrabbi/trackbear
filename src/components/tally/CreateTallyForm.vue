@@ -56,13 +56,13 @@ const formModel = reactive({
 const MAXIMUM_NOTE_LENGTH = 140;
 
 const validations = z.object({
-  date: z.date({ invalid_type_error:'Please select a date.' }).transform(formatDateSafe),
+  date: z.date({ invalid_type_error: 'Please select a date.' }).transform(formatDateSafe),
   workId: z.number({ invalid_type_error: 'Please select a project.' }).positive({ message: 'Please select a project.' }),
   tags: z.array(z.string()),
   count: z.number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }),
-  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<TallyMeasure>, { required_error: 'Please pick a type.'}),
+  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<TallyMeasure>, { required_error: 'Please pick a type.' }),
   setTotal: z.boolean(),
-  note: z.string().max(MAXIMUM_NOTE_LENGTH, { message: `Notes can be at most ${MAXIMUM_NOTE_LENGTH} characters.`}),
+  note: z.string().max(MAXIMUM_NOTE_LENGTH, { message: `Notes can be at most ${MAXIMUM_NOTE_LENGTH} characters.` }),
 });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
@@ -74,7 +74,7 @@ const workOptions = computed(() => {
   if(!options.find(work => work.id === formModel.workId)) {
     const selectedWork = workStore.allWorks.find(work => work.id === formModel.workId);
     if(selectedWork) {
-      return [ ...options, selectedWork ].sort(cmpWorkByTitle);
+      return [...options, selectedWork].sort(cmpWorkByTitle);
     }
   }
 
@@ -90,7 +90,7 @@ const measureOptions = computed(() => {
 
 const onMeasureChange = function() {
   formModel.count = null;
-}
+};
 
 const isLoading = ref<boolean>(false);
 const successMessage = ref<string | null>(null);
@@ -124,7 +124,7 @@ async function handleSubmit() {
     await wait(1 * 1000);
     emit('formSuccess');
   } catch {
-    errorMessage.value = 'Could not log your progress: something went wrong server-side.'
+    errorMessage.value = 'Could not log your progress: something went wrong server-side.';
 
     return;
   } finally {

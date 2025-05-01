@@ -1,14 +1,14 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from 'vitest';
 
 import {
   analyzeStreaksForHabit, isRangeCurrent,
   isTargetAchieved,
-  isTargetGoal, isHabitGoal
-} from "./helpers";
-import { mockObject } from "testing-support/util";
-import { Goal, TargetGoal } from "./types";
-import { GOAL_TYPE } from "./consts";
-import { TALLY_MEASURE } from "../tally/consts";
+  isTargetGoal, isHabitGoal,
+} from './helpers';
+import { mockObject } from 'testing-support/util';
+import { Goal, TargetGoal } from './types';
+import { GOAL_TYPE } from './consts';
+import { TALLY_MEASURE } from '../tally/consts';
 
 describe('goal model helpers', () => {
   describe.todo(analyzeStreaksForHabit);
@@ -20,8 +20,8 @@ describe('goal model helpers', () => {
       const testTargetWith500Words = mockObject<TargetGoal>({
         parameters: { threshold: {
           measure: TALLY_MEASURE.WORD,
-          count: 500
-        } }
+          count: 500,
+        } },
       });
 
       it('returns true when the current count is higher than the target', () => {
@@ -49,8 +49,8 @@ describe('goal model helpers', () => {
       const testTargetWithNegative500Words = mockObject<TargetGoal>({
         parameters: { threshold: {
           measure: TALLY_MEASURE.WORD,
-          count: -500
-        } }
+          count: -500,
+        } },
       });
 
       it('returns true when the current count is lower than the target', () => {

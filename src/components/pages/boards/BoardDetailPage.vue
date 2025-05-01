@@ -60,14 +60,14 @@ const ownerIsViewing = computed(() => {
 });
 
 const measuresAvailable = computed(() => {
-  if(board.value === null) { return [ TALLY_MEASURE.WORD ]; }
+  if(board.value === null) { return [TALLY_MEASURE.WORD]; }
 
   const measuresPresent = new Set(board.value.participants.flatMap(participant => participant.tallies.map(tally => tally.measure)));
   return board.value.measures.filter(measure => measuresPresent.has(measure));
 });
 
 const selectedMeasure = ref(TALLY_MEASURE.WORD);
-watch(measuresAvailable, (newMeasuresAvailable) => {
+watch(measuresAvailable, newMeasuresAvailable => {
   if(!newMeasuresAvailable.includes(selectedMeasure.value)) {
     selectedMeasure.value = measuresAvailable.value[0];
   }
@@ -106,7 +106,7 @@ const loadBoard = async function() {
   try {
     const result = await getBoard(boardUuid.value);
     board.value = result;
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err.message;
     if(err.code === 'MUST_JOIN') {
       router.push({ name: 'join-board', params: { boardUuid: boardUuid.value } });
@@ -118,12 +118,12 @@ const loadBoard = async function() {
   } finally {
     isLoading.value = false;
   }
-}
+};
 
 const reloadBoards = async function() {
   boardStore.populate(true);
   loadBoard();
-}
+};
 
 onMounted(() => {
   useEventBus<{ tally: Tally }>('tally:create').on(reloadBoards);

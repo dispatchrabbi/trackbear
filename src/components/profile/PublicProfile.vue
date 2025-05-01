@@ -5,7 +5,7 @@ import type { PublicProfile } from 'src/lib/api/profile.ts';
 
 const props = defineProps<{
   profile: PublicProfile;
-}>()
+}>();
 
 import { formatCountValue, formatCountCounter } from 'src/lib/tally.ts';
 import { commaify, formatPercent } from 'src/lib/number.ts';

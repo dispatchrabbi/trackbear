@@ -1,5 +1,5 @@
 export function deepMergeWithDefaults(defaults: object, overrides: object = {}) {
-  const out = {...defaults};
+  const out = { ...defaults };
 
   for(const key of Object.keys(overrides)) {
     if(typeof defaults[key] === 'object' && typeof overrides[key] === 'object') {

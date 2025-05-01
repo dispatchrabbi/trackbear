@@ -1,9 +1,9 @@
-import dbClient from "../../db.ts";
+import dbClient from '../../db.ts';
 
-import type { BoardParticipant } from "@prisma/client";
-import type { Leaderboard, ParticipantGoal } from "./types";
-import type { WorksAndTagsIncluded } from "../helpers";
-import { TALLY_STATE } from "../tally/consts.ts";
+import type { BoardParticipant } from '@prisma/client';
+import type { Leaderboard, ParticipantGoal } from './types';
+import type { WorksAndTagsIncluded } from '../helpers';
+import { TALLY_STATE } from '../tally/consts.ts';
 
 type BoardParticipantWithWorksAndTags = BoardParticipant & WorksAndTagsIncluded;
 
@@ -30,9 +30,9 @@ export async function getTalliesForParticipants(leaderboard: Leaderboard, partic
         // 'do-not-return-tallies' is a weird magic value that will never match a measure, so it forces no returned tallies for participants with no set goal
         measure: leaderboard.individualGoalMode ? ((participant.goal as ParticipantGoal)?.measure ?? 'do-not-return-tallies') : undefined,
         // only include tallies from works specified in the participant's config (if any were)
-        workId: participant.worksIncluded.length > 0 ? { in: participant.worksIncluded.map(work => work.id ) } : undefined,
+        workId: participant.worksIncluded.length > 0 ? { in: participant.worksIncluded.map(work => work.id) } : undefined,
         // only include tallies with at least one tag specified in the participant's config (if any were)
-        tags: participant.tagsIncluded.length > 0 ? { some: { id: { in: participant.tagsIncluded.map(tag => tag.id ) } } } : undefined,
+        tags: participant.tagsIncluded.length > 0 ? { some: { id: { in: participant.tagsIncluded.map(tag => tag.id) } } } : undefined,
       })),
     },
   });

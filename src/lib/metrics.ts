@@ -8,7 +8,7 @@ export function initPlausible(enable: boolean, apiHost: string, domain: string) 
       domain,
       apiHost,
     });
-  
+
     plausible.enableAutoPageviews();
   } else {
     plausible = {

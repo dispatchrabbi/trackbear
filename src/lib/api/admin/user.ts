@@ -1,7 +1,7 @@
-import { callApiV1, RoundTrip } from "src/lib/api";
+import { callApiV1, RoundTrip } from 'src/lib/api';
 
-import type { User as PrismaUser, AuditEvent as PrismaAuditEvent } from "@prisma/client";
-import { UserUpdatePayload, UserStatePayload, UserQuery, GetUsersResponsePayload as _GetUsersResponsePayload } from "server/api/admin/user.ts";
+import type { User as PrismaUser, AuditEvent as PrismaAuditEvent } from '@prisma/client';
+import { UserUpdatePayload, UserStatePayload, UserQuery, GetUsersResponsePayload as _GetUsersResponsePayload } from 'server/api/admin/user.ts';
 
 export type GetUsersResponsePayload = RoundTrip<_GetUsersResponsePayload>;
 export type User = RoundTrip<PrismaUser>;
@@ -16,7 +16,7 @@ export async function getUsers(query: UserQuery = null) {
 }
 
 export async function getUser(id: number) {
-  return callApiV1<{ user: User; auditEvents: AuditEvent[]; }>(ENDPOINT + `/${id}`, 'GET');
+  return callApiV1<{ user: User; auditEvents: AuditEvent[] }>(ENDPOINT + `/${id}`, 'GET');
 }
 
 export async function updateUser(id: number, data: UserUpdatePayload) {

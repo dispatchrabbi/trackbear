@@ -8,10 +8,10 @@ import {
 import { ValueEnum } from '../../obj.ts';
 
 export const GOAL_STATE = {
-  ACTIVE:   'active',
+  ACTIVE: 'active',
   // TODO: Paused goals seem like a thing?
   // PAUSED:   'paused',
-  DELETED:  'deleted',
+  DELETED: 'deleted',
 };
 export type GoalState = ValueEnum<typeof GOAL_STATE>;
 
@@ -36,7 +36,7 @@ export const GOAL_CADENCE_UNIT_INFO = {
       each: eachDayOfInterval,
       startOf: startOfDay,
       endOf: endOfDay,
-      add: addDays
+      add: addDays,
     },
   },
   [GOAL_CADENCE_UNIT.WEEK]: {
@@ -45,7 +45,7 @@ export const GOAL_CADENCE_UNIT_INFO = {
       each: eachWeekOfInterval,
       startOf: startOfWeek,
       endOf: endOfWeek,
-      add: addWeeks
+      add: addWeeks,
     },
   },
   [GOAL_CADENCE_UNIT.MONTH]: {
@@ -54,7 +54,7 @@ export const GOAL_CADENCE_UNIT_INFO = {
       each: eachMonthOfInterval,
       startOf: startOfMonth,
       endOf: endOfMonth,
-      add: addMonths
+      add: addMonths,
     },
   },
   [GOAL_CADENCE_UNIT.YEAR]: {
@@ -63,8 +63,7 @@ export const GOAL_CADENCE_UNIT_INFO = {
       each: eachYearOfInterval,
       startOf: startOfYear,
       endOf: endOfYear,
-      add: addYears
+      add: addYears,
     },
   },
 };
-

@@ -20,7 +20,7 @@ import CreateTallyForm from 'src/components/tally/CreateTallyForm.vue';
 const isFormVisible = ref<boolean>(false);
 const toggleForm = function() {
   isFormVisible.value = !isFormVisible.value;
-}
+};
 
 </script>
 

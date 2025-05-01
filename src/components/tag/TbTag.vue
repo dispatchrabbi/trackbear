@@ -9,8 +9,8 @@ import Chip from 'primevue/chip';
 import { PrimeIcons } from 'primevue/api';
 
 type TagInfoProps =
-| { tag: Tag; name?: string; color?: string; }
-| { tag?: Tag; name: string; color: string; }
+  | { tag: Tag; name?: string; color?: string }
+  | { tag?: Tag; name: string; color: string };
 const props = defineProps<TagInfoProps & {
   removable?: boolean;
 }>();

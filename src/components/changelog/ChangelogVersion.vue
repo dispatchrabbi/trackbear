@@ -3,7 +3,6 @@
 import Tag from 'primevue/tag';
 import MIcon from 'src/components/MIcon.vue';
 
-
 import markdownit from 'markdown-it';
 const md = markdownit({
   html: false,

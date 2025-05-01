@@ -4,7 +4,7 @@ import type { Board, FullParticipant } from 'src/lib/api/board.ts';
 
 import { differenceInCalendarDays } from 'date-fns';
 
-import { formatDate, parseDateString } from "src/lib/date.ts";
+import { formatDate, parseDateString } from 'src/lib/date.ts';
 import { formatCount } from 'src/lib/tally.ts';
 import { formatPercent } from 'src/lib/number.ts';
 
@@ -36,30 +36,30 @@ const hasPar = computed(() => {
   return (props.measure === 'percent') || (props.measure in props.board.goal && !props.board.fundraiserMode);
 });
 
-const cmpByRawProgress = function (a, b) {
+const cmpByRawProgress = function(a, b) {
   return a.progress === b.progress ?
-    (a.lastActivity < b.lastActivity ? -1 : a.lastActivity > b.lastActivity ? 1 : 0) :
-    (b.progress - a.progress);
-}
+      (a.lastActivity < b.lastActivity ? -1 : a.lastActivity > b.lastActivity ? 1 : 0) :
+      (b.progress - a.progress);
+};
 
 const cmpByRawPercent = function(a, b) {
   return a.percentRaw === b.percentRaw ?
-    (a.lastActivity < b.lastActivity ? -1 : a.lastActivity > b.lastActivity ? 1 : 0) :
-    (a.percentRaw > b.percentRaw ? -1 : a.percentRaw < b.percentRaw ? 1 : 0);
-}
+      (a.lastActivity < b.lastActivity ? -1 : a.lastActivity > b.lastActivity ? 1 : 0) :
+      (a.percentRaw > b.percentRaw ? -1 : a.percentRaw < b.percentRaw ? 1 : 0);
+};
 
 const tableData = computed(() => {
-  const [ earliestDate, latestDate ] = props.participants
+  const [earliestDate, latestDate] = props.participants
     .flatMap(participant => participant.tallies
       .filter(tally => tally.measure === getMeasure(participant))
-      .map(tally => tally.date)
+      .map(tally => tally.date),
     )
     .reduce(([earliest, latest], date) => {
       return [
         earliest === null ? date : date < earliest ? date : earliest,
         latest === null ? date : date > latest ? date : latest,
       ];
-    }, [ null, null ]);
+    }, [null, null]);
 
   const startDate = determineChartStartDate(earliestDate, props.board.startDate);
   const endDate = determineChartEndDate(latestDate, props.board.endDate);
@@ -98,7 +98,7 @@ const tableData = computed(() => {
     const aDisplayName = a.displayName.toLowerCase();
     const bDisplayName = b.displayName.toLowerCase();
     return aDisplayName < bDisplayName ? -1 : aDisplayName > bDisplayName ? 1 : 0;
-  })
+  });
   for(const participant of sortedParticipants) {
     const normalizedTallies = normalizeTallies(participant.tallies.filter(tally => tally.measure === getMeasure(participant)));
     const accumulatedTallies = accumulateTallies(normalizedTallies);
@@ -125,7 +125,7 @@ const tableData = computed(() => {
   // forEach, not map, because I need access to the modified previous elements
   sorted.forEach((el, ix, arr) => {
     let position = ix + 1;
-    
+
     if(ix !== 0) {
       const prevEl = arr[ix - 1];
       const total = props.measure === 'percent' ? el.percent : el.progress;

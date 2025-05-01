@@ -1,4 +1,4 @@
-import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from "server/lib/api.ts";
+import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from 'server/lib/api.ts';
 import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 import { RequestWithUser } from '../../lib/middleware/access.ts';
 
@@ -7,16 +7,16 @@ import { zIdParam } from '../../lib/validators.ts';
 
 import {
   USER_STATE,
-  USERNAME_REGEX, type UserState
-} from "../../lib/models/user/consts.ts";
+  USERNAME_REGEX, type UserState,
+} from '../../lib/models/user/consts.ts';
 import {
   UserModel, type User,
-} from "../../lib/models/user/user-model.ts";
-import { AuditEventModel, type AuditEvent } from "server/lib/models/audit-event/audit-event-model.ts";
-import { AUDIT_EVENT_ENTITIES, AUDIT_EVENT_SOURCE } from "server/lib/models/audit-event/consts.ts";
+} from '../../lib/models/user/user-model.ts';
+import { AuditEventModel, type AuditEvent } from 'server/lib/models/audit-event/audit-event-model.ts';
+import { AUDIT_EVENT_ENTITIES, AUDIT_EVENT_SOURCE } from 'server/lib/models/audit-event/consts.ts';
 
-import { reqCtx } from "server/lib/request-context.ts";
-import { ValidationError } from "server/lib/models/errors.ts";
+import { reqCtx } from 'server/lib/request-context.ts';
+import { ValidationError } from 'server/lib/models/errors.ts';
 
 type EmptyObject = Record<string, never>;
 
@@ -32,17 +32,17 @@ export type GetUsersResponsePayload = {
 
 export async function handleGetUsers(req: RequestWithUser, res: ApiResponse<GetUsersResponsePayload>) {
   const query = req.query as UserQuery;
-  
+
   const users = await UserModel.getUsers(query.skip ?? 0, query.take ?? Infinity);
   const total = await UserModel.getTotalUserCount();
 
   return res.status(200).send(success({
     users,
-    total
+    total,
   }));
 }
 
-export async function handleGetUser(req: RequestWithUser, res: ApiResponse<{ user: User; auditEvents: AuditEvent[]; }>) {
+export async function handleGetUser(req: RequestWithUser, res: ApiResponse<{ user: User; auditEvents: AuditEvent[] }>) {
   const user = await UserModel.getUser(+req.params.id);
   if(!user) {
     return res.status(404).send(failure('NOT_FOUND', `Could not find a user with id ${req.params.id}`));
@@ -61,8 +61,8 @@ export type UserUpdatePayload = Partial<{
 }>;
 const zUserUpdatePayload = z.object({
   username: z.string().trim().toLowerCase()
-    .min(3, { message: 'Username must be at least 3 characters long.'})
-    .max(24, { message: 'Username may not be longer than 24 characters.'})
+    .min(3, { message: 'Username must be at least 3 characters long.' })
+    .max(24, { message: 'Username may not be longer than 24 characters.' })
     .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
   displayName: z.string(),
   email: z.string().email(),
@@ -79,8 +79,8 @@ export async function handleUpdateUser(req: RequestWithUser, res: ApiResponse<Us
 
   let updated;
   try {
-    updated = await UserModel.updateUser(user, payload, reqCtx(req))
-  } catch(err) {
+    updated = await UserModel.updateUser(user, payload, reqCtx(req));
+  } catch (err) {
     if(err instanceof ValidationError) {
       return res.status(400).send(failure('VALIDATION_FAILED', err.meta.reason));
     } else {

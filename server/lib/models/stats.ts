@@ -1,15 +1,15 @@
-import dbClient from "../../lib/db.ts";
+import dbClient from '../../lib/db.ts';
 import { WORK_STATE } from './work/consts.ts';
-import { TALLY_STATE } from "./tally/consts.ts";
-import { MeasureCounts } from "./tally/types.ts";
+import { TALLY_STATE } from './tally/consts.ts';
+import { MeasureCounts } from './tally/types.ts';
 
 export type DayCount = {
   date: string;
-  counts: MeasureCounts,
+  counts: MeasureCounts;
 };
 
 export async function getDayCounts(userId: number, startDate?: string, endDate?: string): Promise<DayCount[]> {
-  const dateFilter: { gte?: string; lte?: string; } | undefined = (startDate || endDate) ? {} : undefined;
+  const dateFilter: { gte?: string; lte?: string } | undefined = (startDate || endDate) ? {} : undefined;
   if(startDate) {
     dateFilter.gte = startDate;
   }
@@ -18,13 +18,13 @@ export async function getDayCounts(userId: number, startDate?: string, endDate?:
   }
 
   const dateAndMeasureSums = await dbClient.tally.groupBy({
-    by: [ 'date', 'measure' ],
+    by: ['date', 'measure'],
     where: {
       ownerId: userId,
       state: TALLY_STATE.ACTIVE,
       work: {
         ownerId: userId,
-        state: WORK_STATE.ACTIVE
+        state: WORK_STATE.ACTIVE,
       },
       date: dateFilter,
     },

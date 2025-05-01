@@ -35,10 +35,10 @@ const colorOptions = [
   { label: 'Error (red)', value: 'error' },
 ];
 const validations = z.object({
-  message: z.string().min(1, { message: 'Please enter a title.'}),
-  icon: z.string().min(1, { message: 'Please enter an icon.'}),
+  message: z.string().min(1, { message: 'Please enter a title.' }),
+  icon: z.string().min(1, { message: 'Please enter an icon.' }),
   color: z.enum(colorOptions.map(opt => opt.value) as NonEmptyArray<string>, { required_error: 'Please choose a color.' }),
-  showUntil: z.date().min(new Date(), { message: 'Please choose a date and time after now.'} ),
+  showUntil: z.date().min(new Date(), { message: 'Please choose a date and time after now.' }),
   enabled: z.boolean(),
 });
 

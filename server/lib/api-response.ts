@@ -1,13 +1,13 @@
-import type { Request, Response, NextFunction } from "express";
-import winston from "winston";
-import { RecordNotFoundError } from "./models/errors";
+import type { Request, Response, NextFunction } from 'express';
+import winston from 'winston';
+import { RecordNotFoundError } from './models/errors';
 
 export type ApiResponse<T> = Response<ApiResponsePayload<T>>;
 export type ApiResponsePayload<T> = ApiSuccessPayload<T> | ApiFailurePayload;
 
 export type ApiSuccessPayload<T> = {
   success: true;
-  data: T
+  data: T;
 };
 
 export type ApiFailurePayload = {
@@ -17,12 +17,12 @@ export type ApiFailurePayload = {
     code: string;
     message: string;
   };
-}
+};
 
 export function success<T>(data: T): ApiSuccessPayload<T> {
   return {
     success: true,
-    data
+    data,
   };
 }
 
@@ -38,7 +38,7 @@ export function h<T>(handler: ApiHandler<T>) {
   return async function handle(req: Request, res: Response, next: NextFunction) {
     try {
       await handler(req, res);
-    } catch(err) {
+    } catch (err) {
       if(err instanceof RecordNotFoundError) {
         winston.warn(`RecordNotFoundError during call to ${req.url}: ${err.message}: ${err.cause}`);
         return res.status(404).send(failure('NOT_FOUND', `Did not find any ${err.meta.model} with id ${err.meta.id}`));

@@ -1,13 +1,13 @@
-import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
 import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
 import { zIdParam } from '../../lib/validators.ts';
 
-import { reqCtx } from "server/lib/request-context.ts";
-import { transformPayload } from "server/lib/transform-payload.ts";
-import { BannerModel, type Banner, type BannerData } from "server/lib/models/banner/banner-model.ts";
+import { reqCtx } from 'server/lib/request-context.ts';
+import { transformPayload } from 'server/lib/transform-payload.ts';
+import { BannerModel, type Banner, type BannerData } from 'server/lib/models/banner/banner-model.ts';
 
 export async function handleGetBanners(req: RequestWithUser, res: ApiResponse<Banner[]>) {
   const banners = await BannerModel.getBanners();
@@ -51,7 +51,7 @@ export async function handleUpdateBanner(req: RequestWithUser, res: ApiResponse<
   const payload = req.body as BannerUpdatePayload;
 
   const data: Partial<BannerData> = transformPayload(payload, {
-    showUntil: (val) => new Date(val),
+    showUntil: val => new Date(val),
   });
 
   const updated = await BannerModel.updateBanner(+req.params.id, data, reqCtx(req));
@@ -67,7 +67,7 @@ export async function handleDeleteBanner(req: RequestWithUser, res: ApiResponse<
   if(!deleted) {
     return res.status(404).send(failure('NOT_FOUND', `Could not find a banner with id ${req.params.id}`));
   }
-  
+
   return res.status(200).send(success(deleted));
 }
 

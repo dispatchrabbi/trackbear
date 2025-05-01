@@ -42,15 +42,15 @@ const formModel = reactive({
 
 const validations = z
   .object({
-    title: z.string().min(1, { message: 'Please enter a title.'}),
+    title: z.string().min(1, { message: 'Please enter a title.' }),
     description: z.string(),
 
     startDate: z
-      .date({ invalid_type_error:'Please select a valid start date or clear the field.' }).nullable()
-      .refine(v => v === null || formModel.endDate === null || v <= formModel.endDate, { message: 'Start date must be before end date.'}).transform(formatDateSafe),
+      .date({ invalid_type_error: 'Please select a valid start date or clear the field.' }).nullable()
+      .refine(v => v === null || formModel.endDate === null || v <= formModel.endDate, { message: 'Start date must be before end date.' }).transform(formatDateSafe),
     endDate: z
-      .date({ invalid_type_error:'Please select a valid end date or clear the field.' }).nullable()
-      .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.'}).transform(formatDateSafe),
+      .date({ invalid_type_error: 'Please select a valid end date or clear the field.' }).nullable()
+      .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.' }).transform(formatDateSafe),
 
     measures: z.array(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>))
       .refine(arr => {
@@ -62,7 +62,7 @@ const validations = z
       }, { message: 'Please select at least one.' }),
     goal: z.record(
       z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
-      z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' })
+      z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' }),
     ),
     individualGoalMode: z.boolean(),
     fundraiserMode: z.boolean(),
@@ -89,15 +89,15 @@ async function handleSubmit() {
       data.goal = {};
       data.fundraiserMode = false;
     }
-    
+
     const createdBoard = await createBoard(data as BoardCreatePayload);
 
     emit('board:create', { board: createdBoard });
     eventBus.emit({ board: createdBoard });
-    
+
     successMessage.value = `${createdBoard.title} has been created.`;
     await wait(1 * 1000);
-    
+
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not create the leaderboard: something went wrong server-side.';

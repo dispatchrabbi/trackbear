@@ -23,7 +23,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  deleteConfirmation: z.string().refine(val => val === props.goal.title, { message: 'You must type the title exactly.',  }), // only allow exactly the work title
+  deleteConfirmation: z.string().refine(val => val === props.goal.title, { message: 'You must type the title exactly.' }), // only allow exactly the work title
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);
@@ -45,10 +45,10 @@ async function handleSubmit() {
 
     emit('goal:delete', { goal: deletedGoal });
     eventBus.emit({ goal: deletedGoal });
-    
+
     successMessage.value = `${deletedGoal.title} has been deleted.`;
     await wait(1 * 1000);
-    
+
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not delete the goal: something went wrong server-side.';

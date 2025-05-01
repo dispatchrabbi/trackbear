@@ -11,8 +11,8 @@ import GoalCard from 'src/components/dashboard/GoalCard.vue';
 import TargetMeter from 'src/components/goal/TargetMeter.vue';
 
 const props = defineProps<{
-  goal: TargetGoal,
-  tallies: Tally[],
+  goal: TargetGoal;
+  tallies: Tally[];
 }>();
 
 const targetStats = computed(() => {

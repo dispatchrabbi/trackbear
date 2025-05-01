@@ -32,7 +32,7 @@ const breadcrumbs = computed(() => {
     { label: 'Leaderboards', url: '/leaderboards' },
     { label: board.value === null ? 'Loading...' : board.value.title, url: `/leaderboards/${boardUuid.value}` },
     { label: board.value === null ? 'Loading...' : 'Join', url: `/leaderboards/${boardUuid.value}/join` },
-    ];
+  ];
   return crumbs;
 });
 
@@ -45,13 +45,13 @@ const loadBoardParticipation = async function() {
   try {
     const result = await getBoardParticipation(boardUuid.value);
     board.value = result;
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err.message;
     router.push({ name: 'boards' });
   } finally {
     isLoading.value = false;
   }
-}
+};
 
 const isNewParticipant = computed(() => {
   return board.value && board.value.participants.length === 0;

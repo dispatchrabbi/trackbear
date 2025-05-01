@@ -48,7 +48,7 @@ const formModel = reactive({
 
 const validations = z.object({
   countsText: z.string()
-    .min(1, { message: 'Please fill in your NaNoWriMo progress updates.'})
+    .min(1, { message: 'Please fill in your NaNoWriMo progress updates.' })
     .superRefine((val, ctx) => {
       const validation = validateCountsText(val);
 
@@ -60,7 +60,7 @@ const validations = z.object({
       }
     }),
   workId: z.number({ message: 'Please select a project.' }).int(),
-  workTitle: z.string().refine(val => formModel.workId === -1 ? val.length > 0 : true, { message: "Please enter a title for the new project." }),
+  workTitle: z.string().refine(val => formModel.workId === -1 ? val.length > 0 : true, { message: 'Please enter a title for the new project.' }),
 });
 
 const { ruleFor, isValid } = useValidation(validations, formModel);
@@ -202,7 +202,7 @@ async function handleImportClick() {
       title: formModel.workTitle,
       description: 'Imported from NaNoWriMo',
       phase: WORK_PHASE.DRAFTING,
-      startingBalance: {}
+      startingBalance: {},
     };
 
     try {

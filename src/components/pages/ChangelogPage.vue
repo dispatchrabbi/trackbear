@@ -18,7 +18,7 @@ async function loadChangelog() {
   try {
     const result = await getChangelog();
     changelog.value = result;
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err.message;
   }
 }

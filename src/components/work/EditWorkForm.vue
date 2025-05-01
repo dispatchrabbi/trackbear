@@ -35,13 +35,13 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  title: z.string().min(1, { message: 'Please enter a title.'}),
+  title: z.string().min(1, { message: 'Please enter a title.' }),
   description: z.string(),
   displayOnProfile: z.boolean(),
-  phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<typeof WORK_PHASE[keyof typeof WORK_PHASE]>, { required_error: 'Please pick a phase.'}),
+  phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<typeof WORK_PHASE[keyof typeof WORK_PHASE]>, { required_error: 'Please pick a phase.' }),
   startingBalance: z.record(
     z.enum(Object.keys(TALLY_MEASURE_INFO) as NonEmptyArray<string>),
-    z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' })
+    z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' }),
   ),
 });
 
@@ -72,7 +72,7 @@ async function handleSubmit() {
 
     successMessage.value = `${updatedWork.title} has been edited.`;
     await wait(1 * 1000);
-    
+
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not edit the project: something went wrong server-side.';

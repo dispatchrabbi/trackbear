@@ -1,14 +1,14 @@
-import { callApiV1 } from "../api.ts";
+import { callApiV1 } from '../api.ts';
 
-import type { Tally, Tag } from "@prisma/client";
-import type { Work, SummarizedWork } from "server/api/v1/work.ts";
+import type { Tally, Tag } from '@prisma/client';
+import type { Work, SummarizedWork } from 'server/api/v1/work.ts';
 
 export type { Work, SummarizedWork };
 
 export type TallyWithTags = Tally & { tags: Tag[] };
 export type WorkWithTallies = Work & { tallies: TallyWithTags[] };
 
-import type { WorkCreatePayload, WorkUpdatePayload } from "server/api/v1/work.ts";
+import type { WorkCreatePayload, WorkUpdatePayload } from 'server/api/v1/work.ts';
 export type { WorkCreatePayload, WorkUpdatePayload };
 
 const ENDPOINT = '/api/v1/work';

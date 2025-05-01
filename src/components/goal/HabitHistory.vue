@@ -12,8 +12,8 @@ import { parseDateStringSafe } from 'src/lib/date.ts';
 import HabitGauge from 'src/components/goal/HabitGauge.vue';
 
 const props = defineProps<{
-  goal: Goal,
-  tallies: Tally[],
+  goal: Goal;
+  tallies: Tally[];
 }>();
 
 const habitStats = computed(() => {
@@ -23,7 +23,7 @@ const habitStats = computed(() => {
     parameters.cadence,
     parameters.threshold,
     props.goal.startDate,
-    props.goal.endDate
+    props.goal.endDate,
   );
 
   return stats;

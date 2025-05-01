@@ -15,7 +15,7 @@ export class RecordNotFoundError extends Error {
     };
   }
 
-  meta: { 
+  meta: {
     model: string;
     idField: string;
     id: string;

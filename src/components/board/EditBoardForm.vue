@@ -54,27 +54,27 @@ const formModel = reactive({
 
 const validations = z
   .object({
-    title: z.string().min(1, { message: 'Please enter a title.'}),
+    title: z.string().min(1, { message: 'Please enter a title.' }),
     description: z.string(),
 
     startDate: z
-      .date({ invalid_type_error:'Please select a valid start date or clear the field.' }).nullable()
-      .refine(v => v === null || formModel.endDate === null || v <= formModel.endDate, { message: 'Start date must be before end date.'}).transform(formatDateSafe),
+      .date({ invalid_type_error: 'Please select a valid start date or clear the field.' }).nullable()
+      .refine(v => v === null || formModel.endDate === null || v <= formModel.endDate, { message: 'Start date must be before end date.' }).transform(formatDateSafe),
     endDate: z
-      .date({ invalid_type_error:'Please select a valid end date or clear the field.' }).nullable()
-      .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.'}).transform(formatDateSafe),
+      .date({ invalid_type_error: 'Please select a valid end date or clear the field.' }).nullable()
+      .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.' }).transform(formatDateSafe),
 
     measures: z.array(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>))
-    .refine(arr => {
-      if(formModel.individualGoalMode) {
-        return true;
-      } else {
-        return arr.length >= 1;
-      }
-    }, { message: 'Please select at least one.' }),
+      .refine(arr => {
+        if(formModel.individualGoalMode) {
+          return true;
+        } else {
+          return arr.length >= 1;
+        }
+      }, { message: 'Please select at least one.' }),
     goal: z.record(
       z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
-      z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' })
+      z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' }),
     ),
     individualGoalMode: z.boolean(),
     fundraiserMode: z.boolean(),
@@ -101,7 +101,7 @@ async function handleSubmit() {
       data.goal = {};
       data.fundraiserMode = false;
     }
-    
+
     const updatedBoard = await updateBoard(props.board.uuid, data as BoardUpdatePayload);
 
     emit('board:edit', { board: updatedBoard });
@@ -109,7 +109,7 @@ async function handleSubmit() {
 
     successMessage.value = `${updatedBoard.title} has been updated.`;
     await wait(1 * 1000);
-    
+
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not update the leaderboard: something went wrong server-side.';
@@ -213,10 +213,9 @@ async function handleSubmit() {
             :invalid="!isFieldValid"
             @update:model-value="onUpdate"
           />
-          <div
-            class="max-w-64 md:max-w-none"
-          >
-            Everyone will be working toward <span class="font-bold">{{ formModel.individualGoalMode ? `their own goals` : `the same goal` }}</span>.
+          <div class="max-w-64 md:max-w-none">
+            Everyone will be working toward <span class="font-bold">{{ formModel.individualGoalMode ? `their own goals`
+              : `the same goal` }}</span>.
           </div>
         </div>
       </template>
@@ -241,7 +240,8 @@ async function handleSubmit() {
             :invalid="!isFieldValid"
             @update:model-value="onUpdate"
           />
-          <label :for="`board-form-measures-checkbox-${measure}`">{{ toTitleCase(TALLY_MEASURE_INFO[measure].label.plural) }}</label>
+          <label :for="`board-form-measures-checkbox-${measure}`">{{
+            toTitleCase(TALLY_MEASURE_INFO[measure].label.plural) }}</label>
         </div>
       </template>
     </FieldWrapper>
@@ -277,10 +277,9 @@ async function handleSubmit() {
             :invalid="!isFieldValid"
             @update:model-value="onUpdate"
           />
-          <div
-            class="max-w-64 md:max-w-none"
-          >
-            Everyone's progress will be counted <span class="font-bold">{{ formModel.fundraiserMode ? `collectively` : `separately` }}</span>.
+          <div class="max-w-64 md:max-w-none">
+            Everyone's progress will be counted <span class="font-bold">{{ formModel.fundraiserMode ? `collectively` :
+              `separately` }}</span>.
           </div>
         </div>
       </template>
@@ -299,10 +298,9 @@ async function handleSubmit() {
             :invalid="!isFieldValid"
             @update:model-value="onUpdate"
           />
-          <div
-            class="max-w-64 md:max-w-none"
-          >
-            This leaderboard is <span class="font-bold">{{ formModel.isJoinable ? `open` : `closed` }}</span> for users to join.
+          <div class="max-w-64 md:max-w-none">
+            This leaderboard is <span class="font-bold">{{ formModel.isJoinable ? `open` : `closed` }}</span> for users
+            to join.
           </div>
         </div>
       </template>
@@ -321,10 +319,10 @@ async function handleSubmit() {
             :invalid="!isFieldValid"
             @update:model-value="onUpdate"
           />
-          <div
-            class="max-w-64 md:max-w-none"
-          >
-            <span class="font-bold">{{ formModel.isPublic ? `Any user with the link` : `Only participants` }}</span> will be able to view this leaderboard. {{ formModel.isPublic ? `They will not need to join it to do so.` : `Non-participants will not be able to view it until they join.` }}
+          <div class="max-w-64 md:max-w-none">
+            <span class="font-bold">{{ formModel.isPublic ? `Any user with the link` : `Only participants` }}</span>
+            will be able to view this leaderboard. {{ formModel.isPublic ? `They will not need to join it to do so.` :
+              `Non-participants will not be able to view it until they join.` }}
           </div>
         </div>
       </template>
@@ -332,5 +330,4 @@ async function handleSubmit() {
   </TbForm>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

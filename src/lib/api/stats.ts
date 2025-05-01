@@ -1,6 +1,6 @@
-import { callApiV1 } from "../api.ts";
+import { callApiV1 } from '../api.ts';
 
-import type { DayCount, DaysQuery } from "server/api/v1/stats.ts";
+import type { DayCount, DaysQuery } from 'server/api/v1/stats.ts';
 
 export type { DayCount };
 

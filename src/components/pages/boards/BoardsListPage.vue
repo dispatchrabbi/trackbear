@@ -36,12 +36,12 @@ const loadBoards = async function(force = false) {
 
   try {
     await boardStore.populate(force);
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err.message;
   } finally {
     isLoading.value = false;
   }
-}
+};
 
 // const reloadBoards = async function() {
 //   loadBoards(true);

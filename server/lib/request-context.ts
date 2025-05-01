@@ -1,5 +1,5 @@
-import { TRACKBEAR_SYSTEM_ID, UNKNOWN_ACTOR_ID } from "./audit-events";
-import {  } from "./audit-events";
+import { TRACKBEAR_SYSTEM_ID, UNKNOWN_ACTOR_ID } from './audit-events';
+import { } from './audit-events';
 
 export type RequestContext = {
   userId: number | null;

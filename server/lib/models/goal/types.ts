@@ -1,7 +1,7 @@
-import { type Goal as PrismaGoal } from "@prisma/client";
-import { type TallyMeasure } from "../tally/consts";
-import { type GoalCadenceUnit, GOAL_TYPE } from "./consts";
-import { Expand } from "server/lib/obj";
+import { type Goal as PrismaGoal } from '@prisma/client';
+import { type TallyMeasure } from '../tally/consts';
+import { type GoalCadenceUnit, GOAL_TYPE } from './consts';
+import { Expand } from 'server/lib/obj';
 
 export type GoalThreshold = {
   measure: TallyMeasure;
@@ -34,11 +34,11 @@ export type Goal = Expand<Omit<PrismaGoal, 'type' | 'parameters'> & {
 }>;
 
 export type TargetGoal = Goal & {
-  type: typeof GOAL_TYPE.TARGET,
-  parameters: TargetGoalParameters
+  type: typeof GOAL_TYPE.TARGET;
+  parameters: TargetGoalParameters;
 };
 
 export type HabitGoal = Goal & {
-  type: typeof GOAL_TYPE.HABIT,
-  parameters: HabitGoalParameters
+  type: typeof GOAL_TYPE.HABIT;
+  parameters: HabitGoalParameters;
 };

@@ -38,7 +38,7 @@ describe(LeaderboardModel, () => {
         state: TAG_STATE.ACTIVE,
       },
       select: { id: true },
-    }
+    },
   };
 
   afterEach(() => {
@@ -53,27 +53,27 @@ describe(LeaderboardModel, () => {
           participants: [
             {
               ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: false, isParticipant: false }),
-              user: mockObject<User>({ id: TEST_USER_ID, displayName: 'test0', avatar: null })
+              user: mockObject<User>({ id: TEST_USER_ID, displayName: 'test0', avatar: null }),
             },
             {
               ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID - 1, userId: TEST_USER_ID - 1, starred: true, isParticipant: true }),
-              user: mockObject<User>({ id: TEST_USER_ID - 1, displayName: 'test1', avatar: null })
-            }
-          ]
+              user: mockObject<User>({ id: TEST_USER_ID - 1, displayName: 'test1', avatar: null }),
+            },
+          ],
         },
         {
           ...mockObject<Leaderboard>(),
           participants: [
             {
               ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: true, isParticipant: true }),
-              user: mockObject<User>({ id: TEST_USER_ID, displayName: 'test0', avatar: null })
+              user: mockObject<User>({ id: TEST_USER_ID, displayName: 'test0', avatar: null }),
             },
             {
-              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID - 2, userId: TEST_USER_ID -2, starred: false, isParticipant: true }),
-              user: mockObject<User>({ id: TEST_USER_ID - 2, displayName: 'test2', avatar: null })
-            }
-          ]
-        }
+              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID - 2, userId: TEST_USER_ID - 2, starred: false, isParticipant: true }),
+              user: mockObject<User>({ id: TEST_USER_ID - 2, displayName: 'test2', avatar: null }),
+            },
+          ],
+        },
       ];
       dbClient.board.findMany.mockResolvedValue(testDbLeaderboards);
 
@@ -82,16 +82,16 @@ describe(LeaderboardModel, () => {
           ...mockObject<Leaderboard>(),
           starred: false,
           members: [
-            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, isParticipant: false },
-            { id: TEST_OBJECT_ID - 1, displayName: 'test1', avatar: null, isParticipant: true },
-          ]
+            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, userUuid: TEST_UUID, isParticipant: false },
+            { id: TEST_OBJECT_ID - 1, displayName: 'test1', avatar: null, userUuid: TEST_UUID, isParticipant: true },
+          ],
         },
         {
           ...mockObject<Leaderboard>(),
           starred: true,
           members: [
-            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, isParticipant: true },
-            { id: TEST_OBJECT_ID - 2, displayName: 'test2', avatar: null, isParticipant: true },
+            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, userUuid: TEST_UUID, isParticipant: true },
+            { id: TEST_OBJECT_ID - 2, displayName: 'test2', avatar: null, userUuid: TEST_UUID, isParticipant: true },
           ],
         },
       ];
@@ -106,7 +106,7 @@ describe(LeaderboardModel, () => {
             some: {
               userId: TEST_USER_ID,
               state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-            }
+            },
           },
         },
         include: {
@@ -117,8 +117,8 @@ describe(LeaderboardModel, () => {
             },
             include: {
               user: true,
-            }
-          }
+            },
+          },
         },
       });
     });
@@ -136,7 +136,7 @@ describe(LeaderboardModel, () => {
         where: {
           id: TEST_OBJECT_ID,
           state: LEADERBOARD_STATE.ACTIVE,
-        }
+        },
       });
     });
   });
@@ -159,11 +159,11 @@ describe(LeaderboardModel, () => {
                 some: {
                   userId: TEST_USER_ID,
                   state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-                }
+                },
               },
-            }  
-          ]
-        }
+            },
+          ],
+        },
       });
     });
   });
@@ -189,5 +189,4 @@ describe(LeaderboardModel, () => {
   describe.skip(LeaderboardModel.updateMember, () => {});
 
   describe.skip(LeaderboardModel.removeMember, () => {});
-
 });

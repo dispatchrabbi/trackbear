@@ -1,10 +1,10 @@
 import qs from 'qs';
 
 type FetchResponse<T> = {
-  ok: boolean,
+  ok: boolean;
   status: number;
-  payload: T,
-}
+  payload: T;
+};
 
 type NaNoWriMoEntity = {
   id: number;
@@ -12,17 +12,17 @@ type NaNoWriMoEntity = {
   links: Record<string, string>;
   attributes: Record<string, unknown>;
   relationships: Record<string, { links: Record<string, string> }>;
-}
+};
 
 type NaNoWriMoSingleResponse = {
-  data: NaNoWriMoEntity,
-  included?: NaNoWriMoEntity[],
-}
+  data: NaNoWriMoEntity;
+  included?: NaNoWriMoEntity[];
+};
 
 type NaNoWriMoCollectionResponse = {
-  data: NaNoWriMoEntity[],
-  included?: NaNoWriMoEntity[],
-}
+  data: NaNoWriMoEntity[];
+  included?: NaNoWriMoEntity[];
+};
 
 export type NaNoWriMoProject = {
   id: number;
@@ -30,7 +30,7 @@ export type NaNoWriMoProject = {
   summary: string;
   total: number;
   createdAt: string;
-}
+};
 
 export type NaNoWriMoChallenge = {
   id: number;
@@ -39,15 +39,15 @@ export type NaNoWriMoChallenge = {
   goal: number;
   startDate: string;
   endDate: string;
-}
+};
 
 export type NaNoWriMoSession = {
   id: number;
   projectId: number;
   challengeId: number;
-	date: string;
+  date: string;
   count: number;
-}
+};
 
 export default class NaNoWriMo {
   static API_PREFIX = 'https://api.nanowrimo.org';
@@ -58,9 +58,9 @@ export default class NaNoWriMo {
   async login(username: string, password: string) {
     const signInPayload = {
       identifier: username,
-      password: password
+      password: password,
     };
-    const signInResponse = await this.callApi<{auth_token: string}>(NaNoWriMo.API_PREFIX + '/users/sign_in', 'POST', signInPayload);
+    const signInResponse = await this.callApi<{ auth_token: string }>(NaNoWriMo.API_PREFIX + '/users/sign_in', 'POST', signInPayload);
     if(signInResponse.status === 401) {
       throw new Error('Invalid credentials');
     } else if(!signInResponse.ok) {
@@ -84,7 +84,7 @@ export default class NaNoWriMo {
 
     const query = {
       'filter[user_id]': this.userId,
-      include: 'project-challenges,project-sessions',
+      'include': 'project-challenges,project-sessions',
     };
     const response = await this.callApi<NaNoWriMoCollectionResponse>(NaNoWriMo.API_PREFIX + '/projects', 'GET', null, query);
     if(!response.ok) {
@@ -119,7 +119,7 @@ export default class NaNoWriMo {
     return {
       projects,
       challenges,
-      sessions
+      sessions,
     };
   }
 

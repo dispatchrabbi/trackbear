@@ -1,5 +1,5 @@
-import type { TallyMeasure } from "./consts";
-import type { MeasureCounts } from "./types";
+import type { TallyMeasure } from './consts';
+import type { MeasureCounts } from './types';
 
 type Counted = {
   measure: TallyMeasure;

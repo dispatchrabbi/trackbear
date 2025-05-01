@@ -1,7 +1,7 @@
 import { endOfDay, add } from 'date-fns';
 import { formatDate, parseDateString } from 'src/lib/date.ts';
 
-import { type TallyMeasure } from "../tally/consts.ts";
+import { type TallyMeasure } from '../tally/consts.ts';
 import type { Goal, GoalCadence, GoalThreshold, HabitGoal, TargetGoal } from './types.ts';
 import { type GoalCadenceUnit, GOAL_CADENCE_UNIT_INFO, GOAL_TYPE } from './consts.ts';
 
@@ -9,7 +9,7 @@ type TallyLike = {
   date: string;
   measure: TallyMeasure;
   count: number;
-}
+};
 export type HabitRange = {
   startDate: string;
   endDate: string;
@@ -35,7 +35,7 @@ export function analyzeStreaksForHabit(tallies: TallyLike[], cadence: GoalCadenc
   if(sortedTallies.length === 0) {
     return {
       ranges: [],
-      streaks: { longest: [], current: [], all: [[]] }
+      streaks: { longest: [], current: [], all: [[]] },
     };
   }
 
@@ -57,7 +57,7 @@ export function analyzeStreaksForHabit(tallies: TallyLike[], cadence: GoalCadenc
       endDate: dateRange.end,
       tallies: talliesInRange,
       total: total,
-      isSuccess: threshold === null ? total > 0 : total >= threshold.count
+      isSuccess: threshold === null ? total > 0 : total >= threshold.count,
     };
     ranges.push(range);
 
@@ -99,7 +99,7 @@ function createDateRanges(period: number, unit: GoalCadenceUnit, startDate: stri
     const endOfRange = endOfDay(add(nextStartOfRange, { days: -1 }));
     ranges.push({
       start: formatDate(startOfRange),
-      end: formatDate(endOfRange)
+      end: formatDate(endOfRange),
     });
 
     startOfRange = nextStartOfRange;

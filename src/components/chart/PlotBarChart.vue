@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watchEffect, defineProps, withDefaults, onMounted } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
-import * as Plot from "@observablehq/plot";
+import * as Plot from '@observablehq/plot';
 
 import { useTheme } from 'src/lib/theme';
 import twColors from 'tailwindcss/colors.js';
@@ -38,8 +38,8 @@ const DEFAULT_BAR_COLORS = {
   background: { light: themeColors.surface[0], dark: themeColors.surface[800] },
 
   cycle: {
-    light: [ themeColors.primary[500], twColors.red[500], twColors.orange[500], twColors.yellow[500], twColors.green[500], twColors.blue[500], twColors.purple[500] ],
-    dark: [ themeColors.primary[400], twColors.red[400], twColors.orange[400], twColors.yellow[400], twColors.green[400], twColors.blue[400], twColors.purple[400] ],
+    light: [themeColors.primary[500], twColors.red[500], twColors.orange[500], twColors.yellow[500], twColors.green[500], twColors.blue[500], twColors.purple[500]],
+    dark: [themeColors.primary[400], twColors.red[400], twColors.orange[400], twColors.yellow[400], twColors.green[400], twColors.blue[400], twColors.purple[400]],
   },
 };
 const colorScheme = computed(() => {
@@ -71,7 +71,7 @@ onMounted(() => {
         y: 'value',
         fill: 'series',
       })),
-      Plot.tip(props.data, Plot.pointerX(Plot.stackY2({x: "date", y: "value", fill: "series"}))),
+      Plot.tip(props.data, Plot.pointerX(Plot.stackY2({ x: 'date', y: 'value', fill: 'series' }))),
     );
 
     const chart = Plot.plot({

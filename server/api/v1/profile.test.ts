@@ -2,12 +2,11 @@ import { vi, describe, it, expect, afterEach } from 'vitest';
 import { mockObject } from '../../../testing-support/util.ts';
 import { getHandlerMocksWithUser } from '../../lib/__mocks__/express.ts';
 
-import * as profileModel from "../../lib/models/profile.ts";
+import * as profileModel from '../../lib/models/profile.ts';
 
 import { handleGetProfile } from './profile.ts';
 
 describe('profile api v1', () => {
-
   const getUserProfileSpy = vi.spyOn(profileModel, 'getUserProfile');
 
   afterEach(() => {
@@ -37,4 +36,4 @@ describe('profile api v1', () => {
       expect(res.send).toHaveBeenCalled();
     });
   });
-})
+});

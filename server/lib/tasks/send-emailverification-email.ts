@@ -25,7 +25,7 @@ async function handler(task) {
         uuid: task.verificationUuid,
         user: { state: USER_STATE.ACTIVE },
       },
-      include: { user: true }
+      include: { user: true },
     });
   } catch {
     taskLogger.error(`Could not find a pending email verification with uuid ${task.verificationUuid}`);
@@ -85,5 +85,5 @@ function makeTask(verificationUuid: string) {
 export default {
   TASK_NAME,
   handler,
-  makeTask
+  makeTask,
 };

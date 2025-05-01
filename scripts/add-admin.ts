@@ -23,7 +23,7 @@ async function main() {
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 
-  const [ userId ] = process.argv.slice(2);
+  const [userId] = process.argv.slice(2);
   if(isNaN(parseInt(userId, 10))) {
     scriptLogger.error(`Invalid user ID '${userId}'`);
     return;
@@ -37,7 +37,7 @@ async function main() {
         state: USER_STATE.ACTIVE,
       },
     });
-  } catch(err) {
+  } catch (err) {
     scriptLogger.error(`Error finding the user: ${err.message}`);
     return;
   }
@@ -53,11 +53,11 @@ async function main() {
       data: {
         isAdmin: true,
         userId: user.id,
-      }
+      },
     });
 
     await logAuditEvent('adminperms:add', TRACKBEAR_SYSTEM_ID, user.id, undefined, { source: 'add-admin script' });
-  } catch(err) {
+  } catch (err) {
     scriptLogger.error(`Error adding admin permissions: ${err.message}`);
     return;
   }

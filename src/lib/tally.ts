@@ -1,8 +1,8 @@
-import { addDays, eachDayOfInterval } from "date-fns";
+import { addDays, eachDayOfInterval } from 'date-fns';
 
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 import type { Tally, TallyWithWorkAndTags } from 'src/lib/api/tally.ts';
-import { formatDuration, formatDate, parseDateString } from "src/lib/date.ts";
+import { formatDuration, formatDate, parseDateString } from 'src/lib/date.ts';
 import { commaify } from './number.ts';
 
 export const TALLY_MEASURE_INFO = {
@@ -38,15 +38,15 @@ export const TALLY_MEASURE_INFO = {
   },
 };
 
-export function formatCount(count: number, measure: string ) {
+export function formatCount(count: number, measure: string) {
   return measure === TALLY_MEASURE.TIME ? formatDuration(count) : `${commaify(count)} ${TALLY_MEASURE_INFO[measure].counter[Math.abs(count) === 1 ? 'singular' : 'plural']}`;
 }
 
-export function formatCountValue(count: number, measure: string ) {
+export function formatCountValue(count: number, measure: string) {
   return measure === TALLY_MEASURE.TIME ? formatDuration(count) : commaify(count);
 }
 
-export function formatCountCounter(count: number, measure: string ) {
+export function formatCountCounter(count: number, measure: string) {
   return measure === TALLY_MEASURE.TIME ? '' : TALLY_MEASURE_INFO[measure].counter[Math.abs(count) === 1 ? 'singular' : 'plural'];
 }
 
@@ -72,7 +72,7 @@ export function compileTallies(tallies: Tally[], overrideStartDate: string = nul
   const sortedTallies = tallies.toSorted(cmpTallies);
   const bounds = determineDateBounds(
     overrideStartDate, overrideEndDate,
-    sortedTallies[0]?.date, sortedTallies[sortedTallies.length - 1]?.date
+    sortedTallies[0]?.date, sortedTallies[sortedTallies.length - 1]?.date,
   );
 
   // first populate the base object and the counts (totals come later)
@@ -98,7 +98,7 @@ export function compileTallies(tallies: Tally[], overrideStartDate: string = nul
   // now go through and accumulate the totals
   for(let i = 0; i < compiledPoints.length; ++i) {
     for(const measure of Object.keys(compiledPoints[i].total)) {
-      compiledPoints[i].total[measure] = compiledPoints[i].count[measure] + (i > 0 ? compiledPoints[i-1].total[measure] : 0);
+      compiledPoints[i].total[measure] = compiledPoints[i].count[measure] + (i > 0 ? compiledPoints[i - 1].total[measure] : 0);
     }
   }
 
@@ -107,8 +107,8 @@ export function compileTallies(tallies: Tally[], overrideStartDate: string = nul
 function determineDateBounds(
   overrideStartDate?: string, overrideEndDate?: string,
   firstTallyDate?: string, lastTallyDate?: string,
-  minimumDaySpan: number = 0
-): { start: string, end: string } {
+  minimumDaySpan: number = 0,
+): { start: string; end: string } {
   const today = new Date();
 
   const start = overrideStartDate ?? firstTallyDate ?? formatDate(today);
@@ -139,24 +139,24 @@ export function streakColors(streakLength) {
 
 export function filterTallies(tallies: TallyWithWorkAndTags[], workIds: number[], tagIds: number[], startDate: string | null, endDate: string | null) {
   const workFilterFn: (tallyWorkId: number) => boolean = workIds.length > 0 ?
-    (tallyWorkId: number) => workIds.includes(tallyWorkId) :
+      (tallyWorkId: number) => workIds.includes(tallyWorkId) :
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    (tallyWorkId: number) => true; // do not filter by works if no workId is specified
+      (tallyWorkId: number) => true; // do not filter by works if no workId is specified
 
   const tagFilterFn: (tallyTagIds: number[]) => boolean = tagIds.length > 0 ?
-    (tallyTagIds: number[]) => tallyTagIds.some(tagId => tagIds.includes(tagId)) :
+      (tallyTagIds: number[]) => tallyTagIds.some(tagId => tagIds.includes(tagId)) :
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    (tallyTagIds: number[]) => true; // do not filter by tags if no tagIds are specified
+      (tallyTagIds: number[]) => true; // do not filter by tags if no tagIds are specified
 
   const startDateFilterFn: (tallyDate: string) => boolean = startDate === null ?
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    (tallyDate: string) => true :
-    (tallyDate: string) => tallyDate >= startDate;
-  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      (tallyDate: string) => true :
+      (tallyDate: string) => tallyDate >= startDate;
+
   const endDateFilterFn: (tallyDate: string) => boolean = endDate === null ?
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    (tallyDate: string) => true :
-    (tallyDate: string) => tallyDate <= endDate;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      (tallyDate: string) => true :
+      (tallyDate: string) => tallyDate <= endDate;
 
   return tallies.filter(tally => (
     workFilterFn(tally.workId) &&

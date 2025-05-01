@@ -6,7 +6,7 @@ const route = useRoute();
 
 import { parseISO, format } from 'date-fns';
 
-import { getUser, updateUserState, verifyEmailByFiat, sendEmailVerificationEmail, sendResetPasswordEmail, User, AuditEvent } from 'src/lib/api/admin/user.ts'
+import { getUser, updateUserState, verifyEmailByFiat, sendEmailVerificationEmail, sendResetPasswordEmail, User, AuditEvent } from 'src/lib/api/admin/user.ts';
 import { USER_STATE } from 'server/lib/models/user/consts';
 import { USER_STATE_INFO } from 'src/lib/user.ts';
 
@@ -34,7 +34,7 @@ watch(
     if(newId !== undefined) {
       userId.value = +newId;
     }
-  }
+  },
 );
 
 async function loadUser(id: number) {
@@ -44,7 +44,7 @@ async function loadUser(id: number) {
 }
 
 const user = ref<User | null>(null);
-  const auditEvents = ref<AuditEvent[]>([]);
+const auditEvents = ref<AuditEvent[]>([]);
 watch(userId, newId => {
   loadUser(newId);
 }, { immediate: true });
@@ -66,7 +66,7 @@ async function handleActivateClick() {
     toast.removeGroup('activate');
     toast.add({ summary: 'User activated', severity: 'success', life: 3000 });
     loadUser(userId.value);
-  } catch(err) {
+  } catch (err) {
     toast.add({ summary: `Error activating user (${err.code})`, detail: err.message, severity: 'error', life: 3000 });
   }
 }
@@ -78,7 +78,7 @@ async function handleSuspendClick() {
     toast.removeGroup('suspend');
     toast.add({ summary: 'User suspended', severity: 'success', life: 3000 });
     loadUser(userId.value);
-  } catch(err) {
+  } catch (err) {
     toast.add({ summary: `Error suspending user (${err.code})`, detail: err.message, severity: 'error', life: 3000 });
   }
 }
@@ -90,7 +90,7 @@ async function handleVerifyClick() {
     toast.removeGroup('verify');
     toast.add({ summary: 'User verified', severity: 'success', life: 3000 });
     loadUser(userId.value);
-  } catch(err) {
+  } catch (err) {
     toast.add({ summary: `Error verifying user (${err.code})`, detail: err.message, severity: 'error', life: 3000 });
   }
 }
@@ -108,10 +108,10 @@ function handleRestoreClick() {
 async function handleSendPasswordResetClick() {
   toast.add({ summary: 'Sending password reset email...', severity: 'secondary', group: 'sendReset' });
   try {
-    await sendResetPasswordEmail(userId.value)
+    await sendResetPasswordEmail(userId.value);
     toast.removeGroup('sendReset');
     toast.add({ summary: 'Reset email sent!', severity: 'success', life: 3000 });
-  } catch(err) {
+  } catch (err) {
     toast.add({ summary: `Error sending reset email (${err.code})`, detail: err.message, severity: 'error', life: 3000 });
   }
 }
@@ -119,10 +119,10 @@ async function handleSendPasswordResetClick() {
 async function handleSendEmailVerificationClick() {
   toast.add({ summary: 'Sending email verification email...', severity: 'secondary', group: 'sendVerify' });
   try {
-    await sendEmailVerificationEmail(userId.value)
+    await sendEmailVerificationEmail(userId.value);
     toast.removeGroup('sendVerify');
     toast.add({ summary: 'Verification email sent!', severity: 'success', life: 3000 });
-  } catch(err) {
+  } catch (err) {
     toast.add({ summary: `Error sending verification email (${err.code})`, detail: err.message, severity: 'error', life: 3000 });
   }
 }

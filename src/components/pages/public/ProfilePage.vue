@@ -23,7 +23,7 @@ const populateProfile = async function() {
   } finally {
     profilePopulated.value = true;
   }
-}
+};
 
 onMounted(() => {
   populateProfile();

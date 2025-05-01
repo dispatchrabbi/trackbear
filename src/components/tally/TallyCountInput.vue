@@ -27,7 +27,7 @@ const hours = computed({
       const minutesVal = minutes.value ?? 0;
       model.value = (val * 60) + (decisiveSign(val) * minutesVal);
     }
-  }
+  },
 });
 
 const minutes = computed({
@@ -44,7 +44,7 @@ const minutes = computed({
       const hoursVal = hours.value ?? 0;
       model.value = (hours.value * 60) + (decisiveSign(hoursVal) * val);
     }
-  }
+  },
 });
 
 import InputGroup from 'primevue/inputgroup';

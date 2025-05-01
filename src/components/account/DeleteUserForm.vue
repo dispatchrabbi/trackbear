@@ -17,7 +17,7 @@ import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 
 const props = defineProps<{
-  user: { id: number; username: string; };
+  user: { id: number; username: string };
   isSelf?: boolean;
 }>();
 
@@ -28,7 +28,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  deleteConfirmation: z.string().refine(val => val === props.user.username, { message: `You must type ${props.isSelf ? 'your' : 'the'} username exactly.`,  }),
+  deleteConfirmation: z.string().refine(val => val === props.user.username, { message: `You must type ${props.isSelf ? 'your' : 'the'} username exactly.` }),
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);

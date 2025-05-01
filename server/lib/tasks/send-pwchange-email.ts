@@ -58,5 +58,5 @@ function makeTask(userId: number) {
 export default {
   TASK_NAME,
   handler,
-  makeTask
+  makeTask,
 };

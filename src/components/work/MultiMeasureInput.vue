@@ -9,8 +9,8 @@ const props = defineProps<{
   addButtonText?: string;
 }>();
 
-const entries = reactive<{ measure: keyof typeof TALLY_MEASURE_INFO; count: number; }[]>([]);
-watch(entries, (newEntries) => {
+const entries = reactive<{ measure: keyof typeof TALLY_MEASURE_INFO; count: number }[]>([]);
+watch(entries, newEntries => {
   const collatedEntries = {};
   for(const entry of newEntries) {
     // do not filter - this should represent nulls if the input is still in the DOM
@@ -40,18 +40,18 @@ const handleAddStartingEntryClick = function() {
   if(measuresLeft.value.length === 0) { return; } // nothing more we can add (and the button should be gone anyway)
 
   entries.push({ measure: measuresLeft.value[0], count: 0 });
-}
+};
 
 const handleRemoveStartingEntryClick = function(measure) {
   const entryIx = entries.findIndex(entry => entry.measure === measure);
   if(entryIx < 0) { return; } // balance wasn't found
 
   entries.splice(entryIx, 1);
-}
+};
 
 onMounted(() => {
   for(const measure of Object.keys(model.value)) {
-    entries.push({ measure, count: model.value[measure]});
+    entries.push({ measure, count: model.value[measure] });
   }
 });
 

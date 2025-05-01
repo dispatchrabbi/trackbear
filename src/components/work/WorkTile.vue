@@ -46,7 +46,7 @@ async function onStarClick() {
 
 const isNotMobile = computed(() => {
   return breakpoints.greater('sm').value;
-})
+});
 
 </script>
 

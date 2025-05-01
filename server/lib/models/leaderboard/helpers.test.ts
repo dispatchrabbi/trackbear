@@ -13,7 +13,6 @@ vi.mock('../../db.ts');
 const dbClient = vi.mocked(_dbClient, { deep: true });
 
 describe(getTalliesForParticipants, () => {
-
   afterEach(() => {
     vi.resetAllMocks();
   });
@@ -51,8 +50,8 @@ describe(getTalliesForParticipants, () => {
         date: { gte: '2024-01-01', lte: '2024-12-31' },
         OR: [
           { ownerId: -20, measure: undefined, workId: undefined, tags: undefined },
-        ]
-      }
+        ],
+      },
     });
   });
 
@@ -67,8 +66,8 @@ describe(getTalliesForParticipants, () => {
     type Participant = Parameters<typeof getTalliesForParticipants>[1][number];
     const testParticipants = [
       mockObject<Participant>({ userId: -20, worksIncluded: [], tagsIncluded: [] }),
-      mockObject<Participant>({ userId: -21, worksIncluded: [ { id: -30 }, { id: -31 } ], tagsIncluded: [] }),
-      mockObject<Participant>({ userId: -22, worksIncluded: [], tagsIncluded: [ { id: -40 }, { id: -41 } ] }),
+      mockObject<Participant>({ userId: -21, worksIncluded: [{ id: -30 }, { id: -31 }], tagsIncluded: [] }),
+      mockObject<Participant>({ userId: -22, worksIncluded: [], tagsIncluded: [{ id: -40 }, { id: -41 }] }),
     ];
 
     await getTalliesForParticipants(testLeaderboard, testParticipants);
@@ -82,8 +81,8 @@ describe(getTalliesForParticipants, () => {
           { ownerId: -20, measure: undefined, workId: undefined, tags: undefined },
           { ownerId: -21, measure: undefined, workId: { in: [-30, -31] }, tags: undefined },
           { ownerId: -22, measure: undefined, workId: undefined, tags: { some: { id: { in: [-40, -41] } } } },
-        ]
-      }
+        ],
+      },
     });
   });
 
@@ -110,9 +109,8 @@ describe(getTalliesForParticipants, () => {
         OR: [
           { ownerId: -20, measure: TALLY_MEASURE.PAGE, workId: undefined, tags: undefined },
           { ownerId: -21, measure: 'do-not-return-tallies', workId: undefined, tags: undefined },
-        ]
-      }
+        ],
+      },
     });
   });
-
 });

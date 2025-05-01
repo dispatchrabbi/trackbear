@@ -1,17 +1,16 @@
-import { vi, expect, describe, it, afterEach, beforeEach, MockInstance } from "vitest";
-import { mockObject, mockObjects, TEST_OBJECT_ID, getTestReqCtx } from "testing-support/util";
+import { vi, expect, describe, it, afterEach, beforeEach, MockInstance } from 'vitest';
+import { mockObject, mockObjects, TEST_OBJECT_ID, getTestReqCtx } from 'testing-support/util';
 
 import _dbClient from '../../db.ts';
 import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
 
-import { BannerModel, type Banner, type BannerData } from "./banner-model.ts";
-import { AUDIT_EVENT_TYPE } from "../audit-event/consts.ts";
+import { BannerModel, type Banner, type BannerData } from './banner-model.ts';
+import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 vi.mock('../tracer.ts');
 
 vi.mock('../../db.ts');
 const dbClient = vi.mocked(_dbClient, { deep: true });
-
 
 vi.mock('../../audit-events.ts');
 const logAuditEvent = vi.mocked(_logAuditEvent);
@@ -19,7 +18,7 @@ const logAuditEvent = vi.mocked(_logAuditEvent);
 describe(BannerModel, () => {
   afterEach(() => {
     vi.resetAllMocks();
-  })
+  });
 
   describe(BannerModel.getBanners, () => {
     it('gets banners', async () => {
@@ -44,7 +43,7 @@ describe(BannerModel, () => {
       expect(dbClient.banner.findMany).toBeCalledWith(expect.objectContaining({
         where: {
           enabled: true,
-          showUntil: { gte: expect.any(Date) }
+          showUntil: { gte: expect.any(Date) },
         },
       }));
     });
@@ -59,7 +58,7 @@ describe(BannerModel, () => {
 
       expect(results).toBe(testBanner);
       expect(dbClient.banner.findUnique).toBeCalledWith({
-        where: { id: TEST_OBJECT_ID }
+        where: { id: TEST_OBJECT_ID },
       });
     });
 
@@ -89,13 +88,13 @@ describe(BannerModel, () => {
 
       expect(created).toBe(testBanner);
       expect(dbClient.banner.create).toBeCalledWith({
-        data: testBannerData
+        data: testBannerData,
       });
 
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.BANNER_CREATE,
         reqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), reqCtx.sessionId
+        expect.any(Object), reqCtx.sessionId,
       );
     });
 
@@ -117,13 +116,13 @@ describe(BannerModel, () => {
           showUntil: expect.any(Date),
           icon: 'campaign',
           color: 'info',
-        }
+        },
       });
 
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.BANNER_CREATE,
         reqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), reqCtx.sessionId
+        expect.any(Object), reqCtx.sessionId,
       );
     });
   });
@@ -159,7 +158,7 @@ describe(BannerModel, () => {
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.BANNER_UPDATE,
         reqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), reqCtx.sessionId
+        expect.any(Object), reqCtx.sessionId,
       );
     });
 
@@ -170,7 +169,7 @@ describe(BannerModel, () => {
         color: 'success',
       };
       getBannerMock.mockResolvedValue(null);
-      
+
       const updated = await BannerModel.updateBanner(TEST_OBJECT_ID, testBannerData, reqCtx);
 
       expect(updated).toBe(null);
@@ -200,20 +199,20 @@ describe(BannerModel, () => {
 
       expect(deleted).toBe(testBanner);
       expect(dbClient.banner.delete).toBeCalledWith({
-        where: { id: TEST_OBJECT_ID }
+        where: { id: TEST_OBJECT_ID },
       });
 
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.BANNER_DELETE,
         reqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), reqCtx.sessionId
+        expect.any(Object), reqCtx.sessionId,
       );
     });
 
     it('returns null if there was no banner to delete', async () => {
       const reqCtx = getTestReqCtx();
       getBannerMock.mockResolvedValue(null);
-      
+
       const deleted = await BannerModel.deleteBanner(TEST_OBJECT_ID, reqCtx);
 
       expect(deleted).toBe(null);

@@ -1,4 +1,4 @@
-import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
 import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 
 import { RequestWithUser } from '../../lib/middleware/access.ts';
@@ -6,35 +6,35 @@ import { RequestWithUser } from '../../lib/middleware/access.ts';
 import { z } from 'zod';
 import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
 
-import dbClient from "../../lib/db.ts";
-import { GOAL_TYPE, GOAL_CADENCE_UNIT } from "../../lib/models/goal/consts.ts";
-import type { HabitGoalParameters, TargetGoalParameters } from "server/lib/models/goal/types.ts";
-import { Tally } from "../../lib/models/tally/tally-model.wip.ts";
+import dbClient from '../../lib/db.ts';
+import { GOAL_TYPE, GOAL_CADENCE_UNIT } from '../../lib/models/goal/consts.ts';
+import type { HabitGoalParameters, TargetGoalParameters } from 'server/lib/models/goal/types.ts';
+import { Tally } from '../../lib/models/tally/tally-model.wip.ts';
 import { WORK_STATE } from '../../lib/models/work/consts.ts';
-import { TALLY_MEASURE } from "../../lib/models/tally/consts.ts";
-import { TAG_STATE } from "../../lib/models/tag/consts.ts";
+import { TALLY_MEASURE } from '../../lib/models/tally/consts.ts';
+import { TAG_STATE } from '../../lib/models/tag/consts.ts';
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
 
 import { omit } from '../../lib/obj.ts';
-import { GoalModel, type Goal } from "server/lib/models/goal/goal-model.ts";
-import { isTargetAchieved, isTargetGoal } from "server/lib/models/goal/helpers.ts";
-import { reqCtx } from "server/lib/request-context.ts";
+import { GoalModel, type Goal } from 'server/lib/models/goal/goal-model.ts';
+import { isTargetAchieved, isTargetGoal } from 'server/lib/models/goal/helpers.ts';
+import { reqCtx } from 'server/lib/request-context.ts';
 
 export type { Goal };
 
 export type GoalAndTallies = {
   goal: Goal;
-  tallies: Tally[]
+  tallies: Tally[];
 };
 
 export type GoalWithAchievement = Goal & {
   achieved: boolean;
-}
+};
 
 export async function handleGetGoals(req: RequestWithUser, res: ApiResponse<GoalWithAchievement[]>) {
   const goals = await GoalModel.getGoals(req.user) as GoalWithAchievement[];
-  
+
   const targetTotals = await GoalModel.getTargetTotals(req.user);
 
   for(const goal of goals) {
@@ -45,7 +45,7 @@ export async function handleGetGoals(req: RequestWithUser, res: ApiResponse<Goal
     }
   }
 
-  return res.status(200).send(success(goals))
+  return res.status(200).send(success(goals));
 }
 
 export async function handleGetGoal(req: RequestWithUser, res: ApiResponse<Goal>) {
@@ -90,7 +90,7 @@ const zGoalCreatePayload = z.object({
   title: z.string().min(1),
   description: z.string(),
   type: z.enum(Object.values(GOAL_TYPE) as NonEmptyArray<string>),
-  parameters: z.union([ zTargetGoalParameters, zHabitGoalParameters ]), // I could enforce this more strictly with a discriminated union, but it's terrible in zod
+  parameters: z.union([zTargetGoalParameters, zHabitGoalParameters]), // I could enforce this more strictly with a discriminated union, but it's terrible in zod
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
   starred: z.boolean().nullable().default(false),

@@ -36,7 +36,7 @@ watch(
       workId.value = +newId;
       reloadData(); // this isn't a great pattern - it should get changed
     }
-  }
+  },
 );
 
 const isDeleteFormVisible = ref<boolean>(false);
@@ -52,7 +52,7 @@ const loadWork = async function() {
   try {
     await workStore.populate();
     work.value = workStore.get(+workId.value);
-  } catch(err) {
+  } catch (err) {
     workErrorMessage.value = err.message;
     // the ApplicationLayout takes care of this. Otherwise, this will redirect to /works before ApplicationLayout
     // can redirect to /login.
@@ -63,12 +63,12 @@ const loadWork = async function() {
   } finally {
     isWorkLoading.value = false;
   }
-}
+};
 
 const tallies = ref<TallyWithWorkAndTags[]>([]);
 const isTalliesLoading = ref<boolean>(false);
 const talliesErrorMessage = ref<string | null>(null);
-const loadTallies = async function () {
+const loadTallies = async function() {
   isTalliesLoading.value = true;
   talliesErrorMessage.value = null;
 
@@ -78,17 +78,17 @@ const loadTallies = async function () {
     });
 
     tallies.value = talliesForWork;
-  } catch(err) {
+  } catch (err) {
     talliesErrorMessage.value = err.message;
   } finally {
     isTalliesLoading.value = false;
   }
-}
+};
 
 const reloadData = async function() {
   await loadWork();
   await loadTallies();
-}
+};
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [

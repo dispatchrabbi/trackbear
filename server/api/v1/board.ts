@@ -1,20 +1,20 @@
-import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
 import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 import { RequestWithUser } from '../../lib/middleware/access.ts';
 
-import winston from "winston";
+import winston from 'winston';
 
 import { z } from 'zod';
 import { zUuidParam, NonEmptyArray } from '../../lib/validators.ts';
 
-import dbClient from "../../lib/db.ts";
-import type { BoardParticipant } from "@prisma/client";
+import dbClient from '../../lib/db.ts';
+import type { BoardParticipant } from '@prisma/client';
 
-import { BOARD_PARTICIPANT_STATE, BOARD_STATE, getFullBoard, getExtendedBoardsForUser, getBoardParticipationForUser } from "../../lib/models/board-wip/consts.ts";
+import { BOARD_PARTICIPANT_STATE, BOARD_STATE, getFullBoard, getExtendedBoardsForUser, getBoardParticipationForUser } from '../../lib/models/board-wip/consts.ts';
 import type { Board, BoardWithParticipantBios, BoardWithParticipants, BoardGoal, ParticipantGoal, FullBoard } from '../../lib/models/board-wip/types.ts';
-import { TALLY_MEASURE, TallyMeasure } from "../../lib/models/tally/consts.ts";
+import { TALLY_MEASURE, TallyMeasure } from '../../lib/models/tally/consts.ts';
 import { WORK_STATE } from '../../lib/models/work/consts.ts';
-import { TAG_STATE } from "../../lib/models/tag/consts.ts";
+import { TAG_STATE } from '../../lib/models/tag/consts.ts';
 
 import { logAuditEvent } from '../../lib/audit-events.ts';
 
@@ -161,7 +161,7 @@ export async function handleStarBoard(req: RequestWithUser, res: ApiResponse<Boa
       OR: [
         { ownerId: user.id },
         { participants: { some: { userId: user.id, state: BOARD_PARTICIPANT_STATE.ACTIVE } } },
-      ]
+      ],
     },
   });
 
@@ -169,7 +169,7 @@ export async function handleStarBoard(req: RequestWithUser, res: ApiResponse<Boa
     return res.status(404).send(failure('NOT_FOUND', `Could not find a board with UUID ${req.params.uuid}`));
   }
 
-  const [ board, participant ] = await dbClient.$transaction([
+  const [board, participant] = await dbClient.$transaction([
     // update the board (if one exists)
     dbClient.board.updateMany({
       where: {
@@ -293,40 +293,48 @@ export async function handleUpdateBoardParticipation(req: RequestWithUser, res: 
       },
       data: {
         isParticipant: true,
-        
+
         goal: payload.goal,
-        worksIncluded: payload.works ? { set: payload.works.map(workId => ({
-          id: workId,
-          ownerId: user.id,
-          state: WORK_STATE.ACTIVE,
-        })) } : undefined,
-        tagsIncluded: payload.tags ? { set: payload.tags.map(workId => ({
-          id: workId,
-          ownerId: user.id,
-          state: TAG_STATE.ACTIVE,
-        })) } : undefined,
+        worksIncluded: payload.works ?
+            { set: payload.works.map(workId => ({
+              id: workId,
+              ownerId: user.id,
+              state: WORK_STATE.ACTIVE,
+            })) } :
+          undefined,
+        tagsIncluded: payload.tags ?
+            { set: payload.tags.map(workId => ({
+              id: workId,
+              ownerId: user.id,
+              state: TAG_STATE.ACTIVE,
+            })) } :
+          undefined,
       },
     });
   } else {
     participant = await dbClient.boardParticipant.create({
       data: {
         state: BOARD_PARTICIPANT_STATE.ACTIVE,
-        user: { connect: { id: user.id }},
+        user: { connect: { id: user.id } },
         board: { connect: { uuid: req.params.uuid } },
         isParticipant: true,
 
         goal: payload.goal,
-        worksIncluded: payload.works ? { connect: payload.works.map(workId => ({
-          id: workId,
-          ownerId: user.id,
-          state: WORK_STATE.ACTIVE,
-        })) } : undefined,
-        tagsIncluded: payload.tags ? { connect: payload.tags.map(workId => ({
-          id: workId,
-          ownerId: user.id,
-          state: TAG_STATE.ACTIVE,
-        })) } : undefined,
-      }
+        worksIncluded: payload.works ?
+            { connect: payload.works.map(workId => ({
+              id: workId,
+              ownerId: user.id,
+              state: WORK_STATE.ACTIVE,
+            })) } :
+          undefined,
+        tagsIncluded: payload.tags ?
+            { connect: payload.tags.map(workId => ({
+              id: workId,
+              ownerId: user.id,
+              state: TAG_STATE.ACTIVE,
+            })) } :
+          undefined,
+      },
     });
   }
 

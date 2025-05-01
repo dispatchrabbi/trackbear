@@ -1,5 +1,5 @@
-import type { User } from "@prisma/client";
-import type { Request, Response, NextFunction } from "express";
+import type { User } from '@prisma/client';
+import type { Request, Response, NextFunction } from 'express';
 
 import dbClient from '../db.ts';
 import { failure } from '../api-response.ts';

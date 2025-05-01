@@ -1,5 +1,5 @@
-import { addDays } from "date-fns";
-import { parseDateString, formatDate, Dated} from "./date.ts";
+import { addDays } from 'date-fns';
+import { parseDateString, formatDate, Dated } from './date.ts';
 
 export function findStreaks(tallies: Dated[]): string[][] {
   const tallyDates = [...(new Set(tallies.map(tally => tally.date)))].sort();
@@ -20,13 +20,13 @@ export function findStreaks(tallies: Dated[]): string[][] {
     streaks[streaks.length - 1].push(thisTallyDate);
   }
 
-    // if the last date of the last streak isn't today or yesterday, add a new, empty streak
-    const today = formatDate(new Date());
-    const yesterday = formatDate(addDays(new Date(), -1));
-    const lastDateOfTheLastStreak = tallyDates[tallyDates.length - 1];
+  // if the last date of the last streak isn't today or yesterday, add a new, empty streak
+  const today = formatDate(new Date());
+  const yesterday = formatDate(addDays(new Date(), -1));
+  const lastDateOfTheLastStreak = tallyDates[tallyDates.length - 1];
 
-    if(![today, yesterday].includes(lastDateOfTheLastStreak)) {
-      streaks.push([]);
+  if(![today, yesterday].includes(lastDateOfTheLastStreak)) {
+    streaks.push([]);
   }
 
   return streaks;

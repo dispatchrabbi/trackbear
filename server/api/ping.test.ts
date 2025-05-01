@@ -3,7 +3,7 @@ import { vi, expect, describe, it, beforeEach } from 'vitest';
 import { getHandlerMocks } from 'server/lib/__mocks__/express.ts';
 import { success } from '../lib/api-response.ts';
 
-import { handleGetPing, handleGetError } from "./ping.ts";
+import { handleGetPing, handleGetError } from './ping.ts';
 
 describe('/api/ping', () => {
   describe('GET /', () => {
@@ -33,7 +33,7 @@ describe('/api/ping', () => {
 
       try {
         await handleGetError(req, res);
-      } catch(err) {
+      } catch (err) {
         expectedErr = err;
       }
 

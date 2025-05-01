@@ -1,7 +1,7 @@
-import { callApiV1 } from "../api.ts";
+import { callApiV1 } from '../api.ts';
 
-import type { Tag } from "@prisma/client";
-import type { TagCreatePayload, TagUpdatePayload } from "server/api/v1/tag.ts";
+import type { Tag } from '@prisma/client';
+import type { TagCreatePayload, TagUpdatePayload } from 'server/api/v1/tag.ts';
 
 export type { Tag, TagCreatePayload, TagUpdatePayload };
 

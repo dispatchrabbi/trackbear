@@ -1,7 +1,7 @@
 import { vi, describe, it, expect, afterEach } from 'vitest';
 import { mockObject, mockObjects, TEST_SESSION_ID, TEST_USER_ID } from '../../../testing-support/util.ts';
 import { getHandlerMocksWithUser } from '../../lib/__mocks__/express.ts';
-import type { Tag } from "@prisma/client";
+import type { Tag } from '@prisma/client';
 
 vi.mock('../../lib/db.ts');
 import dbClientMock from '../../lib/__mocks__/db.ts';
@@ -57,7 +57,7 @@ describe('tag api v1', () => {
   });
 
   describe(handleCreateTag, () => {
-    it('creates a tag', async() => {
+    it('creates a tag', async () => {
       dbClientMock.tag.findMany.mockResolvedValue([]);
       const TAG_ID = -10;
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)

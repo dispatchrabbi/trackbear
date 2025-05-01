@@ -35,7 +35,7 @@ const loadGoal = async function() {
   try {
     await goalStore.populate();
     goal.value = goalStore.get(goalId.value);
-  } catch(err) {
+  } catch (err) {
     goalErrorMessage.value = err.message;
     // the ApplicationLayout takes care of this. Otherwise, this will redirect to /goals before ApplicationLayout
     // can redirect to /login.
@@ -46,7 +46,7 @@ const loadGoal = async function() {
   } finally {
     isGoalLoading.value = false;
   }
-}
+};
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [

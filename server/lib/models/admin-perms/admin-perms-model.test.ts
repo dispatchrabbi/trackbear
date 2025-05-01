@@ -1,12 +1,12 @@
-import { vi, expect, describe, it, afterEach } from "vitest";
-import { mockObject, TEST_USER_ID } from "testing-support/util";
+import { vi, expect, describe, it, afterEach } from 'vitest';
+import { mockObject, TEST_USER_ID } from 'testing-support/util';
 
 import _dbClient from '../../db.ts';
 
-import { USER_STATE } from "../user/consts.ts";
-import { RecordNotFoundError } from "../errors.ts";
+import { USER_STATE } from '../user/consts.ts';
+import { RecordNotFoundError } from '../errors.ts';
 
-import { AdminPermsModel, type AdminPerms } from "./admin-perms-model.ts";
+import { AdminPermsModel, type AdminPerms } from './admin-perms-model.ts';
 
 vi.mock('../tracer.ts');
 
@@ -29,7 +29,7 @@ describe(AdminPermsModel, () => {
       expect(dbClient.adminPerms.findUnique).toBeCalledWith({
         where: {
           userId: TEST_USER_ID,
-          user: { state: USER_STATE.ACTIVE }
+          user: { state: USER_STATE.ACTIVE },
         },
       });
     });
@@ -38,9 +38,8 @@ describe(AdminPermsModel, () => {
       dbClient.adminPerms.findUnique.mockResolvedValue(null);
 
       await expect(
-        async () => await AdminPermsModel.getAdminPerms(TEST_USER_ID)
+        async () => await AdminPermsModel.getAdminPerms(TEST_USER_ID),
       ).rejects.toThrow(RecordNotFoundError);
     });
-
   });
 });

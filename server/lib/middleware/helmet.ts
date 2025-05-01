@@ -1,4 +1,4 @@
-import helmet from "helmet";
+import helmet from 'helmet';
 import { getNormalizedEnv } from 'server/lib/env.ts';
 
 async function middleware() {
@@ -9,19 +9,19 @@ async function middleware() {
     return helmet({
       contentSecurityPolicy: {
         directives: {
-          "default-src": [
+          'default-src': [
             "'self'", // ourselves
-            "ws://localhost:24678", "wss://localhost:24678", "http://localhost:24678", "https://localhost:24678" // HMR
+            'ws://localhost:24678', 'wss://localhost:24678', 'http://localhost:24678', 'https://localhost:24678', // HMR
           ],
-          "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-          "img-src": ["'self'", "blob:"],
-          "connect-src": [
+          'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+          'img-src': ["'self'", 'blob:'],
+          'connect-src': [
             "'self'", // the api
-            "ws://localhost:24678", "wss://localhost:24678", "http://localhost:24678", "https://localhost:24678", // HMR
+            'ws://localhost:24678', 'wss://localhost:24678', 'http://localhost:24678', 'https://localhost:24678', // HMR
             ...(env.ENABLE_METRICS ? [env.PLAUSIBLE_HOST] : []),
-            "https://api.nanowrimo.org", // NaNoWriMo importing
-            "https://ywp.nanowrimo.org", // NaNoWriMo Young Writers Program importing
-            "wss://localhost:3000/wisp",
+            'https://api.nanowrimo.org', // NaNoWriMo importing
+            'https://ywp.nanowrimo.org', // NaNoWriMo Young Writers Program importing
+            'wss://localhost:3000/wisp',
           ],
         },
       },
@@ -30,14 +30,14 @@ async function middleware() {
     return helmet({
       contentSecurityPolicy: {
         directives: {
-          "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-          "img-src": ["'self'", "blob:"],
-          "connect-src": [
+          'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+          'img-src': ["'self'", 'blob:'],
+          'connect-src': [
             "'self'", // the api
             ...(env.ENABLE_METRICS ? [env.PLAUSIBLE_HOST] : []),
-            "https://api.nanowrimo.org", // NaNoWriMo importing
-            "https://ywp.nanowrimo.org", // NaNoWriMo Young Writers Program importing
-            "wss://trackbear.app/wisp",
+            'https://api.nanowrimo.org', // NaNoWriMo importing
+            'https://ywp.nanowrimo.org', // NaNoWriMo Young Writers Program importing
+            'wss://trackbear.app/wisp',
           ],
         },
       },

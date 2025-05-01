@@ -23,7 +23,7 @@ async function main() {
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 
-  const [ userFilePath ] = process.argv.slice(2);
+  const [userFilePath] = process.argv.slice(2);
   const contents = await readFile(userFilePath, { encoding: 'utf-8' });
   const lines = contents.trim().split('\n').map(line => line.trim());
 
@@ -69,7 +69,7 @@ async function main() {
       await UserModel.verifyEmailByFiat(user, AUDIT_EVENT_SOURCE.SCRIPT, reqCtxForScript('verify-users'));
 
       results.success.push(user);
-    } catch(err) {
+    } catch (err) {
       scriptLogger.error(`Could not verify ${user.username} (${user.id}): ${err.message}`);
       results.failure.push(user);
     }

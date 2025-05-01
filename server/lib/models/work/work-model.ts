@@ -1,20 +1,20 @@
-import { traced } from "../../tracer.ts";
+import { traced } from '../../tracer.ts';
 
-import dbClient from "../../db.ts";
-import { type Work as PrismaWork } from "@prisma/client";
-import type { Create, Update } from "../types.ts";
+import dbClient from '../../db.ts';
+import { type Work as PrismaWork } from '@prisma/client';
+import type { Create, Update } from '../types.ts';
 
-import { type RequestContext } from "../../request-context.ts";
+import { type RequestContext } from '../../request-context.ts';
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 import type { User } from '../user/user-model.ts';
-import { WORK_PHASE, WORK_STATE, type WorkPhase } from "./consts.ts";
+import { WORK_PHASE, WORK_STATE, type WorkPhase } from './consts.ts';
 import type { Tally } from '../tally/tally-model.wip.ts';
-import { TALLY_STATE } from "../tally/consts.ts";
-import { sumTallies } from "../tally/helpers.ts";
-import { omit } from "server/lib/obj.ts";
-import { type MeasureCounts } from "../tally/types.ts";
+import { TALLY_STATE } from '../tally/consts.ts';
+import { sumTallies } from '../tally/helpers.ts';
+import { omit } from 'server/lib/obj.ts';
+import { type MeasureCounts } from '../tally/types.ts';
 
 export type Work = Omit<PrismaWork, 'phase' | 'startingBalance'> & {
   phase: WorkPhase;
@@ -26,21 +26,20 @@ export type SummarizedWork = Work & {
 };
 export type WorkWithTallies = Work & {
   tallies: Tally[];
-}
+};
 
 type OptionalWorkFields = 'description' | 'phase' | 'startingBalance' | 'cover';
 export type CreateWorkData = Create<Work, OptionalWorkFields>;
 export type UpdateWorkData = Update<Work>;
 
 export class WorkModel {
-
   @traced
   static async getWorks(owner: User): Promise<Work[]> {
     const works = await dbClient.work.findMany({
       where: {
         ownerId: owner.id,
         state: WORK_STATE.ACTIVE,
-      }
+      },
     }) as Work[];
 
     return works;
@@ -61,14 +60,16 @@ export class WorkModel {
     const summarizedWorks: SummarizedWork[] = worksWithTallies.map(work => {
       const totals = sumTallies(work.tallies, work.startingBalance);
 
-      const lastUpdated = work.tallies.length > 0 ? work.tallies.reduce((last, tally) => {
-        return tally.date > last ? tally.date : last
-      }, '0000-00-00') : null;
+      const lastUpdated = work.tallies.length > 0 ?
+          work.tallies.reduce((last, tally) => {
+            return tally.date > last ? tally.date : last;
+          }, '0000-00-00') :
+        null;
 
       return {
         ...omit(work, ['tallies']),
         totals,
-        lastUpdated
+        lastUpdated,
       };
     });
 
@@ -82,7 +83,7 @@ export class WorkModel {
         id,
         ownerId: owner.id,
         state: WORK_STATE.ACTIVE,
-      }
+      },
     }) as Work;
 
     return work;
@@ -90,7 +91,6 @@ export class WorkModel {
 
   @traced
   static async createWork(owner: User, data: CreateWorkData, reqCtx: RequestContext): Promise<Work> {
-    
     const dataWithDefaults: Required<CreateWorkData> = Object.assign({
       description: '',
       phase: WORK_PHASE.PLANNING,
@@ -112,7 +112,7 @@ export class WorkModel {
     await logAuditEvent(
       AUDIT_EVENT_TYPE.WORK_CREATE,
       reqCtx.userId, created.id, null,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return created;
@@ -135,7 +135,7 @@ export class WorkModel {
     await logAuditEvent(
       AUDIT_EVENT_TYPE.WORK_UPDATE,
       reqCtx.userId, updated.id, null,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return updated;
@@ -157,7 +157,7 @@ export class WorkModel {
           updateMany: {
             where: { state: TALLY_STATE.ACTIVE },
             data: { state: TALLY_STATE.DELETED },
-          }
+          },
         },
       },
     }) as Work;
@@ -166,7 +166,7 @@ export class WorkModel {
     await logAuditEvent(
       AUDIT_EVENT_TYPE.WORK_DELETE,
       reqCtx.userId, deleted.id, null,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return deleted;
@@ -187,7 +187,7 @@ export class WorkModel {
           updateMany: {
             where: { state: TALLY_STATE.DELETED },
             data: { state: TALLY_STATE.ACTIVE },
-          }
+          },
         },
       },
     }) as Work;
@@ -196,10 +196,9 @@ export class WorkModel {
     await logAuditEvent(
       AUDIT_EVENT_TYPE.WORK_UNDELETE,
       reqCtx.userId, undeleted.id, null,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return undeleted;
   }
-
 }

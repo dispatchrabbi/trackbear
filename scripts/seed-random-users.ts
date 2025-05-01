@@ -20,7 +20,7 @@ async function main() {
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 
-  const [ numStr, emailBase ] = process.argv.slice(2);
+  const [numStr, emailBase] = process.argv.slice(2);
   const numberToSeed = +numStr;
   if(numberToSeed.toString() !== numStr) {
     scriptLogger.error(`Invalid number of users to seed given (${numStr}). Aborting...`);
@@ -43,7 +43,7 @@ async function main() {
     const created = await UserModel.createUser({
       username: `seeded${tag}`,
       password: `password${tag}`,
-      email: `${emailParts[0]}+tb_seeded${tag}@${emailParts[1]}`
+      email: `${emailParts[0]}+tb_seeded${tag}@${emailParts[1]}`,
     }, reqCtxForScript('seed-random-users'));
 
     scriptLogger.info(`Created user ${created.username} (${created.id})`);

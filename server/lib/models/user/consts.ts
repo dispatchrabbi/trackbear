@@ -1,15 +1,15 @@
-import { ValueEnum } from "../../obj";
+import { ValueEnum } from '../../obj';
 
 export const USER_STATE = {
-  ACTIVE:     'active',
-  SUSPENDED:  'suspended',
-  DELETED:    'deleted',
+  ACTIVE: 'active',
+  SUSPENDED: 'suspended',
+  DELETED: 'deleted',
 } as const;
 export type UserState = ValueEnum<typeof USER_STATE>;
 
 export const PASSWORD_RESET_LINK_STATE = {
-  ACTIVE:   'active',
-  USED:     'used',
+  ACTIVE: 'active',
+  USED: 'used',
   // no DELETED because we only hard-delete these
 };
 export type PasswordResetLinkState = ValueEnum<typeof PASSWORD_RESET_LINK_STATE>;

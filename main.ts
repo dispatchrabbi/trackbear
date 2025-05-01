@@ -40,7 +40,7 @@ async function main() {
   winston.info('TrackBear is starting up and logs are online!');
   // use `winston` just as the general logger
   const accessLogger = winston.loggers.get('access');
-  
+
   // make sure all the directories we need exist
   await createAvatarUploadDirectory();
   await createCoverUploadDirectory();
@@ -50,7 +50,7 @@ async function main() {
   try {
     await testDatabaseConnection();
     winston.info('Database connection established');
-  } catch(err) {
+  } catch (err) {
     console.error(`Could not connect to the database: ${err.message}`);
     winston.error(`${err.message}`, {
       message: err.message,
@@ -88,7 +88,11 @@ async function main() {
 
   // log requests
   // always stream to the access logger
-  app.use(morgan('combined', { stream: { write: function(message) { accessLogger.info(message); } } }));
+  app.use(morgan('combined', {
+    stream: {
+      write: function(message) { accessLogger.info(message); },
+    },
+  }));
   // also stream to the console if we're developing
   if(env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
@@ -140,10 +144,12 @@ async function main() {
     const vite = await createServer({
       server: {
         middlewareMode: true,
-        https:  env.ENABLE_TLS ? {
-          key:  env.TLS_KEY_PATH,
-          cert: env.TLS_CERT_PATH,
-        } : undefined,
+        https: env.ENABLE_TLS ?
+            {
+              key: env.TLS_KEY_PATH,
+              cert: env.TLS_CERT_PATH,
+            } :
+          undefined,
       },
       appType: 'spa',
       publicDir: './public',
@@ -177,7 +183,7 @@ async function main() {
     // The docs say that this will always be a Socket (which is a subclass of Duplex): https://nodejs.org/docs/latest/api/http.html#event-upgrade
     console.log('upgrade request:', req.url);
     // please include thr trailing slash
-    if (req.url.endsWith("/wisp/")) {
+    if(req.url.endsWith('/wisp/')) {
       console.log('wisped');
       wisp.routeRequest(req, socket as Socket, head);
     } else {

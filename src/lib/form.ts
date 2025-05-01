@@ -1,5 +1,5 @@
 import { computed } from 'vue';
-import { ZodObject, ZodRawShape } from "zod";
+import { ZodObject, ZodRawShape } from 'zod';
 import type { RoundTrip } from 'src/lib/api';
 
 export function useValidation<T extends object, V extends ZodObject<ZodRawShape> = ZodObject<ZodRawShape>>(schema: V, model: T) {
@@ -12,7 +12,7 @@ export function useValidation<T extends object, V extends ZodObject<ZodRawShape>
       const result = schema.shape[field].safeParse(v);
       return (result.success === true) || result.error.errors[0].message;
     };
-  }
+  };
 
   const rulesFor = function(fields: string[]) {
     const rules = [];
@@ -38,12 +38,12 @@ export function useValidation<T extends object, V extends ZodObject<ZodRawShape>
       }
 
       return true;
-    }
-  }
+    };
+  };
 
   const validate = function(): boolean {
     return schema.safeParse(model).success;
-  }
+  };
 
   const isValid = computed(() => validate());
 
@@ -51,7 +51,7 @@ export function useValidation<T extends object, V extends ZodObject<ZodRawShape>
 
   const formData = function(): RoundTrip<T> {
     return schema.parse(model) as RoundTrip<T>;
-  }
+  };
 
   return {
     ruleFor,

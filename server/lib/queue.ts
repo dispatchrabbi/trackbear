@@ -32,7 +32,7 @@ async function initQueue() {
       username: env.DATABASE_USER,
       password: env.DATABASE_PASSWORD,
       dbname: 'queue',
-      tableName: 'tasks'
+      tableName: 'tasks',
     },
     cancelIfRunning: true,
     autoResume: true,
@@ -52,16 +52,16 @@ async function initQueue() {
   registerTaskType(sendTestEmail);
 
   const queueLogger = winston.loggers.get('queue');
-  q.on('task_queued', (taskId, task) => queueLogger.info('Task queued', {taskId, ...task}));
-  q.on('task_accepted', (taskId, task) => queueLogger.debug('Task accepted', {taskId, ...task}));
-  q.on('task_started', (taskId, task) => queueLogger.info('Task started', {taskId, ...task}));
-  q.on('task_finish', (taskId, result) => queueLogger.info('Task finished', {taskId, result}));
-  q.on('task_failed', (taskId, err) => queueLogger.warn('Task failed', {taskId, err}));
+  q.on('task_queued', (taskId, task) => queueLogger.info('Task queued', { taskId, ...task }));
+  q.on('task_accepted', (taskId, task) => queueLogger.debug('Task accepted', { taskId, ...task }));
+  q.on('task_started', (taskId, task) => queueLogger.info('Task started', { taskId, ...task }));
+  q.on('task_finish', (taskId, result) => queueLogger.info('Task finished', { taskId, result }));
+  q.on('task_failed', (taskId, err) => queueLogger.warn('Task failed', { taskId, err }));
   // @ts-expect-error this actually does get emitted but the types aren't updated for it
-  q.on('task_retry', (taskId, retries) => queueLogger.info('Retrying task', {taskId, retries}));
+  q.on('task_retry', (taskId, retries) => queueLogger.info('Retrying task', { taskId, retries }));
   q.on('empty', () => queueLogger.debug('Queue is empty but tasks may be in progress'));
   q.on('drain', () => queueLogger.debug('Queue has been drained'));
-  q.on('error', (err) => queueLogger.error('Queue experienced an error', { err }));
+  q.on('error', err => queueLogger.error('Queue experienced an error', { err }));
 
   winston.info('Queue has been configured');
 }
@@ -80,7 +80,7 @@ async function taskHandler(task) {
     }
 
     return HANDLER_MAP[task.name](task);
-  } catch(err) {
+  } catch (err) {
     queueLogger.error(err.message);
     throw err;
   }
@@ -95,5 +95,5 @@ function pushTask(task) {
 
 export {
   initQueue,
-  pushTask
+  pushTask,
 };

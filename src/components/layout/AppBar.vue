@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, defineProps, defineEmits, onMounted } from "vue";
+import { ref, computed, defineProps, defineEmits, onMounted } from 'vue';
 
-import { RouterLink } from "vue-router";
+import { RouterLink } from 'vue-router';
 
-import { useUserStore } from "src/stores/user.ts";
+import { useUserStore } from 'src/stores/user.ts';
 const userStore = useUserStore();
 
 import { useLastChangelogViewed, getCurrentVersion, cmpVersion } from 'src/lib/changelog.ts';
@@ -11,12 +11,12 @@ const lastChangelogViewed = useLastChangelogViewed();
 const flagUpdates = ref(false);
 
 import { PrimeIcons } from 'primevue/api';
-import Button from "primevue/button";
-import Menu from "primevue/menu";
-import Breadcrumb from "primevue/breadcrumb";
+import Button from 'primevue/button';
+import Menu from 'primevue/menu';
+import Breadcrumb from 'primevue/breadcrumb';
 import type { MenuItem } from 'primevue/menuitem';
-import TrackbearMasthead from "./TrackbearMasthead.vue";
-import UserAvatar from "../UserAvatar.vue";
+import TrackbearMasthead from './TrackbearMasthead.vue';
+import UserAvatar from '../UserAvatar.vue';
 import Tag from 'primevue/tag';
 
 const props = defineProps<{
@@ -24,11 +24,11 @@ const props = defineProps<{
   collapsed: boolean;
 }>();
 
-const emit = defineEmits([ 'sidebar:toggle' ]);
+const emit = defineEmits(['sidebar:toggle']);
 
 const toggleSidebar = function() {
   emit('sidebar:toggle');
-}
+};
 
 const userMenu = ref(null);
 const userMenuItems = computed(() => {
@@ -39,7 +39,7 @@ const userMenuItems = computed(() => {
         { icon: PrimeIcons.USER, label: 'Account', to: { name: 'account' } },
         { icon: PrimeIcons.COG, label: 'Settings', to: { name: 'settings' } },
         { icon: PrimeIcons.TAG, label: 'Manage Tags', to: { name: 'tags' } },
-      ] ,
+      ],
     },
     { separator: true },
     {
@@ -51,7 +51,7 @@ const userMenuItems = computed(() => {
         { icon: PrimeIcons.QUESTION_CIRCLE, label: 'Help', href: 'https://help.trackbear.app/', target: '_blank' },
         { icon: PrimeIcons.ENVELOPE, label: 'Contact', to: { name: 'contact' } },
         { icon: PrimeIcons.HEART_FILL, label: 'Support the Dev', href: '/ko-fi', target: '_blank', iconColor: 'text-primary-500 dark:text-primary-400' },
-      ]
+      ],
     },
     { separator: true },
     { icon: PrimeIcons.SIGN_OUT, label: 'Log Out', to: { name: 'logout' } },

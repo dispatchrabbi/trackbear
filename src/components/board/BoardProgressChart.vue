@@ -21,17 +21,17 @@ const participants = computed(() => {
 });
 
 const chartData = computed(() => {
-  const [ earliestDate, latestDate ] = participants.value
+  const [earliestDate, latestDate] = participants.value
     .flatMap(participant => participant.tallies
       .filter(tally => tally.measure === props.measure)
-      .map(tally => tally.date)
+      .map(tally => tally.date),
     )
     .reduce(([earliest, latest], date) => {
       return [
         earliest === null ? date : date < earliest ? date : earliest,
         latest === null ? date : date > latest ? date : latest,
       ];
-    }, [ null, null ]);
+    }, [null, null]);
   const eachDay = listEachDayOfData(props.board.startDate, props.board.endDate, earliestDate, latestDate);
   const eachDayOfData = listEachDayOfData(props.board.startDate, null, earliestDate, latestDate);
 
@@ -49,7 +49,7 @@ const chartData = computed(() => {
       date,
       value: props.board.endDate === null ?
         goalCount :
-        (ix === eachDay.length - 1) ? goalCount : Math.ceil((goalCount / eachDay.length) * (ix + 1)),
+          (ix === eachDay.length - 1) ? goalCount : Math.ceil((goalCount / eachDay.length) * (ix + 1)),
     }));
     data.par = parData;
   }

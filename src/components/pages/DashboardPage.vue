@@ -46,12 +46,12 @@ const loadAllTallies = async function() {
 
   try {
     allTallies.value = await getTallies();
-  } catch(err) {
+  } catch (err) {
     allTalliesErrorMessage.value = err.message;
   } finally {
     allTalliesIsLoading.value = false;
   }
-}
+};
 
 const goalsIsLoading = ref<boolean>(false);
 const goalsErrorMessage = ref<string | null>(null);
@@ -61,7 +61,7 @@ const loadGoals = async function() {
 
   try {
     await goalStore.populate();
-  } catch(err) {
+  } catch (err) {
     goalsErrorMessage.value = err.message;
   } finally {
     goalsIsLoading.value = false;

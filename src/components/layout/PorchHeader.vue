@@ -10,7 +10,7 @@ import TrackbearMasthead from './TrackbearMasthead.vue';
 
 onMounted(() => {
   userStore.populate();
-})
+});
 
 </script>
 

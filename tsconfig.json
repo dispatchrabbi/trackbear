@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    // "module": "ES2022",
     "module": "ESNext",
     "target": "es2022",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
@@ -16,6 +15,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "allowJs": true,
 
     "noErrorTruncation": true,
 
@@ -32,11 +32,12 @@
     },
   },
   "include": [
-    "vitest-custom-matchers.d.ts",
     "src/**/*.ts", "src/**/*.js", "src/**/*.vue",
     "server/**/*.ts",
-    "scripts/**/*.ts",
-    "main.ts", "testing-support/util.ts",
+    "testing-support/**/*.ts", "vitest-custom-matchers.d.ts",
+    "prisma/**/*.ts",
+    "scripts/**/*.ts", "scripts/**/*.js",
+    "main.ts", "instrumentation.ts",
   ],
   "references": [
     { "path": "./tsconfig.vite.json" }

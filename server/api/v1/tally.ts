@@ -1,4 +1,4 @@
-import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
 import { ApiResponse, success, failure } from 'server/lib/api-response.ts';
 
 import { RequestWithUser } from 'server/lib/middleware/access.ts';
@@ -6,13 +6,13 @@ import { RequestWithUser } from 'server/lib/middleware/access.ts';
 import { z } from 'zod';
 import { zIdParam, zDateStr, NonEmptyArray } from 'server/lib/validators.ts';
 
-import dbClient from "../../lib/db.ts";
-import type { Tally, Work, Tag } from "@prisma/client";
+import dbClient from '../../lib/db.ts';
+import type { Tally, Work, Tag } from '@prisma/client';
 import { TALLY_STATE, TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts.ts';
 import { TAG_STATE, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts.ts';
 
 import { buildChangeRecord, logAuditEvent } from '../../lib/audit-events.ts';
-import { WORK_STATE } from "server/lib/models/work/consts.ts";
+import { WORK_STATE } from 'server/lib/models/work/consts.ts';
 
 export type TallyWithWorkAndTags = Tally & { work: Work } & { tags: Tag[] };
 
@@ -247,7 +247,7 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
         workId: payload.workId,
         measure: payload.measure,
         date: { lte: payload.date },
-        id: { notIn: [ +req.params.id ] },
+        id: { notIn: [+req.params.id] },
       },
     });
 

@@ -7,7 +7,7 @@ import TextBlurb from 'src/components/layout/TextBlurb.vue';
 const KOFI_URL = 'https://ko-fi.com/trackbear';
 onMounted(() => {
   window.location.href = KOFI_URL;
-})
+});
 </script>
 
 <template>

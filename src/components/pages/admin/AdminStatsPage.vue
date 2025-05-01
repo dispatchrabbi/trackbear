@@ -4,7 +4,7 @@ import { ref, computed, onMounted } from 'vue';
 import {
   getWeeklyActiveUsers, getWeeklySignups, WeeklyStat,
   getDailyActiveUsers, getDailySignups, DailyStat,
-} from 'src/lib/api/admin/stats.ts'
+} from 'src/lib/api/admin/stats.ts';
 
 import AdminLayout from 'src/layouts/AdminLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
@@ -21,8 +21,8 @@ const weeklyActiveUsers = ref<WeeklyStat[]>([]);
 const loadWeeklyActiveUsers = async function() {
   try {
     weeklyActiveUsers.value = await getWeeklyActiveUsers();
-  } catch(err) { console.log(err); }
-}
+  } catch (err) { console.log(err); }
+};
 
 const weeklyActiveUsersData = computed(() => {
   return weeklyActiveUsers.value.map(({ weekStart, count }) => ({
@@ -36,8 +36,8 @@ const weeklySignups = ref<WeeklyStat[]>([]);
 const loadWeeklySignups = async function() {
   try {
     weeklySignups.value = await getWeeklySignups();
-  } catch(err) { console.log(err); }
-}
+  } catch (err) { console.log(err); }
+};
 
 const weeklySignupsData = computed(() => {
   return weeklySignups.value.map(({ weekStart, count }) => ({
@@ -51,8 +51,8 @@ const dailyActiveUsers = ref<DailyStat[]>([]);
 const loadDailyActiveUsers = async function() {
   try {
     dailyActiveUsers.value = await getDailyActiveUsers();
-  } catch(err) { console.log(err); }
-}
+  } catch (err) { console.log(err); }
+};
 
 const dailyActiveUsersData = computed(() => {
   return dailyActiveUsers.value.map(({ date, count }) => ({
@@ -66,8 +66,8 @@ const dailySignups = ref<DailyStat[]>([]);
 const loadDailySignups = async function() {
   try {
     dailySignups.value = await getDailySignups();
-  } catch(err) { console.log(err); }
-}
+  } catch (err) { console.log(err); }
+};
 
 const dailySignupsData = computed(() => {
   return dailySignups.value.map(({ date, count }) => ({

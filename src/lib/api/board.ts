@@ -1,8 +1,8 @@
-import { callApiV1 } from "../api.ts";
+import { callApiV1 } from '../api.ts';
 
-import type { BoardParticipant } from "@prisma/client";
-import type { Board, BoardWithParticipantBios, FullBoard, BoardGoal, BoardWithParticipants, ExtendedBoardParticipant, FullParticipant, ParticipantGoal } from "server/lib/models/board-wip/types.ts";
-import type { BoardCreatePayload, BoardUpdatePayload, BoardStarUpdatePayload, BoardStarUpdateResponse, BoardParticipantPayload } from "server/api/v1/board.ts";
+import type { BoardParticipant } from '@prisma/client';
+import type { Board, BoardWithParticipantBios, FullBoard, BoardGoal, BoardWithParticipants, ExtendedBoardParticipant, FullParticipant, ParticipantGoal } from 'server/lib/models/board-wip/types.ts';
+import type { BoardCreatePayload, BoardUpdatePayload, BoardStarUpdatePayload, BoardStarUpdateResponse, BoardParticipantPayload } from 'server/api/v1/board.ts';
 
 export type {
   Board, BoardWithParticipantBios, FullBoard, BoardWithParticipants, BoardGoal, BoardParticipant, ExtendedBoardParticipant, FullParticipant, ParticipantGoal,

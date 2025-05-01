@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { getMyAdminPerms, AdminPerms } from 'src/lib/api/admin/me.ts';
 
 export const useAdminUserStore = defineStore('admin-user', {
-  state: () : { perms: AdminPerms | null; } => {
+  state: (): { perms: AdminPerms | null } => {
     return { perms: null };
   },
   actions: {
@@ -12,6 +12,6 @@ export const useAdminUserStore = defineStore('admin-user', {
         const perms = await getMyAdminPerms();
         this.perms = perms;
       }
-    }
+    },
   },
 });

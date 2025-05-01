@@ -1,4 +1,4 @@
-import "core-js/stable"; // polyfill for older browsers
+import 'core-js/stable'; // polyfill for older browsers
 import { createApp, type Plugin, type Directive } from 'vue';
 
 import App from './App.vue';
@@ -11,8 +11,8 @@ import routes from './routes.ts';
 import 'primeicons/primeicons.css';
 import './style.css';
 
-import { useEnvStore } from "./stores/env.ts";
-import { initPlausible } from "./lib/metrics.ts";
+import { useEnvStore } from './stores/env.ts';
+import { initPlausible } from './lib/metrics.ts';
 
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
@@ -44,7 +44,7 @@ async function main() {
   initPlausible(
     envStore.env.ENABLE_METRICS,
     envStore.env.PLAUSIBLE_HOST,
-    envStore.env.PLAUSIBLE_DOMAIN
+    envStore.env.PLAUSIBLE_DOMAIN,
   );
 
   app.mount('#app');

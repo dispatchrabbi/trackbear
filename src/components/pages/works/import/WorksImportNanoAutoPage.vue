@@ -60,7 +60,7 @@ const nanoData = ref({
   challenges: [] as NaNoWriMoChallenge[],
   sessions: [] as NaNoWriMoSession[],
 });
-type ImportTarget = { id: number; project: NaNoWriMoProject; target: number; };
+type ImportTarget = { id: number; project: NaNoWriMoProject; target: number };
 const importTargets = ref<ImportTarget[]>([]);
 
 // credentials form
@@ -70,8 +70,8 @@ const credentialsFormModel = reactive({
 });
 
 const credentialsValidations = z.object({
-  username: z.string().min(1, { message: 'Please enter your NaNoWriMo username.'}),
-  password: z.string().min(1, { message: 'Please enter your NaNoWriMo password.'}),
+  username: z.string().min(1, { message: 'Please enter your NaNoWriMo username.' }),
+  password: z.string().min(1, { message: 'Please enter your NaNoWriMo password.' }),
 });
 
 const { ruleFor, isValid } = useValidation(credentialsValidations, credentialsFormModel);
@@ -101,7 +101,7 @@ async function handleLoginClick(ev, nextCallback) {
   try {
     loginSignals.progressMessage = 'Logging in to NaNoWriMo...';
     await nanoApi.login(credentialsFormModel.username, credentialsFormModel.password);
-  } catch(err) {
+  } catch (err) {
     loginSignals.errorMessage = `Could not log in: ${err.message}`;
     loginSignals.progressMessage = null;
     loginSignals.isLoading = false;
@@ -121,7 +121,7 @@ async function handleLoginClick(ev, nextCallback) {
 
     loginSignals.successMessage = 'Successfully fetched all your projects from NaNoWriMo!';
     loginSignals.hasSucceeded = true;
-  } catch(err) {
+  } catch (err) {
     loginSignals.errorMessage = `Could not fetch your projects: ${err.message}`;
     return;
   } finally {
@@ -211,7 +211,7 @@ async function importNanoProject(target: ImportTarget) {
       result.tbName = createdWork.title;
 
       result.workCreated = true;
-    } catch(err) {
+    } catch (err) {
       result.workCreated = false;
       result.workError = `Could not create a new project: ${err.message}`;
       return result;
@@ -232,7 +232,7 @@ async function importNanoProject(target: ImportTarget) {
     await batchCreateTallies(batchTallyPayload);
 
     result.talliesImported = true;
-  } catch(err) {
+  } catch (err) {
     result.talliesImported = false;
     result.tallyError = `Could not import progress: ${err.message}`;
     return result;
@@ -252,13 +252,13 @@ async function importNanoProject(target: ImportTarget) {
       },
       startDate: challenge.startDate,
       endDate: challenge.endDate,
-      workIds: [ result.tbId ],
+      workIds: [result.tbId],
       tagIds: [],
     }));
     await Promise.all(batchGoalPayload.map(payload => createGoal(payload)));
 
     result.goalsCreated = true;
-  } catch(err) {
+  } catch (err) {
     result.goalsCreated = false;
     result.goalError = `Could not create goals: ${err.message}`;
     return result;

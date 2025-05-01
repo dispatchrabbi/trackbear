@@ -3,7 +3,7 @@ import winston, { format, transports } from 'winston';
 import { getNormalizedEnv } from 'server/lib/env.ts';
 
 export type LoggerInitOpts = {
-  forceConsoles?: boolean
+  forceConsoles?: boolean;
 };
 
 async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
@@ -13,22 +13,22 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
     level: env.LOG_LEVEL,
     format: format.combine(
       format.timestamp({
-        format: 'YYYY-MM-DD HH:mm:ss'
+        format: 'YYYY-MM-DD HH:mm:ss',
       }),
       format.errors({ stack: true }),
       format.splat(),
-      format.json()
+      format.json(),
     ),
     defaultMeta: { service: 'trackbear' },
     transports: [
-       // log everything
+      // log everything
       new transports.File({
         filename: path.join(env.LOG_PATH, 'trackbear.log'),
       }),
       // log errors and up
       new transports.File({
         filename: path.join(env.LOG_PATH, 'errors.log'),
-        level: 'error'
+        level: 'error',
       }),
       // always log to the console
       new transports.Console({
@@ -42,7 +42,7 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
       }),
     ],
     rejectionHandlers: [
-       // handle uncaught promise rejections
+      // handle uncaught promise rejections
       new transports.File({
         filename: path.join(env.LOG_PATH, 'rejections.log'),
       }),
@@ -54,11 +54,11 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
     level: 'info', // not affected by LOG_LEVEL because it's just logging requests
     format: format.combine(
       format.timestamp({
-        format: 'YYYY-MM-DD HH:mm:ss'
+        format: 'YYYY-MM-DD HH:mm:ss',
       }),
       format.errors({ stack: true }),
       format.splat(),
-      format.json()
+      format.json(),
     ),
     defaultMeta: { service: 'trackbear' },
     transports: [
@@ -73,17 +73,17 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
     level: env.LOG_LEVEL,
     format: format.combine(
       format.timestamp({
-        format: 'YYYY-MM-DD HH:mm:ss'
+        format: 'YYYY-MM-DD HH:mm:ss',
       }),
       format.errors({ stack: true }),
       format.splat(),
-      format.json()
+      format.json(),
     ),
     defaultMeta: { service: 'queue' },
     transports: [
-       // log everything
+      // log everything
       new transports.File({
-        filename: path.join(env.LOG_PATH, 'queue.log')
+        filename: path.join(env.LOG_PATH, 'queue.log'),
       }),
     ],
     exitOnError: false,
@@ -93,36 +93,36 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
     level: env.LOG_LEVEL,
     format: format.combine(
       format.timestamp({
-        format: 'YYYY-MM-DD HH:mm:ss'
+        format: 'YYYY-MM-DD HH:mm:ss',
       }),
       format.errors({ stack: true }),
       format.splat(),
-      format.json()
+      format.json(),
     ),
     defaultMeta: { service: 'worker' },
     transports: [
-       // log everything
+      // log everything
       new transports.File({
-        filename: path.join(env.LOG_PATH, 'worker.log')
+        filename: path.join(env.LOG_PATH, 'worker.log'),
       }),
     ],
     exitOnError: false,
   });
 
   // also log queue and worker to the console if we're in development mode
-  if (forceConsoles || env.NODE_ENV === 'production') {
+  if(forceConsoles || env.NODE_ENV === 'production') {
     winston.loggers.get('queue').add(new transports.Console({
       format: format.combine(
         format.colorize(),
-        format.simple()
-      )
+        format.simple(),
+      ),
     }));
 
     winston.loggers.get('worker').add(new transports.Console({
       format: format.combine(
         format.colorize(),
-        format.simple()
-      )
+        format.simple(),
+      ),
     }));
   }
 
@@ -136,7 +136,7 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
 
 async function closeLoggers() {
   return Promise.all(Array.from(winston.loggers.loggers.values()).map(logger => {
-    return new Promise<void>((res/*, rej*/) => {
+    return new Promise<void>((res/* , rej */) => {
       logger.on('finish', () => res());
       logger.end();
     });

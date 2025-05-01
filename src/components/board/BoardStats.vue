@@ -2,7 +2,7 @@
 import { computed, defineProps } from 'vue';
 
 import type { Board, FullParticipant } from 'src/lib/api/board.ts';
-import { TallyMeasure } from "server/lib/models/tally/consts";
+import { TallyMeasure } from 'server/lib/models/tally/consts';
 import { formatCountValue, formatCountCounter } from 'src/lib/tally.ts'; // TODO: change percentage to formatted count? or both?
 
 import StatTile from '../goal/StatTile.vue';
@@ -20,7 +20,7 @@ const contributions = computed(() => {
 
     return {
       participant,
-      total
+      total,
     };
   })
     .filter(participant => participant.total > 0)

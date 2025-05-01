@@ -26,7 +26,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  leaveConfirmation: z.string().refine(val => val === userStore.user.username, { message: 'You must type your username exactly.',  }), // only allow exactly the work title
+  leaveConfirmation: z.string().refine(val => val === userStore.user.username, { message: 'You must type your username exactly.' }), // only allow exactly the work title
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);
@@ -48,10 +48,10 @@ async function handleSubmit() {
 
     emit('board:leave', { participant: leftParticipant, board: props.board });
     eventBus.emit({ board: props.board, participant: leftParticipant });
-    
+
     successMessage.value = `You have left ${props.board.title}.`;
     await wait(1 * 1000);
-    
+
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not leave the leaderboard: something went wrong server-side.';

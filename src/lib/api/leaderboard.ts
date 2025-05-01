@@ -1,17 +1,17 @@
-import { callApiV1 } from "../api.ts";
+import { callApiV1 } from '../api.ts';
 
 import type {
   LeaderboardSummary, Leaderboard, LeaderboardStarResponse, Member, Participant, Participation,
   LeaderboardCreatePayload, LeaderboardUpdatePayload, LeaderboardStarPayload,
   LeaderboardMemberUpdatePayload,
-  LeaderboardParticipationCreatePayload, LeaderboardParticipationUpdatePayload
-} from "server/api/v1/leaderboard.ts";
+  LeaderboardParticipationCreatePayload, LeaderboardParticipationUpdatePayload,
+} from 'server/api/v1/leaderboard.ts';
 
 export type {
   LeaderboardSummary, Leaderboard, LeaderboardStarResponse, Member, Participant, Participation,
   LeaderboardCreatePayload, LeaderboardUpdatePayload, LeaderboardStarPayload,
   LeaderboardMemberUpdatePayload,
-  LeaderboardParticipationCreatePayload, LeaderboardParticipationUpdatePayload
+  LeaderboardParticipationCreatePayload, LeaderboardParticipationUpdatePayload,
 };
 
 const ENDPOINT = '/api/v1/leaderboard';

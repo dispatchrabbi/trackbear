@@ -1,14 +1,14 @@
-import { TALLY_STATE } from "../tally/consts.ts";
-import { USER_STATE } from "../user/consts.ts";
+import { TALLY_STATE } from '../tally/consts.ts';
+import { USER_STATE } from '../user/consts.ts';
 
-import dbClient from "../../db.ts";
+import dbClient from '../../db.ts';
 
-import { pick } from "../../obj.ts";
-import type { Board, BoardWithParticipantBios, BoardWithParticipants, FullBoard, ParticipantGoal } from "./types.ts";
+import { pick } from '../../obj.ts';
+import type { Board, BoardWithParticipantBios, BoardWithParticipants, FullBoard, ParticipantGoal } from './types.ts';
 
 export const BOARD_STATE = {
-  ACTIVE:   'active',
-  DELETED:  'deleted',
+  ACTIVE: 'active',
+  DELETED: 'deleted',
 };
 
 export const BOARD_PARTICIPANT_STATE = {
@@ -24,7 +24,7 @@ export async function getExtendedBoardsForUser(userId: number): Promise<BoardWit
         some: {
           userId: userId,
           state: BOARD_PARTICIPANT_STATE.ACTIVE,
-        }
+        },
       },
     },
     include: {
@@ -38,7 +38,7 @@ export async function getExtendedBoardsForUser(userId: number): Promise<BoardWit
           user: true,
         },
       },
-    }
+    },
   });
 
   const extendedBoards = boards.map(board => ({
@@ -70,7 +70,7 @@ export async function getFullBoard(uuid: string): Promise<FullBoard | null> {
           tagsIncluded: true,
         },
       },
-    }
+    },
   });
 
   if(!board) {
@@ -94,11 +94,11 @@ export async function getFullBoard(uuid: string): Promise<FullBoard | null> {
         // only include tallies with the measure from the individual goal, if there are individual goals
         measure: board.individualGoalMode ? ((participant.goal as ParticipantGoal)?.measure ?? 'do-not-return-tallies') : undefined,
         // only include tallies from works specified in the participant's config (if any were)
-        workId: participant.worksIncluded.length > 0 ? { in: participant.worksIncluded.map(work => work.id ) } : undefined,
+        workId: participant.worksIncluded.length > 0 ? { in: participant.worksIncluded.map(work => work.id) } : undefined,
         // only include tallies with at least one tag specified in the participant's config (if any were)
-        tags: participant.tagsIncluded.length > 0 ? { some: { id: { in: participant.tagsIncluded.map(tag => tag.id ) } } } : undefined,
-      }))
-    }
+        tags: participant.tagsIncluded.length > 0 ? { some: { id: { in: participant.tagsIncluded.map(tag => tag.id) } } } : undefined,
+      })),
+    },
   });
 
   const fullBoard: FullBoard = {
@@ -134,7 +134,7 @@ export async function getBoardParticipationForUser(uuid: string, userId: number)
         include: {
           worksIncluded: true,
           tagsIncluded: true,
-        }
+        },
       },
     },
   }) as BoardWithParticipants;

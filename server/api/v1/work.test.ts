@@ -1,7 +1,7 @@
 import { vi, describe, it, expect, afterEach } from 'vitest';
 import { mockObject, mockObjects, TEST_SESSION_ID, TEST_USER_ID } from '../../../testing-support/util.ts';
 import { getHandlerMocksWithUser } from '../../lib/__mocks__/express.ts';
-import type { Work, Tally } from "@prisma/client";
+import type { Work, Tally } from '@prisma/client';
 
 vi.mock('../../lib/db.ts');
 import dbClientMock from '../../lib/__mocks__/db.ts';
@@ -60,7 +60,7 @@ describe('work api v1', () => {
   });
 
   describe(handleCreateWork, () => {
-    it('creates a goal', async() => {
+    it('creates a goal', async () => {
       const WORK_ID = -10;
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
       dbClientMock.work.create.mockResolvedValue(mockObject<Work>({
@@ -82,7 +82,7 @@ describe('work api v1', () => {
     it('updates a work', async () => {
       const WORK_ID = -10;
       dbClientMock.work.update.mockResolvedValue(
-        mockObject<Work>({ id: WORK_ID,})
+        mockObject<Work>({ id: WORK_ID }),
       );
 
       const { req, res } = getHandlerMocksWithUser();
@@ -100,7 +100,7 @@ describe('work api v1', () => {
     it('deletes a work', async () => {
       const WORK_ID = -10;
       dbClientMock.work.update.mockResolvedValue(
-        mockObject<Work>({ id: WORK_ID })
+        mockObject<Work>({ id: WORK_ID }),
       );
 
       const { req, res } = getHandlerMocksWithUser();

@@ -45,7 +45,7 @@ async function handleSubmit() {
     } else {
       router.push('/dashboard');
     }
-  } catch(err) {
+  } catch (err) {
     if(err.code === 'INCORRECT_CREDS') {
       errorMessage.value = 'Incorrect username or password. Please check and try again.';
     } else {

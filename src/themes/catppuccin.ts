@@ -1,4 +1,4 @@
-import type { LegacyTheme_DEPRECATED } from "src/lib/theme.ts";
+import type { LegacyTheme_DEPRECATED } from 'src/lib/theme.ts';
 
 // catpuccin is from https://github.com/catppuccin/catppuccin
 const latteColors = {

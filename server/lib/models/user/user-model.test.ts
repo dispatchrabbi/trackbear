@@ -181,8 +181,8 @@ describe(UserModel, () => {
     it('validates the username, creates a user, logs an audit event, and sends two emails', async () => {
       const testUser = mockObject<User>({ id: -10 });
       const testReqCtx = { userId: null, sessionId: TEST_SESSION_ID };
-      
-      validateUsername.mockImplementation(async (username) => username.toLowerCase());
+
+      validateUsername.mockImplementation(async username => username.toLowerCase());
       createUser.mockResolvedValue(testUser);
       sendSignupEmail.mockResolvedValue(void 0);
       sendEmailVerificationLink.mockResolvedValue(void 0);
@@ -201,7 +201,7 @@ describe(UserModel, () => {
         AUDIT_EVENT_TYPE.USER_SIGNUP,
         testUser.id, testUser.id, null,
         null,
-        TEST_SESSION_ID
+        TEST_SESSION_ID,
       );
       expect(sendSignupEmail).toBeCalledWith(testUser, { force: true }, { ...testReqCtx, userId: -10 });
       expect(sendEmailVerificationLink).toBeCalledWith(testUser, { force: true }, { ...testReqCtx, userId: -10 });
@@ -240,7 +240,7 @@ describe(UserModel, () => {
         AUDIT_EVENT_TYPE.USER_CREATE,
         testUser.id, testUser.id, null,
         null,
-        TEST_SESSION_ID
+        TEST_SESSION_ID,
       );
     });
 
@@ -252,13 +252,13 @@ describe(UserModel, () => {
       };
       const testUser = mockObject<User>({ id: -10 });
       dbClient.user.create.mockResolvedValue(testUser);
-      
+
       await UserModel.createUser(testCreateData, getTestReqCtx());
 
       expect(dbClient.user.create).toBeCalledWith({
         data: expect.objectContaining({
           state: USER_STATE.ACTIVE,
-        })
+        }),
       });
     });
 
@@ -270,14 +270,14 @@ describe(UserModel, () => {
       };
       const testUser = mockObject<User>({ id: -10 });
       dbClient.user.create.mockResolvedValue(testUser);
-      
+
       await UserModel.createUser(testCreateData, getTestReqCtx());
 
       expect(dbClient.user.create).toBeCalledWith({
         data: expect.objectContaining({
           username: testCreateData.username,
           displayName: testCreateData.username,
-        })
+        }),
       });
     });
 
@@ -289,13 +289,13 @@ describe(UserModel, () => {
       };
       const testUser = mockObject<User>({ id: -10 });
       dbClient.user.create.mockResolvedValue(testUser);
-      
+
       await UserModel.createUser(testCreateData, getTestReqCtx());
 
       expect(dbClient.user.create).toBeCalledWith({
         data: expect.objectContaining({
           isEmailVerified: false,
-        })
+        }),
       });
     });
   });
@@ -304,12 +304,12 @@ describe(UserModel, () => {
     let mockValidateUsername;
 
     beforeEach(() => {
-      mockValidateUsername = vi.spyOn(UserModel, 'validateUsername').mockImplementation(async (username) => username.toLowerCase());
+      mockValidateUsername = vi.spyOn(UserModel, 'validateUsername').mockImplementation(async username => username.toLowerCase());
     });
 
     afterEach(() => {
       mockValidateUsername.mockRestore();
-    })
+    });
 
     it('updates a user with the given data', async () => {
       const testUser = mockObject<User>({ id: -10 });
@@ -338,7 +338,7 @@ describe(UserModel, () => {
         AUDIT_EVENT_TYPE.USER_UPDATE,
         testUser.id, testUser.id, null,
         expect.any(Object),
-        TEST_SESSION_ID
+        TEST_SESSION_ID,
       );
     });
 
@@ -389,7 +389,7 @@ describe(UserModel, () => {
       expect(dbClient.user.update).toBeCalledWith({
         where: { id: testUser.id },
         data: {
-          state: testNewState
+          state: testNewState,
         },
       });
     });
@@ -410,7 +410,7 @@ describe(UserModel, () => {
         event,
         testUser.id, testUser.id, null,
         expect.any(Object),
-        TEST_SESSION_ID
+        TEST_SESSION_ID,
       );
     });
   });
@@ -430,7 +430,7 @@ describe(UserModel, () => {
       dbClient.user.update.mockResolvedValue(testUser);
 
       const isVerified = await UserModel.verifyEmail(TEST_UUID, getTestReqCtx());
-      
+
       expect(isVerified).toBe(true);
 
       expect(dbClient.pendingEmailVerification.findUnique).toBeCalledWith(expect.objectContaining({
@@ -445,14 +445,14 @@ describe(UserModel, () => {
           isEmailVerified: true,
           pendingEmailVerifications: { deleteMany: [] },
         },
-        where: { id: TEST_USER_ID }
+        where: { id: TEST_USER_ID },
       });
 
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.USER_VERIFY_EMAIL,
         TEST_USER_ID, testUser.id, null,
         expect.any(Object),
-        TEST_SESSION_ID
+        TEST_SESSION_ID,
       );
     });
 
@@ -460,7 +460,7 @@ describe(UserModel, () => {
       dbClient.pendingEmailVerification.findUnique.mockResolvedValue(null);
 
       const isVerified = await UserModel.verifyEmail(TEST_UUID, getTestReqCtx());
-      
+
       expect(isVerified).toBe(false);
 
       expect(dbClient.pendingEmailVerification.findUnique).toBeCalled();
@@ -483,7 +483,7 @@ describe(UserModel, () => {
       dbClient.pendingEmailVerification.findUnique.mockResolvedValue(testPendingVerification);
 
       const isVerified = await UserModel.verifyEmail(TEST_UUID, getTestReqCtx());
-      
+
       expect(isVerified).toBe(false);
 
       expect(dbClient.pendingEmailVerification.findUnique).toBeCalledWith(expect.objectContaining({
@@ -505,7 +505,7 @@ describe(UserModel, () => {
       dbClient.user.update.mockResolvedValue(testUser);
 
       const isVerified = await UserModel.verifyEmailByFiat(testUser, AUDIT_EVENT_SOURCE.ADMIN_CONSOLE, getTestReqCtx(TEST_SYSTEM_ID));
-      
+
       expect(isVerified).toBe(true);
 
       expect(dbClient.user.update).toBeCalledWith({
@@ -513,7 +513,7 @@ describe(UserModel, () => {
           isEmailVerified: true,
           pendingEmailVerifications: { deleteMany: [] },
         },
-        where: { id: TEST_USER_ID }
+        where: { id: TEST_USER_ID },
       });
 
       expect(logAuditEvent).toBeCalledWith(
@@ -523,7 +523,7 @@ describe(UserModel, () => {
           method: AUDIT_EVENT_SOURCE.ADMIN_CONSOLE,
           email: testUser.email,
         },
-        TEST_SESSION_ID
+        TEST_SESSION_ID,
       );
     });
 
@@ -535,7 +535,7 @@ describe(UserModel, () => {
       dbClient.user.update.mockResolvedValue(testUser);
 
       const isVerified = await UserModel.verifyEmailByFiat(testUser, AUDIT_EVENT_SOURCE.SCRIPT, getTestReqCtx(TEST_SYSTEM_ID));
-      
+
       expect(isVerified).toBe(true);
 
       expect(dbClient.user.update).toBeCalledWith({
@@ -543,7 +543,7 @@ describe(UserModel, () => {
           isEmailVerified: true,
           pendingEmailVerifications: { deleteMany: [] },
         },
-        where: { id: TEST_USER_ID }
+        where: { id: TEST_USER_ID },
       });
 
       expect(logAuditEvent).toBeCalledWith(
@@ -553,7 +553,7 @@ describe(UserModel, () => {
           method: AUDIT_EVENT_SOURCE.SCRIPT,
           email: testUser.email,
         },
-        TEST_SESSION_ID
+        TEST_SESSION_ID,
       );
     });
   });
@@ -580,11 +580,11 @@ describe(UserModel, () => {
       });
       const testNewPassword = 'secrets secrets';
       const testReqCtx = getTestReqCtx();
-      
+
       dbClient.passwordResetLink.findUnique.mockResolvedValue(testPasswordResetLink);
 
       const isReset = await UserModel.resetPassword(TEST_UUID, testNewPassword, testReqCtx);
-      
+
       expect(isReset).toBe(true);
 
       expect(dbClient.passwordResetLink.findUnique).toBeCalledWith(expect.objectContaining({
@@ -610,7 +610,7 @@ describe(UserModel, () => {
         AUDIT_EVENT_TYPE.USER_PASSWORD_RESET,
         testUser.id, testUser.id, null,
         expect.any(Object),
-        TEST_SESSION_ID
+        TEST_SESSION_ID,
       );
 
       expect(mockSendPasswordChangedEmail).toBeCalledWith(testUser, testReqCtx);
@@ -619,11 +619,11 @@ describe(UserModel, () => {
     it(`refuses to reset the password if it can't find the link`, async () => {
       const testNewPassword = 'secrets secrets';
       const testReqCtx = getTestReqCtx();
-      
+
       dbClient.passwordResetLink.findUnique.mockResolvedValue(null);
 
       const isReset = await UserModel.resetPassword(TEST_UUID, testNewPassword, testReqCtx);
-      
+
       expect(isReset).toBe(false);
 
       expect(mockSetUserPassword).not.toBeCalled();
@@ -649,7 +649,7 @@ describe(UserModel, () => {
 
     it('returns true if the password matches', async () => {
       const testUser = mockObject<User>({ id: TEST_USER_ID });
-      
+
       const testPassword = 'this should match';
       const { hashedPassword, salt } = await hash(testPassword);
 
@@ -666,7 +666,7 @@ describe(UserModel, () => {
 
     it('returns false if the password does not match', async () => {
       const testUser = mockObject<User>({ id: TEST_USER_ID });
-      
+
       const testPassword = 'this is one thing';
       const { hashedPassword, salt } = await hash(testPassword);
 
@@ -692,7 +692,7 @@ describe(UserModel, () => {
     afterEach(() => {
       hashSpy.mockRestore();
     });
-    
+
     it(`sets a user's password`, async () => {
       const testUser = mockObject<User>({ id: TEST_USER_ID });
       const testNewPassword = 'secrets secrets';
@@ -708,14 +708,14 @@ describe(UserModel, () => {
           password: hashedPassword,
           salt: salt,
         },
-        where: { userId: testUser.id }
+        where: { userId: testUser.id },
       });
 
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.USER_PASSWORD_CHANGE,
         TEST_USER_ID, testUser.id, null,
         null,
-        TEST_SESSION_ID
+        TEST_SESSION_ID,
       );
     });
   });
@@ -786,7 +786,7 @@ describe(UserModel, () => {
         isEmailVerified: false,
       });
       pushTask.mockReturnValue(mockObject<Ticket>());
-      
+
       const testPendingVerification = mockObject<PendingEmailVerification>({ uuid: TEST_UUID });
       dbClient.pendingEmailVerification.create.mockResolvedValue(testPendingVerification);
 
@@ -808,7 +808,7 @@ describe(UserModel, () => {
         AUDIT_EVENT_TYPE.USER_REQUEST_EMAIL_VERIFICATION,
         TEST_USER_ID, testUser.id, null,
         expect.any(Object),
-        TEST_SESSION_ID
+        TEST_SESSION_ID,
       );
     });
 
@@ -837,7 +837,7 @@ describe(UserModel, () => {
         isEmailVerified: true,
       });
       pushTask.mockReturnValue(mockObject<Ticket>());
-      
+
       const testPendingVerification = mockObject<PendingEmailVerification>({ uuid: TEST_UUID });
       dbClient.pendingEmailVerification.create.mockResolvedValue(testPendingVerification);
 
@@ -859,7 +859,7 @@ describe(UserModel, () => {
         AUDIT_EVENT_TYPE.USER_REQUEST_EMAIL_VERIFICATION,
         TEST_USER_ID, testUser.id, null,
         expect.any(Object),
-        TEST_SESSION_ID
+        TEST_SESSION_ID,
       );
     });
   });
@@ -871,7 +871,7 @@ describe(UserModel, () => {
         state: USER_STATE.ACTIVE,
       });
       pushTask.mockReturnValue(mockObject<Ticket>());
-      
+
       const testPasswordResetLink = mockObject<PasswordResetLink>({ uuid: TEST_UUID });
       dbClient.passwordResetLink.create.mockResolvedValue(testPasswordResetLink);
 
@@ -893,7 +893,7 @@ describe(UserModel, () => {
         AUDIT_EVENT_TYPE.USER_REQUEST_PASSWORD_RESET,
         TEST_USER_ID, testUser.id, null,
         expect.any(Object),
-        TEST_SESSION_ID
+        TEST_SESSION_ID,
       );
     });
 
@@ -902,7 +902,7 @@ describe(UserModel, () => {
         id: TEST_USER_ID,
         state: USER_STATE.SUSPENDED,
       });
-      
+
       const link = await UserModel.sendPasswordResetLink(testUser, {}, getTestReqCtx());
 
       expect(link).toBe(null);
@@ -914,5 +914,4 @@ describe(UserModel, () => {
       expect(logAuditEvent).not.toHaveBeenCalled();
     });
   });
-
 });

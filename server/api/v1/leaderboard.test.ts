@@ -6,7 +6,7 @@ import { Leaderboard, Member, Participant, Participation, type LeaderboardSummar
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 
 vi.mock('../../lib/models/leaderboard/leaderboard-model.ts');
-import { LeaderboardModel as _LeaderboardModel } from "../../lib/models/leaderboard/leaderboard-model.ts";
+import { LeaderboardModel as _LeaderboardModel } from '../../lib/models/leaderboard/leaderboard-model.ts';
 const LeaderboardModel = vi.mocked(_LeaderboardModel);
 
 import { handleAddMyParticipation, handleCreate, handleDelete, handleGetByJoinCode, handleGetByUuid, handleGetMyParticipation, handleList, handleListMembers, handleListParticipants, handleRemoveMember, handleRemoveMyParticipation, handleStar, handleUpdate, handleUpdateMember, handleUpdateMyParticipation } from './leaderboard.ts';
@@ -96,7 +96,7 @@ describe('leaderboard api v1', () => {
 
       const payload = {
         title: 'Fake Leaderboard',
-        measures: [ TALLY_MEASURE.WORD ],
+        measures: [TALLY_MEASURE.WORD],
         startDate: null,
         endDate: null,
         goal: null,
@@ -124,7 +124,7 @@ describe('leaderboard api v1', () => {
 
       const payload = {
         title: 'Fake Leaderboard 2',
-        measures: [ TALLY_MEASURE.CHAPTER ],
+        measures: [TALLY_MEASURE.CHAPTER],
       };
 
       const { req, res } = getHandlerMocksWithUser({
@@ -143,7 +143,7 @@ describe('leaderboard api v1', () => {
 
       const payload = {
         title: 'Fake Leaderboard 2',
-        measures: [ TALLY_MEASURE.CHAPTER ],
+        measures: [TALLY_MEASURE.CHAPTER],
       };
 
       const { req, res } = getHandlerMocksWithUser({
@@ -307,11 +307,11 @@ describe('leaderboard api v1', () => {
       const { req, res } = getHandlerMocksWithUser({
         params: {
           uuid: TEST_UUID,
-          id: String(TEST_OBJECT_ID)
+          id: String(TEST_OBJECT_ID),
         },
         body: {
           isOwner: true,
-        }
+        },
       });
       await handleUpdateMember(req, res);
 
@@ -327,7 +327,7 @@ describe('leaderboard api v1', () => {
       const { req, res } = getHandlerMocksWithUser({
         params: {
           uuid: TEST_UUID,
-          id: String(TEST_OBJECT_ID)
+          id: String(TEST_OBJECT_ID),
         },
       });
       await handleUpdateMember(req, res);
@@ -347,7 +347,7 @@ describe('leaderboard api v1', () => {
       const { req, res } = getHandlerMocksWithUser({
         params: {
           uuid: TEST_UUID,
-          id: String(TEST_OBJECT_ID)
+          id: String(TEST_OBJECT_ID),
         },
       });
       await handleUpdateMember(req, res);
@@ -372,7 +372,7 @@ describe('leaderboard api v1', () => {
       const { req, res } = getHandlerMocksWithUser({
         params: {
           uuid: TEST_UUID,
-          id: String(TEST_OBJECT_ID)
+          id: String(TEST_OBJECT_ID),
         },
       });
       await handleRemoveMember(req, res);
@@ -389,7 +389,7 @@ describe('leaderboard api v1', () => {
       const { req, res } = getHandlerMocksWithUser({
         params: {
           uuid: TEST_UUID,
-          id: String(TEST_OBJECT_ID)
+          id: String(TEST_OBJECT_ID),
         },
       });
       await handleRemoveMember(req, res);
@@ -409,7 +409,7 @@ describe('leaderboard api v1', () => {
       const { req, res } = getHandlerMocksWithUser({
         params: {
           uuid: TEST_UUID,
-          id: String(TEST_OBJECT_ID)
+          id: String(TEST_OBJECT_ID),
         },
       });
       await handleRemoveMember(req, res);
@@ -432,7 +432,7 @@ describe('leaderboard api v1', () => {
       const { req, res } = getHandlerMocksWithUser({
         params: {
           uuid: TEST_UUID,
-          id: String(TEST_OBJECT_ID)
+          id: String(TEST_OBJECT_ID),
         },
       });
       await handleRemoveMember(req, res);

@@ -18,13 +18,16 @@ import DeleteTallyForm from '../tally/DeleteTallyForm.vue';
 
 const props = defineProps<{
   work: Work;
-  tallies: Array<TallyWithTags>
+  tallies: Array<TallyWithTags>;
 }>();
 
 const sortedTallies = computed(() => props.tallies.toSorted((a, b) => {
   // oldest first, break ties by createdAt (oldest first)
-  return a.date < b.date ? -1 : a.date > b.date ? 1 :
-    a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0;
+  return a.date < b.date ?
+      -1 :
+    a.date > b.date ?
+      1 :
+      a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0;
 }));
 
 const chartRows = computed(() => {

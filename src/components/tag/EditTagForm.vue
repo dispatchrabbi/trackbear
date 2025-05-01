@@ -37,9 +37,9 @@ const formModel = reactive({
 const validations = z.object({
   name: z.string()
     .min(1, { message: 'Please enter a tag name.' })
-    .regex(/^[^#]/, { message: 'There is no need to type the #.'}),
-    // TODO: add something that disallows current tag names
-  color: z.enum(TAG_COLORS, { required_error: 'Please pick a color.'}),
+    .regex(/^[^#]/, { message: 'There is no need to type the #.' }),
+  // TODO: add something that disallows current tag names
+  color: z.enum(TAG_COLORS, { required_error: 'Please pick a color.' }),
 });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
@@ -49,7 +49,7 @@ const colorOptions = computed(() => {
     label: toTitleCase(color),
     value: color,
   }));
-})
+});
 
 const isLoading = ref<boolean>(false);
 const successMessage = ref<string | null>(null);
@@ -66,12 +66,12 @@ async function handleSubmit() {
 
     emit('tag:edit', { tag: updatedTag });
     eventBus.emit({ tag: updatedTag });
-    
+
     successMessage.value = `#${updatedTag.name} has been edited.`;
     await wait(1 * 1000);
-    
+
     emit('formSuccess');
-  } catch(err) {
+  } catch (err) {
     if(err.code === 'TAG_EXISTS') {
       errorMessage.value = 'Could not edit the tag: a tag with this name already exists.';
     } else {

@@ -1,5 +1,5 @@
-import { callApi } from "../api.ts";
-import type { Changelog, EnvInfo } from "server/api/info.ts";
+import { callApi } from '../api.ts';
+import type { Changelog, EnvInfo } from 'server/api/info.ts';
 
 export type { Changelog, EnvInfo };
 

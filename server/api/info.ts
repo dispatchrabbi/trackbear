@@ -1,7 +1,7 @@
 import path from 'path';
 const ROOT_DIR = path.resolve(import.meta.url.replace('file://', ''), '../../..');
 
-import { Request } from "express";
+import { Request } from 'express';
 import { ApiHandler, ApiResponse, success } from '../lib/api-response.ts';
 
 import { readFile } from 'fs/promises';
@@ -13,7 +13,7 @@ import { HTTP_METHODS, ACCESS_LEVEL, RouteConfig } from 'server/lib/api.ts';
 export type { Changelog };
 export const handleGetChangelog: ApiHandler<Changelog> = (function() {
   let memoizedParsedChangelog = null;
-  
+
   return async function(req: Request, res: ApiResponse<Changelog>) {
     if(memoizedParsedChangelog === null) {
       const changelogContents = await readFile(path.join(ROOT_DIR, 'CHANGELOG.md'), { encoding: 'utf-8' });
@@ -33,9 +33,9 @@ export type EnvInfo = {
 export async function handleGetEnv(req: Request, res: ApiResponse<EnvInfo>) {
   const env = await getNormalizedEnv();
   const envInfo: EnvInfo = {
-    URL_PREFIX:       env.EMAIL_URL_PREFIX,
-    ENABLE_METRICS:   env.ENABLE_METRICS,
-    PLAUSIBLE_HOST:   env.ENABLE_METRICS ? env.PLAUSIBLE_HOST : '',
+    URL_PREFIX: env.EMAIL_URL_PREFIX,
+    ENABLE_METRICS: env.ENABLE_METRICS,
+    PLAUSIBLE_HOST: env.ENABLE_METRICS ? env.PLAUSIBLE_HOST : '',
     PLAUSIBLE_DOMAIN: env.ENABLE_METRICS ? env.PLAUSIBLE_DOMAIN : '',
   };
 
@@ -54,6 +54,6 @@ const routes: RouteConfig[] = [
     method: HTTP_METHODS.GET,
     handler: handleGetEnv,
     accessLevel: ACCESS_LEVEL.PUBLIC,
-  }
-]
+  },
+];
 export default routes;

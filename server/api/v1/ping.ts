@@ -1,5 +1,5 @@
-import { Request } from "express";
-import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "server/lib/api.ts";
+import { Request } from 'express';
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
 import { ApiResponse, success } from '../../lib/api-response.ts';
 
 export async function handleGetPing(req: Request, res: ApiResponse<'pong'>) {

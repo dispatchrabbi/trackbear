@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<{
 
 const src = computed(() => {
   return props.work.cover ? `/uploads/covers/${props.work.cover}` : '/images/placeholder-cover.png';
-})
+});
 
 const ROUNDED_CLASSES = {
   none: 'rounded-none',

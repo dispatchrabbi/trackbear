@@ -1,6 +1,6 @@
-import { callApiV1 } from "../api.ts";
+import { callApiV1 } from '../api.ts';
 
-import type { PublicProfile } from "server/api/v1/profile.ts";
+import type { PublicProfile } from 'server/api/v1/profile.ts';
 export type { PublicProfile };
 
 const ENDPOINT = '/api/v1/profile';

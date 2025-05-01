@@ -1,7 +1,7 @@
-import type { Board as PrismaBoard, User, Tally, BoardParticipant, Work, Tag } from "@prisma/client";
-import type { TallyMeasure } from "../tally/consts.ts";
-import type { MeasureCounts } from "../tally/types.ts";
-import { Expand } from "server/lib/obj.ts";
+import type { Board as PrismaBoard, User, Tally, BoardParticipant, Work, Tag } from '@prisma/client';
+import type { TallyMeasure } from '../tally/consts.ts';
+import type { MeasureCounts } from '../tally/types.ts';
+import { Expand } from 'server/lib/obj.ts';
 
 export type BoardGoal = MeasureCounts | null;
 export type Board = Expand<Omit<PrismaBoard, 'goal'> & {

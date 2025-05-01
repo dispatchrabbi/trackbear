@@ -23,7 +23,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  deleteConfirmation: z.string().refine(val => val === props.board.title, { message: 'You must type the title exactly.',  }), // only allow exactly the board title
+  deleteConfirmation: z.string().refine(val => val === props.board.title, { message: 'You must type the title exactly.' }), // only allow exactly the board title
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);
@@ -44,11 +44,11 @@ async function handleSubmit() {
     const deletedBoard = await deleteBoard(props.board.uuid);
 
     emit('board:delete', { board: deletedBoard });
-    eventBus.emit({ board: deletedBoard})
-    
+    eventBus.emit({ board: deletedBoard });
+
     successMessage.value = `${deletedBoard.title} has been deleted.`;
     await wait(1 * 1000);
-    
+
     emit('formSuccess');
   } catch {
     errorMessage.value = 'Could not delete the leaderboard: something went wrong server-side.';

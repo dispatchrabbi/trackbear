@@ -1,27 +1,27 @@
-import { USER_STATE } from "./user/consts.ts";
-import dbClient from "../db.ts";
+import { USER_STATE } from './user/consts.ts';
+import dbClient from '../db.ts';
 
-import { add } from "date-fns";
-import { formatDate } from "src/lib/date.ts";
+import { add } from 'date-fns';
+import { formatDate } from 'src/lib/date.ts';
 
-import { WORK_STATE } from "./work/consts.ts";
-import { TALLY_MEASURE, TALLY_STATE } from "./tally/consts.ts";
-import { MeasureCounts } from "./tally/types.ts";
-import { GOAL_TYPE } from "./goal/consts.ts";
-import { analyzeStreaksForHabit, HabitRange, isRangeCurrent } from "./goal/helpers.ts";
-import type { TargetGoalParameters, HabitGoalParameters, HabitGoal, TargetGoal } from "./goal/types.ts";
+import { WORK_STATE } from './work/consts.ts';
+import { TALLY_MEASURE, TALLY_STATE } from './tally/consts.ts';
+import { MeasureCounts } from './tally/types.ts';
+import { GOAL_TYPE } from './goal/consts.ts';
+import { analyzeStreaksForHabit, HabitRange, isRangeCurrent } from './goal/helpers.ts';
+import type { TargetGoalParameters, HabitGoalParameters, HabitGoal, TargetGoal } from './goal/types.ts';
 import type { User } from './user/user-model.ts';
-import { GoalModel } from "./goal/goal-model.ts";
-import { getDayCounts, DayCount } from "./stats.ts";
+import { GoalModel } from './goal/goal-model.ts';
+import { getDayCounts, DayCount } from './stats.ts';
 
 type ProfileWorkSummary = {
   uuid: string;
   title: string;
-  totals: MeasureCounts,
-  recentActivity: DayCount[],
+  totals: MeasureCounts;
+  recentActivity: DayCount[];
 };
 
-type SimpleDayCount = { date: string; count: number; };
+type SimpleDayCount = { date: string; count: number };
 type ProfileTargetSummary = {
   uuid: string;
   title: string;
@@ -62,7 +62,7 @@ export async function getUserProfile(username): Promise<PublicProfile> {
     },
     include: {
       userSettings: true,
-    }
+    },
   });
 
   if(user === null) {
@@ -81,7 +81,7 @@ export async function getUserProfile(username): Promise<PublicProfile> {
   const lifetimeTotals = Object.values(TALLY_MEASURE).reduce((obj, measure) => {
     let didTheyUseThisMeasureEver = false;
     let total = 0;
-    
+
     if(measure in lifetimeStartingBalance) {
       total += lifetimeStartingBalance[measure];
       didTheyUseThisMeasureEver = true;
@@ -141,7 +141,7 @@ async function getWorksWithStartingBalances(userId: number): Promise<WorkStartin
     select: {
       id: true,
       startingBalance: true,
-    }
+    },
   });
 
   return works as WorkStartingBalance[];
@@ -149,13 +149,13 @@ async function getWorksWithStartingBalances(userId: number): Promise<WorkStartin
 
 async function getTallyTotals(userId: number): Promise<MeasureCounts> {
   const totalsResult = await dbClient.tally.groupBy({
-    by: [ 'measure' ],
+    by: ['measure'],
     where: {
       ownerId: userId,
       state: TALLY_STATE.ACTIVE,
       work: {
         ownerId: userId,
-        state: WORK_STATE.ACTIVE
+        state: WORK_STATE.ACTIVE,
       },
     },
     _sum: { count: true },
@@ -185,7 +185,7 @@ async function getProfileWorkSummaries(userId: number): Promise<ProfileWorkSumma
   });
 
   const dayCountsForProfile = await dbClient.tally.groupBy({
-    by: [ 'workId', 'date', 'measure' ],
+    by: ['workId', 'date', 'measure'],
     where: {
       ownerId: userId,
       workId: { in: worksOnProfile.map(work => work.id) },
@@ -216,8 +216,8 @@ async function getProfileWorkSummaries(userId: number): Promise<ProfileWorkSumma
       uuid: work.uuid,
       title: work.title,
       totals,
-      recentActivity
-    }
+      recentActivity,
+    };
   });
 
   return summaries;
@@ -231,14 +231,14 @@ async function getProfileTargetSummaries(userId: number): Promise<ProfileTargetS
   for(const target of eligibleTargets) {
     // not happy about hitting the db once for every target but anything else is way too complicated
     const talliesForTarget = await GoalModel.DEPRECATED_getTalliesForGoal(target);
-    
+
     const dayCounts = Object.values(talliesForTarget.reduce((obj: Record<string, SimpleDayCount>, tally) => {
       if(!(tally.date in obj)) {
         obj[tally.date] = { date: tally.date, count: 0 };
       }
-      
+
       obj[tally.date].count += tally.count;
-      
+
       return obj;
     }, {}));
 
@@ -261,18 +261,17 @@ async function getProfileHabitSummaries(userId: number): Promise<ProfileHabitSum
 
   const summaries = [];
   for(const habit of eligibleHabits) {
-
     const talliesForHabit = await GoalModel.DEPRECATED_getTalliesForGoal(habit);
 
     const { ranges, streaks } = analyzeStreaksForHabit(
       talliesForHabit, habit.parameters.cadence, habit.parameters.threshold,
-      habit.startDate, habit.endDate
+      habit.startDate, habit.endDate,
     );
 
     const currentRange = (ranges.length > 0 && isRangeCurrent(ranges.at(-1))) ? ranges.at(-1) : null;
     const successfulRanges = ranges.filter(range => range.isSuccess).length;
     const totalRanges = ranges.length;
-    
+
     summaries.push({
       uuid: habit.uuid,
       title: habit.title,

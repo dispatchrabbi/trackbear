@@ -17,7 +17,7 @@ export const GOAL_COMPLETION_ORDER = [
   GOAL_COMPLETION.ONGOING,
   GOAL_COMPLETION.ACHIEVED,
   GOAL_COMPLETION.ENDED,
-]
+];
 
 interface WithProgress {
   achieved: boolean;
@@ -46,7 +46,7 @@ export function cmpGoalByCompletion(a: GoalWithAchievement, b: GoalWithAchieveme
   return cmpStarred(a, b) || cmpCompletion(a, b) || cmpTimebounds(a, b) || cmpTitle(a, b) || -cmpCreated(a, b);
 }
 
-interface Starred { starred: boolean; }
+interface Starred { starred: boolean }
 function cmpStarred(a: Starred, b: Starred) {
   return a.starred === b.starred ? 0 : (a.starred ? -1 : 1);
 }
@@ -91,13 +91,13 @@ function cmpTimebounds(a: TimeBound, b: TimeBound) {
   }
 }
 
-interface Titled { title: string; }
+interface Titled { title: string }
 const cmp = compare();
 function cmpTitle(a: Titled, b: Titled) {
   return cmp(a.title, b.title);
 }
 
-interface Created { createdAt: Date; }
+interface Created { createdAt: Date }
 function cmpCreated(a: Created, b: Created) {
   return a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0;
 }
@@ -117,7 +117,7 @@ export function describeGoal(goal: Goal) {
 
     const threshold = params.threshold ? formatCount(params.threshold.count, params.threshold.measure) : 'something';
     const cadence = params.cadence.period === 1 ? GOAL_CADENCE_UNIT_INFO[params.cadence.unit].label.singular : `${params.cadence.period} ${GOAL_CADENCE_UNIT_INFO[params.cadence.unit].label.plural}`;
-    
+
     let description = `Log ${threshold} every ${cadence}`;
     if(goal.endDate) {
       description += ` until ${goal.endDate}`;

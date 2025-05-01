@@ -16,8 +16,8 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  currentPassword: z.string().min(1, { message: 'Current password is required.'}),
-  newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.'}),
+  currentPassword: z.string().min(1, { message: 'Current password is required.' }),
+  newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
 });
 
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
@@ -34,11 +34,11 @@ async function handleSubmit() {
   try {
     const { currentPassword, newPassword } = formData();
     await changePassword(currentPassword, newPassword);
-    
+
     successMessage.value = 'Your password has been changed!';
     formModel.currentPassword = '';
     formModel.newPassword = '';
-  } catch(err) {
+  } catch (err) {
     if(err.code === 'VALIDATION_FAILED') {
       errorMessage.value = err.message;
     } else if(err.code === 'INCORRECT_CREDS') {

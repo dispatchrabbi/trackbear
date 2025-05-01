@@ -30,13 +30,12 @@ async function main() {
   scriptLogger.info(`Sending a test email to ${TEST_EMAIL_RECIPIENT} without the queue...`);
   const result = await sendTestEmail(TEST_EMAIL_RECIPIENT, 'This was sent directly');
   if(result) {
-    console.log(`Test email send result was ${result.statusCode}: ${JSON.stringify(result.body)}`)
+    console.log(`Test email send result was ${result.statusCode}: ${JSON.stringify(result.body)}`);
     scriptLogger.info(`Test email send result was ${result.statusCode}: ${JSON.stringify(result.body)}`);
   } else {
     scriptLogger.info(`Test email send result was undefined for some reason`);
   }
   scriptLogger.info(`Done`);
-
 }
 
 main().catch(e => console.error(e));

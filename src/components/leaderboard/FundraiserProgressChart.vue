@@ -10,7 +10,7 @@ import { TallyMeasure } from 'server/lib/models/tally/consts.ts';
 const props = defineProps<{
   leaderboard: Leaderboard;
   participants: Participant[];
-  measure: TallyMeasure
+  measure: TallyMeasure;
 }>();
 
 const filteredParticipants = computed(() => {
@@ -23,18 +23,18 @@ const filteredParticipants = computed(() => {
 const dataDates = computed(() => {
   const allDatesSet = new Set(filteredParticipants.value.flatMap(participant => participant.tallies.map(tally => tally.date)));
   const sortedDates = [...allDatesSet].sort();
-  const [ earliestDate, latestDate ] = [ sortedDates.at(0) ?? null, sortedDates.at(-1) ?? null ];
+  const [earliestDate, latestDate] = [sortedDates.at(0) ?? null, sortedDates.at(-1) ?? null];
 
   return {
     earliestDate,
-    latestDate
+    latestDate,
   };
 });
 
 const tallies = computed(() => {
   const eachDayWithData = listEachDayOfData(
     props.leaderboard.startDate, null,
-    dataDates.value.earliestDate, dataDates.value.latestDate
+    dataDates.value.earliestDate, dataDates.value.latestDate,
   );
 
   const tallies = filteredParticipants.value.flatMap(participant => {
@@ -59,7 +59,7 @@ const tallies = computed(() => {
 const par = computed(() => {
   const eachDay = listEachDayOfData(
     props.leaderboard.startDate, props.leaderboard.endDate,
-    dataDates.value.earliestDate, dataDates.value.latestDate
+    dataDates.value.earliestDate, dataDates.value.latestDate,
   );
 
   const goalCount = props.leaderboard.goal[props.measure];
@@ -67,15 +67,15 @@ const par = computed(() => {
     // no goal for this measure, so no par line needed
     return null;
   }
-  
+
   const par = eachDay.map((date, ix) => ({
-  series: 'Par',
-  date,
-  value: props.leaderboard.endDate === null ?
-    goalCount : // if there's no end date, just show a contant line at 100%
-    (ix === eachDay.length - 1) ?
-      goalCount : // force the last day to be 100%
-      Math.ceil((goalCount / eachDay.length) * (ix + 1)),
+    series: 'Par',
+    date,
+    value: props.leaderboard.endDate === null ?
+      goalCount : // if there's no end date, just show a contant line at 100%
+        (ix === eachDay.length - 1) ?
+          goalCount : // force the last day to be 100%
+            Math.ceil((goalCount / eachDay.length) * (ix + 1)),
   }));
 
   return par;

@@ -4,7 +4,7 @@ import { computed } from 'vue';
 import { useTheme } from 'src/lib/theme';
 const { theme } = useTheme();
 
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const size = computed(() => {
@@ -35,7 +35,7 @@ const sections = [
       pace for a quarter-million words this year? TrackBear has you covered with <b>targets</b>. Set a goal and a date
       range, and TrackBear will graph your progress and show you where you are versus par for the day. Targets can span
       multiple projects, so you can see progress across all your work.`,
-      `(P.S.: you can even import your old projects from NaNoWriMo.)`
+      `(P.S.: you can even import your old projects from NaNoWriMo.)`,
     ],
   },
   {
@@ -44,7 +44,7 @@ const sections = [
     body: [
       `TrackBear can help you track writing habits too. If you're trying to draw a comic page a day, spend two hours a
       day editing, or just write <i>something</i>, set a <b>habit</b> and TrackBear will show you how you're doing. And
-      there's no judgement for breaking a streak — TrackBear celebrates with you but doesn't shame you if you miss a day.`
+      there's no judgement for breaking a streak — TrackBear celebrates with you but doesn't shame you if you miss a day.`,
     ],
   },
   {
@@ -53,7 +53,7 @@ const sections = [
     body: [
       `Keep up with your community with leaderboards. When you create a leaderboard and your friends join it, everyone
       can see each other's progress. You can cheer your friends on, set up an accountability buddy system, or all try
-      to hit a community goal together. Writing is more fun with friends, and TrackBear helps make that happen.`
+      to hit a community goal together. Writing is more fun with friends, and TrackBear helps make that happen.`,
     ],
   },
   {
@@ -62,17 +62,17 @@ const sections = [
     body: [
       `TrackBear is designed with privacy in mind and will <b>always be free to use</b>. TrackBear isn't a social
       network, a chat platform, or AI-powered, and there is no premium tier or pay-to-play. There are no ads, no
-      third-party tracking, and no data harvesting. It's just a place for you to track your writing.`
+      third-party tracking, and no data harvesting. It's just a place for you to track your writing.`,
     ],
-  }
-]
+  },
+];
 
 const imagePt = {
-  rotateRightButton: { class: [ 'hidden' ] },
-  rotateLeftButton: { class: [ 'hidden' ] },
-  zoomInButton: { class: [ 'hidden' ] },
-  zoomOutButton: { class: [ 'hidden' ] },
-  preview: { class: [ 'p-8 max-h-screen max-w-screen' ] },
+  rotateRightButton: { class: ['hidden'] },
+  rotateLeftButton: { class: ['hidden'] },
+  zoomInButton: { class: ['hidden'] },
+  zoomOutButton: { class: ['hidden'] },
+  preview: { class: ['p-8 max-h-screen max-w-screen'] },
 };
 </script>
 

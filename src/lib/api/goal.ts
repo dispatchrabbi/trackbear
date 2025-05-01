@@ -1,6 +1,6 @@
-import { callApiV1 } from "../api.ts";
+import { callApiV1 } from '../api.ts';
 
-import type { Goal, GoalWithAchievement, GoalAndTallies, GoalCreatePayload, GoalUpdatePayload } from "server/api/v1/goal.ts";
+import type { Goal, GoalWithAchievement, GoalAndTallies, GoalCreatePayload, GoalUpdatePayload } from 'server/api/v1/goal.ts';
 
 export type { Goal, GoalWithAchievement, GoalAndTallies, GoalCreatePayload, GoalUpdatePayload };
 

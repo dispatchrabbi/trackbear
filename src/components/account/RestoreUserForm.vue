@@ -13,7 +13,7 @@ import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 
 const props = defineProps<{
-  user: { id: number; username: string; };
+  user: { id: number; username: string };
 }>();
 
 const emit = defineEmits(['user:restore', 'formSuccess']);
@@ -23,7 +23,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  restoreConfirmation: z.string().refine(val => val === props.user.username, { message: 'You must type the username exactly.',  }),
+  restoreConfirmation: z.string().refine(val => val === props.user.username, { message: 'You must type the username exactly.' }),
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);
@@ -47,7 +47,6 @@ async function handleSubmit() {
     successMessage.value = `The account has been restored.`;
     await wait(1 * 1000);
     emit('formSuccess');
-
   } catch {
     errorMessage.value = 'Could not restore the account: something went wrong server-side.';
 

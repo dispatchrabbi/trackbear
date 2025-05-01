@@ -20,7 +20,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  newPassword: z.string().min(8, { message: 'Password must be at least 8 characters long.'}),
+  newPassword: z.string().min(8, { message: 'Password must be at least 8 characters long.' }),
 });
 
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
@@ -50,7 +50,7 @@ async function handleSubmit() {
     successMessage.value = 'Your password has been reset! Redirecting you to the login page...';
     await wait(2 * 1000);
     router.push('/login');
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err;
   } finally {
     isLoading.value = false;

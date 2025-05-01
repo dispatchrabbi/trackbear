@@ -17,7 +17,7 @@ const props = defineProps<{
   items: MenuBarItem[];
 }>();
 
-const emit = defineEmits(['menu-navigation'])
+const emit = defineEmits(['menu-navigation']);
 
 function matchesCurrentRoute(to?: RouteLocationRaw, href?: string) {
   const routeToMatch = to ? router.resolve(to).href : href;

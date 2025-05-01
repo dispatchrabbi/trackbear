@@ -34,12 +34,12 @@ export function cmpWorkByLastUpdate(a: SummarizedWork, b: SummarizedWork) {
   return cmpStarred(a, b) || cmpLatestTally(a, b) || cmpTitle(a, b) || -cmpCreated(a, b);
 }
 
-interface Starred { starred: boolean; }
+interface Starred { starred: boolean }
 function cmpStarred(a: Starred, b: Starred) {
   return a.starred === b.starred ? 0 : (a.starred ? -1 : 1);
 }
 
-interface Phased { phase: string; }
+interface Phased { phase: string }
 function cmpPhase(a: Phased, b: Phased) {
   const aPhaseIndex = WORK_PHASE_ORDER.indexOf(a.phase);
   const bPhaseIndex = WORK_PHASE_ORDER.indexOf(b.phase);
@@ -49,22 +49,22 @@ function cmpPhase(a: Phased, b: Phased) {
   }
 }
 
-interface Titled { title: string; }
+interface Titled { title: string }
 const cmp = compare();
 function cmpTitle(a: Titled, b: Titled) {
   return cmp(a.title, b.title);
 }
 
-interface Created { createdAt: Date; }
+interface Created { createdAt: Date }
 function cmpCreated(a: Created, b: Created) {
   return a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0;
 }
 
-interface WithLastUpdated { lastUpdated: string | null; }; // should be an ISO datestring
+interface WithLastUpdated { lastUpdated: string | null }; // should be an ISO datestring
 function cmpLatestTally(a: WithLastUpdated, b: WithLastUpdated) {
   // we do the equals case first to also catch when `lastUpdated` is null
   return a.lastUpdated === b.lastUpdated ? 0 : // we do the equals case first to also catch when `lastUpdated` is both null
     a.lastUpdated === null ? 1 : // null goes after
-    b.lastUpdated === null ? -1 : // null goes after
-    a.lastUpdated > b.lastUpdated ? -1 : 1; // more recently updated goes before
+      b.lastUpdated === null ? -1 : // null goes after
+        a.lastUpdated > b.lastUpdated ? -1 : 1; // more recently updated goes before
 }

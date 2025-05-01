@@ -9,7 +9,7 @@ import FileUpload, { FileUploadUploaderEvent } from 'primevue/fileupload';
 
 const props = defineProps<{
   work: Work;
-}>()
+}>();
 
 const emit = defineEmits(['work:cover', 'formSuccess']);
 const eventBus = useEventBus<{ work: Work }>('work:cover');
@@ -35,8 +35,7 @@ async function handleUpload(ev: FileUploadUploaderEvent) {
 
     successMessage.value = `Your new cover has been uploaded.`;
     emit('formSuccess');
-
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = `Could not upload your cover: ${err.message}.`;
     return;
   } finally {

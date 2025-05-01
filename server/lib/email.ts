@@ -3,7 +3,6 @@ import winston from 'winston';
 
 import { getNormalizedEnv } from './env.ts';
 
-
 export async function sendEmail(params: EmailParams) {
   const env = await getNormalizedEnv();
 

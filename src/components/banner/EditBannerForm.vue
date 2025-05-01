@@ -37,8 +37,8 @@ const colorOptions = [
   { label: 'Error (red)', value: 'error' },
 ];
 const validations = z.object({
-  message: z.string().min(1, { message: 'Please enter a title.'}),
-  icon: z.string().min(1, { message: 'Please enter an icon.'}),
+  message: z.string().min(1, { message: 'Please enter a title.' }),
+  icon: z.string().min(1, { message: 'Please enter an icon.' }),
   color: z.enum(colorOptions.map(opt => opt.value) as NonEmptyArray<string>, { required_error: 'Please choose a color.' }),
   showUntil: z.date(), // don't validate that it's in the future when editing it
   enabled: z.boolean(),

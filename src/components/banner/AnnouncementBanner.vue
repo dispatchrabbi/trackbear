@@ -13,26 +13,26 @@ import MIcon from '../MIcon.vue';
 
 const pt = {
   root: ({ props }) => ({
-        class: [
-          // Spacing and Shape
-          'my-0 mx-0',
-          // Colors
-          'border-solid border-0 border-l-[6px]',
-          // Colors
-          {
-            'bg-info-100/70 dark:bg-info-500/20': props.severity == 'info',
-            'bg-success-100/70 dark:bg-success-500/20': props.severity == 'success',
-            'bg-warning-100/70 dark:bg-warning-500/20': props.severity == 'warn',
-            'bg-danger-100/70 dark:bg-danger-500/20': props.severity == 'error'
-          },
-          {
-            'border-info-500 dark:border-info-400': props.severity == 'info',
-            'border-success-500 dark:border-success-400': props.severity == 'success',
-            'border-warning-500 dark:border-warning-400': props.severity == 'warn',
-            'border-danger-500 dark:border-danger-400': props.severity == 'error'
-          },
-        ]
-    }),
+    class: [
+      // Spacing and Shape
+      'my-0 mx-0',
+      // Colors
+      'border-solid border-0 border-l-[6px]',
+      // Colors
+      {
+        'bg-info-100/70 dark:bg-info-500/20': props.severity == 'info',
+        'bg-success-100/70 dark:bg-success-500/20': props.severity == 'success',
+        'bg-warning-100/70 dark:bg-warning-500/20': props.severity == 'warn',
+        'bg-danger-100/70 dark:bg-danger-500/20': props.severity == 'error',
+      },
+      {
+        'border-info-500 dark:border-info-400': props.severity == 'info',
+        'border-success-500 dark:border-success-400': props.severity == 'success',
+        'border-warning-500 dark:border-warning-400': props.severity == 'warn',
+        'border-danger-500 dark:border-danger-400': props.severity == 'error',
+      },
+    ],
+  }),
 };
 
 const emit = defineEmits(['close']);
@@ -75,7 +75,7 @@ const messageHtml = computed(() => {
     <template #messageicon>
       <span
         v-if="props.icon.startsWith('pi-')"
-        :class="[ 'pi', props.icon ]"
+        :class="['pi', props.icon]"
       />
       <MIcon
         v-else
@@ -92,5 +92,4 @@ const messageHtml = computed(() => {
   </Message>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

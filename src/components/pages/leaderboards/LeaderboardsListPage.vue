@@ -34,12 +34,12 @@ const loadLeaderboards = async function(force = false) {
 
   try {
     await leaderboardStore.populate(force);
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err.message;
   } finally {
     isLoading.value = false;
   }
-}
+};
 
 const filter = ref<string>('');
 const filteredLeaderboards = computed(() => {

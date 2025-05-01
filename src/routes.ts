@@ -70,17 +70,17 @@ const routes = [
   { path: '/contact', name: 'contact', component: ContactPage },
   { path: '/ko-fi', name: 'ko-fi', component: KoFiRedirectPage },
 
-  { path: '/signup', name:'signup', component: SignUpPage },
-  { path: '/login', name:'login', component: LoginPage },
-  { path: '/logout', name:'logout', component: LogoutPage },
-  { path: '/verify-email/:verifyUuid', name:'verify-email', component: VerifyEmailPage },
-  { path: '/reset-password/', name:'send-reset-password', component: SendResetPasswordPage },
-  { path: '/reset-password/:resetUuid', name:'reset-password', component: ResetPasswordPage },
+  { path: '/signup', name: 'signup', component: SignUpPage },
+  { path: '/login', name: 'login', component: LoginPage },
+  { path: '/logout', name: 'logout', component: LogoutPage },
+  { path: '/verify-email/:verifyUuid', name: 'verify-email', component: VerifyEmailPage },
+  { path: '/reset-password/', name: 'send-reset-password', component: SendResetPasswordPage },
+  { path: '/reset-password/:resetUuid', name: 'reset-password', component: ResetPasswordPage },
 
   { path: `/:username(@${ROUTER_PARAM_USERNAME_REGEX})`, name: 'profile', component: ProfilePage },
 
   // Tag-and-Tally building
-  { path: '/dashboard', name:'dashboard', component: DashboardPage },
+  { path: '/dashboard', name: 'dashboard', component: DashboardPage },
 
   // Works section
   { path: '/works', name: 'works', component: WorksListPage },
@@ -128,7 +128,7 @@ const routes = [
   { path: '/admin/users/:userId(\\d+)', name: 'admin-user', component: AdminUserPage },
 
   // catch-all
-  { path: '/:catchAll(.*)', name:'404', component: PlaceholderPage, props: { title: '404' } },
+  { path: '/:catchAll(.*)', name: '404', component: PlaceholderPage, props: { title: '404' } },
 ];
 
 export default routes;

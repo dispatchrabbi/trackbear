@@ -33,7 +33,7 @@ async function main() {
         state: USER_STATE.ACTIVE,
       },
     });
-  } catch(err) {
+  } catch (err) {
     scriptLogger.error(`Error fetching unverified users: ${err.message}`);
     return;
   }
@@ -55,7 +55,7 @@ async function main() {
 
       scriptLogger.info(`Queueing a verification email for ${verification.uuid} to ${user.id}...`);
       pushTask(sendEmailverificationEmail.makeTask(verification.uuid));
-    } catch(err) {
+    } catch (err) {
       erroredUsers.push(user.id);
       scriptLogger.error(`Error creating a verification for ${user.id}: ${err.message}`);
       continue;

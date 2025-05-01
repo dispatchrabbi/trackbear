@@ -1,23 +1,23 @@
-import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from "server/lib/api.ts";
+import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from 'server/lib/api.ts';
 import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 
-import winston from "winston";
+import winston from 'winston';
 
 import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
-import { getCoverUploadFn, getCoverUploadPath } from "server/lib/upload.ts";
+import { getCoverUploadFn, getCoverUploadPath } from 'server/lib/upload.ts';
 
 import { z } from 'zod';
 import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
 
-import dbClient from "../../lib/db.ts";
-import type { Work as PrismaWork, Tally, Tag } from "@prisma/client";
+import dbClient from '../../lib/db.ts';
+import type { Work as PrismaWork, Tally, Tag } from '@prisma/client';
 import { WORK_PHASE, WORK_STATE, ALLOWED_COVER_FORMATS } from '../../lib/models/work/consts.ts';
-import { TALLY_MEASURE, TALLY_STATE } from "../../lib/models/tally/consts.ts";
-import { TAG_STATE } from "../../lib/models/tag/consts.ts";
+import { TALLY_MEASURE, TALLY_STATE } from '../../lib/models/tally/consts.ts';
+import { TAG_STATE } from '../../lib/models/tag/consts.ts';
 
 import { logAuditEvent, buildChangeRecord } from '../../lib/audit-events.ts';
 
@@ -43,7 +43,7 @@ export async function handleGetWorks(req: RequestWithUser, res: ApiResponse<Summ
     },
     include: {
       tallies: { where: { state: TALLY_STATE.ACTIVE } },
-    }
+    },
   });
 
   const works = worksWithTallies.map(workWithTallies => {
@@ -52,14 +52,16 @@ export async function handleGetWorks(req: RequestWithUser, res: ApiResponse<Summ
       return totals;
     }, { ...(workWithTallies.startingBalance as Record<string, number>) });
 
-    const lastUpdated = workWithTallies.tallies.length > 0 ? workWithTallies.tallies.reduce((last, tally) => {
-      return tally.date > last ? tally.date : last
-    }, '0000-00-00') : null;
+    const lastUpdated = workWithTallies.tallies.length > 0 ?
+        workWithTallies.tallies.reduce((last, tally) => {
+          return tally.date > last ? tally.date : last;
+        }, '0000-00-00') :
+      null;
 
     return {
-      ...omit(workWithTallies, [ 'tallies' ]),
+      ...omit(workWithTallies, ['tallies']),
       totals,
-      lastUpdated
+      lastUpdated,
     } as SummarizedWork;
   });
 
@@ -78,7 +80,7 @@ export async function handleGetWork(req: RequestWithUser, res: ApiResponse<WorkW
         where: { state: TALLY_STATE.ACTIVE },
         include: { tags: { where: { state: TAG_STATE.ACTIVE } } },
       },
-    }
+    },
   }) as WorkWithTallies;
 
   if(work) {
@@ -113,7 +115,7 @@ export async function handleCreateWork(req: RequestWithUser, res: ApiResponse<Wo
       ...req.body as WorkCreatePayload,
       state: WORK_STATE.ACTIVE,
       ownerId: user.id,
-    }
+    },
   }) as Work;
 
   await logAuditEvent('work:create', user.id, work.id, null, null, req.sessionID);
@@ -154,7 +156,7 @@ export async function handleDeleteWork(req: RequestWithUser, res: ApiResponse<Wo
       tallies: {
         updateMany: {
           where: {
-            state: TALLY_STATE.ACTIVE
+            state: TALLY_STATE.ACTIVE,
           },
           data: {
             state: TALLY_STATE.DELETED,
@@ -192,9 +194,9 @@ export async function handlePostCover(req: RequestWithUser, res: ApiResponse<Wor
 
   // make sure the file uploads correctly and is under limits and such
   const uploadCover = getCoverUploadFn();
-  try{
+  try {
     await uploadCover(req, res);
-  } catch(err) {
+  } catch (err) {
     return res.status(400).send(failure(err.code, err.message));
   }
 
@@ -212,14 +214,14 @@ export async function handlePostCover(req: RequestWithUser, res: ApiResponse<Wor
   const newPath = path.join(coverUploadPath, filename);
   try {
     await fs.copyFile(oldPath, newPath);
-  } catch(err) {
+  } catch (err) {
     winston.error(`Could not move uploaded cover file (from: ${oldPath}, to: ${newPath}): ${err.message}`, err);
     return res.status(500).send(failure('SERVER_ERROR', 'Could not save cover file'));
   }
 
   try {
     await fs.rm(oldPath);
-  } catch(err) {
+  } catch (err) {
     winston.error(`Could not delete uploaded cover file (from: ${oldPath}): ${err.message}`, err);
     // but we don't actually want to stop the upload on this error, so keep going...
   }
@@ -232,7 +234,7 @@ export async function handlePostCover(req: RequestWithUser, res: ApiResponse<Wor
     },
     data: {
       cover: filename,
-    }
+    },
   }) as Work;
 
   // this should only happen if the work somehow got deleted over the course of this function
@@ -269,7 +271,7 @@ export async function handleDeleteCover(req: RequestWithUser, res: ApiResponse<W
     },
     data: {
       cover: null,
-    }
+    },
   }) as Work;
 
   // this should only happen if the work somehow got deleted before the user clicked delete
@@ -332,7 +334,7 @@ const routes: RouteConfig[] = [
     handler: handleDeleteCover,
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zIdParam(),
-  }
+  },
 ];
 
 export default routes;

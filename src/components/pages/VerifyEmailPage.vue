@@ -41,7 +41,7 @@ async function submitVerification() {
     successMessage.value = 'Your email has been verified! Redirecting you to the login page...';
     await wait(2 * 1000);
     router.push('/login');
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err.message;
   } finally {
     isLoading.value = false;

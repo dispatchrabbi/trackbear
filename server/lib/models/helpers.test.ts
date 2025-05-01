@@ -9,7 +9,7 @@ import {
   ids2included,
   makeIncludeWorkAndTagIds,
   makeSetWorksAndTagsIncluded,
-  makeConnectWorksAndTagsIncluded
+  makeConnectWorksAndTagsIncluded,
 } from './helpers';
 
 describe('model helpers', () => {
@@ -19,58 +19,56 @@ describe('model helpers', () => {
         id: TEST_OBJECT_ID,
         someOtherProperty: true,
         anArray: [1, 3, 5],
-        workIds: [ -20, -21, -22 ],
-        tagIds: [ -30, -31, -32 ],
+        workIds: [-20, -21, -22],
+        tagIds: [-30, -31, -32],
       };
-  
+
       const testInput = {
         id: TEST_OBJECT_ID,
         someOtherProperty: true,
         anArray: [1, 3, 5],
-        worksIncluded: [ { id: -20 }, { id: -21 }, { id: -22 } ],
-        tagsIncluded: [ { id: -30 }, { id: -31 }, { id: -32 } ],
+        worksIncluded: [{ id: -20 }, { id: -21 }, { id: -22 }],
+        tagsIncluded: [{ id: -30 }, { id: -31 }, { id: -32 }],
       };
-  
+
       const actual = included2ids(testInput);
-  
+
       expect(actual).toEqual(expected);
     });
-  
+
     it('returns null when handed null', () => {
       const actual = included2ids(null);
-  
+
       expect(actual).toBe(null);
     });
   });
-  
+
   describe(ids2included, () => {
     it('converts an object with work and tag ids to an object with works and tags included', () => {
       const expected = {
         id: TEST_OBJECT_ID,
         someOtherProperty: true,
         anArray: [1, 3, 5],
-        worksIncluded: [ { id: -20 }, { id: -21 }, { id: -22 } ],
-        tagsIncluded: [ { id: -30 }, { id: -31 }, { id: -32 } ],
+        worksIncluded: [{ id: -20 }, { id: -21 }, { id: -22 }],
+        tagsIncluded: [{ id: -30 }, { id: -31 }, { id: -32 }],
       };
-  
+
       const testInput = {
         id: TEST_OBJECT_ID,
         someOtherProperty: true,
         anArray: [1, 3, 5],
-        workIds: [ -20, -21, -22 ],
-        tagIds: [ -30, -31, -32 ],
+        workIds: [-20, -21, -22],
+        tagIds: [-30, -31, -32],
       };
-  
-      
-  
+
       const actual = ids2included(testInput);
-  
+
       expect(actual).toEqual(expected);
     });
-  
+
     it('returns null when handed null', () => {
       const actual = included2ids(null);
-  
+
       expect(actual).toBe(null);
     });
   });
@@ -89,7 +87,7 @@ describe('model helpers', () => {
             { id: -22, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
             { id: -23, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
           ],
-        }
+        },
       };
 
       const actual = makeConnectWorksAndTagsIncluded({
@@ -115,7 +113,7 @@ describe('model helpers', () => {
             { id: -22, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
             { id: -23, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
           ],
-        }
+        },
       };
 
       const actual = makeSetWorksAndTagsIncluded({
@@ -134,7 +132,7 @@ describe('model helpers', () => {
             { id: -22, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
             { id: -23, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
           ],
-        }
+        },
       };
 
       const actual = makeSetWorksAndTagsIncluded({
@@ -152,7 +150,7 @@ describe('model helpers', () => {
             { id: -21, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
           ],
         },
-        tagsIncluded: undefined
+        tagsIncluded: undefined,
       };
 
       const actual = makeSetWorksAndTagsIncluded({
@@ -179,12 +177,12 @@ describe('model helpers', () => {
             state: TAG_STATE.ACTIVE,
           },
           select: { id: true },
-        }
+        },
       };
 
       const actual = makeIncludeWorkAndTagIds(TEST_USER_ID);
 
       expect(actual).toEqual(expected);
     });
-  })
+  });
 });

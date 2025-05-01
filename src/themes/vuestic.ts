@@ -1,4 +1,4 @@
-import type { LegacyTheme_DEPRECATED } from "src/lib/theme.ts";
+import type { LegacyTheme_DEPRECATED } from 'src/lib/theme.ts';
 
 // this is the default vuestic light theme
 const light: LegacyTheme_DEPRECATED = {

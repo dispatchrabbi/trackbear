@@ -1,14 +1,14 @@
-import dbClient from "../../db.ts";
-import { type Tally } from "@prisma/client";
+import dbClient from '../../db.ts';
+import { type Tally } from '@prisma/client';
 
-import { type RequestContext } from "../../request-context.ts";
+import { type RequestContext } from '../../request-context.ts';
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 import type { User } from '../user/user-model.ts';
-import { TALLY_STATE, TallyMeasure } from "./consts.ts";
+import { TALLY_STATE, TallyMeasure } from './consts.ts';
 
-import { traced } from "../../tracer.ts";
+import { traced } from '../../tracer.ts';
 
 export type { Tally };
 export type TallyData = {
@@ -27,10 +27,9 @@ export type TallyFilter = {
   endDate?: string;
   workIds?: number[];
   tagIds?: number[];
-}
+};
 
 export class TallyModel {
-
   @traced
   static async getTallies(owner: User, filter: TallyFilter = {}): Promise<Tally[]> {
     const tallies = await dbClient.tally.findMany({
@@ -64,7 +63,7 @@ export class TallyModel {
   }
 
   @traced
-  static async createTally(/*owner: User, data: TallyData, reqCtx: RequestContext*/): Promise<Tally> {
+  static async createTally(/* owner: User, data: TallyData, reqCtx: RequestContext */): Promise<Tally> {
     return null;
   }
 
@@ -89,7 +88,7 @@ export class TallyModel {
       const changes = buildChangeRecord({}, created);
       return logAuditEvent(AUDIT_EVENT_TYPE.TALLY_CREATE,
         reqCtx.userId, created.id, null,
-        changes, reqCtx.sessionId
+        changes, reqCtx.sessionId,
       );
     }));
 
@@ -97,7 +96,7 @@ export class TallyModel {
   }
 
   @traced
-  static async updateTally(/*owner: User, tally: Tally, data: Partial<TallyData>, reqCtx: RequestContext*/): Promise<Tally> {
+  static async updateTally(/* owner: User, tally: Tally, data: Partial<TallyData>, reqCtx: RequestContext */): Promise<Tally> {
     return null;
   }
 
@@ -109,17 +108,16 @@ export class TallyModel {
         id: tally.id,
         ownerId: owner.id,
         state: TALLY_STATE.ACTIVE,
-      }
+      },
     });
 
     const changes = buildChangeRecord(tally, deleted);
     await logAuditEvent(
       AUDIT_EVENT_TYPE.TALLY_DELETE,
       reqCtx.userId, deleted.id, null,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return deleted;
   }
-
 }

@@ -62,19 +62,19 @@ export function formatDuration(totalMinutes, omitZeroMinutes = false, forceColon
   }
 }
 
-export function minDate<T extends Date|string>(a: T, b: T) {
+export function minDate<T extends Date | string>(a: T, b: T) {
   return a < b ? a : b;
 }
 
-export function maxDate<T extends Date|string>(a: T, b: T) {
+export function maxDate<T extends Date | string>(a: T, b: T) {
   return a > b ? a : b;
 }
 
 export function validateTimeString(timeString: string) {
   const parts = timeString.split(':');
   const timeIsValid = parts.length === 2 &&
-      parseInt(parts[0], 10) === +parts[0] && Number.isInteger(+parts[0]) &&
-      parseInt(parts[1], 10) === +parts[1] && Number.isInteger(+parts[1]) && +parts[1] < 60;
+    parseInt(parts[0], 10) === +parts[0] && Number.isInteger(+parts[0]) &&
+    parseInt(parts[1], 10) === +parts[1] && Number.isInteger(+parts[1]) && +parts[1] < 60;
 
   return timeIsValid;
 }
@@ -92,7 +92,7 @@ export function formatDateRange(startDate: string, endDate: string, formatString
 
 export type Dated = {
   date: string;
-}
+};
 
 export function cmpByDate(a: Dated, b: Dated) {
   return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;

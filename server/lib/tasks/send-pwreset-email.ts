@@ -18,7 +18,7 @@ async function handler(task) {
         state: PASSWORD_RESET_LINK_STATE.ACTIVE,
         user: { state: USER_STATE.ACTIVE },
       },
-      include: { user: true }
+      include: { user: true },
     });
   } catch {
     throw new Error(`Could not find an active password reset link with uuid ${task.resetUuid}`);
@@ -67,5 +67,5 @@ function makeTask(resetUuid: string) {
 export default {
   TASK_NAME,
   handler,
-  makeTask
+  makeTask,
 };

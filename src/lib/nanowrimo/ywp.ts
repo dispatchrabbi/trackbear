@@ -1,4 +1,4 @@
-import { libcurl } from "libcurl.js";
+import { libcurl } from 'libcurl.js';
 import libcurlWasm from '../../../node_modules/libcurl.js/libcurl.wasm?url';
 
 import qs from 'qs';
@@ -13,11 +13,11 @@ type RawHeader = [
 ];
 
 type FetchResponse<T> = {
-  ok: boolean,
+  ok: boolean;
   status: number;
   headers: RawHeader[];
-  payload: T,
-}
+  payload: T;
+};
 
 type YwpBookResponse = {
   id: number;
@@ -182,7 +182,7 @@ export default class YoungWritersProgram {
     // We can't get away with regex matching for this one. Gotta actually parse the HTML...
     const parser = new DOMParser();
     const document = parser.parseFromString(response.payload, 'text/html');
-    
+
     const challengeParticipantIdElements: HTMLElement[] = [...document.querySelectorAll('[data-challenge_participant_id]').values()] as HTMLElement[];
     const challengeParticipantIds = [...new Set(challengeParticipantIdElements.map(el => +el.dataset.challenge_participant_id))];
 
@@ -204,7 +204,7 @@ export default class YoungWritersProgram {
     return challengeStubs;
   }
 
-  async _getChallengeStats(challengeStub: YwpChallengeStub): Promise<{ challenge: YwpChallenge, wordcounts: YwpWordcountStub[] }> {
+  async _getChallengeStats(challengeStub: YwpChallengeStub): Promise<{ challenge: YwpChallenge; wordcounts: YwpWordcountStub[] }> {
     const response = await this.callApi<YwpChallengeParticipantStatsResponse>(YoungWritersProgram.API_PREFIX + `/challenge_participants/${challengeStub.id}/stats.json`);
     if(!response.ok) {
       throw new Error(`An unknown error occurred: ${response.status}`);
@@ -240,7 +240,7 @@ export default class YoungWritersProgram {
       const sortedBookStubs = stubs
         .filter(stub => stub.bookId === bookId)
         .sort((a, b) => a.createdAtDatetime < b.createdAtDatetime ? -1 : a.createdAtDatetime > b.createdAtDatetime ? 1 : 0);
-      
+
       const bookWordcounts: YwpWordcount[] = sortedBookStubs.map((stub, ix, arr) => ({
         ...stub,
         delta: ix > 0 ? (stub.totalCount - arr[ix - 1].totalCount) : stub.totalCount,
@@ -265,7 +265,7 @@ export default class YoungWritersProgram {
 
       headers['X-CSRF-Token'] = this.csrfToken;
     }
-    
+
     if(this.cookie) {
       headers['Cookie'] = this.cookie;
     }

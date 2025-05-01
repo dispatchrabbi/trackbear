@@ -41,7 +41,7 @@ const toast = useToast();
 const leaderboard = ref<LeaderboardSummary>(null);
 const loadLeaderboard = async function() {
   leaderboard.value = leaderboardStore.get(route.params.boardUuid.toString());
-}
+};
 
 const participants = ref<Participant[]>([]);
 const isParticipantsLoading = ref<boolean>(false);
@@ -52,7 +52,7 @@ const loadParticipants = async function() {
 
   try {
     participants.value = await listParticipants(leaderboard.value.uuid);
-  } catch(err) {
+  } catch (err) {
     participantsErrorMessage.value = err.message;
     if(err.code !== 'NOT_LOGGED_IN') {
       // the ApplicationLayout takes care of this. If we don't exclude NOT_LOGGED_IN, this will redirect to /leaderboards
@@ -63,7 +63,7 @@ const loadParticipants = async function() {
   } finally {
     isParticipantsLoading.value = false;
   }
-}
+};
 
 async function reloadData() {
   await leaderboardStore.populate(true);
@@ -72,14 +72,14 @@ async function reloadData() {
 }
 
 const measuresAvailable = computed(() => {
-  if(leaderboard.value === null) { return [ TALLY_MEASURE.WORD ]; }
+  if(leaderboard.value === null) { return [TALLY_MEASURE.WORD]; }
 
   const measuresPresent = new Set(participants.value.flatMap(participant => participant.tallies.map(tally => tally.measure)));
   return leaderboard.value.measures.filter(measure => measuresPresent.has(measure));
 });
 
 const selectedMeasure = ref(TALLY_MEASURE.WORD);
-watch(measuresAvailable, (newMeasuresAvailable) => {
+watch(measuresAvailable, newMeasuresAvailable => {
   if(!newMeasuresAvailable.includes(selectedMeasure.value)) {
     selectedMeasure.value = measuresAvailable.value[0];
   }

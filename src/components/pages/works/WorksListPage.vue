@@ -38,12 +38,12 @@ const loadWorks = async function() {
 
   try {
     await workStore.populate();
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err.message;
   } finally {
     isLoading.value = false;
   }
-}
+};
 
 const WORK_SORTS = {
   'phase': { key: 'phase', label: 'Phase', cmpFn: cmpWorkByPhase },

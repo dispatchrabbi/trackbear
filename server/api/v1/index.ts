@@ -1,6 +1,6 @@
-import { prefixRoutes, type RouteConfig } from "server/lib/api.ts";
+import { prefixRoutes, type RouteConfig } from 'server/lib/api.ts';
 
-import boardRoutes from "./board.ts";
+import boardRoutes from './board.ts';
 import goalRoutes from './goal.ts';
 import leaderboardRoutes from './leaderboard.ts';
 import meRoutes from './me.ts';

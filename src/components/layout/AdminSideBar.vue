@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineEmits } from 'vue';
 
-const emit = defineEmits(['menu-navigation'])
+const emit = defineEmits(['menu-navigation']);
 
 import MenuBar from 'src/components/layout/MenuBar.vue';
 import { PrimeIcons } from 'primevue/api';

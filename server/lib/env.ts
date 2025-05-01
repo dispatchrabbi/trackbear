@@ -38,12 +38,12 @@ type TrackbearCommonEnv = {
 };
 
 type TrackbearTlsEnv =
-| {
+  | {
     ENABLE_TLS: true;
     TLS_KEY_PATH: string;
     TLS_CERT_PATH: string;
   }
-| {
+  | {
     ENABLE_TLS: false;
     TLS_KEY_PATH: string | null;
     TLS_CERT_PATH: string | null;
@@ -67,36 +67,35 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   } else if(process.env.PORT === '') {
     console.info('No PORT provided; defaulting to 3000');
   }
-  process.env.PORT = process.env.PORT || "3000";
+  process.env.PORT = process.env.PORT || '3000';
 
   if(!['', '0', '1'].includes(process.env.HAS_PROXY)) { throw new Error('HAS_PROXY should only be either `0` or `1`'); }
-  process.env.HAS_PROXY = process.env.HAS_PROXY || "0";
+  process.env.HAS_PROXY = process.env.HAS_PROXY || '0';
 
   if(!['', '0', '1'].includes(process.env.ENABLE_TLS)) { throw new Error('ENABLE_TLS should only be either `0` or `1`'); }
-  process.env.ENABLE_TLS = process.env.ENABLE_TLS || "0";
+  process.env.ENABLE_TLS = process.env.ENABLE_TLS || '0';
 
   const enableTls = !!+process.env.ENABLE_TLS;
   if(enableTls) {
     if(!(process.env.TLS_KEY_PATH && process.env.TLS_CERT_PATH)) { throw new Error('ENABLE_TLS requires both TLS_KEY_PATH and TLS_CERT_PATH values in .env'); }
 
-
     process.env.TLS_KEY_PATH = path.resolve(ROOT_DIR, process.env.TLS_KEY_PATH);
     try {
       await access(process.env.TLS_KEY_PATH, constants.R_OK);
-    } catch(err) {
+    } catch (err) {
       throw new Error(`Could not read TLS_KEY_PATH (${process.env.TLS_KEY_PATH}): ${err.message}`, { cause: err });
     }
 
     process.env.TLS_CERT_PATH = path.resolve(ROOT_DIR, process.env.TLS_CERT_PATH);
     try {
       await access(process.env.TLS_CERT_PATH, constants.R_OK);
-    } catch(err) {
+    } catch (err) {
       throw new Error(`Could not read TLS_CERT_PATH (${process.env.TLS_CERT_PATH}): ${err.message}`, { cause: err });
     }
   }
 
   if(!['', '0', '1'].includes(process.env.TLS_ALLOW_SELF_SIGNED)) { throw new Error('TLS_ALLOW_SELF_SIGNED should only be either `0` or `1`'); }
-  process.env.TLS_ALLOW_SELF_SIGNED = process.env.TLS_ALLOW_SELF_SIGNED || "0";
+  process.env.TLS_ALLOW_SELF_SIGNED = process.env.TLS_ALLOW_SELF_SIGNED || '0';
 
   process.env.LOG_PATH = process.env.LOG_PATH || '/logs';
 
@@ -129,52 +128,52 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   process.env.UPLOADS_PATH = process.env.UPLOADS_PATH || '/uploads';
 
   if(!['', '0', '1'].includes(process.env.ENABLE_METRICS)) { throw new Error('ENABLE_METRICS should only be either `0` or `1`'); }
-  process.env.ENABLE_METRICS = process.env.ENABLE_METRICS || "0";
+  process.env.ENABLE_METRICS = process.env.ENABLE_METRICS || '0';
 
   if(process.env.ENABLE_METRICS && !process.env.PLAUSIBLE_HOST) { throw new Error('Missing PLAUSIBLE_HOST value in .env'); }
 
   if(process.env.ENABLE_METRICS && !process.env.PLAUSIBLE_DOMAIN) { throw new Error('Missing PLAUSIBLE_DOMAIN value in .env'); }
 
   if(!['', '0', '1'].includes(process.env.ENABLE_INSTRUMENTATION)) { throw new Error('ENABLE_METRICS should only be either `0` or `1`'); }
-  process.env.ENABLE_INSTRUMENTATION = process.env.ENABLE_INSTRUMENTATION || "0";
+  process.env.ENABLE_INSTRUMENTATION = process.env.ENABLE_INSTRUMENTATION || '0';
 
   if(process.env.ENABLE_INSTRUMENTATION && !process.env.OTLP_URL) { throw new Error('Missing PLAUSIBLE_HOST value in .env'); }
 
   // second step is to parse the values into more usable types
   return {
-    NODE_ENV:               process.env.NODE_ENV,
+    NODE_ENV: process.env.NODE_ENV,
 
-    PORT:                  +process.env.PORT,
-    HAS_PROXY:              process.env.HAS_PROXY === '1',
+    PORT: +process.env.PORT,
+    HAS_PROXY: process.env.HAS_PROXY === '1',
 
-    ENABLE_TLS:             process.env.ENABLE_TLS === '1',
-    TLS_KEY_PATH:           enableTls ? process.env.TLS_KEY_PATH : null,
-    TLS_CERT_PATH:          enableTls ? process.env.TLS_CERT_PATH : null,
-    TLS_ALLOW_SELF_SIGNED:  process.env.TLS_ALLOW_SELF_SIGNED === '1',
+    ENABLE_TLS: process.env.ENABLE_TLS === '1',
+    TLS_KEY_PATH: enableTls ? process.env.TLS_KEY_PATH : null,
+    TLS_CERT_PATH: enableTls ? process.env.TLS_CERT_PATH : null,
+    TLS_ALLOW_SELF_SIGNED: process.env.TLS_ALLOW_SELF_SIGNED === '1',
 
-    LOG_PATH:               process.env.LOG_PATH,
-    LOG_LEVEL:              process.env.LOG_LEVEL,
+    LOG_PATH: process.env.LOG_PATH,
+    LOG_LEVEL: process.env.LOG_LEVEL,
 
-    DATABASE_USER:          process.env.DATABASE_USER,
-    DATABASE_PASSWORD:      process.env.DATABASE_PASSWORD,
-    DATABASE_NAME:          process.env.DATABASE_NAME,
-    DATABASE_HOST:          process.env.DATABASE_HOST,
+    DATABASE_USER: process.env.DATABASE_USER,
+    DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
+    DATABASE_NAME: process.env.DATABASE_NAME,
+    DATABASE_HOST: process.env.DATABASE_HOST,
 
-    DB_PATH:                process.env.DB_PATH,
-    COOKIE_SECRET:          process.env.COOKIE_SECRET,
+    DB_PATH: process.env.DB_PATH,
+    COOKIE_SECRET: process.env.COOKIE_SECRET,
 
-    ENABLE_EMAIL:           process.env.ENABLE_EMAIL === '1',
-    MAILERSEND_API_KEY:     process.env.MAILERSEND_API_KEY,
-    EMAIL_URL_PREFIX:       process.env.EMAIL_URL_PREFIX,
+    ENABLE_EMAIL: process.env.ENABLE_EMAIL === '1',
+    MAILERSEND_API_KEY: process.env.MAILERSEND_API_KEY,
+    EMAIL_URL_PREFIX: process.env.EMAIL_URL_PREFIX,
 
-    UPLOADS_PATH:           process.env.UPLOADS_PATH,
+    UPLOADS_PATH: process.env.UPLOADS_PATH,
 
-    ENABLE_METRICS:         process.env.ENABLE_METRICS === '1',
-    PLAUSIBLE_HOST:         process.env.PLAUSIBLE_HOST,
-    PLAUSIBLE_DOMAIN:       process.env.PLAUSIBLE_DOMAIN,
+    ENABLE_METRICS: process.env.ENABLE_METRICS === '1',
+    PLAUSIBLE_HOST: process.env.PLAUSIBLE_HOST,
+    PLAUSIBLE_DOMAIN: process.env.PLAUSIBLE_DOMAIN,
 
     ENABLE_INSTRUMENTATION: process.env.ENABLE_INSTRUMENTATION === '1',
-    OTLP_URL:               process.env.OTLP_URL,
+    OTLP_URL: process.env.OTLP_URL,
   };
 }
 

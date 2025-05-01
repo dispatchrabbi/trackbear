@@ -1,9 +1,9 @@
-import { Request, ErrorRequestHandler, RequestHandler, Application } from "express";
+import { Request, ErrorRequestHandler, RequestHandler, Application } from 'express';
 import type { WithSessionAuth } from 'server/lib/auth.ts';
-import { ApiResponse, failure } from "server/lib/api-response.ts";
-import { mountEndpoints, prefixRoutes, type RouteConfig } from "server/lib/api.ts";
+import { ApiResponse, failure } from 'server/lib/api-response.ts';
+import { mountEndpoints, prefixRoutes, type RouteConfig } from 'server/lib/api.ts';
 
-import winston from "winston";
+import winston from 'winston';
 
 import authRoutes from './auth.ts';
 import bannersRoutes from './banners.ts';
@@ -11,7 +11,7 @@ import infoRoutes from './info.ts';
 import pingRoutes from './ping.ts';
 
 import adminRoutes from './admin/index.ts';
-import v1Routes from "./v1/index.ts";
+import v1Routes from './v1/index.ts';
 
 const apiRoutes: RouteConfig[] = [
   ...prefixRoutes('/auth', authRoutes),
@@ -35,7 +35,7 @@ export function mountApiEndpoints(app: Application) {
 const logApiRequest: RequestHandler = function(req, res, next) {
   winston.info(`${req.method} ${req.originalUrl}`, { sessionId: req.sessionID, user: (req as WithSessionAuth<Request>).session.auth?.id });
   next();
-}
+};
 
 // handle any API errors
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -52,6 +52,6 @@ const lastChanceApiErrorHandler: ErrorRequestHandler = (err, req, res: ApiRespon
   }
 };
 
-const fallthrough404Handler: RequestHandler = function (req, res) {
+const fallthrough404Handler: RequestHandler = function(req, res) {
   res.status(404).send(failure('NOT_FOUND', 'Not found'));
-}
+};

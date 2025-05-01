@@ -34,21 +34,27 @@ const loadBanners = async function() {
 
   try {
     banners.value = await getBanners();
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err.message;
   } finally {
     isLoading.value = false;
   }
-}
+};
 
 const onlyShowEnabledBanners = ref<boolean>(true);
 const onlyShowCurrentBanners = ref<boolean>(true);
 
 const sortedFilteredBanners = computed(() => {
   let sortedBanners = banners.value.toSorted((a, b) =>
-    a.showUntil > b.showUntil ? -1 : a.showUntil < b.showUntil ? 1 :
-      a.updatedAt > b.updatedAt ? -1 : a.updatedAt < b.updatedAt ? 1 :
-    0
+    a.showUntil > b.showUntil ?
+        -1 :
+      a.showUntil < b.showUntil ?
+        1 :
+        a.updatedAt > b.updatedAt ?
+            -1 :
+          a.updatedAt < b.updatedAt ?
+            1 :
+            0,
   );
 
   if(onlyShowEnabledBanners.value) {

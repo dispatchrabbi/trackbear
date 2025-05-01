@@ -50,8 +50,8 @@ const formModel = reactive({
 const validations = z.object({
   measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>).nullable(),
   count: z
-      .number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }).nullable()
-      .refine(v => props.board.individualGoalMode ? v !== null : true, { message: 'Please input your goal for this leaderboard.'}),
+    .number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }).nullable()
+    .refine(v => props.board.individualGoalMode ? v !== null : true, { message: 'Please input your goal for this leaderboard.' }),
   works: z.array(z.number({ invalid_type_error: 'Please select only valid projects.' }).int({ message: 'Please select only valid projects.' }).positive({ message: 'Please select only valid projects.' })),
   tags: z.array(z.number({ invalid_type_error: 'Please select only valid tags.' }).int({ message: 'Please select only valid tags.' }).positive({ message: 'Please select only valid tags.' })),
 });
@@ -67,7 +67,7 @@ const measureOptions = computed(() => {
 
 const onMeasureChange = function() {
   formModel.count = null;
-}
+};
 
 const isLoading = ref<boolean>(false);
 const successMessage = ref<string | null>(null);
@@ -81,10 +81,12 @@ async function handleSubmit() {
   try {
     const data = formData();
     const payload: BoardParticipantPayload = {
-      goal: props.board.individualGoalMode ? {
-        measure: data.measure,
-        count: data.count,
-      } : null,
+      goal: props.board.individualGoalMode ?
+          {
+            measure: data.measure,
+            count: data.count,
+          } :
+        null,
       works: data.works,
       tags: data.tags,
     };
@@ -93,13 +95,13 @@ async function handleSubmit() {
 
     emit('board:edit-participation', { participant: updated });
     eventBus.emit({ board: props.board, participant: updated });
-    
+
     successMessage.value = `You have ${isJoin.value ? 'joined' : 'changed your selections for'} ${props.board.title}!`;
     await wait(1 * 1000);
 
     emit('formSuccess');
   } catch {
-    errorMessage.value = 'Could not submit: something went wrong server-side.'
+    errorMessage.value = 'Could not submit: something went wrong server-side.';
 
     return;
   } finally {
@@ -200,5 +202,4 @@ async function handleSubmit() {
   </TbForm>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

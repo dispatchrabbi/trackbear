@@ -1,19 +1,19 @@
-import { traced } from "../../tracer.ts";
+import { traced } from '../../tracer.ts';
 
-import dbClient from "../../db.ts";
-import type { Create, Update } from "../types.ts";
+import dbClient from '../../db.ts';
+import type { Create, Update } from '../types.ts';
 
-import { type RequestContext } from "../../request-context.ts";
+import { type RequestContext } from '../../request-context.ts';
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 import type { User } from '../user/user-model.ts';
-import { BOARD_STATE, BOARD_PARTICIPANT_STATE } from "./consts.ts";
-import { Board, BoardTally, BoardWithParticipantBios, FullBoard, ParticipantBio, ParticipantGoal } from "./types.ts";
-import { TALLY_STATE } from "../tally/consts.ts";
+import { BOARD_STATE, BOARD_PARTICIPANT_STATE } from './consts.ts';
+import { Board, BoardTally, BoardWithParticipantBios, FullBoard, ParticipantBio, ParticipantGoal } from './types.ts';
+import { TALLY_STATE } from '../tally/consts.ts';
 // import type { Tally } from '../tally/tally-model.wip.ts';
-import { /*omit,*/ pick } from 'server/lib/obj.ts';
-import { USER_STATE } from "../user/consts.ts";
+import { /* omit, */ pick } from 'server/lib/obj.ts';
+import { USER_STATE } from '../user/consts.ts';
 // import { WORK_STATE } from '../work/consts.ts';
 // import { TAG_STATE } from '../tag/consts.ts';
 // import { makeIncludeWorkAndTagIds, included2ids } from '../helpers.ts';
@@ -23,7 +23,6 @@ export type CreateBoardData = Create<Board, OptionalBoardFields>;
 export type UpdateBoardData = Update<Board>;
 
 export class BoardModel {
-
   @traced
   static async getBoards(owner: User): Promise<BoardWithParticipantBios[]> {
     const found = await dbClient.board.findMany({
@@ -35,17 +34,17 @@ export class BoardModel {
             participants: {
               some: {
                 userId: owner.id,
-                state: BOARD_PARTICIPANT_STATE.ACTIVE
-              }
-            }
-          }
-        ]
+                state: BOARD_PARTICIPANT_STATE.ACTIVE,
+              },
+            },
+          },
+        ],
       },
       include: {
         participants: {
           where: {
             state: BOARD_PARTICIPANT_STATE.ACTIVE,
-            user: { is: { state: USER_STATE.ACTIVE } }
+            user: { is: { state: USER_STATE.ACTIVE } },
           },
           include: {
             user: {
@@ -53,17 +52,17 @@ export class BoardModel {
                 uuid: true,
                 displayName: true,
                 avatar: true,
-              }
+              },
             },
           },
         },
-      }
+      },
     });
 
     const boards = found.map(board => Object.assign(board, {
       starred: (board.ownerId === owner.id && board.starred) || board.participants.filter(p => p.userId === owner.id).some(p => p.starred),
       participants: board.participants.map(p => p.user) as ParticipantBio[],
-    })) as BoardWithParticipantBios[]
+    })) as BoardWithParticipantBios[];
 
     return boards;
   }
@@ -79,7 +78,7 @@ export class BoardModel {
         participants: {
           where: {
             state: BOARD_PARTICIPANT_STATE.ACTIVE,
-            user: { is: { state: USER_STATE.ACTIVE } }
+            user: { is: { state: USER_STATE.ACTIVE } },
           },
           include: {
             user: true,
@@ -87,7 +86,7 @@ export class BoardModel {
             tagsIncluded: { select: { id: true } },
           },
         },
-      }
+      },
     });
 
     if(!board) { return null; }
@@ -112,11 +111,11 @@ export class BoardModel {
           // only include tallies with the measure from the individual goal, if there are individual goals — but don't return any tallies if the participant hasn't set a goal
           measure: board.individualGoalMode ? ((participant.goal as ParticipantGoal)?.measure ?? FAKE_MEASURE_TO_PREVENT_RETURNING_TALLIES_FOR_PARTICIPANTS_WITH_UNSET_GOALS) : undefined,
           // only include tallies from works specified in the participant's config (if any were)
-          workId: participant.worksIncluded.length > 0 ? { in: participant.worksIncluded.map(work => work.id ) } : undefined,
+          workId: participant.worksIncluded.length > 0 ? { in: participant.worksIncluded.map(work => work.id) } : undefined,
           // only include tallies with at least one tag specified in the participant's config (if any were)
-          tags: participant.tagsIncluded.length > 0 ? { some: { id: { in: participant.tagsIncluded.map(tag => tag.id ) } } } : undefined,
-        }))
-      }
+          tags: participant.tagsIncluded.length > 0 ? { some: { id: { in: participant.tagsIncluded.map(tag => tag.id) } } } : undefined,
+        })),
+      },
     });
 
     const fullBoard = Object.assign(board, {
@@ -145,21 +144,21 @@ export class BoardModel {
     }, data);
 
     const normalizedData = this.normalizeBoardData(dataWithDefaults);
-    
+
     const created = await dbClient.board.create({
       data: {
         state: BOARD_STATE.ACTIVE,
         ownerId: owner.id,
 
         ...normalizedData,
-      }
+      },
     }) as Board;
 
     const changes = buildChangeRecord({}, created);
     await logAuditEvent(
       AUDIT_EVENT_TYPE.BOARD_CREATE,
       reqCtx.userId, created.id, null,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return created;
@@ -184,7 +183,7 @@ export class BoardModel {
     await logAuditEvent(
       AUDIT_EVENT_TYPE.BOARD_UPDATE,
       reqCtx.userId, updated.id, null,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return updated;
@@ -202,14 +201,14 @@ export class BoardModel {
         id: board.id,
         ownerId: owner.id,
         state: BOARD_STATE.ACTIVE,
-      }
+      },
     }) as Board;
 
     const changes = buildChangeRecord(board, deleted);
     await logAuditEvent(
       AUDIT_EVENT_TYPE.BOARD_DELETE,
       reqCtx.userId, board.id, null,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return deleted;
@@ -225,14 +224,14 @@ export class BoardModel {
         id: board.id,
         ownerId: owner.id,
         state: BOARD_STATE.DELETED,
-      }
+      },
     }) as Board;
 
     const changes = buildChangeRecord(board, undeleted);
     await logAuditEvent(
       AUDIT_EVENT_TYPE.BOARD_UNDELETE,
       reqCtx.userId, board.id, null,
-      changes, reqCtx.sessionId
+      changes, reqCtx.sessionId,
     );
 
     return undeleted;
@@ -248,5 +247,4 @@ export class BoardModel {
 
     return data;
   }
-
 }

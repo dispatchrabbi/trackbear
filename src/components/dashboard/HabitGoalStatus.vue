@@ -11,14 +11,13 @@ import { streakColors } from 'src/lib/tally.ts';
 import { formatDate, parseDateStringSafe } from 'src/lib/date.ts';
 import { commaify, formatPercent } from 'src/lib/number.ts';
 
-
 import GoalCard from 'src/components/dashboard/GoalCard.vue';
 import HabitGauge from 'src/components/goal/HabitGauge.vue';
 import StatTile from 'src/components/goal/StatTile.vue';
 
 const props = defineProps<{
-  goal: HabitGoal,
-  tallies: Tally[],
+  goal: HabitGoal;
+  tallies: Tally[];
 }>();
 
 const habitStats = computed(() => {
@@ -48,7 +47,7 @@ const currentRange = computed(() => {
   } else {
     return null;
   }
-})
+});
 
 function rangeContainsToday(range) {
   const now = new Date();

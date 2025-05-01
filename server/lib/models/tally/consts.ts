@@ -1,8 +1,8 @@
-import { ValueEnum } from "../../obj";
+import { ValueEnum } from '../../obj';
 
 export const TALLY_STATE = {
-  ACTIVE:   'active',
-  DELETED:  'deleted', // use this when the parent work was deleted
+  ACTIVE: 'active',
+  DELETED: 'deleted', // use this when the parent work was deleted
 };
 export type TallyState = ValueEnum<typeof TALLY_MEASURE>;
 

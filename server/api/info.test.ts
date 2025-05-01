@@ -1,9 +1,9 @@
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
-import { mockObject } from "../../testing-support/util.ts";
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { mockObject } from '../../testing-support/util.ts';
 import { getHandlerMocks } from '../lib/__mocks__/express.ts';
 import * as env from '../lib/env';
 
-import { EnvInfo, handleGetEnv } from "./info";
+import { EnvInfo, handleGetEnv } from './info';
 
 describe('/api/info', () => {
   describe.todo('GET /changelog', () => {
@@ -28,7 +28,7 @@ describe('/api/info', () => {
           PLAUSIBLE_DOMAIN: 'trackbear.test',
         });
       });
-      
+
       const expected: EnvInfo = {
         URL_PREFIX: 'https://trackbear.test',
         ENABLE_METRICS: true,

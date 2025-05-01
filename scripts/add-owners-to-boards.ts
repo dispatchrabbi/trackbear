@@ -41,21 +41,21 @@ async function main() {
       where: {
         userId_boardId: {
           userId: board.ownerId,
-          boardId: board.id
+          boardId: board.id,
         },
-      }
+      },
     });
 
     if(ownerParticipant) {
       scriptLogger.info(`  - Found! Setting the isOwner flag...`);
-      
+
       await dbClient.boardParticipant.update({
         where: {
           id: ownerParticipant.id,
         },
         data: {
           isOwner: true,
-        }
+        },
       });
 
       report.ownersFoundAndFlagged++;
@@ -89,9 +89,9 @@ async function main() {
       where: {
         userId_boardId: {
           userId: board.ownerId,
-          boardId: board.id
+          boardId: board.id,
         },
-      }
+      },
     });
 
     if(ownerParticipant) {
@@ -108,7 +108,7 @@ async function main() {
     }
   }
 
-  scriptLogger.info(`Final report:`)
+  scriptLogger.info(`Final report:`);
   scriptLogger.info(`🔎 Boards examined: ${report.boardsExamined}`);
   scriptLogger.info(`🏁 Owners found and flagged: ${report.ownersFoundAndFlagged}`);
   scriptLogger.info(`👋 Owners missing and created: ${report.ownersMissingAndCreated}`);

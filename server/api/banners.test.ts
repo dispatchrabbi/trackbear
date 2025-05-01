@@ -5,7 +5,7 @@ import dbClientMock from '../lib/__mocks__/db.ts';
 
 import { getHandlerMocks } from 'server/lib/__mocks__/express.ts';
 
-import { handleGetBanners } from "./banners.ts";
+import { handleGetBanners } from './banners.ts';
 
 describe('/api/banners', () => {
   describe('GET /', () => {

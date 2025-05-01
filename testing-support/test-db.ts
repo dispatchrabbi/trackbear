@@ -1,8 +1,8 @@
 import path from 'node:path';
-import { URL } from "node:url";
-import { execSync } from "child_process";
-import { PrismaClient } from "@prisma/client";
-import { v4 } from "uuid";
+import { URL } from 'node:url';
+import { execSync } from 'child_process';
+import { PrismaClient } from '@prisma/client';
+import { v4 } from 'uuid';
 import { beforeEach, afterEach } from 'vitest';
 import { loadDotEnv } from './env.ts';
 
@@ -17,7 +17,7 @@ process.env.DATABASE_URL = testDatabaseUrl;
 console.log(`Creating client for database ${testDatabaseUrl}...`);
 const dbClient = new PrismaClient({
   datasources: { db: { url: testDatabaseUrl } },
-  
+
 });
 
 export default dbClient;
@@ -44,8 +44,8 @@ afterEach(async () => {
 });
 
 function makeTestDatabaseUrl(testSchemaName) {
-  if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL is not set; cannot create testing database");
+  if(!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL is not set; cannot create testing database');
   }
 
   console.log(process.env.DATABASE_URL);

@@ -12,8 +12,8 @@ import { type HabitGoalParameters } from 'server/lib/models/goal/types';
 import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal/consts';
 
 const props = defineProps<{
-  goal: Goal,
-  tallies: Tally[],
+  goal: Goal;
+  tallies: Tally[];
 }>();
 
 const habitStats = computed(() => {
@@ -23,7 +23,7 @@ const habitStats = computed(() => {
     parameters.cadence,
     parameters.threshold,
     props.goal.startDate,
-    props.goal.endDate
+    props.goal.endDate,
   );
 
   return stats;

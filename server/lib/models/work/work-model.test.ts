@@ -39,7 +39,7 @@ describe(WorkModel, () => {
         where: {
           ownerId: testOwner.id,
           state: WORK_STATE.ACTIVE,
-        }
+        },
       });
     });
   });
@@ -50,8 +50,8 @@ describe(WorkModel, () => {
         tallies: mockObjects<Tally>(4, () => ({
           date: '2024-01-01',
           measure: TALLY_MEASURE.WORD,
-          count: 1000
-        }))
+          count: 1000,
+        })),
       }));
       dbClient.work.findMany.mockResolvedValue(testWorksWithTallies);
 
@@ -76,11 +76,11 @@ describe(WorkModel, () => {
 
     it('works with multiple measures in the tallies', async () => {
       const testWorksWithTallies = mockObjects<WorkWithTallies>(1, () => ({
-        tallies: mockObjects<Tally>(6, (ix) => ({
+        tallies: mockObjects<Tally>(6, ix => ({
           date: `2024-01-${10 + ix}`,
           measure: ix % 2 ? TALLY_MEASURE.SCENE : TALLY_MEASURE.LINE,
           count: ix % 2 ? 5 : 100,
-        }))
+        })),
       }));
       dbClient.work.findMany.mockResolvedValue(testWorksWithTallies);
 
@@ -99,7 +99,7 @@ describe(WorkModel, () => {
 
     it('returns reasonable info when there are no tallies for a work', async () => {
       const testWorksWithTallies = mockObjects<WorkWithTallies>(1, () => ({
-        tallies: []
+        tallies: [],
       }));
       dbClient.work.findMany.mockResolvedValue(testWorksWithTallies);
 
@@ -127,7 +127,7 @@ describe(WorkModel, () => {
           id: TEST_OBJECT_ID,
           ownerId: testOwner.id,
           state: WORK_STATE.ACTIVE,
-        }
+        },
       });
     });
 
@@ -162,12 +162,12 @@ describe(WorkModel, () => {
           ...testData,
           state: WORK_STATE.ACTIVE,
           ownerId: testOwner.id,
-        }
+        },
       });
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.WORK_CREATE,
         testReqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), testReqCtx.sessionId
+        expect.any(Object), testReqCtx.sessionId,
       );
     });
 
@@ -175,7 +175,7 @@ describe(WorkModel, () => {
       const testData: CreateWorkData = {
         title: 'barebones work',
       };
-      const testWork = mockObject<Work>( { id: TEST_OBJECT_ID });
+      const testWork = mockObject<Work>({ id: TEST_OBJECT_ID });
       dbClient.work.create.mockResolvedValue(testWork);
 
       await WorkModel.createWork(testOwner, testData, testReqCtx);
@@ -191,9 +191,9 @@ describe(WorkModel, () => {
           displayOnProfile: false,
           state: WORK_STATE.ACTIVE,
           ownerId: testOwner.id,
-        }
+        },
       });
-    })
+    });
   });
 
   describe(WorkModel.updateWork, () => {
@@ -221,7 +221,7 @@ describe(WorkModel, () => {
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.WORK_UPDATE,
         testReqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), testReqCtx.sessionId
+        expect.any(Object), testReqCtx.sessionId,
       );
     });
   });
@@ -232,7 +232,7 @@ describe(WorkModel, () => {
       dbClient.work.update.mockResolvedValue(testWork);
 
       const deleted = await WorkModel.deleteWork(testOwner, testWork, testReqCtx);
-      
+
       expect(deleted).toBe(testWork);
       expect(dbClient.work.update).toBeCalledWith({
         where: {
@@ -246,14 +246,14 @@ describe(WorkModel, () => {
             updateMany: {
               where: { state: TALLY_STATE.ACTIVE },
               data: { state: TALLY_STATE.DELETED },
-            }
+            },
           },
         },
       });
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.WORK_DELETE,
         testReqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), testReqCtx.sessionId
+        expect.any(Object), testReqCtx.sessionId,
       );
     });
   });
@@ -277,15 +277,15 @@ describe(WorkModel, () => {
             updateMany: {
               where: { state: TALLY_STATE.DELETED },
               data: { state: TALLY_STATE.ACTIVE },
-            }
+            },
           },
         },
       });
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.WORK_UNDELETE,
         testReqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), testReqCtx.sessionId
+        expect.any(Object), testReqCtx.sessionId,
       );
     });
   });
-})
+});

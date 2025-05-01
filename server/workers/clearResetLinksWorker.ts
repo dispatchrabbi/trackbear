@@ -1,7 +1,7 @@
-import { Prisma } from "@prisma/client";
-import dbClient from "../lib/db.ts";
-import winston from "winston";
-import { PASSWORD_RESET_LINK_STATE } from "../lib/models/user/consts.ts";
+import { Prisma } from '@prisma/client';
+import dbClient from '../lib/db.ts';
+import winston from 'winston';
+import { PASSWORD_RESET_LINK_STATE } from '../lib/models/user/consts.ts';
 
 const NAME = 'clearResetLinksWorker';
 
@@ -18,11 +18,11 @@ async function run() {
       where: {
         OR: [
           { state: PASSWORD_RESET_LINK_STATE.USED },
-          { expiresAt: { lt: new Date() } }
-        ]
-      }
+          { expiresAt: { lt: new Date() } },
+        ],
+      },
     });
-  } catch(err) {
+  } catch (err) {
     workerLogger.error(`Error while deleting password reset links: ${err.message}`, { service: NAME });
     return;
   }

@@ -15,11 +15,11 @@ export const useBannerStore = defineStore('banner', {
     };
   },
   getters: {
-    availableBanners: (state) => {
+    availableBanners: state => {
       if(state.currentBanners === null) { return []; }
 
       return state.currentBanners.filter(banner => !state.closedBannerUuids.includes(banner.uuid));
-    }
+    },
   },
   actions: {
     async populate() {
@@ -36,6 +36,6 @@ export const useBannerStore = defineStore('banner', {
     closeBanner(bannerUuid: string) {
       this.closedBannerUuids.push(bannerUuid);
       localStorage.setItem('closed-banners', this.closedBannerUuids.join(','));
-    }
-  }
+    },
+  },
 });

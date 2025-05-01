@@ -4,7 +4,7 @@ const PORT = process.env.PORT || 3000;
 const ENABLE_TLS = !!+(process.env.ENABLE_TLS || '0');
 
 if(process.env.TLS_ALLOW_SELF_SIGNED === '1') {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 }
 
 async function healthcheck() {

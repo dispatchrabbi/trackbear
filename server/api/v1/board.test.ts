@@ -1,7 +1,7 @@
 import { vi, describe, it, expect, afterEach } from 'vitest';
 import { mockObject, NIL_UUID, TEST_SESSION_ID, TEST_USER_ID } from '../../../testing-support/util.ts';
 import { getHandlerMocksWithUser } from '../../lib/__mocks__/express.ts';
-import { type User, type Board, BoardParticipant } from "@prisma/client";
+import { type User, type Board, BoardParticipant } from '@prisma/client';
 
 vi.mock('../../lib/db.ts');
 import dbClientMock from '../../lib/__mocks__/db.ts';
@@ -9,13 +9,13 @@ import dbClientMock from '../../lib/__mocks__/db.ts';
 vi.mock('../../lib/audit-events.ts', { spy: true });
 import { logAuditEventMock } from '../../lib/__mocks__/audit-events.ts';
 
-import * as boardConsts from "../../lib/models/board-wip/consts.ts";
-import type { BoardWithParticipantBios, FullBoard, FullParticipant, BoardWithParticipants } from "../../lib/models/board-wip/types.ts";
+import * as boardConsts from '../../lib/models/board-wip/consts.ts';
+import type { BoardWithParticipantBios, FullBoard, FullParticipant, BoardWithParticipants } from '../../lib/models/board-wip/types.ts';
 
 import {
   handleGetBoards, handleGetBoard,
   handleCreateBoard, handleUpdateBoard, handleStarBoard, handleDeleteBoard,
-  handleGetBoardParticipation, handleUpdateBoardParticipation, handleDeleteBoardParticipation
+  handleGetBoardParticipation, handleUpdateBoardParticipation, handleDeleteBoardParticipation,
 } from './board';
 
 describe('board api v1', () => {
@@ -29,7 +29,7 @@ describe('board api v1', () => {
         mockObject<BoardWithParticipantBios>(),
         mockObject<BoardWithParticipantBios>(),
       ]);
-  
+
       const { req, res } = getHandlerMocksWithUser();
       await handleGetBoards(req, res);
 
@@ -45,7 +45,7 @@ describe('board api v1', () => {
         ownerId: TEST_USER_ID,
         isPublic: false,
       }));
-  
+
       const { req, res } = getHandlerMocksWithUser({ params: { uuid: NIL_UUID } });
       await handleGetBoard(req, res);
 
@@ -63,7 +63,7 @@ describe('board api v1', () => {
 
       const { req, res } = getHandlerMocksWithUser({
         user: mockObject<User>({ id: TEST_USER_ID, uuid: NIL_UUID }),
-        params: { uuid: NIL_UUID }
+        params: { uuid: NIL_UUID },
       });
       await handleGetBoard(req, res);
 
@@ -206,7 +206,7 @@ describe('board api v1', () => {
   describe('getBoardParticipation', () => {
     it('gets information about a board', async () => {
       vi.spyOn(boardConsts, 'getBoardParticipationForUser').mockResolvedValue(mockObject<BoardWithParticipants>());
-  
+
       const { req, res } = getHandlerMocksWithUser();
       await handleGetBoardParticipation(req, res);
 
@@ -222,7 +222,7 @@ describe('board api v1', () => {
         individualGoalMode: true,
       }));
       dbClientMock.boardParticipant.findFirst.mockResolvedValue(null);
-  
+
       const { req, res } = getHandlerMocksWithUser();
       await handleUpdateBoardParticipation(req, res);
 
@@ -236,7 +236,7 @@ describe('board api v1', () => {
         individualGoalMode: true,
       }));
       dbClientMock.boardParticipant.findFirst.mockResolvedValue(mockObject<BoardParticipant>());
-  
+
       const { req, res } = getHandlerMocksWithUser();
       await handleUpdateBoardParticipation(req, res);
 
@@ -249,9 +249,9 @@ describe('board api v1', () => {
   describe('deleteBoardParticipation', () => {
     it('removes you from the list of participants', async () => {
       dbClientMock.boardParticipant.findFirst.mockResolvedValue(mockObject<BoardParticipant>({
-        id: -10
+        id: -10,
       }));
-      
+
       const { req, res } = getHandlerMocksWithUser();
       await handleDeleteBoardParticipation(req, res);
 

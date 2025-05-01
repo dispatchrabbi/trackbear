@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watchEffect, defineProps, withDefaults, onMounted, useTemplateRef } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
-import * as Plot from "@observablehq/plot";
-import { utcFormat } from 'd3-time-format'
+import * as Plot from '@observablehq/plot';
+import { utcFormat } from 'd3-time-format';
 
 import { saveSvgAsPng } from 'src/lib/image.ts';
 
@@ -82,7 +82,7 @@ const getSuggestedYAxisMaximum = function(measureHint: TallyMeasure | 'percent')
   if(measureHint === 'percent') {
     return 100;
   } else {
-    return TALLY_MEASURE_INFO[measureHint].defaultChartMax
+    return TALLY_MEASURE_INFO[measureHint].defaultChartMax;
   }
 };
 
@@ -93,7 +93,7 @@ const formatValue = function(d: number) {
   } else {
     return formatCount(d, props.config.measureHint);
   }
-}
+};
 
 const handlePlotDoubleclick = function(ev: MouseEvent) {
   // only do this if the alt/option key is held down
@@ -103,7 +103,7 @@ const handlePlotDoubleclick = function(ev: MouseEvent) {
   const svgClass = figureEl.className.replace('-figure', '');
   const svgEl = plotContainer.value.querySelector(`svg.${svgClass}`) as SVGSVGElement;
   saveSvgAsPng(svgEl, 'chart.png', DEFAULT_LINE_COLORS.background.light);
-}
+};
 
 onMounted(() => {
   useResizeObserver(plotContainer, entries => {
@@ -124,7 +124,7 @@ onMounted(() => {
           order: 'series',
           sort: 'date',
           fill: 'series',
-        }))
+        })),
       );
     } else {
       marks.push(
@@ -135,7 +135,7 @@ onMounted(() => {
           sort: 'date',
           stroke: 'series',
           marker: 'dot',
-        })
+        }),
       );
     }
     if(props.par !== null) {
@@ -145,7 +145,7 @@ onMounted(() => {
           y: 'value',
           stroke: 'series',
           strokeDasharray: 8,
-        })
+        }),
       );
     }
 
@@ -164,7 +164,7 @@ onMounted(() => {
           y: formatValue,
         },
         fill: colorScheme.value.background,
-      }))
+      })),
     );
 
     const chart = Plot.plot({
@@ -188,7 +188,7 @@ onMounted(() => {
         nice: 'day',
         tickFormat: (d: Date) => {
           if(d.getUTCHours() === 0) {
-            return utcFormat("%-d\n%b")(d);
+            return utcFormat('%-d\n%b')(d);
           } else {
             return '';
           }
@@ -198,13 +198,13 @@ onMounted(() => {
         tickFormat: props.config.measureHint === TALLY_MEASURE.TIME ?
           tick => formatDuration(tick) :
           props.config.measureHint === 'percent' ?
-          tick => `${tick}%` :
-          tick => kify(tick),
+            tick => `${tick}%` :
+            tick => kify(tick),
         grid: true,
         domain: [
           props.data.concat(props.par ?? []).reduce((min, point) => Math.min(min, point.value), 0),
           props.data.concat(props.par ?? []).reduce((max, point) => Math.max(max, point.value), getSuggestedYAxisMaximum(props.config.measureHint)),
-        ]
+        ],
       },
       marks: marks,
     });

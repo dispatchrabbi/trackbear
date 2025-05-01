@@ -1,10 +1,10 @@
-import { ValueEnum } from "../../obj";
+import { ValueEnum } from '../../obj';
 
 export const WORK_STATE = {
-  ACTIVE:   'active',
-  DELETED:  'deleted',
+  ACTIVE: 'active',
+  DELETED: 'deleted',
 };
-export type WorkState = ValueEnum<typeof WORK_STATE>
+export type WorkState = ValueEnum<typeof WORK_STATE>;
 
 export const WORK_PHASE = {
   PLANNING: 'planning',

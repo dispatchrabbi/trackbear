@@ -1,4 +1,4 @@
-import { prefixRoutes, type RouteConfig } from "server/lib/api.ts";
+import { prefixRoutes, type RouteConfig } from 'server/lib/api.ts';
 
 import pingRoutes from './ping.ts';
 import meRoutes from './me.ts';

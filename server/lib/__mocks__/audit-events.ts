@@ -6,7 +6,7 @@ const logAuditEventMock = vi.spyOn(auditEvents, 'logAuditEvent');
 const buildChangeRecordMock = vi.spyOn(auditEvents, 'buildChangeRecord');
 
 beforeEach(() => {
-  buildChangeRecordMock.mockImplementation(() => ({}))
+  buildChangeRecordMock.mockImplementation(() => ({}));
 });
 
 afterEach(() => {

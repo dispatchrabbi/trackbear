@@ -14,7 +14,7 @@ export function getTracer(scopeName?: string) {
 
 /**
  * Adds tracing to the function via a nested span. Use this as a decorator: `@trace`
- * 
+ *
  * @param fn the original function
  * @param context the context for the function
  * @returns a traced verion of the function
@@ -22,18 +22,17 @@ export function getTracer(scopeName?: string) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function traced<This, Args extends any[], Return>(
   fn: (this: This, ...args: Args) => Return,
-  context: ClassMethodDecoratorContext<This, (this: This, ...args: Args) => Return>
+  context: ClassMethodDecoratorContext<This, (this: This, ...args: Args) => Return>,
 ) {
   const tracer = getTracer();
   const fnName = String(context.name);
 
   function tracedFn(this: This, ...args: Args): Return {
-
     return tracer.startActiveSpan(fnName, (span: Span) => {
       let result;
       try {
         result = fn.call(this, ...args);
-      } catch(err) {
+      } catch (err) {
         span.recordException(err);
         span.setStatus({
           code: SpanStatusCode.ERROR,
@@ -47,7 +46,6 @@ export function traced<This, Args extends any[], Return>(
       span.end();
       return result;
     });
-
   }
 
   return tracedFn;

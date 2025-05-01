@@ -25,5 +25,5 @@ async function hash(password: string) {
 
 export {
   hash,
-  verifyHash
+  verifyHash,
 };

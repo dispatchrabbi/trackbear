@@ -1,4 +1,4 @@
-import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from "../../lib/api.ts";
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from '../../lib/api.ts';
 import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 
 import { RequestWithUser } from '../../lib/middleware/access.ts';
@@ -6,11 +6,11 @@ import { RequestWithUser } from '../../lib/middleware/access.ts';
 import { z } from 'zod';
 import { zIdParam } from '../../lib/validators.ts';
 
-import { TagModel, type Tag, type TagData } from "../../lib/models/tag/tag-model.ts";
+import { TagModel, type Tag, type TagData } from '../../lib/models/tag/tag-model.ts';
 import { TAG_COLORS } from '../../lib/models/tag/consts.ts';
 
-import { reqCtx } from "../../lib/request-context.ts";
-import { ValidationError } from "server/lib/models/errors.ts";
+import { reqCtx } from '../../lib/request-context.ts';
+import { ValidationError } from 'server/lib/models/errors.ts';
 
 export async function handleGetTags(req: RequestWithUser, res: ApiResponse<Tag[]>) {
   const tags = await TagModel.getTags(req.user);
@@ -44,7 +44,7 @@ export async function handleCreateTag(req: RequestWithUser, res: ApiResponse<Tag
   let created;
   try {
     created = await TagModel.createTag(user, payload as TagData, reqCtx(req));
-  } catch(err) {
+  } catch (err) {
     if(err instanceof ValidationError) {
       return res.status(400).send(failure('TAG_EXISTS', `There is already a tag called ${payload.name}`));
     } else {
@@ -70,7 +70,7 @@ export async function handleUpdateTag(req: RequestWithUser, res: ApiResponse<Tag
   let updated;
   try {
     updated = await TagModel.updateTag(user, original, payload as Partial<TagData>, reqCtx(req));
-  } catch(err) {
+  } catch (err) {
     if(err instanceof ValidationError) {
       return res.status(400).send(failure('TAG_EXISTS', `There is already a tag called ${payload.name}`));
     } else {
@@ -90,7 +90,7 @@ export async function handleDeleteTag(req: RequestWithUser, res: ApiResponse<Tag
   }
 
   const deleted = await TagModel.deleteTag(user, original, reqCtx(req));
-  
+
   return res.status(200).send(success(deleted));
 }
 

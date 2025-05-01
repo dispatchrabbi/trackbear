@@ -41,7 +41,7 @@ describe(GoalModel, () => {
         state: TAG_STATE.ACTIVE,
       },
       select: { id: true },
-    }
+    },
   };
 
   afterEach(() => {
@@ -52,7 +52,7 @@ describe(GoalModel, () => {
     it('gets a list of goals', async () => {
       const testGoals = mockObjects<Goal>(4, () => ({
         workIds: [],
-        tagIds: []
+        tagIds: [],
       }));
       dbClient.goal.findMany.mockResolvedValue(testGoals.map(ids2included));
 
@@ -64,7 +64,7 @@ describe(GoalModel, () => {
           ownerId: testOwner.id,
           state: GOAL_STATE.ACTIVE,
         },
-        include: includeWorkAndTagIds
+        include: includeWorkAndTagIds,
       });
     });
   });
@@ -87,7 +87,7 @@ describe(GoalModel, () => {
           ownerId: testOwner.id,
           state: GOAL_STATE.ACTIVE,
         },
-        include: includeWorkAndTagIds
+        include: includeWorkAndTagIds,
       });
     });
 
@@ -139,19 +139,19 @@ describe(GoalModel, () => {
             { id: -20, ownerId: testOwner.id, state: WORK_STATE.ACTIVE },
             { id: -21, ownerId: testOwner.id, state: WORK_STATE.ACTIVE },
             { id: -22, ownerId: testOwner.id, state: WORK_STATE.ACTIVE },
-          ]},
+          ] },
           tagsIncluded: { connect: [
             { id: -23, ownerId: testOwner.id, state: TAG_STATE.ACTIVE },
             { id: -24, ownerId: testOwner.id, state: TAG_STATE.ACTIVE },
             { id: -25, ownerId: testOwner.id, state: TAG_STATE.ACTIVE },
-          ]},
+          ] },
         },
         include: includeWorkAndTagIds,
       });
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.GOAL_CREATE,
         testReqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), testReqCtx.sessionId
+        expect.any(Object), testReqCtx.sessionId,
       );
     });
 
@@ -231,19 +231,19 @@ describe(GoalModel, () => {
             { id: -27, ownerId: testOwner.id, state: WORK_STATE.ACTIVE },
             { id: -28, ownerId: testOwner.id, state: WORK_STATE.ACTIVE },
             { id: -29, ownerId: testOwner.id, state: WORK_STATE.ACTIVE },
-          ]},
+          ] },
           tagsIncluded: { set: [
             { id: -30, ownerId: testOwner.id, state: TAG_STATE.ACTIVE },
             { id: -31, ownerId: testOwner.id, state: TAG_STATE.ACTIVE },
             { id: -32, ownerId: testOwner.id, state: TAG_STATE.ACTIVE },
-          ]},
+          ] },
         },
         include: includeWorkAndTagIds,
       });
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.GOAL_UPDATE,
         testReqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), testReqCtx.sessionId
+        expect.any(Object), testReqCtx.sessionId,
       );
     });
 
@@ -298,7 +298,7 @@ describe(GoalModel, () => {
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.GOAL_DELETE,
         testReqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), testReqCtx.sessionId
+        expect.any(Object), testReqCtx.sessionId,
       );
     });
   });
@@ -325,7 +325,7 @@ describe(GoalModel, () => {
       expect(logAuditEvent).toBeCalledWith(
         AUDIT_EVENT_TYPE.GOAL_UNDELETE,
         testReqCtx.userId, TEST_OBJECT_ID, null,
-        expect.any(Object), testReqCtx.sessionId
+        expect.any(Object), testReqCtx.sessionId,
       );
     });
   });
@@ -355,7 +355,7 @@ describe(GoalModel, () => {
         ownerId: TEST_USER_ID,
         type: GOAL_TYPE.TARGET,
         parameters: {
-          threshold: { count: 100, measure: TALLY_MEASURE.CHAPTER }
+          threshold: { count: 100, measure: TALLY_MEASURE.CHAPTER },
         },
         workIds: [-10, -11, -12, -13],
         tagIds: [-20, -21, -22, -23],
@@ -372,15 +372,15 @@ describe(GoalModel, () => {
         where: {
           ownerId: testGoal.ownerId,
           state: TALLY_STATE.ACTIVE,
-    
-          workId: { in: [ -10, -11, -12, -13 ] },
-          tags: { some: { id: { in: [ -20, -21, -22, -23 ] } } },
+
+          workId: { in: [-10, -11, -12, -13] },
+          tags: { some: { id: { in: [-20, -21, -22, -23] } } },
           date: {
             gte: '2024-06-15',
             lte: '2024-07-15',
           },
           measure: TALLY_MEASURE.CHAPTER,
-        }
+        },
       });
     });
 
@@ -399,15 +399,15 @@ describe(GoalModel, () => {
       });
       const testTallies = mockObjects<Tally>(11);
       dbClient.tally.findMany.mockResolvedValue(testTallies);
-  
+
       const tallies = await GoalModel.DEPRECATED_getTalliesForGoal(testGoal);
-  
+
       expect(tallies).toBe(testTallies);
       expect(dbClient.tally.findMany).toBeCalledWith({
         where: {
           ownerId: testGoal.ownerId,
           state: TALLY_STATE.ACTIVE,
-    
+
           workId: undefined,
           tags: undefined,
           date: {
@@ -415,7 +415,7 @@ describe(GoalModel, () => {
             lte: undefined,
           },
           measure: undefined,
-        }
+        },
       });
     });
 
@@ -434,15 +434,15 @@ describe(GoalModel, () => {
       });
       const testTallies = mockObjects<Tally>(11);
       dbClient.tally.findMany.mockResolvedValue(testTallies);
-  
+
       const tallies = await GoalModel.DEPRECATED_getTalliesForGoal(testGoal);
-  
+
       expect(tallies).toBe(testTallies);
       expect(dbClient.tally.findMany).toBeCalledWith({
         where: {
           ownerId: testGoal.ownerId,
           state: TALLY_STATE.ACTIVE,
-    
+
           workId: undefined,
           tags: undefined,
           date: {
@@ -450,7 +450,7 @@ describe(GoalModel, () => {
             lte: undefined,
           },
           measure: TALLY_MEASURE.SCENE,
-        }
+        },
       });
     });
   });

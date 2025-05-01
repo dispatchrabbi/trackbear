@@ -1,11 +1,11 @@
-import type { Application, IRouter, Router } from "express";
-import type { ZodSchema } from "zod";
-import winston from "winston";
-import { h, type ApiHandler } from "./api-response";
-import { decorateApiCallSpan, instrumentMiddleware } from "./middleware/decorate-span";
-import { requirePublic, requireUser, requireAdminUser, requirePrivate } from "./middleware/access";
-import { validateBody, validateParams, validateQuery } from "./middleware/validate";
-import { ValueEnum } from "./obj";
+import type { Application, IRouter, Router } from 'express';
+import type { ZodSchema } from 'zod';
+import winston from 'winston';
+import { h, type ApiHandler } from './api-response';
+import { decorateApiCallSpan, instrumentMiddleware } from './middleware/decorate-span';
+import { requirePublic, requireUser, requireAdminUser, requirePrivate } from './middleware/access';
+import { validateBody, validateParams, validateQuery } from './middleware/validate';
+import { ValueEnum } from './obj';
 
 export const HTTP_METHODS = {
   GET: 'GET',
@@ -27,7 +27,7 @@ type AccessLevel = ValueEnum<typeof ACCESS_LEVEL>;
 export type RouteConfig = {
   method: HttpMethod;
   path: string;
-  handler: ApiHandler<unknown>
+  handler: ApiHandler<unknown>;
   accessLevel: AccessLevel;
   paramsSchema?: ZodSchema;
   querySchema?: ZodSchema;
@@ -85,7 +85,7 @@ export function mountEndpoint(app: Application | Router, route: RouteConfig) {
   const validators = [
     route.paramsSchema && validateParams(route.paramsSchema),
     route.querySchema && validateQuery(route.querySchema),
-    route.bodySchema && validateBody(route.bodySchema)
+    route.bodySchema && validateBody(route.bodySchema),
   ].filter(fn => !!fn);
 
   const routeKey = `${route.method} ${route.path}`;

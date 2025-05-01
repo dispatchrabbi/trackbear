@@ -13,7 +13,7 @@ function validateBody(schema: ZodSchema) {
 
     req.body = parsed.data;
     return next();
-  }
+  };
 }
 
 function validateParams(schema: ZodSchema) {
@@ -26,7 +26,7 @@ function validateParams(schema: ZodSchema) {
     }
 
     return next();
-  }
+  };
 }
 
 function validateQuery(schema: ZodSchema) {
@@ -40,7 +40,7 @@ function validateQuery(schema: ZodSchema) {
 
     req.query = parsed.data;
     return next();
-  }
+  };
 }
 
 export {

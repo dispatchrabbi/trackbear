@@ -25,7 +25,7 @@ export async function createAvatarUploadDirectory() {
   // create the avatar directory if it doesn't exist
   try {
     await fs.mkdir(avatarUploadPath);
-  } catch(err) {
+  } catch (err) {
     if(err.code !== 'EEXIST') {
       throw err;
     } // else EEXIST means it exists and we're good
@@ -37,7 +37,7 @@ export async function createCoverUploadDirectory() {
   // create the avatar directory if it doesn't exist
   try {
     await fs.mkdir(avatarUploadPath);
-  } catch(err) {
+  } catch (err) {
     if(err.code !== 'EEXIST') {
       throw err;
     } // else EEXIST means it exists and we're good
@@ -51,11 +51,12 @@ function getMulterStorage(useMemoryStorage = false): multer.StorageEngine {
       multerStorage = multer.memoryStorage();
     } else {
       multerStorage = multer.diskStorage({
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         destination: async (req, file, cb) => {
           // create a temporary directory to store files in on upload
           const tbTmpDir = await fs.mkdtemp(path.join(tmpdir(), 'trackbear-'));
           cb(null, tbTmpDir);
-        }
+        },
       });
     }
   }

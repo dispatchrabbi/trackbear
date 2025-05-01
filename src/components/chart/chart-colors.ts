@@ -37,7 +37,7 @@ const DARK_CHART_COLORS: ChartColors = {
 const THEME_CHART_COLORS = {
   light: LIGHT_CHART_COLORS,
   dark: DARK_CHART_COLORS,
-}
+};
 
 const chartColors = computed<ChartColors>(() => {
   const { theme } = useTheme();

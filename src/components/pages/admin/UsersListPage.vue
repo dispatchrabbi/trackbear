@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 import { parseISO, addDays, addMonths, startOfDay } from 'date-fns';
 
-import { getUsers, User } from 'src/lib/api/admin/user.ts'
+import { getUsers, User } from 'src/lib/api/admin/user.ts';
 import { USER_STATE } from 'server/lib/models/user/consts';
 import { USER_STATE_INFO } from 'src/lib/user.ts';
 
@@ -35,12 +35,12 @@ const loadUsers = async function() {
   try {
     const response = await getUsers();
     users.value = response.users;
-  } catch(err) {
+  } catch (err) {
     errorMessage.value = err.message;
   } finally {
     isLoading.value = false;
   }
-}
+};
 
 const activeUsers = computed(() => {
   return users.value.filter(user => user.state === USER_STATE.ACTIVE).length;
@@ -59,7 +59,7 @@ const wowPercentage = computed(() => {
   const aWeekAgo = startOfDay(addDays(new Date(), -6));
   const twoWeeksAgo = addDays(aWeekAgo, -7);
   const lastWeekUsers = users.value.filter(user => parseISO(user.createdAt) < aWeekAgo && parseISO(user.createdAt) >= twoWeeksAgo).length;
-  return Math.round(100* (newWeekUsers.value / lastWeekUsers));
+  return Math.round(100 * (newWeekUsers.value / lastWeekUsers));
 });
 
 const newMonthUsers = computed(() => {
@@ -71,7 +71,7 @@ const momPercentage = computed(() => {
   const aMonthAgo = startOfDay(addMonths(new Date(), -1));
   const twoMonthsAgo = addMonths(aMonthAgo, -1);
   const lastMonthUsers = users.value.filter(user => parseISO(user.createdAt) < aMonthAgo && parseISO(user.createdAt) >= twoMonthsAgo).length;
-  return Math.round(100* (newMonthUsers.value / lastMonthUsers));
+  return Math.round(100 * (newMonthUsers.value / lastMonthUsers));
 });
 
 const usersFilter = ref<string>('');
@@ -89,7 +89,7 @@ const sortedFilteredUsers = computed(() => {
       user.displayName.toLowerCase().includes(filter) ||
       user.email.toLowerCase().includes(filter) ||
       user.uuid.toLowerCase().includes(filter) ||
-      user.id.toString().includes(filter)
+      user.id.toString().includes(filter),
     );
   }
 

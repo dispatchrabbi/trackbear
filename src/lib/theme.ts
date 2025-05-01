@@ -1,6 +1,6 @@
-import { useLocalStorage, usePreferredColorScheme } from "@vueuse/core";
-import { computed, watchEffect } from "vue";
-import { PrimeIcons } from "primevue/api";
+import { useLocalStorage, usePreferredColorScheme } from '@vueuse/core';
+import { computed, watchEffect } from 'vue';
+import { PrimeIcons } from 'primevue/api';
 
 export const THEME_OPTIONS = [
   { label: 'Auto', value: 'auto', icon: PrimeIcons.GLOBE },
@@ -34,7 +34,7 @@ export function useTheme() {
     /**
      * The theme resolved to either `light` or `dark`
      */
-    theme
+    theme,
   };
 }
 

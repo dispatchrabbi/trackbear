@@ -4,7 +4,7 @@ import { computed, defineProps } from 'vue';
 import { useChartColors } from '../chart/chart-colors';
 
 import type { Board, FullParticipant } from 'src/lib/api/board.ts';
-import { TallyMeasure } from "server/lib/models/tally/consts";
+import { TallyMeasure } from 'server/lib/models/tally/consts';
 
 import MeterGroup, { MeterItem } from 'primevue/metergroup';
 
@@ -21,7 +21,7 @@ const contributions = computed(() => {
 
     return {
       participant,
-      total
+      total,
     };
   })
     .filter(participant => participant.total > 0)

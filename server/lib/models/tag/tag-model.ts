@@ -1,33 +1,32 @@
-import winston from "winston";
+import winston from 'winston';
 
-import dbClient from "../../db.ts";
-import { type Tag } from "@prisma/client";
+import dbClient from '../../db.ts';
+import { type Tag } from '@prisma/client';
 
-import { type RequestContext } from "../../request-context.ts";
+import { type RequestContext } from '../../request-context.ts';
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 import type { User } from '../user/user-model.ts';
-import { TAG_DEFAULT_COLOR, TAG_STATE, TagColor } from "./consts";
+import { TAG_DEFAULT_COLOR, TAG_STATE, TagColor } from './consts';
 
-import { traced } from "../../tracer.ts";
-import { ValidationError } from "../errors.ts";
+import { traced } from '../../tracer.ts';
+import { ValidationError } from '../errors.ts';
 
 export type { Tag };
 export type TagData = {
   name: string;
-  color?: TagColor
+  color?: TagColor;
 };
 
 export class TagModel {
-
   @traced
   static async getTags(owner: User): Promise<Tag[]> {
     const tags = await dbClient.tag.findMany({
       where: {
         ownerId: owner.id,
         state: TAG_STATE.ACTIVE,
-      }
+      },
     });
 
     return tags;
@@ -40,7 +39,7 @@ export class TagModel {
         id: id,
         ownerId: owner.id,
         state: TAG_STATE.ACTIVE,
-      }
+      },
     });
 
     if(!tag) {
@@ -57,7 +56,7 @@ export class TagModel {
         name: name,
         ownerId: owner.id,
         state: TAG_STATE.ACTIVE,
-      }
+      },
     });
 
     if(tags.length === 0) {
@@ -94,7 +93,7 @@ export class TagModel {
         ...dataWithDefaults,
         state: TAG_STATE.ACTIVE,
         ownerId: owner.id,
-      }
+      },
     });
 
     const changes = buildChangeRecord({}, created);
@@ -137,6 +136,4 @@ export class TagModel {
 
     return deleted;
   }
-
 }
-

@@ -1,14 +1,13 @@
-import dbClient from "../../db.ts";
-import { type AuditEvent } from "@prisma/client";
+import dbClient from '../../db.ts';
+import { type AuditEvent } from '@prisma/client';
 
-import { traced } from "../../tracer.ts";
+import { traced } from '../../tracer.ts';
 
-import { type AuditEventEntity, type AuditEventType, AUDIT_EVENT_TYPE_ARGUMENTS } from "./consts.ts";
+import { type AuditEventEntity, type AuditEventType, AUDIT_EVENT_TYPE_ARGUMENTS } from './consts.ts';
 
 export type { AuditEvent };
 
 export class AuditEventModel {
-
   @traced
   static async getAuditEvents(id: number, entity: AuditEventEntity): Promise<AuditEvent[]> {
     const tuples = this.buildAuditEventTypeTuples(entity);
@@ -54,7 +53,7 @@ export class AuditEventModel {
   static async createAuditEvent(
     eventType: AuditEventType,
     agentId: number, patientId: number | null = null, goalId: number | null = null,
-    auxInfo: Record<string, unknown> = null, sessionId: string | null = null
+    auxInfo: Record<string, unknown> = null, sessionId: string | null = null,
   ): Promise<AuditEvent> {
     const stringifiedAuxInfo = JSON.stringify(auxInfo ?? {});
 
@@ -64,7 +63,7 @@ export class AuditEventModel {
         agentId, patientId, goalId,
         auxInfo: stringifiedAuxInfo,
         sessionId,
-      }
+      },
     });
 
     return created;

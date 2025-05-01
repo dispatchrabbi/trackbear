@@ -45,7 +45,7 @@ async function handleSubmit() {
 
     await wait(1 * 1000);
     emit('formSuccess');
-  } catch(err) {
+  } catch (err) {
     if(err.code === 'NOT_FOUND') {
       errorMessage.value = 'This join code is invalid. Check it and try again.';
     } else {

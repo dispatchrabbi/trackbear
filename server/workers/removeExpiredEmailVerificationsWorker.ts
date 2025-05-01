@@ -1,6 +1,6 @@
-import dbClient from "../lib/db.ts";
-import winston from "winston";
-import { addDays } from "date-fns";
+import dbClient from '../lib/db.ts';
+import winston from 'winston';
+import { addDays } from 'date-fns';
 
 const NAME = 'removeExpiredEmailVerificationsWorker';
 
@@ -20,7 +20,7 @@ async function run() {
     });
 
     workerLogger.info(`Deleted ${result.count} expired email verification entries`, { service: NAME });
-  } catch(err) {
+  } catch (err) {
     workerLogger.error(`Error while deleting pending email verifications: ${err.message}`, { service: NAME });
     return;
   }

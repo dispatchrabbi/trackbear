@@ -42,7 +42,7 @@ const maxima = computed(() => {
   }, {});
 });
 
-const normalizerFn = function(datum: CalendarHeatMapDataPoint/*, data: CalendarHeatMapDataPoint[]*/) {
+const normalizerFn = function(datum: CalendarHeatMapDataPoint/* , data: CalendarHeatMapDataPoint[] */) {
   return Math.max(...Object.keys(datum.value).map(measure => maxima.value[measure] === 0 ? 0 : datum.value[measure] / maxima.value[measure]));
 };
 const valueFormatFn = function(datum: CalendarHeatMapDataPoint) {
