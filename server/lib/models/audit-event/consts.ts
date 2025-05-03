@@ -31,8 +31,6 @@ export const AUDIT_EVENT_TYPE = {
   LEADERBOARD_CREATE: 'leaderboard:create',
   LEADERBOARD_UPDATE: 'leaderboard:update',
   LEADERBOARD_DELETE: 'leaderboard:delete',
-  LEADERBOARD_JOIN: 'leaderboard:join',
-  LEADERBOARD_LEAVE: 'leaderboard:leave',
 
   LEADERBOARD_MEMBER_CREATE: 'leaderboard-member:create',
   LEADERBOARD_MEMBER_UPDATE: 'leaderboard-member:update',
@@ -143,16 +141,6 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.LEADERBOARD,
     goal: null,
-  },
-  [AUDIT_EVENT_TYPE.LEADERBOARD_JOIN]: {
-    agent: AUDIT_EVENT_ENTITIES.USER,
-    patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD,
-  },
-  [AUDIT_EVENT_TYPE.LEADERBOARD_LEAVE]: {
-    agent: AUDIT_EVENT_ENTITIES.USER,
-    patient: AUDIT_EVENT_ENTITIES.USER,
-    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD,
   },
   [AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,

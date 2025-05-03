@@ -5,13 +5,14 @@ import { RequestWithUser } from '../../lib/middleware/access.ts';
 import { z } from 'zod';
 import { zUuidParam, NonEmptyArray, zUuidAndIdParams } from '../../lib/validators.ts';
 
-import { CreateLeaderboardData, CreateParticipationData, LeaderboardModel, UpdateLeaderboardData, UpdateParticipationData } from 'server/lib/models/leaderboard/leaderboard-model.ts';
-import type { Leaderboard, LeaderboardSummary, Member, Participant, Participation } from 'server/lib/models/leaderboard/types.ts';
+import { CreateLeaderboardData, CreateMemberData, LeaderboardModel, UpdateLeaderboardData } from 'server/lib/models/leaderboard/leaderboard-model.ts';
+import type { Leaderboard, LeaderboardSummary, LeaderboardMember, JustMember, Participant, ParticipantGoal, Participation, Membership } from 'server/lib/models/leaderboard/types.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 import { reqCtx } from 'server/lib/request-context.ts';
+import { pick } from 'server/lib/obj.ts';
 
 export type {
-  LeaderboardSummary, Leaderboard, Member, Participant, Participation,
+  LeaderboardSummary, Leaderboard, LeaderboardMember, Participant, Participation,
 };
 
 export async function handleList(req: RequestWithUser, res: ApiResponse<LeaderboardSummary[]>) {
@@ -117,16 +118,17 @@ export async function handleDelete(req: RequestWithUser, res: ApiResponse<Leader
   return res.status(200).send(success(deleted));
 }
 
-export async function handleListMembers(req: RequestWithUser, res: ApiResponse<Member[]>) {
+export async function handleListMembers(req: RequestWithUser, res: ApiResponse<Membership[]>) {
   const leaderboardUuid = req.params.uuid;
-  const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { ownerUserId: req.user.id });
+  const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { memberUserId: req.user.id });
   if(!leaderboard) {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
   }
 
   const members = await LeaderboardModel.listMembers(leaderboard);
+  const memberships = members.map(member2membership);
 
-  return res.status(200).send(success(members));
+  return res.status(200).send(success(memberships));
 }
 
 export type LeaderboardMemberUpdatePayload = {
@@ -135,14 +137,14 @@ export type LeaderboardMemberUpdatePayload = {
 const zLeaderboardMemberUpdatePayload = z.object({
   isOwner: z.boolean(),
 }).strict().partial();
-export async function handleUpdateMember(req: RequestWithUser, res: ApiResponse<Member>) {
+export async function handleUpdateMember(req: RequestWithUser, res: ApiResponse<Membership>) {
   const leaderboardUuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { ownerUserId: req.user.id });
   if(!leaderboard) {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
   }
 
-  const memberId = +req.params.id;
+  const memberId = +req.params.memberId;
   const member = await LeaderboardModel.getMember(leaderboard, memberId);
   if(!member) {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any member with id ${memberId} on that leaderboard.`));
@@ -150,30 +152,33 @@ export async function handleUpdateMember(req: RequestWithUser, res: ApiResponse<
 
   const payload = req.body as LeaderboardMemberUpdatePayload;
   const updated = await LeaderboardModel.updateMember(member, payload, reqCtx(req));
+  const membership = member2membership(updated);
 
-  return res.status(200).send(success(updated));
+  return res.status(200).send(success(membership));
 }
 
-export async function handleRemoveMember(req: RequestWithUser, res: ApiResponse<null>) {
+export async function handleRemoveMember(req: RequestWithUser, res: ApiResponse<Membership>) {
   const leaderboardUuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { ownerUserId: req.user.id });
   if(!leaderboard) {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
   }
 
-  const memberId = +req.params.id;
+  const memberId = +req.params.memberId;
   const member = await LeaderboardModel.getMember(leaderboard, memberId);
   if(!member) {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any member with id ${memberId} on that leaderboard.`));
   }
 
+  let membership: Membership;
   try {
-    await LeaderboardModel.removeMember(member, reqCtx(req));
+    const removed = await LeaderboardModel.removeMember(member, reqCtx(req));
+    membership = member2membership(removed);
   } catch {
-    return res.status(400).send(failure('LAST_OWNER', `Cannot remove member with id ${memberId} because they are the last owner of this leaderboard.`));
+    return res.status(409).send(failure('ONLY_OWNER', `Cannot remove member with id ${memberId} because they are the only owner of this leaderboard.`));
   }
 
-  return res.status(200).send(success(null));
+  return res.status(200).send(success(membership));
 }
 
 export async function handleListParticipants(req: RequestWithUser, res: ApiResponse<Participant[]>) {
@@ -199,8 +204,39 @@ export async function handleGetMyParticipation(req: RequestWithUser, res: ApiRes
   return res.status(200).send(success(participation));
 }
 
-export type LeaderboardParticipationCreatePayload = CreateParticipationData;
-const zLeaderboardParticipationCreatePayload = z.object({
+export async function handleJoinBoard(req: RequestWithUser, res: ApiResponse<LeaderboardMember>) {
+  const uuid = req.params.uuid;
+  const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: req.user.id, includePublicLeaderboards: true });
+  if(!leaderboard) {
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
+  }
+
+  const user = req.user;
+  const existing = await LeaderboardModel.getMemberByUserId(leaderboard, user.id);
+  if(existing) {
+    return res.status(409).send(failure('ALREADY_JOINED', `You are already part of this leaderboard.`));
+  }
+
+  const memberData: CreateMemberData = {
+    isParticipant: true,
+    isOwner: false,
+    goal: null,
+    workIds: [],
+    tagIds: [],
+  };
+  const created = await LeaderboardModel.createMember(leaderboard, user, memberData, reqCtx(req));
+
+  return res.status(201).send(success(created));
+}
+
+export type LeaderboardParticipationUpdatePayload = {
+  isParticipant: boolean;
+  goal: ParticipantGoal;
+  workIds: number[];
+  tagIds: number[];
+};
+const zLeaderboardParticipationUpdatePayload = z.object({
+  isParticipant: z.boolean(),
   goal: z.object({
     measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
     count: z.number().int(),
@@ -208,69 +244,50 @@ const zLeaderboardParticipationCreatePayload = z.object({
   workIds: z.array(z.number().int()),
   tagIds: z.array(z.number().int()),
 }).strict();
-export async function handleAddMyParticipation(req: RequestWithUser, res: ApiResponse<Participation>) {
-  const userId = req.user.id;
+export async function handleUpdateMyParticipation(req: RequestWithUser, res: ApiResponse<LeaderboardMember>) {
   const uuid = req.params.uuid;
-  const leaderboard = await LeaderboardModel.getByUuid(uuid);
-  if(!leaderboard || leaderboard.isJoinable === false) {
+  const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: req.user.id });
+  if(!leaderboard) {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
   }
 
-  const payload = req.body as LeaderboardParticipationCreatePayload;
-
-  const member = await LeaderboardModel.getMemberByUserId(leaderboard, userId);
-  if(member?.isParticipant) {
-    // error out — why are you here?
-    return res.status(409).send(failure('ALREADY_EXISTS', `You have already joined this leaderboard.`));
-  }
-
-  if(member?.isOwner) {
-    // do an update instead of a create
-    const participation = await LeaderboardModel.updateMemberParticipation(member, payload, reqCtx(req));
-    return res.status(200).send(success(participation));
-  }
-
-  const participation = await LeaderboardModel.addMemberParticipation(leaderboard.id, userId, payload, reqCtx(req));
-  return res.status(201).send(success(participation));
-}
-
-export type LeaderboardParticipationUpdatePayload = UpdateParticipationData;
-const zLeaderboardParticipationUpdatePayload = zLeaderboardParticipationCreatePayload.partial();
-export async function handleUpdateMyParticipation(req: RequestWithUser, res: ApiResponse<Participation>) {
-  const userId = req.user.id;
-  const leaderboardUuid = req.params.uuid;
-  const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { memberUserId: userId });
-  if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
-  }
-
-  const member = await LeaderboardModel.getMemberByUserId(leaderboard, userId);
-  if(!member) {
-    return res.status(404).send(failure('NOT_FOUND', `You are not a participant in this leaderboard.`));
+  const user = req.user;
+  const existing = await LeaderboardModel.getMemberByUserId(leaderboard, user.id);
+  if(!existing) {
+    return res.status(404).send(failure('NOT_FOUND', `You are not part of this leaderboard.`));
   }
 
   const payload = req.body as LeaderboardParticipationUpdatePayload;
-  const updated = await LeaderboardModel.updateMemberParticipation(member, payload, reqCtx(req));
+  const updated = await LeaderboardModel.updateMember(existing, payload, reqCtx(req));
 
   return res.status(200).send(success(updated));
 }
 
-export async function handleRemoveMyParticipation(req: RequestWithUser, res: ApiResponse<null>) {
-  const userId = req.user.id;
-  const leaderboardUuid = req.params.uuid;
-  const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { memberUserId: userId });
+export async function handleLeaveBoard(req: RequestWithUser, res: ApiResponse<LeaderboardMember>) {
+  const uuid = req.params.uuid;
+  const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: req.user.id });
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
   }
 
-  const member = await LeaderboardModel.getMemberByUserId(leaderboard, userId);
-  if(!member) {
-    return res.status(404).send(failure('NOT_FOUND', `You are not a participant in this leaderboard.`));
+  const user = req.user;
+  const existing = await LeaderboardModel.getMemberByUserId(leaderboard, user.id);
+  if(!existing) {
+    return res.status(404).send(failure('NOT_FOUND', `You are not part of this leaderboard.`));
   }
 
-  const removed = await LeaderboardModel.removeMemberParticipation(member, reqCtx(req));
+  let removed: LeaderboardMember;
+  try {
+    removed = await LeaderboardModel.removeMember(existing, reqCtx(req));
+  } catch {
+    return res.status(409).send(failure('ONLY_OWNER', `Cannot remove you because you are the only owner of this leaderboard.`));
+  }
 
   return res.status(200).send(success(removed));
+}
+
+export function member2membership(member: JustMember): Membership {
+  return pick(member, ['uuid', 'state', 'isOwner', 'isParticipant', 'displayName', 'avatar']);
 }
 
 /**
@@ -280,18 +297,20 @@ export async function handleRemoveMyParticipation(req: RequestWithUser, res: Api
  *
  * Here is the detailed breakdown:
  * - Basic leaderboard CRUD is more or less as expected.
- * - If you are a leaderboard owner, you can edit and delete members, but there is no way to directly create a member,
- *   as that would forcefully add someone to a leaderboard (and I don't want that to be possible). However, this does
- *   create some weirdness if you have people you want to be owners without being participants, as you'll see below.
- *   - Right now, owners can only promote and demote participants to/from owner. In the future, other things will be
- *     possible, such as assigning people to teams and changing the color they appear in.
- *   - Leaderboard owners can also remove participants. In the future, leaderboard owners will be able to ban members.
- * - To join a leaderboard, you request leaderboard info via the /joincode/:joincode endpoint, then actually join the
- *   leaderboard via adding participation info.
- * - You can change your own participation info or remove it at any time. Removing your info leaves the board unless
- *   you are an owner. Then you stay on unless you leave the board as an owner as well.
- * - If you want someone to be an owner, you need them to first join the board. You can then promote them, and then
- *   they can remove their participation. This is a little complicated and perhaps I should rethink it.
+ *   - Even though a leaderboard's starred status is per-user, it is still done via the usual PATCH /:uuid/star endpoint.
+ *   - In order to get a list of tallies for each participant, use GET /:uuid/participants. (TODO: should this be /:uuid/tallies?)
+ * - There is only one way to create a member:
+ *   - A prospective member must first request leaderboard info via the GET /joincode/:joincode endpoint. Then they can
+ *     join the leaderboard via POST /:uuid/me endpoint and subsequently edit their participation via the PATCH /:uuid/me endpoint.
+ *   - There is no way to forcefully add a user to a leaderboard; they must join by themself.
+ * - There are two ways to update a member:
+ *   - Members can update their own participation information (spectator status, goals, filters, display name, color,
+ *     team assignment (if allowed)) at any time via the PATCH /:uuid/me endpoint.
+ *   - Owners can update membership information (promote/demote owners, team assignment) at any time via the
+ *     PATCH /:uuid/members/:id endpoint.
+ * - There are two ways for a member to leave the board:
+ *   - Members can leave a board at any time via the DELETE /:uuid/me endpoint.
+ *   - Owners can remove members from the board via the DELETE /:uuid/members/:id endpoint.
  */
 
 const routes: RouteConfig[] = [
@@ -353,34 +372,6 @@ const routes: RouteConfig[] = [
     paramsSchema: zUuidParam(),
   },
   //
-  // GET /:uuid/members - get all members for a board (owners only)
-  {
-    path: '/:uuid/members',
-    method: HTTP_METHODS.GET,
-    handler: handleListMembers,
-    accessLevel: ACCESS_LEVEL.USER,
-    paramsSchema: zUuidParam(),
-  },
-  // POST /:uuid/members - create a board member (owners only)
-  // NOT IMPLEMENTED (board members join via POST /:uuid/me on their own)
-  // PATCH /:uuid/members/:id - edit a board member (owners only)
-  {
-    path: '/:uuid/members/:id',
-    method: HTTP_METHODS.PATCH,
-    handler: handleUpdateMember,
-    accessLevel: ACCESS_LEVEL.USER,
-    paramsSchema: zUuidAndIdParams(),
-    bodySchema: zLeaderboardMemberUpdatePayload,
-  },
-  // DELETE /:uuid/members/:id - remove a board member (owners only)
-  {
-    path: '/:uuid/members/:id',
-    method: HTTP_METHODS.DELETE,
-    handler: handleRemoveMember,
-    accessLevel: ACCESS_LEVEL.USER,
-    paramsSchema: zUuidAndIdParams(),
-  },
-  //
   // GET /:uuid/participants - get all participants for a board, plus tallies
   {
     path: '/:uuid/participants',
@@ -388,6 +379,34 @@ const routes: RouteConfig[] = [
     handler: handleListParticipants,
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
+  },
+  //
+  // GET /:uuid/members - get all members for a board
+  {
+    path: '/:uuid/members',
+    method: HTTP_METHODS.GET,
+    handler: handleListMembers,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidParam(),
+  },
+  // POST /:uuid/members - create a board member
+  // INTENTIONALLY NOT IMPLEMENTED (board members join via POST /:uuid/me on their own)
+  // PATCH /:uuid/members/:memberId - edit a board member (owners only)
+  {
+    path: '/:uuid/members/:memberId',
+    method: HTTP_METHODS.PATCH,
+    handler: handleUpdateMember,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidAndIdParams(),
+    bodySchema: zLeaderboardMemberUpdatePayload,
+  },
+  // DELETE /:uuid/members/:memberId - remove a board member (owners only)
+  {
+    path: '/:uuid/members/:memberId',
+    method: HTTP_METHODS.DELETE,
+    handler: handleRemoveMember,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidAndIdParams(),
   },
   // GET /:uuid/me - get your participation info
   {
@@ -397,14 +416,13 @@ const routes: RouteConfig[] = [
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
   },
-  // POST /:uuid/me - add your participation info (a.k.a. join the board)
+  // POST /:uuid/me - join the board
   {
     path: '/:uuid/me',
     method: HTTP_METHODS.POST,
-    handler: handleAddMyParticipation,
+    handler: handleJoinBoard,
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
-    bodySchema: zLeaderboardParticipationCreatePayload,
   },
   // PATCH /:uuid/me - edit your participation info
   {
@@ -415,11 +433,11 @@ const routes: RouteConfig[] = [
     paramsSchema: zUuidParam(),
     bodySchema: zLeaderboardParticipationUpdatePayload,
   },
-  // DELETE /:uuid/me - remove your participation info (a.k.a. leave the board)
+  // DELETE /:uuid/me - leave the board
   {
     path: '/:uuid/me',
     method: HTTP_METHODS.DELETE,
-    handler: handleRemoveMyParticipation,
+    handler: handleLeaveBoard,
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
   },

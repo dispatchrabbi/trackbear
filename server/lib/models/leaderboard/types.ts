@@ -3,44 +3,45 @@ import type { TallyMeasure } from '../tally/consts.ts';
 import type { MeasureCounts } from '../tally/types.ts';
 import type { Expand } from 'server/lib/obj.ts';
 
-export type LeaderboardGoal = MeasureCounts | null;
 export type Leaderboard = Expand<Omit<PrismaBoard, 'goal' | 'measures'> & {
   measures: TallyMeasure[];
   goal: LeaderboardGoal;
 }>;
+export type LeaderboardGoal = MeasureCounts | null;
 
+// Eventually, displayName will be in the BoardParticipant table and can move over from the User type
+// and we'll also have stuff like 'team' and 'color'
+export type LeaderboardMember = Expand<
+  Omit<PrismaBoardParticipant, 'goal'>
+  & {
+    goal: ParticipantGoal;
+    workIds: number[];
+    tagIds: number[];
+  }
+  & Pick<User, 'displayName' | 'avatar'>
+>;
 export type ParticipantGoal = null | {
   measure: TallyMeasure;
   count: number;
 };
-export type LeaderboardParticipant = Expand<Omit<PrismaBoardParticipant, 'goal'> & {
-  goal: ParticipantGoal;
-}>;
 
-export type MemberBio = Pick<LeaderboardParticipant, 'id' | 'isParticipant'> & Pick<User, 'displayName' | 'avatar'> & {
-  userUuid: string;
-};
+export type JustMember = Omit<LeaderboardMember, 'workIds' | 'tagIds'>;
 
 export type LeaderboardSummary = Leaderboard & {
   members: MemberBio[];
 };
+export type MemberBio = Pick<LeaderboardMember, 'id' | 'isParticipant' | 'displayName' | 'avatar'> & {
+  userUuid: string;
+};
 
-export type LeaderboardTally = Pick<Tally, 'uuid' | 'date' | 'measure' | 'count'>;
-
-// TODO: later on this will have stuff like 'team' and 'color' and 'displayName'
 export type Participant = Expand<
-  Pick<LeaderboardParticipant, 'id' | 'uuid' | 'goal'>
-  & Pick<User, 'displayName' | 'avatar'>
+  Pick<LeaderboardMember, 'id' | 'uuid' | 'goal'>
   & {
     tallies: LeaderboardTally[];
   }
 >;
+export type LeaderboardTally = Pick<Tally, 'uuid' | 'date' | 'measure' | 'count'>;
 
-// TODO: later on this will have stuff like 'team' and 'color' and 'displayName'
-export type Participation = Expand<Pick<LeaderboardParticipant, 'id' | 'goal'> & {
-  workIds: number[];
-  tagIds: number[];
-}>;
+export type Participation = Expand<Pick<LeaderboardMember, 'id' | 'goal' | 'isParticipant' | 'workIds' | 'tagIds'>>;
 
-// TODO: later on this will have stuff like 'team' and 'color' and 'displayName'
-export type Member = LeaderboardParticipant & Pick<User, 'displayName' | 'avatar'>;
+export type Membership = Pick<LeaderboardMember, 'uuid' | 'state' | 'avatar' | 'displayName' | 'isOwner' | 'isParticipant'>;

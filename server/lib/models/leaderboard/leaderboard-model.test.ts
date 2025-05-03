@@ -5,7 +5,7 @@ import _dbClient from '../../db.ts';
 import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
 
 import { LeaderboardModel } from './leaderboard-model.ts';
-import { Leaderboard, LeaderboardParticipant, LeaderboardSummary } from './types.ts';
+import { Leaderboard, LeaderboardMember, LeaderboardSummary } from './types.ts';
 import { LEADERBOARD_STATE, LEADERBOARD_PARTICIPANT_STATE } from './consts.ts';
 import { type User } from '../user/user-model.ts';
 import { USER_STATE } from '../user/consts.ts';
@@ -52,12 +52,12 @@ describe(LeaderboardModel, () => {
           ...mockObject<Leaderboard>(),
           participants: [
             {
-              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: false, isParticipant: false }),
-              user: mockObject<User>({ id: TEST_USER_ID, displayName: 'test0', avatar: null }),
+              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: false, isParticipant: false }),
+              user: mockObject<User>({ id: TEST_USER_ID, uuid: TEST_UUID, displayName: 'test0', avatar: null }),
             },
             {
-              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID - 1, userId: TEST_USER_ID - 1, starred: true, isParticipant: true }),
-              user: mockObject<User>({ id: TEST_USER_ID - 1, displayName: 'test1', avatar: null }),
+              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID - 1, userId: TEST_USER_ID - 1, starred: true, isParticipant: true }),
+              user: mockObject<User>({ id: TEST_USER_ID - 1, uuid: TEST_UUID, displayName: 'test1', avatar: null }),
             },
           ],
         },
@@ -65,12 +65,12 @@ describe(LeaderboardModel, () => {
           ...mockObject<Leaderboard>(),
           participants: [
             {
-              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: true, isParticipant: true }),
-              user: mockObject<User>({ id: TEST_USER_ID, displayName: 'test0', avatar: null }),
+              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: true, isParticipant: true }),
+              user: mockObject<User>({ id: TEST_USER_ID, uuid: TEST_UUID, displayName: 'test0', avatar: null }),
             },
             {
-              ...mockObject<LeaderboardParticipant>({ id: TEST_OBJECT_ID - 2, userId: TEST_USER_ID - 2, starred: false, isParticipant: true }),
-              user: mockObject<User>({ id: TEST_USER_ID - 2, displayName: 'test2', avatar: null }),
+              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID - 2, userId: TEST_USER_ID - 2, starred: false, isParticipant: true }),
+              user: mockObject<User>({ id: TEST_USER_ID - 2, uuid: TEST_UUID, displayName: 'test2', avatar: null }),
             },
           ],
         },
@@ -177,8 +177,6 @@ describe(LeaderboardModel, () => {
   describe.skip(LeaderboardModel.listParticipants, () => {});
 
   describe.skip(LeaderboardModel.getMemberParticipation, () => {});
-
-  describe.skip(LeaderboardModel.removeMemberParticipation, () => {});
 
   describe.skip(LeaderboardModel.listMembers, () => {});
 
