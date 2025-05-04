@@ -569,7 +569,7 @@ describe('leaderboard api v1', () => {
       expect(res).toFailWith(404, 'NOT_FOUND');
     });
 
-    it('returns 400 if the user is already a member', async () => {
+    it('returns 409 if the user is already a member', async () => {
       const leaderboard = mockObject<Leaderboard>({ id: TEST_OBJECT_ID });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 

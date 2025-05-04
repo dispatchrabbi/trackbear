@@ -8,7 +8,7 @@ import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 import { LEADERBOARD_STATE, LEADERBOARD_PARTICIPANT_STATE } from './consts.ts';
-import type { LeaderboardSummary, Leaderboard, LeaderboardMember, JustMember, Participant, Participation, ParticipantGoal } from './types.ts';
+import type { LeaderboardSummary, Leaderboard, LeaderboardMember, JustMember, Participant, Participation, ParticipantGoal, MemberBio, LeaderboardGoal, LeaderboardTally } from './types.ts';
 import { getTalliesForParticipants } from './helpers.ts';
 import type { User } from '../user/user-model.ts';
 import { USER_STATE } from '../user/consts.ts';
@@ -66,25 +66,27 @@ export class LeaderboardModel {
       },
     });
 
-    const summaries = leaderboardsWithMembers.map(board => ({
+    const summaries = leaderboardsWithMembers.map((board): LeaderboardSummary => ({
       ...pick(board, [
         'id', 'uuid', 'state', 'ownerId', 'createdAt', 'updatedAt',
         'title', 'description',
-        'measures', 'startDate', 'endDate', 'goal',
+        'measures', 'startDate', 'endDate',
         'individualGoalMode', 'fundraiserMode',
         'isJoinable', 'isPublic',
       ]),
+      goal: board.goal as LeaderboardGoal,
       // use the starred property from the participant, not the leaderboard
       starred: board.participants.find(p => p.userId === participantUserId).starred,
-      members: board.participants.map(participant => ({
+      members: board.participants.map((participant): MemberBio => ({
         id: participant.id,
         isParticipant: participant.isParticipant,
+        isOwner: participant.isOwner,
         userUuid: participant.user.uuid,
         // TODO: this will change when we have per-board display names
         displayName: participant.user.displayName,
         avatar: participant.user.avatar,
       })),
-    })) as LeaderboardSummary[];
+    }));
 
     return summaries;
   }
@@ -352,7 +354,7 @@ export class LeaderboardModel {
   static async createMember(leaderboard: Leaderboard, user: User, data: CreateMemberData, reqCtx: RequestContext): Promise<LeaderboardMember> {
     const dataWithDefaults = {
       starred: false,
-      isParticipant: true,
+      isParticipant: false,
       isOwner: false,
       goal: null,
       workIds: [],
@@ -483,8 +485,8 @@ export class LeaderboardModel {
       where: {
         boardId: leaderboard.id,
         state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-        isParticipant: true,
         user: { state: USER_STATE.ACTIVE },
+        isParticipant: true,
       },
       include: {
         user: true,
@@ -495,13 +497,13 @@ export class LeaderboardModel {
 
     const tallies = await getTalliesForParticipants(leaderboard, rawParticipants);
 
-    const participants = rawParticipants.map(participant => ({
+    const participants = rawParticipants.map((participant): Participant => ({
       ...pick(participant, ['id', 'uuid']),
       goal: participant.goal as ParticipantGoal,
       avatar: participant.user.avatar,
       displayName: participant.user.displayName,
-      tallies: tallies.filter(tally => tally.ownerId === participant.userId).map(tally => pick(tally, ['uuid', 'date', 'measure', 'count'])),
-    })) as Participant[];
+      tallies: tallies.filter(tally => tally.ownerId === participant.userId).map((tally): LeaderboardTally => pick(tally, ['uuid', 'date', 'measure', 'count'])),
+    }));
 
     return participants;
   }
@@ -514,7 +516,6 @@ export class LeaderboardModel {
           userId: userId,
           boardId: leaderboardId,
         },
-        isParticipant: true,
         state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
         board: { state: LEADERBOARD_STATE.ACTIVE },
         user: { state: USER_STATE.ACTIVE },
@@ -533,7 +534,7 @@ export class LeaderboardModel {
     }
 
     return included2ids(pick(record, [
-      'id', 'goal', 'worksIncluded', 'tagsIncluded',
+      'id', 'isParticipant', 'goal', 'worksIncluded', 'tagsIncluded',
     ])) as Participation;
   }
 

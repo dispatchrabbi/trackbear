@@ -12,7 +12,7 @@ import { reqCtx } from 'server/lib/request-context.ts';
 import { pick } from 'server/lib/obj.ts';
 
 export type {
-  LeaderboardSummary, Leaderboard, LeaderboardMember, Participant, Participation,
+  LeaderboardSummary, Leaderboard, LeaderboardMember, Participant, Participation, Membership,
 };
 
 export async function handleList(req: RequestWithUser, res: ApiResponse<LeaderboardSummary[]>) {
@@ -192,7 +192,7 @@ export async function handleListParticipants(req: RequestWithUser, res: ApiRespo
   return res.status(200).send(success(participants));
 }
 
-export async function handleGetMyParticipation(req: RequestWithUser, res: ApiResponse<Participation | null>) {
+export async function handleGetMyParticipation(req: RequestWithUser, res: ApiResponse<Participation>) {
   const userId = req.user.id;
   const uuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: userId });

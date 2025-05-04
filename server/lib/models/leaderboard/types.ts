@@ -30,12 +30,12 @@ export type JustMember = Omit<LeaderboardMember, 'workIds' | 'tagIds'>;
 export type LeaderboardSummary = Leaderboard & {
   members: MemberBio[];
 };
-export type MemberBio = Pick<LeaderboardMember, 'id' | 'isParticipant' | 'displayName' | 'avatar'> & {
+export type MemberBio = Pick<LeaderboardMember, 'id' | 'isParticipant' | 'isOwner' | 'displayName' | 'avatar'> & {
   userUuid: string;
 };
 
 export type Participant = Expand<
-  Pick<LeaderboardMember, 'id' | 'uuid' | 'goal'>
+  Pick<LeaderboardMember, 'id' | 'uuid' | 'goal' | 'avatar' | 'displayName'>
   & {
     tallies: LeaderboardTally[];
   }

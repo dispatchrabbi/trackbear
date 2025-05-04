@@ -9,6 +9,7 @@ const props = defineProps<{
   id?: string;
   measure: keyof typeof TALLY_MEASURE_INFO;
   invalid?: boolean;
+  disabled?: boolean;
 }>();
 
 // hours and minutes are decomposed from a model value that's just minutes, and have to add back up to that
@@ -62,6 +63,7 @@ import InputGroupAddon from 'primevue/inputgroupaddon';
         :pt="{ input: { root: { class: 'w-0 grow'} } }"
         :pt-options="{ mergeSections: true, mergeProps: true }"
         :invalid="props.invalid"
+        :disabled="props.disabled"
       />
       <InputGroupAddon class="!min-w-0">
         h
@@ -72,6 +74,7 @@ import InputGroupAddon from 'primevue/inputgroupaddon';
         :pt="{ input: { root: { class: 'w-0 grow'} } }"
         :pt-options="{ mergeSections: true, mergeProps: true }"
         :invalid="props.invalid"
+        :disabled="props.disabled"
       />
       <InputGroupAddon class="!min-w-0">
         m
@@ -84,6 +87,7 @@ import InputGroupAddon from 'primevue/inputgroupaddon';
         :pt="{ input: { root: { class: 'w-0 grow'} } }"
         :pt-options="{ mergeSections: true, mergeProps: true }"
         :invalid="props.invalid"
+        :disabled="props.disabled"
       />
       <InputGroupAddon>{{ TALLY_MEASURE_INFO[props.measure].counter.plural }}</InputGroupAddon>
     </template>

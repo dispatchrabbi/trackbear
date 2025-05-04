@@ -123,25 +123,18 @@ type StandingsDataRow = {
   yesterdayPercentRaw: number;
 };
 
-const filteredParticipants = computed(() => {
-  return props.participants.map(participant => ({
-    ...participant,
-    tallies: participant.tallies.filter(tally => tally.measure === getMeasure(participant)),
-  })).filter(participant => participant.tallies.length > 0);
-});
-
 const standingsRows = computed<StandingsDataRow[]>(() => {
   const { daysAlong, totalDays } = determineStartAndEndDates(props.leaderboard, props.participants);
   const today = formatDate(new Date());
   const yesterday = formatDate(addDays(new Date(), -1));
 
   const rows = [];
-  for(const participant of filteredParticipants.value) {
+  for(const participant of props.participants) {
     const normalizedTallies = normalizeTallies(participant.tallies);
     const accumulatedTallies = accumulateTallies(normalizedTallies);
 
-    const todayTally = accumulatedTallies.findLast(tally => tally.date <= today);
-    const yesterdayTally = accumulatedTallies.findLast(tally => tally.date <= yesterday);
+    const todayTally = accumulatedTallies.findLast(tally => tally.date <= today) ?? { date: 'Never', value: 0, count: 0, accumulated: 0 };
+    const yesterdayTally = accumulatedTallies.findLast(tally => tally.date <= yesterday) ?? { date: 'Never', value: 0, count: 0, accumulated: 0 };
 
     const row: StandingsDataRow = {
       uuid: participant.uuid,

@@ -25,6 +25,7 @@ import DeleteUserForm from 'src/components/account/DeleteUserForm.vue';
 import UserAvatar from 'src/components/UserAvatar.vue';
 
 import { useConfirm } from 'primevue/useconfirm';
+import DangerPanel from 'src/components/layout/DangerPanel.vue';
 const confirm = useConfirm();
 
 const breadcrumbs: MenuItem[] = [
@@ -120,13 +121,9 @@ const handleRemoveAvatar = function(ev) {
       >
         <ChangePasswordForm />
       </Panel>
-      <Panel
+      <DangerPanel
         header="Danger Zone"
         class="m-2"
-        toggleable
-        collapsed
-        :pt="{ header: { class: '!bg-danger-200 dark:!bg-danger-900' } }"
-        :pt-options="{ mergeSections: true, mergeProps: true }"
       >
         <Button
           label="Delete account"
@@ -151,7 +148,7 @@ const handleRemoveAvatar = function(ev) {
             @form-success="router.push({ name: 'logout' })"
           />
         </Dialog>
-      </Panel>
+      </DangerPanel>
     </div>
   </ApplicationLayout>
 </template>

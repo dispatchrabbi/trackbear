@@ -41,6 +41,9 @@ const toast = useToast();
 const leaderboard = ref<LeaderboardSummary>(null);
 const loadLeaderboard = async function() {
   leaderboard.value = leaderboardStore.get(route.params.boardUuid.toString());
+  if(leaderboard.value === null) {
+    router.push({ name: 'leaderboards' });
+  }
 };
 
 const participants = ref<Participant[]>([]);
@@ -72,7 +75,9 @@ async function reloadData() {
 }
 
 const measuresAvailable = computed(() => {
-  if(leaderboard.value === null) { return [TALLY_MEASURE.WORD]; }
+  if(leaderboard.value === null) {
+    return [TALLY_MEASURE.WORD];
+  }
 
   const measuresPresent = new Set(participants.value.flatMap(participant => participant.tallies.map(tally => tally.measure)));
   return leaderboard.value.measures.filter(measure => measuresPresent.has(measure));
@@ -93,9 +98,15 @@ const isUserAMember = computed(() => {
   return leaderboard.value.members.some(member => member.userUuid === userStore.user.uuid);
 });
 
+const handleConfigureClick = function() {
+  router.push({ name: 'edit-leaderboard' });
+};
+
 const { copy } = useClipboard({ legacy: true });
 const handleShareClick = function() {
-  if(leaderboard.value === null) { return; }
+  if(leaderboard.value === null) {
+    return;
+  }
 
   copy(leaderboard.value.uuid);
   toast.add({
@@ -156,13 +167,7 @@ watch(() => route.params.boardUuid, newUuid => {
             label="Configure Leaderboard"
             severity="info"
             :icon="PrimeIcons.COG"
-            @click="console.log('configure!')"
-          />
-          <Button
-            v-if="leaderboard.isJoinable && !isUserAMember"
-            label="Join Leaderboard"
-            :icon="PrimeIcons.USER_PLUS"
-            @click="console.log('join!')"
+            @click="handleConfigureClick"
           />
           <Button
             v-if="leaderboard.isJoinable"
