@@ -13,6 +13,7 @@ const leaderboardStore = useLeaderboardStore();
 
 import { type Participation, type LeaderboardSummary, type Membership, listMembers, getMyParticipation } from 'src/lib/api/leaderboard';
 
+import EditLeaderboardForm from 'src/components/leaderboard/EditLeaderboardForm.vue';
 import EditLeaderboardParticipationForm from 'src/components/leaderboard/EditLeaderboardParticipationForm.vue';
 
 import { PrimeIcons } from 'primevue/api';
@@ -122,15 +123,33 @@ watch(() => route.params.boardUuid, newUuid => {
           key="leaderboard"
           header="Leaderboard"
         >
-          <pre class="whitespace-pre-wrap">{{ JSON.stringify(leaderboard) }}</pre>
+          <div class="flex flex-col gap-4 max-w-screen-md">
+            <Panel header="Configure Leaderboard">
+              <EditLeaderboardForm
+                :leaderboard="leaderboard"
+                @form-success="router.push({ name: 'leaderboard', params: { boardUuid: route.params.boardUuid }})"
+                @form-cancel="router.push({ name: 'leaderboard', params: { boardUuid: route.params.boardUuid }})"
+              />
+            </Panel>
+            <DangerPanel header="Delete this Leaderboard">
+              <Button
+                label="Delete this leaderboard"
+                severity="danger"
+                size="large"
+                :icon="PrimeIcons.TIMES_CIRCLE"
+                @click="console.log('delete!')"
+              />
+            </DangerPanel>
+          </div>
         </TabPanel>
-        <TabPanel
+        <!-- haven't yet implemented this feature -->
+        <!-- <TabPanel
           v-if="isCurrentUserAnOwner"
           key="members"
           header="Members"
         >
           <pre class="whitespace-pre-wrap">{{ JSON.stringify(members) }}</pre>
-        </TabPanel>
+        </TabPanel> -->
         <TabPanel
           v-if="isCurrentUserAnOwner"
           key="participation"
@@ -141,6 +160,8 @@ watch(() => route.params.boardUuid, newUuid => {
               <EditLeaderboardParticipationForm
                 :leaderboard="leaderboard"
                 :participation="myParticipation"
+                @form-success="router.push({ name: 'leaderboard', params: { boardUuid: route.params.boardUuid }})"
+                @form-cancel="router.push({ name: 'leaderboard', params: { boardUuid: route.params.boardUuid }})"
               />
             </Panel>
             <DangerPanel header="Leave this Leaderboard">

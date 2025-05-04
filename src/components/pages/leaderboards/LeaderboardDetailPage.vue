@@ -47,14 +47,22 @@ const loadLeaderboard = async function() {
 };
 
 const participants = ref<Participant[]>([]);
+const participantsNeedToSetGoals = ref<boolean>(false);
 const isParticipantsLoading = ref<boolean>(false);
 const participantsErrorMessage = ref<string>(null);
 const loadParticipants = async function() {
+  participantsNeedToSetGoals.value = false;
   participantsErrorMessage.value = null;
   isParticipantsLoading.value = true;
 
   try {
-    participants.value = await listParticipants(leaderboard.value.uuid);
+    const allParticipants = await listParticipants(leaderboard.value.uuid);
+    participants.value = leaderboard.value.individualGoalMode ? allParticipants.filter(participant => participant.goal !== null) : allParticipants;
+
+    // set a flag if there are participants but all of them need to set goals
+    if(leaderboard.value.individualGoalMode && participants.value.length === 0 && allParticipants.length > 0) {
+      participantsNeedToSetGoals.value = true;
+    }
   } catch (err) {
     participantsErrorMessage.value = err.message;
     if(err.code !== 'NOT_LOGGED_IN') {
@@ -196,7 +204,10 @@ watch(() => route.params.boardUuid, newUuid => {
         <!-- Standings -->
         <div class="w-full max-w-screen-md">
           <SubsectionTitle title="Standings" />
-          <div v-if="participants.length === 0">
+          <div v-if="participantsNeedToSetGoals">
+            This leaderboard is using Individual Goal Mode but no participants have yet set their own goals, so there's nothing to show.
+          </div>
+          <div v-else-if="participants.length === 0">
             This leaderboard has no participants, so there's nothing to show.
           </div>
           <div v-else-if="leaderboard.individualGoalMode">
