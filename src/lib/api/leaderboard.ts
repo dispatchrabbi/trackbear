@@ -65,7 +65,7 @@ export async function getMyParticipation(uuid: string) {
   return callApiV1<Participation>(ENDPOINT + `/${uuid}/me`, 'GET');
 }
 
-export async function joinBoard(uuid: string) {
+export async function joinLeaderboard(uuid: string) {
   return callApiV1<LeaderboardMember>(ENDPOINT + `/${uuid}/me`, 'POST');
 }
 
@@ -73,6 +73,6 @@ export async function updateMyParticipation(uuid: string, data: LeaderboardParti
   return callApiV1<LeaderboardMember>(ENDPOINT + `/${uuid}/me`, 'PATCH', data);
 }
 
-export async function leaveBoard(uuid: string) {
+export async function leaveLeaderboard(uuid: string) {
   return callApiV1<LeaderboardMember>(ENDPOINT + `/${uuid}/me`, 'DELETE');
 }

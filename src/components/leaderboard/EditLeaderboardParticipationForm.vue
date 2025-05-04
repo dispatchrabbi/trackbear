@@ -143,7 +143,7 @@ async function handleSubmit() {
     @cancel="emit('formCancel')"
   >
     <FieldWrapper
-      for="board-form-is-participant"
+      for="leaderboard-form-is-participant"
       label="Are you participating in this leaderboard?"
       :rule="ruleFor('isParticipant')"
       required
@@ -166,7 +166,7 @@ async function handleSubmit() {
     </FieldWrapper>
     <FieldWrapper
       v-if="formModel.isParticipant && props.leaderboard.individualGoalMode"
-      for="board-form-goal-count"
+      for="leaderboard-form-goal-count"
       label="Your individual goal"
       :rule="ruleFor('count')"
       required
@@ -176,7 +176,7 @@ async function handleSubmit() {
         <div class="count-fieldset-container flex gap-2">
           <div class="count-fieldset-measure flex-none">
             <Dropdown
-              id="board-form-goal-measure"
+              id="leaderboard-form-goal-measure"
               v-model="formModel.measure"
               :options="measureOptions"
               option-label="label"
@@ -187,7 +187,7 @@ async function handleSubmit() {
           </div>
           <div class="count-fieldset-count flex-auto">
             <TallyCountInput
-              id="board-form-goal-count"
+              id="leaderboard-form-goal-count"
               v-model="formModel.count"
               :measure="formModel.measure"
               :invalid="!isFieldValid"
@@ -205,14 +205,14 @@ async function handleSubmit() {
     </div>
     <FieldWrapper
       v-if="formModel.isParticipant"
-      for="board-form-works"
+      for="leaderboard-form-works"
       label="Projects to include"
       :rule="ruleFor('works')"
       info="Only progress entries from the selected projects will be included on this leaderboard."
     >
       <template #default="{ onUpdate, isFieldValid }">
         <MultiSelect
-          id="board-form-works"
+          id="leaderboard-form-works"
           v-model="formModel.works"
           display="chip"
           :options="workStore.works"
@@ -228,14 +228,14 @@ async function handleSubmit() {
     </FieldWrapper>
     <FieldWrapper
       v-if="formModel.isParticipant"
-      for="board-form-tags"
+      for="leaderboard-form-tags"
       label="Tags to include"
       :rule="ruleFor('tags')"
       info="Only progress entries with at least one of these tags will be included on this leaderboard."
     >
       <template #default="{ onUpdate, isFieldValid }">
         <MultiSelect
-          id="board-form-tags"
+          id="leaderboard-form-tags"
           v-model="formModel.tags"
           display="chip"
           :options="tagStore.tags"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
+import { useEventBus } from '@vueuse/core';
 
 import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
@@ -11,10 +12,12 @@ const userStore = useUserStore();
 import { useLeaderboardStore } from 'src/stores/leaderboard';
 const leaderboardStore = useLeaderboardStore();
 
-import { type Participation, type LeaderboardSummary, type Membership, listMembers, getMyParticipation } from 'src/lib/api/leaderboard';
+import { type Participation, type LeaderboardSummary, type Leaderboard, type Membership, listMembers, getMyParticipation, deleteLeaderboard, leaveLeaderboard } from 'src/lib/api/leaderboard';
 
 import EditLeaderboardForm from 'src/components/leaderboard/EditLeaderboardForm.vue';
 import EditLeaderboardParticipationForm from 'src/components/leaderboard/EditLeaderboardParticipationForm.vue';
+import DangerPanel from 'src/components/layout/DangerPanel.vue';
+import DangerButton from 'src/components/shared/DangerButton.vue';
 
 import { PrimeIcons } from 'primevue/api';
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
@@ -24,7 +27,9 @@ import Button from 'primevue/button';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Panel from 'primevue/panel';
-import DangerPanel from 'src/components/layout/DangerPanel.vue';
+
+const deleteEventBus = useEventBus<{ leaderboard: Leaderboard }>('leaderboard:delete');
+const leaveEventBus = useEventBus<{ leaderboard: Leaderboard }>('leaderboard:leave');
 
 const leaderboard = ref<LeaderboardSummary>(null);
 const isCurrentUserAnOwner = ref<boolean>(false);
@@ -86,6 +91,11 @@ async function reloadData() {
   isLoading.value = false;
 }
 
+const handleDeleteLeaderboardSubmit = async function() {
+  const deletedLeaderboard = await deleteLeaderboard(leaderboard.value.uuid);
+  deleteEventBus.emit({ leaderboard: deletedLeaderboard });
+};
+
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
     { label: 'Leaderboards', url: '/leaderboards2' },
@@ -132,12 +142,17 @@ watch(() => route.params.boardUuid, newUuid => {
               />
             </Panel>
             <DangerPanel header="Delete this Leaderboard">
-              <Button
-                label="Delete this leaderboard"
-                severity="danger"
-                size="large"
-                :icon="PrimeIcons.TIMES_CIRCLE"
-                @click="console.log('delete!')"
+              <DangerButton
+                danger-button-label="Delete this leaderboard"
+                :danger-button-icon="PrimeIcons.TRASH"
+                action-description="delete this leaderboard"
+                action-command="Delete"
+                action-in-progress-message="Deleting..."
+                action-success-message="This leaderboard has been deleted."
+                :confirmation-code="leaderboard.title"
+                confirmation-code-description="this leaderboard's title"
+                :action-fn="handleDeleteLeaderboardSubmit"
+                @inner-form-success="router.push({ name: 'leaderboards' })"
               />
             </DangerPanel>
           </div>
