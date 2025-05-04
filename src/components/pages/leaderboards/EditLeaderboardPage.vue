@@ -22,17 +22,16 @@ import DangerButton from 'src/components/shared/DangerButton.vue';
 import { PrimeIcons } from 'primevue/api';
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
-import Button from 'primevue/button';
-// import UserAvatar from 'src/components/UserAvatar.vue';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Panel from 'primevue/panel';
 
 const deleteEventBus = useEventBus<{ leaderboard: Leaderboard }>('leaderboard:delete');
-const leaveEventBus = useEventBus<{ leaderboard: Leaderboard }>('leaderboard:leave');
+const leaveEventBus = useEventBus<{ leaderboardUuid: string }>('leaderboard:leave');
 
 const leaderboard = ref<LeaderboardSummary>(null);
 const isCurrentUserAnOwner = ref<boolean>(false);
+const isCurrentUserTheOnlyOwner = ref<boolean>(false);
 const loadLeaderboard = async function() {
   leaderboard.value = leaderboardStore.get(route.params.boardUuid.toString());
   if(leaderboard.value === null) {
@@ -43,8 +42,10 @@ const loadLeaderboard = async function() {
   if(!currentMember) {
     router.push({ name: 'leaderboards' });
   }
-
   isCurrentUserAnOwner.value = currentMember.isOwner;
+
+  const owners = leaderboard.value.members.filter(member => member.isOwner);
+  isCurrentUserTheOnlyOwner.value = currentMember.isOwner && owners.length === 1;
 };
 
 const myParticipation = ref<Participation>(null);
@@ -94,6 +95,11 @@ async function reloadData() {
 const handleDeleteLeaderboardSubmit = async function() {
   const deletedLeaderboard = await deleteLeaderboard(leaderboard.value.uuid);
   deleteEventBus.emit({ leaderboard: deletedLeaderboard });
+};
+
+const handleLeaveLeaderboardSubmit = async function() {
+  await leaveLeaderboard(leaderboard.value.uuid);
+  leaveEventBus.emit({ leaderboardUuid: leaderboard.value.uuid });
 };
 
 const breadcrumbs = computed(() => {
@@ -166,7 +172,6 @@ watch(() => route.params.boardUuid, newUuid => {
           <pre class="whitespace-pre-wrap">{{ JSON.stringify(members) }}</pre>
         </TabPanel> -->
         <TabPanel
-          v-if="isCurrentUserAnOwner"
           key="participation"
           header="My Participation"
         >
@@ -180,12 +185,23 @@ watch(() => route.params.boardUuid, newUuid => {
               />
             </Panel>
             <DangerPanel header="Leave this Leaderboard">
-              <Button
-                label="Leave this leaderboard"
-                severity="danger"
-                size="large"
-                :icon="PrimeIcons.TIMES_CIRCLE"
-                @click="console.log('leave!')"
+              <div v-if="isCurrentUserTheOnlyOwner">
+                <!-- You cannot leave this leaderboard because you are its only owner. To be able to leave the leaderboard,
+                you must first promote at least one other member to be an owner in your stead on the Members tab. -->
+                You cannot leave this leaderboard because you are its only owner.
+              </div>
+              <DangerButton
+                v-else
+                danger-button-label="Leave this leaderboard"
+                :danger-button-icon="PrimeIcons.USER_MINUS"
+                action-description="leave this leaderboard"
+                action-command="Leave"
+                action-in-progress-message="Leaving..."
+                action-success-message="You have left the leaderboard."
+                :confirmation-code="leaderboard.title"
+                confirmation-code-description="this leaderboard's title"
+                :action-fn="handleLeaveLeaderboardSubmit"
+                @inner-form-success="router.push({ name: 'leaderboards' })"
               />
             </DangerPanel>
           </div>

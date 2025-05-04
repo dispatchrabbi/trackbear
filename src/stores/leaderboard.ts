@@ -30,8 +30,9 @@ export const useLeaderboardStore = defineStore('leaderboard', () => {
   useEventBus<{ leaderboard: Leaderboard }>('leaderboard:edit').on(() => populate(true));
   useEventBus<{ leaderboard: Leaderboard }>('leaderboard:star').on(() => populate(true));
   useEventBus<{ leaderboard: Leaderboard }>('leaderboard:delete').on(() => populate(true));
-  useEventBus<{ leaderboard: Leaderboard }>('leaderboard:join').on(() => populate(true));
-  useEventBus<{ leaderboard: Leaderboard }>('leaderboard:leave').on(() => populate(true));
+
+  useEventBus<{ leaderboardUuid: string }>('leaderboard:join').on(() => populate(true));
+  useEventBus<{ leaderboardUuid: string }>('leaderboard:leave').on(() => populate(true));
 
   return {
     leaderboards,

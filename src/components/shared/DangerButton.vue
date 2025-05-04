@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<{
   actionFn: () => Promise<void>;
 }>(), {
   dangerButtonSize: 'large',
-  dangerButtonIcon: PrimeIcons.MINUS_CIRCLE,
+  dangerButtonIcon: PrimeIcons.TIMES_CIRCLE,
   dangerButtonOutlined: false,
 });
 
