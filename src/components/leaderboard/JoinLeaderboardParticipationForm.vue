@@ -17,7 +17,7 @@ import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
-import { updateMyParticipation, type Leaderboard, type Participation, type LeaderboardParticipationPayload } from 'src/lib/api/leaderboard';
+import { joinLeaderboard, type Leaderboard, type LeaderboardParticipationPayload } from 'src/lib/api/leaderboard';
 
 import InputSwitch from 'primevue/inputswitch';
 import MultiSelect from 'primevue/multiselect';
@@ -29,18 +29,17 @@ import TallyCountInput from '../tally/TallyCountInput.vue';
 
 const props = defineProps<{
   leaderboard: Leaderboard;
-  participation: Participation;
 }>();
 
-const emit = defineEmits(['leaderboard:edit-participation', 'formSuccess', 'formCancel']);
-const eventBus = useEventBus<{ leaderboard: Leaderboard; participation: Participation }>('board:edit-participation');
+const emit = defineEmits(['leaderboard:join', 'formSuccess', 'formCancel']);
+const eventBus = useEventBus<{ leaderboardUuid: string }>('leaderboard:join');
 
 const formModel = reactive({
-  isParticipant: props.participation.isParticipant,
-  measure: props.participation.goal?.measure ?? TALLY_MEASURE.WORD,
-  count: props.participation.goal?.count ?? 0,
-  works: props.participation.workIds,
-  tags: props.participation.tagIds,
+  isParticipant: true,
+  measure: TALLY_MEASURE.WORD,
+  count: null,
+  works: [],
+  tags: [],
 });
 
 const validations = z.object({
@@ -106,17 +105,17 @@ async function handleSubmit() {
         // user is not participating — save their previous participation info
         {
           isParticipant: false,
-          goal: props.leaderboard.individualGoalMode ? props.participation.goal : null,
-          workIds: props.participation.workIds,
-          tagIds: props.participation.tagIds,
+          goal: null,
+          workIds: [],
+          tagIds: [],
         };
 
-    const updated = await updateMyParticipation(props.leaderboard.uuid, payload);
+    const joinedMember = await joinLeaderboard(props.leaderboard.uuid, payload);
 
-    emit('leaderboard:edit-participation', { participation: updated });
-    eventBus.emit({ leaderboard: props.leaderboard, participation: updated });
+    emit('leaderboard:join', { leaderboard: props.leaderboard, member: joinedMember });
+    eventBus.emit({ leaderboardUuid: props.leaderboard.uuid });
 
-    successMessage.value = `You have changed your selections for ${props.leaderboard.title}!`;
+    successMessage.value = `You have joined ${props.leaderboard.title}!`;
     await wait(1 * 1000);
 
     emit('formSuccess');
@@ -134,8 +133,8 @@ async function handleSubmit() {
 <template>
   <TbForm
     :is-valid="isWholeFormValid"
-    submit-message="Submit"
-    :loading-message="isLoading ? 'Submitting...' : null"
+    submit-message="Join"
+    :loading-message="isLoading ? 'Joining...' : null"
     :success-message="successMessage"
     :error-message="errorMessage"
     cancel-button
@@ -251,5 +250,3 @@ async function handleSubmit() {
     </FieldWrapper>
   </TbForm>
 </template>
-
-<style scoped></style>

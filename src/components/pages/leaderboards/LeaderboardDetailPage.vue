@@ -106,6 +106,14 @@ const isUserAMember = computed(() => {
   return leaderboard.value.members.some(member => member.userUuid === userStore.user.uuid);
 });
 
+const participantMembers = computed(() => {
+  return leaderboard.value.members.filter(member => member.isParticipant);
+});
+
+const spectatorMembers = computed(() => {
+  return leaderboard.value.members.filter(member => !member.isParticipant);
+});
+
 const handleConfigureClick = function() {
   router.push({ name: 'edit-leaderboard' });
 };
@@ -187,18 +195,31 @@ watch(() => route.params.boardUuid, newUuid => {
         </template>
       </DetailPageHeader>
       <div
-        class="flex flex-row-reverse flex-wrap justify-end gap-8"
+        class="flex flex-col lg:flex-row-reverse flex-wrap justify-end gap-8"
       >
         <!-- Members -->
         <div class="max-w-screen-md">
-          <SubsectionTitle title="Members" />
-          <div class="mb-4 flex flex-wrap gap-2">
-            <!-- TODO: add a crown for owners, or something-->
-            <UserAvatar
-              v-for="member of leaderboard.members"
-              :key="member.id"
-              :user="member"
-            />
+          <div v-if="participantMembers.length > 0">
+            <SubsectionTitle title="Participants" />
+            <div class="mb-4 flex flex-wrap gap-2">
+              <!-- TODO: add a crown for owners, or something-->
+              <UserAvatar
+                v-for="participant of participantMembers"
+                :key="participant.id"
+                :user="participant"
+              />
+            </div>
+          </div>
+          <div v-if="spectatorMembers.length > 0">
+            <SubsectionTitle title="Spectators" />
+            <div class="mb-4 flex flex-wrap gap-2">
+              <!-- TODO: add a crown for owners, or something-->
+              <UserAvatar
+                v-for="spectator of spectatorMembers"
+                :key="spectator.id"
+                :user="spectator"
+              />
+            </div>
           </div>
         </div>
         <!-- Standings -->

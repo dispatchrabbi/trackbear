@@ -5,7 +5,7 @@ import { RequestWithUser } from '../../lib/middleware/access.ts';
 import { z } from 'zod';
 import { zUuidParam, NonEmptyArray, zUuidAndIdParams } from '../../lib/validators.ts';
 
-import { CreateLeaderboardData, CreateMemberData, LeaderboardModel, UpdateLeaderboardData } from 'server/lib/models/leaderboard/leaderboard-model.ts';
+import { CreateLeaderboardData, CreateMemberData, LeaderboardModel, UpdateLeaderboardData, UpdateMemberData } from 'server/lib/models/leaderboard/leaderboard-model.ts';
 import type { Leaderboard, LeaderboardSummary, LeaderboardMember, JustMember, Participant, ParticipantGoal, Participation, Membership } from 'server/lib/models/leaderboard/types.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 import { reqCtx } from 'server/lib/request-context.ts';
@@ -37,6 +37,10 @@ export async function handleGetByJoinCode(req: RequestWithUser, res: ApiResponse
   const leaderboard = await LeaderboardModel.getByJoinCode(joinCode);
   if(!leaderboard) {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with join code ${joinCode}.`));
+  }
+
+  if(!leaderboard.isJoinable) {
+    return res.status(409).send(failure('CANNOT_JOIN', `This leaderboard is not accepting new members.`));
   }
 
   return res.status(200).send(success(leaderboard));
@@ -90,19 +94,22 @@ const zLeaderboardStarPayload = z.object({
 }).strict();
 export async function handleStar(req: RequestWithUser, res: ApiResponse<LeaderboardStarResponse>) {
   const leaderboardUuid = req.params.uuid;
-  const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { ownerUserId: req.user.id });
+  const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { memberUserId: req.user.id });
   if(!leaderboard) {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
   }
 
   const memberId = +req.user.id;
-  const member = await LeaderboardModel.getMember(leaderboard, memberId);
+  const member = await LeaderboardModel.getMemberByUserId(leaderboard, memberId);
   if(!member) {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any member with id ${memberId} on that leaderboard.`));
   }
 
   const payload = req.body as LeaderboardStarPayload;
-  const updated = await LeaderboardModel.updateMember(member, payload, reqCtx(req));
+  const updatedData: UpdateMemberData = {
+    starred: payload.starred,
+  };
+  const updated = await LeaderboardModel.updateMember(member, updatedData, reqCtx(req));
 
   return res.status(200).send(success({ starred: updated.starred }));
 }
@@ -204,38 +211,13 @@ export async function handleGetMyParticipation(req: RequestWithUser, res: ApiRes
   return res.status(200).send(success(participation));
 }
 
-export async function handleJoinBoard(req: RequestWithUser, res: ApiResponse<LeaderboardMember>) {
-  const uuid = req.params.uuid;
-  const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: req.user.id, includePublicLeaderboards: true });
-  if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
-  }
-
-  const user = req.user;
-  const existing = await LeaderboardModel.getMemberByUserId(leaderboard, user.id);
-  if(existing) {
-    return res.status(409).send(failure('ALREADY_JOINED', `You are already part of this leaderboard.`));
-  }
-
-  const memberData: CreateMemberData = {
-    isParticipant: true,
-    isOwner: false,
-    goal: null,
-    workIds: [],
-    tagIds: [],
-  };
-  const created = await LeaderboardModel.createMember(leaderboard, user, memberData, reqCtx(req));
-
-  return res.status(201).send(success(created));
-}
-
-export type LeaderboardParticipationUpdatePayload = {
+export type LeaderboardParticipationPayload = {
   isParticipant: boolean;
   goal: ParticipantGoal;
   workIds: number[];
   tagIds: number[];
 };
-const zLeaderboardParticipationUpdatePayload = z.object({
+const zLeaderboardParticipationPayload = z.object({
   isParticipant: z.boolean(),
   goal: z.object({
     measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
@@ -244,6 +226,37 @@ const zLeaderboardParticipationUpdatePayload = z.object({
   workIds: z.array(z.number().int()),
   tagIds: z.array(z.number().int()),
 }).strict();
+
+export async function handleJoinBoard(req: RequestWithUser, res: ApiResponse<LeaderboardMember>) {
+  const uuid = req.params.uuid;
+  const leaderboard = await LeaderboardModel.getByUuid(uuid);
+  if(!leaderboard) {
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
+  }
+
+  if(!leaderboard.isJoinable) {
+    return res.status(409).send(failure('CANNOT_JOIN', `This leaderboard is not accepting new members.`));
+  }
+
+  const user = req.user;
+  const existing = await LeaderboardModel.getMemberByUserId(leaderboard, user.id);
+  if(existing) {
+    return res.status(409).send(failure('ALREADY_JOINED', `You are already part of this leaderboard.`));
+  }
+
+  const payload = req.body as LeaderboardParticipationPayload;
+  const memberData: CreateMemberData = {
+    isParticipant: payload.isParticipant,
+    isOwner: false,
+    goal: payload.goal,
+    workIds: payload.workIds,
+    tagIds: payload.tagIds,
+  };
+  const created = await LeaderboardModel.createMember(leaderboard, user, memberData, reqCtx(req));
+
+  return res.status(201).send(success(created));
+}
+
 export async function handleUpdateMyParticipation(req: RequestWithUser, res: ApiResponse<LeaderboardMember>) {
   const uuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: req.user.id });
@@ -257,7 +270,7 @@ export async function handleUpdateMyParticipation(req: RequestWithUser, res: Api
     return res.status(404).send(failure('NOT_FOUND', `You are not part of this leaderboard.`));
   }
 
-  const payload = req.body as LeaderboardParticipationUpdatePayload;
+  const payload = req.body as LeaderboardParticipationPayload;
   const updated = await LeaderboardModel.updateMember(existing, payload, reqCtx(req));
 
   return res.status(200).send(success(updated));
@@ -423,6 +436,7 @@ const routes: RouteConfig[] = [
     handler: handleJoinBoard,
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
+    bodySchema: zLeaderboardParticipationPayload,
   },
   // PATCH /:uuid/me - edit your participation info
   {
@@ -431,7 +445,7 @@ const routes: RouteConfig[] = [
     handler: handleUpdateMyParticipation,
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
-    bodySchema: zLeaderboardParticipationUpdatePayload,
+    bodySchema: zLeaderboardParticipationPayload,
   },
   // DELETE /:uuid/me - leave the board
   {

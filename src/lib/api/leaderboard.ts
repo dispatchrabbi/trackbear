@@ -4,14 +4,14 @@ import type {
   LeaderboardSummary, Leaderboard, LeaderboardMember, LeaderboardStarResponse, Participant, Participation, Membership,
   LeaderboardCreatePayload, LeaderboardUpdatePayload, LeaderboardStarPayload,
   LeaderboardMemberUpdatePayload,
-  LeaderboardParticipationUpdatePayload,
+  LeaderboardParticipationPayload,
 } from 'server/api/v1/leaderboard.ts';
 
 export type {
   LeaderboardSummary, Leaderboard, LeaderboardMember, LeaderboardStarResponse, Participant, Participation, Membership,
   LeaderboardCreatePayload, LeaderboardUpdatePayload, LeaderboardStarPayload,
   LeaderboardMemberUpdatePayload,
-  LeaderboardParticipationUpdatePayload,
+  LeaderboardParticipationPayload,
 };
 
 const ENDPOINT = '/api/v1/leaderboard';
@@ -65,11 +65,11 @@ export async function getMyParticipation(uuid: string) {
   return callApiV1<Participation>(ENDPOINT + `/${uuid}/me`, 'GET');
 }
 
-export async function joinLeaderboard(uuid: string) {
-  return callApiV1<LeaderboardMember>(ENDPOINT + `/${uuid}/me`, 'POST');
+export async function joinLeaderboard(uuid: string, data: LeaderboardParticipationPayload) {
+  return callApiV1<LeaderboardMember>(ENDPOINT + `/${uuid}/me`, 'POST', data);
 }
 
-export async function updateMyParticipation(uuid: string, data: LeaderboardParticipationUpdatePayload) {
+export async function updateMyParticipation(uuid: string, data: LeaderboardParticipationPayload) {
   return callApiV1<LeaderboardMember>(ENDPOINT + `/${uuid}/me`, 'PATCH', data);
 }
 

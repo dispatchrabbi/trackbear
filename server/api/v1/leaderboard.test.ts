@@ -16,7 +16,7 @@ import {
   handleListParticipants, handleGetMyParticipation,
   handleJoinBoard, handleUpdateMyParticipation, handleLeaveBoard,
   member2membership,
-  LeaderboardParticipationUpdatePayload,
+  LeaderboardParticipationPayload,
 } from './leaderboard.ts';
 import { LEADERBOARD_PARTICIPANT_STATE } from 'server/lib/models/leaderboard/consts.ts';
 
@@ -601,7 +601,7 @@ describe('leaderboard api v1', () => {
       const updated = mockObject<LeaderboardMember>();
       LeaderboardModel.updateMember.mockResolvedValue(updated);
 
-      const payload: LeaderboardParticipationUpdatePayload = {
+      const payload: LeaderboardParticipationPayload = {
         isParticipant: false,
         goal: null,
         workIds: [],

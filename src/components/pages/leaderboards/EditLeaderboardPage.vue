@@ -131,7 +131,7 @@ watch(() => route.params.boardUuid, newUuid => {
       Loading...
     </div>
     <div
-      v-else
+      v-else-if="leaderboard !== null"
     >
       <TabView>
         <TabPanel

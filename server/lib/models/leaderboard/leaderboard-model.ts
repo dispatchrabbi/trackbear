@@ -1,5 +1,6 @@
 import { traced } from '../../tracer.ts';
 
+import type { Prisma } from '@prisma/client';
 import dbClient from '../../db.ts';
 import type { Create, Update } from '../types.ts';
 
@@ -105,7 +106,7 @@ export class LeaderboardModel {
 
   @traced
   static async getByUuid(uuid: string, options: GetLeaderboardOptions = {}): Promise<Leaderboard> {
-    const extraWhereClauses = [];
+    const extraWhereClauses: Prisma.BoardWhereInput[] = [];
 
     if(options.memberUserId) {
       extraWhereClauses.push({
@@ -140,7 +141,8 @@ export class LeaderboardModel {
       where: {
         uuid: uuid,
         state: LEADERBOARD_STATE.ACTIVE,
-        OR: extraWhereClauses,
+        // Prisma doesn't treat an empty OR array as though there's nothing there, so we have to do it ourselves
+        OR: extraWhereClauses.length > 0 ? extraWhereClauses : undefined,
       },
     }) as Leaderboard;
 
@@ -154,7 +156,6 @@ export class LeaderboardModel {
         // TODO: this will change when we implement rolling join codes
         uuid: joinCode,
         state: LEADERBOARD_STATE.ACTIVE,
-        isJoinable: true,
       },
     }) as Leaderboard;
 

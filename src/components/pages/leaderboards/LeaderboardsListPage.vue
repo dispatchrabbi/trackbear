@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { useRouter, RouterLink } from 'vue-router';
-const router = useRouter();
+import { RouterLink } from 'vue-router';
 
 import { useLeaderboardStore } from 'src/stores/leaderboard.ts';
 const leaderboardStore = useLeaderboardStore();
@@ -13,17 +12,13 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import Dialog from 'primevue/dialog';
 
 import LeaderboardTile from 'src/components/leaderboard/LeaderboardTile.vue';
-import JoinCodeForm from 'src/components/board/JoinCodeForm.vue';
 import { PrimeIcons } from 'primevue/api';
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Leaderboards', url: '/leaderboards' },
 ];
-
-const isJoinFormVisible = ref<boolean>(false);
 
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string | null>(null);
@@ -62,12 +57,13 @@ onMounted(async () => {
     <div class="actions flex flex-row-reverse flex-wrap justify-start gap-2 mb-4">
       <div class="flex flex-wrap gap-2">
         <div>
-          <Button
-            label="Use Join Code"
-            severity="help"
-            :icon="PrimeIcons.USER_PLUS"
-            @click="isJoinFormVisible = true"
-          />
+          <RouterLink :to="{ name: 'join-leaderboard' }">
+            <Button
+              label="Use Join Code"
+              severity="help"
+              :icon="PrimeIcons.USER_PLUS"
+            />
+          </RouterLink>
         </div>
         <div>
           <RouterLink :to="{ name: 'new-leaderboard' }">
@@ -112,20 +108,5 @@ onMounted(async () => {
         />
       </RouterLink>
     </div>
-    <Dialog
-      v-model:visible="isJoinFormVisible"
-      modal
-    >
-      <template #header>
-        <h2 class="font-heading font-semibold uppercase">
-          <span :class="PrimeIcons.USER_PLUS" />
-          Use Join Code
-        </h2>
-      </template>
-      <JoinCodeForm
-        @code:confirm="({code}) => router.push({ name: 'join-board', params: { boardUuid: code }})"
-        @form-success="isJoinFormVisible = false"
-      />
-    </Dialog>
   </ApplicationLayout>
 </template>

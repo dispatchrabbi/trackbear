@@ -11,9 +11,9 @@ import { useGoalStore } from 'src/stores/goal.ts';
 import { cmpGoalByCompletion } from 'src/lib/goal.ts';
 const goalStore = useGoalStore();
 
-import { useBoardStore } from 'src/stores/board.ts';
+import { useLeaderboardStore } from 'src/stores/leaderboard';
 import { cmpBoard } from 'src/lib/board.ts';
-const boardStore = useBoardStore();
+const leaderboardStore = useLeaderboardStore();
 
 import SidebarLogProgressButton from 'src/components/tally/SidebarLogProgressButton.vue';
 
@@ -56,18 +56,18 @@ const items = computed(() => {
       label: goal.title,
       to: { name: 'goal', params: { goalId: goal.id } },
     })),
-    // boards
+    // leaderboards
     {
-      key: 'boards',
+      key: 'leaderboards',
       label: 'Leaderboards',
       icon: PrimeIcons.TROPHY,
-      to: { name: 'boards' },
+      to: { name: 'leaderboards' },
       header: true,
     },
-    ...(boardStore.starredBoards ?? []).toSorted(cmpBoard).map(board => ({
-      key: `board-${board.id}`,
-      label: board.title,
-      to: { name: 'board', params: { boardUuid: board.uuid } },
+    ...(leaderboardStore.starredLeaderboards ?? []).toSorted(cmpBoard).map(leaderboard => ({
+      key: `leaderboard-${leaderboard.id}`,
+      label: leaderboard.title,
+      to: { name: 'leaderboard', params: { boardUuid: leaderboard.uuid } },
     })),
     {
       key: 'stats',
@@ -82,7 +82,7 @@ const items = computed(() => {
 onMounted(() => {
   workStore.populate();
   goalStore.populate();
-  boardStore.populate();
+  leaderboardStore.populate();
 });
 </script>
 

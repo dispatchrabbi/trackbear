@@ -5,7 +5,7 @@ import { getMe, type FullUser } from 'src/lib/api/me.ts';
 import { useWorkStore } from 'src/stores/work.ts';
 import { useTagStore } from 'src/stores/tag.ts';
 import { useGoalStore } from 'src/stores/goal.ts';
-import { useBoardStore } from 'src/stores/board.ts';
+import { useLeaderboardStore } from 'src/stores/leaderboard.ts';
 
 type UserStoreState = {
   user: FullUser | null;
@@ -31,8 +31,8 @@ export const useUserStore = defineStore('user', {
       const goalStore = useGoalStore();
       goalStore.$reset();
 
-      const boardStore = useBoardStore();
-      boardStore.$reset();
+      const leaderboardStore = useLeaderboardStore();
+      leaderboardStore.$reset();
     },
     async logOut() {
       await logOut();
@@ -47,8 +47,8 @@ export const useUserStore = defineStore('user', {
       const goalStore = useGoalStore();
       goalStore.$reset();
 
-      const boardStore = useBoardStore();
-      boardStore.$reset();
+      const leaderboardStore = useLeaderboardStore();
+      leaderboardStore.$reset();
     },
     async populate(force = false) {
       if(force || this.user === null) {
