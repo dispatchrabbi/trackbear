@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
-import { useEventBus, useClipboard } from '@vueuse/core';
+import { useEventBus, useClipboard, useMagicKeys } from '@vueuse/core';
 
 import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
@@ -12,6 +12,9 @@ const userStore = useUserStore();
 import { useLeaderboardStore } from 'src/stores/leaderboard';
 const leaderboardStore = useLeaderboardStore();
 
+import { useEnvStore } from 'src/stores/env';
+const envStore = useEnvStore();
+
 import { LeaderboardSummary, listParticipants, Participant } from 'src/lib/api/leaderboard';
 import type { Tally } from 'src/lib/api/tally.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
@@ -19,13 +22,13 @@ import { TALLY_MEASURE_INFO } from 'src/lib/tally';
 import { toTitleCase } from 'src/lib/str';
 
 import { PrimeIcons } from 'primevue/api';
-import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import Button from 'primevue/button';
-import UserAvatar from 'src/components/UserAvatar.vue';
+// import Dialog from 'primevue/dialog';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 
+import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import DetailPageHeader from 'src/components/layout/DetailPageHeader.vue';
 import SubsectionTitle from 'src/components/layout/SubsectionTitle.vue';
 import IndividualGoalProgressChart from 'src/components/leaderboard/IndividualGoalProgressChart.vue';
@@ -34,6 +37,8 @@ import ChallengeProgressChart from 'src/components/leaderboard/ChallengeProgress
 import FundraiserProgressChart from 'src/components/leaderboard/FundraiserProgressChart.vue';
 import FundraiserProgressMeter from 'src/components/leaderboard/FundraiserProgressMeter.vue';
 import LeaderboardStandings from 'src/components/leaderboard/LeaderboardStandings.vue';
+// import JoinCodeDisplay from 'src/components/leaderboard/JoinCodeDisplay.vue';
+import UserAvatar from 'src/components/UserAvatar.vue';
 
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
@@ -118,19 +123,33 @@ const handleConfigureClick = function() {
   router.push({ name: 'edit-leaderboard' });
 };
 
+// const isJoinCodeDialogVisible = ref<boolean>(false);
+// const handleJoinCodeClick = function() {
+//   isJoinCodeDialogVisible.value = true;
+// };
+
+const { alt } = useMagicKeys();
 const { copy } = useClipboard({ legacy: true });
-const handleShareClick = function() {
+const handleCopyJoinCodeClick = function(ev: MouseEvent) {
   if(leaderboard.value === null) {
     return;
   }
 
-  copy(leaderboard.value.uuid);
+  const copyLink = ev.altKey;
+  copy(copyLink ? getDirectJoinUrl() : leaderboard.value.uuid);
   toast.add({
     severity: 'success',
-    summary: 'Code copied!',
-    detail: 'The join code for this leaderboard has been copied to your clipboard.',
+    summary: copyLink ? 'Link copied!' : 'Code copied!',
+    detail: `The join ${copyLink ? 'link' : 'code'} for this leaderboard has been copied to your clipboard.`,
     life: 3 * 1000,
   });
+};
+
+const getDirectJoinUrl = function() {
+  if(leaderboard.value === null) {
+    return null;
+  }
+  return `${envStore.env.URL_PREFIX}/leaderboards/join?joinCode=${leaderboard.value.uuid}`;
 };
 
 const breadcrumbs = computed(() => {
@@ -141,12 +160,13 @@ const breadcrumbs = computed(() => {
   return crumbs;
 });
 
-onMounted(() => {
+onMounted(async () => {
   useEventBus<{ tally: Tally }>('tally:create').on(reloadData);
   useEventBus<{ tally: Tally }>('tally:edit').on(reloadData);
   useEventBus<{ tally: Tally }>('tally:delete').on(reloadData);
 
-  reloadData();
+  await reloadData();
+  await envStore.populate();
 });
 
 watch(() => route.params.boardUuid, newUuid => {
@@ -187,11 +207,18 @@ watch(() => route.params.boardUuid, newUuid => {
           />
           <Button
             v-if="leaderboard.isJoinable"
-            label="Copy Join Code"
+            :label="`Copy Join ${alt ? 'Link' : 'Code'}`"
             severity="help"
             :icon="PrimeIcons.COPY"
-            @click="handleShareClick"
+            @click="handleCopyJoinCodeClick"
           />
+          <!-- <Button
+            v-if="leaderboard.isJoinable"
+            label="View Join Code"
+            severity="help"
+            :icon="PrimeIcons.USER_PLUS"
+            @click="handleJoinCodeClick"
+          /> -->
         </template>
       </DetailPageHeader>
       <div
@@ -295,6 +322,18 @@ watch(() => route.params.boardUuid, newUuid => {
           </div>
         </div>
       </div>
+      <!-- <Dialog
+        v-model:visible="isJoinCodeDialogVisible"
+        modal
+      >
+        <template #header>
+          <h2 class="font-heading font-semibold uppercase">
+            <span :class="PrimeIcons.USER_PLUS" />
+            View Join Code
+          </h2>
+        </template>
+        <JoinCodeDisplay :leaderboard="leaderboard" />
+      </Dialog> -->
     </div>
     <div v-else>
       Loading leaderboard...

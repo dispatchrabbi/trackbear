@@ -13,7 +13,6 @@ import StepperPanel from 'primevue/stepperpanel';
 import Panel from 'primevue/panel';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
-import JoinCodeForm from 'src/components/leaderboard/JoinCodeForm.vue';
 import JoinLeaderboardParticipationForm from 'src/components/leaderboard/JoinLeaderboardParticipationForm.vue';
 
 const leaderboard = ref<Leaderboard>(null);
