@@ -1,13 +1,13 @@
 #!/usr/bin/env -S node --import tsx
 
 import dotenv from 'dotenv';
-import { getNormalizedEnv } from '../server/lib/env.ts';
+import { getNormalizedEnv } from '../../server/lib/env.ts';
 
 import winston from 'winston';
-import { initLoggers } from '../server/lib/logger.ts';
+import { initLoggers } from '../../server/lib/logger.ts';
 
-import dbClient from '../server/lib/db.ts';
-import { BOARD_PARTICIPANT_STATE } from '../server/lib/models/board-wip/consts.ts';
+import dbClient from '../../server/lib/db.ts';
+import { LEADERBOARD_PARTICIPANT_STATE } from '../../server/lib/models/leaderboard/consts.ts';
 
 async function main() {
   process.env.NODE_ENV = 'development';
@@ -64,7 +64,7 @@ async function main() {
 
       await dbClient.boardParticipant.create({
         data: {
-          state: BOARD_PARTICIPANT_STATE.ACTIVE,
+          state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
           userId: board.ownerId,
           boardId: board.id,
           starred: board.starred,

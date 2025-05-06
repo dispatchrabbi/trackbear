@@ -52,11 +52,11 @@ describe(LeaderboardModel, () => {
           ...mockObject<Leaderboard>(),
           participants: [
             {
-              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: false, isParticipant: false }),
+              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: false, isParticipant: false, isOwner: true }),
               user: mockObject<User>({ id: TEST_USER_ID, uuid: TEST_UUID, displayName: 'test0', avatar: null }),
             },
             {
-              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID - 1, userId: TEST_USER_ID - 1, starred: true, isParticipant: true }),
+              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID - 1, userId: TEST_USER_ID - 1, starred: true, isParticipant: true, isOwner: false }),
               user: mockObject<User>({ id: TEST_USER_ID - 1, uuid: TEST_UUID, displayName: 'test1', avatar: null }),
             },
           ],
@@ -65,11 +65,11 @@ describe(LeaderboardModel, () => {
           ...mockObject<Leaderboard>(),
           participants: [
             {
-              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: true, isParticipant: true }),
+              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: true, isParticipant: true, isOwner: true }),
               user: mockObject<User>({ id: TEST_USER_ID, uuid: TEST_UUID, displayName: 'test0', avatar: null }),
             },
             {
-              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID - 2, userId: TEST_USER_ID - 2, starred: false, isParticipant: true }),
+              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID - 2, userId: TEST_USER_ID - 2, starred: false, isParticipant: true, isOwner: false }),
               user: mockObject<User>({ id: TEST_USER_ID - 2, uuid: TEST_UUID, displayName: 'test2', avatar: null }),
             },
           ],
@@ -82,16 +82,16 @@ describe(LeaderboardModel, () => {
           ...mockObject<Leaderboard>(),
           starred: false,
           members: [
-            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, userUuid: TEST_UUID, isParticipant: false },
-            { id: TEST_OBJECT_ID - 1, displayName: 'test1', avatar: null, userUuid: TEST_UUID, isParticipant: true },
+            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, userUuid: TEST_UUID, isParticipant: false, isOwner: true },
+            { id: TEST_OBJECT_ID - 1, displayName: 'test1', avatar: null, userUuid: TEST_UUID, isParticipant: true, isOwner: false },
           ],
         },
         {
           ...mockObject<Leaderboard>(),
           starred: true,
           members: [
-            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, userUuid: TEST_UUID, isParticipant: true },
-            { id: TEST_OBJECT_ID - 2, displayName: 'test2', avatar: null, userUuid: TEST_UUID, isParticipant: true },
+            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, userUuid: TEST_UUID, isParticipant: true, isOwner: true },
+            { id: TEST_OBJECT_ID - 2, displayName: 'test2', avatar: null, userUuid: TEST_UUID, isParticipant: true, isOwner: false },
           ],
         },
       ];

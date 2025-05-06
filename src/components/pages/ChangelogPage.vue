@@ -53,6 +53,7 @@ onMounted(async () => {
     <TextBlurb
       v-if="changelog"
       title="Changelog"
+      :auto-space="false"
     >
       <ChangelogVersion
         v-for="(version, index) of changelog"

@@ -2,9 +2,13 @@
 
 import SectionTitle from './SectionTitle.vue';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   title?: string;
-}>();
+  autoSpace?: boolean;
+}>(), {
+  title: '',
+  autoSpace: true,
+});
 
 </script>
 
@@ -14,7 +18,13 @@ const props = defineProps<{
       v-if="props.title"
       :title="props.title"
     />
-    <div class="blurb-text mt-3 space-y-3">
+    <div
+      :class="{
+        'blurb-text': true,
+        'mt-3': true,
+        'space-y-3': props.autoSpace
+      }"
+    >
       <slot />
     </div>
   </div>

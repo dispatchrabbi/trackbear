@@ -1,8 +1,8 @@
 import { compare } from 'natural-orderby';
-import { Board } from 'src/lib/api/board.ts';
+import { Leaderboard } from 'src/lib/api/leaderboard';
 
 const cmp = compare();
-export function cmpBoard(a: Board, b: Board) {
+export function cmpBoard(a: Leaderboard, b: Leaderboard) {
   if(a.starred !== b.starred) {
     return a.starred ? -1 : 1;
   }
