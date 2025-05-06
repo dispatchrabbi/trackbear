@@ -14,6 +14,9 @@ Types of changes include:
 
 - NEW: API access is the next big thing on the list.
 
+## 1.2.1
+- FIXED: The Join Leaderboard page now correctly displays a form for the join code.
+
 ## 1.2.0
 
 - NEW: The backend for leaderboards has been entirely rewritten, and so has much of the front-end. This will make it much easier to add highly-requested features, such as per-leaderboard display names, choosing your own graph color, leaderboard teams, and allowing leaderboard owners to manage leaderboard members.
