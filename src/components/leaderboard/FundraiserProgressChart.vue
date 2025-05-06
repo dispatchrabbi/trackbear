@@ -52,7 +52,6 @@ const tallies = computed(() => {
     return tallyData;
   });
 
-  console.log(tallies);
   return tallies;
 });
 

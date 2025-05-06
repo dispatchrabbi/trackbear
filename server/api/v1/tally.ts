@@ -294,7 +294,6 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
   });
 
   const changes = buildChangeRecord(existingTally, tally);
-  console.log(existingTally, tally, changes);
   await logAuditEvent('tally:update', user.id, tally.id, null, changes, req.sessionID);
 
   return res.status(200).send(success(tally));

@@ -72,7 +72,7 @@ describe('leaderboard api v1', () => {
   describe(handleGetByJoinCode, () => {
     it('returns a leaderboard when it finds one', async () => {
       const joincode = 'JOIN-M3';
-      const testLeaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const testLeaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID, isJoinable: true });
       LeaderboardModel.getByJoinCode.mockResolvedValue(testLeaderboard);
 
       const { req, res } = getHandlerMocksWithUser({
@@ -175,7 +175,7 @@ describe('leaderboard api v1', () => {
       LeaderboardModel.getByUuid.mockResolvedValue(found);
 
       const member = mockObject<LeaderboardMember>();
-      LeaderboardModel.getMember.mockResolvedValue(member);
+      LeaderboardModel.getMemberByUserId.mockResolvedValue(member);
 
       const updated = mockObject<LeaderboardMember>({ starred: willBeStarred });
       LeaderboardModel.updateMember.mockResolvedValue(updated);
@@ -190,8 +190,8 @@ describe('leaderboard api v1', () => {
       });
       await handleStar(req, res);
 
-      expect(LeaderboardModel.getByUuid).toBeCalledWith(TEST_UUID, { ownerUserId: TEST_USER_ID });
-      expect(LeaderboardModel.getMember).toBeCalledWith(found, TEST_USER_ID);
+      expect(LeaderboardModel.getByUuid).toBeCalledWith(TEST_UUID, { memberUserId: TEST_USER_ID });
+      expect(LeaderboardModel.getMemberByUserId).toBeCalledWith(found, TEST_USER_ID);
       expect(LeaderboardModel.updateMember).toBeCalledWith(member, payload, getTestReqCtx());
       expect(res).toSucceedWith(200, { starred: willBeStarred });
     });
@@ -209,8 +209,8 @@ describe('leaderboard api v1', () => {
       });
       await handleStar(req, res);
 
-      expect(LeaderboardModel.getByUuid).toBeCalledWith(TEST_UUID, { ownerUserId: TEST_USER_ID });
-      expect(LeaderboardModel.getMember).not.toBeCalled();
+      expect(LeaderboardModel.getByUuid).toBeCalledWith(TEST_UUID, { memberUserId: TEST_USER_ID });
+      expect(LeaderboardModel.getMemberByUserId).not.toBeCalled();
       expect(LeaderboardModel.updateMember).not.toBeCalled();
       expect(res).toFailWith(404, 'NOT_FOUND');
     });
@@ -219,7 +219,7 @@ describe('leaderboard api v1', () => {
       const found = mockObject<Leaderboard>({ uuid: TEST_UUID });
       LeaderboardModel.getByUuid.mockResolvedValue(found);
 
-      LeaderboardModel.getMember.mockResolvedValue(null);
+      LeaderboardModel.getMemberByUserId.mockResolvedValue(null);
 
       const payload = {
         starred: true,
@@ -231,8 +231,8 @@ describe('leaderboard api v1', () => {
       });
       await handleStar(req, res);
 
-      expect(LeaderboardModel.getByUuid).toBeCalledWith(TEST_UUID, { ownerUserId: TEST_USER_ID });
-      expect(LeaderboardModel.getMember).toBeCalledWith(found, TEST_USER_ID);
+      expect(LeaderboardModel.getByUuid).toBeCalledWith(TEST_UUID, { memberUserId: TEST_USER_ID });
+      expect(LeaderboardModel.getMemberByUserId).toBeCalledWith(found, TEST_USER_ID);
       expect(LeaderboardModel.updateMember).not.toBeCalled();
       expect(res).toFailWith(404, 'NOT_FOUND');
     });
@@ -525,7 +525,7 @@ describe('leaderboard api v1', () => {
 
   describe(handleJoinBoard, () => {
     it('creates a member with default settings and returns it', async () => {
-      const leaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const leaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID, isJoinable: true });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       // no existing member
@@ -534,21 +534,29 @@ describe('leaderboard api v1', () => {
       const created = mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID });
       LeaderboardModel.createMember.mockResolvedValue(created);
 
+      const payload: LeaderboardParticipationPayload = {
+        isParticipant: true,
+        goal: null,
+        workIds: [1, 2, 3],
+        tagIds: [4, 5, 6],
+      };
+
       const { req, res } = getHandlerMocksWithUser({
         params: {
           uuid: TEST_UUID,
         },
+        body: payload,
       });
       await handleJoinBoard(req, res);
 
-      expect(LeaderboardModel.getByUuid).toBeCalledWith(TEST_UUID, { memberUserId: TEST_USER_ID, includePublicLeaderboards: true });
+      expect(LeaderboardModel.getByUuid).toBeCalledWith(TEST_UUID);
       expect(LeaderboardModel.getMemberByUserId).toBeCalledWith(leaderboard, TEST_USER_ID);
       expect(LeaderboardModel.createMember).toBeCalledWith(leaderboard, req.user, {
         isParticipant: true,
         isOwner: false,
         goal: null,
-        workIds: [],
-        tagIds: [],
+        workIds: [1, 2, 3],
+        tagIds: [4, 5, 6],
       }, getTestReqCtx());
       expect(res).toSucceedWith(201, created);
     });
@@ -563,14 +571,31 @@ describe('leaderboard api v1', () => {
       });
       await handleJoinBoard(req, res);
 
-      expect(LeaderboardModel.getByUuid).toBeCalledWith(TEST_UUID, { memberUserId: TEST_USER_ID, includePublicLeaderboards: true });
+      expect(LeaderboardModel.getByUuid).toBeCalledWith(TEST_UUID);
       expect(LeaderboardModel.getMemberByUserId).not.toBeCalled();
       expect(LeaderboardModel.createMember).not.toBeCalled();
       expect(res).toFailWith(404, 'NOT_FOUND');
     });
 
+    it('returns 409 if the leaderboard is not joinable', async () => {
+      const leaderboard = mockObject<Leaderboard>({ id: TEST_OBJECT_ID, isJoinable: false });
+      LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
+
+      const { req, res } = getHandlerMocksWithUser({
+        params: {
+          uuid: TEST_UUID,
+        },
+      });
+      await handleJoinBoard(req, res);
+
+      expect(LeaderboardModel.getByUuid).toBeCalledWith(TEST_UUID);
+      expect(LeaderboardModel.getMemberByUserId).not.toBeCalled();
+      expect(LeaderboardModel.createMember).not.toBeCalled();
+      expect(res).toFailWith(409, 'CANNOT_JOIN');
+    });
+
     it('returns 409 if the user is already a member', async () => {
-      const leaderboard = mockObject<Leaderboard>({ id: TEST_OBJECT_ID });
+      const leaderboard = mockObject<Leaderboard>({ id: TEST_OBJECT_ID, isJoinable: true });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       const existing = mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID });
@@ -583,7 +608,7 @@ describe('leaderboard api v1', () => {
       });
       await handleJoinBoard(req, res);
 
-      expect(LeaderboardModel.getByUuid).toBeCalledWith(TEST_UUID, { memberUserId: TEST_USER_ID, includePublicLeaderboards: true });
+      expect(LeaderboardModel.getByUuid).toBeCalledWith(TEST_UUID);
       expect(LeaderboardModel.getMemberByUserId).toBeCalledWith(leaderboard, TEST_USER_ID);
       expect(LeaderboardModel.createMember).not.toBeCalled();
       expect(res).toFailWith(409, 'ALREADY_JOINED');

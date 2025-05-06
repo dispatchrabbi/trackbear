@@ -44,13 +44,6 @@ import NewGoalPage from './components/pages/goals/NewGoalPage.vue';
 import GoalDetailPage from './components/pages/goals/GoalDetailPage.vue';
 import EditGoalPage from './components/pages/goals/EditGoalPage.vue';
 
-import BoardsListPage from 'src/components/pages/boards/BoardsListPage.vue';
-import BoardDetailPage from 'src/components/pages/boards/BoardDetailPage.vue';
-import NewBoardPage from './components/pages/boards/NewBoardPage.vue';
-import EditBoardPage from './components/pages/boards/EditBoardPage.vue';
-import JoinBoardPage from './components/pages/boards/JoinBoardPage.vue';
-import EditBoardParticipationPage from './components/pages/boards/EditBoardParticipationPage.vue';
-
 import LeaderboardsListPage from 'src/components/pages/leaderboards/LeaderboardsListPage.vue';
 import LeaderboardDetailPage from 'src/components/pages/leaderboards/LeaderboardDetailPage.vue';
 import NewLeaderboardPage from './components/pages/leaderboards/NewLeaderboardPage.vue';
@@ -96,15 +89,7 @@ const routes = [
   { path: '/goals/:goalId(\\d+)', name: 'goal', component: GoalDetailPage },
   { path: '/goals/:goalId(\\d+)/edit', name: 'edit-goal', component: EditGoalPage },
 
-  // Boards section
-  { path: '/leaderboards-old', name: 'boards', component: BoardsListPage },
-  { path: '/leaderboards-old/new', name: 'new-board', component: NewBoardPage },
-  { path: '/leaderboards-old/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', name: 'board', component: BoardDetailPage },
-  { path: '/leaderboards-old/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/edit', name: 'edit-board', component: EditBoardPage },
-  { path: '/leaderboards-old/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/join', name: 'join-board', component: JoinBoardPage },
-  { path: '/leaderboards-old/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/filters', name: 'edit-board-filters', component: EditBoardParticipationPage },
-
-  // Hidden replacement Leaderboards section
+  // Leaderboards section
   { path: '/leaderboards', name: 'leaderboards', component: LeaderboardsListPage },
   { path: '/leaderboards/new', name: 'new-leaderboard', component: NewLeaderboardPage },
   { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', name: 'leaderboard', component: LeaderboardDetailPage },
