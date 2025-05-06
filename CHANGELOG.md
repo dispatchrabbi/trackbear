@@ -10,10 +10,17 @@ Types of changes include:
 - REMOVED, for features that have been removed
 - SECURITY, for vulnerabilities or other security updates
 
-## Upcoming/Unreleased
+## Upcoming
 
 - NEW: The backend rewrite mentioned below is part of a larger process to make the codebase more testable and prepare it for general API access. I know this is a highly-requested feature, so don't worry — it's on its way!
-- CHANGED: The backend for leaderboards is in the process of being rewritten, in order to make it easier to add some much-requested features like picking your own colors and having teams on leaderboards.
+
+## Unreleased
+
+- NEW: The backend for leaderboards has been entirely rewritten, and so has much of the front-end. This will make it much easier to add highly-requested features, such as per-leaderboard display names, choosing your own color, leaderboard teams, and allowing leaderboard owners to manage leaderboard members.
+- NEW: The leaderboard standings now shows how many places up or down each participant has moved since the day before.
+- CHANGED: Editing, deleting, and leaving a leaderboard, as well as editing your participation, are now condensed under a single "Configure Leaderboard" button.
+- CHANGED: You can now join a leaderboard as a spectator. To do so, toggle the "Are you participating in this leaderboard?" switch off when editing your participation. Spectators will be listed as members of the leaderboard on the detail page, but will not appear on the chart or standings table.
+- REMOVED: It is no longer possible to view a leaderboard you are not a member of. That is, the previous "Can people view without joining?" setting has no effect and has been removed.
 
 ## 1.1.22
 
