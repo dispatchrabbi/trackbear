@@ -154,8 +154,8 @@ const getDirectJoinUrl = function() {
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
-    { label: 'Leaderboards', url: '/leaderboards2' },
-    { label: leaderboard.value === null ? 'Loading...' : leaderboard.value.title, url: leaderboard.value === null ? '' : `/leaderboards2/${leaderboard.value.uuid}` },
+    { label: 'Leaderboards', url: '/leaderboards' },
+    { label: leaderboard.value === null ? 'Loading...' : leaderboard.value.title, url: leaderboard.value === null ? '' : `/leaderboards/${leaderboard.value.uuid}` },
   ];
   return crumbs;
 });

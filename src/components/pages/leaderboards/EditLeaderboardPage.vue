@@ -104,9 +104,9 @@ const handleLeaveLeaderboardSubmit = async function() {
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
-    { label: 'Leaderboards', url: '/leaderboards2' },
-    { label: leaderboard.value === null ? 'Loading...' : leaderboard.value.title, url: leaderboard.value === null ? '' : `/leaderboards2/${leaderboard.value.uuid}` },
-    { label: 'Edit', url: leaderboard.value === null ? '' : `/leaderboards2/${leaderboard.value.uuid}/edit` },
+    { label: 'Leaderboards', url: '/leaderboards' },
+    { label: leaderboard.value === null ? 'Loading...' : leaderboard.value.title, url: leaderboard.value === null ? '' : `/leaderboards/${leaderboard.value.uuid}` },
+    { label: 'Edit', url: leaderboard.value === null ? '' : `/leaderboards/${leaderboard.value.uuid}/edit` },
   ];
   return crumbs;
 });

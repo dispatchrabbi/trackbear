@@ -27,7 +27,7 @@ const queryJoinCode = computed(() => {
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
-    { label: 'Leaderboards', url: '/leaderboards2' },
+    { label: 'Leaderboards', url: '/leaderboards' },
     { label: leaderboard.value === null ? 'Join a leaderboard' : `Join ${leaderboard.value.title}`, url: `/leaderboards/join` },
   ];
   return crumbs;

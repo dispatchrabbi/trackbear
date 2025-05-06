@@ -10,8 +10,8 @@ import CreateLeaderboardForm from 'src/components/leaderboard/CreateLeaderboardF
 import Panel from 'primevue/panel';
 
 const breadcrumbs: MenuItem[] = [
-  { label: 'Leaderboards', url: '/leaderboards2' },
-  { label: 'New', url: '/leaderboards2/new' },
+  { label: 'Leaderboards', url: '/leaderboards' },
+  { label: 'New', url: '/leaderboards/new' },
 ];
 </script>
 
