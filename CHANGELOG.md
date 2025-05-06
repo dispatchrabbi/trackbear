@@ -10,11 +10,11 @@ Types of changes include:
 - REMOVED, for features that have been removed
 - SECURITY, for vulnerabilities or other security updates
 
-## Upcoming
+## Upcoming/Unreleased
 
 - NEW: API access is the next big thing on the list.
 
-## Unreleased
+## 1.2.0
 
 - NEW: The backend for leaderboards has been entirely rewritten, and so has much of the front-end. This will make it much easier to add highly-requested features, such as per-leaderboard display names, choosing your own graph color, leaderboard teams, and allowing leaderboard owners to manage leaderboard members.
 - NEW: The leaderboard standings now shows how many places up or down each participant has moved since the day before.
