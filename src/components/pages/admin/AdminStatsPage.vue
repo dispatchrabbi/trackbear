@@ -91,31 +91,41 @@ onMounted(() => {
   <AdminLayout
     :breadcrumbs="breadcrumbs"
   >
-    <SectionTitle title="Weekly Active Users" />
-    <div class="max-w-screen-lg">
-      <PlotBarChart
-        :data="weeklyActiveUsersData"
-      />
-    </div>
-    <SectionTitle title="Weekly Signups" />
-    <div class="max-w-screen-lg">
-      <PlotBarChart
-        :data="weeklySignupsData"
-      />
-    </div>
-    <SectionTitle title="Daily Active Users" />
-    <div class="max-w-screen-lg">
-      <PlotBarChart
-        :data="dailyActiveUsersData"
-        :config="{ interval: 'day' }"
-      />
-    </div>
-    <SectionTitle title="Daily Signups" />
-    <div class="max-w-screen-lg">
-      <PlotBarChart
-        :data="dailySignupsData"
-        :config="{ interval: 'day' }"
-      />
+    <div class="flex flex-col gap-4">
+      <div>
+        <SectionTitle title="Weekly Active Users" />
+        <div class="max-w-screen-lg">
+          <PlotBarChart
+            :data="weeklyActiveUsersData"
+          />
+        </div>
+      </div>
+      <div>
+        <SectionTitle title="Weekly Signups" />
+        <div class="max-w-screen-lg">
+          <PlotBarChart
+            :data="weeklySignupsData"
+          />
+        </div>
+      </div>
+      <div>
+        <SectionTitle title="Daily Active Users" />
+        <div class="max-w-screen-lg">
+          <PlotBarChart
+            :data="dailyActiveUsersData"
+            :config="{ interval: 'day' }"
+          />
+        </div>
+      </div>
+      <div>
+        <SectionTitle title="Daily Signups" />
+        <div class="max-w-screen-lg">
+          <PlotBarChart
+            :data="dailySignupsData"
+            :config="{ interval: 'day' }"
+          />
+        </div>
+      </div>
     </div>
   </AdminLayout>
 </template>

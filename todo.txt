@@ -12,7 +12,7 @@
 (A) Make the tally table more mobile-friendly (h/t lailah) dif:2 @projects +delight
 (A) Combine delete and edit/configure into a single edit page that includes a Danger Zone for deleting dif:3 @boards @goals @projects +editpage
 (A) Implement data export dif:5 @backend @frontend +export
-(A) Build out a full model layer so it can be used by scripts/workers/queues as well as endpoints dif:5 @backend +models
+x (A) Build out a full model layer so it can be used by scripts/workers/queues as well as endpoints dif:5 @backend +models
 (A) Change the settings pages to a Settings section with its own sidebar dif:5 @settings +settingssection
 (A) De-duplicate add/edit forms dif:3 @frontend +techdebt
 (A) Should convert text-white to text-surface-0 probably dif:1 @ui +themes
@@ -32,7 +32,7 @@
 (B) Write help page for leaderboards dif:2 @docs +completehelp
 (B) Write help page for settings dif:2 @docs +completehelp
 (B) Write help page for tags dif:2 @docs +completehelp
-(B) Add rank changes from the previous day into the standings dif:1 @boards +delight
+x (B) Add rank changes from the previous day into the standings dif:1 @boards +delight
 (B) Graph widget overhaul: lines/bars toggle, full-screen, download dif:3 @charts +delight
 (B) Show starred leaderboards on dashboard dif:2 @dashboard +delight
 (B) Graph lifetime progress dif:1 @stats +delight
@@ -59,6 +59,7 @@
 (C) Display positive (written) and negative (removed) word counts separately dif:3 @stats +delight
 (C) Project progress embed (h/t Laura) dif:3 @public +embeds
 (C) Grand Totals embed (h/t Laura) dif:1 @public +embeds
+(C) Leaderboard embed (h/t Jenai) dif:1 @public +embeds
 (C) Progress update widget (h/t Laura) dif:2 stage:considering @public +embeds
 (C) Create ping check dif:8 @backend +o11y
 (C) Create better seed data for testing dif:? @backend +scenarios
@@ -95,3 +96,5 @@ Ensure that projects (etc.) on public profile have a consistent order (last upda
 Allow users to configure profile ordering (h/t K. A. J. Klok) @profile @settings
 Allow users to configure Dashboard more (h/t K. A. J. Klok) @dashboard @settings
 (B) Allow users to specify Sunday or Monday as the first day of the week (h/t Hester van Bork) @settings +localization +delight
+Break down overall stat project graphs by project, or show "a leaderboard against myself" (h/t Katy F) stage:needs-refinement @stats
+Allow habit goals to designate specific days of the week (h/t Aminta) stage:considering @goals
