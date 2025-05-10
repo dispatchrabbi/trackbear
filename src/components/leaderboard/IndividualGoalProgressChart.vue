@@ -26,7 +26,7 @@ const eachDay = computed(() => {
 
 const tallies = computed(() => {
   const tallies = props.participants.flatMap(participant => {
-    const normalizedTallies = normalizeTallies(participant.tallies);
+    const normalizedTallies = normalizeTallies(participant.tallies.filter(tally => tally.measure === participant.goal.measure));
     const accumulatedTallies = accumulateTallies(normalizedTallies);
 
     const tallyData = accumulatedTallies.map(tally => ({

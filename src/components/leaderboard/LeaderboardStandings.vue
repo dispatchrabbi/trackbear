@@ -33,7 +33,8 @@ const getGoalCount = function(participant: Participant) {
 const determineStartAndEndDates = function(leaderboard: Leaderboard, participants: Participant[]) {
   const dateSet = new Set<string>();
   for(const participant of participants) {
-    for(const tally of participant.tallies) {
+    const measure = getMeasure(participant);
+    for(const tally of participant.tallies.filter(tally => tally.measure === measure)) {
       dateSet.add(tally.date);
     }
   }
@@ -130,7 +131,8 @@ const standingsRows = computed<StandingsDataRow[]>(() => {
 
   const rows = [];
   for(const participant of props.participants) {
-    const normalizedTallies = normalizeTallies(participant.tallies);
+    const measure = getMeasure(participant);
+    const normalizedTallies = normalizeTallies(participant.tallies.filter(tally => tally.measure === measure));
     const accumulatedTallies = accumulateTallies(normalizedTallies);
 
     const todayTally = accumulatedTallies.findLast(tally => tally.date <= today) ?? { date: 'Never', value: 0, count: 0, accumulated: 0 };
