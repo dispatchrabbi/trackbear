@@ -13,6 +13,8 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - NEW: API access is the next big thing on the list.
+
+## 1.2.3
 - FIXED: Leaderboard standings now shows the correct count total for the selected measure, instead of a total of all measures. (h/t Lucile, romana)
 
 ## 1.2.1
