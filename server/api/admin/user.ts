@@ -21,8 +21,9 @@ import { ValidationError } from 'server/lib/models/errors.ts';
 type EmptyObject = Record<string, never>;
 
 const zUserQuery = z.object({
-  skip: z.number().int().nonnegative(),
-  take: z.number().int().positive(),
+  skip: z.coerce.number().int().nonnegative(),
+  take: z.coerce.number().int().positive(),
+  search: z.string(),
 }).partial();
 export type UserQuery = z.infer<typeof zUserQuery>;
 export type GetUsersResponsePayload = {
@@ -33,8 +34,13 @@ export type GetUsersResponsePayload = {
 export async function handleGetUsers(req: RequestWithUser, res: ApiResponse<GetUsersResponsePayload>) {
   const query = req.query as UserQuery;
 
-  const users = await UserModel.getUsers(query.skip ?? 0, query.take ?? Infinity);
-  const total = await UserModel.getTotalUserCount();
+  const hasSearch = query.search?.length > 0;
+  const users = await UserModel.getUsers(
+    query.skip ?? 0,
+    query.take ?? Infinity,
+    hasSearch ? query.search : null,
+  );
+  const total = await UserModel.getTotalUserCount(hasSearch ? query.search : null);
 
   return res.status(200).send(success({
     users,

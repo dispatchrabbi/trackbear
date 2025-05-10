@@ -2,9 +2,9 @@ import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from 'server/lib/api.ts'
 import { ApiResponse, success } from '../../lib/api-response.ts';
 import { RequestWithUser } from '../../lib/middleware/access.ts';
 
-import { ServiceStatsModel, type WeeklyStat, type DailyStat } from 'server/lib/models/service-stats/service-stats-model.ts';
+import { ServiceStatsModel, type WeeklyStat, type DailyStat, type UserStats } from 'server/lib/models/service-stats/service-stats-model.ts';
 
-export type { WeeklyStat, DailyStat };
+export type { WeeklyStat, DailyStat, UserStats };
 
 export async function handleGetWeeklyActiveUsers(req: RequestWithUser, res: ApiResponse<WeeklyStat[]>) {
   const activeUsersByWeek = await ServiceStatsModel.getWeeklyUsers();
@@ -30,6 +30,12 @@ export async function handleGetDailySignups(req: RequestWithUser, res: ApiRespon
   return res.status(200).send(success(signupsByDay));
 }
 
+export async function handleGetUserStats(req: RequestWithUser, res: ApiResponse<UserStats>) {
+  const userStats = await ServiceStatsModel.getUserStats();
+
+  return res.status(200).send(success(userStats));
+}
+
 const routes: RouteConfig[] = [
   {
     path: '/weekly-active-users',
@@ -53,6 +59,12 @@ const routes: RouteConfig[] = [
     path: '/daily-signups',
     method: HTTP_METHODS.GET,
     handler: handleGetDailySignups,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+  },
+  {
+    path: '/user-stats',
+    method: HTTP_METHODS.GET,
+    handler: handleGetUserStats,
     accessLevel: ACCESS_LEVEL.ADMIN,
   },
 ];

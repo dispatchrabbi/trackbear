@@ -1,8 +1,8 @@
 import { callApiV1 } from 'src/lib/api';
 
-import { WeeklyStat, DailyStat } from 'server/api/admin/stats.ts';
+import { WeeklyStat, DailyStat, UserStats } from 'server/api/admin/stats.ts';
 
-export type { WeeklyStat, DailyStat };
+export type { WeeklyStat, DailyStat, UserStats };
 
 const ENDPOINT = '/api/admin/stats';
 
@@ -20,4 +20,8 @@ export async function getDailyActiveUsers() {
 
 export async function getDailySignups() {
   return callApiV1<DailyStat[]>(ENDPOINT + '/daily-signups', 'GET');
+}
+
+export async function getUserStats() {
+  return callApiV1<UserStats>(ENDPOINT + '/user-stats', 'GET');
 }

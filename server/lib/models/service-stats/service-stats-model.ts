@@ -1,10 +1,11 @@
 import path from 'node:path';
-import { parse, format } from 'date-fns';
+import { parse, format, startOfDay, subDays } from 'date-fns';
 
 import { traced } from '../../tracer.ts';
 
 import dbClient from '../../db.ts';
 import { importRawSql } from 'server/lib/sql.ts';
+import { USER_STATE } from '../user/consts.ts';
 
 export type WeeklyStat = {
   weekStart: string;
@@ -14,6 +15,13 @@ export type WeeklyStat = {
 export type DailyStat = {
   date: string;
   count: number;
+};
+
+export type UserStats = {
+  active: number;
+  verified: number;
+  signedUpLast7Days: number;
+  signedUpLast30Days: number;
 };
 
 const dailySignupsSql = await importRawSql(path.resolve(import.meta.dirname, './sql/daily-signups.sql'));
@@ -66,5 +74,48 @@ export class ServiceStatsModel {
     });
 
     return usersByWeek;
+  }
+
+  @traced
+  static async getUserStats(): Promise<UserStats> {
+    const active = await dbClient.user.count({
+      where: {
+        state: USER_STATE.ACTIVE,
+      },
+    });
+
+    const verified = await dbClient.user.count({
+      where: {
+        state: USER_STATE.ACTIVE,
+        isEmailVerified: true,
+      },
+    });
+
+    const now = new Date();
+
+    const signedUpLast7Days = await dbClient.user.count({
+      where: {
+        state: USER_STATE.ACTIVE,
+        createdAt: {
+          gte: subDays(startOfDay(now), 6),
+        },
+      },
+    });
+
+    const signedUpLast30Days = await dbClient.user.count({
+      where: {
+        state: USER_STATE.ACTIVE,
+        createdAt: {
+          gte: subDays(startOfDay(now), 29),
+        },
+      },
+    });
+
+    return {
+      active,
+      verified,
+      signedUpLast7Days,
+      signedUpLast30Days,
+    };
   }
 }

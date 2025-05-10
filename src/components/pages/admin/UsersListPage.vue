@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { watchDebounced } from '@vueuse/core';
-import { parseISO, addDays, addMonths, startOfDay } from 'date-fns';
 
 import { getUsers, User } from 'src/lib/api/admin/user.ts';
-import { USER_STATE } from 'server/lib/models/user/consts';
+import { getUserStats, type UserStats } from 'src/lib/api/admin/stats.ts';
 import { USER_STATE_INFO } from 'src/lib/user.ts';
 
 import AdminLayout from 'src/layouts/AdminLayout.vue';
@@ -12,7 +11,6 @@ import type { MenuItem } from 'primevue/menuitem';
 import IconField from 'primevue/iconfield';
 import InputText from 'primevue/inputtext';
 import InputIcon from 'primevue/inputicon';
-import InputSwitch from 'primevue/inputswitch';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
@@ -24,83 +22,72 @@ const breadcrumbs: MenuItem[] = [
   { label: 'Users', url: '/admin/users' },
 ];
 
-const users = ref<User[]>([]);
-const isLoading = ref<boolean>(false);
-const errorMessage = ref<string | null>(null);
+const stats = ref<UserStats>({
+  active: -1,
+  verified: -1,
+  signedUpLast30Days: -1,
+  signedUpLast7Days: -1,
+});
+const isStatsLoading = ref<boolean>(false);
+const statsErrorMessage = ref<string>(null);
 
-const loadUsers = async function() {
-  isLoading.value = true;
-  errorMessage.value = null;
+const loadUserStats = async function() {
+  isStatsLoading.value = true;
+  statsErrorMessage.value = null;
 
   try {
-    const response = await getUsers();
-    users.value = response.users;
+    const response = await getUserStats();
+    stats.value = response;
   } catch (err) {
-    errorMessage.value = err.message;
+    statsErrorMessage.value = err.message;
   } finally {
-    isLoading.value = false;
+    isStatsLoading.value = false;
   }
 };
 
-const activeUsers = computed(() => {
-  return users.value.filter(user => user.state === USER_STATE.ACTIVE).length;
-});
+const ROWS_PER_PAGE_OPTIONS = [50, 100, 250];
+const savedRows = ref<number>(ROWS_PER_PAGE_OPTIONS[0]);
+const savedFirst = ref<number>(0);
 
-const verifiedActiveUsers = computed(() => {
-  return users.value.filter(user => user.state === USER_STATE.ACTIVE && user.isEmailVerified).length;
-});
+const usersSlice = ref<User[]>([]);
+const totalUsers = ref<number>(0);
 
-const newWeekUsers = computed(() => {
-  const aWeekAgo = startOfDay(addDays(new Date(), -6));
-  return users.value.filter(user => parseISO(user.createdAt) >= aWeekAgo).length;
-});
+const isUsersLoading = ref<boolean>(false);
+const usersErrorMessage = ref<string>(null);
+const loadUsersSlice = async function(first: number, rows: number, search: string) {
+  if(rows === 0) {
+    return;
+  }
 
-const wowPercentage = computed(() => {
-  const aWeekAgo = startOfDay(addDays(new Date(), -6));
-  const twoWeeksAgo = addDays(aWeekAgo, -7);
-  const lastWeekUsers = users.value.filter(user => parseISO(user.createdAt) < aWeekAgo && parseISO(user.createdAt) >= twoWeeksAgo).length;
-  return Math.round(100 * (newWeekUsers.value / lastWeekUsers));
-});
+  isUsersLoading.value = true;
+  usersErrorMessage.value = null;
 
-const newMonthUsers = computed(() => {
-  const aMonthAgo = startOfDay(addMonths(new Date(), -1));
-  return users.value.filter(user => parseISO(user.createdAt) >= aMonthAgo).length;
-});
-
-const momPercentage = computed(() => {
-  const aMonthAgo = startOfDay(addMonths(new Date(), -1));
-  const twoMonthsAgo = addMonths(aMonthAgo, -1);
-  const lastMonthUsers = users.value.filter(user => parseISO(user.createdAt) < aMonthAgo && parseISO(user.createdAt) >= twoMonthsAgo).length;
-  return Math.round(100 * (newMonthUsers.value / lastMonthUsers));
-});
+  try {
+    const response = await getUsers({
+      skip: first,
+      take: rows,
+      search: search ? search.toString() : '',
+    });
+    usersSlice.value = response.users;
+    totalUsers.value = response.total;
+  } catch (err) {
+    usersErrorMessage.value = err.message;
+  } finally {
+    isUsersLoading.value = false;
+  }
+};
 
 const usersFilter = ref<string>('');
 const debouncedUsersFilter = ref<string>('');
-watchDebounced(usersFilter, () => debouncedUsersFilter.value = usersFilter.value, { debounce: 500, maxWait: 1000 });
+watchDebounced(usersFilter, async () => {
+  debouncedUsersFilter.value = usersFilter.value;
+  await loadUsersSlice(savedFirst.value, savedRows.value, debouncedUsersFilter.value);
+}, { debounce: 500, maxWait: 1000 });
 
-const onlyShowSuspendedUsers = ref<boolean>(false);
-const sortedFilteredUsers = computed(() => {
-  let sortedUsers = users.value.toSorted((a, b) => a.createdAt > b.createdAt ? -1 : a.createdAt < b.createdAt ? 1 : 0);
-  const filter = debouncedUsersFilter.value.toLowerCase();
-
-  if(filter.length > 0) {
-    sortedUsers = sortedUsers.filter(user =>
-      user.username.toLowerCase().includes(filter) ||
-      user.displayName.toLowerCase().includes(filter) ||
-      user.email.toLowerCase().includes(filter) ||
-      user.uuid.toLowerCase().includes(filter) ||
-      user.id.toString().includes(filter),
-    );
-  }
-
-  if(onlyShowSuspendedUsers.value === true) {
-    sortedUsers = sortedUsers.filter(user => user.state === USER_STATE.SUSPENDED);
-  }
-
-  return sortedUsers;
+onMounted(async () => {
+  await loadUserStats();
+  await loadUsersSlice(0, 50, null);
 });
-
-onMounted(() => loadUsers());
 
 </script>
 
@@ -110,34 +97,24 @@ onMounted(() => loadUsers());
   >
     <div class="data flex flex-wrap justify-center gap-4 mb-4">
       <StatTile
-        :highlight="users.length"
-        bottom-legend="total users"
+        :highlight="stats.active"
+        top-legend="users"
+        bottom-legend="active"
       />
       <StatTile
-        :highlight="activeUsers"
-        bottom-legend="active users"
+        :highlight="stats.verified"
+        top-legend="users"
+        bottom-legend="active & verified"
       />
       <StatTile
-        :highlight="verifiedActiveUsers"
-        bottom-legend="verified active"
+        :highlight="stats.signedUpLast7Days"
+        top-legend="signups"
+        bottom-legend="signups past 7 days"
       />
       <StatTile
-        :highlight="newWeekUsers"
-        bottom-legend="past week"
-      />
-      <StatTile
-        :highlight="wowPercentage"
-        suffix="%"
-        bottom-legend="week over week"
-      />
-      <StatTile
-        :highlight="newMonthUsers"
-        bottom-legend="past month"
-      />
-      <StatTile
-        :highlight="momPercentage"
-        suffix="%"
-        bottom-legend="month over month"
+        :highlight="stats.signedUpLast30Days"
+        top-legend="signups"
+        bottom-legend="past 30 days"
       />
     </div>
     <div class="actions flex justify-end gap-4 mb-4">
@@ -153,24 +130,23 @@ onMounted(() => loadUsers());
           />
         </IconField>
       </div>
-      <div class="flex gap-1 items-center">
-        <span :class="PrimeIcons.USERS" />
-        <InputSwitch
-          v-model="onlyShowSuspendedUsers"
-        />
-        <span :class="PrimeIcons.EXCLAMATION_CIRCLE" />
-      </div>
     </div>
     <div
       class="user-list"
     >
       <DataTable
-        :value="sortedFilteredUsers"
+        :value="usersSlice"
         paginator
-        :rows="50"
-        :rows-per-page-options="[50, 100, 250]"
+        :rows="ROWS_PER_PAGE_OPTIONS[0]"
+        :rows-per-page-options="ROWS_PER_PAGE_OPTIONS"
+        :total-records="totalUsers"
         paginator-template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
         current-page-report-template="{first} to {last} of {totalRecords}"
+        :loading="isUsersLoading"
+        :lazy="true"
+        @page="ev => { loadUsersSlice(ev.first, ev.rows, debouncedUsersFilter)}"
+        @update:rows="value => savedRows = value"
+        @update:first="value => savedFirst = value"
       >
         <Column
           header="ID"
@@ -219,10 +195,10 @@ onMounted(() => loadUsers());
         </Column>
       </DataTable>
     </div>
-    <div v-if="users.length > 0 && sortedFilteredUsers.length === 0">
+    <div v-if="totalUsers === 0 && debouncedUsersFilter.length > 0">
       No users found with those filters.
     </div>
-    <div v-if="users.length === 0">
+    <div v-if="totalUsers === 0">
       No users found. Are you sure this thing is on?
     </div>
   </AdminLayout>

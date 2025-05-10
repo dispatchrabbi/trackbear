@@ -2,7 +2,7 @@ import winston from 'winston';
 import { addDays, addMinutes } from 'date-fns';
 
 import dbClient from '../../db.ts';
-import type { PasswordResetLink, PendingEmailVerification, User, UserAuth } from '@prisma/client';
+import type { PasswordResetLink, PendingEmailVerification, User, UserAuth, Prisma } from '@prisma/client';
 import { hash, verifyHash } from '../../hash.ts';
 
 import { type RequestContext } from '../../request-context.ts';
@@ -59,9 +59,10 @@ type SendPasswordResetLinkOptions = Partial<{
 
 export class UserModel {
   @traced
-  static async getUsers(skip: number = 0, take: number = Infinity): Promise<User[]> {
+  static async getUsers(skip: number = 0, take: number = Infinity, search: string = null): Promise<User[]> {
     const users = await dbClient.user.findMany({
-      orderBy: { createdAt: 'asc' },
+      where: this.buildSearchWhereClauses(search),
+      orderBy: { createdAt: 'desc' },
       skip,
       take: take < Infinity ? take : undefined,
     });
@@ -70,10 +71,35 @@ export class UserModel {
   }
 
   @traced
-  static async getTotalUserCount(): Promise<number> {
-    const total = await dbClient.user.count();
+  static async getTotalUserCount(search: string = null): Promise<number> {
+    const total = await dbClient.user.count({
+      where: this.buildSearchWhereClauses(search),
+    });
 
     return total;
+  }
+
+  private static buildSearchWhereClauses(search: string = null) {
+    if(search === null) {
+      return undefined;
+    }
+
+    let searchWhereClauses: Prisma.UserWhereInput[] = [];
+    if(search) {
+      const isSearchNumeric = !isNaN(+search);
+
+      searchWhereClauses = [
+        { id: { equals: isSearchNumeric ? +search : -1 } },
+        { uuid: { contains: search, mode: 'insensitive' } },
+        { username: { contains: search, mode: 'insensitive' } },
+        { displayName: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    return {
+      OR: searchWhereClauses,
+    };
   }
 
   @traced
