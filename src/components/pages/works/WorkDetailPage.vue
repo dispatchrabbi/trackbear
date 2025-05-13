@@ -22,7 +22,7 @@ import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import DeleteWorkForm from 'src/components/work/DeleteWorkForm.vue';
 import UploadCoverForm from 'src/components/work/UploadCoverForm.vue';
-import ActivityHeatmap from 'src/components/dashboard/ActivityHeatmap.vue';
+import WorkActivityHeatmap from 'src/components/work/WorkActivityHeatmap.vue';
 import WorkTallyLineChart from 'src/components/work/WorkTallyLineChart.vue';
 import WorkTallyDataTable from 'src/components/work/WorkTallyDataTable.vue';
 import DetailPageHeader from 'src/components/layout/DetailPageHeader.vue';
@@ -147,7 +147,8 @@ onMounted(async () => {
         class="flex flex-col gap-2 max-w-screen-md"
       >
         <div class="w-full">
-          <ActivityHeatmap
+          <WorkActivityHeatmap
+            :work="work"
             :tallies="tallies"
           />
         </div>

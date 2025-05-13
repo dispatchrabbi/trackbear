@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
+
+import { type Work } from 'src/lib/api/work.ts';
+import { WORK_PHASE } from 'server/lib/models/work/consts';
 import type { Tally } from 'src/lib/api/tally.ts';
 
 import { addYears } from 'date-fns';
@@ -12,19 +15,28 @@ import PlotCalendarHeatMap, { type CalendarHeatMapDataPoint } from '../chart/Plo
 import Card from 'primevue/card';
 
 const props = defineProps<{
+  work: Work;
   tallies: Array<Tally>;
 }>();
 
+const INACTIVE_WORK_PHASES = [
+  WORK_PHASE.ABANDONED,
+  WORK_PHASE.FINISHED,
+  WORK_PHASE.ON_HOLD,
+];
+
 const data = computed(() => {
-  const today = new Date();
-  const timelineStart = addYears(today, -1);
+  if(props.tallies.length === 0) {
+    return [];
+  }
 
   const sortedTallies = props.tallies.toSorted(cmpTallies);
 
+  const today = new Date();
   const compiledTallies = compileTallies(
     sortedTallies,
-    sortedTallies.length > 0 ? maxDate(sortedTallies[0].date, formatDate(timelineStart)) : formatDate(timelineStart),
-    formatDate(today),
+    maxDate(sortedTallies[0].date, formatDate(addYears(today, -1))),
+    INACTIVE_WORK_PHASES.includes(props.work.phase) ? sortedTallies.at(-1).date : formatDate(today),
   );
 
   const compiledData = compiledTallies.map(compiledTally => ({

@@ -36,7 +36,7 @@ x (B) Add rank changes from the previous day into the standings dif:1 @boards +d
 (B) Graph widget overhaul: lines/bars toggle, full-screen, download dif:3 @charts +delight
 (B) Show starred leaderboards on dashboard dif:2 @dashboard +delight
 (B) Graph lifetime progress dif:1 @stats +delight
-(B) Make the project heatmap stop after the last day of progress if the phase is finished/abandonded/on-hold (h/t Starlight) dif:1 @projects +delight
+x (B) Make the project heatmap stop after the last day of progress if the phase is finished/abandonded/on-hold (h/t Starlight) dif:1 @projects +delight
 (B) Implement a following system dif:5 @followers +followers
 (B) Change the public and friend profile choices to be a settings page instead of being in the configure pages dif:3 @followers @settings +followers
 (B) Add a Following page under the Dashboard section dif:3 @dashboard @followers +followers
@@ -46,7 +46,7 @@ x (B) Add rank changes from the previous day into the standings dif:1 @boards +d
 (B) Improve tag inputs dif:? @boards @goals @projects @tags +taginputs
 (B) Fix winston warnings by creating a non-default logger to use and exporting that (which can be silenced during unit tests) dif:2 @backend +techdebt
 (B) Need to figure out accent vs success vs completion dif:3 @ui +themes
-(B) Rewrite the heatmap to use Plot dif:3 @charts
+x (B) Rewrite the heatmap to use Plot dif:3 @charts
 (B) Cyclical leaderboards (renews or does new standings every week/month/year) (h/t Becca Stargazer) dif:5 @boards
 (B) Do some load testing to see if multiple containers is better dif:3 @deploy
 (B) Investigate Docker Swarm if it turns out multiple containers is better dif:? @deploy

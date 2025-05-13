@@ -67,6 +67,10 @@ export default ts_eslint.config(
           catch: { after: true }, // TODO: keep an eye on https://github.com/eslint-stylistic/eslint-stylistic/pull/770
         },
       }],
+      '@stylistic/max-statements-per-line': ['error', {
+        max: 1,
+        ignoredNodes: ['ReturnStatement'], // allow a single-line if() { return; }
+      }],
       '@stylistic/operator-linebreak': ['error', 'after'],
       '@stylistic/quotes': ['error', 'single', {
         allowTemplateLiterals: true,

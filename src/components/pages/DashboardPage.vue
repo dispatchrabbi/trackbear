@@ -98,9 +98,9 @@ onMounted(async () => {
       </div>
       <div
         v-if="!(allTalliesIsLoading || goalsIsLoading)"
-        class="flex gap-4 flex-wrap items-top"
+        class="flex gap-4 flex-col items-top"
       >
-        <div class="flex-grow">
+        <div class="flex-grow max-w-full">
           <SectionTitle title="Activity" />
           <ActivityHeatmap
             :tallies="allTallies"
