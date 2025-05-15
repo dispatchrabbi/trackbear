@@ -13,6 +13,8 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - NEW: API access is the next big thing on the list.
+
+## 1.2.4
 - NEW: Added a background job to minify uploaded images and prune unused uploaded images.
 - CHANGED: The activity heatmap has been updated to have nicer tooltips and use the same chart library as the rest of TrackBear.
 - CHANGED: Activity heatmaps on projects will not continue past the last day of activity if the project is finished, on hold, or abandoned. (h/t Starlight)
