@@ -6,7 +6,7 @@ import { Resource } from '@opentelemetry/resources';
 // import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import Prisma from '@prisma/instrumentation';
+import { PrismaInstrumentation } from '@prisma/instrumentation';
 
 // import {
 //     SimpleLogRecordProcessor,
@@ -61,7 +61,7 @@ const sdk = new NodeSDK({
     // so we are just going to do http instrumentation and then we'll have to do middleware for the rest
     new HttpInstrumentation(),
 
-    new Prisma.PrismaInstrumentation(),
+    new PrismaInstrumentation(),
   ],
 });
 
