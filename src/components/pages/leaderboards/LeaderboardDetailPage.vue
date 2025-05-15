@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
-import { useEventBus, useClipboard, useMagicKeys } from '@vueuse/core';
+import { useEventBus } from '@vueuse/core';
 
 import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
@@ -24,7 +24,7 @@ import { toTitleCase } from 'src/lib/str';
 import { PrimeIcons } from 'primevue/api';
 import type { MenuItem } from 'primevue/menuitem';
 import Button from 'primevue/button';
-// import Dialog from 'primevue/dialog';
+import Dialog from 'primevue/dialog';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 
@@ -37,11 +37,8 @@ import ChallengeProgressChart from 'src/components/leaderboard/ChallengeProgress
 import FundraiserProgressChart from 'src/components/leaderboard/FundraiserProgressChart.vue';
 import FundraiserProgressMeter from 'src/components/leaderboard/FundraiserProgressMeter.vue';
 import LeaderboardStandings from 'src/components/leaderboard/LeaderboardStandings.vue';
-// import JoinCodeDisplay from 'src/components/leaderboard/JoinCodeDisplay.vue';
+import JoinCodeDisplay from 'src/components/leaderboard/JoinCodeDisplay.vue';
 import UserAvatar from 'src/components/UserAvatar.vue';
-
-import { useToast } from 'primevue/usetoast';
-const toast = useToast();
 
 const leaderboard = ref<LeaderboardSummary>(null);
 const loadLeaderboard = async function() {
@@ -123,33 +120,9 @@ const handleConfigureClick = function() {
   router.push({ name: 'edit-leaderboard' });
 };
 
-// const isJoinCodeDialogVisible = ref<boolean>(false);
-// const handleJoinCodeClick = function() {
-//   isJoinCodeDialogVisible.value = true;
-// };
-
-const { alt } = useMagicKeys();
-const { copy } = useClipboard({ legacy: true });
-const handleCopyJoinCodeClick = function(ev: MouseEvent) {
-  if(leaderboard.value === null) {
-    return;
-  }
-
-  const copyLink = ev.altKey;
-  copy(copyLink ? getDirectJoinUrl() : leaderboard.value.uuid);
-  toast.add({
-    severity: 'success',
-    summary: copyLink ? 'Link copied!' : 'Code copied!',
-    detail: `The join ${copyLink ? 'link' : 'code'} for this leaderboard has been copied to your clipboard.`,
-    life: 3 * 1000,
-  });
-};
-
-const getDirectJoinUrl = function() {
-  if(leaderboard.value === null) {
-    return null;
-  }
-  return `${envStore.env.URL_PREFIX}/leaderboards/join?joinCode=${leaderboard.value.uuid}`;
+const isJoinCodeDialogVisible = ref<boolean>(false);
+const handleJoinCodeClick = function() {
+  isJoinCodeDialogVisible.value = true;
 };
 
 const breadcrumbs = computed(() => {
@@ -207,18 +180,11 @@ watch(() => route.params.boardUuid, newUuid => {
           />
           <Button
             v-if="leaderboard.isJoinable"
-            :label="`Copy Join ${alt ? 'Link' : 'Code'}`"
-            severity="help"
-            :icon="PrimeIcons.COPY"
-            @click="handleCopyJoinCodeClick"
-          />
-          <!-- <Button
-            v-if="leaderboard.isJoinable"
             label="View Join Code"
             severity="help"
             :icon="PrimeIcons.USER_PLUS"
             @click="handleJoinCodeClick"
-          /> -->
+          />
         </template>
       </DetailPageHeader>
       <div
@@ -322,7 +288,7 @@ watch(() => route.params.boardUuid, newUuid => {
           </div>
         </div>
       </div>
-      <!-- <Dialog
+      <Dialog
         v-model:visible="isJoinCodeDialogVisible"
         modal
       >
@@ -333,7 +299,7 @@ watch(() => route.params.boardUuid, newUuid => {
           </h2>
         </template>
         <JoinCodeDisplay :leaderboard="leaderboard" />
-      </Dialog> -->
+      </Dialog>
     </div>
     <div v-else>
       Loading leaderboard...

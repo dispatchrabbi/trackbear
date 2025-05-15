@@ -14,9 +14,8 @@ const props = defineProps<{
 
 import { PrimeIcons } from 'primevue/api';
 import Button from 'primevue/button';
-import Divider from 'primevue/divider';
-
-import SubsectionTitle from '../layout/SubsectionTitle.vue';
+import InputGroup from 'primevue/inputgroup';
+import InputText from 'primevue/inputtext';
 
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
@@ -51,39 +50,43 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 mb-4">
+  <div class="flex flex-col gap-4 mb-4">
     <div class="flex flex-col gap-1">
-      <div class="flex justify-start items-baseline gap-2 mt-1">
-        <div class="text-lg font-bold font-heading">
-          Join Code
-        </div>
-        <!-- <SubsectionTitle title="Join Code" /> -->
-        <Button
-          label="Copy"
-          :icon="PrimeIcons.COPY"
-          size="small"
-          severity="help"
-          @click="handleCopyCodeClick"
-        />
+      <div class="text-lg font-bold font-heading">
+        Join Code
       </div>
-      <div class="text-xl">
-        {{ props.leaderboard.uuid }}
+      <div>
+        <InputGroup>
+          <InputText
+            :value="props.leaderboard.uuid"
+            read-only
+          />
+          <Button
+            label="Copy"
+            :icon="PrimeIcons.COPY"
+            severity="help"
+            @click="handleCopyCodeClick"
+          />
+        </InputGroup>
       </div>
     </div>
-    <Divider />
     <div class="flex flex-col gap-1">
-      <div class="flex justify-start items-baseline gap-2 mt-1">
-        <SubsectionTitle title="Direct Join Link" />
-        <Button
-          label="Copy"
-          :icon="PrimeIcons.COPY"
-          size="small"
-          severity="help"
-          @click="handleCopyLinkClick"
-        />
+      <div class="text-lg font-bold font-heading">
+        Direct Join Link
       </div>
-      <div class="text-xl">
-        {{ makeDirectLink(props.leaderboard) }}
+      <div>
+        <InputGroup>
+          <InputText
+            :value="makeDirectLink(props.leaderboard)"
+            read-only
+          />
+          <Button
+            label="Copy"
+            :icon="PrimeIcons.COPY"
+            severity="help"
+            @click="handleCopyLinkClick"
+          />
+        </InputGroup>
       </div>
     </div>
   </div>

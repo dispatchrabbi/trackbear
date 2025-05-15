@@ -13,9 +13,10 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - NEW: API access is the next big thing on the list.
+- NEW: Added a background job to minify uploaded images and prune unused uploaded images.
 - CHANGED: The activity heatmap has been updated to have nicer tooltips and use the same chart library as the rest of TrackBear.
 - CHANGED: Activity heatmaps on projects will not continue past the last day of activity if the project is finished, on hold, or abandoned. (h/t Starlight)
-- NEW: Added a background job to minify uploaded images and prune unused uploaded images.
+- CHANGED: The "Copy Join Code" button on leaderboard pages has been replaced with a "View Join Code" button that show you both the join code and a direct join link and let you copy them to the clipboard.
 
 ## 1.2.3
 - FIXED: Leaderboard standings now shows the correct count total for the selected measure, instead of a total of all measures. (h/t Lucile, romana)

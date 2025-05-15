@@ -1,6 +1,6 @@
 (A) Allow admins to force password reset dif:5 @admin +adminconsole
 (A) Allow admins to view any project, goal, leaderboard in-situ dif:3 @admin +adminconsole
-(A) Revamp stats on the Users page dif:1 @admin +adminconsole
+x (A) Revamp stats on the Users page dif:1 @admin +adminconsole
 (A) Implement API keys dif:3 @api +api
 (A) Implement API permissions on the backend dif:2 @backend +api
 (A) Separate join code from UUID and allow rolling the code dif:3 @boards +boardsv2
