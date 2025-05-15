@@ -37,6 +37,9 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     rollupOptions: {
+      external: [
+        'sharp',
+      ],
       output: {
         manualChunks: function(id) {
           return Object.keys(CHUNKS_MAP).find(chunk => id.includes(CHUNKS_MAP[chunk]));

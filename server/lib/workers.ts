@@ -1,13 +1,15 @@
 import { CronJob } from 'cron';
 import winston from 'winston';
 
-import suspendUnverifiedUsersWorker from 'server/workers/suspendUnverifiedUsersWorker.ts';
 import clearResetLinksWorker from 'server/workers/clearResetLinksWorker.ts';
+import minifyImagesWorker from 'server/workers/minifyImagesWorker.ts';
 import removeExpiredEmailVerificationsWorker from 'server/workers/removeExpiredEmailVerificationsWorker.ts';
+import suspendUnverifiedUsersWorker from 'server/workers/suspendUnverifiedUsersWorker.ts';
 
 const WORKERS = [
-  suspendUnverifiedUsersWorker,
   clearResetLinksWorker,
+  minifyImagesWorker,
+  suspendUnverifiedUsersWorker,
   removeExpiredEmailVerificationsWorker,
 ];
 

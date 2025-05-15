@@ -19,7 +19,7 @@ x (A) Build out a full model layer so it can be used by scripts/workers/queues a
 (A) Definitely need to figure out themed chart colors somehow dif:2 @charts @ui +themes
 (A) Actually make several themes dif:5 @ui +themes
 (A) Allow viewing leaderboards without logging in dif:2 @boards
-(A) Sharp-ify covers and avatar files to save on space dif:2 @backend
+x (A) Sharp-ify covers and avatar files to save on space dif:2 @backend
 (B) Improve audit event retrieval/listings dif:2 @admin +adminconsole
 (B) Let admins manage projects dif:5 @admin +adminconsole
 (B) Let admins manage goals dif:3 @admin +adminconsole

@@ -15,6 +15,7 @@ Types of changes include:
 - NEW: API access is the next big thing on the list.
 - CHANGED: The activity heatmap has been updated to have nicer tooltips and use the same chart library as the rest of TrackBear.
 - CHANGED: Activity heatmaps on projects will not continue past the last day of activity if the project is finished, on hold, or abandoned. (h/t Starlight)
+- NEW: Added a background job to minify uploaded images and prune unused uploaded images.
 
 ## 1.2.3
 - FIXED: Leaderboard standings now shows the correct count total for the selected measure, instead of a total of all measures. (h/t Lucile, romana)
