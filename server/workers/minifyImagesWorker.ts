@@ -8,7 +8,10 @@ import winston from 'winston';
 import { getNormalizedEnv } from 'server/lib/env.ts';
 
 const NAME = 'optimizeUploadsWorker';
+
 const DRY_RUN: boolean = false;
+const SHOULD_PRUNE: boolean = true;
+const SHOULD_OPTIMIZE: boolean = false;
 
 // run every day at 3:24 (time chosen at random)
 const CRONTAB = '24 3 * * *';
@@ -24,11 +27,15 @@ async function run() {
   const workerLogger = winston.loggers.get('worker');
   workerLogger.debug(`Worker has started`, { service: NAME });
 
-  await pruneAvatars(workerLogger);
-  await pruneCovers(workerLogger);
+  if(SHOULD_PRUNE) {
+    await pruneAvatars(workerLogger);
+    await pruneCovers(workerLogger);
+  }
 
-  await optimizeAvatars(workerLogger);
-  await optimizeCovers(workerLogger);
+  if(SHOULD_OPTIMIZE) {
+    await optimizeAvatars(workerLogger);
+    await optimizeCovers(workerLogger);
+  }
 }
 
 async function pruneAvatars(workerLogger: winston.Logger) {
