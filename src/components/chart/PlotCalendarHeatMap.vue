@@ -177,7 +177,7 @@ function renderChart() {
         x: d => d3.timeSunday.count(d3.timeDay(dateBounds.value.startDate), d3.timeDay(d.date)),
         y: d => (new Date(d.date)).getDay(),
         // fill: d => (console.log(d, visibleData.value, props.normalizerFn(d, visibleData.value)), props.normalizerFn(d, visibleData.value)),
-        fill: d => d.value.word,
+        fill: d => props.normalizerFn(d, visibleData.value),
         inset: 0.5,
         margin: 0,
       }),
