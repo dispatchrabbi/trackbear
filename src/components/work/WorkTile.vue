@@ -54,12 +54,13 @@ const isNotMobile = computed(() => {
   <div class="work-tile flex gap-3 rounded-lg shadow-md bg-surface-0 dark:bg-surface-900 mb-2">
     <div
       v-if="props.showCover && isNotMobile"
-      class="work-tile-cover self-center flex-none w-32 h-48 my-auto bg-surface-100 dark:bg-surface-950 rounded-s-lg"
+      class="work-tile-cover flex flex-none w-32 h-48 my-auto bg-surface-100 dark:bg-surface-950 rounded-s-lg"
     >
       <WorkCover
         :work="work"
         rounded="lg"
         shadow="none"
+        class="flex-1 self-center"
       />
     </div>
     <div

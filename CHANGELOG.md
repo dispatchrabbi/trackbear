@@ -13,6 +13,7 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - NEW: API access is the next big thing on the list.
+- FIXED: Project cover image sizes that are not the right aspect ratio are now centered when displayed. (h/t Seraphe)
 
 ## 1.2.4
 - NEW: Added a background job to minify uploaded images and prune unused uploaded images.
