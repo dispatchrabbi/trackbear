@@ -5,8 +5,7 @@ import { type Work } from 'src/lib/api/work.ts';
 import { WORK_PHASE } from 'server/lib/models/work/consts';
 import type { Tally } from 'src/lib/api/tally.ts';
 
-import { addYears } from 'date-fns';
-import { maxDate, formatDate, parseDateString } from 'src/lib/date.ts';
+import { formatDate, parseDateString } from 'src/lib/date.ts';
 
 import { cmpTallies, compileTallies, formatCount } from 'src/lib/tally.ts';
 
@@ -19,6 +18,7 @@ const props = defineProps<{
   tallies: Array<Tally>;
 }>();
 
+// for inactive projects, we'll show a heatmap for the time the project was active
 const INACTIVE_WORK_PHASES = [
   WORK_PHASE.ABANDONED,
   WORK_PHASE.FINISHED,
@@ -35,8 +35,8 @@ const data = computed(() => {
   const today = new Date();
   const compiledTallies = compileTallies(
     sortedTallies,
-    maxDate(sortedTallies[0].date, formatDate(addYears(today, -1))),
-    INACTIVE_WORK_PHASES.includes(props.work.phase) ? sortedTallies.at(-1).date : formatDate(today),
+    sortedTallies[0].date, // we don't care about limiting the startDate — let the heatmap show as much data as it can
+    INACTIVE_WORK_PHASES.includes(props.work.phase) ? sortedTallies.at(-1).date : formatDate(today), // for inactive projects, don't show past the last tally
   );
 
   const compiledData = compiledTallies.map(compiledTally => ({
