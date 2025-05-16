@@ -13,8 +13,10 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - NEW: API access is the next big thing on the list.
-- FIXED: Project cover image sizes that are not the right aspect ratio are now centered when displayed. (h/t Seraphe)
-- FIXED: Activity heatmaps for projects finished more than a year ago now display progress for the correct date range. (h/t Seraphe)
+
+## 1.2.6
+- FIXED: Project cover image sizes that are not the right aspect ratio are now centered when displayed. (h/t Seraphle)
+- FIXED: Activity heatmaps for projects finished more than a year ago now display progress for the correct date range. (h/t Seraphle)
 - FIXED: The Dashboard activity heatmap coloring now correctly takes into account progress other than words.
 
 ## 1.2.4
