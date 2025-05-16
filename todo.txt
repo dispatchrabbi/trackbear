@@ -49,6 +49,7 @@ x (B) Rewrite the heatmap to use Plot dif:3 @charts
 (B) Cyclical leaderboards (renews or does new standings every week/month/year) (h/t Becca Stargazer) dif:5 @boards
 (B) Do some load testing to see if multiple containers is better dif:3 @deploy
 (B) Investigate Docker Swarm if it turns out multiple containers is better dif:? @deploy
+(B) Display the time/count/amount to go if a habit has an end date dif:2 @goals +delight
 (C) Allow admins to rename user/displayName dif:2 @admin +adminconsole
 (C) Allow merging two accounts dif:5 @admin +adminconsole
 (C) Implement API rate-limiting dif:2 @backend @security +api
