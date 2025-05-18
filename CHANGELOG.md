@@ -13,6 +13,8 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - NEW: API access is the next big thing on the list.
+
+## 1.2.7
 - NEW: Leaderboard owners can now manage the memberships of their boards. Specifically, they can promote other members to owner and remove members.
 
 ## 1.2.6

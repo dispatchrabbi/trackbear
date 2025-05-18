@@ -382,7 +382,7 @@ describe('leaderboard api v1', () => {
 
       const membership = member2membership(member);
 
-      LeaderboardModel.removeMember.mockResolvedValue(null);
+      LeaderboardModel.removeMember.mockResolvedValue(member);
 
       const { req, res } = getHandlerMocksWithUser({
         params: {
@@ -770,6 +770,7 @@ describe('leaderboard api v1', () => {
       };
 
       const membership: Membership = {
+        id: TEST_OBJECT_ID,
         uuid: TEST_UUID,
         state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
         isParticipant: true,
