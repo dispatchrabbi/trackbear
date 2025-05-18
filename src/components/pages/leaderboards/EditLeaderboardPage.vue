@@ -12,9 +12,10 @@ const userStore = useUserStore();
 import { useLeaderboardStore } from 'src/stores/leaderboard';
 const leaderboardStore = useLeaderboardStore();
 
-import { type Participation, type LeaderboardSummary, type Leaderboard, type Membership, listMembers, getMyParticipation, deleteLeaderboard, leaveLeaderboard } from 'src/lib/api/leaderboard';
+import { type Participation, type LeaderboardSummary, type Leaderboard, getMyParticipation, deleteLeaderboard, leaveLeaderboard } from 'src/lib/api/leaderboard';
 
 import EditLeaderboardForm from 'src/components/leaderboard/EditLeaderboardForm.vue';
+import MembersList from 'src/components/leaderboard/MembersList.vue';
 import EditLeaderboardParticipationForm from 'src/components/leaderboard/EditLeaderboardParticipationForm.vue';
 import DangerPanel from 'src/components/layout/DangerPanel.vue';
 import DangerButton from 'src/components/shared/DangerButton.vue';
@@ -62,24 +63,6 @@ const loadMyParticipation = async function() {
   }
 };
 
-const members = ref<Membership[]>(null);
-const loadMembers = async function() {
-  if(!isCurrentUserAnOwner.value) {
-    members.value = null;
-  }
-
-  try {
-    members.value = await listMembers(leaderboard.value.uuid);
-  } catch (err) {
-    if(err.code !== 'NOT_LOGGED_IN') {
-      // the ApplicationLayout takes care of this. If we don't exclude NOT_LOGGED_IN, this will redirect to /leaderboards
-      // before ApplicationLayout can redirect to /login.
-      // TODO: figure out a better way to ensure that there's no race condition here
-      router.push({ name: 'leaderboards' });
-    }
-  }
-};
-
 const isLoading = ref<boolean>(false);
 async function reloadData() {
   isLoading.value = true;
@@ -87,7 +70,6 @@ async function reloadData() {
   await leaderboardStore.populate(true);
   await loadLeaderboard();
   await loadMyParticipation();
-  await loadMembers();
 
   isLoading.value = false;
 }
@@ -149,8 +131,8 @@ watch(() => route.params.boardUuid, newUuid => {
             </Panel>
             <DangerPanel header="Delete this Leaderboard">
               <DangerButton
-                danger-button-label="Delete this leaderboard"
-                :danger-button-icon="PrimeIcons.TRASH"
+                label="Delete this leaderboard"
+                :icon="PrimeIcons.TRASH"
                 action-description="delete this leaderboard"
                 action-command="Delete"
                 action-in-progress-message="Deleting..."
@@ -163,14 +145,13 @@ watch(() => route.params.boardUuid, newUuid => {
             </DangerPanel>
           </div>
         </TabPanel>
-        <!-- haven't yet implemented this feature -->
-        <!-- <TabPanel
+        <TabPanel
           v-if="isCurrentUserAnOwner"
           key="members"
           header="Members"
         >
-          <pre class="whitespace-pre-wrap">{{ JSON.stringify(members) }}</pre>
-        </TabPanel> -->
+          <MembersList :leaderboard="leaderboard" />
+        </TabPanel>
         <TabPanel
           key="participation"
           header="My Participation"
@@ -192,8 +173,8 @@ watch(() => route.params.boardUuid, newUuid => {
               </div>
               <DangerButton
                 v-else
-                danger-button-label="Leave this leaderboard"
-                :danger-button-icon="PrimeIcons.USER_MINUS"
+                label="Leave this leaderboard"
+                :icon="PrimeIcons.USER_MINUS"
                 action-description="leave this leaderboard"
                 action-command="Leave"
                 action-in-progress-message="Leaving..."

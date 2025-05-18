@@ -21,7 +21,7 @@ const props = defineProps<{
   actionFn: () => Promise<void>;
 }>();
 
-const emit = defineEmits(['action:success', 'action:failure', 'formSuccess']);
+const emit = defineEmits(['action:success', 'action:failure', 'formSuccess', 'cancel']);
 
 const formModel = reactive({
   typedConfirmation: '',
@@ -76,7 +76,9 @@ async function handleSubmit() {
     :loading-message="isLoading ? props.actionInProgressMessage : null"
     :success-message="successMessage"
     :error-message="errorMessage"
+    cancel-button
     @submit="validate() && handleSubmit()"
+    @cancel="emit('cancel')"
   >
     <p class="font-bold text-danger-500 dark:text-danger-400">
       You are about to {{ props.actionDescription }}.

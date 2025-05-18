@@ -49,11 +49,11 @@ export async function listMembers(uuid: string) {
   return callApiV1<Membership[]>(ENDPOINT + `/${uuid}/members`, 'GET');
 }
 
-export async function updateMember(uuid: string, memberId: string, data: LeaderboardMemberUpdatePayload) {
+export async function updateMember(uuid: string, memberId: number, data: LeaderboardMemberUpdatePayload) {
   return callApiV1<Membership[]>(ENDPOINT + `/${uuid}/members/${memberId}`, 'PATCH', data);
 }
 
-export async function removeMember(uuid: string, memberId: string) {
+export async function removeMember(uuid: string, memberId: number) {
   return callApiV1<Membership>(ENDPOINT + `/${uuid}/members/${memberId}`, 'DELETE');
 }
 

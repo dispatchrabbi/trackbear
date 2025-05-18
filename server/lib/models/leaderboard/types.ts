@@ -44,4 +44,4 @@ export type LeaderboardTally = Pick<Tally, 'uuid' | 'date' | 'measure' | 'count'
 
 export type Participation = Expand<Pick<LeaderboardMember, 'id' | 'goal' | 'isParticipant' | 'workIds' | 'tagIds'>>;
 
-export type Membership = Pick<LeaderboardMember, 'uuid' | 'state' | 'avatar' | 'displayName' | 'isOwner' | 'isParticipant'>;
+export type Membership = Pick<LeaderboardMember, 'id' | 'uuid' | 'state' | 'avatar' | 'displayName' | 'isOwner' | 'isParticipant'>;

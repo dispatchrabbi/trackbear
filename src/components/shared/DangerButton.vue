@@ -9,10 +9,11 @@ import DangerConfirmationForm from './DangerConfirmationForm.vue';
 
 const props = withDefaults(defineProps<{
   /** The label for the danger button */
-  dangerButtonLabel: string;
-  dangerButtonSize?: string;
-  dangerButtonIcon?: string;
-  dangerButtonOutlined?: boolean;
+  label: string;
+  size?: string;
+  icon?: string;
+  outlined?: boolean;
+  disabled?: boolean;
 
   /** A middle-of-a-sentence description of the dangerous action. */
   actionDescription: string;
@@ -30,9 +31,10 @@ const props = withDefaults(defineProps<{
 
   actionFn: () => Promise<void>;
 }>(), {
-  dangerButtonSize: 'large',
-  dangerButtonIcon: PrimeIcons.TIMES_CIRCLE,
-  dangerButtonOutlined: false,
+  size: 'large',
+  icon: PrimeIcons.TIMES_CIRCLE,
+  outlined: false,
+  disabled: false,
 });
 
 const emit = defineEmits(['innerFormSuccess']);
@@ -48,9 +50,10 @@ const handleDangerFormSuccess = function() {
 <template>
   <Button
     severity="danger"
-    :label="props.dangerButtonLabel"
-    :icon="props.dangerButtonIcon"
-    :outlined="props.dangerButtonOutlined"
+    :label="props.label"
+    :icon="props.icon"
+    :outlined="props.outlined"
+    :disabled="props.disabled"
     @click="isDangerDialogVisible = true"
   />
   <Dialog
@@ -59,8 +62,8 @@ const handleDangerFormSuccess = function() {
   >
     <template #header>
       <h2 class="font-heading font-semibold uppercase">
-        <span :class="props.dangerButtonIcon" />
-        {{ props.dangerButtonLabel }}
+        <span :class="props.icon" />
+        {{ props.label }}
       </h2>
     </template>
     <DangerConfirmationForm
@@ -75,6 +78,7 @@ const handleDangerFormSuccess = function() {
       :action-fn="props.actionFn"
 
       @form-success="handleDangerFormSuccess"
+      @cancel="isDangerDialogVisible = false"
     />
   </Dialog>
 </template>

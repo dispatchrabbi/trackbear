@@ -13,6 +13,7 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - NEW: API access is the next big thing on the list.
+- NEW: Leaderboard owners can now manage the memberships of their boards. Specifically, they can promote other members to owner and remove members.
 
 ## 1.2.6
 - FIXED: Project cover image sizes that are not the right aspect ratio are now centered when displayed. (h/t Seraphle)

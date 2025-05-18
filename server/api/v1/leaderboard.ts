@@ -3,7 +3,7 @@ import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
-import { zUuidParam, NonEmptyArray, zUuidAndIdParams } from '../../lib/validators.ts';
+import { zUuidParam, NonEmptyArray, zStrInt } from '../../lib/validators.ts';
 
 import { CreateLeaderboardData, CreateMemberData, LeaderboardModel, UpdateLeaderboardData, UpdateMemberData } from 'server/lib/models/leaderboard/leaderboard-model.ts';
 import type { Leaderboard, LeaderboardSummary, LeaderboardMember, JustMember, Participant, ParticipantGoal, Participation, Membership } from 'server/lib/models/leaderboard/types.ts';
@@ -300,7 +300,7 @@ export async function handleLeaveBoard(req: RequestWithUser, res: ApiResponse<Le
 }
 
 export function member2membership(member: JustMember): Membership {
-  return pick(member, ['uuid', 'state', 'isOwner', 'isParticipant', 'displayName', 'avatar']);
+  return pick(member, ['id', 'uuid', 'state', 'isOwner', 'isParticipant', 'displayName', 'avatar']);
 }
 
 /**
@@ -410,7 +410,10 @@ const routes: RouteConfig[] = [
     method: HTTP_METHODS.PATCH,
     handler: handleUpdateMember,
     accessLevel: ACCESS_LEVEL.USER,
-    paramsSchema: zUuidAndIdParams(),
+    paramsSchema: z.object({
+      uuid: z.string().uuid(),
+      memberId: zStrInt(),
+    }),
     bodySchema: zLeaderboardMemberUpdatePayload,
   },
   // DELETE /:uuid/members/:memberId - remove a board member (owners only)
@@ -419,7 +422,10 @@ const routes: RouteConfig[] = [
     method: HTTP_METHODS.DELETE,
     handler: handleRemoveMember,
     accessLevel: ACCESS_LEVEL.USER,
-    paramsSchema: zUuidAndIdParams(),
+    paramsSchema: z.object({
+      uuid: z.string().uuid(),
+      memberId: zStrInt(),
+    }),
   },
   // GET /:uuid/me - get your participation info
   {
