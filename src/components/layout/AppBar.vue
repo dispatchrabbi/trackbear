@@ -37,7 +37,7 @@ const userMenuItems = computed(() => {
       label: 'Your Account',
       items: [
         { icon: PrimeIcons.USER, label: 'Account', to: { name: 'account' } },
-        { icon: PrimeIcons.COG, label: 'Settings', to: { name: 'settings' } },
+        { icon: PrimeIcons.SLIDERS_V, label: 'Settings', to: { name: 'settings' } },
         { icon: PrimeIcons.TAG, label: 'Manage Tags', to: { name: 'tags' } },
       ],
     },

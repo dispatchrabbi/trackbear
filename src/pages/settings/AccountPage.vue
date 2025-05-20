@@ -16,7 +16,7 @@ import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import type { MenuItem } from 'primevue/menuitem';
 
-import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
+import SettingsLayout from 'src/layouts/SettingsLayout.vue';
 import UnverifiedEmailMessage from 'src/components/account/UnverifiedEmailMessage.vue';
 import AccountInfoForm from 'src/components/account/AccountInfoForm.vue';
 import UploadAvatarForm from 'src/components/account/UploadAvatarForm.vue';
@@ -51,7 +51,7 @@ const handleRemoveAvatar = function(ev) {
 </script>
 
 <template>
-  <ApplicationLayout
+  <SettingsLayout
     :breadcrumbs="breadcrumbs"
   >
     <div
@@ -150,7 +150,7 @@ const handleRemoveAvatar = function(ev) {
         </Dialog>
       </DangerPanel>
     </div>
-  </ApplicationLayout>
+  </SettingsLayout>
 </template>
 
 <style scoped>

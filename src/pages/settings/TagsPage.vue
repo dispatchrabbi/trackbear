@@ -6,7 +6,7 @@ const tagStore = useTagStore();
 
 import { type Tag } from 'src/lib/api/tag.ts';
 
-import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
+import SettingsLayout from 'src/layouts/SettingsLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import CreateTagForm from 'src/components/tag/CreateTagForm.vue';
 import EditTagForm from 'src/components/tag/EditTagForm.vue';
@@ -55,7 +55,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ApplicationLayout
+  <SettingsLayout
     :breadcrumbs="breadcrumbs"
   >
     <div
@@ -162,7 +162,7 @@ onMounted(async () => {
         />
       </Dialog>
     </div>
-  </ApplicationLayout>
+  </SettingsLayout>
 </template>
 
 <style scoped>

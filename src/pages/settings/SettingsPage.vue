@@ -6,7 +6,7 @@ await userStore.populate();
 
 import type { MenuItem } from 'primevue/menuitem';
 
-import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
+import SettingsLayout from 'src/layouts/SettingsLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import SettingsForm from 'src/components/settings/SettingsForm.vue';
 import ThemeSwitcher from 'src/components/settings/ThemeSwitcher.vue';
@@ -25,7 +25,7 @@ async function reloadUserStore() {
 </script>
 
 <template>
-  <ApplicationLayout
+  <SettingsLayout
     :breadcrumbs="breadcrumbs"
   >
     <SectionTitle title="Settings" />
@@ -48,7 +48,7 @@ async function reloadUserStore() {
         <ThemeSwitcher />
       </Panel>
     </div>
-  </ApplicationLayout>
+  </SettingsLayout>
 </template>
 
 <style scoped>
