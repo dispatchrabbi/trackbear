@@ -144,6 +144,7 @@ onMounted(() => {
             v-if="!item.target"
             :to="item.to"
             v-bind="itemProps.action"
+            class="w-full"
           >
             <span :class="[item.icon, item.iconColor]" />
             <span class="leading-6 text-sm font-medium ml-2">{{ item.label }}</span>
@@ -153,6 +154,7 @@ onMounted(() => {
             :href="item.href"
             :target="item.target"
             v-bind="itemProps.action"
+            class="w-full"
           >
             <span :class="[item.icon, item.iconColor]" />
             <span class="leading-6 text-sm font-medium ml-2">{{ item.label }}</span>
