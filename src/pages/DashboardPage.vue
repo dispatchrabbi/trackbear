@@ -20,8 +20,8 @@ import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import UnverifiedEmailMessage from 'src/components/account/UnverifiedEmailMessage.vue';
 import ActivityHeatmap from 'src/components/dashboard/ActivityHeatmap.vue';
 import StreakCounter from 'src/components/dashboard/StreakCounter.vue';
-import HabitGoalStatus from '../dashboard/HabitGoalStatus.vue';
-import TargetGoalStatus from '../dashboard/TargetGoalStatus.vue';
+import HabitGoalStatus from 'src/components/dashboard/HabitGoalStatus.vue';
+import TargetGoalStatus from 'src/components/dashboard/TargetGoalStatus.vue';
 import { filterTallies } from 'src/lib/tally';
 import { HabitGoal, TargetGoal } from 'server/lib/models/goal/types';
 

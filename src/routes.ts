@@ -1,56 +1,56 @@
-import PlaceholderPage from 'src/components/pages/PlaceholderPage.vue';
+import PlaceholderPage from 'src/pages/PlaceholderPage.vue';
 
-import HomePage from 'src/components/pages/HomePage.vue';
-import MaintenancePage from 'src/components/pages/MaintenancePage.vue';
-import AboutPage from 'src/components/pages/AboutPage.vue';
-import ChangelogPage from 'src/components/pages/ChangelogPage.vue';
-import PrivacyPage from 'src/components/pages/PrivacyPage.vue';
-import ContactPage from 'src/components/pages/ContactPage.vue';
-import KoFiRedirectPage from 'src/components/pages/KoFiRedirectPage.vue';
+import HomePage from 'src/pages/HomePage.vue';
+import MaintenancePage from 'src/pages/MaintenancePage.vue';
+import AboutPage from 'src/pages/AboutPage.vue';
+import ChangelogPage from 'src/pages/ChangelogPage.vue';
+import PrivacyPage from 'src/pages/PrivacyPage.vue';
+import ContactPage from 'src/pages/ContactPage.vue';
+import KoFiRedirectPage from 'src/pages/KoFiRedirectPage.vue';
 
-import SignUpPage from 'src/components/pages/SignUpPage.vue';
-import LoginPage from 'src/components/pages/LoginPage.vue';
-import LogoutPage from 'src/components/pages/LogoutPage.vue';
-import VerifyEmailPage from 'src/components/pages/VerifyEmailPage.vue';
-import SendResetPasswordPage from 'src/components/pages/SendResetPasswordPage.vue';
-import ResetPasswordPage from 'src/components/pages/ResetPasswordPage.vue';
+import SignUpPage from 'src/pages/SignUpPage.vue';
+import LoginPage from 'src/pages/LoginPage.vue';
+import LogoutPage from 'src/pages/LogoutPage.vue';
+import VerifyEmailPage from 'src/pages/VerifyEmailPage.vue';
+import SendResetPasswordPage from 'src/pages/SendResetPasswordPage.vue';
+import ResetPasswordPage from 'src/pages/ResetPasswordPage.vue';
 
-import ProfilePage from 'src/components/pages/public/ProfilePage.vue';
+import ProfilePage from 'src/pages/public/ProfilePage.vue';
 import { USERNAME_REGEX } from 'server/lib/models/user/consts.ts';
 const ROUTER_PARAM_USERNAME_REGEX = USERNAME_REGEX.source.replace('^', '').replace('$', '');
 
-import SettingsPage from './components/pages/settings/SettingsPage.vue';
-import AccountPage from 'src/components/pages/settings/AccountPage.vue';
-import TagsPage from 'src/components/pages/settings/TagsPage.vue';
+import SettingsPage from 'src/pages/settings/SettingsPage.vue';
+import AccountPage from 'src/pages/settings/AccountPage.vue';
+import TagsPage from 'src/pages/settings/TagsPage.vue';
 
-import AdminHomePage from './components/pages/admin/AdminHomePage.vue';
-import AdminStatsPage from './components/pages/admin/AdminStatsPage.vue';
-import AdminBannersListPage from './components/pages/admin/BannersListPage.vue';
-import AdminUsersListPage from './components/pages/admin/UsersListPage.vue';
-import AdminUserPage from './components/pages/admin/UserPage.vue';
+import AdminHomePage from 'src/pages/admin/AdminHomePage.vue';
+import AdminStatsPage from 'src/pages/admin/AdminStatsPage.vue';
+import AdminBannersListPage from 'src/pages/admin/BannersListPage.vue';
+import AdminUsersListPage from 'src/pages/admin/UsersListPage.vue';
+import AdminUserPage from 'src/pages/admin/UserPage.vue';
 
-import DashboardPage from 'src/components/pages/DashboardPage.vue';
+import DashboardPage from 'src/pages/DashboardPage.vue';
 
-import WorksListPage from 'src/components/pages/works/WorksListPage.vue';
-import WorkDetailPage from 'src/components/pages/works/WorkDetailPage.vue';
-import EditWorkPage from './components/pages/works/EditWorkPage.vue';
-import WorksImportPage from 'src/components/pages/works/import/WorksImportPage.vue';
-import WorksImportNanoAutoPage from './components/pages/works/import/WorksImportNanoAutoPage.vue';
-import WorksImportNanoManualPage from './components/pages/works/import/WorksImportNanoManualPage.vue';
-import WorksImportYwpAutoPage from './components/pages/works/import/WorksImportYwpAutoPage.vue';
+import WorksListPage from 'src/pages/works/WorksListPage.vue';
+import WorkDetailPage from 'src/pages/works/WorkDetailPage.vue';
+import EditWorkPage from 'src/pages/works/EditWorkPage.vue';
+import WorksImportPage from 'src/pages/works/import/WorksImportPage.vue';
+import WorksImportNanoAutoPage from 'src/pages/works/import/WorksImportNanoAutoPage.vue';
+import WorksImportNanoManualPage from 'src/pages/works/import/WorksImportNanoManualPage.vue';
+import WorksImportYwpAutoPage from 'src/pages/works/import/WorksImportYwpAutoPage.vue';
 
-import GoalsListPage from './components/pages/goals/GoalsListPage.vue';
-import NewGoalPage from './components/pages/goals/NewGoalPage.vue';
-import GoalDetailPage from './components/pages/goals/GoalDetailPage.vue';
-import EditGoalPage from './components/pages/goals/EditGoalPage.vue';
+import GoalsListPage from 'src/pages/goals/GoalsListPage.vue';
+import NewGoalPage from 'src/pages/goals/NewGoalPage.vue';
+import GoalDetailPage from 'src/pages/goals/GoalDetailPage.vue';
+import EditGoalPage from 'src/pages/goals/EditGoalPage.vue';
 
-import LeaderboardsListPage from 'src/components/pages/leaderboards/LeaderboardsListPage.vue';
-import LeaderboardDetailPage from 'src/components/pages/leaderboards/LeaderboardDetailPage.vue';
-import NewLeaderboardPage from './components/pages/leaderboards/NewLeaderboardPage.vue';
-import EditLeaderboardPage from './components/pages/leaderboards/EditLeaderboardPage.vue';
-import JoinLeaderboardPage from './components/pages/leaderboards/JoinLeaderboardPage.vue';
+import LeaderboardsListPage from 'src/pages/leaderboards/LeaderboardsListPage.vue';
+import LeaderboardDetailPage from 'src/pages/leaderboards/LeaderboardDetailPage.vue';
+import NewLeaderboardPage from 'src/pages/leaderboards/NewLeaderboardPage.vue';
+import EditLeaderboardPage from 'src/pages/leaderboards/EditLeaderboardPage.vue';
+import JoinLeaderboardPage from 'src/pages/leaderboards/JoinLeaderboardPage.vue';
 
-import LifetimeStatsPage from './components/pages/stats/LifetimeStats.vue';
+import LifetimeStatsPage from 'src/pages/stats/LifetimeStats.vue';
 
 const routes = [
   // no login needed
