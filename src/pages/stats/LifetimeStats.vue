@@ -26,7 +26,10 @@ const workStartingBalances = computed(() => {
 
   const startingBalances: MeasureCounts = workStore.works.reduce((balances, work) => {
     for(const measure of Object.keys(work.startingBalance)) {
-      if(!(measure in balances)) { balances[measure] = 0; }
+      if(!(measure in balances)) {
+        balances[measure] = 0;
+      }
+
       balances[measure] += work.startingBalance[measure];
     }
 
@@ -55,7 +58,10 @@ const dayCountsByYear = computed<Record<string, DayCount[]>>(() => {
   const countsByYear = dayCounts.value.reduce((years, dayCount) => {
     const year = dayCount.date.substring(0, 4);
 
-    if(!(year in years)) { years[year] = []; }
+    if(!(year in years)) {
+      years[year] = [];
+    }
+
     years[year].push(dayCount);
 
     return years;

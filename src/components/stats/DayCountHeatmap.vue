@@ -2,10 +2,14 @@
 import { computed, defineProps } from 'vue';
 import type { DayCount } from 'src/lib/api/stats.ts';
 
-import { parseDateString, cmpByDate } from 'src/lib/date.ts';
+import { parseDateString, cmpByDate, formatDate } from 'src/lib/date.ts';
 
-import CalendarHeatMap, { CalendarHeatMapDataPoint } from 'src/components/chart/CalendarHeatMap.vue';
+import Card from 'primevue/card';
+import PlotCalendarHeatMap, { CalendarHeatMapDataPoint } from 'src/components/chart/PlotCalendarHeatMap.vue';
+
 import { formatCount } from 'src/lib/tally.ts';
+import { eachDayOfInterval } from 'date-fns';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 
 const props = withDefaults(defineProps<{
   dayCounts: Array<DayCount>;
@@ -15,10 +19,31 @@ const props = withDefaults(defineProps<{
 });
 
 const data = computed(() => {
-  return props.dayCounts.toSorted(cmpByDate).map(c => ({
-    date: parseDateString(c.date),
+  if(props.dayCounts.length === 0) {
+    return [];
+  }
+
+  const sortedCounts = props.dayCounts.toSorted(cmpByDate).map(c => ({
+    date: c.date,
     value: c.counts,
   }));
+
+  const countMap = sortedCounts.reduce((obj, day) => {
+    obj[day.date] = day.value;
+    return obj;
+  }, {});
+
+  const days = eachDayOfInterval({
+    start: parseDateString(sortedCounts[0].date),
+    end: parseDateString(sortedCounts.at(-1).date),
+  });
+
+  const densifiedCounts = days.map(day => ({
+    date: day,
+    value: countMap[formatDate(day)] ?? { [TALLY_MEASURE.WORD]: 0 },
+  }));
+
+  return densifiedCounts;
 });
 
 const maxima = computed(() => {
@@ -41,13 +66,22 @@ const valueFormatFn = function(datum: CalendarHeatMapDataPoint) {
 </script>
 
 <template>
-  <CalendarHeatMap
-    v-if="props.dayCounts.length > 0"
-    :data="data"
-    :anchor="props.anchor"
-    :normalizer-fn="normalizerFn"
-    :value-format-fn="valueFormatFn"
-  />
+  <Card
+    class="max-w-full"
+    :pt="{
+      content: { class: 'py-0 px-5 md:px-6' }
+    }"
+  >
+    <template #content>
+      <PlotCalendarHeatMap
+        v-if="props.dayCounts.length > 0"
+        :data="data"
+        :anchor="props.anchor"
+        :normalizer-fn="normalizerFn"
+        :value-format-fn="valueFormatFn"
+      />
+    </template>
+  </Card>
 </template>
 
 <style scoped>

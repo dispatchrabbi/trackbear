@@ -212,7 +212,7 @@ onMounted(() => {
     ref="chart-container"
     :class="{
       'chart-container': true,
-      'overflow-scroll': !props.constrainWidth
+      'overflow-x-auto': !props.constrainWidth,
     }"
   >
     <div
