@@ -27,7 +27,7 @@ const props = withDefaults(defineProps<{
 }>(), {
   anchor: 'start',
   constrainWidth: false,
-  normalizerFn: datum => datum.value == null ? null : (+datum.value) > 0 ? 1 : 0,
+  normalizerFn: datum => datum.value == null ? null : (+datum.value) !== 0 ? 1 : 0,
   valueFormatFn: datum => datum.value.toString(),
 });
 
@@ -184,7 +184,7 @@ function renderChart() {
       Plot.tip(visibleData.value, Plot.pointer({
         x: d => d3.timeSunday.count(d3.timeDay(dateBounds.value.startDate), d3.timeDay(d.date)),
         y: d => (new Date(d.date)).getDay(),
-        // filter: d => Object.values(d.value).some(val => (val as number) > 0),
+        // filter: d => Object.values(d.value).some(val => (val as number) !== 0),
         title: formatTooltip,
         fill: chartColors.value.background,
       })),

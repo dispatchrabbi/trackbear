@@ -57,10 +57,12 @@ const maxima = computed(() => {
 });
 
 const normalizerFn = function(datum: CalendarHeatMapDataPoint/* , data: CalendarHeatMapDataPoint[] */) {
-  return Math.max(...Object.keys(datum.value).map(measure => maxima.value[measure] === 0 ? 0 : datum.value[measure] / maxima.value[measure]));
+  return Math.max(...Object.keys(datum.value).map(measure => (
+    (maxima.value[measure] === 0 || datum.value[measure] === 0) ? 0 : (Math.abs(datum.value[measure]) / maxima.value[measure])
+  )));
 };
 const valueFormatFn = function(datum: CalendarHeatMapDataPoint) {
-  return Object.keys(datum.value).filter(measure => datum.value[measure] > 0).map(measure => formatCount(datum.value[measure], measure)).join('\n');
+  return Object.keys(datum.value).filter(measure => datum.value[measure] !== 0).map(measure => formatCount(datum.value[measure], measure)).join('\n');
 };
 
 </script>

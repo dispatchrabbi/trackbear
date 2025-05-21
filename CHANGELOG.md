@@ -15,6 +15,7 @@ Types of changes include:
 - NEW: API access is the next big thing on the list.
 - FIXED: Item in the user menu now work when you click anywhere on them, not just on text.
 - CHANGED: Settings pages (Account, Settings, Tags) now have a settings-specific sidebar to more easily navigate between them.
+- FIXED: Heatmaps now behave correctly for negative data.
 
 ## 1.2.7
 - NEW: Leaderboard owners can now manage the memberships of their boards. Specifically, they can promote other members to owner and remove members.
