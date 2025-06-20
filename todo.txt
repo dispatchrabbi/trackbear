@@ -17,7 +17,7 @@ x (A) Build out a full model layer so it can be used by scripts/workers/queues a
 (A) Should convert text-white to text-surface-0 probably dif:1 @ui +themes
 (A) Definitely need to figure out themed chart colors somehow dif:2 @charts @ui +themes
 (A) Actually make several themes dif:5 @ui +themes
-(A) Allow viewing leaderboards without logging in dif:2 @boards
+(A) Allow viewing leaderboards without logging in dif:3 @boards
 x (A) Sharp-ify covers and avatar files to save on space dif:2 @backend
 (B) Improve audit event retrieval/listings dif:2 @admin +adminconsole
 (B) Let admins manage projects dif:5 @admin +adminconsole
@@ -25,7 +25,7 @@ x (A) Sharp-ify covers and avatar files to save on space dif:2 @backend
 (B) Let admins manage leaderboards dif:3 @admin +adminconsole
 (B) Rename /work endpoints and routes to /project dif:1 @frontend @backend +api
 (B) Create Swagger/OpenAPI docs + other developer docs dif:5 @backend @docs +api
-(B) Allow more than one board owner (do this through roles, implies owner must join board) dif:5 @boards +boardsv2
+x (B) Allow more than one board owner (do this through roles, implies owner must join board) dif:5 @boards +boardsv2
 (B) Allow participants to pick their own chart color (if they are not on teams) dif:2 @boards +boardsv2
 (B) Write help page for leaderboards dif:2 @docs +completehelp
 (B) Write help page for settings dif:2 @docs +completehelp
@@ -50,7 +50,7 @@ x (B) Rewrite the heatmap to use Plot dif:3 @charts
 (B) Investigate Docker Swarm if it turns out multiple containers is better dif:? @deploy
 (B) Display the time/count/amount to go if a habit has an end date dif:2 @goals +delight
 (B) Allow leaderboard owners to ban users dif:3 @boards +boardsv2
-(B) Allow leaderboards to be public dif:3 @boards +boardsv2
+(B) Make a better loading thing to show than "Loading..." dif:2 +delight
 (C) Allow admins to rename user/displayName dif:2 @admin +adminconsole
 (C) Allow merging two accounts dif:5 @admin +adminconsole
 (C) Implement API rate-limiting dif:2 @backend @security +api
@@ -99,3 +99,4 @@ Allow users to configure Dashboard more (h/t K. A. J. Klok) @dashboard @settings
 (C) Allow users to specify Sunday or Monday as the first day of the week (h/t Hester van Bork) @settings +localization +delight
 Break down overall stat project graphs by project, or show "a leaderboard against myself" (h/t Katy F) stage:needs-refinement @stats
 Allow habit goals to designate specific days of the week (h/t Aminta) stage:considering @goals
+Allow tallies to be marked as "catch-up" (catching up the number after several days of not tracking) (h/t Gwen) stage:considering @tallies
