@@ -13,6 +13,8 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - NEW: API access is the next big thing on the list.
+
+## 1.2.8
 - FIXED: Item in the user menu now work when you click anywhere on them, not just on text.
 - CHANGED: Settings pages (Account, Settings, Tags) now have a settings-specific sidebar to more easily navigate between them.
 - FIXED: Heatmaps now behave correctly for negative data.
