@@ -180,16 +180,16 @@ export async function handleSendPasswordResetEmail(req: Request, res: ApiRespons
   return res.status(201).send(success({}));
 }
 
-export type PasswordResetPayload = {
+export type ResetPasswordPayload = {
   newPassword: string;
 };
-const zPasswordResetPayload = z.object({
+const zResetPasswordPayload = z.object({
   newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
 });
 
-export async function handlePasswordReset(req: Request, res: ApiResponse<EmptyObject>) {
+export async function handleResetPassword(req: Request, res: ApiResponse<EmptyObject>) {
   const resetUuid = req.params.uuid;
-  const { newPassword } = req.body as PasswordResetPayload;
+  const { newPassword } = req.body as ResetPasswordPayload;
 
   try {
     await UserModel.resetPassword(resetUuid, newPassword, reqCtx(req));
@@ -257,10 +257,10 @@ const routes: RouteConfig[] = [
   {
     path: '/reset-password/:uuid',
     method: HTTP_METHODS.POST,
-    handler: handlePasswordReset,
+    handler: handleResetPassword,
     accessLevel: ACCESS_LEVEL.PUBLIC,
     paramsSchema: zUuidParam(),
-    bodySchema: zPasswordResetPayload,
+    bodySchema: zResetPasswordPayload,
   },
 ];
 export default routes;

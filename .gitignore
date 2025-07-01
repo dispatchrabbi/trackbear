@@ -66,6 +66,9 @@ dist
 dist-ssr
 *.local
 
+# TypeSpec output
+tsp-output
+
 # Storage for database files
 db
 

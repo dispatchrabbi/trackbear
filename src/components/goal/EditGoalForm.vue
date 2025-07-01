@@ -205,10 +205,10 @@ async function handleSubmit() {
 
     const updatedGoal = await updateGoal(props.goal.id, data);
 
-    emit('goal:edit', { goal: updatedGoal.goal });
-    eventBus.emit({ goal: updatedGoal.goal });
+    emit('goal:edit', { goal: updatedGoal });
+    eventBus.emit({ goal: updatedGoal });
 
-    successMessage.value = `${updatedGoal.goal.title} has been updated.`;
+    successMessage.value = `${updatedGoal.title} has been updated.`;
     await wait(1 * 1000);
 
     emit('formSuccess');

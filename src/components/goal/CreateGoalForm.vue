@@ -202,10 +202,10 @@ async function handleSubmit() {
 
     const createdGoal = await createGoal(data);
 
-    emit('goal:create', { goal: createdGoal.goal });
-    eventBus.emit({ goal: createdGoal.goal });
+    emit('goal:create', { goal: createdGoal });
+    eventBus.emit({ goal: createdGoal });
 
-    successMessage.value = `${createdGoal.goal.title} has been created.`;
+    successMessage.value = `${createdGoal.title} has been created.`;
     await wait(1 * 1000);
 
     emit('formSuccess');

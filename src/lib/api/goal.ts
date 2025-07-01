@@ -1,8 +1,8 @@
 import { callApiV1 } from '../api.ts';
 
-import type { Goal, GoalWithAchievement, GoalAndTallies, GoalCreatePayload, GoalUpdatePayload } from 'server/api/v1/goal.ts';
+import type { Goal, GoalWithAchievement, GoalCreatePayload, GoalUpdatePayload } from 'server/api/v1/goal.ts';
 
-export type { Goal, GoalWithAchievement, GoalAndTallies, GoalCreatePayload, GoalUpdatePayload };
+export type { Goal, GoalWithAchievement, GoalCreatePayload, GoalUpdatePayload };
 
 const ENDPOINT = '/api/v1/goal';
 
@@ -15,7 +15,7 @@ export async function getGoal(id: number) {
 }
 
 export async function createGoal(data: GoalCreatePayload) {
-  return callApiV1<GoalAndTallies>(ENDPOINT, 'POST', data);
+  return callApiV1<Goal>(ENDPOINT, 'POST', data);
 }
 
 export async function batchCreateGoals(data: GoalCreatePayload[]) {
@@ -23,7 +23,7 @@ export async function batchCreateGoals(data: GoalCreatePayload[]) {
 }
 
 export async function updateGoal(id: number, data: GoalUpdatePayload) {
-  return callApiV1<GoalAndTallies>(ENDPOINT + `/${id}`, 'PATCH', data);
+  return callApiV1<Goal>(ENDPOINT + `/${id}`, 'PATCH', data);
 }
 
 export async function starGoal(id: number, starred: boolean) {

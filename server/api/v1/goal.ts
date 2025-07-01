@@ -23,11 +23,6 @@ import { reqCtx } from 'server/lib/request-context.ts';
 
 export type { Goal };
 
-export type GoalAndTallies = {
-  goal: Goal;
-  tallies: Tally[];
-};
-
 export type GoalWithAchievement = Goal & {
   achieved: boolean;
 };
@@ -99,15 +94,13 @@ const zGoalCreatePayload = z.object({
   tagIds: z.array(z.number().int()),
 }).strict();
 
-export async function handleCreateGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
+export async function handleCreateGoal(req: RequestWithUser, res: ApiResponse<Goal>) {
   const user = req.user;
   const payload = req.body as GoalCreatePayload;
 
   const goal = await GoalModel.createGoal(user, payload, reqCtx(req));
 
-  const tallies = await GoalModel.DEPRECATED_getTalliesForGoal(goal);
-
-  return res.status(201).send(success({ goal, tallies }));
+  return res.status(201).send(success(goal));
 }
 
 const zBatchGoalCreatePayload = z.array(zGoalCreatePayload);
@@ -143,7 +136,7 @@ export async function handleCreateGoals(req: RequestWithUser, res: ApiResponse<G
 export type GoalUpdatePayload = Partial<GoalCreatePayload>;
 const zGoalUpdatePayload = zGoalCreatePayload.partial();
 
-export async function handleUpdateGoal(req: RequestWithUser, res: ApiResponse<GoalAndTallies>) {
+export async function handleUpdateGoal(req: RequestWithUser, res: ApiResponse<Goal>) {
   const user = req.user;
   const payload = req.body as GoalUpdatePayload;
 
@@ -153,9 +146,8 @@ export async function handleUpdateGoal(req: RequestWithUser, res: ApiResponse<Go
   }
 
   const goal = await GoalModel.updateGoal(user, original, payload, reqCtx(req));
-  const tallies = await GoalModel.DEPRECATED_getTalliesForGoal(goal);
 
-  return res.status(200).send(success({ goal, tallies }));
+  return res.status(200).send(success(goal));
 }
 
 export async function handleDeleteGoal(req: RequestWithUser, res: ApiResponse<Goal>) {

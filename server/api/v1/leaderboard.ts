@@ -125,6 +125,17 @@ export async function handleDelete(req: RequestWithUser, res: ApiResponse<Leader
   return res.status(200).send(success(deleted));
 }
 
+export async function handleListParticipants(req: RequestWithUser, res: ApiResponse<Participant[]>) {
+  const uuid = req.params.uuid;
+  const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: req.user.id, includePublicLeaderboards: true });
+  if(!leaderboard) {
+    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
+  }
+
+  const participants = await LeaderboardModel.listParticipants(leaderboard);
+  return res.status(200).send(success(participants));
+}
+
 export async function handleListMembers(req: RequestWithUser, res: ApiResponse<Membership[]>) {
   const leaderboardUuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { memberUserId: req.user.id });
@@ -186,17 +197,6 @@ export async function handleRemoveMember(req: RequestWithUser, res: ApiResponse<
   }
 
   return res.status(200).send(success(membership));
-}
-
-export async function handleListParticipants(req: RequestWithUser, res: ApiResponse<Participant[]>) {
-  const uuid = req.params.uuid;
-  const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: req.user.id, includePublicLeaderboards: true });
-  if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
-  }
-
-  const participants = await LeaderboardModel.listParticipants(leaderboard);
-  return res.status(200).send(success(participants));
 }
 
 export async function handleGetMyParticipation(req: RequestWithUser, res: ApiResponse<Participation>) {
