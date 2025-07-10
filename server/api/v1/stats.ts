@@ -38,7 +38,7 @@ const routes: RouteConfig[] = [
     path: '/days',
     method: HTTP_METHODS.GET,
     handler: handleGetDays,
-    accessLevel: ACCESS_LEVEL.USER,
+    accessLevel: ACCESS_LEVEL.SESSION,
     querySchema: zDaysQuery,
   },
 ];

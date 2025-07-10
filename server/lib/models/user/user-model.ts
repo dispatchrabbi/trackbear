@@ -44,6 +44,10 @@ export type UpdateUserData = Partial<{
   displayName: string;
 }>;
 
+type GetUserOptions = Partial<{
+  state: UserState;
+}>;
+
 type SendSignupEmailOptions = Partial<{
   force: boolean;
 }>;
@@ -103,9 +107,12 @@ export class UserModel {
   }
 
   @traced
-  static async getUser(id: number): Promise<User | null> {
+  static async getUser(id: number, options: GetUserOptions = {}): Promise<User | null> {
     const user = await dbClient.user.findUnique({
-      where: { id },
+      where: {
+        id,
+        state: options.state ?? undefined,
+      },
     });
 
     return user;
@@ -118,6 +125,25 @@ export class UserModel {
     });
 
     return user;
+  }
+
+  @traced
+  static async getUserByApiToken(apiToken: string): Promise<User | null> {
+    const now = new Date();
+    const key = await dbClient.apiKey.findUnique({
+      where: {
+        token: apiToken,
+        expiresAt: { gte: now },
+        owner: {
+          state: USER_STATE.ACTIVE,
+        }
+      },
+      include: {
+        owner: {},
+      }
+    });
+
+    return key ? key.owner : null;
   }
 
   @traced

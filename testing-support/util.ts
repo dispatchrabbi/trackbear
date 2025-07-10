@@ -6,6 +6,7 @@ export const TEST_USER_ID = -10;
 export const TEST_OBJECT_ID = -20;
 export const TEST_SESSION_ID = 'mocked';
 export const TEST_SYSTEM_ID = -2;
+export const TEST_API_TOKEN = 'tb.test-api-token-rawr';
 
 export function mockObject<T extends object>(partial: Partial<T> = {}): T {
   return partial as T;

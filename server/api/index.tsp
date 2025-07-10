@@ -60,42 +60,48 @@ using OpenAPI;
   
   ## Authentication
   
-  In order to use the API, you will need to obtain an API key from the API page in Settings in the TrackBear webapp.
-  Once you have the API key, send it along with every request in the `X-Api-Key` header:
+  In order to use the API, you will need to obtain an API token from the API page in Settings in the TrackBear webapp.
+  Once you have the API token, send it along with every request in the `x-api-token` header:
   
   ```
-  X-Api-Key: YOUR_API_KEY_HERE
+  x-api-token: YOUR_API_TOKEN_HERE
   ```
   
   ## Identifying your app
   
   > This is inspired by [the API guidelines for Advent of Code](https://www.reddit.com/r/adventofcode/wiki/faqs/automation/#wiki_put_your_contact_info_in_your_script.27s_user-agent_header).
   
-  All requests should include a `User-Agent` header that contains some form of contact info for the developer of the
-  app or script making the request. This is so that, if something goes wrong or there is a major upcoming change, I can
-  reach out and warn you before either your code breaks or you get blocked. This is the only way I will use your contact
-  info.
+  All requests should include a `User-Agent` header that contains some form of contact info for the author of the app
+  or script making the request. This is so that, if something goes wrong or there is a major upcoming change, I can
+  reach out and warn you before either your code breaks or you get blocked. (This is the only way I will use your
+  contact info.)
   
-  Bonus points if your `User-Agent` includes a URL where I can check out your work!
+  It also means that, if you contact me for help, I can look up your app's activity easily. Bonus points if your
+  `User-Agent` includes a URL where I can check out your work!
   
   A few examples of good `User-Agent` strings:
   
   ```
-  User-Agent: TrackBear (trackbearapp@gmail.com)
-  User-Agent: github.com/dispatchrabbi/trackbear by trackbearapp@gmail.com
-  User-Agent: TrackBear/1.0 (trackbear.app) by trackbearapp@gmail.com
+  # Just the app name and the author's email address
+  User-Agent: Example App (author@example.com)
+  
+  # The app repo and the author's email address
+  User-Agent: github.com/author-username/example-app by author@example.com
+  
+  # The app name and version, plus a URL and the author's email address
+  User-Agent: Example App/1.0 (app.example.com) by author@example.com
   ```
   
   ## Rate limits
   
   Requests are limited to 100 requests per minute. You can see how you're doing against your rate limits by checking the
-  `RateLimit` and `RateLimit-Policy` response headers:
+  `RateLimit-Policy` and `RateLimit` response headers:
   
   ```
-  // the limit is 100 requests, you have 95 remaining, and that will reset in 25 seconds
-  RateLimit: limit=100,remaining=95,reset=25
   // the policy is 100 requests per each 60 second window
   RateLimit-Policy: 100,w=60
+  // you have 95 requests remaining in the window, and the window will reset in 25 seconds
+  RateLimit: remaining=95,reset=25
   ```
   
   If you exceed the rate limit, you will receive a 429 status code in your response, and the headers will tell you when

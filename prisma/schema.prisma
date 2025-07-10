@@ -48,9 +48,11 @@ model User {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
 
-  userAuth   UserAuth?
+  userAuth    UserAuth?
+  apiKeys     ApiKey[]
+  
   adminPerms AdminPerms?
-
+  
   userSettings UserSettings?
 
   passwordResetLinks        PasswordResetLink[]
@@ -71,6 +73,20 @@ model UserAuth {
 
   password String
   salt     String
+
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+}
+
+model ApiKey {
+  id    Int @id @default(autoincrement())
+  
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId Int  @unique
+
+  title String
+  token       String @unique
+  expiresAt   DateTime? @db.Timestamptz(3)
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)

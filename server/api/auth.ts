@@ -231,7 +231,7 @@ const routes: RouteConfig[] = [
     path: '/verify-email',
     method: HTTP_METHODS.POST,
     handler: handleSendEmailVerification,
-    accessLevel: ACCESS_LEVEL.USER,
+    accessLevel: ACCESS_LEVEL.SESSION,
   },
   {
     path: '/verify-email/:uuid',
@@ -244,7 +244,7 @@ const routes: RouteConfig[] = [
     path: '/password',
     method: HTTP_METHODS.POST,
     handler: handleChangePassword,
-    accessLevel: ACCESS_LEVEL.USER,
+    accessLevel: ACCESS_LEVEL.SESSION,
     bodySchema: zChangePasswordPayload,
   },
   {

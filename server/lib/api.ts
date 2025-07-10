@@ -3,7 +3,7 @@ import type { ZodSchema } from 'zod';
 import winston from 'winston';
 import { h, type ApiHandler } from './api-response';
 import { decorateApiCallSpan, instrumentMiddleware } from './middleware/decorate-span';
-import { requirePublic, requireUser, requireAdminUser, requirePrivate } from './middleware/access';
+import { requirePublic, requireApiKey, requireSession, requireUser, requireAdminUser, requirePrivate } from './middleware/access';
 import { validateBody, validateParams, validateQuery } from './middleware/validate';
 import { ValueEnum } from './obj';
 
@@ -17,9 +17,17 @@ export const HTTP_METHODS = {
 type HttpMethod = ValueEnum<typeof HTTP_METHODS>;
 
 export const ACCESS_LEVEL = {
+  /** Requires no authn or authz at all */
   PUBLIC: 'public',
+  /** Requires a valid api key to access */
+  API_KEY: 'api-key',
+  /** Requires a valid session to access */
+  SESSION: 'session',
+  /** Requires either a valid api key or a valid session to access */
   USER: 'user',
+  /** Requires a valid session whose user has admin permissions to access */
   ADMIN: 'admin',
+  /** Not accessible in any way by anyone */
   NONE: 'none',
 } as const;
 type AccessLevel = ValueEnum<typeof ACCESS_LEVEL>;
@@ -45,6 +53,8 @@ const HTTP_METHODS_TO_EXPRESS_METHOD: Record<HttpMethod, AllowedExpressMethods> 
 
 const ACCESS_LEVEL_TO_MIDDLEWARE = {
   [ACCESS_LEVEL.PUBLIC]: requirePublic,
+  [ACCESS_LEVEL.API_KEY]: requireApiKey,
+  [ACCESS_LEVEL.SESSION]: requireSession,
   [ACCESS_LEVEL.USER]: requireUser,
   [ACCESS_LEVEL.ADMIN]: requireAdminUser,
   [ACCESS_LEVEL.NONE]: requirePrivate,

@@ -3,7 +3,7 @@ import type { Request, Response, NextFunction } from 'express';
 
 import dbClient from '../db.ts';
 import { failure } from '../api-response.ts';
-import { deserializeUser } from '../auth.ts';
+import { API_TOKEN_HEADER, deserializeUser, getApiTokenFromRequest, getUserFromApiToken } from '../auth.ts';
 
 type SessionWithAuth = { session: { auth?: null | { id: number } } };
 type RequestWithSessionAuth = Request & SessionWithAuth;
@@ -17,7 +17,22 @@ export async function requirePublic(req: Request, res: Response, next: NextFunct
   next();
 }
 
-export async function requireUser(req: WithSessionAuth<Request>, res: Response, next: NextFunction) {
+export async function requireApiKey(req: Request, res: Response, next: NextFunction) {
+  const apiKey = getApiTokenFromRequest(req);
+  if(!apiKey) {
+    return res.status(403).send(failure('NO_API_TOKEN', `No valid API token found in ${API_TOKEN_HEADER} header`));
+  }
+
+  const user = await getUserFromApiToken(apiKey);
+  if(!user) {
+    return res.status(403).send(failure('NO_API_TOKEN', `No valid API token found in ${API_TOKEN_HEADER} header`));
+  }
+
+  (req as WithUser<Request>).user = user;
+  next();
+}
+
+export async function requireSession(req: WithSessionAuth<Request>, res: Response, next: NextFunction) {
   if(!req.session.auth) {
     return res.status(403).send(failure('NOT_LOGGED_IN', 'Must be logged in'));
   }
@@ -27,6 +42,28 @@ export async function requireUser(req: WithSessionAuth<Request>, res: Response, 
     return res.status(403).send(failure('NOT_LOGGED_IN', 'Must be logged in'));
   }
 
+  (req as WithUser<Request>).user = user;
+  next();
+}
+
+export async function requireUser(req: WithSessionAuth<Request>, res: Response, next: NextFunction) {
+  let user: User;
+  const apiToken = getApiTokenFromRequest(req);
+
+  if(apiToken) {
+    // if an API token in the headers exists, use it
+    user = await getUserFromApiToken(apiToken);
+  } else if(req.session.auth) {
+    // if not, check for an existing session
+    user = await deserializeUser(req.session.auth.id);
+  }
+
+  // if there's no valid token and no existing session, return 403, no api key
+  if(!user) {
+    return res.status(403).send(failure('NO_API_TOKEN', `No valid API token found in ${API_TOKEN_HEADER} header`));
+  }
+
+  // otherwise, record the user and get on with it
   (req as WithUser<Request>).user = user;
   next();
 }
