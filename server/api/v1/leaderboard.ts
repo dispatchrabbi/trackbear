@@ -332,14 +332,14 @@ const routes: RouteConfig[] = [
     path: '/',
     method: HTTP_METHODS.GET,
     handler: handleList,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
   },
   // GET /:uuid - get overall info about a board
   {
     path: '/:uuid',
     method: HTTP_METHODS.GET,
     handler: handleGetByUuid,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
   },
   // GET /joincode/:joincode - get overall info about a board via join code
@@ -347,7 +347,7 @@ const routes: RouteConfig[] = [
     path: '/joincode/:joincode',
     method: HTTP_METHODS.GET,
     handler: handleGetByJoinCode,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zJoinCodeParam,
   },
   // POST / - create a new board
@@ -355,7 +355,7 @@ const routes: RouteConfig[] = [
     path: '/',
     method: HTTP_METHODS.POST,
     handler: handleCreate,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     bodySchema: zLeaderboardCreatePayload,
   },
   // PATCH /:uuid - update an existing board
@@ -363,7 +363,7 @@ const routes: RouteConfig[] = [
     path: '/:uuid',
     method: HTTP_METHODS.PATCH,
     handler: handleUpdate,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
     bodySchema: zLeaderboardUpdatePayload,
   },
@@ -372,7 +372,7 @@ const routes: RouteConfig[] = [
     path: '/:uuid/star',
     method: HTTP_METHODS.PATCH,
     handler: handleStar,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
     bodySchema: zLeaderboardStarPayload,
   },
@@ -381,7 +381,7 @@ const routes: RouteConfig[] = [
     path: '/:uuid',
     method: HTTP_METHODS.DELETE,
     handler: handleDelete,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
   },
   //
@@ -390,7 +390,7 @@ const routes: RouteConfig[] = [
     path: '/:uuid/participants',
     method: HTTP_METHODS.GET,
     handler: handleListParticipants,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
   },
   //
@@ -399,7 +399,7 @@ const routes: RouteConfig[] = [
     path: '/:uuid/members',
     method: HTTP_METHODS.GET,
     handler: handleListMembers,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
   },
   // POST /:uuid/members - create a board member
@@ -409,7 +409,7 @@ const routes: RouteConfig[] = [
     path: '/:uuid/members/:memberId',
     method: HTTP_METHODS.PATCH,
     handler: handleUpdateMember,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: z.object({
       uuid: z.string().uuid(),
       memberId: zStrInt(),
@@ -421,7 +421,7 @@ const routes: RouteConfig[] = [
     path: '/:uuid/members/:memberId',
     method: HTTP_METHODS.DELETE,
     handler: handleRemoveMember,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: z.object({
       uuid: z.string().uuid(),
       memberId: zStrInt(),
@@ -432,7 +432,7 @@ const routes: RouteConfig[] = [
     path: '/:uuid/me',
     method: HTTP_METHODS.GET,
     handler: handleGetMyParticipation,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
   },
   // POST /:uuid/me - join the board
@@ -440,7 +440,7 @@ const routes: RouteConfig[] = [
     path: '/:uuid/me',
     method: HTTP_METHODS.POST,
     handler: handleJoinBoard,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
     bodySchema: zLeaderboardParticipationPayload,
   },
@@ -449,7 +449,7 @@ const routes: RouteConfig[] = [
     path: '/:uuid/me',
     method: HTTP_METHODS.PATCH,
     handler: handleUpdateMyParticipation,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
     bodySchema: zLeaderboardParticipationPayload,
   },
@@ -458,7 +458,7 @@ const routes: RouteConfig[] = [
     path: '/:uuid/me',
     method: HTTP_METHODS.DELETE,
     handler: handleLeaveBoard,
-    accessLevel: ACCESS_LEVEL.SESSION,
+    accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
   },
 ];
