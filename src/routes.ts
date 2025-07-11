@@ -19,9 +19,11 @@ import ProfilePage from 'src/pages/public/ProfilePage.vue';
 import { USERNAME_REGEX } from 'server/lib/models/user/consts.ts';
 const ROUTER_PARAM_USERNAME_REGEX = USERNAME_REGEX.source.replace('^', '').replace('$', '');
 
-import SettingsPage from 'src/pages/settings/SettingsPage.vue';
 import AccountPage from 'src/pages/settings/AccountPage.vue';
+import SettingsPage from 'src/pages/settings/SettingsPage.vue';
 import TagsPage from 'src/pages/settings/TagsPage.vue';
+import ApiKeysPage from 'src/pages/settings/ApiKeysPage.vue';
+import NewApiKeyPage from 'src/pages/settings/NewApiKeyPage.vue';
 
 import AdminHomePage from 'src/pages/admin/AdminHomePage.vue';
 import AdminStatsPage from 'src/pages/admin/AdminStatsPage.vue';
@@ -53,7 +55,7 @@ import JoinLeaderboardPage from 'src/pages/leaderboards/JoinLeaderboardPage.vue'
 import LifetimeStatsPage from 'src/pages/stats/LifetimeStats.vue';
 
 const routes = [
-  // no login needed
+  // Public pages (no auth required)
   { path: '/', name: 'home', component: HomePage },
   { path: '/maintenance', name: 'maintenance', component: MaintenancePage },
   { path: '/about', name: 'about', component: AboutPage },
@@ -62,6 +64,7 @@ const routes = [
   { path: '/contact', name: 'contact', component: ContactPage },
   { path: '/ko-fi', name: 'ko-fi', component: KoFiRedirectPage },
 
+  // Auth-related
   { path: '/signup', name: 'signup', component: SignUpPage },
   { path: '/login', name: 'login', component: LoginPage },
   { path: '/logout', name: 'logout', component: LogoutPage },
@@ -69,12 +72,13 @@ const routes = [
   { path: '/reset-password/', name: 'send-reset-password', component: SendResetPasswordPage },
   { path: '/reset-password/:resetUuid', name: 'reset-password', component: ResetPasswordPage },
 
+  // Public Profile
   { path: `/:username(@${ROUTER_PARAM_USERNAME_REGEX})`, name: 'profile', component: ProfilePage },
 
-  // Tag-and-Tally building
+  // Dashboard
   { path: '/dashboard', name: 'dashboard', component: DashboardPage },
 
-  // Works section
+  // Works
   { path: '/works', name: 'works', component: WorksListPage },
   { path: '/works/import', name: 'import-works', component: WorksImportPage },
   { path: '/works/import/auto-nano', name: 'import-works-nano-auto', component: WorksImportNanoAutoPage },
@@ -83,28 +87,30 @@ const routes = [
   { path: '/works/:workId(\\d+)', name: 'work', component: WorkDetailPage },
   { path: '/works/:workId(\\d+)/edit', name: 'edit-work', component: EditWorkPage },
 
-  // Goals section
+  // Goals
   { path: '/goals', name: 'goals', component: GoalsListPage },
   { path: '/goals/new', name: 'new-goal', component: NewGoalPage },
   { path: '/goals/:goalId(\\d+)', name: 'goal', component: GoalDetailPage },
   { path: '/goals/:goalId(\\d+)/edit', name: 'edit-goal', component: EditGoalPage },
 
-  // Leaderboards section
+  // Leaderboards
   { path: '/leaderboards', name: 'leaderboards', component: LeaderboardsListPage },
   { path: '/leaderboards/new', name: 'new-leaderboard', component: NewLeaderboardPage },
   { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', name: 'leaderboard', component: LeaderboardDetailPage },
   { path: '/leaderboards/:boardUuid([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/edit', name: 'edit-leaderboard', component: EditLeaderboardPage },
   { path: '/leaderboards/join', name: 'join-leaderboard', component: JoinLeaderboardPage },
 
-  // Stats section
+  // Stats
   { path: '/stats/lifetime', name: 'lifetime-stats', component: LifetimeStatsPage },
 
-  // Account section
+  // Account + Settings
   { path: '/account', name: 'account', component: AccountPage },
   { path: '/account/settings', name: 'settings', component: SettingsPage },
   { path: '/account/tags', name: 'tags', component: TagsPage },
+  { path: '/account/api-keys', name: 'api-keys', component: ApiKeysPage },
+  { path: '/account/api-keys/new', name: 'new-api-key', component: NewApiKeyPage },
 
-  // Admin section
+  // Admin
   { path: '/admin', name: 'admin', component: AdminHomePage },
   { path: '/admin/stats', name: 'admin-stats', component: AdminStatsPage },
   { path: '/admin/banners', name: 'admin-banners', component: AdminBannersListPage },

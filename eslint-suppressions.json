@@ -4,11 +4,6 @@
       "count": 1
     }
   },
-  "server/api/admin/stats.ts": {
-    "@stylistic/no-tabs": {
-      "count": 11
-    }
-  },
   "server/lib/env.ts": {
     "@stylistic/max-statements-per-line": {
       "count": 25
@@ -24,32 +19,12 @@
       "count": 22
     }
   },
-  "server/lib/models/helpers.ts": {
-    "@stylistic/max-statements-per-line": {
-      "count": 2
-    }
-  },
   "server/lib/models/leaderboard/leaderboard-model.test.ts": {
     "@typescript-eslint/no-unused-vars": {
       "count": 3
     }
   },
   "server/lib/queue.ts": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
-  "src/components/account/DeleteUserForm.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
-  "src/components/account/RestoreUserForm.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
-  "src/components/banner/DeleteBannerForm.vue": {
     "@stylistic/max-statements-per-line": {
       "count": 1
     }
@@ -69,32 +44,7 @@
       "count": 1
     }
   },
-  "src/components/chart/CalendarHeatMap.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
-  "src/components/chart/LineChart.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
-  "src/components/chart/PlotProgressChart.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
   "src/components/chart/StackedAreaChart.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 2
-    }
-  },
-  "src/components/form/TbForm.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
-  "src/components/goal/DeleteGoalForm.vue": {
     "@stylistic/max-statements-per-line": {
       "count": 1
     }
@@ -132,44 +82,14 @@
       "count": 1
     }
   },
-  "src/components/tag/DeleteTagForm.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
-  "src/components/tally/TallyCountInput.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 2
-    }
-  },
-  "src/components/work/DeleteWorkForm.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
-  "src/components/work/MultiMeasureInput.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 2
-    }
-  },
   "src/lib/date.ts": {
     "@stylistic/max-statements-per-line": {
-      "count": 6
-    }
-  },
-  "src/lib/tally.ts": {
-    "@stylistic/max-statements-per-line": {
-      "count": 2
+      "count": 5
     }
   },
   "src/lib/work.ts": {
     "@stylistic/multiline-ternary": {
       "count": 3
-    }
-  },
-  "src/stores/banner.ts": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
     }
   }
 }

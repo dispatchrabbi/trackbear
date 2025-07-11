@@ -3,6 +3,7 @@ import { reactive } from 'vue';
 type WorkFunction<T, A extends unknown[]> = (...args: A) => Promise<T>;
 type OnErrorFunction = (e: Error) => Promise<string | null>;
 type OnSuccessFunction<T> = (result: T) => Promise<string | null>;
+type OnFinallyFunction = () => Promise<void>;
 
 type WorkSignals = {
   isLoading: boolean;
@@ -18,6 +19,7 @@ export function useAsyncSignals<T, A extends unknown[]>(
   workFn: WorkFunction<T, A>,
   onError: OnErrorFunction = defaultOnError,
   onSuccess: OnSuccessFunction<T> = defaultOnSuccess,
+  onFinally: OnFinallyFunction = defaultOnFinally,
 ): [DoWorkFunction<A>, WorkSignals, ResetFunction] {
   const signals = reactive<WorkSignals>({
     isLoading: false,
@@ -40,6 +42,7 @@ export function useAsyncSignals<T, A extends unknown[]>(
       signals.errorMessage = errorMessage ?? null;
     } finally {
       signals.isLoading = false;
+      await onFinally();
     }
   };
 
@@ -64,3 +67,5 @@ export async function defaultOnError(e: Error): Promise<string> {
 export async function defaultOnSuccess(/* result: unknown */): Promise<null> {
   return null;
 }
+
+export async function defaultOnFinally(): Promise<void> { }

@@ -2,7 +2,7 @@ import { promisify } from 'node:util';
 import type { User } from '@prisma/client';
 import type { Request } from 'express';
 
-import dbClient from './db.ts';
+import { API_TOKEN_HEADER } from './auth-consts.ts';
 import { USER_STATE } from './models/user/consts.ts';
 import { UserModel } from './models/user/user-model.ts';
 
@@ -28,7 +28,6 @@ function _logOut(req: WithSessionAuth<Request>, cb: (err: unknown) => void): voi
 }
 export const logOut = promisify(_logOut);
 
-export const API_TOKEN_HEADER = 'x-api-token';
 export function getApiTokenFromRequest(req: Request): string | null {
   const apiToken = req.header(API_TOKEN_HEADER);
   return apiToken ?? null;

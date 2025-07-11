@@ -24,7 +24,6 @@ export type UpdateApiKeyData = Update<ApiKey, ExcludedFields>;
 export class ApiKeyModel {
   @traced
   static async getApiKeys(owner: User): Promise<ApiKey[]> {
-    const now = new Date();
     const keys = await dbClient.apiKey.findMany({
       where: {
         ownerId: owner.id,
@@ -63,7 +62,7 @@ export class ApiKeyModel {
         ...dataWithDefaults,
         token: token,
         ownerId: owner.id,
-      }
+      },
     });
 
     const changes = buildChangeRecord({}, censorApiKey(created));
@@ -84,7 +83,7 @@ export class ApiKeyModel {
 
     const changes = buildChangeRecord(
       censorApiKey(apiKey),
-      censorApiKey(updated)
+      censorApiKey(updated),
     );
     await logAuditEvent(AUDIT_EVENT_TYPE.API_KEY_UPDATE, reqCtx.userId, updated.id, null, changes, reqCtx.sessionId);
 

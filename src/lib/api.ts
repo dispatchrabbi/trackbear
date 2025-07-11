@@ -1,17 +1,8 @@
 import qs from 'qs';
+import { parseJSON } from 'date-fns';
 
 import type { ApiResponsePayload } from 'server/lib/api-response.ts';
 type ApiResponse<T> = ApiResponsePayload<T> & { status: number };
-
-export type DateString = string;
-// this type lets us turn server-side objects into client-side objects that have been through JSON.parse(JSON.stringify())
-export type RoundTrip<T extends object> = {
-  [K in keyof T]: T[K] extends Date
-    ? DateString
-    : T[K] extends object
-      ? RoundTrip<T[K]>
-      : T[K];
-};
 
 export async function callApi<T>(path: string, method: string = 'GET', payload: Record<string, unknown> | Record<string, unknown>[] | FormData | null = null, query: object | null = null): Promise<ApiResponse<T>> {
   const headers = {};
@@ -76,4 +67,21 @@ export function makeCrudFns<Entity extends object, CreatePayload extends Record<
       return callApiV1<Entity>(path + `/${id}`, 'DELETE');
     },
   };
+}
+
+export type DateString = string;
+// this type lets us turn server-side objects into client-side objects that have been through JSON.parse(JSON.stringify())
+export type RoundTrip<T extends object> = {
+  [K in keyof T]: T[K] extends Date
+    ? DateString
+    : T[K] extends object
+      ? RoundTrip<T[K]>
+      : T[K];
+};
+
+export function roundTrip<T extends object>(obj: RoundTrip<T>, dateKeys: Array<keyof T>): T {
+  return Object.keys(obj).reduce((out, key) => {
+    out[key] = dateKeys.includes(key as keyof T) ? parseJSON(obj[key]) : obj[key];
+    return out;
+  }, {}) as T;
 }

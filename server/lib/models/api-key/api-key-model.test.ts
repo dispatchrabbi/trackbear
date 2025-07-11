@@ -8,7 +8,6 @@ import { ApiKeyModel, type ApiKey, type CreateApiKeyData, type UpdateApiKeyData 
 import { generateApiToken as _generateApiToken } from '../../api-key.ts';
 import { type User } from '../user/user-model.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
-import { beforeEach } from 'node:test';
 
 vi.mock('../../tracer.ts');
 
@@ -52,7 +51,7 @@ describe(ApiKeyModel, () => {
       });
     });
   });
-  
+
   describe(ApiKeyModel.getApiKey, () => {
     it('gets an api key', async () => {
       const testApiKey = mockObject<ApiKey>({ id: TEST_OBJECT_ID });
@@ -86,11 +85,11 @@ describe(ApiKeyModel, () => {
       };
 
       generateApiToken.mockResolvedValue(TEST_API_TOKEN);
-      
+
       const testApiKey = mockObject<ApiKey>({
         id: TEST_OBJECT_ID,
         token: TEST_API_TOKEN,
-        ...testData
+        ...testData,
       });
       dbClient.apiKey.create.mockResolvedValue(testApiKey);
 
@@ -125,7 +124,7 @@ describe(ApiKeyModel, () => {
       const testApiKey = mockObject<ApiKey>({
         id: TEST_OBJECT_ID,
         token: TEST_API_TOKEN,
-        ...testData
+        ...testData,
       });
       dbClient.apiKey.create.mockResolvedValue(testApiKey);
 
@@ -150,7 +149,7 @@ describe(ApiKeyModel, () => {
       const testApiKey = mockObject<ApiKey>({
         id: TEST_OBJECT_ID,
         token: TEST_API_TOKEN,
-        ...testData
+        ...testData,
       });
       dbClient.apiKey.update.mockResolvedValue(testApiKey);
 

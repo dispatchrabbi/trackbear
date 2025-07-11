@@ -1,4 +1,4 @@
-import { vi, describe, it, expect, afterEach, expectTypeOf } from 'vitest';
+import { vi, describe, it, expect, afterEach } from 'vitest';
 import { mockObject, mockObjects, TEST_OBJECT_ID, TEST_API_TOKEN, TEST_USER_ID } from '../../../testing-support/util.ts';
 import { getHandlerMocksWithUser } from '../../lib/__mocks__/express.ts';
 

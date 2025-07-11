@@ -33,7 +33,7 @@ export async function handleGetApiKey(req: RequestWithUser, res: ApiResponse<Api
 
 export type ApiKeyCreatePayload = {
   title: string;
-  expiresAt: Date;
+  expiresAt: Date | null;
 };
 const zApiKeyCreatePayload = z.object({
   title: z.string().min(1),

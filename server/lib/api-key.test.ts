@@ -5,7 +5,6 @@ import { generateApiToken, censorApiKey } from './api-key';
 import { type ApiKey } from './models/api-key/api-key-model.ts';
 
 describe('api-key', async () => {
-
   describe(generateApiToken, async () => {
     it('generates a well-formed API token', async () => {
       const token = await generateApiToken();
@@ -25,5 +24,4 @@ describe('api-key', async () => {
       expect(censored.token).toHaveLength(40);
     });
   });
-
 });

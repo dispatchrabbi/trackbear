@@ -3,7 +3,8 @@ import type { Request, Response, NextFunction } from 'express';
 
 import dbClient from '../db.ts';
 import { failure } from '../api-response.ts';
-import { API_TOKEN_HEADER, deserializeUser, getApiTokenFromRequest, getUserFromApiToken } from '../auth.ts';
+import { API_TOKEN_HEADER } from '../auth-consts.ts';
+import { deserializeUser, getApiTokenFromRequest, getUserFromApiToken } from '../auth.ts';
 
 type SessionWithAuth = { session: { auth?: null | { id: number } } };
 type RequestWithSessionAuth = Request & SessionWithAuth;

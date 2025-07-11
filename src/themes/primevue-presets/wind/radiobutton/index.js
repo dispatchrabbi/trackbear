@@ -80,7 +80,14 @@ export default {
             'cursor-default'
         ]
     },
-    icon: {
-        class: 'hidden'
-    }
+    icon: ({ props, context }) => ({
+        // this change actually means the radio button will look filled when checked
+        class: [
+            'w-0 h-0',
+            'bg-primary-500 dark:bg-primary-400',
+            'rounded-full',
+            'transition-all duration-200 ease-in-out',
+            { 'w-2 h-2': context.checked }
+        ],
+    })
 };

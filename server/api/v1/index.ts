@@ -1,5 +1,6 @@
 import { prefixRoutes, type RouteConfig } from 'server/lib/api.ts';
 
+import apiKeyRoutes from './api-key.ts';
 import goalRoutes from './goal.ts';
 import leaderboardRoutes from './leaderboard.ts';
 import meRoutes from './me.ts';
@@ -11,6 +12,7 @@ import tallyRoutes from './tally.ts';
 import workRoutes from './work.ts';
 
 const v1Routes: RouteConfig[] = [
+  ...prefixRoutes('/api-key', apiKeyRoutes),
   ...prefixRoutes('/goal', goalRoutes),
   ...prefixRoutes('/leaderboard', leaderboardRoutes),
   ...prefixRoutes('/me', meRoutes),

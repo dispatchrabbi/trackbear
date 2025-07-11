@@ -18,7 +18,7 @@ export const AUDIT_EVENT_TYPE = {
   API_KEY_CREATE: 'api-key:create',
   API_KEY_UPDATE: 'api-key:update',
   API_KEY_DELETE: 'api-key:delete',
-  
+
   BANNER_CREATE: 'banner:create',
   BANNER_UPDATE: 'banner:update',
   BANNER_DELETE: 'banner:delete',

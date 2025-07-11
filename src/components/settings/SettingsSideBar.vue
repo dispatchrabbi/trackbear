@@ -36,6 +36,13 @@ const items = computed(() => {
       to: { name: 'tags' },
       header: true,
     },
+    {
+      key: 'api-keys',
+      label: 'API Keys',
+      icon: PrimeIcons.QRCODE,
+      to: { name: 'api-keys' },
+      header: true,
+    },
   ];
 });
 </script>

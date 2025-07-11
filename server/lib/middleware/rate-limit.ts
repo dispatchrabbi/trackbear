@@ -8,7 +8,7 @@ function rateLimit() {
     limit: 100, // 100 requests per limit
     standardHeaders: 'draft-8',
     legacyHeaders: false,
-    keyGenerator: (req/*, res*/) => {
+    keyGenerator: (req/* , res */) => {
       // if we're using an API Key, rate-limit on that key
       const apiKey = getApiTokenFromRequest(req);
       if(apiKey) {
@@ -20,10 +20,10 @@ function rateLimit() {
       if(sessionId) {
         return sessionId;
       }
-      
+
       // otherwise, rate-limit on the IP
       return req.ip;
-    }
+    },
   });
 }
 

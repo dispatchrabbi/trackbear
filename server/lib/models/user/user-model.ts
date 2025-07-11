@@ -136,11 +136,11 @@ export class UserModel {
         expiresAt: { gte: now },
         owner: {
           state: USER_STATE.ACTIVE,
-        }
+        },
       },
       include: {
         owner: {},
-      }
+      },
     });
 
     return key ? key.owner : null;

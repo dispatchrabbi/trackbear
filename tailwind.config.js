@@ -53,6 +53,7 @@ export default {
       },
       fontFamily: {
         sans: ['Jost', 'sans-serif'],
+        mono: ['Overpass Mono', 'monospace'],
       },
       aspectRatio: {
         '2/3': '2 / 3',
