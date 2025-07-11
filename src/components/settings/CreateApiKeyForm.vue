@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { reactive, defineEmits } from 'vue';
 import { startOfDay, endOfDay, add } from 'date-fns';
-import wait from 'src/lib/wait.ts';
 
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
@@ -21,7 +20,7 @@ const START_OF_TODAY = startOfDay(new Date());
 const emit = defineEmits(['api-key:create', 'formSuccess']);
 
 const formModel = reactive({
-  title: '',
+  name: '',
   expirationPreset: '',
   expiresAt: null,
 });
@@ -47,7 +46,7 @@ function handleSelectPreset(preset: ExpirationPreset) {
 }
 
 const validations = z.object({
-  title: z.string().min(1, { message: 'Please enter a title.' }),
+  name: z.string().min(1, { message: 'Please enter a title.' }),
   expirationPreset: z.enum(EXPIRATION_PRESETS.map(preset => preset.key) as NonEmptyArray<string>),
   expiresAt: z
     .date({ invalid_type_error: 'Please select a valid expiration date.' })
@@ -56,13 +55,13 @@ const validations = z.object({
     .transform(val => val === null ? null : endOfDay(val)),
 });
 
-const { ruleFor, rulesFor, validate, isValid, formData } = useValidation(validations, formModel);
+const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
 
 const [handleSubmit, signals] = useAsyncSignals(
   async function() {
     const data = formData();
     const payload: ApiKeyCreatePayload = {
-      title: data.title,
+      name: data.name,
       expiresAt: data.expiresAt,
     };
     const createdApiKey = await createApiKey(payload);
@@ -71,10 +70,6 @@ const [handleSubmit, signals] = useAsyncSignals(
   },
   async () => 'Could not create the API key: something went wrong server-side.',
   async () => 'Your API key has been created.',
-  async () => {
-    await wait(1 * 1000);
-    emit('formSuccess');
-  },
 );
 </script>
 
@@ -89,14 +84,14 @@ const [handleSubmit, signals] = useAsyncSignals(
   >
     <FieldWrapper
       for="api-key-form-title"
-      label="Title"
+      label="Name"
       required
-      :rule="ruleFor('title')"
+      :rule="ruleFor('name')"
     >
       <template #default="{ onUpdate, isFieldValid }">
         <InputText
-          id="api-key-form-title"
-          v-model="formModel.title"
+          id="api-key-form-name"
+          v-model="formModel.name"
           :invalid="!isFieldValid"
           @update:model-value="onUpdate"
         />
@@ -106,7 +101,7 @@ const [handleSubmit, signals] = useAsyncSignals(
       for="api-key-form-expires-at"
       label="When will this API key expire?"
       required
-      :rule="rulesFor(['expirationPreset', 'expiresAt'])"
+      :rule="ruleFor('expiresAt')"
     >
       <template #default="{ onUpdate, isFieldValid }">
         <div class="flex flex-col gap-1">

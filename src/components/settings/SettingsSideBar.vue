@@ -39,7 +39,7 @@ const items = computed(() => {
     {
       key: 'api-keys',
       label: 'API Keys',
-      icon: PrimeIcons.QRCODE,
+      icon: PrimeIcons.KEY,
       to: { name: 'api-keys' },
       header: true,
     },

@@ -2,17 +2,20 @@
 import { ref, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 
-import { getApiKeys, updateApiKey, deleteApiKey, type ApiKey } from 'src/lib/api/api-key';
+import { getApiKeys, deleteApiKey, type ApiKey } from 'src/lib/api/api-key';
+import { formatExpirationDate, isExpired } from 'src/lib/api-key';
 import { useAsyncSignals } from 'src/lib/use-async-signals';
 
-import SettingsLayout from 'src/layouts/SettingsLayout.vue';
-import SectionTitle from 'src/components/layout/SectionTitle.vue';
-import DataView from 'primevue/dataview';
-import Button from 'primevue/button';
-import Dialog from 'primevue/dialog';
+import DangerButton from 'src/components/shared/DangerButton.vue';
 
 import type { MenuItem } from 'primevue/menuitem';
 import { PrimeIcons } from 'primevue/api';
+import SettingsLayout from 'src/layouts/SettingsLayout.vue';
+import SectionTitle from 'src/components/layout/SectionTitle.vue';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import Button from 'primevue/button';
+import Tag from 'primevue/tag';
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Account' },
@@ -47,17 +50,7 @@ onMounted(async () => {
   <SettingsLayout
     :breadcrumbs="breadcrumbs"
   >
-    <div class="flex justify-between items-center mb-4">
-      <SectionTitle title="API Keys" />
-      <div class="actions flex flex-wrap gap-2">
-        <RouterLink :to="{ name: 'new-api-key' }">
-          <Button
-            label="New"
-            :icon="PrimeIcons.PLUS"
-          />
-        </RouterLink>
-      </div>
-    </div>
+    <SectionTitle title="API Keys" />
     <div v-if="signals.errorMessage">
       {{ signals.errorMessage }}
     </div>
@@ -65,24 +58,73 @@ onMounted(async () => {
       Loading...
     </div>
     <div v-if="apiKeys !== null">
-      <DataView
+      <DataTable
         :value="apiKeys"
         data-key="id"
       >
-        <template #list>
-          <div class="flex flex-col">
-            <div
-              v-for="apiKey of apiKeys"
-              :key="apiKey.id"
-            >
-              <pre>{{ JSON.stringify(apiKey, null, 2) }}</pre>
+        <Column
+          field="name"
+          header="Name"
+        >
+          <template #body="{data}">
+            {{ data.name }}
+            <Tag
+              v-if="isExpired(data.expiresAt)"
+              value="expired"
+              severity="danger"
+              :pt="{ root: { class: 'font-normal uppercase' } }"
+              :pt-options="{ mergeSections: true, mergeProps: true }"
+            />
+          </template>
+        </Column>
+        <Column
+          field="expiresAt"
+          header="Expires"
+        >
+          <template #body="{data}">
+            {{ formatExpirationDate(data.expiresAt) }}
+          </template>
+        </Column>
+        <Column
+          header=""
+          class="w-0 text-center"
+        >
+          <template #header>
+            <RouterLink :to="{ name: 'new-api-key' }">
+              <Button
+                label="New"
+                size="small"
+                :icon="PrimeIcons.PLUS"
+              />
+            </RouterLink>
+          </template>
+          <template #body="{ data }">
+            <div class="flex gap-1">
+              <DangerButton
+                :icon="PrimeIcons.TRASH"
+                text
+                rounded
+                dialog-title="Delete API Key"
+                action-description="delete this API key"
+                action-command="Delete"
+                action-in-progress-message="Deleting"
+                action-success-message="Deleted"
+                :confirmation-code="data.name"
+                confirmation-code-description="the API key's name"
+                :action-fn="async () => { await deleteApiKey(data.id); }"
+                @inner-form-success="loadApiKeys"
+              />
+              <!-- <Button
+                :icon="PrimeIcons.TRASH"
+                severity="danger"
+                text
+                rounded
+                @click="currentlyDeletingApiKey = data"
+              /> -->
             </div>
-          </div>
-        </template>
-        <template #empty>
-          You haven't created any API keys yet. To get started, click <b>New</b>.
-        </template>
-      </DataView>
+          </template>
+        </Column>
+      </DataTable>
     </div>
   </SettingsLayout>
 </template>

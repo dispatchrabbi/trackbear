@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import wait from 'src/lib/wait.ts';
 
 import { type ApiKey } from 'src/lib/api/api-key';
 
@@ -11,7 +12,7 @@ import type { MenuItem } from 'primevue/menuitem';
 
 import SettingsLayout from 'src/layouts/SettingsLayout.vue';
 import CreateApiKeyForm from 'src/components/settings/CreateApiKeyForm.vue';
-import ApiKeyCard from 'src/components/settings/ApiKeyCard.vue';
+import ApiKeyDisplay from 'src/components/settings/ApiKeyDisplay.vue';
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Account' },
@@ -20,8 +21,10 @@ const breadcrumbs: MenuItem[] = [
 ];
 
 const createdApiKey = ref<ApiKey>(null);
-function handleApiKeyCreate({ created }: { created: ApiKey }) {
+async function handleApiKeyCreate({ created }: { created: ApiKey }, nextCallback) {
   createdApiKey.value = created;
+  await wait(1 * 1000);
+  nextCallback();
 }
 </script>
 
@@ -35,15 +38,14 @@ function handleApiKeyCreate({ created }: { created: ApiKey }) {
       <StepperPanel header="Create API Key">
         <template #content="{ nextCallback }">
           <CreateApiKeyForm
-            @api-key:create="handleApiKeyCreate"
-            @form-success="nextCallback"
+            @api-key:create="(data) => { handleApiKeyCreate(data, nextCallback); }"
           />
         </template>
       </StepperPanel>
       <StepperPanel header="View API Key">
         <template #content>
           <div>Here is your new API key:</div>
-          <ApiKeyCard
+          <ApiKeyDisplay
             v-if="createdApiKey"
             :api-key="createdApiKey"
           />

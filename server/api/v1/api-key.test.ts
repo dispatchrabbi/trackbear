@@ -154,7 +154,7 @@ function generateFakeApiKey(i = 0): ApiKey {
   return {
     id: TEST_OBJECT_ID - i,
     ownerId: TEST_USER_ID,
-    title: 'Fake API Key',
+    name: 'Fake API Key',
     token: TEST_API_TOKEN,
     expiresAt: now,
     createdAt: now,

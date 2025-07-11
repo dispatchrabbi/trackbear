@@ -82,9 +82,9 @@ model ApiKey {
   id    Int @id @default(autoincrement())
   
   owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId Int  @unique
+  ownerId Int
 
-  title String
+  name       String
   token       String @unique
   expiresAt   DateTime? @db.Timestamptz(3)
 

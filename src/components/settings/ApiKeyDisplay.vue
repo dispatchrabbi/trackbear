@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import { format } from 'date-fns';
 import { type ApiKey } from 'src/lib/api/api-key';
 import { API_TOKEN_HEADER } from 'server/lib/auth-consts';
+import { formatExpirationDate } from 'src/lib/api-key';
 
 import Panel from 'primevue/panel';
 
 const props = defineProps<{
   apiKey: ApiKey;
 }>();
-
-function formatExpirationDate(expiresAt: Date) {
-  return format(expiresAt, 'PPPpp');
-}
 </script>
 
 <template>
@@ -19,7 +15,7 @@ function formatExpirationDate(expiresAt: Date) {
     <template #header>
       <div class="flex flex-col">
         <div class="font-heading text-lg font-bold">
-          {{ props.apiKey.title }}
+          {{ props.apiKey.name }}
         </div>
         <div class="text-sm font-light italic">
           Expires {{ formatExpirationDate(props.apiKey.expiresAt) }}

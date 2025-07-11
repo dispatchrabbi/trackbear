@@ -9,12 +9,16 @@ import DangerConfirmationForm from './DangerConfirmationForm.vue';
 
 const props = withDefaults(defineProps<{
   /** The label for the danger button */
-  label: string;
+  label?: string;
   size?: string;
   icon?: string;
   outlined?: boolean;
+  rounded?: boolean;
+  text?: boolean;
   disabled?: boolean;
 
+  /** The title of the pop-up dialog (defaults to the same as the button label) */
+  dialogTitle?: string;
   /** A middle-of-a-sentence description of the dangerous action. */
   actionDescription: string;
   /** A short command description of the dangerous action (for a submit button). */
@@ -31,10 +35,14 @@ const props = withDefaults(defineProps<{
 
   actionFn: () => Promise<void>;
 }>(), {
+  label: null,
   size: 'large',
   icon: PrimeIcons.TIMES_CIRCLE,
   outlined: false,
+  rounded: false,
+  text: false,
   disabled: false,
+  dialogTitle: null,
 });
 
 const emit = defineEmits(['innerFormSuccess']);
@@ -53,6 +61,8 @@ const handleDangerFormSuccess = function() {
     :label="props.label"
     :icon="props.icon"
     :outlined="props.outlined"
+    :rounded="props.rounded"
+    :text="props.text"
     :disabled="props.disabled"
     @click="isDangerDialogVisible = true"
   />
@@ -63,7 +73,7 @@ const handleDangerFormSuccess = function() {
     <template #header>
       <h2 class="font-heading font-semibold uppercase">
         <span :class="props.icon" />
-        {{ props.label }}
+        {{ props.dialogTitle ?? props.label }}
       </h2>
     </template>
     <DangerConfirmationForm

@@ -80,7 +80,7 @@ describe(ApiKeyModel, () => {
   describe(ApiKeyModel.createApiKey, () => {
     it('creates an api key', async () => {
       const testData: CreateApiKeyData = {
-        title: 'a test API key',
+        name: 'a test API key',
         expiresAt: new Date(),
       };
 
@@ -116,7 +116,7 @@ describe(ApiKeyModel, () => {
 
     it('creates an api key with defaults supplied as needed', async () => {
       const testData: CreateApiKeyData = {
-        title: 'barebones api key',
+        name: 'barebones api key',
       };
 
       generateApiToken.mockResolvedValue(TEST_API_TOKEN);
@@ -132,7 +132,7 @@ describe(ApiKeyModel, () => {
 
       expect(dbClient.apiKey.create).toBeCalledWith({
         data: {
-          title: testData.title,
+          name: testData.name,
           expiresAt: expect.any(Date),
           token: TEST_API_TOKEN,
           ownerId: testUser.id,
@@ -144,7 +144,7 @@ describe(ApiKeyModel, () => {
   describe(ApiKeyModel.updateApiKey, () => {
     it('updates an api key', async () => {
       const testData: UpdateApiKeyData = {
-        title: 'a more flowery title',
+        name: 'a more flowery title',
       };
       const testApiKey = mockObject<ApiKey>({
         id: TEST_OBJECT_ID,

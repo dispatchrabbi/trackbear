@@ -32,11 +32,11 @@ export async function handleGetApiKey(req: RequestWithUser, res: ApiResponse<Api
 }
 
 export type ApiKeyCreatePayload = {
-  title: string;
+  name: string;
   expiresAt: Date | null;
 };
 const zApiKeyCreatePayload = z.object({
-  title: z.string().min(1),
+  name: z.string().min(1),
   expiresAt: z.coerce.date().nullable(),
 });
 

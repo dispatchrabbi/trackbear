@@ -33,6 +33,7 @@ export function useValidation<T extends object, V extends ZodObject<ZodRawShape>
         const result = rule.test.safeParse(v[rule.field]);
 
         if(result.success !== true) {
+          console.log('rulesFor', result, rule);
           return result.error.errors[0].message;
         }
       }
