@@ -1,7 +1,7 @@
 import { callApiV1, roundTrip, type RoundTrip } from '../api.ts';
 
-import type { ApiKey, ApiKeyCreatePayload, ApiKeyUpdatePayload } from 'server/api/v1/api-key.ts';
-export type { ApiKey, ApiKeyCreatePayload, ApiKeyUpdatePayload };
+import type { ApiKey, ApiKeyCreatePayload } from 'server/api/v1/api-key.ts';
+export type { ApiKey, ApiKeyCreatePayload };
 
 const ENDPOINT = '/api/v1/api-key';
 
@@ -17,11 +17,6 @@ export async function getApiKey(id: number): Promise<ApiKey> {
 
 export async function createApiKey(data: ApiKeyCreatePayload): Promise<ApiKey> {
   const result = await callApiV1<RoundTrip<ApiKey>>(ENDPOINT, 'POST', data);
-  return roundTripApiKey(result);
-}
-
-export async function updateApiKey(id: number, data: ApiKeyUpdatePayload): Promise<ApiKey> {
-  const result = await callApiV1<RoundTrip<ApiKey>>(ENDPOINT + `/${id}`, 'PATCH', data);
   return roundTripApiKey(result);
 }
 

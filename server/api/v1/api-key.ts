@@ -6,7 +6,7 @@ import { RequestWithUser } from '../../lib/middleware/access.ts';
 import { z } from 'zod';
 import { zIdParam } from '../../lib/validators.ts';
 
-import { ApiKeyModel, type ApiKey, type CreateApiKeyData, type UpdateApiKeyData } from '../../lib/models/api-key/api-key-model.ts';
+import { ApiKeyModel, type ApiKey, type CreateApiKeyData } from '../../lib/models/api-key/api-key-model.ts';
 import { censorApiKey } from 'server/lib/api-key.ts';
 
 import { reqCtx } from '../../lib/request-context.ts';
@@ -50,24 +50,6 @@ export async function handleCreateApiKey(req: RequestWithUser, res: ApiResponse<
   return res.status(201).send(success(created));
 }
 
-export type ApiKeyUpdatePayload = Partial<ApiKeyCreatePayload>;
-const zApiKeyUpdatePayload = zApiKeyCreatePayload.partial();
-
-export async function handleUpdateApiKey(req: RequestWithUser, res: ApiResponse<ApiKey>) {
-  const user = req.user;
-  const payload = req.body as ApiKeyUpdatePayload;
-
-  const original = await ApiKeyModel.getApiKey(user, +req.params.id);
-  if(!original) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any apiKey with id ${req.params.id}.`));
-  }
-
-  const updated = await ApiKeyModel.updateApiKey(user, original, payload as UpdateApiKeyData, reqCtx(req));
-  const censoredUpdated = censorApiKey(updated);
-
-  return res.status(200).send(success(censoredUpdated));
-}
-
 export async function handleDeleteApiKey(req: RequestWithUser, res: ApiResponse<ApiKey>) {
   const user = req.user;
 
@@ -102,14 +84,6 @@ const routes: RouteConfig[] = [
     handler: handleCreateApiKey,
     accessLevel: ACCESS_LEVEL.SESSION,
     bodySchema: zApiKeyCreatePayload,
-  },
-  {
-    path: '/:id',
-    method: HTTP_METHODS.PATCH,
-    handler: handleUpdateApiKey,
-    accessLevel: ACCESS_LEVEL.SESSION,
-    paramsSchema: zIdParam(),
-    bodySchema: zApiKeyUpdatePayload,
   },
   {
     path: '/:id',

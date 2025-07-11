@@ -12,11 +12,11 @@
 
 - [x] Add API key table: key, name, permissions, expiration
 - [x] Change title to name
-= [ ] Remove update ability
+= [x] Remove update ability
 - [x] Create API section in Settings
 - [x] Implement API key creation workflow
 - [x] Implement API key deletion workflow
-- [ ] Add API key usage record table: id, api key id, app name, app details, last used
+- [ ] Add 'last used' to API key table
 
 ## API Access
 

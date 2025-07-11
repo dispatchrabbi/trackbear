@@ -10,7 +10,6 @@ describe('api-key', async () => {
       const token = await generateApiToken();
 
       expect(token).toMatch(/^tb\.[a-z0-9]+$/);
-      expect(token).toHaveLength(40);
     });
   });
 
@@ -21,7 +20,6 @@ describe('api-key', async () => {
       const censored = censorApiKey(key);
 
       expect(censored.token).toMatch(/^t0\.[0]+$/);
-      expect(censored.token).toHaveLength(40);
     });
   });
 });

@@ -8,7 +8,7 @@ vi.mock('../../lib/models/api-key/api-key-model.ts');
 import { ApiKeyModel as _ApiKeyModel, type ApiKey } from '../../lib/models/api-key/api-key-model.ts';
 const ApiKeyModel = vi.mocked(_ApiKeyModel);
 
-import { handleGetApiKeys, handleGetApiKey, handleCreateApiKey, handleUpdateApiKey, handleDeleteApiKey } from './api-key.ts';
+import { handleGetApiKeys, handleGetApiKey, handleCreateApiKey, handleDeleteApiKey } from './api-key.ts';
 import { censorApiKey } from 'server/lib/api-key.ts';
 
 describe('api key api v1', () => {
@@ -77,40 +77,6 @@ describe('api key api v1', () => {
       expect(ApiKeyModel.createApiKey).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.send).toHaveBeenCalledWith(success(testApiKey));
-    });
-  });
-
-  describe(handleUpdateApiKey, () => {
-    it(`updates an api key if it exists`, async () => {
-      const testApiKey = mockObject<ApiKey>(generateFakeApiKey());
-      ApiKeyModel.getApiKey.mockResolvedValue(testApiKey);
-      ApiKeyModel.updateApiKey.mockResolvedValue(testApiKey);
-
-      const testCensoredApiKey = censorApiKey(testApiKey);
-
-      const { req, res } = getHandlerMocksWithUser({
-        params: { id: String(TEST_OBJECT_ID) },
-      });
-      await handleUpdateApiKey(req, res);
-
-      expect(ApiKeyModel.getApiKey).toHaveBeenCalledWith(req.user, +req.params.id);
-      expect(ApiKeyModel.updateApiKey).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.send).toHaveBeenCalledWith(success(testCensoredApiKey));
-    });
-
-    it(`returns 404 when updating an api key that doesn't exist`, async () => {
-      ApiKeyModel.getApiKey.mockResolvedValue(null);
-
-      const { req, res } = getHandlerMocksWithUser({
-        params: { id: String(TEST_OBJECT_ID) },
-      });
-      await handleUpdateApiKey(req, res);
-
-      expect(ApiKeyModel.getApiKey).toHaveBeenCalledWith(req.user, +req.params.id);
-      expect(ApiKeyModel.updateApiKey).not.toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.send).toHaveBeenCalled();
     });
   });
 
