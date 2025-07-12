@@ -31,7 +31,7 @@
     "lint": "npm run type-check && npm run eslint",
     "eslint": "npx eslint --fix --prune-suppressions .",
     "type-check": "npx vue-tsc --noEmit",
-    "compile": "node --run compile:db && node --run compile:client",
+    "compile": "node --run compile:db && node --run compile:client && node --run compile:api",
     "compile:db": "npx prisma generate --no-hints",
     "compile:client": "npx vue-tsc && npx vite build --emptyOutDir",
     "compile:api": "npx tsp compile .",

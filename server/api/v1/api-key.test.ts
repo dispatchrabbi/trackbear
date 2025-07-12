@@ -123,6 +123,7 @@ function generateFakeApiKey(i = 0): ApiKey {
     name: 'Fake API Key',
     token: TEST_API_TOKEN,
     expiresAt: now,
+    lastUsed: null,
     createdAt: now,
     updatedAt: now,
   };
