@@ -12,7 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-- NEW: API access is the next big thing on the list.
+- NEW: The TrackBear API is open for developers! You can find the API docs on [the help site](https://help.trackbear.app/). Any feedback on the docs and the ergonomics of the API is very much appreciated.
+- NEW: Users can create API keys, which allow integrations and other applications to access their TrackBear account on their behalf.
 
 ## 1.2.8
 - FIXED: Item in the user menu now work when you click anywhere on them, not just on text.
