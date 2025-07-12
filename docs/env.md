@@ -46,11 +46,17 @@ These are only needed for working with the Docker Compose files.
 | `DB_APP_DB_URL` | `file:/db/trackbear.db` | This URL is used by the Prisma schema (see *prisma/schema.prisma*) to connect to the database. |
 | `DB_PATH` | `/db` | The directory to create databases in. Don't set this unless you're running outside a container for some reason. |
 
+## Rate limiting
+
+| Variable | Default | Notes |
+| --- | --- | --- |
+`DISABLE_RATE_LIMITS` | 0 | Set to `1` to disable rate limits on the API. |
+
 ## Session/Cookies
 
 | Variable | Default | Notes |
 | --- | --- | --- |
-`COOKIE_SECRET` | (not set) | This is the secret used to sign the session ID cookie. Use a random string of characters for this, at least 24 characters long. Changing this will invalidate existing sessions. See https://www.npmjs.com/package/express-session#secret for more details.
+`COOKIE_SECRET` | (not set) | This is the secret used to sign the session ID cookie. Use a random string of characters for this, at least 24 characters long. Changing this will invalidate existing sessions. See https://www.npmjs.com/package/express-session#secret for more details. |
 
 ## Email
 

@@ -17,7 +17,7 @@ import { traced } from '../../tracer.ts';
 export type { ApiKey };
 
 type OptionalFields = 'expiresAt';
-type ExcludedFields = 'token';
+type ExcludedFields = 'token' | 'lastUsed';
 export type CreateApiKeyData = Create<ApiKey, OptionalFields, ExcludedFields>;
 export type UpdateApiKeyData = Update<ApiKey, ExcludedFields>;
 
@@ -102,5 +102,32 @@ export class ApiKeyModel {
     await logAuditEvent(AUDIT_EVENT_TYPE.API_KEY_DELETE, reqCtx.userId, deleted.id, null, null, reqCtx.sessionId);
 
     return deleted;
+  }
+
+  @traced
+  static async touchApiKey(token: string): Promise<ApiKey> {
+    const now = new Date();
+
+    const apiKeyToTouch = await dbClient.apiKey.findFirst({
+      where: { token },
+    });
+
+    if(!apiKeyToTouch) {
+      return null;
+    }
+
+    const touched = await dbClient.apiKey.update({
+      where: {
+        id: apiKeyToTouch.id,
+      },
+      data: {
+        lastUsed: now,
+      },
+    });
+
+    // no audit event here — we'd be logging one literally every API call along with whatever was actually called
+    // plus we're not super interested in this action for auditing
+
+    return touched;
   }
 }

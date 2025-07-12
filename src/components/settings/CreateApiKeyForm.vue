@@ -35,7 +35,7 @@ const EXPIRATION_PRESETS: ExpirationPreset[] = [
   { key: 'one-month', label: '1 month from now', date: endOfDay(add(START_OF_TODAY, { months: 1 })) },
   { key: 'three-months', label: '3 months from now', date: endOfDay(add(START_OF_TODAY, { months: 3 })) },
   { key: 'one-year', label: '1 year from now', date: endOfDay(add(START_OF_TODAY, { years: 1 })) },
-  { key: 'forever', label: 'Forever', date: null },
+  { key: 'never', label: 'Never', date: null },
   { key: 'custom', label: 'Pick a date:', date: undefined },
 ];
 
@@ -64,9 +64,14 @@ const [handleSubmit, signals] = useAsyncSignals(
       name: data.name,
       expiresAt: data.expiresAt,
     };
-    const createdApiKey = await createApiKey(payload);
+    try {
+      const createdApiKey = await createApiKey(payload);
 
-    emit('api-key:create', { created: createdApiKey });
+      emit('api-key:create', { created: createdApiKey });
+    } catch (e) {
+      console.log('error', e);
+      throw e;
+    }
   },
   async () => 'Could not create the API key: something went wrong server-side.',
   async () => 'Your API key has been created.',

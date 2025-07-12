@@ -205,4 +205,52 @@ describe(ApiKeyModel, () => {
       expect(changeRecord).toBeNull();
     });
   });
+
+  describe(ApiKeyModel.touchApiKey, () => {
+    it('updates the lastUsed of an API key', async () => {
+      const testApiKey = mockObject<ApiKey>({
+        id: TEST_OBJECT_ID,
+        token: TEST_API_TOKEN,
+      });
+      dbClient.apiKey.findFirst.mockResolvedValue(testApiKey);
+      dbClient.apiKey.update.mockResolvedValue(testApiKey);
+
+      const touched = await ApiKeyModel.touchApiKey(TEST_API_TOKEN);
+
+      expect(touched).toBe(testApiKey);
+      expect(dbClient.apiKey.findFirst).toBeCalledWith({
+        where: {
+          token: testApiKey.token,
+        },
+      });
+      expect(dbClient.apiKey.update).toBeCalledWith({
+        where: {
+          id: testApiKey.id,
+        },
+        data: {
+          lastUsed: expect.any(Date),
+        },
+      });
+      expect(logAuditEvent).not.toBeCalled();
+    });
+
+    it('returns null if it cannot find an API token', async () => {
+      const testApiKey = mockObject<ApiKey>({
+        id: TEST_OBJECT_ID,
+        token: TEST_API_TOKEN,
+      });
+      dbClient.apiKey.findFirst.mockResolvedValue(null);
+
+      const touched = await ApiKeyModel.touchApiKey(TEST_API_TOKEN);
+
+      expect(touched).toBeNull();
+      expect(dbClient.apiKey.findFirst).toBeCalledWith({
+        where: {
+          token: testApiKey.token,
+        },
+      });
+      expect(dbClient.apiKey.update).not.toBeCalled();
+      expect(logAuditEvent).not.toBeCalled();
+    });
+  });
 });

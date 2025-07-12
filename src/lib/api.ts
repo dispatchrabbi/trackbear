@@ -81,7 +81,7 @@ export type RoundTrip<T extends object> = {
 
 export function roundTrip<T extends object>(obj: RoundTrip<T>, dateKeys: Array<keyof T>): T {
   return Object.keys(obj).reduce((out, key) => {
-    out[key] = dateKeys.includes(key as keyof T) ? parseJSON(obj[key]) : obj[key];
+    out[key] = dateKeys.includes(key as keyof T) ? (obj[key] === null ? obj[key] : parseJSON(obj[key])) : obj[key];
     return out;
   }, {}) as T;
 }

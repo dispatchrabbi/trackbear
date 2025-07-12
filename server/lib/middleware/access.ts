@@ -5,6 +5,7 @@ import dbClient from '../db.ts';
 import { failure } from '../api-response.ts';
 import { API_TOKEN_HEADER } from '../auth-consts.ts';
 import { deserializeUser, getApiTokenFromRequest, getUserFromApiToken } from '../auth.ts';
+import { ApiKeyModel } from '../models/api-key/api-key-model.ts';
 
 type SessionWithAuth = { session: { auth?: null | { id: number } } };
 type RequestWithSessionAuth = Request & SessionWithAuth;
@@ -19,17 +20,19 @@ export async function requirePublic(req: Request, res: Response, next: NextFunct
 }
 
 export async function requireApiKey(req: Request, res: Response, next: NextFunction) {
-  const apiKey = getApiTokenFromRequest(req);
-  if(!apiKey) {
+  const apiToken = getApiTokenFromRequest(req);
+  if(!apiToken) {
     return res.status(403).send(failure('NO_API_TOKEN', `No valid API token found in ${API_TOKEN_HEADER} header`));
   }
 
-  const user = await getUserFromApiToken(apiKey);
+  const user = await getUserFromApiToken(apiToken);
   if(!user) {
     return res.status(403).send(failure('NO_API_TOKEN', `No valid API token found in ${API_TOKEN_HEADER} header`));
   }
 
   setUserOnRequest(req, user);
+  await ApiKeyModel.touchApiKey(apiToken);
+
   next();
 }
 
@@ -66,6 +69,10 @@ export async function requireUser(req: WithSessionAuth<Request>, res: Response, 
 
   // otherwise, record the user and get on with it
   setUserOnRequest(req, user);
+  if(apiToken) {
+    await ApiKeyModel.touchApiKey(apiToken);
+  }
+
   next();
 }
 

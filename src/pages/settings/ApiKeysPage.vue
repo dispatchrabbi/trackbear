@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 
 import { getApiKeys, deleteApiKey, type ApiKey } from 'src/lib/api/api-key';
-import { formatExpirationDate, isExpired } from 'src/lib/api-key';
+import { formatExpirationDate, formatLastUsedDate, isExpired } from 'src/lib/api-key';
 import { useAsyncSignals } from 'src/lib/use-async-signals';
 
 import DangerButton from 'src/components/shared/DangerButton.vue';
@@ -83,6 +83,14 @@ onMounted(async () => {
         >
           <template #body="{data}">
             {{ formatExpirationDate(data.expiresAt) }}
+          </template>
+        </Column>
+        <Column
+          field="lastUsed"
+          header="Last Used"
+        >
+          <template #body="{data}">
+            {{ formatLastUsedDate(data.lastUsed) }}
           </template>
         </Column>
         <Column

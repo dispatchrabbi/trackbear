@@ -39,6 +39,7 @@ const userMenuItems = computed(() => {
         { icon: PrimeIcons.USER, label: 'Account', to: { name: 'account' } },
         { icon: PrimeIcons.SLIDERS_V, label: 'Settings', to: { name: 'settings' } },
         { icon: PrimeIcons.TAG, label: 'Manage Tags', to: { name: 'tags' } },
+        { icon: PrimeIcons.KEY, label: 'API Keys', to: { name: 'api-keys' } },
       ],
     },
     { separator: true },

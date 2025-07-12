@@ -13,6 +13,12 @@ const routes: RouteConfig[] = [
     handler: handleGetPing,
     accessLevel: ACCESS_LEVEL.PUBLIC,
   },
+  {
+    path: '/api-token',
+    method: HTTP_METHODS.GET,
+    handler: handleGetPing,
+    accessLevel: ACCESS_LEVEL.API_KEY,
+  },
 ];
 
 export default routes;

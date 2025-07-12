@@ -123,11 +123,9 @@ async function main() {
     }),
   }));
 
+  // /api: enable rate limiting on API routes
+  app.use('/api', await rateLimit());
   // /api: mount the API routes
-  if(env.NODE_ENV !== 'development') {
-    // add rate-limiting for the API for production
-    app.use('/api', rateLimit());
-  }
   mountApiEndpoints(app);
 
   // Serve the front-end - either statically or out of the vite server, depending

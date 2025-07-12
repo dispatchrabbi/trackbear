@@ -1,3 +1,6 @@
+// Disable max-statements-per-line to enable inline errors below
+/* eslint-disable @stylistic/max-statements-per-line */
+
 import { access, constants } from 'fs/promises';
 
 import path from 'path';
@@ -21,6 +24,9 @@ type TrackbearCommonEnv = {
   DATABASE_HOST: string;
 
   DB_PATH: string;
+
+  DISABLE_RATE_LIMITS: boolean;
+
   COOKIE_SECRET: string;
 
   ENABLE_EMAIL: boolean;
@@ -116,6 +122,9 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
 
   process.env.DB_PATH = process.env.DB_PATH || '/db';
 
+  if(!['', '0', '1'].includes(process.env.DISABLE_RATE_LIMITS)) { throw new Error('DISABLE_RATE_LIMITS should only be either `0` or `1`'); }
+  process.env.DISABLE_RATE_LIMITS = process.env.DISABLE_RATE_LIMITS || '0';
+
   if(!process.env.COOKIE_SECRET) { throw new Error('Missing COOKIE_SECRET value in .env'); }
   if(process.env.COOKIE_SECRET.startsWith('"') && process.env.COOKIE_SECRET.endsWith('"')) { console.warn('COOKIE_SECRET value is quoted; it probably should not be.'); }
 
@@ -160,6 +169,9 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
     DATABASE_HOST: process.env.DATABASE_HOST,
 
     DB_PATH: process.env.DB_PATH,
+
+    DISABLE_RATE_LIMITS: process.env.DISABLE_RATE_LIMITS === '1',
+
     COOKIE_SECRET: process.env.COOKIE_SECRET,
 
     ENABLE_EMAIL: process.env.ENABLE_EMAIL === '1',
