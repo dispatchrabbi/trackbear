@@ -1,8 +1,9 @@
-import { Span, trace } from '@opentelemetry/api';
+import { trace, type Span } from '@opentelemetry/api';
 import { ATTR_HTTP_ROUTE, ATTR_CLIENT_ADDRESS } from '@opentelemetry/semantic-conventions';
 
 import type { Request, Response, NextFunction } from 'express';
 import { getTracer } from '../tracer';
+import { RequestWithUser } from './access';
 
 export type DecorateSpanConfig = {
   method: string;
@@ -24,6 +25,17 @@ export function decorateApiCallSpan(config: DecorateSpanConfig) {
 
     next();
   };
+}
+
+export function addUserInfoToSpan(req: Request, res: Response, next: NextFunction) {
+  const user = (req as RequestWithUser).user ?? null;
+
+  if(user) {
+    const activeSpan = trace.getActiveSpan();
+    activeSpan.setAttribute('session.userId', user.id);
+  }
+
+  next();
 }
 
 type MiddlewareFunction<R extends Request = Request> = (req: R, res: Response, next: NextFunction) => unknown;

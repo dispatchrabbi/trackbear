@@ -29,7 +29,7 @@ export async function requireApiKey(req: Request, res: Response, next: NextFunct
     return res.status(403).send(failure('NO_API_TOKEN', `No valid API token found in ${API_TOKEN_HEADER} header`));
   }
 
-  (req as WithUser<Request>).user = user;
+  setUserOnRequest(req, user);
   next();
 }
 
@@ -43,7 +43,7 @@ export async function requireSession(req: WithSessionAuth<Request>, res: Respons
     return res.status(403).send(failure('NOT_LOGGED_IN', 'Must be logged in'));
   }
 
-  (req as WithUser<Request>).user = user;
+  setUserOnRequest(req, user);
   next();
 }
 
@@ -65,7 +65,7 @@ export async function requireUser(req: WithSessionAuth<Request>, res: Response, 
   }
 
   // otherwise, record the user and get on with it
-  (req as WithUser<Request>).user = user;
+  setUserOnRequest(req, user);
   next();
 }
 
@@ -78,7 +78,7 @@ export async function requireAdminUser(req: WithSessionAuth<Request>, res: Respo
   if(!user) {
     return res.status(403).send(failure('NOT_LOGGED_IN', 'Must be logged in'));
   }
-  (req as WithUser<Request>).user = user;
+  setUserOnRequest(req, user);
 
   const adminPerms = await dbClient.adminPerms.findUnique({ where: { userId: user.id } });
   // don't leak info about whether they even ever have been an admin
@@ -91,4 +91,8 @@ export async function requireAdminUser(req: WithSessionAuth<Request>, res: Respo
 
 export async function requirePrivate(req: Request, res: Response) {
   return res.status(403).send(failure('FORBIDDEN', 'Forbidden'));
+}
+
+function setUserOnRequest(req: Request, user: User) {
+  (req as RequestWithUser).user = user;
 }

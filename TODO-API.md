@@ -23,4 +23,4 @@
 - [x] Implement authentication via API
 - [x] API rate limiting
 - [x] Add API access to (some) endpoints
-- [ ] Refactor auth methods to be one middleware and decorate spans with user + session
+- [x] Decorate spans with user + session
