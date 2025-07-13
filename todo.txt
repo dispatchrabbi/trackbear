@@ -19,8 +19,8 @@ x (A) Update vite +update
 x (A) Update vue +update
 x (A) Update vitest +update
 x (A) Update prisma +update
+x (A) Update multer +update
 (A) Update otel +update
-(A) Update multer +update
 (B) Update zod +update
 (C) Consider updating tailwind +update
 (C) Consider updating primevue +update

@@ -12,7 +12,7 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-- NEW: The TrackBear API is open for developers! You can find the API docs on [the help site](https://help.trackbear.app/). Any feedback on the docs and the ergonomics of the API is very much appreciated.
+- NEW: API docs for developers. If you'd like early access, send me an email and I'll send you the OpenAPI spec.
 - NEW: Users can create API keys, which allow integrations and other applications to access their TrackBear account on their behalf.
 - FIXED: White, black, and brown tags are now correctly colored, and the colors of all the tags have been tweaked. (h/t Mathias)
 
