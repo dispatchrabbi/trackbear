@@ -10,7 +10,7 @@
       src="/public/images/hans-jurgen-mager_p2xEnIZAv1E_polar-bear-sleeping_992.jpg"
       alt="A picture of a polar bear sleeping in the snow"
       title="Photo by Hans-Jurgen Mager on Unsplash"
-    />
+    >
     <p>TrackBear is offline for maintenance. We'll be back online soon!</p>
   </main>
 </template>

@@ -15,6 +15,15 @@
 (A) Ensure that projects (etc.) on public profile have a consistent order (last updated?) (h/t K. A. J. Klok) dif:2 @profile +delight
 (A) Endpoints that return EmptyObject should return null instead dif:1 +techdebt
 (A) Move help into this repo dif:5 @help
+x (A) Update vite +update
+x (A) Update vue +update
+x (A) Update vitest +update
+(A) Update prisma +update
+(A) Update otel +update
+(A) Update multer +update
+(B) Update zod +update
+(C) Consider updating tailwind +update
+(C) Consider updating primevue +update
 (B) Improve audit event retrieval/listings dif:2 @admin +adminconsole
 (B) Let admins manage projects dif:5 @admin +adminconsole
 (B) Let admins manage goals dif:3 @admin +adminconsole

@@ -51,7 +51,7 @@ function getMulterStorage(useMemoryStorage = false): multer.StorageEngine {
       multerStorage = multer.memoryStorage();
     } else {
       multerStorage = multer.diskStorage({
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+
         destination: async (req, file, cb) => {
           // create a temporary directory to store files in on upload
           const tbTmpDir = await fs.mkdtemp(path.join(tmpdir(), 'trackbear-'));

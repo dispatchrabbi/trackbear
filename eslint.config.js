@@ -1,8 +1,9 @@
+import globals from 'globals';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import eslint from '@eslint/js';
 import ts_eslint from 'typescript-eslint';
-import vue_eslint from 'eslint-plugin-vue';
-import vitest_eslint from '@vitest/eslint-plugin';
+import vue from 'eslint-plugin-vue';
+import vitest from '@vitest/eslint-plugin';
 import stylistic from '@stylistic/eslint-plugin';
 
 import vueParser from 'vue-eslint-parser';
@@ -10,6 +11,21 @@ import vueParser from 'vue-eslint-parser';
 export default ts_eslint.config(
   {
     files: ['**/*.js', '**/*.ts', '**/*.vue'],
+    languageOptions: {
+      sourceType: 'module',
+    },
+  },
+  {
+    files: ['server/**/*.ts', './*.ts', './*.js', 'scripts/**/*.js'],
+    languageOptions: {
+      globals: { ...globals.node },
+    },
+  },
+  {
+    files: ['src/**/*.ts', 'src/**/*.vue'],
+    languageOptions: {
+      globals: { ...globals.browser },
+    },
   },
   defineConfig([globalIgnores([
     'dist/',
@@ -19,8 +35,18 @@ export default ts_eslint.config(
   ])]),
   eslint.configs.recommended,
   ts_eslint.configs.recommended,
-  vue_eslint.configs['flat/recommended'],
-  vitest_eslint.configs.recommended,
+  vue.configs['flat/recommended'],
+  // this is vitest_eslint.configs.recommended, but with typechecking on to enable passing functions in describe() and it()
+  {
+    files: ['**/*.test.ts'],
+    plugins: { vitest },
+    rules: { ...vitest.configs.recommended.rules },
+    settings: {
+      vitest: {
+        typecheck: true,
+      },
+    },
+  },
   stylistic.configs.customize({
     indent: 2,
     quotes: 'single',
@@ -80,17 +106,6 @@ export default ts_eslint.config(
         anonymous: 'never',
         named: 'never',
         asyncArrow: 'always',
-      }],
-    },
-  },
-  {
-    files: ['**/*.test.ts'],
-    rules: {
-      '@typescript-eslint/unbound-method': 'off',
-      'vitest/valid-title': ['error', {
-        // allow passing the actual function to `describe` instead of a string
-        ignoreTypeOfDescribeName: true,
-        // allowArguments: true, // it should be this but this option doesn't work for some reason?
       }],
     },
   },

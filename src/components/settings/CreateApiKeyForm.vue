@@ -64,14 +64,9 @@ const [handleSubmit, signals] = useAsyncSignals(
       name: data.name,
       expiresAt: data.expiresAt,
     };
-    try {
-      const createdApiKey = await createApiKey(payload);
 
-      emit('api-key:create', { created: createdApiKey });
-    } catch (e) {
-      console.log('error', e);
-      throw e;
-    }
+    const createdApiKey = await createApiKey(payload);
+    emit('api-key:create', { created: createdApiKey });
   },
   async () => 'Could not create the API key: something went wrong server-side.',
   async () => 'Your API key has been created.',

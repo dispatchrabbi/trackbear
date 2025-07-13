@@ -4,21 +4,6 @@
       "count": 1
     }
   },
-  "server/lib/env.ts": {
-    "@stylistic/max-statements-per-line": {
-      "count": 25
-    }
-  },
-  "server/lib/models/board-wip/board-model.ts": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
-  "server/lib/models/board-wip/board-participation-model.ts": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 22
-    }
-  },
   "server/lib/models/leaderboard/leaderboard-model.test.ts": {
     "@typescript-eslint/no-unused-vars": {
       "count": 3
@@ -29,56 +14,8 @@
       "count": 1
     }
   },
-  "src/components/board/BoardStandings.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
-  "src/components/board/DeleteBoardForm.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
-  "src/components/board/LeaveBoardForm.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
   "src/components/chart/StackedAreaChart.vue": {
     "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
-  "src/components/leaderboard/StandingsChart.vue": {
-    "@typescript-eslint/no-unused-vars": {
-      "count": 3
-    },
-    "@stylistic/max-statements-per-line": {
-      "count": 1
-    }
-  },
-  "src/components/pages/boards/BoardDetailPage.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 2
-    }
-  },
-  "src/components/pages/leaderboards/LeaderboardDetailPage.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 2
-    }
-  },
-  "src/components/pages/settings/AccountPage.vue": {
-    "@typescript-eslint/no-misused-promises": {
-      "count": 1
-    }
-  },
-  "src/components/pages/stats/LifetimeStats.vue": {
-    "@stylistic/max-statements-per-line": {
-      "count": 3
-    }
-  },
-  "src/components/pages/works/EditWorkPage.vue": {
-    "@typescript-eslint/no-misused-promises": {
       "count": 1
     }
   },
