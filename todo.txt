@@ -1,40 +1,33 @@
 (A) Allow admins to force password reset dif:5 @admin +adminconsole
 (A) Allow admins to view any project, goal, leaderboard in-situ dif:3 @admin +adminconsole
-x (A) Revamp stats on the Users page dif:1 @admin +adminconsole
-x (A) Implement API keys dif:3 @api +api
-x (A) Implement API permissions on the backend dif:2 @backend +api
 (A) Separate join code from UUID and allow rolling the code dif:3 @boards +boardsv2
 (A) Group participants into teams and compare team totals (h/t Asha) dif:5 @boards +boardsv2
 (A) Create/commission logo and assets dif:? +branding
-x (A) White, black, and brown tags are not colored (h/t Mathias) dif:1 @tags +bugs
 (A) Too many projects when making a goal scroll off the edge of the screen (h/t DarkJediQueen) dif:1 @goals +bugs
 (A) Make the tally table more mobile-friendly (h/t lailah) dif:2 @projects +delight
-(A) Combine delete and edit/configure into a single edit page that includes a Danger Zone for deleting dif:3 @boards @goals @projects +editpage
+(A) Combine delete and edit/configure into a single edit page that includes a Danger Zone for deleting dif:3 @goals @projects +editpage
 (A) Implement data export dif:5 @backend @frontend +export
-x (A) Build out a full model layer so it can be used by scripts/workers/queues as well as endpoints dif:5 @backend +models
-(A) Change the settings pages to a Settings section with its own sidebar dif:5 @settings +settingssection
 (A) De-duplicate add/edit forms dif:3 @frontend +techdebt
 (A) Should convert text-white to text-surface-0 probably dif:1 @ui +themes
 (A) Definitely need to figure out themed chart colors somehow dif:2 @charts @ui +themes
 (A) Actually make several themes dif:5 @ui +themes
 (A) Allow viewing leaderboards without logging in dif:3 @boards
-x (A) Sharp-ify covers and avatar files to save on space dif:2 @backend
+(A) Ensure that projects (etc.) on public profile have a consistent order (last updated?) (h/t K. A. J. Klok) dif:2 @profile +delight
+(A) Endpoints that return EmptyObject should return null instead dif:1 +techdebt
+(A) Move help into this repo dif:5 @help
 (B) Improve audit event retrieval/listings dif:2 @admin +adminconsole
 (B) Let admins manage projects dif:5 @admin +adminconsole
 (B) Let admins manage goals dif:3 @admin +adminconsole
 (B) Let admins manage leaderboards dif:3 @admin +adminconsole
 (B) Rename /work endpoints and routes to /project dif:1 @frontend @backend +api
 (B) Create Swagger/OpenAPI docs + other developer docs dif:5 @backend @docs +api
-x (B) Allow more than one board owner (do this through roles, implies owner must join board) dif:5 @boards +boardsv2
 (B) Allow participants to pick their own chart color (if they are not on teams) dif:2 @boards +boardsv2
 (B) Write help page for leaderboards dif:2 @docs +completehelp
 (B) Write help page for settings dif:2 @docs +completehelp
 (B) Write help page for tags dif:2 @docs +completehelp
-x (B) Add rank changes from the previous day into the standings dif:1 @boards +delight
 (B) Graph widget overhaul: lines/bars toggle, full-screen, download dif:5 @charts +delight
 (B) Show starred leaderboards on dashboard dif:2 @dashboard +delight
 (B) Graph lifetime progress dif:1 @stats +delight
-x (B) Make the project heatmap stop after the last day of progress if the phase is finished/abandonded/on-hold (h/t Starlight) dif:1 @projects +delight
 (B) Implement a following system dif:5 @followers +followers
 (B) Change the public and friend profile choices to be a settings page instead of being in the configure pages dif:3 @followers @settings +followers
 (B) Add a Following page under the Dashboard section dif:3 @dashboard @followers +followers
@@ -44,13 +37,13 @@ x (B) Make the project heatmap stop after the last day of progress if the phase 
 (B) Improve tag inputs dif:? @boards @goals @projects @tags +taginputs
 (B) Fix winston warnings by creating a non-default logger to use and exporting that (which can be silenced during unit tests) dif:2 @backend +techdebt
 (B) Need to figure out accent vs success vs completion dif:3 @ui +themes
-x (B) Rewrite the heatmap to use Plot dif:3 @charts
 (B) Cyclical leaderboards (renews or does new standings every week/month/year) (h/t Becca Stargazer) dif:5 @boards
 (B) Do some load testing to see if multiple containers is better dif:3 @deploy
 (B) Investigate Docker Swarm if it turns out multiple containers is better dif:? @deploy
 (B) Display the time/count/amount to go if a habit has an end date dif:2 @goals +delight
 (B) Allow leaderboard owners to ban users dif:3 @boards +boardsv2
 (B) Make a better loading thing to show than "Loading..." dif:2 +delight
+(B) Replace API error codes with constants dif:2 +techdebt
 (C) Allow admins to rename user/displayName dif:2 @admin +adminconsole
 (C) Allow merging two accounts dif:5 @admin +adminconsole
 (C) Implement API rate-limiting dif:2 @backend @security +api
@@ -72,6 +65,7 @@ x (B) Rewrite the heatmap to use Plot dif:3 @charts
 (C) Double-check [Node.js Security Checklist](https://blog.risingstack.com/node-js-security-checklist/) dif:5 @security
 (C) Multiple goal points (a la "stretch goals") dif:5 @boards @goals
 (C) Totals by tag dif:2 @stats
+(C) Allow users to specify Sunday or Monday as the first day of the week (h/t Hester van Bork) @settings +localization +delight
 (D) Default the Enter Progress dialog on a project page to the last measure entered dif:3 @projects +delight
 (D) Fix the required-auth page architecture dif:5 @frontend +techdebt
 (D) Improve the worker architecture dif:5 @backend +techdebt
@@ -93,13 +87,8 @@ Rewrite copy on "outside" pages dif:? stage:needs-refinement @porch
 Ability to exempt tags/projects from total dif:3 stage:considering @stats
 Allow logging half-pages (but only for pages probably) (h/t Alex) stage:considering @tallies
 Consider the ability to add more than one type of progress at once (h/t Alice) stage:considering @tallies
-(A) Ensure that projects (etc.) on public profile have a consistent order (last updated?) (h/t K. A. J. Klok) dif:2 @profile +delight
 Allow users to configure profile ordering (h/t K. A. J. Klok) @profile @settings
 Allow users to configure Dashboard more (h/t K. A. J. Klok) @dashboard @settings
-(C) Allow users to specify Sunday or Monday as the first day of the week (h/t Hester van Bork) @settings +localization +delight
 Break down overall stat project graphs by project, or show "a leaderboard against myself" (h/t Katy F) stage:needs-refinement @stats
 Allow habit goals to designate specific days of the week (h/t Aminta) stage:considering @goals
 Allow tallies to be marked as "catch-up" (catching up the number after several days of not tracking) (h/t Gwen) stage:considering @tallies
-(B) Replace API error codes with constants dif:2 +techdebt
-(A) Endpoints that return EmptyObject should return null instead dif:1 +techdebt
-(A) Move help into this repo dif:5 @help

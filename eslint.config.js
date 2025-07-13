@@ -53,7 +53,7 @@ export default ts_eslint.config(
       '@typescript-eslint/ban-ts-comment': 'off',
       '@typescript-eslint/no-misused-promises': ['error', {
         // do not flag async functions being passed when a void-returning function is expected
-        'checksVoidReturn': { 'arguments': false },
+        'checksVoidReturn': false,
       }],
 
       '@stylistic/arrow-parens': ['error', 'as-needed', {
