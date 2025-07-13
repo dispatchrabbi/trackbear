@@ -1,12 +1,12 @@
 (A) Allow admins to force password reset dif:5 @admin +adminconsole
 (A) Allow admins to view any project, goal, leaderboard in-situ dif:3 @admin +adminconsole
 x (A) Revamp stats on the Users page dif:1 @admin +adminconsole
-(A) Implement API keys dif:3 @api +api
-(A) Implement API permissions on the backend dif:2 @backend +api
+x (A) Implement API keys dif:3 @api +api
+x (A) Implement API permissions on the backend dif:2 @backend +api
 (A) Separate join code from UUID and allow rolling the code dif:3 @boards +boardsv2
 (A) Group participants into teams and compare team totals (h/t Asha) dif:5 @boards +boardsv2
 (A) Create/commission logo and assets dif:? +branding
-(A) White, black, brown, and pink tags are not colored (h/t Mathias) dif:1 @tags +bugs
+x (A) White, black, and brown tags are not colored (h/t Mathias) dif:1 @tags +bugs
 (A) Too many projects when making a goal scroll off the edge of the screen (h/t DarkJediQueen) dif:1 @goals +bugs
 (A) Make the tally table more mobile-friendly (h/t lailah) dif:2 @projects +delight
 (A) Combine delete and edit/configure into a single edit page that includes a Danger Zone for deleting dif:3 @boards @goals @projects +editpage
@@ -93,10 +93,13 @@ Rewrite copy on "outside" pages dif:? stage:needs-refinement @porch
 Ability to exempt tags/projects from total dif:3 stage:considering @stats
 Allow logging half-pages (but only for pages probably) (h/t Alex) stage:considering @tallies
 Consider the ability to add more than one type of progress at once (h/t Alice) stage:considering @tallies
-Ensure that projects (etc.) on public profile have a consistent order (last updated?) (h/t K. A. J. Klok) @profile +delight
+(A) Ensure that projects (etc.) on public profile have a consistent order (last updated?) (h/t K. A. J. Klok) dif:2 @profile +delight
 Allow users to configure profile ordering (h/t K. A. J. Klok) @profile @settings
 Allow users to configure Dashboard more (h/t K. A. J. Klok) @dashboard @settings
 (C) Allow users to specify Sunday or Monday as the first day of the week (h/t Hester van Bork) @settings +localization +delight
 Break down overall stat project graphs by project, or show "a leaderboard against myself" (h/t Katy F) stage:needs-refinement @stats
 Allow habit goals to designate specific days of the week (h/t Aminta) stage:considering @goals
 Allow tallies to be marked as "catch-up" (catching up the number after several days of not tracking) (h/t Gwen) stage:considering @tallies
+(B) Replace API error codes with constants dif:2 +techdebt
+(A) Endpoints that return EmptyObject should return null instead dif:1 +techdebt
+(A) Move help into this repo dif:5 @help

@@ -14,6 +14,7 @@ Types of changes include:
 
 - NEW: The TrackBear API is open for developers! You can find the API docs on [the help site](https://help.trackbear.app/). Any feedback on the docs and the ergonomics of the API is very much appreciated.
 - NEW: Users can create API keys, which allow integrations and other applications to access their TrackBear account on their behalf.
+- FIXED: White, black, and brown tags are now correctly colored, and the colors of all the tags have been tweaked. (h/t Mathias)
 
 ## 1.2.8
 - FIXED: Item in the user menu now work when you click anywhere on them, not just on text.

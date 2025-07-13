@@ -4,19 +4,19 @@ export const TAG_COLOR_CLASSES = {
     text: '!text-surface-900 dark:!text-surface-100',
   },
   'red': {
-    background: '!bg-red-300 dark:!bg-red-700',
+    background: '!bg-red-300 dark:!bg-red-800',
     text: '!text-surface-900 dark:!text-surface-100',
   },
   'orange': {
-    background: '!bg-orange-300 dark:!bg-orange-700',
-    text: '!text-surface-900 dark:!text-surface-100',
+    background: '!bg-orange-300 dark:!bg-orange-400',
+    text: '!text-surface-900 dark:!text-surface-900',
   },
   'yellow': {
-    background: '!bg-yellow-300 dark:!bg-yellow-700',
-    text: '!text-surface-900 dark:!text-surface-100',
+    background: '!bg-yellow-200 dark:!bg-yellow-400',
+    text: '!text-surface-900 dark:!text-surface-900',
   },
   'green': {
-    background: '!bg-green-300 dark:!bg-green-700',
+    background: '!bg-green-300 dark:!bg-green-800',
     text: '!text-surface-900 dark:!text-surface-100',
   },
   'blue': {
@@ -28,16 +28,16 @@ export const TAG_COLOR_CLASSES = {
     text: '!text-surface-900 dark:!text-surface-100',
   },
   'brown': {
-    background: '!bg-brown-300 dark:!bg-brown-700',
-    text: '!text-surface-900 dark:!text-surface-100',
+    background: '!bg-amber-700 dark:!bg-amber-700',
+    text: '!text-surface-100 dark:!text-surface-100',
   },
   'white': {
-    background: '!bg-white-300 dark:!bg-white-700',
-    text: '!text-surface-900 dark:!text-surface-100',
+    background: '!bg-surface-100 dark:!bg-surface-100',
+    text: '!text-surface-900 dark:!text-surface-900',
   },
   'black': {
-    background: '!bg-black-300 dark:!bg-black-700',
-    text: '!text-surface-900 dark:!text-surface-100',
+    background: '!bg-surface-900 dark:!bg-surface-900',
+    text: '!text-surface-100 dark:!text-surface-100',
   },
   'gray': {
     background: '!bg-gray-300 dark:!bg-gray-700',
