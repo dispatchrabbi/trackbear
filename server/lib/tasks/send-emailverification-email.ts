@@ -1,7 +1,7 @@
 import { EmailParams, Sender, Recipient } from 'mailersend';
 import { sendEmail } from '../email.ts';
 
-import type { User, PendingEmailVerification } from '@prisma/client';
+import type { User, PendingEmailVerification } from 'generated/prisma/client';
 import dbClient from '../db.ts';
 
 // use the queue log to log info about the queue

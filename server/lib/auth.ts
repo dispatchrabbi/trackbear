@@ -1,5 +1,5 @@
 import { promisify } from 'node:util';
-import type { User } from '@prisma/client';
+import type { User } from 'generated/prisma/client';
 import type { Request } from 'express';
 
 import { API_TOKEN_HEADER } from './auth-consts.ts';

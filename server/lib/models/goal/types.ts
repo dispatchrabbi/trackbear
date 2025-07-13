@@ -1,4 +1,4 @@
-import { type Goal as PrismaGoal } from '@prisma/client';
+import { type Goal as PrismaGoal } from 'generated/prisma/client';
 import { type TallyMeasure } from '../tally/consts';
 import { type GoalCadenceUnit, GOAL_TYPE } from './consts';
 import { Expand } from 'server/lib/obj';

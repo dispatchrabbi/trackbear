@@ -1,6 +1,6 @@
 import { traced } from '../../tracer.ts';
 
-import type { Prisma } from '@prisma/client';
+import type { Prisma, BoardParticipant as PrismaBoardParticipant, User as PrismaUser } from 'generated/prisma/client';
 import dbClient from '../../db.ts';
 import type { Create, Update } from '../types.ts';
 
@@ -18,7 +18,6 @@ import { makeIncludeWorkAndTagIds, included2ids, makeSetWorksAndTagsIncluded, ty
 import { omit, pick } from 'server/lib/obj.ts';
 
 // used for db2participation and db2member
-import { BoardParticipant as PrismaBoardParticipant, User as PrismaUser } from '@prisma/client';
 type DbParticipation = PrismaBoardParticipant & WorksAndTagsIncluded;
 type DbMember = PrismaBoardParticipant & { user: PrismaUser };
 

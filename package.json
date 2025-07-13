@@ -8,7 +8,8 @@
   },
   "imports": {
     "src/*": "./src/*",
-    "server/*": "./server/*"
+    "server/*": "./server/*",
+    "generated/*": "./generated/*"
   },
   "prisma": {
     "schema": "prisma/schema.prisma",

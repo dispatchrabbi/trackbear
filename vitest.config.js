@@ -17,6 +17,7 @@ export default defineConfig({
       exclude: [
         ...coverageConfigDefaults.exclude,
         'docs/**',
+        'generated/**',
         'prisma/**',
         'public/**',
         'scripts/**',

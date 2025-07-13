@@ -1,4 +1,4 @@
-import type { User, PendingEmailVerification } from '@prisma/client';
+import type { User, PendingEmailVerification } from 'generated/prisma/client';
 import dbClient from '../lib/db.ts';
 import winston from 'winston';
 import { USER_STATE } from '../lib/models/user/consts.ts';

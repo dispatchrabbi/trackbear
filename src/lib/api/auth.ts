@@ -1,7 +1,7 @@
 import { RoundTrip, callApi } from '../api.ts';
 import { CreateUserPayload } from 'server/api/auth.ts';
 
-import type { User as PrismaUser } from '@prisma/client';
+import type { User as PrismaUser } from 'generated/prisma/client';
 export type User = RoundTrip<PrismaUser>;
 
 type EmptyObject = Record<string, never>;

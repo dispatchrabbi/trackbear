@@ -14,7 +14,7 @@ import { z } from 'zod';
 import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
 
 import dbClient from '../../lib/db.ts';
-import type { Work as PrismaWork, Tally, Tag } from '@prisma/client';
+import type { Work as PrismaWork, Tally, Tag } from 'generated/prisma/client';
 import { WORK_PHASE, WORK_STATE, ALLOWED_COVER_FORMATS } from '../../lib/models/work/consts.ts';
 import { TALLY_MEASURE, TALLY_STATE } from '../../lib/models/tally/consts.ts';
 import { TAG_STATE } from '../../lib/models/tag/consts.ts';

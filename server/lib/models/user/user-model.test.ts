@@ -4,7 +4,7 @@ import { getTestReqCtx, mockObject, mockObjects, TEST_SESSION_ID, TEST_SYSTEM_ID
 import { Ticket } from 'better-queue';
 import { CreateUserData, UpdateUserData, UserModel } from './user-model.ts';
 import { hash } from '../../hash.ts';
-import type { PasswordResetLink, PendingEmailVerification, User, UserAuth } from '@prisma/client';
+import type { PasswordResetLink, PendingEmailVerification, User, UserAuth } from 'generated/prisma/client';
 import { ValidationError } from '../errors.ts';
 import { AUDIT_EVENT_TYPE, AUDIT_EVENT_SOURCE } from '../audit-event/consts.ts';
 import { USER_STATE, PASSWORD_RESET_LINK_STATE } from './consts.ts';

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import type { User } from '@prisma/client';
+import type { User } from 'generated/prisma/client';
 
 import { vi, Mock } from 'vitest';
 import { mockObject, TEST_USER_ID } from '../../../testing-support/util';

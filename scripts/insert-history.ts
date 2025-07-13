@@ -9,7 +9,7 @@ import { subYears, addDays, isBefore } from 'date-fns';
 import { formatDate } from '../src/lib/date.ts';
 
 import dbClient from '../server/lib/db.ts';
-import { User, Work } from '@prisma/client';
+import { User, Work } from 'generated/prisma/client';
 import { USER_STATE } from '../server/lib/models/user/consts.ts';
 import { WORK_STATE } from '../server/lib/models/work/consts.ts';
 import { TALLY_MEASURE, TALLY_STATE } from '../server/lib/models/tally/consts.ts';

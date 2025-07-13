@@ -6,7 +6,7 @@ import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts'
 import { zUuidParam } from 'server/lib/validators.ts';
 import { ApiResponse, success, failure } from '../lib/api-response.ts';
 
-import type { User } from '@prisma/client';
+import type { User } from 'generated/prisma/client';
 import { logIn, logOut } from '../lib/auth.ts';
 import { RequestWithUser } from 'server/lib/middleware/access.ts';
 import { USER_STATE, USERNAME_REGEX } from '../lib/models/user/consts.ts';

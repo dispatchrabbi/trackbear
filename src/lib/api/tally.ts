@@ -1,6 +1,6 @@
 import { callApiV1 } from '../api.ts';
 
-import type { Tally } from '@prisma/client';
+import type { Tally } from 'generated/prisma/client';
 import type { TallyQuery, TallyCreatePayload, TallyUpdatePayload, TallyWithWorkAndTags } from 'server/api/v1/tally.ts';
 import type { Tag } from 'src/lib/api/tag.ts';
 

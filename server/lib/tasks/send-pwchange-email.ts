@@ -1,7 +1,7 @@
 import { EmailParams, Sender, Recipient } from 'mailersend';
 import { sendEmail } from '../email.ts';
 
-import type { User } from '@prisma/client';
+import type { User } from 'generated/prisma/client';
 import dbClient from '../db.ts';
 
 import { logAuditEvent, TRACKBEAR_SYSTEM_ID } from '../audit-events.ts';

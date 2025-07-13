@@ -1,7 +1,8 @@
+import process from 'node:process';
 import path from 'node:path';
-import { URL } from 'node:url';
-import { execSync } from 'child_process';
-import { PrismaClient } from '@prisma/client';
+import { execSync } from 'node:child_process';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from 'generated/prisma/client';
 import { v4 } from 'uuid';
 import { beforeEach, afterEach } from 'vitest';
 import { loadDotEnv } from './env.ts';
@@ -12,12 +13,13 @@ loadDotEnv();
 const testSchemaName = `test-${v4()}`;
 
 // create a client pointed at the test database
-const testDatabaseUrl = makeTestDatabaseUrl(testSchemaName);
-process.env.DATABASE_URL = testDatabaseUrl;
-console.log(`Creating client for database ${testDatabaseUrl}...`);
-const dbClient = new PrismaClient({
-  datasources: { db: { url: testDatabaseUrl } },
+const connectionString = makeTestDatabaseConnectionString();
+const connectionStringWithSchema = connectionString + '?schema=' + testSchemaName;
 
+console.log(`Creating client for database ${connectionString}...`);
+const adapter = new PrismaPg({ connectionString }, { schema: testSchemaName });
+const dbClient = new PrismaClient({
+  adapter,
 });
 
 export default dbClient;
@@ -25,11 +27,11 @@ export default dbClient;
 // create the database
 const prismaBinary = path.join(import.meta.dirname, '../node_modules/.bin/prisma');
 beforeEach(() => {
-  console.log(`Creating database ${testDatabaseUrl}...`);
+  console.log(`Creating database ${connectionString}...`);
   execSync(`${prismaBinary} db push`, {
     env: {
       ...process.env,
-      DATABASE_URL: testDatabaseUrl,
+      DATABASE_URL: connectionStringWithSchema,
     },
   });
 });
@@ -43,14 +45,18 @@ afterEach(async () => {
   await dbClient.$disconnect();
 });
 
-function makeTestDatabaseUrl(testSchemaName) {
-  if(!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not set; cannot create testing database');
+function makeTestDatabaseConnectionString() {
+  for(const envVar of [
+    'DATABASE_USER',
+    'DATABASE_PASSWORD',
+    'DATABASE_HOST',
+    'DATABASE_NAME',
+  ]) {
+    if(!process.env[envVar]) {
+      throw new Error(`${envVar} is not set; cannot create testing database`);
+    }
   }
 
-  console.log(process.env.DATABASE_URL);
-  const databaseUrl = new URL(process.env.DATABASE_URL);
-  databaseUrl.searchParams.append('schema', testSchemaName);
-
-  return decodeURI(databaseUrl.toString());
+  const connectionString = `postgresql://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}/${process.env.DATABASE_NAME}`;
+  return connectionString;
 }

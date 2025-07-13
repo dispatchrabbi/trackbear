@@ -1,5 +1,5 @@
 import dbClient from '../../db.ts';
-import { type AuditEvent } from '@prisma/client';
+import { type AuditEvent } from 'generated/prisma/client';
 
 import { traced } from '../../tracer.ts';
 

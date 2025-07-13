@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { zIdParam, zDateStr, NonEmptyArray } from 'server/lib/validators.ts';
 
 import dbClient from '../../lib/db.ts';
-import type { Tally, Work, Tag } from '@prisma/client';
+import type { Tally, Work, Tag } from 'generated/prisma/client';
 import { TALLY_STATE, TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts.ts';
 import { TAG_STATE, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts.ts';
 

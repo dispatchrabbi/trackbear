@@ -25,8 +25,9 @@ export default defineConfig({
     alias: {
       'src': path.resolve(__dirname, './src'),
       'server': path.resolve(__dirname, './server'),
+      'generated': path.resolve(__dirname, './generated'),
       // found in https://github.com/prisma/prisma/issues/12504#issuecomment-1285883083
-      '.prisma/client/index-browser': './node_modules/.prisma/client/index-browser.js',
+      // '.prisma/client/index-browser': './node_modules/.prisma/client/index-browser.js',
     },
   },
   plugins: [

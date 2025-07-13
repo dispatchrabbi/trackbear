@@ -1,5 +1,5 @@
 import dbClient from '../../db.ts';
-import { type Tally } from '@prisma/client';
+import { type Tally } from 'generated/prisma/client';
 
 import { type RequestContext } from '../../request-context.ts';
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';

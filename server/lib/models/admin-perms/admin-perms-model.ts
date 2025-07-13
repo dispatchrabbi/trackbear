@@ -1,5 +1,5 @@
 import dbClient from '../../db.ts';
-import { type AdminPerms } from '@prisma/client';
+import { type AdminPerms } from 'generated/prisma/client';
 
 import { RecordNotFoundError } from '../errors.ts';
 

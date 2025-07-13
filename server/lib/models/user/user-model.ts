@@ -2,7 +2,7 @@ import winston from 'winston';
 import { addDays, addMinutes } from 'date-fns';
 
 import dbClient from '../../db.ts';
-import type { PasswordResetLink, PendingEmailVerification, User, UserAuth, Prisma } from '@prisma/client';
+import type { PasswordResetLink, PendingEmailVerification, User, UserAuth, Prisma } from 'generated/prisma/client';
 import { hash, verifyHash } from '../../hash.ts';
 
 import { type RequestContext } from '../../request-context.ts';

@@ -1,7 +1,7 @@
 import { EmailParams, Sender, Recipient } from 'mailersend';
 import { sendEmail } from '../email.ts';
 
-import type { User, PasswordResetLink } from '@prisma/client';
+import type { User, PasswordResetLink } from 'generated/prisma/client';
 import dbClient from '../db.ts';
 import { PASSWORD_RESET_LINK_STATE } from '../models/user/consts.ts';
 

@@ -29,6 +29,7 @@
     "paths": {
       "src/*": ["./src/*"],
       "server/*": ["./server/*"],
+      "generated/*": ["./generated/*"],
     },
   },
   "include": [

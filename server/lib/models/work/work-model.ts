@@ -1,7 +1,7 @@
 import { traced } from '../../tracer.ts';
 
 import dbClient from '../../db.ts';
-import { type Work as PrismaWork } from '@prisma/client';
+import { type Work as PrismaWork } from 'generated/prisma/client';
 import type { Create, Update } from '../types.ts';
 
 import { type RequestContext } from '../../request-context.ts';

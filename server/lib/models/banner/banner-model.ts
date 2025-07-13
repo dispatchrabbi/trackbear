@@ -1,7 +1,7 @@
 import { addDays } from 'date-fns';
 
 import dbClient from '../../db.ts';
-import { type Banner } from '@prisma/client';
+import { type Banner } from 'generated/prisma/client';
 
 import { type RequestContext } from '../../request-context.ts';
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';

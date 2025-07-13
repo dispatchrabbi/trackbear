@@ -4,8 +4,7 @@ import { ref, reactive, defineProps } from 'vue';
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
-import { User } from '@prisma/client';
-import { updateMe } from 'src/lib/api/me.ts';
+import { updateMe, type FullUser } from 'src/lib/api/me.ts';
 
 import { useUserStore } from 'src/stores/user.ts';
 const userStore = useUserStore();
@@ -15,7 +14,7 @@ import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 
 const props = defineProps<{
-  user: User;
+  user: FullUser;
 }>();
 
 const formModel = reactive({

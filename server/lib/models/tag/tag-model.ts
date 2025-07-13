@@ -1,7 +1,7 @@
 import winston from 'winston';
 
 import dbClient from '../../db.ts';
-import { type Tag } from '@prisma/client';
+import { type Tag } from 'generated/prisma/client';
 
 import { type RequestContext } from '../../request-context.ts';
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
