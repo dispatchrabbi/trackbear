@@ -20,10 +20,13 @@ x (A) Update vue +update
 x (A) Update vitest +update
 x (A) Update prisma +update
 x (A) Update multer +update
+x (B) Update pinia +update
+(A) Update typescript +update
 (A) Update otel +update
 (B) Update zod +update
 (C) Consider updating tailwind +update
 (C) Consider updating primevue +update
+(B) Remove Wisp +techdebt
 (B) Improve audit event retrieval/listings dif:2 @admin +adminconsole
 (B) Let admins manage projects dif:5 @admin +adminconsole
 (B) Let admins manage goals dif:3 @admin +adminconsole
