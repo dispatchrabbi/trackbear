@@ -19,27 +19,38 @@
     "start": "node --run start:dev",
     "start:dev": "NODE_ENV=development node --import tsx --import ./instrumentation.ts ./main.ts",
     "start:prod": "NODE_ENV=production node --import tsx --import ./instrumentation.ts ./main.ts",
+
+    "help:dev": "vitepress dev help-docs",
+    "help:build": "vitepress build help-docs",
+    "help:preview": "vitepress preview help-docs",
+    
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "vitest run",
     "test:watch": "vitest",
     "test:webui": "vitest --ui",
     "test:integration": "vitest run --config ./vitest.integration.config.js",
     "coverage": "vitest run --coverage",
+
+    "lint": "npm run type-check && npm run eslint",
+    "eslint": "npx eslint --fix --prune-suppressions .",
+    "type-check": "npx vue-tsc --noEmit",
+    
     "prebuild": "node --run compile && node --run test",
     "build": "node --run build:prod",
     "build:prod": "docker build -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t dispatchrabbi/trackbear:latest --target prod .",
     "build:prod:progress": "docker build --progress=plain -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t dispatchrabbi/trackbear:latest --target prod .",
-    "lint": "npm run type-check && npm run eslint",
-    "eslint": "npx eslint --fix --prune-suppressions .",
-    "type-check": "npx vue-tsc --noEmit",
-    "compile": "node --run compile:db && node --run compile:client && node --run compile:api",
+    
+    "compile": "node --run compile:db && node --run compile:client && node --run compile:api && node --run && compile:help",
     "compile:db": "npx prisma generate --no-hints",
     "compile:client": "npx vue-tsc && npx vite build --emptyOutDir",
     "compile:api": "npx tsp compile .",
+    "compile:help": "node --run help:build",
+
+    "api": "node --run compile:api",
+    
     "migrate:dev": "npx prisma migrate dev && npx prisma generate",
     "migrate:prod": "npx prisma migrate deploy",
-    "api": "node --run compile:api",
-    "hooks": "husky install",
+    
     "preversion": "node --run build",
     "version": "VERSION=$(npm pkg get version --workspaces=false | tr -d \\\"); git add .; git commit -m \"v${VERSION}\"; git tag -a \"v${VERSION}\" -m \"v${VERSION}\""
   },
@@ -133,13 +144,13 @@
     "@vitest/ui": "^3.2.4",
     "eslint-plugin-vue": "^10.0.0",
     "globals": "^16.3.0",
-    "husky": "^8.0.3",
     "prisma": "^6.11.1",
     "rollup-plugin-visualizer": "^5.11.0",
-    "typescript": "5.6.3",
+    "typescript": "^5.8.3",
     "typescript-eslint": "^8.26.0",
     "uuid": "^11.1.0",
     "vite-tsconfig-paths": "^5.1.4",
+    "vitepress": "^1.6.3",
     "vitest": "^3.2.4",
     "vitest-mock-extended": "^2.0.2"
   }

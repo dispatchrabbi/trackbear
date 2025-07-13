@@ -33,11 +33,12 @@
     },
   },
   "include": [
+    "help-docs/**/*.ts", "help-docs/.vitepress/*.ts",
+    "prisma/**/*.ts",
+    "scripts/**/*.ts", "scripts/**/*.js",
     "src/**/*.ts", "src/**/*.js", "src/**/*.vue",
     "server/**/*.ts",
     "testing-support/**/*.ts", "vitest-custom-matchers.d.ts",
-    "prisma/**/*.ts",
-    "scripts/**/*.ts", "scripts/**/*.js",
     "main.ts", "instrumentation.ts",
   ],
   "references": [

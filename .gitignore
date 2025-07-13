@@ -77,3 +77,7 @@ certs
 
 # User uploads
 uploads
+
+# VitePress
+help-docs/.vitepress/dist
+help-docs/.vitepress/cache

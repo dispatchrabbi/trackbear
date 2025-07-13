@@ -28,8 +28,9 @@ export default ts_eslint.config(
     },
   },
   defineConfig([globalIgnores([
-    'dist/',
     'node_modules/',
+    'dist/',
+    'generated/',
     'coverage/',
     'src/themes/primevue-presets/',
   ])]),
