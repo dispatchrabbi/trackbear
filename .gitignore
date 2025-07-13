@@ -66,8 +66,8 @@ dist
 dist-ssr
 *.local
 
-# TypeSpec output
-tsp-output
+# Output for generated files (Prisma, TypeSpec)
+generated
 
 # Storage for database files
 db

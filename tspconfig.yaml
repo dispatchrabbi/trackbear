@@ -1,3 +1,4 @@
+output-dir: "{cwd}/generated/tsp"
 emit:
   - "@typespec/openapi3"
 options:
