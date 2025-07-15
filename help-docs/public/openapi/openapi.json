@@ -921,6 +921,263 @@
         ]
       }
     },
+    "/project": {
+      "get": {
+        "operationId": "Projects_list",
+        "summary": "List projects",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Projects.SummarizedProject"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ]
+      },
+      "post": {
+        "operationId": "Projects_create",
+        "summary": "Create a project",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Projects.ProjectWithTallies"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Projects.CreateProjectPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project/{id}": {
+      "get": {
+        "operationId": "Projects_get",
+        "summary": "Get a project",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Projects.ProjectWithTallies"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ]
+      },
+      "patch": {
+        "operationId": "Projects_update",
+        "summary": "Update a project",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Projects.ProjectWithTallies"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Projects.UpdateProjectPayload"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Projects_delete",
+        "summary": "Delete a project",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Projects.ProjectWithTallies"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ]
+      }
+    },
+    "/project/{id}/cover": {
+      "post": {
+        "operationId": "Projects_uploadCover",
+        "summary": "Upload project cover",
+        "description": "Upload a cover image for the project. Allowed formats include APNG, AVIF, GIF, JPEG, PNG, SVG, and WebP.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Projects.Project"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "image/png": {
+              "schema": {
+                "contentMediaType": "image/png"
+              }
+            },
+            "image/jpeg": {
+              "schema": {
+                "contentMediaType": "image/jpeg"
+              }
+            },
+            "image/webp": {
+              "schema": {
+                "contentMediaType": "image/webp"
+              }
+            },
+            "image/svg": {
+              "schema": {
+                "contentMediaType": "image/svg"
+              }
+            },
+            "image/gif": {
+              "schema": {
+                "contentMediaType": "image/gif"
+              }
+            },
+            "image/apng": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "contentMediaType": "image/apng"
+                  },
+                  {
+                    "contentMediaType": "image/apng"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Projects_deleteCover",
+        "summary": "Delete project cover",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Projects.Project"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ]
+      }
+    },
     "/stats/days": {
       "get": {
         "operationId": "Stats_list",
@@ -1424,263 +1681,6 @@
         },
         "tags": [
           "Tallies"
-        ]
-      }
-    },
-    "/work": {
-      "get": {
-        "operationId": "Works_list",
-        "summary": "List projects",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Works.SummarizedWork"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Projects"
-        ]
-      },
-      "post": {
-        "operationId": "Works_create",
-        "summary": "Create a project",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": "The request has succeeded and a new resource has been created as a result.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Works.WorkWithTallies"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Projects"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Works.CreateWorkPayload"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/work/{id}": {
-      "get": {
-        "operationId": "Works_get",
-        "summary": "Get a project",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Works.WorkWithTallies"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Projects"
-        ]
-      },
-      "patch": {
-        "operationId": "Works_update",
-        "summary": "Update a project",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Works.WorkWithTallies"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Projects"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Works.UpdateWorkPayload"
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "operationId": "Works_delete",
-        "summary": "Delete a project",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Works.WorkWithTallies"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Projects"
-        ]
-      }
-    },
-    "/work/{id}/cover": {
-      "post": {
-        "operationId": "Works_uploadCover",
-        "summary": "Upload project cover",
-        "description": "Upload a cover image for the project. Allowed formats include APNG, AVIF, GIF, JPEG, PNG, SVG, and WebP.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Works.Work"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Projects"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "image/png": {
-              "schema": {
-                "contentMediaType": "image/png"
-              }
-            },
-            "image/jpeg": {
-              "schema": {
-                "contentMediaType": "image/jpeg"
-              }
-            },
-            "image/webp": {
-              "schema": {
-                "contentMediaType": "image/webp"
-              }
-            },
-            "image/svg": {
-              "schema": {
-                "contentMediaType": "image/svg"
-              }
-            },
-            "image/gif": {
-              "schema": {
-                "contentMediaType": "image/gif"
-              }
-            },
-            "image/apng": {
-              "schema": {
-                "anyOf": [
-                  {
-                    "contentMediaType": "image/apng"
-                  },
-                  {
-                    "contentMediaType": "image/apng"
-                  }
-                ]
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "operationId": "Works_deleteCover",
-        "summary": "Delete project cover",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Works.Work"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Projects"
         ]
       }
     }
@@ -2981,6 +2981,239 @@
           }
         }
       },
+      "Projects.CreateProjectPayload": {
+        "type": "object",
+        "required": [
+          "title",
+          "description",
+          "phase",
+          "startingBalance"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "phase": {
+            "$ref": "#/components/schemas/Projects.ProjectPhase"
+          },
+          "startingBalance": {
+            "$ref": "#/components/schemas/MeasureCounts"
+          },
+          "starred": {
+            "type": "boolean",
+            "default": false
+          },
+          "displayOnProfile": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "description": ""
+      },
+      "Projects.Project": {
+        "type": "object",
+        "required": [
+          "id",
+          "uuid",
+          "createdAt",
+          "updatedAt",
+          "state",
+          "ownerId",
+          "title",
+          "description",
+          "phase",
+          "startingBalance",
+          "cover"
+        ],
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "uuid": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/uuid"
+              }
+            ],
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Projects.ProjectState"
+              }
+            ],
+            "readOnly": true
+          },
+          "ownerId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "phase": {
+            "$ref": "#/components/schemas/Projects.ProjectPhase"
+          },
+          "startingBalance": {
+            "$ref": "#/components/schemas/MeasureCounts"
+          },
+          "cover": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "readOnly": true
+          },
+          "starred": {
+            "type": "boolean",
+            "default": false
+          },
+          "displayOnProfile": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "Projects.ProjectPhase": {
+        "type": "string",
+        "enum": [
+          "planning",
+          "outlining",
+          "drafting",
+          "revising",
+          "on hold",
+          "finished",
+          "abandoned"
+        ]
+      },
+      "Projects.ProjectState": {
+        "type": "string",
+        "enum": [
+          "active",
+          "deleted"
+        ]
+      },
+      "Projects.ProjectWithTallies": {
+        "type": "object",
+        "required": [
+          "tallies"
+        ],
+        "properties": {
+          "tallies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Projects.TallyWithTags"
+            }
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Projects.Project"
+          }
+        ]
+      },
+      "Projects.SummarizedProject": {
+        "type": "object",
+        "required": [
+          "totals",
+          "lastUpdated"
+        ],
+        "properties": {
+          "totals": {
+            "$ref": "#/components/schemas/MeasureCounts"
+          },
+          "lastUpdated": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Projects.Project"
+          }
+        ]
+      },
+      "Projects.TallyWithTags": {
+        "type": "object",
+        "required": [
+          "tags"
+        ],
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tags.Tag"
+            }
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Tallies.Tally"
+          }
+        ]
+      },
+      "Projects.UpdateProjectPayload": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "phase": {
+            "$ref": "#/components/schemas/Projects.ProjectPhase"
+          },
+          "startingBalance": {
+            "$ref": "#/components/schemas/MeasureCounts"
+          },
+          "starred": {
+            "type": "boolean",
+            "default": false
+          },
+          "displayOnProfile": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "description": ""
+      },
       "ServerErrorFailure": {
         "type": "object",
         "required": [
@@ -3329,7 +3562,7 @@
         ],
         "properties": {
           "work": {
-            "$ref": "#/components/schemas/Works.Work"
+            "$ref": "#/components/schemas/Projects.Project"
           },
           "tags": {
             "type": "array",
@@ -3417,239 +3650,6 @@
           }
         },
         "description": ""
-      },
-      "Works.CreateWorkPayload": {
-        "type": "object",
-        "required": [
-          "title",
-          "description",
-          "phase",
-          "startingBalance"
-        ],
-        "properties": {
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "phase": {
-            "$ref": "#/components/schemas/Works.WorkPhase"
-          },
-          "startingBalance": {
-            "$ref": "#/components/schemas/MeasureCounts"
-          },
-          "starred": {
-            "type": "boolean",
-            "default": false
-          },
-          "displayOnProfile": {
-            "type": "boolean",
-            "default": false
-          }
-        },
-        "description": ""
-      },
-      "Works.SummarizedWork": {
-        "type": "object",
-        "required": [
-          "totals",
-          "lastUpdated"
-        ],
-        "properties": {
-          "totals": {
-            "$ref": "#/components/schemas/MeasureCounts"
-          },
-          "lastUpdated": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/plaindate"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Works.Work"
-          }
-        ]
-      },
-      "Works.TallyWithTags": {
-        "type": "object",
-        "required": [
-          "tags"
-        ],
-        "properties": {
-          "tags": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Tags.Tag"
-            }
-          }
-        },
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Tallies.Tally"
-          }
-        ]
-      },
-      "Works.UpdateWorkPayload": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "phase": {
-            "$ref": "#/components/schemas/Works.WorkPhase"
-          },
-          "startingBalance": {
-            "$ref": "#/components/schemas/MeasureCounts"
-          },
-          "starred": {
-            "type": "boolean",
-            "default": false
-          },
-          "displayOnProfile": {
-            "type": "boolean",
-            "default": false
-          }
-        },
-        "description": ""
-      },
-      "Works.Work": {
-        "type": "object",
-        "required": [
-          "id",
-          "uuid",
-          "createdAt",
-          "updatedAt",
-          "state",
-          "ownerId",
-          "title",
-          "description",
-          "phase",
-          "startingBalance",
-          "cover"
-        ],
-        "properties": {
-          "id": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/id"
-              }
-            ],
-            "readOnly": true
-          },
-          "uuid": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/uuid"
-              }
-            ],
-            "readOnly": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "readOnly": true
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "readOnly": true
-          },
-          "state": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Works.WorkState"
-              }
-            ],
-            "readOnly": true
-          },
-          "ownerId": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/id"
-              }
-            ],
-            "readOnly": true
-          },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "phase": {
-            "$ref": "#/components/schemas/Works.WorkPhase"
-          },
-          "startingBalance": {
-            "$ref": "#/components/schemas/MeasureCounts"
-          },
-          "cover": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "readOnly": true
-          },
-          "starred": {
-            "type": "boolean",
-            "default": false
-          },
-          "displayOnProfile": {
-            "type": "boolean",
-            "default": false
-          }
-        }
-      },
-      "Works.WorkPhase": {
-        "type": "string",
-        "enum": [
-          "planning",
-          "outlining",
-          "drafting",
-          "revising",
-          "on hold",
-          "finished",
-          "abandoned"
-        ]
-      },
-      "Works.WorkState": {
-        "type": "string",
-        "enum": [
-          "active",
-          "deleted"
-        ]
-      },
-      "Works.WorkWithTallies": {
-        "type": "object",
-        "required": [
-          "tallies"
-        ],
-        "properties": {
-          "tallies": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Works.TallyWithTags"
-            }
-          }
-        },
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Works.Work"
-          }
-        ]
       },
       "id": {
         "type": "integer",

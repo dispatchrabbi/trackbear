@@ -50,7 +50,7 @@ namespace Tallies {
   }
 
   model TallyWithWorkAndTags extends Tally {
-    work: Works.Work;
+    work: Projects.Project;
     tags: Tags.Tag[];
   }
 

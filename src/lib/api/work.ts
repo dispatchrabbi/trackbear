@@ -11,7 +11,7 @@ export type WorkWithTallies = Work & { tallies: TallyWithTags[] };
 import type { WorkCreatePayload, WorkUpdatePayload } from 'server/api/v1/work.ts';
 export type { WorkCreatePayload, WorkUpdatePayload };
 
-const ENDPOINT = '/api/v1/work';
+const ENDPOINT = '/api/v1/project';
 
 export async function getWorks() {
   return callApiV1<SummarizedWork[]>(ENDPOINT, 'GET');

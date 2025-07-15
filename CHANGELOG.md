@@ -12,8 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-- NEW: API docs for developers. If you'd like early access, send me an email and I'll send you the OpenAPI spec.
+- NEW: API access for developers is finally here! Read all about it at [the API Docs](https://help.trackbear.app/api)!
 - NEW: Users can create API keys, which allow integrations and other applications to access their TrackBear account on their behalf.
+- CHANGED: Pages under `/works` are now under `/projects`. The old URLs will redirect for a while, but you should update your bookmarks.
 - FIXED: White, black, and brown tags are now correctly colored, and the colors of all the tags have been tweaked. (h/t Mathias)
 
 ## 1.2.8
