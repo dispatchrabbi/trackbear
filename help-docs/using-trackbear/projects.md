@@ -4,7 +4,7 @@ Projects are the main way to organize your work in TrackBear. You should create 
 
 ## Manage your projects
 
-In order to see all your projects, click the **Projects** link on the sidebar and you'll be taken to [the Projects page](https://trackbear.app/works).
+In order to see all your projects, click the **Projects** link on the sidebar and you'll be taken to [the Projects page](https://trackbear.appprojects).
 
 ![A screenshot of projects screen in TrackBear, with three projects.](/images/help/many-projects.png)
 
@@ -18,7 +18,7 @@ Starred projects will show up at the top of the list on the Projects page, and a
 
 ## See project details
 
-You can see all the details about your project on the project details page. To get here, start on [the Projects page](https://trackbear.app/works) and click your project.
+You can see all the details about your project on the project details page. To get here, start on [the Projects page](https://trackbear.appprojects) and click your project.
 
 ![A screenshot of the project details page.](/images/help/project-page.png)
 
@@ -26,7 +26,7 @@ To learn more about the [activity heatmap](/using-trackbear/tracking-progress#ac
 
 ## Create a new project
 
-In order to create a new project, click the **New** button in the top right of [the Projects page](https://trackbear.app/works). You'll be presented with the **Create Project** dialog:
+In order to create a new project, click the **New** button in the top right of [the Projects page](https://trackbear.appprojects). You'll be presented with the **Create Project** dialog:
 
 ![A screenshot of the Create Project dialog box, with some data filled in.](/images/help/create-project.png)
 

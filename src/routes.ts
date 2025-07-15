@@ -1,3 +1,5 @@
+import type { RouteRecordRaw } from 'vue-router';
+
 import PlaceholderPage from 'src/pages/PlaceholderPage.vue';
 
 import HomePage from 'src/pages/HomePage.vue';
@@ -54,7 +56,7 @@ import JoinLeaderboardPage from 'src/pages/leaderboards/JoinLeaderboardPage.vue'
 
 import LifetimeStatsPage from 'src/pages/stats/LifetimeStats.vue';
 
-const routes = [
+const routes: RouteRecordRaw[] = [
   // Public pages (no auth required)
   { path: '/', name: 'home', component: HomePage },
   { path: '/maintenance', name: 'maintenance', component: MaintenancePage },
@@ -78,14 +80,23 @@ const routes = [
   // Dashboard
   { path: '/dashboard', name: 'dashboard', component: DashboardPage },
 
-  // Works
-  { path: '/works', name: 'works', component: WorksListPage },
-  { path: '/works/import', name: 'import-works', component: WorksImportPage },
-  { path: '/works/import/auto-nano', name: 'import-works-nano-auto', component: WorksImportNanoAutoPage },
-  { path: '/works/import/auto-ywp', name: 'import-works-ywp-auto', component: WorksImportYwpAutoPage },
-  { path: '/works/import/manual-nano', name: 'import-works-nano-manual', component: WorksImportNanoManualPage },
-  { path: '/works/:workId(\\d+)', name: 'work', component: WorkDetailPage },
-  { path: '/works/:workId(\\d+)/edit', name: 'edit-work', component: EditWorkPage },
+  // Projects
+  { path: '/projects', name: 'works', component: WorksListPage },
+  { path: '/projects/import', name: 'import-works', component: WorksImportPage },
+  { path: '/projects/import/auto-nano', name: 'import-works-nano-auto', component: WorksImportNanoAutoPage },
+  { path: '/projects/import/auto-ywp', name: 'import-works-ywp-auto', component: WorksImportYwpAutoPage },
+  { path: '/projects/import/manual-nano', name: 'import-works-nano-manual', component: WorksImportNanoManualPage },
+  { path: '/projects/:workId(\\d+)', name: 'work', component: WorkDetailPage },
+  { path: '/projects/:workId(\\d+)/edit', name: 'edit-work', component: EditWorkPage },
+
+  // Works (only redirects to projects)
+  { path: '/works', redirect: { name: 'works' } },
+  { path: '/works/import', redirect: { name: 'import-works' } },
+  { path: '/works/import/auto-nano', redirect: { name: 'import-works-nano-auto' } },
+  { path: '/works/import/auto-ywp', redirect: { name: 'import-works-ywp-auto' } },
+  { path: '/works/import/manual-nano', redirect: { name: 'import-works-nano-manual' } },
+  { path: '/works/:workId(\\d+)', redirect: { name: 'work' } },
+  { path: '/works/:workId(\\d+)/edit', redirect: { name: 'edit-work' } },
 
   // Goals
   { path: '/goals', name: 'goals', component: GoalsListPage },

@@ -2,50 +2,50 @@ import "@typespec/http";
 using Http;
 namespace TrackBear;
 
-@route("/work")
+@route("/project")
 @tag("Projects")
-namespace Works {
+namespace Projects {
   @summary("List projects")
-  op list is WorkCrud.list;
+  op list is ProjectCrud.list;
 
   @summary("Get a project")
-  op get is WorkCrud.get;
+  op get is ProjectCrud.get;
 
   @summary("Create a project")
-  op create is WorkCrud.create;
+  op create is ProjectCrud.create;
 
   @summary("Update a project")
-  op update is WorkCrud.update;
+  op update is ProjectCrud.update;
 
   @summary("Delete a project")
-  op delete is WorkCrud.delete;
+  op delete is ProjectCrud.delete;
 
   @summary("Upload project cover")
   @doc("Upload a cover image for the project. Allowed formats include APNG, AVIF, GIF, JPEG, PNG, SVG, and WebP.")
   @route("/{id}/cover")
   @post
-  op uploadCover(@path id: id, @body image: ImageFile): Success<OkResponse, Work>;
+  op uploadCover(@path id: id, @body image: ImageFile): Success<OkResponse, Project>;
 
   @summary("Delete project cover")
   @route("/{id}/cover")
   @delete
-  op deleteCover(@path id: id): Success<OkResponse, Work>;
+  op deleteCover(@path id: id): Success<OkResponse, Project>;
 
-  alias WorkCrud = Crud<
-    Work,
-    ListModel = SummarizedWork,
-    GetModel = WorkWithTallies,
-    CreatePayload = CreateWorkPayload,
-    UpdatePayload = UpdateWorkPayload
+  alias ProjectCrud = Crud<
+    Project,
+    ListModel = SummarizedProject,
+    GetModel = ProjectWithTallies,
+    CreatePayload = CreateProjectPayload,
+    UpdatePayload = UpdateProjectPayload
   >;
 
-  model Work {
+  model Project {
     ...DbProps;
-    ...StateProps<WorkState>;
+    ...StateProps<ProjectState>;
     ...OwnerProps;
     title: string;
     description: string;
-    phase: WorkPhase;
+    phase: ProjectPhase;
     startingBalance: MeasureCounts;
 
     @visibility(Lifecycle.Read)
@@ -55,27 +55,27 @@ namespace Works {
     ...ProfileProps;
   }
 
-  model SummarizedWork extends Work {
+  model SummarizedProject extends Project {
     totals: MeasureCounts;
     lastUpdated: plaindate | null;
   }
 
-  model WorkWithTallies extends Work {
+  model ProjectWithTallies extends Project {
     tallies: TallyWithTags[];
   }
   model TallyWithTags extends Tallies.Tally {
     tags: Tags.Tag[];
   }
 
-  model CreateWorkPayload is Create<Work>;
-  model UpdateWorkPayload is Update<Work>;
+  model CreateProjectPayload is Create<Project>;
+  model UpdateProjectPayload is Update<Project>;
 
-  enum WorkState {
+  enum ProjectState {
     active: "active",
     deleted: "deleted",
   }
 
-  enum WorkPhase {
+  enum ProjectPhase {
     planning: "planning",
     outlining: "outlining",
     drafting: "drafting",

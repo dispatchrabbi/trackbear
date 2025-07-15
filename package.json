@@ -35,7 +35,7 @@
     "build": "node --run build:prod",
     "build:prod": "docker build -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t dispatchrabbi/trackbear:latest --target prod .",
     "build:prod:progress": "docker build --progress=plain -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t dispatchrabbi/trackbear:latest --target prod .",
-    "compile": "node --run compile:db && node --run compile:client && node --run compile:api && node --run && compile:help",
+    "compile": "node --run compile:db && node --run compile:client && node --run compile:api && node --run compile:help",
     "compile:db": "npx prisma generate --no-hints",
     "compile:client": "npx vue-tsc && npx vite build --emptyOutDir",
     "compile:api": "npx tsp compile .",

@@ -4,7 +4,7 @@ Projects are where you track your writing progress, so let's make one.
 
 ## Creating the project
 
-Start by going to the [Projects](https://trackbear.app/works) page by clicking **Projects** in the sidebar on the left-hand side of your screen. (If you're on mobile, you may have to hit the menu button to expand the sidebar.)
+Start by going to the [Projects](https://trackbear.appprojects) page by clicking **Projects** in the sidebar on the left-hand side of your screen. (If you're on mobile, you may have to hit the menu button to expand the sidebar.)
 
 The Projects page looks like this:
 
