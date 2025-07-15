@@ -14,12 +14,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Install correct node version
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
       - name: Install dependencies
         run: npm ci
-      - name: Build OpenAPI schema
-        run: npm run api
       - name: Build help docs
-        run: npm run compile:help
+        run: |
+          npm run compile:api
+          npm run compile:help
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
