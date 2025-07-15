@@ -1,3 +1,5 @@
+import type { RouteRecordRaw } from 'vue-router';
+
 import PlaceholderPage from 'src/pages/PlaceholderPage.vue';
 
 import HomePage from 'src/pages/HomePage.vue';
@@ -54,7 +56,7 @@ import JoinLeaderboardPage from 'src/pages/leaderboards/JoinLeaderboardPage.vue'
 
 import LifetimeStatsPage from 'src/pages/stats/LifetimeStats.vue';
 
-const routes = [
+const routes: RouteRecordRaw[] = [
   // Public pages (no auth required)
   { path: '/', name: 'home', component: HomePage },
   { path: '/maintenance', name: 'maintenance', component: MaintenancePage },
