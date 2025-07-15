@@ -81,3 +81,4 @@ uploads
 # VitePress
 help-docs/.vitepress/dist
 help-docs/.vitepress/cache
+help-docs/.vitepress/trackbear-help.tar.gz
