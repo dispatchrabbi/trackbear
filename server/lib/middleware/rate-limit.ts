@@ -18,9 +18,9 @@ async function rateLimit() {
     legacyHeaders: false,
     keyGenerator: (req/* , res */) => {
       // if we're using an API Key, rate-limit on that key
-      const apiKey = getApiTokenFromRequest(req);
-      if(apiKey) {
-        return apiKey;
+      const apiToken = getApiTokenFromRequest(req);
+      if(apiToken) {
+        return apiToken;
       }
 
       // if there's a session, rate-limit on the session

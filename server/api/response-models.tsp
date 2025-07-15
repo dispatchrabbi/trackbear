@@ -28,7 +28,8 @@ model NotFoundFailure is Failure<NotFoundResponse, "NOT_FOUND">;
 @error
 model ServerErrorFailure is Failure<Response<500>, "SERVER_ERROR">;
 
-alias TrackBearAuth = ApiKeyAuth<ApiKeyLocation.header, "x-api-token">;
+model TrackBearAuthToken is ApiKeyAuth<ApiKeyLocation.header, "x-api-token">;
+alias TrackBearerAuth = BearerAuth;
 
 interface Crud<
   M extends Reflection.Model,

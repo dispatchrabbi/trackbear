@@ -2,9 +2,9 @@ import { promisify } from 'node:util';
 import type { User } from 'generated/prisma/client';
 import type { Request } from 'express';
 
-import { API_TOKEN_HEADER } from './auth-consts.ts';
 import { USER_STATE } from './models/user/consts.ts';
 import { UserModel } from './models/user/user-model.ts';
+import { AUTHORIZATION_SCHEME } from './auth-consts.ts';
 
 type SessionWithAuth = { session: { auth?: null | { id: number } } };
 export type WithSessionAuth<R> = R & SessionWithAuth;
@@ -29,8 +29,15 @@ function _logOut(req: WithSessionAuth<Request>, cb: (err: unknown) => void): voi
 export const logOut = promisify(_logOut);
 
 export function getApiTokenFromRequest(req: Request): string | null {
-  const apiToken = req.header(API_TOKEN_HEADER);
-  return apiToken ?? null;
+  let apiToken = null;
+
+  const prefix = AUTHORIZATION_SCHEME + ' ';
+  const authorization = req.header('Authorization');
+  if(authorization && authorization.startsWith(prefix) && authorization.length > prefix.length) {
+    apiToken = authorization.substring(prefix.length);
+  }
+
+  return apiToken;
 }
 
 export async function getUserFromApiToken(apiToken: string) {

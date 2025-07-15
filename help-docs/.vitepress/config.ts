@@ -1,5 +1,14 @@
 import { defineConfig } from 'vitepress';
 
+import { useSidebar } from 'vitepress-openapi';
+import spec from '../public/openapi/openapi.json' with { type: 'json' };
+
+const apiSidebar = useSidebar({
+  spec,
+  // Optionally, you can specify a link prefix for all generated sidebar items. Default is `/operations/`.
+  linkPrefix: '/api/',
+});
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: 'TrackBear Help',
@@ -20,44 +29,72 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Using Trackbear', link: '/using-trackbear/tracking-progress' },
       { text: 'Getting Started Guide', link: '/getting-started/introduction' },
+      { text: 'API Docs', link: '/api' },
     ],
 
-    sidebar: [
-      {
-        text: 'Getting Started Guide',
-        items: [
-          { text: 'Introduction', link: '/getting-started/introduction' },
-          { text: 'Sign Up', link: '/getting-started/signing-up' },
-          { text: 'Make a Project', link: '/getting-started/make-a-project' },
+    sidebar: {
+      '/getting-started/': [
+        {
+          text: 'Getting Started Guide',
+          items: [
+            { text: 'Introduction', link: '/getting-started/introduction' },
+            { text: 'Sign Up', link: '/getting-started/signing-up' },
+            { text: 'Make a Project', link: '/getting-started/make-a-project' },
           // { text: 'Make a Goal', link: '/getting-started/make-a-goal' },
           // { text: 'Join a Leaderboard', link: '/getting-started/join-a-leaderboard' },
-        ],
-      },
-      {
-        text: 'Using Trackbear',
-        items: [
-          { text: 'Tracking Progress', link: '/using-trackbear/tracking-progress' },
-          { text: 'Projects', link: '/using-trackbear/projects' },
-          { text: 'Goals', link: '/using-trackbear/goals' },
-        ],
-      },
-      {
-        text: 'Your Account',
-        items: [
-          { text: 'Managing Your Account', link: '/settings/account' },
-          // { text: 'Settings', link: '/settings/settings' },
-          // { text: 'Tags', link: '/settings/tags' },
-          { text: 'Public Profile', link: '/settings/public-profile' },
-        ],
-      },
-      {
-        // faq
-        items: [
-          { text: 'Looking for an app?', link: '/faq/looking-for-an-app' },
-        ],
-      },
-
-    ],
+          ],
+        },
+      ],
+      '/api/': [
+        {
+          text: 'Overview',
+          items: [
+            { text: 'Introduction', link: '/api' },
+            { text: 'Response Format', link: '/api/response-format' },
+            { text: 'Authentication', link: '/api/authentication' },
+            { text: 'Rate Limits', link: '/api/rate-limits' },
+          ],
+        },
+        ...apiSidebar.generateSidebarGroups({
+          tags: ['Tallies', 'Projects', 'Goals', 'Leaderboards', 'Tags', 'Stats', 'Other'],
+          linkPrefix: '/api/',
+          sidebarItemTemplate: ({ method, path, title }) => {
+            const operation = spec.paths[path]?.[method];
+            const displayText = title || (operation ? operation.summary : path);
+            return `
+<div class="OASidebarItem group/oaOperationLink">
+  <span class="OASidebarItem-badge OAMethodBadge--${method.toLowerCase()}">${method.toUpperCase()}</span><span class="text">${displayText}</span>
+</div>
+            `.trim();
+          },
+        }),
+      ],
+      '/': [
+        {
+          text: 'Using Trackbear',
+          items: [
+            { text: 'Tracking Progress', link: '/using-trackbear/tracking-progress' },
+            { text: 'Projects', link: '/using-trackbear/projects' },
+            { text: 'Goals', link: '/using-trackbear/goals' },
+          ],
+        },
+        {
+          text: 'Your Account',
+          items: [
+            { text: 'Managing Your Account', link: '/settings/account' },
+            // { text: 'Settings', link: '/settings/settings' },
+            // { text: 'Tags', link: '/settings/tags' },
+            { text: 'Public Profile', link: '/settings/public-profile' },
+          ],
+        },
+        {
+          text: 'FAQ',
+          items: [
+            { text: 'Looking for an app?', link: '/faq/looking-for-an-app' },
+          ],
+        },
+      ],
+    },
 
     footer: {
       message: 'Made with 🐻 by @dispatchrabbi.',

@@ -77,6 +77,12 @@ COPY --chown=node:node . .
 ENV DB_APP_DB_URL=dummy
 RUN node --run compile:db
 
+# Compile the API
+RUN node --run compile:api
+
+# Compile the help docs
+RUN node --run compile:help
+
 # Compile the front-end
 RUN node --run compile:client
 

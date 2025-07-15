@@ -33,7 +33,7 @@
     },
   },
   "include": [
-    "help-docs/**/*.ts", "help-docs/.vitepress/*.ts",
+    "help-docs/**/*.ts", "help-docs/.vitepress/**/*.ts",
     "prisma/**/*.ts",
     "scripts/**/*.ts", "scripts/**/*.js",
     "src/**/*.ts", "src/**/*.js", "src/**/*.vue",

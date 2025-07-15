@@ -1,13 +1,13 @@
 import { ZodSchema } from 'zod';
 import type { Request, Response, NextFunction } from 'express';
-import { failure } from '../api-response.ts';
+import { failure, FAILURE_CODES } from '../api-response.ts';
 
 function validateBody(schema: ZodSchema) {
   return function validateBody(req: Request, res: Response, next: NextFunction) {
     const parsed = schema.safeParse(req.body);
     if(parsed.success === false) {
       const errorMessages = parsed.error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}.`);
-      res.status(400).send(failure('VALIDATION_FAILED', `Payload validation failed: ${errorMessages.join(' ')}`));
+      res.status(400).send(failure(FAILURE_CODES.VALIDATION_FAILED, `Payload validation failed: ${errorMessages.join(' ')}`));
       return;
     }
 
@@ -21,7 +21,7 @@ function validateParams(schema: ZodSchema) {
     const parsed = schema.safeParse(req.params);
     if(parsed.success === false) {
       const errorMessages = parsed.error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}.`);
-      res.status(400).send(failure('VALIDATION_FAILED', `Param validation failed: ${errorMessages.join(' ')}`));
+      res.status(400).send(failure(FAILURE_CODES.VALIDATION_FAILED, `URL parameter validation failed: ${errorMessages.join(' ')}`));
       return;
     }
 
@@ -34,7 +34,7 @@ function validateQuery(schema: ZodSchema) {
     const parsed = schema.safeParse(req.query);
     if(parsed.success === false) {
       const errorMessages = parsed.error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}.`);
-      res.status(400).send(failure('VALIDATION_FAILED', `Query validation failed: ${errorMessages.join(' ')}`));
+      res.status(400).send(failure(FAILURE_CODES.VALIDATION_FAILED, `Query validation failed: ${errorMessages.join(' ')}`));
       return;
     }
 

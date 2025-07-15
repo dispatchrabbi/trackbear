@@ -1,0 +1,3690 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TrackBear",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Goals"
+    },
+    {
+      "name": "Leaderboards"
+    },
+    {
+      "name": "Stats"
+    },
+    {
+      "name": "Other"
+    },
+    {
+      "name": "Tags"
+    },
+    {
+      "name": "Tallies"
+    },
+    {
+      "name": "Projects"
+    }
+  ],
+  "paths": {
+    "/goal": {
+      "get": {
+        "operationId": "Goals_list",
+        "summary": "List goals",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Goals.GoalWithAchievement"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Goals"
+        ]
+      },
+      "post": {
+        "operationId": "Goals_create",
+        "summary": "Create a goal",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Goals.Goal"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Goals"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Goals.CreateGoalPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goal/batch": {
+      "post": {
+        "operationId": "Goals_batchCreate",
+        "summary": "Create multiple goals",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Goals.Goal"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Goals"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Goals.Goal"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/goal/{id}": {
+      "get": {
+        "operationId": "Goals_get",
+        "summary": "Get a goal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Goals.Goal"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Goals"
+        ]
+      },
+      "patch": {
+        "operationId": "Goals_update",
+        "summary": "Update a goal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Goals.Goal"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Goals"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Goals.UpdateGoalPayload"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Goals_delete",
+        "summary": "Delete a goal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Goals.Goal"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Goals"
+        ]
+      }
+    },
+    "/leaderboard": {
+      "get": {
+        "operationId": "Leaderboards_list",
+        "summary": "List leaderboards",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Leaderboards.LeaderboardSummary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ]
+      },
+      "post": {
+        "operationId": "Leaderboards_create",
+        "summary": "Create a leaderboard",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Leaderboard"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Leaderboards.CreateLeaderboardPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/leaderboard/joincode/{joincode}": {
+      "get": {
+        "operationId": "Leaderboards_getByJoinCode",
+        "summary": "Get a leaderboard by join code",
+        "parameters": [
+          {
+            "name": "joincode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Leaderboard"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns 409 if the requested leaderboard is not currently joinable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "CANNOT_JOIN"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ]
+      }
+    },
+    "/leaderboard/{uuid}": {
+      "get": {
+        "operationId": "Leaderboards_getByUuid",
+        "summary": "Get a leaderboard",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Leaderboard"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ]
+      },
+      "patch": {
+        "operationId": "Leaderboards_update",
+        "summary": "Update a leaderboard",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Leaderboard"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Leaderboards.UpdateLeaderboardPayload"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Leaderboards_delete",
+        "summary": "Delete a leaderboard",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Leaderboard"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ]
+      }
+    },
+    "/leaderboard/{uuid}/me": {
+      "get": {
+        "operationId": "Leaderboards_getMyParticipation",
+        "summary": "Get your participation",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Participation"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ]
+      },
+      "post": {
+        "operationId": "Leaderboards_joinBoard",
+        "summary": "Join a leaderboard",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Member"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns 409 if the requested leaderboard is not currently joinable or if you have already joined.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "CANNOT_JOIN",
+                        "ALREADY_JOINED"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Leaderboards.UpdateParticipation"
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "Leaderboards_updateMyParticipation",
+        "summary": "Update your participation",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Member"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Leaderboards.UpdateParticipation"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Leaderboards_leaveBoard",
+        "summary": "Leave a leaderboard",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Member"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns 409 if you are the only owner of the leaderboard.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ONLY_OWNER"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ]
+      }
+    },
+    "/leaderboard/{uuid}/members": {
+      "get": {
+        "operationId": "Leaderboards_listMembers",
+        "summary": "List leaderboard members",
+        "description": "Lists members of the leaderboard as leaderboard owners see them.",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Leaderboards.Membership"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ]
+      }
+    },
+    "/leaderboard/{uuid}/members/{memberId}": {
+      "patch": {
+        "operationId": "Leaderboards_updateMember",
+        "summary": "Update a leaderboard member",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          },
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Membership"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Leaderboards.UpdateMember"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Leaderboards_removeMember",
+        "summary": "Remove a leaderboard member",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          },
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Membership"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns 409 if the member being removed is the only owner of the leaderboard.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ONLY_OWNER"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ]
+      }
+    },
+    "/leaderboard/{uuid}/participants": {
+      "get": {
+        "operationId": "Leaderboards_listParticipants",
+        "summary": "List leaderboard participants",
+        "description": "Lists the participants of a leaderboard and relevant tallies.",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Leaderboards.Participant"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ]
+      }
+    },
+    "/leaderboard/{uuid}/star": {
+      "patch": {
+        "operationId": "Leaderboards_star",
+        "summary": "Star or unstar a leaderboard",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Starred"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Leaderboards.Starred"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ping": {
+      "get": {
+        "operationId": "Ping_ping",
+        "summary": "Ping",
+        "description": "This endpoint will always return 200, as a way to test API connectivity.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "ping"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Other"
+        ]
+      }
+    },
+    "/ping/api-token": {
+      "get": {
+        "operationId": "Ping_apiTokenPing",
+        "summary": "Ping with API token",
+        "description": "This endpoint will only return 200 when an API token is passed, as a way to test that you are using the API correctly.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "ping"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Other"
+        ]
+      }
+    },
+    "/stats/days": {
+      "get": {
+        "operationId": "Stats_list",
+        "summary": "List total counts per day",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/plaindate"
+            },
+            "explode": false
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/plaindate"
+            },
+            "explode": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Stats.DayCount"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Stats"
+        ]
+      }
+    },
+    "/tag": {
+      "get": {
+        "operationId": "Tags_list",
+        "summary": "List tags",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tags.Tag"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tags"
+        ]
+      },
+      "post": {
+        "operationId": "Tags_create",
+        "summary": "Create a tag",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tags.Tag"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns 400 if a tag with the given name already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ALREADY_EXISTS"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tags"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Tags.CreateTagPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tag/{id}": {
+      "get": {
+        "operationId": "Tags_get",
+        "summary": "Get a tag",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tags.Tag"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tags"
+        ]
+      },
+      "patch": {
+        "operationId": "Tags_update",
+        "summary": "Update a tag",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tags.Tag"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns 400 if a tag with the given name already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": [
+                        "ALREADY_EXISTS"
+                      ]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tags"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Tags.UpdateTagPayload"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Tags_delete",
+        "summary": "Delete a tag",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tags.Tag"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tags"
+        ]
+      }
+    },
+    "/tally": {
+      "get": {
+        "operationId": "Tallies_list",
+        "summary": "List tallies",
+        "parameters": [
+          {
+            "name": "works",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/id"
+              }
+            },
+            "explode": false
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/id"
+              }
+            },
+            "explode": false
+          },
+          {
+            "name": "measure",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/TallyMeasure"
+            },
+            "explode": false
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/plaindate"
+            },
+            "explode": false
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/plaindate"
+            },
+            "explode": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tallies.TallyWithWorkAndTags"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tallies"
+        ]
+      },
+      "post": {
+        "operationId": "Tallies_create",
+        "summary": "Create a tally",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tallies.TallyWithWorkAndTags"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tallies"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Tallies.CreateTallyPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tally/batch": {
+      "post": {
+        "operationId": "Tallies_batchCreate",
+        "summary": "Create multiple tallies",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tallies.Tally"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tallies"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Tallies.BatchCreateTallyPayload"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tally/{id}": {
+      "get": {
+        "operationId": "Tallies_get",
+        "summary": "Get a tally",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tallies.TallyWithWorkAndTags"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tallies"
+        ]
+      },
+      "patch": {
+        "operationId": "Tallies_update",
+        "summary": "Update a tally",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tallies.TallyWithWorkAndTags"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tallies"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Tallies.UpdateTallyPayload"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Tallies_delete",
+        "summary": "Delete a tally",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tallies.TallyWithWorkAndTags"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tallies"
+        ]
+      }
+    },
+    "/work": {
+      "get": {
+        "operationId": "Works_list",
+        "summary": "List projects",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Works.SummarizedWork"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ]
+      },
+      "post": {
+        "operationId": "Works_create",
+        "summary": "Create a project",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Works.WorkWithTallies"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Works.CreateWorkPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/work/{id}": {
+      "get": {
+        "operationId": "Works_get",
+        "summary": "Get a project",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Works.WorkWithTallies"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ]
+      },
+      "patch": {
+        "operationId": "Works_update",
+        "summary": "Update a project",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Works.WorkWithTallies"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Works.UpdateWorkPayload"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Works_delete",
+        "summary": "Delete a project",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Works.WorkWithTallies"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ]
+      }
+    },
+    "/work/{id}/cover": {
+      "post": {
+        "operationId": "Works_uploadCover",
+        "summary": "Upload project cover",
+        "description": "Upload a cover image for the project. Allowed formats include APNG, AVIF, GIF, JPEG, PNG, SVG, and WebP.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Works.Work"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "image/png": {
+              "schema": {
+                "contentMediaType": "image/png"
+              }
+            },
+            "image/jpeg": {
+              "schema": {
+                "contentMediaType": "image/jpeg"
+              }
+            },
+            "image/webp": {
+              "schema": {
+                "contentMediaType": "image/webp"
+              }
+            },
+            "image/svg": {
+              "schema": {
+                "contentMediaType": "image/svg"
+              }
+            },
+            "image/gif": {
+              "schema": {
+                "contentMediaType": "image/gif"
+              }
+            },
+            "image/apng": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "contentMediaType": "image/apng"
+                  },
+                  {
+                    "contentMediaType": "image/apng"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Works_deleteCover",
+        "summary": "Delete project cover",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Works.Work"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Goals.CreateGoalPayload": {
+        "type": "object",
+        "required": [
+          "title",
+          "description",
+          "type",
+          "parameters",
+          "startDate",
+          "endDate",
+          "workIds",
+          "tagIds"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "target",
+              "habit"
+            ]
+          },
+          "parameters": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Goals.TargetParameters"
+              },
+              {
+                "$ref": "#/components/schemas/Goals.HabitParameters"
+              }
+            ]
+          },
+          "startDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "endDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "starred": {
+            "type": "boolean",
+            "default": false
+          },
+          "displayOnProfile": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "description": ""
+      },
+      "Goals.Goal": {
+        "type": "object",
+        "required": [
+          "id",
+          "uuid",
+          "createdAt",
+          "updatedAt",
+          "state",
+          "ownerId",
+          "title",
+          "description",
+          "type",
+          "parameters",
+          "startDate",
+          "endDate",
+          "workIds",
+          "tagIds"
+        ],
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "uuid": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/uuid"
+              }
+            ],
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Goals.GoalState"
+              }
+            ],
+            "readOnly": true
+          },
+          "ownerId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "target",
+              "habit"
+            ]
+          },
+          "parameters": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Goals.TargetParameters"
+              },
+              {
+                "$ref": "#/components/schemas/Goals.HabitParameters"
+              }
+            ]
+          },
+          "startDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "endDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "starred": {
+            "type": "boolean",
+            "default": false
+          },
+          "displayOnProfile": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "Goals.GoalCadence": {
+        "type": "string",
+        "enum": [
+          "day",
+          "week",
+          "month",
+          "year"
+        ]
+      },
+      "Goals.GoalState": {
+        "type": "string",
+        "enum": [
+          "active",
+          "deleted"
+        ]
+      },
+      "Goals.GoalWithAchievement": {
+        "type": "object",
+        "required": [
+          "id",
+          "uuid",
+          "createdAt",
+          "updatedAt",
+          "state",
+          "ownerId",
+          "title",
+          "description",
+          "type",
+          "parameters",
+          "startDate",
+          "endDate",
+          "workIds",
+          "tagIds",
+          "achieved"
+        ],
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "uuid": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/uuid"
+              }
+            ],
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Goals.GoalState"
+              }
+            ],
+            "readOnly": true
+          },
+          "ownerId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "target",
+              "habit"
+            ]
+          },
+          "parameters": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Goals.TargetParameters"
+              },
+              {
+                "$ref": "#/components/schemas/Goals.HabitParameters"
+              }
+            ]
+          },
+          "startDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "endDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "starred": {
+            "type": "boolean",
+            "default": false
+          },
+          "displayOnProfile": {
+            "type": "boolean",
+            "default": false
+          },
+          "achieved": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Goals.HabitParameters": {
+        "type": "object",
+        "required": [
+          "threshold",
+          "cadence"
+        ],
+        "properties": {
+          "threshold": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "measure": {
+                    "$ref": "#/components/schemas/TallyMeasure"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "format": "uint32"
+                  }
+                },
+                "required": [
+                  "measure",
+                  "count"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cadence": {
+            "type": "object",
+            "properties": {
+              "period": {
+                "type": "integer",
+                "format": "uint32"
+              },
+              "unit": {
+                "$ref": "#/components/schemas/Goals.GoalCadence"
+              }
+            },
+            "required": [
+              "period",
+              "unit"
+            ]
+          }
+        }
+      },
+      "Goals.HabitParametersUpdate": {
+        "type": "object",
+        "properties": {
+          "threshold": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "measure": {
+                    "$ref": "#/components/schemas/TallyMeasure"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "format": "uint32"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cadence": {
+            "type": "object",
+            "properties": {
+              "period": {
+                "type": "integer",
+                "format": "uint32"
+              },
+              "unit": {
+                "$ref": "#/components/schemas/Goals.GoalCadence"
+              }
+            }
+          }
+        }
+      },
+      "Goals.TargetParameters": {
+        "type": "object",
+        "required": [
+          "threshold"
+        ],
+        "properties": {
+          "threshold": {
+            "type": "object",
+            "properties": {
+              "measure": {
+                "$ref": "#/components/schemas/TallyMeasure"
+              },
+              "count": {
+                "type": "integer",
+                "format": "uint32"
+              }
+            },
+            "required": [
+              "measure",
+              "count"
+            ]
+          }
+        }
+      },
+      "Goals.TargetParametersUpdate": {
+        "type": "object",
+        "properties": {
+          "threshold": {
+            "type": "object",
+            "properties": {
+              "measure": {
+                "$ref": "#/components/schemas/TallyMeasure"
+              },
+              "count": {
+                "type": "integer",
+                "format": "uint32"
+              }
+            }
+          }
+        }
+      },
+      "Goals.UpdateGoalPayload": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "target",
+              "habit"
+            ]
+          },
+          "parameters": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Goals.TargetParametersUpdate"
+              },
+              {
+                "$ref": "#/components/schemas/Goals.HabitParametersUpdate"
+              }
+            ]
+          },
+          "startDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "endDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "starred": {
+            "type": "boolean",
+            "default": false
+          },
+          "displayOnProfile": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "description": ""
+      },
+      "Leaderboards.CreateLeaderboardPayload": {
+        "type": "object",
+        "required": [
+          "title",
+          "description",
+          "startDate",
+          "endDate",
+          "individualGoalMode",
+          "fundraiserMode",
+          "measures",
+          "goal",
+          "isJoinable"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "endDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "individualGoalMode": {
+            "type": "boolean"
+          },
+          "fundraiserMode": {
+            "type": "boolean"
+          },
+          "measures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TallyMeasure"
+            }
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeasureCounts"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isJoinable": {
+            "type": "boolean"
+          },
+          "starred": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "description": ""
+      },
+      "Leaderboards.Leaderboard": {
+        "type": "object",
+        "required": [
+          "id",
+          "uuid",
+          "createdAt",
+          "updatedAt",
+          "state",
+          "ownerId",
+          "title",
+          "description",
+          "startDate",
+          "endDate",
+          "individualGoalMode",
+          "fundraiserMode",
+          "measures",
+          "goal",
+          "isJoinable"
+        ],
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "uuid": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/uuid"
+              }
+            ],
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Leaderboards.LeaderboardState"
+              }
+            ],
+            "readOnly": true
+          },
+          "ownerId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "endDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "individualGoalMode": {
+            "type": "boolean"
+          },
+          "fundraiserMode": {
+            "type": "boolean"
+          },
+          "measures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TallyMeasure"
+            }
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeasureCounts"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isJoinable": {
+            "type": "boolean"
+          },
+          "starred": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "Leaderboards.LeaderboardParticipantState": {
+        "type": "string",
+        "enum": [
+          "active"
+        ]
+      },
+      "Leaderboards.LeaderboardState": {
+        "type": "string",
+        "enum": [
+          "active",
+          "deleted"
+        ]
+      },
+      "Leaderboards.LeaderboardSummary": {
+        "type": "object",
+        "required": [
+          "members"
+        ],
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/id"
+                    }
+                  ],
+                  "readOnly": true
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "avatar": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "isParticipant": {
+                  "type": "boolean"
+                },
+                "isOwner": {
+                  "type": "boolean"
+                },
+                "userUuid": {
+                  "$ref": "#/components/schemas/uuid"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "avatar",
+                "isParticipant",
+                "isOwner",
+                "userUuid"
+              ]
+            }
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Leaderboards.Leaderboard"
+          }
+        ]
+      },
+      "Leaderboards.LeaderboardTally": {
+        "type": "object",
+        "required": [
+          "uuid",
+          "date",
+          "measure",
+          "count"
+        ],
+        "properties": {
+          "uuid": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/uuid"
+              }
+            ],
+            "readOnly": true
+          },
+          "date": {
+            "$ref": "#/components/schemas/plaindate"
+          },
+          "measure": {
+            "$ref": "#/components/schemas/TallyMeasure"
+          },
+          "count": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        },
+        "description": "The template for picking properties."
+      },
+      "Leaderboards.Member": {
+        "type": "object",
+        "required": [
+          "id",
+          "uuid",
+          "createdAt",
+          "updatedAt",
+          "userId",
+          "boardId",
+          "state",
+          "displayName",
+          "avatar",
+          "isParticipant",
+          "isOwner",
+          "goal",
+          "workIds",
+          "tagIds"
+        ],
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "uuid": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/uuid"
+              }
+            ],
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "userId": {
+            "$ref": "#/components/schemas/id"
+          },
+          "boardId": {
+            "$ref": "#/components/schemas/id"
+          },
+          "state": {
+            "$ref": "#/components/schemas/Leaderboards.LeaderboardParticipantState"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "avatar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isParticipant": {
+            "type": "boolean"
+          },
+          "isOwner": {
+            "type": "boolean"
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Leaderboards.ParticipantGoal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        }
+      },
+      "Leaderboards.Membership": {
+        "type": "object",
+        "required": [
+          "id",
+          "uuid",
+          "state",
+          "displayName",
+          "avatar",
+          "isParticipant",
+          "isOwner"
+        ],
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "uuid": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/uuid"
+              }
+            ],
+            "readOnly": true
+          },
+          "state": {
+            "$ref": "#/components/schemas/Leaderboards.LeaderboardParticipantState"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "avatar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isParticipant": {
+            "type": "boolean"
+          },
+          "isOwner": {
+            "type": "boolean"
+          }
+        },
+        "description": "The template for picking properties."
+      },
+      "Leaderboards.Participant": {
+        "type": "object",
+        "required": [
+          "id",
+          "uuid",
+          "displayName",
+          "avatar",
+          "goal",
+          "tallies"
+        ],
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "uuid": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/uuid"
+              }
+            ],
+            "readOnly": true
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "avatar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Leaderboards.ParticipantGoal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tallies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Leaderboards.LeaderboardTally"
+            }
+          }
+        }
+      },
+      "Leaderboards.ParticipantGoal": {
+        "type": "object",
+        "required": [
+          "measure",
+          "count"
+        ],
+        "properties": {
+          "measure": {
+            "$ref": "#/components/schemas/TallyMeasure"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Leaderboards.Participation": {
+        "type": "object",
+        "required": [
+          "id",
+          "isParticipant",
+          "goal",
+          "workIds",
+          "tagIds"
+        ],
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "isParticipant": {
+            "type": "boolean"
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Leaderboards.ParticipantGoal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        },
+        "description": "The template for picking properties."
+      },
+      "Leaderboards.Starred": {
+        "type": "object",
+        "required": [
+          "starred"
+        ],
+        "properties": {
+          "starred": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Leaderboards.UpdateLeaderboardPayload": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "endDate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "individualGoalMode": {
+            "type": "boolean"
+          },
+          "fundraiserMode": {
+            "type": "boolean"
+          },
+          "measures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TallyMeasure"
+            }
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeasureCounts"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isJoinable": {
+            "type": "boolean"
+          },
+          "starred": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "description": ""
+      },
+      "Leaderboards.UpdateMember": {
+        "type": "object",
+        "properties": {
+          "isOwner": {
+            "type": "boolean"
+          }
+        },
+        "description": "The template for adding optional properties."
+      },
+      "Leaderboards.UpdateParticipation": {
+        "type": "object",
+        "required": [
+          "isParticipant",
+          "goal",
+          "workIds",
+          "tagIds"
+        ],
+        "properties": {
+          "isParticipant": {
+            "type": "boolean"
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Leaderboards.ParticipantGoal"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        },
+        "description": ""
+      },
+      "MeasureCounts": {
+        "type": "object",
+        "properties": {
+          "word": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "time": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "page": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "chapter": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "scene": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "line": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "NotFoundFailure": {
+        "type": "object",
+        "required": [
+          "body"
+        ],
+        "properties": {
+          "body": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "enum": [
+                  false
+                ]
+              },
+              "code": {
+                "type": "string",
+                "enum": [
+                  "NOT_FOUND"
+                ]
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "success",
+              "code",
+              "message"
+            ],
+            "description": "The body type of the operation request or response."
+          }
+        }
+      },
+      "ServerErrorFailure": {
+        "type": "object",
+        "required": [
+          "body"
+        ],
+        "properties": {
+          "body": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "enum": [
+                  false
+                ]
+              },
+              "code": {
+                "type": "string",
+                "enum": [
+                  "SERVER_ERROR"
+                ]
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "success",
+              "code",
+              "message"
+            ],
+            "description": "The body type of the operation request or response."
+          }
+        }
+      },
+      "Stats.DayCount": {
+        "type": "object",
+        "required": [
+          "date",
+          "counts"
+        ],
+        "properties": {
+          "date": {
+            "$ref": "#/components/schemas/plaindate"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/MeasureCounts"
+          }
+        }
+      },
+      "Tags.CreateTagPayload": {
+        "type": "object",
+        "required": [
+          "name",
+          "color"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "enum": [
+              "default",
+              "red",
+              "orange",
+              "yellow",
+              "green",
+              "blue",
+              "purple",
+              "brown",
+              "white",
+              "black",
+              "gray"
+            ]
+          }
+        },
+        "description": ""
+      },
+      "Tags.Tag": {
+        "type": "object",
+        "required": [
+          "id",
+          "uuid",
+          "createdAt",
+          "updatedAt",
+          "state",
+          "ownerId",
+          "name",
+          "color"
+        ],
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "uuid": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/uuid"
+              }
+            ],
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Tags.TagState"
+              }
+            ],
+            "readOnly": true
+          },
+          "ownerId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "enum": [
+              "default",
+              "red",
+              "orange",
+              "yellow",
+              "green",
+              "blue",
+              "purple",
+              "brown",
+              "white",
+              "black",
+              "gray"
+            ]
+          }
+        }
+      },
+      "Tags.TagState": {
+        "type": "string",
+        "enum": [
+          "active",
+          "deleted"
+        ]
+      },
+      "Tags.UpdateTagPayload": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "enum": [
+              "default",
+              "red",
+              "orange",
+              "yellow",
+              "green",
+              "blue",
+              "purple",
+              "brown",
+              "white",
+              "black",
+              "gray"
+            ]
+          }
+        },
+        "description": ""
+      },
+      "Tallies.BatchCreateTallyPayload": {
+        "type": "object",
+        "required": [
+          "date",
+          "measure",
+          "count",
+          "note",
+          "workId",
+          "tags"
+        ],
+        "properties": {
+          "date": {
+            "$ref": "#/components/schemas/plaindate"
+          },
+          "measure": {
+            "$ref": "#/components/schemas/TallyMeasure"
+          },
+          "count": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "note": {
+            "type": "string"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/id"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "The template for omitting properties."
+      },
+      "Tallies.CreateTallyPayload": {
+        "type": "object",
+        "required": [
+          "date",
+          "measure",
+          "count",
+          "note",
+          "workId",
+          "setTotal",
+          "tags"
+        ],
+        "properties": {
+          "date": {
+            "$ref": "#/components/schemas/plaindate"
+          },
+          "measure": {
+            "$ref": "#/components/schemas/TallyMeasure"
+          },
+          "count": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "note": {
+            "type": "string"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/id"
+          },
+          "setTotal": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Tallies.Tally": {
+        "type": "object",
+        "required": [
+          "id",
+          "uuid",
+          "createdAt",
+          "updatedAt",
+          "state",
+          "ownerId",
+          "date",
+          "measure",
+          "count",
+          "note",
+          "workId"
+        ],
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "uuid": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/uuid"
+              }
+            ],
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "state": {
+            "type": "string",
+            "readOnly": true
+          },
+          "ownerId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "date": {
+            "$ref": "#/components/schemas/plaindate"
+          },
+          "measure": {
+            "$ref": "#/components/schemas/TallyMeasure"
+          },
+          "count": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "note": {
+            "type": "string"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/id"
+          }
+        }
+      },
+      "Tallies.TallyState": {
+        "type": "string",
+        "enum": [
+          "active",
+          "deleted"
+        ]
+      },
+      "Tallies.TallyWithWorkAndTags": {
+        "type": "object",
+        "required": [
+          "work",
+          "tags"
+        ],
+        "properties": {
+          "work": {
+            "$ref": "#/components/schemas/Works.Work"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tags.Tag"
+            }
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Tallies.Tally"
+          }
+        ]
+      },
+      "Tallies.UpdateTallyPayload": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "$ref": "#/components/schemas/plaindate"
+          },
+          "measure": {
+            "$ref": "#/components/schemas/TallyMeasure"
+          },
+          "count": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "note": {
+            "type": "string"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/id"
+          },
+          "setTotal": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "The template for adding optional properties."
+      },
+      "TallyMeasure": {
+        "type": "string",
+        "enum": [
+          "word",
+          "time",
+          "page",
+          "chapter",
+          "scene",
+          "line"
+        ]
+      },
+      "TrackBearAuthToken": {
+        "type": "object",
+        "required": [
+          "type",
+          "in",
+          "name"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "apiKey"
+            ],
+            "description": "API key authentication"
+          },
+          "in": {
+            "type": "string",
+            "enum": [
+              "header"
+            ],
+            "description": "location of the API key"
+          },
+          "name": {
+            "type": "string",
+            "enum": [
+              "x-api-token"
+            ],
+            "description": "name of the API key"
+          }
+        },
+        "description": ""
+      },
+      "Works.CreateWorkPayload": {
+        "type": "object",
+        "required": [
+          "title",
+          "description",
+          "phase",
+          "startingBalance"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "phase": {
+            "$ref": "#/components/schemas/Works.WorkPhase"
+          },
+          "startingBalance": {
+            "$ref": "#/components/schemas/MeasureCounts"
+          },
+          "starred": {
+            "type": "boolean",
+            "default": false
+          },
+          "displayOnProfile": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "description": ""
+      },
+      "Works.SummarizedWork": {
+        "type": "object",
+        "required": [
+          "totals",
+          "lastUpdated"
+        ],
+        "properties": {
+          "totals": {
+            "$ref": "#/components/schemas/MeasureCounts"
+          },
+          "lastUpdated": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/plaindate"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Works.Work"
+          }
+        ]
+      },
+      "Works.TallyWithTags": {
+        "type": "object",
+        "required": [
+          "tags"
+        ],
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tags.Tag"
+            }
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Tallies.Tally"
+          }
+        ]
+      },
+      "Works.UpdateWorkPayload": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "phase": {
+            "$ref": "#/components/schemas/Works.WorkPhase"
+          },
+          "startingBalance": {
+            "$ref": "#/components/schemas/MeasureCounts"
+          },
+          "starred": {
+            "type": "boolean",
+            "default": false
+          },
+          "displayOnProfile": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "description": ""
+      },
+      "Works.Work": {
+        "type": "object",
+        "required": [
+          "id",
+          "uuid",
+          "createdAt",
+          "updatedAt",
+          "state",
+          "ownerId",
+          "title",
+          "description",
+          "phase",
+          "startingBalance",
+          "cover"
+        ],
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "uuid": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/uuid"
+              }
+            ],
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Works.WorkState"
+              }
+            ],
+            "readOnly": true
+          },
+          "ownerId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "phase": {
+            "$ref": "#/components/schemas/Works.WorkPhase"
+          },
+          "startingBalance": {
+            "$ref": "#/components/schemas/MeasureCounts"
+          },
+          "cover": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "readOnly": true
+          },
+          "starred": {
+            "type": "boolean",
+            "default": false
+          },
+          "displayOnProfile": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "Works.WorkPhase": {
+        "type": "string",
+        "enum": [
+          "planning",
+          "outlining",
+          "drafting",
+          "revising",
+          "on hold",
+          "finished",
+          "abandoned"
+        ]
+      },
+      "Works.WorkState": {
+        "type": "string",
+        "enum": [
+          "active",
+          "deleted"
+        ]
+      },
+      "Works.WorkWithTallies": {
+        "type": "object",
+        "required": [
+          "tallies"
+        ],
+        "properties": {
+          "tallies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Works.TallyWithTags"
+            }
+          }
+        },
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Works.Work"
+          }
+        ]
+      },
+      "id": {
+        "type": "integer",
+        "format": "int32",
+        "examples": [
+          123
+        ]
+      },
+      "plaindate": {
+        "type": "string",
+        "format": "YYYY-MM-DD",
+        "examples": [
+          "2021-03-23"
+        ]
+      },
+      "uuid": {
+        "type": "string",
+        "format": "uuid",
+        "examples": [
+          "8fb3e519-fc08-477f-a70e-4132eca599d4"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "Bearer"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://trackbear.app/api/v1",
+      "description": "TrackBear API",
+      "variables": {}
+    }
+  ]
+}
