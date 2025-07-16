@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.3.0
+
 - NEW: API access for developers is finally here! Read all about it at [the API Docs](https://help.trackbear.app/api)!
 - NEW: Users can create API keys, which allow integrations and other applications to access their TrackBear account on their behalf.
 - CHANGED: Pages under `/works` are now under `/projects`. The old URLs will redirect for a while, but you should update your bookmarks.
