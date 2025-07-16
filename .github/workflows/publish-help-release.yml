@@ -29,6 +29,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: trackbear-help ${{ github.ref_name }}
-          files: help-docs/.vitepress/help-docs.tar.gz
+          files: help-docs/.vitepress/trackbear-help.tar.gz
           fail_on_unmatched_files: true
           make_latest: false

@@ -22,7 +22,7 @@
     "help:dev": "vitepress dev help-docs",
     "help:build": "vitepress build help-docs",
     "help:preview": "vitepress preview help-docs",
-    "help:zip": "cp -r ./help-docs/.vitepress/dist ./help-docs/.vitepress/help-docs && tar --strip-components 3 -czf ./help-docs/.vitepress/help-docs.tar.gz ./help-docs/.vitepress/help-docs/**/*.* && rm -rf ./help-docs/.vitepress/help-docs",
+    "help:zip": "./scripts/zip-trackbear-help.sh",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "vitest run",
     "test:watch": "vitest",
