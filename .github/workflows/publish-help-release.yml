@@ -20,14 +20,15 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Install dependencies
         run: npm ci
-      - name: Build help docs
+      - name: Build and zip help docs
         run: |
           npm run compile:api
           npm run compile:help
+          npm run help:zip
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           name: trackbear-help ${{ github.ref_name }}
-          files: help-docs/.vitepress/dist/**/*.*
+          files: help-docs/.vitepress/help-docs.tar.gz
           fail_on_unmatched_files: true
           make_latest: false

@@ -81,3 +81,4 @@ uploads
 # VitePress
 help-docs/.vitepress/dist
 help-docs/.vitepress/cache
+help-docs/.vitepress/help-docs.tar.gz
