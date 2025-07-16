@@ -12,6 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.3.1
+- FIXED: API docs now render both on first load and on reload.
+
 ## 1.3.0
 
 - NEW: API access for developers is finally here! Read all about it at [the API Docs](https://help.trackbear.app/api)!
