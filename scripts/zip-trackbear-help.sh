@@ -13,7 +13,7 @@ echo "Copying dist to help-docs..."
 cp -r ./dist ./trackbear-help
 # make the archive (this one ought to be pretty standard)
 echo "Creating archive at trackbear-help.tar.gz..."
-tar -czf ./trackbear-help.tar.gz ./trackbear-help/**/*.* ./trackbear-help/*.*
+tar -czf ./trackbear-help.tar.gz ./trackbear-help
 # remove the copy
 echo "Removing trackbear-help copy..."
 rm -rf ./trackbear-help
