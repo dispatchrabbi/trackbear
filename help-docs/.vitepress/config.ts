@@ -58,15 +58,6 @@ export default defineConfig({
         ...apiSidebar.generateSidebarGroups({
           tags: ['Tallies', 'Projects', 'Goals', 'Leaderboards', 'Tags', 'Stats', 'Other'],
           linkPrefix: '/api/',
-          sidebarItemTemplate: ({ method, path, title }) => {
-            const operation = spec.paths[path]?.[method];
-            const displayText = title || (operation ? operation.summary : path);
-            return `
-<div class="OASidebarItem group/oaOperationLink">
-  <span class="OASidebarItem-badge OAMethodBadge--${method.toLowerCase()}">${method.toUpperCase()}</span><span class="text">${displayText}</span>
-</div>
-            `.trim();
-          },
         }),
       ],
       '/': [
