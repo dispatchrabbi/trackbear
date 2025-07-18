@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     ports:
       - 5432:5432
     env_file:
@@ -12,21 +12,22 @@ services:
       POSTGRES_INITDB_ARGS: -E UTF8
     volumes:
       - ./scripts/healthchecks:/healthchecks
-      - ${DB_VOLUME_DIR}/postgres:/var/lib/postgresql/data:rw
+      - ${DB_VOLUME_DIR}/postgres17:/var/lib/postgresql/data:rw
       - ${DB_VOLUME_DIR}:/data:rw
+      - ${DB_VOLUME_DIR}/backup:/backup:rw
     healthcheck:
       test: /healthchecks/postgres.sh
       interval: "5s"
-  otel-collector:
-    image: otel/opentelemetry-collector-contrib
-    volumes:
-      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
-    ports:
-      - 1888:1888 # pprof extension
-      - 8888:8888 # Prometheus metrics exposed by the Collector
-      - 8889:8889 # Prometheus exporter metrics
-      - 13133:13133 # health_check extension
-      - 4317:4317 # OTLP gRPC receiver
-      - 4318:4318 # OTLP http receiver
-      - 55679:55679 # zpages extension
+  # otel-collector:
+  #   image: otel/opentelemetry-collector-contrib
+  #   volumes:
+  #     - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+  #   ports:
+  #     - 1888:1888 # pprof extension
+  #     - 8888:8888 # Prometheus metrics exposed by the Collector
+  #     - 8889:8889 # Prometheus exporter metrics
+  #     - 13133:13133 # health_check extension
+  #     - 4317:4317 # OTLP gRPC receiver
+  #     - 4318:4318 # OTLP http receiver
+  #     - 55679:55679 # zpages extension
   

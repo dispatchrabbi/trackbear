@@ -21,7 +21,6 @@ x (A) Update vitest +update
 x (A) Update prisma +update
 x (A) Update multer +update
 x (B) Update pinia +update
-(A) Update typescript +update
 (A) Update otel +update
 (B) Update zod +update
 (C) Consider updating tailwind +update
@@ -105,3 +104,4 @@ Allow users to configure Dashboard more (h/t K. A. J. Klok) @dashboard @settings
 Break down overall stat project graphs by project, or show "a leaderboard against myself" (h/t Katy F) stage:needs-refinement @stats
 Allow habit goals to designate specific days of the week (h/t Aminta) stage:considering @goals
 Allow tallies to be marked as "catch-up" (catching up the number after several days of not tracking) (h/t Gwen) stage:considering @tallies
+(B) Don't count negative tallies in goals (should this be per-goal or per-user?) (h/t Dawn) dif:3 @goals
