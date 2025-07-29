@@ -5,6 +5,7 @@ export default defineConfig({
   test: {
     setupFiles: [
       'testing-support/custom-matchers/api-response.ts',
+      'testing-support/test-setup/mock-logger.ts',
     ],
     exclude: [
       'node_modules/**',
