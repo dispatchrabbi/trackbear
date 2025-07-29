@@ -4,8 +4,7 @@ import dotenv from 'dotenv';
 
 import { addDays } from 'date-fns';
 
-import winston from 'winston';
-import { initLoggers } from '../../server/lib/logger.ts';
+import { initLoggers, getLogger } from '../../server/lib/logger.ts';
 
 import dbClient from '../../server/lib/db.ts';
 import type { User } from 'generated/prisma/client';
@@ -19,7 +18,7 @@ async function main() {
   dotenv.config();
 
   await initLoggers();
-  const scriptLogger = winston.child({ service: 'send-email-verifications-to-all-unverified-users.ts' });
+  const scriptLogger = getLogger('default').child({ service: 'send-email-verifications-to-all-unverified-users.ts' });
 
   await initQueue();
 

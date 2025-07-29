@@ -1,6 +1,8 @@
 import { Request } from 'express';
 import { z } from 'zod';
-import winston from 'winston';
+
+import { getLogger } from 'server/lib/logger.ts';
+const logger = getLogger();
 
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
 import { zUuidParam } from 'server/lib/validators.ts';
@@ -31,25 +33,25 @@ export async function handleLogin(req: Request, res: ApiResponse<User>) {
 
   const user: User = await UserModel.getUserByUsername(username);
   if(!user) {
-    winston.info(`LOGIN: ${username} attempted to log in but does not exist`);
+    logger.info(`LOGIN: ${username} attempted to log in but does not exist`);
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
 
   // you can only log in if your user is active
   if(user.state !== USER_STATE.ACTIVE) {
-    winston.info(`LOGIN: ${username} attempted to log in but account state is ${user.state}`);
+    logger.info(`LOGIN: ${username} attempted to log in but account state is ${user.state}`);
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
 
   const passwordMatches = await UserModel.checkPassword(user, password);
   if(!passwordMatches) {
-    winston.debug(`LOGIN: ${username} attempted to log in with an incorrect password`);
+    logger.debug(`LOGIN: ${username} attempted to log in with an incorrect password`);
     await logAuditEvent(AUDIT_EVENT_TYPE.USER_FAILED_LOGIN, user.id, null, null, null, req.sessionID);
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));
   }
 
   logIn(req, user);
-  winston.debug(`LOGIN: ${username} successfully logged in`);
+  logger.debug(`LOGIN: ${username} successfully logged in`);
   await logAuditEvent(AUDIT_EVENT_TYPE.USER_LOGIN, user.id, null, null, null, req.sessionID);
 
   return res.status(200).send(success(user));
@@ -62,7 +64,7 @@ export async function handleLogout(req: Request, res: ApiResponse<EmptyObject>) 
   try {
     await logOut(req);
   } catch (err) {
-    winston.error('An error occurred during logout', err);
+    logger.error('An error occurred during logout', err);
     // but let them log out anyway
   }
 
@@ -141,7 +143,7 @@ export async function handleChangePassword(req: RequestWithUser, res: ApiRespons
 
   const currentPasswordMatches = await UserModel.checkPassword(req.user, currentPassword);
   if(!currentPasswordMatches) {
-    winston.debug(`LOGIN: ${req.user.id} had the incorrect password`);
+    logger.debug(`LOGIN: ${req.user.id} had the incorrect password`);
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect password.'));
   }
 

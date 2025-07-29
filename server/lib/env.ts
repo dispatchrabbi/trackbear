@@ -146,7 +146,7 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   if(!['', '0', '1'].includes(process.env.ENABLE_INSTRUMENTATION)) { throw new Error('ENABLE_METRICS should only be either `0` or `1`'); }
   process.env.ENABLE_INSTRUMENTATION = process.env.ENABLE_INSTRUMENTATION || '0';
 
-  if(process.env.ENABLE_INSTRUMENTATION && !process.env.OTLP_URL) { throw new Error('Missing PLAUSIBLE_HOST value in .env'); }
+  if(process.env.ENABLE_INSTRUMENTATION && !process.env.OTLP_URL) { throw new Error('Missing OTLP_URL value in .env'); }
 
   // second step is to parse the values into more usable types
   return {

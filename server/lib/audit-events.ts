@@ -1,4 +1,6 @@
-import winston from 'winston';
+import { getLogger } from 'server/lib/logger.ts';
+const logger = getLogger();
+
 import { AuditEventModel } from './models/audit-event/audit-event-model.ts';
 
 export const UNKNOWN_ACTOR_ID = 0;
@@ -9,7 +11,7 @@ export async function logAuditEvent(eventType: string, agentId: number, patientI
     auxInfo = {};
   }
 
-  winston.debug(`${eventType}`, {
+  logger.debug(`${eventType}`, {
     agentId,
     patientId,
     goalId,
@@ -20,7 +22,7 @@ export async function logAuditEvent(eventType: string, agentId: number, patientI
     await AuditEventModel.createAuditEvent(eventType, agentId, patientId, goalId, auxInfo, sessionId);
   } catch (err) {
     // log an error but don't do anything. failure to record an audit event shouldn't tank a request
-    winston.error(err);
+    logger.error(err);
   }
 }
 

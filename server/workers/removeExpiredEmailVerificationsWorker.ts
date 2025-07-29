@@ -1,6 +1,8 @@
 import dbClient from '../lib/db.ts';
-import winston from 'winston';
 import { addDays } from 'date-fns';
+
+import { getLogger } from 'server/lib/logger.ts';
+const workerLogger = getLogger('worker');
 
 const NAME = 'removeExpiredEmailVerificationsWorker';
 
@@ -8,7 +10,6 @@ const NAME = 'removeExpiredEmailVerificationsWorker';
 const CRONTAB = '13 1 * * *';
 
 async function run() {
-  const workerLogger = winston.loggers.get('worker');
   workerLogger.debug(`Worker has started`, { service: NAME });
 
   try {

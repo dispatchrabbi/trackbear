@@ -3,7 +3,9 @@ import fs from 'node:fs/promises';
 
 import sharp from 'sharp';
 import dbClient from '../lib/db.ts';
-import winston from 'winston';
+
+import { getLogger } from 'server/lib/logger.ts';
+const workerLogger = getLogger('worker');
 
 import { getNormalizedEnv } from 'server/lib/env.ts';
 
@@ -24,21 +26,20 @@ const LOSSY_OUTPUT_OPTIONS = { webp: { quality: 100, effort: 6 } };
 const OPTIMIZED_TAG = 'min';
 
 async function run() {
-  const workerLogger = winston.loggers.get('worker');
   workerLogger.debug(`Worker has started`, { service: NAME });
 
   if(SHOULD_PRUNE) {
-    await pruneAvatars(workerLogger);
-    await pruneCovers(workerLogger);
+    await pruneAvatars();
+    await pruneCovers();
   }
 
   if(SHOULD_OPTIMIZE) {
-    await optimizeAvatars(workerLogger);
-    await optimizeCovers(workerLogger);
+    await optimizeAvatars();
+    await optimizeCovers();
   }
 }
 
-async function pruneAvatars(workerLogger: winston.Logger) {
+async function pruneAvatars() {
   const env = await getNormalizedEnv();
   const avatarsDir = path.join(env.UPLOADS_PATH, 'avatars');
 
@@ -49,10 +50,10 @@ async function pruneAvatars(workerLogger: winston.Logger) {
   });
   const existingAvatars = dbExistingAvatars.map(record => record.avatar);
 
-  await pruneUploads(avatarsDir, existingAvatars, workerLogger);
+  await pruneUploads(avatarsDir, existingAvatars);
 }
 
-async function pruneCovers(workerLogger: winston.Logger) {
+async function pruneCovers() {
   const env = await getNormalizedEnv();
   const coversDir = path.join(env.UPLOADS_PATH, 'covers');
 
@@ -63,10 +64,10 @@ async function pruneCovers(workerLogger: winston.Logger) {
   });
   const existingCovers = dbExistingCovers.map(record => record.cover);
 
-  await pruneUploads(coversDir, existingCovers, workerLogger);
+  await pruneUploads(coversDir, existingCovers);
 }
 
-async function pruneUploads(directory: string, filesNotToPrune: string[], workerLogger: winston.Logger) {
+async function pruneUploads(directory: string, filesNotToPrune: string[]) {
   const allImagesInFolder = await getAllImagesInFolder(directory);
   workerLogger.debug(`Found ${allImagesInFolder.length} images in ${directory} (${filesNotToPrune.length} should not be pruned.)`, { service: NAME });
   const imagesToPrune = allImagesInFolder.filter(filename => !filesNotToPrune.includes(filename));
@@ -93,11 +94,11 @@ async function getAllImagesInFolder(path: string) {
   return unoptimized;
 }
 
-async function optimizeAvatars(workerLogger: winston.Logger) {
+async function optimizeAvatars() {
   const env = await getNormalizedEnv();
   const avatarsDir = path.join(env.UPLOADS_PATH, 'avatars');
 
-  await optimizeImagesInDirectory(avatarsDir, workerLogger, async function(oldFilename, newFilename) {
+  await optimizeImagesInDirectory(avatarsDir, async function(oldFilename, newFilename) {
     if(!DRY_RUN) {
       await dbClient.user.updateMany({
         data: { avatar: newFilename },
@@ -107,11 +108,11 @@ async function optimizeAvatars(workerLogger: winston.Logger) {
   });
 }
 
-async function optimizeCovers(workerLogger: winston.Logger) {
+async function optimizeCovers() {
   const env = await getNormalizedEnv();
   const coversDir = path.join(env.UPLOADS_PATH, 'covers');
 
-  await optimizeImagesInDirectory(coversDir, workerLogger, async function(oldFilename, newFilename) {
+  await optimizeImagesInDirectory(coversDir, async function(oldFilename, newFilename) {
     if(!DRY_RUN) {
       await dbClient.work.updateMany({
         data: { cover: newFilename },
@@ -123,7 +124,7 @@ async function optimizeCovers(workerLogger: winston.Logger) {
 
 type OnOptimizeImageCallback = (oldFilename: string, newFilename: string) => Promise<void>;
 
-async function optimizeImagesInDirectory(directory: string, workerLogger: winston.Logger, onOptimizeImage: OnOptimizeImageCallback) {
+async function optimizeImagesInDirectory(directory: string, onOptimizeImage: OnOptimizeImageCallback) {
   const imagesToOptimize = await getUnoptimizedImagesInFolder(directory);
   workerLogger.info(`About to optimize ${imagesToOptimize.length} images from ${directory}...`, { service: NAME });
 
@@ -134,7 +135,7 @@ async function optimizeImagesInDirectory(directory: string, workerLogger: winsto
       const {
         data: optimizedImageData,
         filename: optimizedPath,
-      } = await optimizeImage(imagePath, workerLogger);
+      } = await optimizeImage(imagePath);
 
       if(optimizedImageData) {
         // write a new file with the optimized image data
@@ -175,7 +176,7 @@ async function getUnoptimizedImagesInFolder(path: string) {
   return unoptimized;
 }
 
-async function optimizeImage(originalPath: string, workerLogger: winston.Logger) {
+async function optimizeImage(originalPath: string) {
   const originalStats = await fs.stat(originalPath);
   const originalSizeInBytes = originalStats.size;
 

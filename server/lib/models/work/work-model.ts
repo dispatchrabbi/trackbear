@@ -1,4 +1,4 @@
-import { traced } from '../../tracer.ts';
+import { traced } from '../../metrics/tracer.ts';
 
 import dbClient from '../../db.ts';
 import { type Work as PrismaWork } from 'generated/prisma/client';

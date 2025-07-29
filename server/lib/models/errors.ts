@@ -28,7 +28,7 @@ export class ValidationError extends Error {
     super(message, ...args);
 
     if(Error.captureStackTrace) {
-      Error.captureStackTrace(this, RecordNotFoundError);
+      Error.captureStackTrace(this, ValidationError);
     }
 
     this.name = this.constructor.name;

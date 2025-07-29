@@ -4,8 +4,7 @@ import dotenv from 'dotenv';
 
 import { addDays } from 'date-fns';
 
-import winston from 'winston';
-import { initLoggers } from '../server/lib/logger.ts';
+import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
 import dbClient from '../server/lib/db.ts';
 import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from '../server/lib/audit-events.ts';
@@ -19,7 +18,7 @@ async function main() {
   process.env.NODE_ENV = 'production';
   dotenv.config();
   await initLoggers();
-  const scriptLogger = winston.child({ service: 'add-banner.ts' });
+  const scriptLogger = getLogger('default').child({ service: 'add-banner.ts' });
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 

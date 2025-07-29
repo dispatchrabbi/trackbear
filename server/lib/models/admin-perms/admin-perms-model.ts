@@ -3,7 +3,7 @@ import { type AdminPerms } from 'generated/prisma/client';
 
 import { RecordNotFoundError } from '../errors.ts';
 
-import { traced } from '../../tracer.ts';
+import { traced } from '../../metrics/tracer.ts';
 import { USER_STATE } from '../user/consts.ts';
 
 export type { AdminPerms };

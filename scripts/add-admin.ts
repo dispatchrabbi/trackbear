@@ -2,8 +2,7 @@
 
 import dotenv from 'dotenv';
 
-import winston from 'winston';
-import { initLoggers } from '../server/lib/logger.ts';
+import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
 import dbClient from '../server/lib/db.ts';
 import { User } from 'generated/prisma/client';
@@ -19,7 +18,7 @@ async function main() {
   process.env.NODE_ENV = 'production';
   dotenv.config();
   await initLoggers();
-  const scriptLogger = winston.child({ service: 'add-admin.ts' });
+  const scriptLogger = getLogger('default').child({ service: 'add-admin.ts' });
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 

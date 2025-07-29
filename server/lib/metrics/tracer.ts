@@ -1,6 +1,6 @@
 import { trace, Span, SpanStatusCode } from '@opentelemetry/api';
 
-import packageJson from '../../package.json' assert { type: 'json' };
+import packageJson from '../../../package.json' assert { type: 'json' };
 
 export function getTracer(scopeName?: string) {
   const tracer = trace.getTracer(

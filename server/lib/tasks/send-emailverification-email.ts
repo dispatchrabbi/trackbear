@@ -5,7 +5,8 @@ import type { User, PendingEmailVerification } from 'generated/prisma/client';
 import dbClient from '../db.ts';
 
 // use the queue log to log info about the queue
-import winston from 'winston';
+import { getLogger } from 'server/lib/logger.ts';
+const queueLogger = getLogger('queue');
 
 import { getNormalizedEnv } from '../env.ts';
 import { logAuditEvent, TRACKBEAR_SYSTEM_ID } from '../audit-events.ts';
@@ -14,7 +15,7 @@ import { USER_STATE } from '../models/user/consts.ts';
 const TASK_NAME = 'send-emailverification-email';
 
 async function handler(task) {
-  const taskLogger = winston.loggers.get('queue').child({ service: TASK_NAME });
+  const taskLogger = queueLogger.child({ service: TASK_NAME });
   taskLogger.debug('Starting task...');
 
   let pendingEmailVerification: PendingEmailVerification & { user: User };

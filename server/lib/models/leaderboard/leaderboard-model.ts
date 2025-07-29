@@ -1,4 +1,4 @@
-import { traced } from '../../tracer.ts';
+import { traced } from '../../metrics/tracer.ts';
 
 import type { Prisma, BoardParticipant as PrismaBoardParticipant, User as PrismaUser } from 'generated/prisma/client';
 import dbClient from '../../db.ts';

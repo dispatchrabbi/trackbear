@@ -11,7 +11,9 @@ import sendAccountDeletedEmailTask from './tasks/send-account-deleted-email.ts';
 import sendTestEmail from './tasks/send-test-email.ts';
 
 // use the queue log to log info about the queue
-import winston from 'winston';
+import { getLogger } from 'server/lib/logger.ts';
+const logger = getLogger();
+const queueLogger = getLogger('queue');
 
 export type HandlerCallback = (error: Error | null, result: unknown) => void;
 
@@ -51,7 +53,6 @@ async function initQueue() {
   registerTaskType(sendAccountDeletedEmailTask);
   registerTaskType(sendTestEmail);
 
-  const queueLogger = winston.loggers.get('queue');
   q.on('task_queued', (taskId, task) => queueLogger.info('Task queued', { taskId, ...task }));
   q.on('task_accepted', (taskId, task) => queueLogger.debug('Task accepted', { taskId, ...task }));
   q.on('task_started', (taskId, task) => queueLogger.info('Task started', { taskId, ...task }));
@@ -63,7 +64,7 @@ async function initQueue() {
   q.on('drain', () => queueLogger.debug('Queue has been drained'));
   q.on('error', err => queueLogger.error('Queue experienced an error', { err }));
 
-  winston.info('Queue has been configured');
+  logger.info('Queue has been configured');
 }
 
 const HANDLER_MAP = {};
@@ -72,8 +73,6 @@ function registerTaskType(taskType) {
 }
 
 async function taskHandler(task) {
-  const queueLogger = winston.loggers.get('queue');
-
   try {
     if(!Object.keys(HANDLER_MAP).includes(task.name)) {
       throw new Error(`No handler found for taskname ${task.name} (task id ${task.id})`);
@@ -87,7 +86,9 @@ async function taskHandler(task) {
 }
 
 function pushTask(task) {
-  if(q === null) { throw new Error('Queue has not been initialized'); }
+  if(q === null) {
+    throw new Error('Queue has not been initialized');
+  }
 
   const ticket = q.push(task);
   return ticket;

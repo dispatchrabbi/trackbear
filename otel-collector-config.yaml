@@ -34,10 +34,10 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [debug]
-    # metrics:
-    #   receivers: [otlp]
-    #   processors: [batch]
-    #   exporters: [otlp]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/signoz]
     logs:
       receivers: [otlp]
       processors: [batch]

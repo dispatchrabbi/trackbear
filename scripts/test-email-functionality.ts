@@ -3,8 +3,7 @@
 import dotenv from 'dotenv';
 import { getNormalizedEnv } from '../server/lib/env.ts';
 
-import winston from 'winston';
-import { initLoggers } from '../server/lib/logger.ts';
+import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
 import { initQueue, pushTask } from '../server/lib/queue.ts';
 import sendTestEmailTask, { sendTestEmail } from '../server/lib/tasks/send-test-email.ts';
@@ -15,7 +14,7 @@ async function main() {
   await getNormalizedEnv();
 
   await initLoggers();
-  const scriptLogger = winston.child({ service: 'test-email-functionality.ts' });
+  const scriptLogger = getLogger('default').child({ service: 'test-email-functionality.ts' });
 
   await initQueue();
 

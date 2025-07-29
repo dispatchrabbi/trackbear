@@ -1,7 +1,7 @@
 import qs from 'qs';
 import { parseJSON } from 'date-fns';
 
-import type { ApiResponsePayload } from 'server/lib/api-response.ts';
+import type { ApiResponsePayload } from 'server/lib/api-response';
 type ApiResponse<T> = ApiResponsePayload<T> & { status: number };
 
 export async function callApi<T>(path: string, method: string = 'GET', payload: Record<string, unknown> | Record<string, unknown>[] | FormData | null = null, query: object | null = null): Promise<ApiResponse<T>> {

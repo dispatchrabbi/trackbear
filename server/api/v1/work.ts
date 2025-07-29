@@ -1,7 +1,8 @@
 import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from 'server/lib/api.ts';
 import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 
-import winston from 'winston';
+import { getLogger } from 'server/lib/logger.ts';
+const logger = getLogger();
 
 import { RequestWithUser } from '../../lib/middleware/access.ts';
 
@@ -215,14 +216,14 @@ export async function handlePostCover(req: RequestWithUser, res: ApiResponse<Wor
   try {
     await fs.copyFile(oldPath, newPath);
   } catch (err) {
-    winston.error(`Could not move uploaded cover file (from: ${oldPath}, to: ${newPath}): ${err.message}`, err);
+    logger.error(`Could not move uploaded cover file (from: ${oldPath}, to: ${newPath}): ${err.message}`, err);
     return res.status(500).send(failure('SERVER_ERROR', 'Could not save cover file'));
   }
 
   try {
     await fs.rm(oldPath);
   } catch (err) {
-    winston.error(`Could not delete uploaded cover file (from: ${oldPath}): ${err.message}`, err);
+    logger.error(`Could not delete uploaded cover file (from: ${oldPath}): ${err.message}`, err);
     // but we don't actually want to stop the upload on this error, so keep going...
   }
 

@@ -2,8 +2,7 @@
 
 import dotenv from 'dotenv';
 
-import winston from 'winston';
-import { initLoggers } from '../server/lib/logger.ts';
+import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
 import { subYears, addDays, isBefore } from 'date-fns';
 import { formatDate } from '../src/lib/date.ts';
@@ -36,7 +35,7 @@ async function main() {
   process.env.NODE_ENV = 'production';
   dotenv.config();
   await initLoggers();
-  const scriptLogger = winston.child({ service: 'insert-history.ts' });
+  const scriptLogger = getLogger('default').child({ service: 'insert-history.ts' });
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 

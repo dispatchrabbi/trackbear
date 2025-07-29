@@ -1,5 +1,7 @@
-import winston from 'winston';
 import { addDays, addMinutes } from 'date-fns';
+
+import { getLogger } from 'server/lib/logger.ts';
+const logger = getLogger();
 
 import dbClient from '../../db.ts';
 import type { PasswordResetLink, PendingEmailVerification, User, UserAuth, Prisma } from 'generated/prisma/client';
@@ -23,7 +25,7 @@ import sendEmailVerificationEmail from '../../tasks/send-emailverification-email
 import sendPasswordResetEmail from '../../tasks/send-pwreset-email.ts';
 import sendPasswordChangeEmail from '../../tasks/send-pwchange-email.ts';
 
-import { traced } from '../../tracer.ts';
+import { traced } from '../../metrics/tracer.ts';
 
 export type { User };
 export type SignUpUserData = {
@@ -180,7 +182,7 @@ export class UserModel {
     }, reqCtx);
 
     await logAuditEvent(AUDIT_EVENT_TYPE.USER_SIGNUP, created.id, created.id, null, null, reqCtx.sessionId);
-    winston.debug(`SIGNUP: ${created.id} just signed up`);
+    logger.debug(`SIGNUP: ${created.id} just signed up`);
 
     reqCtx = {
       ...reqCtx,
@@ -320,7 +322,7 @@ export class UserModel {
       },
     });
 
-    winston.debug(`VERIFY: ${verification.user.id} just verified their email`);
+    logger.debug(`VERIFY: ${verification.user.id} just verified their email`);
     await logAuditEvent(
       AUDIT_EVENT_TYPE.USER_VERIFY_EMAIL,
       reqCtx.userId, verification.user.id, null,
@@ -351,7 +353,7 @@ export class UserModel {
       },
     });
 
-    winston.debug(`VERIFY: ${user.id} just had their email verified via ${source}`);
+    logger.debug(`VERIFY: ${user.id} just had their email verified via ${source}`);
     await logAuditEvent(
       AUDIT_EVENT_TYPE.USER_VERIFY_EMAIL,
       reqCtx.userId, user.id, null,
@@ -401,7 +403,7 @@ export class UserModel {
       },
     });
 
-    winston.debug(`PASSWORD: ${resetLink.userId} has reset their password using link ${resetLink.uuid}`);
+    logger.debug(`PASSWORD: ${resetLink.userId} has reset their password using link ${resetLink.uuid}`);
     await logAuditEvent(
       AUDIT_EVENT_TYPE.USER_PASSWORD_RESET,
       resetLink.user.id, resetLink.user.id, null,
@@ -433,7 +435,7 @@ export class UserModel {
       where: { userId: user.id },
     });
 
-    winston.debug(`PASSWORD: ${user.id} has changed their password`);
+    logger.debug(`PASSWORD: ${user.id} has changed their password`);
     await logAuditEvent(AUDIT_EVENT_TYPE.USER_PASSWORD_CHANGE, reqCtx.userId, user.id, null, null, reqCtx.sessionId);
   }
 
@@ -448,7 +450,7 @@ export class UserModel {
     }
 
     pushTask(sendSignupEmail.makeTask(user.id));
-    winston.debug(`EMAIL: ${reqCtx.userId} queued a task to send a sign-up email for ${user.id}`);
+    logger.debug(`EMAIL: ${reqCtx.userId} queued a task to send a sign-up email for ${user.id}`);
 
     return true;
   }
@@ -456,7 +458,7 @@ export class UserModel {
   @traced
   static async sendPasswordChangedEmail(user: User, reqCtx: RequestContext): Promise<boolean> {
     pushTask(sendPasswordChangeEmail.makeTask(user.id));
-    winston.debug(`EMAIL: ${reqCtx.userId} queued a task to send a password change email for ${user.id}`);
+    logger.debug(`EMAIL: ${reqCtx.userId} queued a task to send a password change email for ${user.id}`);
 
     return true;
   }
@@ -481,7 +483,7 @@ export class UserModel {
     });
     pushTask(sendEmailVerificationEmail.makeTask(pending.uuid));
 
-    winston.debug(`EMAIL: ${reqCtx.userId} requested a verification link for ${user.id} and got ${pending.uuid}`);
+    logger.debug(`EMAIL: ${reqCtx.userId} requested a verification link for ${user.id} and got ${pending.uuid}`);
     await logAuditEvent(AUDIT_EVENT_TYPE.USER_REQUEST_EMAIL_VERIFICATION, reqCtx.userId, user.id, null, { verificationUuid: pending.uuid }, reqCtx.sessionId);
 
     return pending;
@@ -506,7 +508,7 @@ export class UserModel {
     });
     pushTask(sendPasswordResetEmail.makeTask(resetLink.uuid));
 
-    winston.debug(`EMAIL: A reset link was requested for ${user.id} and got ${resetLink.uuid}`);
+    logger.debug(`EMAIL: A reset link was requested for ${user.id} and got ${resetLink.uuid}`);
     await logAuditEvent(
       AUDIT_EVENT_TYPE.USER_REQUEST_PASSWORD_RESET,
       reqCtx.userId, user.id, null,

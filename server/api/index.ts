@@ -3,7 +3,8 @@ import type { WithSessionAuth } from 'server/lib/auth.ts';
 import { ApiResponse, failure } from 'server/lib/api-response.ts';
 import { mountEndpoints, prefixRoutes, type RouteConfig } from 'server/lib/api.ts';
 
-import winston from 'winston';
+import { getLogger } from 'server/lib/logger.ts';
+const logger = getLogger();
 
 import authRoutes from './auth.ts';
 import bannersRoutes from './banners.ts';
@@ -33,7 +34,7 @@ export function mountApiEndpoints(app: Application) {
 }
 
 const logApiRequest: RequestHandler = function(req, res, next) {
-  winston.info(`${req.method} ${req.originalUrl}`, { sessionId: req.sessionID, user: (req as WithSessionAuth<Request>).session.auth?.id });
+  logger.info(`${req.method} ${req.originalUrl}`, { sessionId: req.sessionID, user: (req as WithSessionAuth<Request>).session.auth?.id });
   next();
 };
 
@@ -41,7 +42,7 @@ const logApiRequest: RequestHandler = function(req, res, next) {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const lastChanceApiErrorHandler: ErrorRequestHandler = (err, req, res: ApiResponse<never>, next) => {
   if(err) {
-    winston.error(`${req.method} ${req.originalUrl}: ${err.message}`, {
+    logger.error(`${req.method} ${req.originalUrl}: ${err.message}`, {
       sessionId: req.sessionID,
       user: (req as WithSessionAuth<Request>).session.auth?.id,
       message: err.message,

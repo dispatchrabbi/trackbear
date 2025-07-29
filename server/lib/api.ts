@@ -1,11 +1,13 @@
 import type { Application, IRouter, Router } from 'express';
 import type { ZodSchema } from 'zod';
-import winston from 'winston';
 import { h, type ApiHandler } from './api-response';
-import { addUserInfoToSpan, decorateApiCallSpan, instrumentMiddleware } from './middleware/decorate-span';
+import { decorateApiCallSpan, instrumentMiddleware } from './middleware/decorate-span';
 import { requirePublic, requireApiKey, requireSession, requireUser, requireAdminUser, requirePrivate } from './middleware/access';
 import { validateBody, validateParams, validateQuery } from './middleware/validate';
 import { ValueEnum } from './obj';
+
+import { getLogger } from 'server/lib/logger.ts';
+const logger = getLogger();
 
 export const HTTP_METHODS = {
   GET: 'GET',
@@ -88,7 +90,7 @@ export function mountEndpoint(app: Application | Router, route: RouteConfig) {
 
   if(!(route.accessLevel in ACCESS_LEVEL_TO_MIDDLEWARE)) {
     // default to no access
-    winston.warn(`Unknown access level (${route.accessLevel}) specified for endpoint '${route.method} ${route.path}'. Defaulting to none...`);
+    logger.warn(`Unknown access level (${route.accessLevel}) specified for endpoint '${route.method} ${route.path}'. Defaulting to none...`);
     route.accessLevel = ACCESS_LEVEL.NONE;
   }
   const accessMiddleware = ACCESS_LEVEL_TO_MIDDLEWARE[route.accessLevel];
@@ -101,7 +103,7 @@ export function mountEndpoint(app: Application | Router, route: RouteConfig) {
 
   const routeKey = `${route.method} ${route.path}`;
   if(mountedEndpoints.has(routeKey)) {
-    winston.warn(`${routeKey} is already mounted! Overwriting...`);
+    logger.warn(`${routeKey} is already mounted! Overwriting...`);
   } else {
     mountedEndpoints.add(routeKey);
   }
@@ -110,7 +112,6 @@ export function mountEndpoint(app: Application | Router, route: RouteConfig) {
     route.path,
     decorateApiCallSpan({ method, routePath: route.path }),
     instrumentMiddleware(accessMiddleware.name, accessMiddleware),
-    addUserInfoToSpan,
     // @ts-expect-error
     ...validators.map(valFn => instrumentMiddleware(valFn.name, valFn)),
     instrumentMiddleware(route.handler.name, h(route.handler)),

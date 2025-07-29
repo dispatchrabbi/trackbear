@@ -1,15 +1,41 @@
 import path from 'path';
-import winston, { format, transports } from 'winston';
+import winston, { format, transports, type Logger } from 'winston';
 import { getNormalizedEnv } from 'server/lib/env.ts';
 
 export type LoggerInitOpts = {
   forceConsoles?: boolean;
 };
 
-async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
+const loggers: {
+  default: Logger;
+  access: Logger;
+  queue: Logger;
+  worker: Logger;
+} = {
+  default: null,
+  access: null,
+  queue: null,
+  worker: null,
+};
+
+const loggerProxies = Object.keys(loggers).reduce((obj, key) => {
+  obj[key] = new Proxy({}, {
+    get: (target, prop) => {
+      if(loggers[key] === null) {
+        throw new Error(`Asked for the ${key} logger but loggers have not yet been initialized!`);
+      }
+
+      return Reflect.get(loggers[key], prop);
+    },
+  });
+
+  return obj;
+}, {});
+
+export async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
   const env = await getNormalizedEnv();
 
-  winston.configure({
+  loggers.default = winston.createLogger({
     level: env.LOG_LEVEL,
     format: format.combine(
       format.timestamp({
@@ -50,7 +76,7 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
     exitOnError: false,
   });
 
-  winston.loggers.add('access', {
+  loggers.access = winston.createLogger({
     level: 'info', // not affected by LOG_LEVEL because it's just logging requests
     format: format.combine(
       format.timestamp({
@@ -69,7 +95,7 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
     exitOnError: false,
   });
 
-  winston.loggers.add('queue', {
+  loggers.queue = winston.createLogger({
     level: env.LOG_LEVEL,
     format: format.combine(
       format.timestamp({
@@ -89,7 +115,7 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
     exitOnError: false,
   });
 
-  winston.loggers.add('worker', {
+  loggers.worker = winston.createLogger({
     level: env.LOG_LEVEL,
     format: format.combine(
       format.timestamp({
@@ -111,14 +137,14 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
 
   // also log queue and worker to the console if we're in development mode
   if(forceConsoles || env.NODE_ENV === 'production') {
-    winston.loggers.get('queue').add(new transports.Console({
+    loggers.queue.add(new transports.Console({
       format: format.combine(
         format.colorize(),
         format.simple(),
       ),
     }));
 
-    winston.loggers.get('worker').add(new transports.Console({
+    loggers.worker.add(new transports.Console({
       format: format.combine(
         format.colorize(),
         format.simple(),
@@ -128,19 +154,21 @@ async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { }) {
 
   // if we're testing, don't log anything
   if(env.NODE_ENV === 'testing') {
-    winston.loggers.loggers.forEach(logger => {
+    for(const logger of Object.values(loggers)) {
       logger.silent = true;
-    });
+    };
   }
 }
 
-async function closeLoggers() {
-  return Promise.all(Array.from(winston.loggers.loggers.values()).map(logger => {
+export function getLogger(logName: keyof typeof loggers = 'default') {
+  return loggerProxies[logName];
+}
+
+export async function closeLoggers() {
+  return Promise.all(Object.values(loggers).map(logger => {
     return new Promise<void>((res/* , rej */) => {
       logger.on('finish', () => res());
       logger.end();
     });
   }));
 }
-
-export { initLoggers, closeLoggers };

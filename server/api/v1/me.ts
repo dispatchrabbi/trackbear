@@ -1,12 +1,13 @@
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
 import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 
-import winston from 'winston';
-import { addDays } from 'date-fns';
-
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
+import { addDays } from 'date-fns';
+
+import { getLogger } from 'server/lib/logger.ts';
+const logger = getLogger();
 
 import dbClient from '../../lib/db.ts';
 import type { User, UserSettings as PrismaUserSettings } from 'generated/prisma/client';
@@ -159,7 +160,7 @@ export async function handleDeleteMe(req: RequestWithUser, res: ApiResponse<User
   });
 
   await logAuditEvent('user:delete', req.user.id, req.user.id, null, null, req.sessionID);
-  winston.debug(`USER DELETION: ${req.user.id} just deleted their account`);
+  logger.debug(`USER DELETION: ${req.user.id} just deleted their account`);
 
   pushTask(sendAccountDeletedEmail.makeTask(req.user.id));
 
@@ -191,14 +192,14 @@ export async function handleUploadAvatar(req: RequestWithUser, res: ApiResponse<
   try {
     await fs.copyFile(oldPath, newPath);
   } catch (err) {
-    winston.error(`Could not move uploaded avatar file (from: ${oldPath}, to: ${newPath}): ${err.message}`, err);
+    logger.error(`Could not move uploaded avatar file (from: ${oldPath}, to: ${newPath}): ${err.message}`, err);
     return res.status(500).send(failure('SERVER_ERROR', 'Could not save avatar file'));
   }
 
   try {
     await fs.rm(oldPath);
   } catch (err) {
-    winston.error(`Could not delete temporary avatar file (from: ${oldPath}): ${err.message}`, err);
+    logger.error(`Could not delete temporary avatar file (from: ${oldPath}): ${err.message}`, err);
   // but we don't actually want to stop the upload on this error, so keep going...
   }
 
@@ -215,7 +216,7 @@ export async function handleUploadAvatar(req: RequestWithUser, res: ApiResponse<
     return res.status(404).send(failure('NOT_FOUND', `No active user found to update`));
   }
 
-  winston.debug(`AVATAR: User ${req.user.id} (${req.user.username}) successfully uploaded a new avatar (${filename})`);
+  logger.debug(`AVATAR: User ${req.user.id} (${req.user.username}) successfully uploaded a new avatar (${filename})`);
   const changeRecord = buildChangeRecord({ avatar: req.user.avatar }, { avatar: updated.avatar });
   await logAuditEvent('user:avatar', req.user.id, req.user.id, null, changeRecord, req.sessionID);
 
@@ -237,7 +238,7 @@ export async function handleDeleteAvatar(req: RequestWithUser, res: ApiResponse<
     return res.status(404).send(failure('NOT_FOUND', `No active user found to update`));
   }
 
-  winston.debug(`AVATAR: User ${req.user.id} (${req.user.username}) deleted their avatar`);
+  logger.debug(`AVATAR: User ${req.user.id} (${req.user.username}) deleted their avatar`);
   const changeRecord = buildChangeRecord({ avatar: req.user.avatar }, { avatar: updated.avatar });
   await logAuditEvent('user:avatar', req.user.id, req.user.id, null, changeRecord, req.sessionID);
 

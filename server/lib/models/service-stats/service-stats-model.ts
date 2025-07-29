@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { parse, format, startOfDay, subDays } from 'date-fns';
 
-import { traced } from '../../tracer.ts';
+import { traced } from '../../metrics/tracer.ts';
 
 import dbClient from '../../db.ts';
 import { importRawSql } from 'server/lib/sql.ts';

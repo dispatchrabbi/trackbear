@@ -2,8 +2,7 @@
 
 import dotenv from 'dotenv';
 
-import winston from 'winston';
-import { initLoggers } from '../server/lib/logger.ts';
+import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
 import dbClient from '../server/lib/db.ts';
 import { Tally, User, Work } from 'generated/prisma/client';
@@ -28,7 +27,7 @@ async function main() {
   process.env.NODE_ENV = 'production';
   dotenv.config();
   await initLoggers();
-  const scriptLogger = winston.child({ service: 'seed-project.ts' });
+  const scriptLogger = getLogger('default').child({ service: 'seed-project.ts' });
 
   scriptLogger.info(`Script initialization complete`);
 

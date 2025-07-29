@@ -1,6 +1,9 @@
 import type { User, PendingEmailVerification } from 'generated/prisma/client';
 import dbClient from '../lib/db.ts';
-import winston from 'winston';
+
+import { getLogger } from 'server/lib/logger.ts';
+const workerLogger = getLogger('worker');
+
 import { USER_STATE } from '../lib/models/user/consts.ts';
 import { AUDIT_EVENT_SOURCE } from 'server/lib/models/audit-event/consts.ts';
 import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from '../lib/audit-events.ts';
@@ -13,7 +16,6 @@ const NAME = 'suspendUnverifiedUsersWorker';
 const CRONTAB = '24 2 * * *';
 
 async function run() {
-  const workerLogger = winston.loggers.get('worker');
   workerLogger.debug(`Worker has started`, { service: NAME });
 
   let users: UserWithVerifications[] | null;

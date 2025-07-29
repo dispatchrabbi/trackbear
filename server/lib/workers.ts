@@ -1,5 +1,8 @@
 import { CronJob } from 'cron';
-import winston from 'winston';
+
+import { getLogger } from 'server/lib/logger.ts';
+const logger = getLogger();
+const workerLogger = getLogger('worker');
 
 import clearResetLinksWorker from 'server/workers/clearResetLinksWorker.ts';
 import minifyImagesWorker from 'server/workers/minifyImagesWorker.ts';
@@ -14,16 +17,15 @@ const WORKERS = [
 ];
 
 function initWorkers() {
-  const workerLogger = winston.loggers.get('worker');
   for(const worker of WORKERS) {
     new CronJob(worker.crontab, () => {
       worker.runFn()
         .catch(err => workerLogger.error(`Worker ${worker.name} encountered an error: ${err.message}`, { service: worker.name }));
     }, null, true);
-    winston.debug(`Worker ${worker.name} has been registered`);
+    logger.debug(`Worker ${worker.name} has been registered`);
   }
 
-  winston.info('Workers have been initialized');
+  logger.info('Workers have been initialized');
 }
 
 export default initWorkers;

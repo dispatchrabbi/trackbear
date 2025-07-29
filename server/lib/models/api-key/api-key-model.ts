@@ -12,7 +12,7 @@ import type { User } from '../user/user-model.ts';
 import { censorApiKey, generateApiToken } from '../../api-key.ts';
 import CONFIG from 'server/config.ts';
 
-import { traced } from '../../tracer.ts';
+import { traced } from '../../metrics/tracer.ts';
 
 export type { ApiKey };
 

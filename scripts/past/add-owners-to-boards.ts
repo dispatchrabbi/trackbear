@@ -3,8 +3,7 @@
 import dotenv from 'dotenv';
 import { getNormalizedEnv } from '../../server/lib/env.ts';
 
-import winston from 'winston';
-import { initLoggers } from '../../server/lib/logger.ts';
+import { initLoggers, getLogger } from '../../server/lib/logger.ts';
 
 import dbClient from '../../server/lib/db.ts';
 import { LEADERBOARD_PARTICIPANT_STATE } from '../../server/lib/models/leaderboard/consts.ts';
@@ -15,7 +14,7 @@ async function main() {
   await getNormalizedEnv();
 
   await initLoggers();
-  const scriptLogger = winston.child({ service: 'add-owners-to-boards.ts' });
+  const scriptLogger = getLogger('default').child({ service: 'add-owners-to-boards.ts' });
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 

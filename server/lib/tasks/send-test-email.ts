@@ -2,13 +2,13 @@ import { EmailParams, Sender, Recipient } from 'mailersend';
 import { sendEmail } from '../email.ts';
 
 // use the queue log to log info about the queue
-import winston from 'winston';
+import { getLogger } from 'server/lib/logger.ts';
+const queueLogger = getLogger('queue');
 
 const TASK_NAME = 'send-test-email';
 
 async function handler(task) {
-  // const taskLogger = winston.loggers.get('queue').child({ service: TASK_NAME });
-  const taskLogger = winston;
+  const taskLogger = queueLogger.child({ service: TASK_NAME });
   taskLogger.info('Starting task...');
 
   taskLogger.info(`Sending test email to ${task.email}`);

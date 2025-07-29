@@ -3,8 +3,8 @@
 import { readFile } from 'fs/promises';
 
 import dotenv from 'dotenv';
-import winston from 'winston';
-import { initLoggers } from '../server/lib/logger.ts';
+
+import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
 import { User, UserModel } from '../server/lib/models/user/user-model.ts';
 import { reqCtxForScript } from '../server/lib/request-context.ts';
@@ -19,7 +19,7 @@ async function main() {
   process.env.NODE_ENV = 'production';
   dotenv.config();
   await initLoggers();
-  const scriptLogger = winston.child({ service: 'verify-users.ts' });
+  const scriptLogger = getLogger('default').child({ service: 'verify-users.ts' });
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 
@@ -31,7 +31,9 @@ async function main() {
   for(let lineNumber = 0; lineNumber < lines.length; ++lineNumber) {
     const line = lines[lineNumber];
     // skip empty lines and comments
-    if(line.length === 0 || line[0] === '#') { continue; }
+    if(line.length === 0 || line[0] === '#') {
+      continue;
+    }
 
     const userId = +line;
     if(userId.toString() !== line) {

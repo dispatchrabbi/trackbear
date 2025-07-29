@@ -1,4 +1,5 @@
-import winston from 'winston';
+import { getLogger } from 'server/lib/logger.ts';
+const logger = getLogger();
 
 import dbClient from '../../db.ts';
 import { type Tag } from 'generated/prisma/client';
@@ -10,7 +11,7 @@ import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 import type { User } from '../user/user-model.ts';
 import { TAG_DEFAULT_COLOR, TAG_STATE, TagColor } from './consts';
 
-import { traced } from '../../tracer.ts';
+import { traced } from '../../metrics/tracer.ts';
 import { ValidationError } from '../errors.ts';
 
 export type { Tag };
@@ -64,7 +65,7 @@ export class TagModel {
     }
 
     if(tags.length > 1) {
-      winston.warn(`Found more than one tag belonging to ${owner.id} with name ${name}: ${tags.map(tag => tag.id).join(', ')}`);
+      logger.warn(`Found more than one tag belonging to ${owner.id} with name ${name}: ${tags.map(tag => tag.id).join(', ')}`);
     }
 
     return tags[0];

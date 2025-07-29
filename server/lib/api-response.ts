@@ -1,7 +1,9 @@
 import type { Request, Response, NextFunction } from 'express';
-import winston from 'winston';
 import { RecordNotFoundError } from './models/errors';
 import { ValueEnum } from './obj';
+
+import { getLogger } from 'server/lib/logger.ts';
+const logger = getLogger();
 
 export type ApiResponse<T> = Response<ApiResponsePayload<T>>;
 export type ApiResponsePayload<T> = ApiSuccessPayload<T> | ApiFailurePayload;
@@ -50,14 +52,14 @@ export function h<T>(handler: ApiHandler<T>) {
       await handler(req, res);
     } catch (err) {
       if(err instanceof RecordNotFoundError) {
-        winston.warn(`RecordNotFoundError during call to ${req.url}: ${err.message}: ${err.cause}`);
+        logger.warn(`RecordNotFoundError during call to ${req.url}: ${err.message}: ${err.cause}`);
         const { model, id } = err.meta;
         return notFound(res, model, id);
       } else if(err.code === 'P2025') { // P2025 means we tried to update or delete a db record that doesn't exist
         const model = err.meta.modelName;
         const cause = err.meta.cause;
 
-        winston.warn(`Error modifying ${model} model during call to ${req.url}: ${cause}`);
+        logger.warn(`Error modifying ${model} model during call to ${req.url}: ${cause}`);
         const id = req.params.id || '<unknown>';
         return notFound(res, model.toLowerCase(), id);
       }

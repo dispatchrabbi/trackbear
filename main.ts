@@ -2,8 +2,7 @@ import { readFile } from 'fs/promises';
 import dotenv from 'dotenv';
 import { getNormalizedEnv } from 'server/lib/env.ts';
 
-import winston from 'winston';
-import { initLoggers, closeLoggers } from 'server/lib/logger.ts';
+import { initLoggers, getLogger, closeLoggers } from 'server/lib/logger.ts';
 
 import { createAvatarUploadDirectory, createCoverUploadDirectory } from 'server/lib/upload';
 
@@ -37,22 +36,21 @@ async function main() {
   const env = await getNormalizedEnv();
 
   await initLoggers();
-  winston.info('TrackBear is starting up and logs are online!');
-  // use `winston` just as the general logger
-  const accessLogger = winston.loggers.get('access');
+  const logger = getLogger();
+  logger.info('TrackBear is starting up and logs are online!');
 
   // make sure all the directories we need exist
   await createAvatarUploadDirectory();
   await createCoverUploadDirectory();
-  winston.info('Avatar and cover upload directories exist');
+  logger.info('Avatar and cover upload directories exist');
 
   // test the database connection
   try {
     await testDatabaseConnection();
-    winston.info('Database connection established');
+    logger.info('Database connection established');
   } catch (err) {
     console.error(`Could not connect to the database: ${err.message}`);
-    winston.error(`${err.message}`, {
+    logger.error(`${err.message}`, {
       message: err.message,
       stack: err.stack.split('\n'),
     });
@@ -88,6 +86,7 @@ async function main() {
 
   // log requests
   // always stream to the access logger
+  const accessLogger = getLogger('access');
   app.use(morgan('combined', {
     stream: {
       write: function(message) { accessLogger.info(message); },
@@ -131,14 +130,14 @@ async function main() {
   // Serve the front-end - either statically or out of the vite server, depending
   if(env.NODE_ENV === 'production') {
     // serve the front-end statically out of dist/
-    winston.info('Serving the front-end out of dist/');
+    logger.info('Serving the front-end out of dist/');
     app.use(spaRoutes(['/assets', '/images', '/uploads', '/manifest.json']));
     app.use('/uploads', express.static(env.UPLOADS_PATH));
     app.use(express.static('./dist'));
   } else {
     // Serve the front end using the schmancy HMR vite server.
     // This middleware has a catch-all route
-    winston.info('Serving the front-end dynamically using vite');
+    logger.info('Serving the front-end dynamically using vite');
     const vite = await createServer({
       server: {
         middlewareMode: true,
@@ -191,7 +190,7 @@ async function main() {
   });
 
   server.listen(env.PORT, () => {
-    winston.info(`TrackBear is now listening on ${env.ENABLE_TLS ? 'https' : 'http'}://localhost:${env.PORT}/`);
+    logger.info(`TrackBear is now listening on ${env.ENABLE_TLS ? 'https' : 'http'}://localhost:${env.PORT}/`);
   });
 
   // handle SIGINT for graceful shutdown
@@ -206,7 +205,8 @@ async function main() {
 }
 
 async function handleGracefulShutdown(signal: string, server: https.Server | http.Server) {
-  winston.info(`Received ${signal}, shutting down gracefully...`);
+  const logger = getLogger();
+  logger.info(`Received ${signal}, shutting down gracefully...`);
 
   // no need to disconnect Prisma; it does it itself
   // we only need to close off the server and the logs

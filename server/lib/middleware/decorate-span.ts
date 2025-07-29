@@ -1,9 +1,12 @@
 import { trace, type Span } from '@opentelemetry/api';
+import type { HttpCustomAttributeFunction } from '@opentelemetry/instrumentation-http';
 import { ATTR_HTTP_ROUTE, ATTR_CLIENT_ADDRESS } from '@opentelemetry/semantic-conventions';
+import { ATTR_TB_SESSION_ID, ATTR_TB_USER_ID, ATTR_TB_ACCESS_TYPE } from '../metrics/attributes';
 
 import type { Request, Response, NextFunction } from 'express';
-import { getTracer } from '../tracer';
+import { getTracer } from '../metrics/tracer';
 import { RequestWithUser } from './access';
+import { ACCESS_TYPE } from '../auth-consts';
 
 export type DecorateSpanConfig = {
   method: string;
@@ -11,32 +14,23 @@ export type DecorateSpanConfig = {
 };
 export function decorateApiCallSpan(config: DecorateSpanConfig) {
   return function decorate(req: Request, res: Response, next: NextFunction) {
-    const activeSpan = trace.getActiveSpan();
+    const apiSpan = trace.getActiveSpan();
 
     const spanName = `${config.method.toUpperCase()} ${config.routePath}`;
-    activeSpan.updateName(spanName);
+    apiSpan.updateName(spanName);
 
-    activeSpan.setAttribute(ATTR_HTTP_ROUTE, config.routePath);
-    activeSpan.setAttribute(ATTR_CLIENT_ADDRESS, req.ip);
-
-    if(req.sessionID) {
-      activeSpan.setAttribute('session.id', req.sessionID);
-    }
+    apiSpan.setAttribute(ATTR_HTTP_ROUTE, config.routePath);
+    apiSpan.setAttribute(ATTR_CLIENT_ADDRESS, req.ip);
 
     next();
   };
 }
 
-export function addUserInfoToSpan(req: Request, res: Response, next: NextFunction) {
-  const user = (req as RequestWithUser).user ?? null;
-
-  if(user) {
-    const activeSpan = trace.getActiveSpan();
-    activeSpan.setAttribute('session.userId', user.id);
-  }
-
-  next();
-}
+export const applyCustomAttributesOnSpan: HttpCustomAttributeFunction = function(span, req/* , res */) {
+  span.setAttribute(ATTR_TB_SESSION_ID, (req as RequestWithUser).sessionID ?? null);
+  span.setAttribute(ATTR_TB_USER_ID, (req as RequestWithUser).user.id ?? null);
+  span.setAttribute(ATTR_TB_ACCESS_TYPE, (req as RequestWithUser).accessType ?? ACCESS_TYPE.UNKNOWN);
+};
 
 type MiddlewareFunction<R extends Request = Request> = (req: R, res: Response, next: NextFunction) => unknown;
 

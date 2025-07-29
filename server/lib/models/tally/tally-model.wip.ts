@@ -8,7 +8,7 @@ import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 import type { User } from '../user/user-model.ts';
 import { TALLY_STATE, TallyMeasure } from './consts.ts';
 
-import { traced } from '../../tracer.ts';
+import { traced } from '../../metrics/tracer.ts';
 
 export type { Tally };
 export type TallyData = {

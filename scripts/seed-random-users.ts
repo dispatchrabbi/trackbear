@@ -1,8 +1,8 @@
 #!/usr/bin/env -S node --import tsx
 
 import dotenv from 'dotenv';
-import winston from 'winston';
-import { initLoggers } from '../server/lib/logger.ts';
+
+import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
 import { UserModel } from '../server/lib/models/user/user-model.ts';
 import { reqCtxForScript } from '../server/lib/request-context.ts';
@@ -16,7 +16,7 @@ async function main() {
   process.env.NODE_ENV = 'production';
   dotenv.config();
   await initLoggers();
-  const scriptLogger = winston.child({ service: 'seed-random-users.ts' });
+  const scriptLogger = getLogger('default').child({ service: 'seed-random-users.ts' });
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 

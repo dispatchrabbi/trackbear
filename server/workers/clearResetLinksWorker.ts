@@ -1,7 +1,9 @@
 import { Prisma } from 'generated/prisma/client';
 import dbClient from '../lib/db.ts';
-import winston from 'winston';
 import { PASSWORD_RESET_LINK_STATE } from '../lib/models/user/consts.ts';
+
+import { getLogger } from 'server/lib/logger.ts';
+const workerLogger = getLogger('worker');
 
 const NAME = 'clearResetLinksWorker';
 
@@ -9,7 +11,6 @@ const NAME = 'clearResetLinksWorker';
 const CRONTAB = '8 * * * *';
 
 async function run() {
-  const workerLogger = winston.loggers.get('worker');
   workerLogger.debug(`Worker has started`, { service: NAME });
 
   let deleted: Prisma.BatchPayload | null;
