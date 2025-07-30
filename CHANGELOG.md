@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: Added a few metrics on the back end so I can track things like response duration.
+- FIXED: API keys that never expire will now actually work.
+- FIXED: The try-it-out functionality of the API docs is no longer thwarted by CORS.
+
 ## 1.3.1
 - FIXED: API docs now render both on first load and on reload.
 

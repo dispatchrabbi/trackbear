@@ -3,6 +3,9 @@ import type { WithSessionAuth } from 'server/lib/auth.ts';
 import { ApiResponse, failure } from 'server/lib/api-response.ts';
 import { mountEndpoints, prefixRoutes, type RouteConfig } from 'server/lib/api.ts';
 
+import cors from 'cors';
+import { corsOptionsDelegate } from 'server/lib/middleware/cors.ts';
+
 import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();
 
@@ -24,7 +27,13 @@ const apiRoutes: RouteConfig[] = [
 ];
 
 export function mountApiEndpoints(app: Application) {
+  // enable CORS pre-flight for all API calls
+  app.options('/api/*', cors(corsOptionsDelegate));
+
   app.use('/api', logApiRequest);
+
+  // enable appropriate CORS headers for all API calls
+  app.use('/api', cors(corsOptionsDelegate));
 
   mountEndpoints(app, prefixRoutes('/api', apiRoutes));
 

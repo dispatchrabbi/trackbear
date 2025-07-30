@@ -41,6 +41,6 @@ export function getApiTokenFromRequest(req: Request): string | null {
 }
 
 export async function getUserFromApiToken(apiToken: string) {
-  const user = UserModel.getUserByApiToken(apiToken);
+  const user = await UserModel.getUserByApiToken(apiToken);
   return user;
 }

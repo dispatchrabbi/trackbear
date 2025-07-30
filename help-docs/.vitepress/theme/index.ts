@@ -36,7 +36,14 @@ export default {
       },
     });
 
-    useOpenapi({ spec });
+    useOpenapi({
+      spec,
+      config: {
+        server: {
+          allowCustomServer: (process.env.NODE_ENV === 'development'),
+        },
+      },
+    });
 
     theme.enhanceApp({ app, router, siteData });
   },

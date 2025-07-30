@@ -135,10 +135,13 @@ export class UserModel {
     const key = await dbClient.apiKey.findUnique({
       where: {
         token: apiToken,
-        expiresAt: { gte: now },
         owner: {
           state: USER_STATE.ACTIVE,
         },
+        OR: [
+          { expiresAt: { gte: now } },
+          { expiresAt: null },
+        ],
       },
       include: {
         owner: {},
