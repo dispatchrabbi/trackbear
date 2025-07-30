@@ -14,14 +14,6 @@
 (A) Allow viewing leaderboards without logging in dif:3 @boards
 (A) Ensure that projects (etc.) on public profile have a consistent order (last updated?) (h/t K. A. J. Klok) dif:2 @profile +delight
 (A) Endpoints that return EmptyObject should return null instead dif:1 +techdebt
-x (A) Move help into this repo dif:5 @help
-x (A) Update vite +update
-x (A) Update vue +update
-x (A) Update vitest +update
-x (A) Update prisma +update
-x (A) Update multer +update
-x (B) Update pinia +update
-(A) Update otel +update
 (B) Update zod +update
 (C) Consider updating tailwind +update
 (C) Consider updating primevue +update
@@ -30,9 +22,7 @@ x (B) Update pinia +update
 (B) Let admins manage projects dif:5 @admin +adminconsole
 (B) Let admins manage goals dif:3 @admin +adminconsole
 (B) Let admins manage leaderboards dif:3 @admin +adminconsole
-x (B) Rename /work endpoints and routes to /project dif:1 @frontend @backend +api
 (C) Finish the work of renaming work to project dif:2 +techdebt
-x (B) Create Swagger/OpenAPI docs + other developer docs dif:5 @backend @docs +api
 (B) Allow participants to pick their own chart color (if they are not on teams) dif:2 @boards +boardsv2
 (B) Write help page for leaderboards dif:2 @docs +completehelp
 (B) Write help page for settings dif:2 @docs +completehelp
@@ -55,10 +45,8 @@ x (B) Create Swagger/OpenAPI docs + other developer docs dif:5 @backend @docs +a
 (B) Display the time/count/amount to go if a habit has an end date dif:2 @goals +delight
 (B) Allow leaderboard owners to ban users dif:3 @boards +boardsv2
 (B) Make a better loading thing to show than "Loading..." dif:2 +delight
-x (B) Replace API error codes with constants dif:2 +techdebt
 (C) Allow admins to rename user/displayName dif:2 @admin +adminconsole
 (C) Allow merging two accounts dif:5 @admin +adminconsole
-x (C) Implement API rate-limiting dif:2 @backend @security +api
 (C) Increase code coverage on the back end dif:34 @backend +coverage100
 (C) Increase code coverage on the front end dif:55 @frontend +coverage100
 (C) Redo the upload UI so it's more intuitive dif:2 @projects @settings +delight
