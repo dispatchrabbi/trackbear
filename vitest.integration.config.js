@@ -4,6 +4,9 @@ import viteTsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
   test: {
     include: 'server/integration-tests/**/*.test.ts',
+    setupFiles: [
+      'testing-support/test-setup/mock-logger.ts',
+    ],
   },
   plugins: [
     viteTsconfigPaths(),
