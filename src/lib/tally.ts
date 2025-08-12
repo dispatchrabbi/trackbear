@@ -9,32 +9,38 @@ export const TALLY_MEASURE_INFO = {
   [TALLY_MEASURE.WORD]: {
     counter: { singular: 'word', plural: 'words' },
     label: { singular: 'word', plural: 'words' },
-    defaultChartMax: 5000,
+    defaultChartMaxTotal: 5000,
+    defaultChartMaxEach: 1000,
   },
   [TALLY_MEASURE.PAGE]: {
     counter: { singular: 'page', plural: 'pages' },
     label: { singular: 'page', plural: 'pages' },
-    defaultChartMax: 50,
+    defaultChartMaxTotal: 50,
+    defaultChartMaxEach: 5,
   },
   [TALLY_MEASURE.CHAPTER]: {
     counter: { singular: 'chapter', plural: 'chapters' },
     label: { singular: 'chapter', plural: 'chapters' },
-    defaultChartMax: 30,
+    defaultChartMaxTotal: 30,
+    defaultChartMaxEach: 5,
   },
   [TALLY_MEASURE.SCENE]: {
     counter: { singular: 'scene', plural: 'scenes' },
     label: { singular: 'scene', plural: 'scenes' },
-    defaultChartMax: 30,
+    defaultChartMaxTotal: 30,
+    defaultChartMaxEach: 5,
   },
   [TALLY_MEASURE.LINE]: {
     counter: { singular: 'line', plural: 'lines' },
     label: { singular: 'line', plural: 'lines' },
-    defaultChartMax: 100,
+    defaultChartMaxTotal: 100,
+    defaultChartMaxEach: 25,
   },
   [TALLY_MEASURE.TIME]: {
     counter: { singular: 'hour', plural: 'hours' },
     label: { singular: 'time', plural: 'time' },
-    defaultChartMax: 250, // hours
+    defaultChartMaxTotal: 250, // hours
+    defaultChartMaxEach: 4, // hours
   },
 };
 

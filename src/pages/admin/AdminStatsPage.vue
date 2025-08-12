@@ -8,9 +8,11 @@ import {
 
 import AdminLayout from 'src/layouts/AdminLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
-import PlotBarChart from 'src/components/chart/PlotBarChart.vue';
+// import PlotBarChart from 'src/components/chart/PlotBarChart.vue';
+import ProgressChart from 'src/components/chart/ProgressChart.vue';
 
 import type { MenuItem } from 'primevue/menuitem';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Admin', url: '/admin' },
@@ -28,7 +30,7 @@ const weeklyActiveUsersData = computed(() => {
   return weeklyActiveUsers.value.map(({ weekStart, count }) => ({
     series: 'Weekly Active Users',
     date: weekStart,
-    value: count,
+    count,
   }));
 });
 
@@ -43,7 +45,7 @@ const weeklySignupsData = computed(() => {
   return weeklySignups.value.map(({ weekStart, count }) => ({
     series: 'Weekly Signups',
     date: weekStart,
-    value: count,
+    count,
   }));
 });
 
@@ -58,7 +60,7 @@ const dailyActiveUsersData = computed(() => {
   return dailyActiveUsers.value.map(({ date, count }) => ({
     series: 'Daily Active Users',
     date,
-    value: count,
+    count,
   }));
 });
 
@@ -73,7 +75,7 @@ const dailySignupsData = computed(() => {
   return dailySignups.value.map(({ date, count }) => ({
     series: 'Daily Signups',
     date,
-    value: count,
+    count,
   }));
 });
 
@@ -95,34 +97,40 @@ onMounted(() => {
       <div>
         <SectionTitle title="Weekly Active Users" />
         <div class="max-w-screen-lg">
-          <PlotBarChart
-            :data="weeklyActiveUsersData"
+          <ProgressChart
+            :tallies="weeklyActiveUsersData"
+            :measure-hint="TALLY_MEASURE.WORD"
+            graph-title="Weekly Active Users"
           />
         </div>
       </div>
       <div>
         <SectionTitle title="Weekly Signups" />
         <div class="max-w-screen-lg">
-          <PlotBarChart
-            :data="weeklySignupsData"
+          <ProgressChart
+            :tallies="weeklySignupsData"
+            :measure-hint="TALLY_MEASURE.WORD"
+            graph-title="Weekly Signups"
           />
         </div>
       </div>
       <div>
         <SectionTitle title="Daily Active Users" />
         <div class="max-w-screen-lg">
-          <PlotBarChart
-            :data="dailyActiveUsersData"
-            :config="{ interval: 'day' }"
+          <ProgressChart
+            :tallies="dailyActiveUsersData"
+            :measure-hint="TALLY_MEASURE.WORD"
+            graph-title="Daily Active Users"
           />
         </div>
       </div>
       <div>
         <SectionTitle title="Daily Signups" />
         <div class="max-w-screen-lg">
-          <PlotBarChart
-            :data="dailySignupsData"
-            :config="{ interval: 'day' }"
+          <ProgressChart
+            :tallies="dailySignupsData"
+            :measure-hint="TALLY_MEASURE.WORD"
+            graph-title="Daily Signups"
           />
         </div>
       </div>

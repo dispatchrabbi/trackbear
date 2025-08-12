@@ -1,0 +1,202 @@
+<script setup lang="ts">
+import { ref, computed, useTemplateRef } from 'vue';
+
+import { type ValueEnum } from 'server/lib/obj';
+import { type TallyMeasure } from 'server/lib/models/tally/consts';
+import { type Tallyish, createChartSeries, createParSeries, determineChartEndDate, determineChartStartDate } from './chart-functions';
+import { cmpByDate, formatDate } from 'src/lib/date';
+import { useChartColors } from './chart-colors';
+import { saveSvgAsPng } from 'src/lib/image';
+
+import { PrimeIcons } from 'primevue/api';
+import Button from 'primevue/button';
+import Dialog from 'primevue/dialog';
+import StackedAreaChart from './StackedAreaChart.vue';
+import BarChart from './BarChart.vue';
+import { filenameify } from 'src/lib/str';
+
+export type SeriesTallyish = Tallyish & {
+  series: string;
+};
+
+const props = withDefaults(defineProps<{
+  tallies: SeriesTallyish[];
+  measureHint: TallyMeasure;
+  startDate?: string;
+  endDate?: string;
+  startingTotal?: number;
+  goalCount?: number;
+  showLegend?: boolean;
+  graphTitle?: string;
+}>(), {
+  startDate: null,
+  endDate: null,
+  startingTotal: 0,
+  goalCount: null,
+  showLegend: true,
+  graphTitle: 'trackbear',
+});
+
+const CHART_TYPES = {
+  AREA: 'area',
+  BAR: 'bar',
+} as const;
+type ChartType = ValueEnum<typeof CHART_TYPES>;
+
+const chartTypeSettings = {
+  [CHART_TYPES.AREA]: {
+    label: 'Area',
+    icon: PrimeIcons.CHART_LINE,
+    accumulate: true,
+    densify: true,
+  },
+  [CHART_TYPES.BAR]: {
+    label: 'Bar',
+    icon: PrimeIcons.CHART_BAR,
+    accumulate: false,
+    densify: false,
+  },
+};
+
+const selectedChartType = ref<ChartType>(CHART_TYPES.AREA);
+
+const chartDates = computed(() => {
+  const sorted = props.tallies.toSorted(cmpByDate);
+  const earliest = sorted.at(0)?.date ?? null;
+  const latest = sorted.at(-1)?.date ?? null;
+
+  const startDate = determineChartStartDate(earliest, props.startDate);
+  const endDate = determineChartEndDate(latest, props.endDate, props.startDate);
+
+  return { startDate, endDate };
+});
+
+const allSeries = computed(() => {
+  const dataPoints = Object.entries(Object.groupBy(props.tallies, tally => tally.series))
+    .flatMap(([seriesName, seriesTallies]) => createChartSeries(seriesTallies, {
+      accumulate: chartTypeSettings[selectedChartType.value].accumulate,
+      densify: chartTypeSettings[selectedChartType.value].densify,
+      startDate: chartDates.value.startDate,
+      endDate: chartDates.value.endDate,
+      startingTotal: props.startingTotal, // only matters if `accumulate` is `true`, so no need to ?: here too
+      series: seriesName,
+    }));
+
+  return dataPoints;
+});
+
+const par = computed(() => {
+  if(props.goalCount === null) {
+    return null;
+  }
+
+  const parSeries = createParSeries(props.goalCount, {
+    accumulate: !!(chartTypeSettings[selectedChartType.value].accumulate && props.endDate),
+    startDate: chartDates.value.startDate,
+    endDate: chartDates.value.endDate,
+  });
+
+  return parSeries;
+});
+
+const chartDialogRef = useTemplateRef('chart-dialog');
+const showFullscreen = ref<boolean>(false);
+function handleClickFullscreen() {
+  showFullscreen.value = true;
+  // @ts-expect-error
+  chartDialogRef.value.maximized = true;
+}
+
+const progressChartRef = useTemplateRef('progress-chart');
+const chartColors = useChartColors();
+function handleClickSave() {
+  const svgEl = progressChartRef.value.querySelector('svg[class^="plot-"]') as SVGSVGElement;
+  const filename = `${filenameify(props.graphTitle)}-${formatDate(new Date())}.png`;
+  saveSvgAsPng(svgEl, filename, chartColors.value.background);
+}
+
+</script>
+
+<template>
+  <div
+    ref="progress-chart"
+    class="flex flex-col gap-0"
+  >
+    <div class="flex gap-1 justify-end p-1">
+      <Button
+        v-for="(settings, type) of chartTypeSettings"
+        :key="type"
+        :aria-label="settings.label"
+        :title="settings.label"
+        :icon="settings.icon"
+        text
+        severity="secondary"
+        size="small"
+        @click="selectedChartType = type"
+      />
+      <Button
+        aria-label="Fullscreen"
+        title="Fullscreen"
+        :icon="PrimeIcons.EXPAND"
+        text
+        severity="secondary"
+        size="small"
+        @click="handleClickFullscreen"
+      />
+      <Button
+        aria-label="Save"
+        title="Save"
+        :icon="PrimeIcons.SAVE"
+        text
+        severity="secondary"
+        size="small"
+        @click="handleClickSave"
+      />
+    </div>
+    <div>
+      <StackedAreaChart
+        v-if="selectedChartType === CHART_TYPES.AREA"
+        :data="allSeries"
+        :par="par"
+        :measure-hint="props.measureHint"
+        :show-legend="props.showLegend"
+      />
+      <BarChart
+        v-if="selectedChartType === CHART_TYPES.BAR"
+        :data="allSeries"
+        :par="par"
+        :stacked="true"
+        :measure-hint="props.measureHint"
+        :show-legend="props.showLegend"
+      />
+    </div>
+    <Dialog
+      ref="chart-dialog"
+      v-model:visible="showFullscreen"
+      :header="props.graphTitle"
+      modal
+    >
+      <div
+        class="flex w-full h-full justify-center items-center"
+      >
+        <StackedAreaChart
+          v-if="selectedChartType === CHART_TYPES.AREA"
+          class="grow"
+          :data="allSeries"
+          :par="par"
+          :measure-hint="props.measureHint"
+          :show-legend="props.showLegend"
+        />
+        <BarChart
+          v-if="selectedChartType === CHART_TYPES.BAR"
+          class="grow"
+          :data="allSeries"
+          :par="par"
+          :stacked="true"
+          :measure-hint="props.measureHint"
+          :show-legend="props.showLegend"
+        />
+      </div>
+    </Dialog>
+  </div>
+</template>

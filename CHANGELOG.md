@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: All charts now are viewable as bar charts.
+- NEW: Added fullscreen mode for charts.
+- NEW: You can now click the save button near a chart to download an image of that chart.
+
 ## 1.3.2
 
 - CHANGED: Added a few metrics on the back end so I can track things like response duration.

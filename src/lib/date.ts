@@ -3,7 +3,9 @@ import { parseISO, format } from 'date-fns';
 const DATE_STRING_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 export function parseDateString(dateString: string): Date {
   const isDateString = DATE_STRING_REGEX.test(dateString);
-  if(!isDateString) { throw new Error(`${dateString} is not a datestring!`); }
+  if(!isDateString) {
+    throw new Error(`${dateString} is not a datestring!`);
+  }
 
   // Temporal when
   return parseISO(dateString);
@@ -21,10 +23,14 @@ export function formatDate(date: Date): string {
   const year = '' + date.getFullYear();
 
   let month = '' + (date.getMonth() + 1);
-  if(month.length === 1) { month = '0' + month; }
+  if(month.length === 1) {
+    month = '0' + month;
+  }
 
   let day = '' + date.getDate();
-  if(day.length === 1) { day = '0' + day; }
+  if(day.length === 1) {
+    day = '0' + day;
+  }
 
   return `${year}-${month}-${day}`;
 }
@@ -32,17 +38,9 @@ export function formatDate(date: Date): string {
 export function formatDateSafe(date: Date | null | undefined): string | null {
   if(date === null || date === undefined) {
     return null;
+  } else {
+    return formatDate(date);
   }
-
-  const year = '' + date.getFullYear();
-
-  let month = '' + (date.getMonth() + 1);
-  if(month.length === 1) { month = '0' + month; }
-
-  let day = '' + date.getDate();
-  if(day.length === 1) { day = '0' + day; }
-
-  return `${year}-${month}-${day}`;
 }
 
 export function formatDuration(totalMinutes, omitZeroMinutes = false, forceColon = false) {

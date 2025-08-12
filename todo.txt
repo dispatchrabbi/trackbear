@@ -27,7 +27,7 @@
 (B) Write help page for leaderboards dif:2 @docs +completehelp
 (B) Write help page for settings dif:2 @docs +completehelp
 (B) Write help page for tags dif:2 @docs +completehelp
-(B) Graph widget overhaul: lines/bars toggle, full-screen, download dif:5 @charts +delight
+x (B) Graph widget overhaul: lines/bars toggle, full-screen, download dif:5 @charts +delight
 (B) Show starred leaderboards on dashboard dif:2 @dashboard +delight
 (B) Graph lifetime progress dif:1 @stats +delight
 (B) Implement a following system dif:5 @followers +followers

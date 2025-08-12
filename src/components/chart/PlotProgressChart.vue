@@ -75,14 +75,14 @@ const colorScheme = computed(() => {
 });
 
 // now start configuring the chart
-const plotContainer = useTemplateRef('plot-contatiner');
+const plotContainer = useTemplateRef('plot-container');
 const plotContainerWidth = ref(0);
 
 const getSuggestedYAxisMaximum = function(measureHint: TallyMeasure | 'percent') {
   if(measureHint === 'percent') {
     return 100;
   } else {
-    return TALLY_MEASURE_INFO[measureHint].defaultChartMax;
+    return TALLY_MEASURE_INFO[measureHint].defaultChartMaxTotal;
   }
 };
 
@@ -216,7 +216,7 @@ onMounted(() => {
 
 <template>
   <div
-    ref="plot-contatiner"
+    ref="plot-container"
     :class="[
       'line-chart-container',
       isFullscreen ? 'line-chart-container-fullscreen' : null,

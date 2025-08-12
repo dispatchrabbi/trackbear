@@ -13,29 +13,31 @@ import { TallyMeasure, TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally';
 import { addMilliseconds } from 'date-fns';
 
-export type LineChartDataPoint = {
+export type BarChartDataPoint = {
   series: string;
   date: string;
   value: number;
 };
 
-export type LineChartParDataPoint = {
+export type BarChartParDataPoint = {
   date: string;
   value: number;
 };
 
 const props = withDefaults(defineProps<{
-  data: LineChartDataPoint[];
-  par?: LineChartParDataPoint[];
+  data: BarChartDataPoint[];
+  par?: BarChartParDataPoint[];
   measureHint: TallyMeasure | 'percent';
+  stacked?: boolean;
   valueFormatFn?: (value: number) => string;
   showLegend?: boolean;
   isFullscreen?: boolean;
 }>(), ({
   par: null,
+  stacked: false,
+  valueFormatFn: null,
   showLegend: true,
   isFullscreen: false,
-  valueFormatFn: null,
 }));
 
 function formatCountWithMeasureHint(value) {
@@ -52,22 +54,9 @@ function getSuggestedYAxisMaximum(measureHint: TallyMeasure | 'percent') {
   if(measureHint === 'percent') {
     return 100;
   } else {
-    return TALLY_MEASURE_INFO[measureHint].defaultChartMaxTotal;
+    return TALLY_MEASURE_INFO[measureHint].defaultChartMaxEach;
   }
 };
-
-// function getSeriesOrder(data: LineChartDataPoint[]) {
-//   const seriesMax = new Map<string, number>();
-//   for(const datapoint of data) {
-//     if((seriesMax.get(datapoint.series) ?? 0) < datapoint.value) {
-//       seriesMax.set(datapoint.series, datapoint.value);
-//     }
-//   }
-
-//   return Array.from(seriesMax.keys()).sort((a, b) => {
-//     return seriesMax.get(b) - seriesMax.get(a);
-//   });
-// }
 
 type ChartDataPoint = {
   series: string;
@@ -81,6 +70,8 @@ function renderChart() {
 
   const marks = [];
 
+  const seriesOrder = orderSeries(props.data, props.stacked);
+
   // we need a zero axis
   marks.push(Plot.ruleY([0]));
 
@@ -91,15 +82,24 @@ function renderChart() {
     value: datapoint.value,
   }));
 
-  const dataLineMark = Plot.lineY(data, {
-    x: 'date',
-    y: 'value',
-    z: 'series',
-    stroke: 'series',
-    marker: 'dot',
-  });
+  const barMarkConfig = props.stacked ?
+      {
+        x: 'date',
+        y: 'value',
+        z: 'series',
+        fill: 'series',
+        order: seriesOrder,
+      } :
+      {
+        x: 'date',
+        y1: () => 0,
+        y2: 'value',
+        z: 'series',
+        fill: 'series',
+      };
+  const dataBarMark = Plot.barY(data, barMarkConfig);
 
-  marks.push(dataLineMark);
+  marks.push(dataBarMark);
   tooltipData.push(...data);
 
   // if there's par, let's add par
@@ -124,7 +124,7 @@ function renderChart() {
 
   // lastly, add the tooltip
   const seriesNames = tooltipData.reduce((set, d) => set.add(d.series), new Set());
-  const tooltipPointerMark = Plot.tip(tooltipData, Plot.pointer({
+  let tooltipPointerConfig = {
     x: 'date',
     y: 'value',
     z: 'series',
@@ -142,11 +142,15 @@ function renderChart() {
       z: false,
     },
     fill: chartColors.value.background,
-  }));
+    order: seriesOrder,
+  };
+  if(props.stacked) {
+    tooltipPointerConfig = Plot.stackY2(tooltipPointerConfig);
+  }
+  // @ts-expect-error not sure why the types don't line up here, but scale: 'color' is what we need
+  const tooltipPointerMark = Plot.tip(tooltipData, Plot.pointer(tooltipPointerConfig));
 
   marks.push(tooltipPointerMark);
-
-  const seriesOrder = orderSeries(props.data);
 
   const chart = Plot.plot({
     style: {
@@ -161,13 +165,13 @@ function renderChart() {
     marginBottom: 36,
     color: {
       type: 'categorical',
-      domain: props.par ? ['Par', ...seriesOrder] : seriesOrder,
-      range: props.par ? [chartColors.value.par, ...chartColors.value.data] : chartColors.value.data,
+      domain: ['Par', ...seriesOrder],
+      range: [chartColors.value.par, ...chartColors.value.data],
       legend: props.showLegend,
     },
     x: {
-      type: 'utc',
-      nice: 'day',
+      type: 'band',
+      interval: 'day',
       tickFormat: (d: Date) => {
         if(d.getUTCHours() === 0) {
           return utcFormat('%-d\n%b')(d);
@@ -209,14 +213,14 @@ onMounted(() => {
   <div
     ref="plot-container"
     :class="[
-      'line-chart-container',
+      'bar-chart-container',
       isFullscreen ? 'fullscreen' : null,
     ]"
   />
 </template>
 
 <style scoped>
-.line-chart-container {
+.bar-chart-container {
   position: relative;
   margin: auto;
 
@@ -225,7 +229,7 @@ onMounted(() => {
   max-width: 100%;
 }
 
-.line-chart-container.fullscreen {
+.bar-chart-container.fullscreen {
   height: calc(100vh - 4rem);
   width: calc(100vw - 4rem);
 }

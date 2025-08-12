@@ -7,6 +7,7 @@ import { utcFormat } from 'd3-time-format';
 import { saveSvgAsPng } from 'src/lib/image.ts';
 
 import { useChartColors } from './chart-colors';
+import { getChartDomain, orderSeries } from './chart-functions';
 
 import { kify } from 'src/lib/number';
 import { formatDate, formatDuration, parseDateString } from 'src/lib/date';
@@ -60,52 +61,8 @@ function handlePlotDoubleclick(ev: MouseEvent) {
 }
 
 function getSuggestedYAxisMaximum(measureHint: TallyMeasure, numberOfSeries: number) {
-  return TALLY_MEASURE_INFO[measureHint].defaultChartMax * numberOfSeries;
+  return TALLY_MEASURE_INFO[measureHint].defaultChartMaxTotal * numberOfSeries;
 };
-
-function getSeriesOrder(data: StackedAreaChartDataPoint[]) {
-  const seriesMax = new Map<string, number>();
-  for(const datapoint of data) {
-    if((seriesMax.get(datapoint.series) ?? 0) < datapoint.value) {
-      seriesMax.set(datapoint.series, datapoint.value);
-    }
-  }
-
-  return Array.from(seriesMax.keys()).sort((a, b) => {
-    return seriesMax.get(b) - seriesMax.get(a);
-  });
-}
-
-function getChartDomain(data: StackedAreaChartDataPoint[], par: StackedAreaChartParDataPoint[]) {
-  const totals = Object.values(data.reduce<Record<string, number>>((obj, el) => {
-    if(!(el.date in obj)) { obj[el.date] = 0; }
-    obj[el.date] += el.value;
-
-    return obj;
-  }, {}));
-  const series = Array.from(new Set(data.map(el => el.series)));
-  const parValues = (par ?? []).map(el => el.value);
-
-  const onlyNegative = totals.every(total => total <= 0) && parValues.every(val => val <= 0);
-
-  const min = onlyNegative ?
-      Math.min(
-        -getSuggestedYAxisMaximum(props.measureHint, series.length),
-        ...totals,
-        ...parValues,
-      ) :
-    0;
-
-  const max = onlyNegative ?
-    0 :
-      Math.max(
-        getSuggestedYAxisMaximum(props.measureHint, series.length),
-        ...totals,
-        ...parValues,
-      );
-
-  return [min, max];
-}
 
 type ChartDataPoint = {
   series: string;
@@ -115,7 +72,7 @@ type ChartDataPoint = {
 
 function renderChart() {
   // determine the order of the series
-  const seriesOrder = getSeriesOrder(props.data);
+  const seriesOrder = orderSeries(props.data, true);
 
   // we will need to add anything that needs a tooltip to this
   const tooltipData: ChartDataPoint[] = [];
@@ -132,13 +89,13 @@ function renderChart() {
     value: datapoint.value,
   }));
 
-  const dataStackMark = Plot.areaY(data, Plot.stackY({
+  const dataStackMark = Plot.areaY(data, {
     x: 'date',
     y: 'value',
     z: 'series',
     order: seriesOrder,
     fill: 'series',
-  }));
+  });
 
   marks.push(dataStackMark);
   tooltipData.push(...data);
@@ -220,7 +177,7 @@ function renderChart() {
         tick => formatDuration(tick) :
         tick => kify(tick),
       grid: true,
-      domain: getChartDomain(props.data, props.par),
+      domain: getChartDomain(props.data, props.par, getSuggestedYAxisMaximum(props.measureHint, seriesOrder.length), true),
     },
     marks: marks,
   });

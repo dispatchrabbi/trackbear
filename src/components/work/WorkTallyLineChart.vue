@@ -6,10 +6,9 @@ import type { TallyWithTags } from 'src/lib/api/tally.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
-import { normalizeTallies, accumulateTallies } from '../chart/chart-functions.ts';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import LineChart from '../chart/LineChart.vue';
+import ProgressChart, { SeriesTallyish } from '../chart/ProgressChart.vue';
 
 const props = defineProps<{
   work: Work;
@@ -28,20 +27,20 @@ watch(measuresAvailable, newMeasuresAvailable => {
   }
 });
 
-const data = computed(() => {
-  const filteredTallies = props.tallies.filter(tally => tally.measure === selectedMeasure.value);
-  const normalizedTallies = normalizeTallies(filteredTallies);
+const filteredTallies = computed(() => {
+  return props.tallies.filter(tally => tally.measure === selectedMeasure.value);
+});
 
-  const startingBalance = props.work.startingBalance[selectedMeasure.value] || 0;
-  const accumulatedTallies = accumulateTallies(normalizedTallies, startingBalance);
-
-  const data = accumulatedTallies.map(tally => ({
-    series: props.work.title,
+const seriesTallies = computed<SeriesTallyish[]>(() => {
+  return filteredTallies.value.map(tally => ({
     date: tally.date,
-    value: tally.accumulated,
+    count: tally.count,
+    series: props.work.title,
   }));
+});
 
-  return data;
+const startingTotal = computed(() => {
+  return props.work.startingBalance[selectedMeasure.value] || 0;
 });
 
 </script>
@@ -55,10 +54,12 @@ const data = computed(() => {
       :key="measure"
       :header="toTitleCase(TALLY_MEASURE_INFO[measure].label.plural)"
     >
-      <LineChart
-        :data="data"
+      <ProgressChart
+        :tallies="seriesTallies"
         :measure-hint="measure"
+        :starting-total="startingTotal"
         :show-legend="false"
+        :graph-title="props.work.title"
       />
     </TabPanel>
   </TabView>
