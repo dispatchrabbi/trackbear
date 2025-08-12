@@ -12,8 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-- NEW: All charts now are viewable as bar charts.
-- NEW: Added fullscreen mode for charts.
+## 1.3.3
+
+- NEW: You can now view any chart as a bar chart, so you can see your total progress each day.
+- NEW: You can now make any chart fullscreen. Hopefully this helps mobile users a bit!
 - NEW: You can now click the save button near a chart to download an image of that chart.
 
 ## 1.3.2
