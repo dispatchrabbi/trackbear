@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.3.4
+
 - FIXED: Percentages in area and bar charts are now limited to 2 decimal places. (h/t Starlight)
 
 ## 1.3.3
