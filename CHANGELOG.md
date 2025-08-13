@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Percentages in area and bar charts are now limited to 2 decimal places. (h/t Starlight)
+
 ## 1.3.3
 
 - NEW: You can now view any chart as a bar chart, so you can see your total progress each day.

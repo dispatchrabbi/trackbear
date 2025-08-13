@@ -7,7 +7,7 @@ import { utcFormat } from 'd3-time-format';
 import { useChartColors } from './chart-colors';
 import { getChartDomain, orderSeries } from './chart-functions';
 
-import { kify } from 'src/lib/number';
+import { formatPercent, kify } from 'src/lib/number';
 import { formatDate, formatDuration, parseDateString } from 'src/lib/date';
 import { TallyMeasure, TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally';
@@ -39,7 +39,11 @@ const props = withDefaults(defineProps<{
 }));
 
 function formatCountWithMeasureHint(value) {
-  return formatCount(value, props.measureHint);
+  if(props.measureHint === 'percent') {
+    return formatPercent(value, 100) + '%';
+  } else {
+    return formatCount(value, props.measureHint);
+  }
 }
 
 const chartColors = useChartColors();
@@ -136,7 +140,7 @@ function renderChart() {
     format: {
       date: formatDate,
       series: seriesNames.size > 1,
-      value: props.valueFormatFn ?? (props.measureHint === 'percent' ? d => `${d}%` : formatCountWithMeasureHint),
+      value: props.valueFormatFn ?? formatCountWithMeasureHint,
       x: false,
       y: false,
       z: false,
