@@ -3,10 +3,11 @@
 
 ###############################################################################
 # base stage
-FROM node:22 AS base
+FROM node:22-alpine AS base
 
 # Install the latest openssl (for HTTPS), and some other tools (for debugging)
-RUN apt update -y && apt install -y openssl curl postgresql-client nano
+RUN apk upgrade && apk add openssl curl postgresql17-client nano
+# RUN apt update -y && apt install -y openssl curl postgresql-client nano
 
 # Default NODE_ENV to development (the safest); later stages will override this if needed
 ENV NODE_ENV=development
