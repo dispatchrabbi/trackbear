@@ -53,6 +53,7 @@ describe('chart-functions', () => {
         { date: '2024-11-03', count: 300 },
         { date: '2024-11-05', count: 500 },
         { date: '2024-11-06', count: 600 },
+        { date: '2024-11-09', count: 900 },
       ];
 
       const expected = [
@@ -61,9 +62,16 @@ describe('chart-functions', () => {
         { series, date: '2024-11-04', value: 0 },
         { series, date: '2024-11-05', value: 500 },
         { series, date: '2024-11-06', value: 600 },
+        { series, date: '2024-11-07', value: 0 },
+        { series, date: '2024-11-08', value: 0 },
+        { series, date: '2024-11-09', value: 900 },
       ];
 
-      const actual = createChartSeries(tallies, { densify: true });
+      const actual = createChartSeries(tallies, {
+        densify: true,
+        earliestData: tallies.at(0).date,
+        latestData: tallies.at(-1).date,
+      });
 
       expect(actual).toStrictEqual(expected);
     });
@@ -119,6 +127,40 @@ describe('chart-functions', () => {
         { date: '2024-11-03', count: 300 },
         { date: '2024-11-05', count: 500 },
         { date: '2024-11-06', count: 600 },
+        { date: '2024-11-09', count: 900 },
+      ];
+
+      const expected = [
+        { series, date: '2024-11-02', value: 200 },
+        { series, date: '2024-11-03', value: 300 },
+        { series, date: '2024-11-04', value: 0 },
+        { series, date: '2024-11-05', value: 500 },
+        { series, date: '2024-11-06', value: 600 },
+        { series, date: '2024-11-07', value: 0 },
+        { series, date: '2024-11-08', value: 0 },
+        { series, date: '2024-11-09', value: 900 },
+      ];
+
+      const actual = createChartSeries(tallies, {
+        densify: true,
+        startDate,
+        endDate,
+        earliestData: tallies.at(0).date,
+        latestData: tallies.at(-1).date,
+      });
+
+      expect(actual).toStrictEqual(expected);
+    });
+
+    it('creates an extended series of densified chart data points with start and end dates', () => {
+      const series = 'Progress';
+      const startDate = '2024-11-01';
+      const endDate = '2024-11-10';
+      const tallies = [
+        { date: '2024-11-02', count: 200 },
+        { date: '2024-11-03', count: 300 },
+        { date: '2024-11-05', count: 500 },
+        { date: '2024-11-06', count: 600 },
       ];
 
       const expected = [
@@ -134,7 +176,14 @@ describe('chart-functions', () => {
         { series, date: '2024-11-10', value: 0 },
       ];
 
-      const actual = createChartSeries(tallies, { densify: true, startDate, endDate });
+      const actual = createChartSeries(tallies, {
+        densify: true,
+        extend: true,
+        startDate,
+        endDate,
+        earliestData: tallies.at(0).date,
+        latestData: tallies.at(-1).date,
+      });
 
       expect(actual).toStrictEqual(expected);
     });

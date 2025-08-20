@@ -59,9 +59,8 @@ export function createChartSeries(tallies: Tallyish[], options: Partial<CreateCh
   }
 
   if(options.densify) {
-    const dates = Array.from(dateCounts.keys()).sort();
-    const startDate = options.extend ? determineChartStartDate(dates.at(0), options.startDate) : options.earliestData;
-    const endDate = options.extend ? determineChartEndDate(dates.at(-1), options.endDate, options.startDate) : options.latestData;
+    const startDate = options.extend ? determineChartStartDate(options.earliestData, options.startDate) : options.earliestData;
+    const endDate = options.extend ? determineChartEndDate(options.latestData, options.endDate, options.startDate) : options.latestData;
 
     if(startDate && endDate) {
       // get each day in the interval
