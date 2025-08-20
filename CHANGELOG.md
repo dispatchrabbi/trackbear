@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: The colors on the chart for a leaderboard in fundraiser mode now match the colors on the bar below it. (h/t Keelia)
+- FIXED: The data on the chart for a leaderboard in fundraiser mode now correctly stops when there's no more data. (h/t Keelia)
 - REMOVED: The NaNoWriMo import functionality has been removed, as the sites are no longer accessible. Manual import is still available, and a more generic import is coming soon.
 
 ## 1.3.4

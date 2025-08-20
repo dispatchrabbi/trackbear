@@ -60,19 +60,6 @@ function getSuggestedYAxisMaximum(measureHint: TallyMeasure | 'percent') {
   }
 };
 
-// function getSeriesOrder(data: LineChartDataPoint[]) {
-//   const seriesMax = new Map<string, number>();
-//   for(const datapoint of data) {
-//     if((seriesMax.get(datapoint.series) ?? 0) < datapoint.value) {
-//       seriesMax.set(datapoint.series, datapoint.value);
-//     }
-//   }
-
-//   return Array.from(seriesMax.keys()).sort((a, b) => {
-//     return seriesMax.get(b) - seriesMax.get(a);
-//   });
-// }
-
 type ChartDataPoint = {
   series: string;
   date: Date;

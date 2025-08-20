@@ -74,7 +74,7 @@ function renderChart() {
 
   const marks = [];
 
-  const seriesOrder = orderSeries(props.data, props.stacked);
+  const seriesOrder = orderSeries(props.data);
 
   // we need a zero axis
   marks.push(Plot.ruleY([0]));

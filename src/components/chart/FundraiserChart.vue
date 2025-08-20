@@ -3,8 +3,8 @@ import { ref, computed, useTemplateRef } from 'vue';
 
 import { type ValueEnum } from 'server/lib/obj';
 import { type TallyMeasure } from 'server/lib/models/tally/consts';
-import { type Tallyish, createChartSeries, createParSeries, determineChartEndDate, determineChartStartDate } from './chart-functions';
-import { cmpByDate, formatDate } from 'src/lib/date';
+import { type Tallyish, createChartSeries, createParSeries, determineChartIntervals } from './chart-functions';
+import { formatDate } from 'src/lib/date';
 import { useChartColors } from './chart-colors';
 import { saveSvgAsPng } from 'src/lib/image';
 
@@ -49,26 +49,21 @@ const chartTypeSettings = {
     icon: PrimeIcons.CHART_LINE,
     accumulate: true,
     densify: true,
+    extend: false,
   },
   [CHART_TYPES.BAR]: {
     label: 'Bar',
     icon: PrimeIcons.CHART_BAR,
     accumulate: false,
     densify: false,
+    extend: false,
   },
 };
 
 const selectedChartType = ref<ChartType>(CHART_TYPES.AREA);
 
-const chartDates = computed(() => {
-  const sorted = props.tallies.toSorted(cmpByDate);
-  const earliest = sorted.at(0)?.date ?? null;
-  const latest = sorted.at(-1)?.date ?? null;
-
-  const startDate = determineChartStartDate(earliest, props.startDate);
-  const endDate = determineChartEndDate(latest, props.endDate, props.startDate);
-
-  return { startDate, endDate };
+const chartIntervals = computed(() => {
+  return determineChartIntervals(props.tallies, props.startDate, props.endDate);
 });
 
 const allSeries = computed(() => {
@@ -76,8 +71,10 @@ const allSeries = computed(() => {
     .flatMap(([seriesName, seriesTallies]) => createChartSeries(seriesTallies, {
       accumulate: chartTypeSettings[selectedChartType.value].accumulate,
       densify: chartTypeSettings[selectedChartType.value].densify,
-      startDate: chartDates.value.startDate,
-      endDate: chartDates.value.endDate,
+      startDate: chartIntervals.value.startDate,
+      endDate: chartIntervals.value.endDate,
+      earliestData: chartIntervals.value.earliestData,
+      latestData: chartIntervals.value.latestData,
       startingTotal: props.startingTotal, // only matters if `accumulate` is `true`, so no need to ?: here too
       series: seriesName,
     }));
@@ -92,8 +89,8 @@ const par = computed(() => {
 
   const parSeries = createParSeries(props.goalCount, {
     accumulate: !!(chartTypeSettings[selectedChartType.value].accumulate && props.endDate),
-    startDate: chartDates.value.startDate,
-    endDate: chartDates.value.endDate,
+    startDate: chartIntervals.value.startDate,
+    endDate: chartIntervals.value.endDate,
   });
 
   return parSeries;

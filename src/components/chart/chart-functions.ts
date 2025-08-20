@@ -1,5 +1,5 @@
 import { addDays, eachDayOfInterval, differenceInCalendarDays } from 'date-fns';
-import { formatDate, parseDateString, maxDate } from 'src/lib/date.ts';
+import { formatDate, parseDateString, maxDate, cmpByDate } from 'src/lib/date.ts';
 
 import { cmpTallies } from 'src/lib/tally.ts';
 
@@ -20,8 +20,14 @@ type CreateChartSeriesOptions = {
   accumulate: boolean;
   /** Whether to fill in missing days with a 0 value (`true`) or leave it sparse (`false`) */
   densify: boolean;
+  /** Whether to fill in missing days before and after the first data value (`true`) or not (`false`) */
+  extend: boolean;
   startDate: string;
   endDate: string;
+  /** the first date that appears in any of the data on this chart */
+  earliestData: string;
+  /** the last date that appears in any of the data on this chart */
+  latestData: string;
   /** What value the accumulated total starts at (though this only matters when `accumulate` is set to `true`) */
   startingTotal: number;
   series: string;
@@ -31,8 +37,11 @@ export function createChartSeries(tallies: Tallyish[], options: Partial<CreateCh
   options = Object.assign<CreateChartSeriesOptions, Partial<CreateChartSeriesOptions>>({
     accumulate: false,
     densify: false,
+    extend: false,
     startDate: null,
     endDate: null,
+    earliestData: null,
+    latestData: null,
     startingTotal: 0,
     series: 'Progress',
   }, options);
@@ -51,18 +60,20 @@ export function createChartSeries(tallies: Tallyish[], options: Partial<CreateCh
 
   if(options.densify) {
     const dates = Array.from(dateCounts.keys()).sort();
-    const startDate = determineChartStartDate(dates.at(0), options.startDate);
-    const endDate = determineChartEndDate(dates.at(-1), options.endDate, options.startDate);
+    const startDate = options.extend ? determineChartStartDate(dates.at(0), options.startDate) : options.earliestData;
+    const endDate = options.extend ? determineChartEndDate(dates.at(-1), options.endDate, options.startDate) : options.latestData;
 
-    // get each day in the interval
-    eachDayOfInterval({
-      start: parseDateString(startDate),
-      end: parseDateString(endDate),
-    }).map(dateObj => formatDate(dateObj))
+    if(startDate && endDate) {
+      // get each day in the interval
+      eachDayOfInterval({
+        start: parseDateString(startDate),
+        end: parseDateString(endDate),
+      }).map(dateObj => formatDate(dateObj))
       // filter to just the missing ones
-      .filter(date => !dateCounts.has(date))
+        .filter(date => !dateCounts.has(date))
       // fill in the gaps
-      .forEach(date => dateCounts.set(date, 0));
+        .forEach(date => dateCounts.set(date, 0));
+    }
   }
 
   const series: ChartDataPoint[] = [];
@@ -141,6 +152,22 @@ export function createParSeries(goal: number, options: Partial<CreateParSeriesOp
   return series;
 }
 
+export function determineChartIntervals(tallies: Tallyish[], overrideStartDate?: string, overrideEndDate?: string) {
+  const sorted = tallies.toSorted(cmpByDate);
+  const earliestData = sorted.at(0)?.date ?? null;
+  const latestData = sorted.at(-1)?.date ?? null;
+
+  const startDate = determineChartStartDate(earliestData, overrideStartDate);
+  const endDate = determineChartEndDate(latestData, overrideEndDate, overrideStartDate);
+
+  return {
+    startDate,
+    endDate,
+    earliestData: earliestData < startDate ? startDate : earliestData,
+    latestData: latestData > endDate ? endDate : latestData,
+  };
+}
+
 export function determineChartStartDate(firstUpdate?: string, overrideStartDate?: string): string {
   if(overrideStartDate) {
     return overrideStartDate;
@@ -166,7 +193,7 @@ export function determineChartEndDate(lastUpdate?: string, overrideEndDate?: str
   }
 }
 
-export function orderSeries(data: ChartDataPoint[], stacked: boolean = false) {
+export function orderSeries(data: ChartDataPoint[]) {
   const mins = {};
   const maxes = {};
 
@@ -177,11 +204,11 @@ export function orderSeries(data: ChartDataPoint[], stacked: boolean = false) {
   }
 
   const sortedSeries = Object.keys(mins).sort((a, b) => {
-    return maxes[a] < maxes[b] ? -1 : maxes[a] > maxes[b] ? 1 : mins[a] > mins[b] ? -1 : mins[a] < mins[b] ? 1 : 0;
+    // we want the biggest first
+    return maxes[a] < maxes[b] ? 1 : maxes[a] > maxes[b] ? -1 : mins[a] > mins[b] ? 1 : mins[a] < mins[b] ? -1 : 0;
   });
 
-  // for a stacked chart, the biggest one should go on the bottom
-  return stacked ? sortedSeries : sortedSeries.reverse();
+  return sortedSeries;
 }
 
 export function getChartDomain(data: BareDataPoint[], par: BareDataPoint[], suggestedYAxisMaximum: number, stacked: boolean = false) {

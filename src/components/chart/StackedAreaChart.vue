@@ -4,8 +4,6 @@ import { useResizeObserver } from '@vueuse/core';
 import * as Plot from '@observablehq/plot';
 import { utcFormat } from 'd3-time-format';
 
-import { saveSvgAsPng } from 'src/lib/image.ts';
-
 import { useChartColors } from './chart-colors';
 import { getChartDomain, orderSeries } from './chart-functions';
 
@@ -50,16 +48,6 @@ const chartColors = useChartColors();
 const plotContainer = useTemplateRef('plot-container');
 const plotContainerWidth = ref(0);
 
-function handlePlotDoubleclick(ev: MouseEvent) {
-  // only do this if the alt/option key is held down
-  if(!ev.altKey) { return; }
-
-  const figureEl = plotContainer.value.querySelector('figure');
-  const svgClass = figureEl.className.replace('-figure', '');
-  const svgEl = plotContainer.value.querySelector(`svg.${svgClass}`) as SVGSVGElement;
-  saveSvgAsPng(svgEl, 'chart.png', chartColors.value.background);
-}
-
 function getSuggestedYAxisMaximum(measureHint: TallyMeasure, numberOfSeries: number) {
   return TALLY_MEASURE_INFO[measureHint].defaultChartMaxTotal * numberOfSeries;
 };
@@ -72,7 +60,7 @@ type ChartDataPoint = {
 
 function renderChart() {
   // determine the order of the series
-  const seriesOrder = orderSeries(props.data, true);
+  const seriesOrder = orderSeries(props.data);
 
   // we will need to add anything that needs a tooltip to this
   const tooltipData: ChartDataPoint[] = [];
@@ -205,7 +193,6 @@ onMounted(() => {
       'chart-container',
       isFullscreen ? 'fullscreen' : null,
     ]"
-    @dblclick="handlePlotDoubleclick"
   />
 </template>
 
