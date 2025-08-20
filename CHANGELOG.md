@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- REMOVED: The NaNoWriMo import functionality has been removed, as the sites are no longer accessible. Manual import is still available, and a more generic import is coming soon.
+
 ## 1.3.4
 
 - FIXED: Percentages in area and bar charts are now limited to 2 decimal places. (h/t Starlight)

@@ -35,7 +35,7 @@ const sections = [
       pace for a quarter-million words this year? TrackBear has you covered with <b>targets</b>. Set a goal and a date
       range, and TrackBear will graph your progress and show you where you are versus par for the day. Targets can span
       multiple projects, so you can see progress across all your work.`,
-      `(P.S.: you can even import your old projects from NaNoWriMo.)`,
+      `(P.S.: you can even import your projects from other places.)`,
     ],
   },
   {

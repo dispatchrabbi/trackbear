@@ -113,7 +113,6 @@
     "vue-router": "^4.5.0",
     "vue-tsc": "^3.0.1",
     "winston": "^3.17.0",
-    "wisp-server-node": "^1.1.7",
     "zod": "^3.23.8"
   },
   "devDependencies": {
