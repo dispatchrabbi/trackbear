@@ -54,6 +54,7 @@ import ProfileHabitGauge from './ProfileHabitGauge.vue';
         <DayCountHeatmap
           :day-counts="props.profile.recentActivity"
           anchor="end"
+          :week-starts-on="props.profile.config.weekStartDay"
         />
       </div>
       <div

@@ -42,6 +42,10 @@ type ProfileHabitSummary = {
   totalRanges: number;
 };
 
+type ProfileConfig = {
+  weekStartDay: Day;
+};
+
 export type PublicProfile = {
   username: string;
   displayName: string;
@@ -51,6 +55,7 @@ export type PublicProfile = {
   workSummaries: ProfileWorkSummary[];
   targetSummaries: ProfileTargetSummary[];
   habitSummaries: ProfileHabitSummary[];
+  config: ProfileConfig;
 };
 
 export async function getUserProfile(username): Promise<PublicProfile> {
@@ -100,6 +105,9 @@ export async function getUserProfile(username): Promise<PublicProfile> {
     workSummaries,
     targetSummaries,
     habitSummaries,
+    config: {
+      weekStartDay: user.userSettings.weekStartDay,
+    },
   };
 }
 
