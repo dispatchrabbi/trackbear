@@ -1,16 +1,16 @@
 import { USER_STATE } from './user/consts.ts';
 import dbClient from '../db.ts';
 
-import { add } from 'date-fns';
+import { add, Day } from 'date-fns';
 import { formatDate } from 'src/lib/date.ts';
 
+import { FullUser, User } from './user/user-model.ts';
 import { WORK_STATE } from './work/consts.ts';
 import { TALLY_MEASURE, TALLY_STATE } from './tally/consts.ts';
 import { MeasureCounts } from './tally/types.ts';
 import { GOAL_TYPE } from './goal/consts.ts';
 import { analyzeStreaksForHabit, HabitRange, isRangeCurrent } from './goal/helpers.ts';
 import type { TargetGoalParameters, HabitGoalParameters, HabitGoal, TargetGoal } from './goal/types.ts';
-import type { User } from './user/user-model.ts';
 import { GoalModel } from './goal/goal-model.ts';
 import { getDayCounts, DayCount } from './stats.ts';
 
@@ -63,7 +63,7 @@ export async function getUserProfile(username): Promise<PublicProfile> {
     include: {
       userSettings: true,
     },
-  });
+  }) as FullUser;
 
   if(user === null) {
     // no active user with that username found
@@ -73,11 +73,40 @@ export async function getUserProfile(username): Promise<PublicProfile> {
     return null;
   }
 
-  // next, get their lifetime totals
+  const [
+    lifetimeTotals,
+    recentActivity,
+    workSummaries,
+    targetSummaries,
+    habitSummaries,
+  ] = await Promise.all([
+    // next, get their lifetime totals
+    getLifetimeTotals(user.id, user.userSettings.lifetimeStartingBalance),
+    // we need activity going back a year for the heatmap
+    getRecentActivity(user.id),
+    // we also give the option to display selected works
+    getProfileWorkSummaries(user.id),
+    // not to mention the option to display selected habits and targets
+    getProfileTargetSummaries(user.id),
+    getProfileHabitSummaries(user.id, user.userSettings.weekStartDay),
+  ]);
+
+  return {
+    username: user.username,
+    displayName: user.displayName,
+    avatar: user.avatar,
+    lifetimeTotals,
+    recentActivity,
+    workSummaries,
+    targetSummaries,
+    habitSummaries,
+  };
+}
+
+async function getLifetimeTotals(userId: number, lifetimeStartingBalance: MeasureCounts): Promise<MeasureCounts> {
   // lifetime totals are: lifetime starting balance + work starting balances + total of tallies
-  const lifetimeStartingBalance = user.userSettings.lifetimeStartingBalance as MeasureCounts;
-  const works = await getWorksWithStartingBalances(user.id);
-  const tallyTotals = await getTallyTotals(user.id);
+  const works = await getWorksWithStartingBalances(userId);
+  const tallyTotals = await getTallyTotals(userId);
   const lifetimeTotals = Object.values(TALLY_MEASURE).reduce((obj, measure) => {
     let didTheyUseThisMeasureEver = false;
     let total = 0;
@@ -105,27 +134,14 @@ export async function getUserProfile(username): Promise<PublicProfile> {
     return obj;
   }, {});
 
-  // after that, we need activity going back a year for the heatmap
+  return lifetimeTotals;
+}
+
+async function getRecentActivity(userId: number): Promise<DayCount[]> {
   const oneYearAgo = formatDate(add(new Date(), { years: -1 }));
-  const recentActivity = await getDayCounts(user.id, oneYearAgo);
+  const recentActivity = await getDayCounts(userId, oneYearAgo);
 
-  // we also give the option to display selected works
-  const workSummaries = await getProfileWorkSummaries(user.id);
-
-  // not to mention the option to display selected habits and targets
-  const targetSummaries = await getProfileTargetSummaries(user.id);
-  const habitSummaries = await getProfileHabitSummaries(user.id);
-
-  return {
-    username: user.username,
-    displayName: user.displayName,
-    avatar: user.avatar,
-    lifetimeTotals,
-    recentActivity,
-    workSummaries,
-    targetSummaries,
-    habitSummaries,
-  };
+  return recentActivity;
 }
 
 type WorkStartingBalance = {
@@ -255,7 +271,7 @@ async function getProfileTargetSummaries(userId: number): Promise<ProfileTargetS
   return summaries;
 }
 
-async function getProfileHabitSummaries(userId: number): Promise<ProfileHabitSummary[]> {
+async function getProfileHabitSummaries(userId: number, weekStartDay: Day): Promise<ProfileHabitSummary[]> {
   const allGoals = await GoalModel.getGoals({ id: userId } as User);
   const eligibleHabits = allGoals.filter(goal => goal.type === GOAL_TYPE.HABIT && goal.displayOnProfile === true) as HabitGoal[];
 
@@ -266,7 +282,7 @@ async function getProfileHabitSummaries(userId: number): Promise<ProfileHabitSum
     const { ranges, streaks } = analyzeStreaksForHabit(
       talliesForHabit, habit.parameters.cadence, habit.parameters.threshold,
       habit.startDate, habit.endDate,
-      0, // hard-code Sunday to avoid leaking info
+      weekStartDay,
     );
 
     const currentRange = (ranges.length > 0 && isRangeCurrent(ranges.at(-1))) ? ranges.at(-1) : null;

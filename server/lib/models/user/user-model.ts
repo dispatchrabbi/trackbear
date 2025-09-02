@@ -1,10 +1,10 @@
-import { addDays, addMinutes } from 'date-fns';
+import { addDays, addMinutes, type Day } from 'date-fns';
 
 import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();
 
 import dbClient from '../../db.ts';
-import type { PasswordResetLink, PendingEmailVerification, User, UserAuth, Prisma } from 'generated/prisma/client';
+import type { PasswordResetLink, PendingEmailVerification, User, UserAuth, UserSettings as PrismaUserSettings, Prisma } from 'generated/prisma/client';
 import { hash, verifyHash } from '../../hash.ts';
 
 import { type RequestContext } from '../../request-context.ts';
@@ -28,6 +28,14 @@ import sendPasswordChangeEmail from '../../tasks/send-pwchange-email.ts';
 import { traced } from '../../metrics/tracer.ts';
 
 export type { User };
+export type UserSettings = Omit<PrismaUserSettings, 'lifetimeStartingBalance' | 'weekStartDay'> & {
+  lifetimeStartingBalance: Record<string, number>;
+  weekStartDay: Day;
+};
+export type FullUser = User & {
+  userSettings: UserSettings;
+};
+
 export type SignUpUserData = {
   username: string;
   password: string;

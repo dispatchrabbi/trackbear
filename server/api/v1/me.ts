@@ -4,14 +4,15 @@ import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
-import { addDays, type Day } from 'date-fns';
+import { addDays } from 'date-fns';
 
 import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();
 
 import dbClient from '../../lib/db.ts';
-import type { User, UserSettings as PrismaUserSettings } from 'generated/prisma/client';
+import type { User } from 'generated/prisma/client';
 import { USERNAME_REGEX, USER_STATE, ALLOWED_AVATAR_FORMATS } from '../../lib/models/user/consts.ts';
+import type { FullUser, UserSettings } from 'server/lib/models/user/user-model.ts';
 import { TALLY_MEASURE } from '../../lib/models/tally/consts.ts';
 import CONFIG from '../../config.ts';
 
@@ -29,13 +30,7 @@ import sendUsernameChangedEmail from '../../lib/tasks/send-username-changed-emai
 import sendAccountDeletedEmail from '../../lib/tasks/send-account-deleted-email.ts';
 import { getAvatarUploadFn, getAvatarUploadPath } from 'server/lib/upload.ts';
 
-type UserSettings = Omit<PrismaUserSettings, 'lifetimeStartingBalance' | 'weekStartDay'> & {
-  lifetimeStartingBalance: Record<string, number>;
-  weekStartDay: Day;
-};
-export type FullUser = User & {
-  userSettings: UserSettings;
-};
+export type { FullUser };
 
 // GET /me - get your own user information
 export async function handleGetMe(req: RequestWithUser, res: ApiResponse<FullUser>) {
