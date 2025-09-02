@@ -12,7 +12,7 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-## 1.3.6
+## 1.3.7
 
 - NEW: You can now set what day the week should start on for the purposes of your dashboard and habit goals. (h/t Hester van Bork)
 
