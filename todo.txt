@@ -1,72 +1,70 @@
-(A) Allow admins to force password reset dif:5 @admin +adminconsole
-(A) Allow admins to view any project, goal, leaderboard in-situ dif:3 @admin +adminconsole
-(A) Separate join code from UUID and allow rolling the code dif:3 @boards +boardsv2
-(A) Group participants into teams and compare team totals (h/t Asha) dif:5 @boards +boardsv2
-(A) Create/commission logo and assets dif:? +branding
+(A) Create a generic importer (h/t Trax) dif:5 @backend @frontend +import
+(A) Allow users to specify Sunday or Monday as the first day of the week (h/t Hester van Bork) @settings +localization +delight
 (A) Too many projects when making a goal scroll off the edge of the screen (h/t DarkJediQueen) dif:1 @goals +bugs
 (A) Make the tally table more mobile-friendly (h/t lailah) dif:2 @projects +delight
-(A) Combine delete and edit/configure into a single edit page that includes a Danger Zone for deleting dif:3 @goals @projects +editpage
-(A) Implement data export dif:5 @backend @frontend +export
-(A) De-duplicate add/edit forms dif:3 @frontend +techdebt
-(A) Should convert text-white to text-surface-0 probably dif:1 @ui +themes
-(A) Definitely need to figure out themed chart colors somehow dif:2 @charts @ui +themes
-(A) Actually make several themes dif:5 @ui +themes
-(A) Allow viewing leaderboards without logging in dif:3 @boards
+(A) Redo the upload UI so it's more intuitive dif:2 @projects @settings +delight
 (A) Ensure that projects (etc.) on public profile have a consistent order (last updated?) (h/t K. A. J. Klok) dif:2 @profile +delight
+(A) Group participants into teams and compare team totals (h/t Asha) dif:5 @boards +boardsv2
+(A) Allow participants to pick their own chart color (if they are not on teams) dif:2 @boards +boardsv2
+(A) Separate join code from UUID and allow rolling the code dif:3 @boards +boardsv2
+(A) Allow viewing leaderboards without logging in dif:3 @boards
+(A) Leaderboard embed (h/t Jenai) dif:1 @public +embeds
+(A) Project progress embed (h/t Laura) dif:3 @public +embeds
+(A) Implement a following system dif:5 @followers +followers
+(A) Add a Following page under the Dashboard section dif:3 @dashboard @followers +followers
+(A) Change the public and friend profile choices to be a settings page instead of being in the configure pages dif:3 @followers @settings +followers
+(A) Implement data export dif:5 @backend @frontend +export
+(A) Write help page for leaderboards dif:2 @docs +completehelp
+(A) Write help page for settings dif:2 @docs +completehelp
+(A) Write help page for tags dif:2 @docs +completehelp
+(A) Combine delete and edit/configure into a single edit page that includes a Danger Zone for deleting dif:3 @goals @projects +editpage
+(A) De-duplicate add/edit forms dif:3 @frontend +techdebt
+(A) Create/commission logo and assets dif:? +branding
+(A) Improve tag inputs dif:? @boards @goals @projects @tags +taginputs
 (A) Endpoints that return EmptyObject should return null instead dif:1 +techdebt
+(A) Display positive (written) and negative (removed) word counts separately dif:3 @stats +delight
+(A) Allow admins to view any project, goal, leaderboard in-situ dif:3 @admin +adminconsole
+(A) Allow admins to force password reset dif:5 @admin +adminconsole
+(B) Should convert text-white to text-surface-0 probably dif:1 @ui +themes
+(B) Definitely need to figure out themed chart colors somehow dif:2 @charts @ui +themes
+(B) Actually make several themes dif:5 @ui +themes
 (B) Update zod +update
-(C) Consider updating tailwind +update
-(C) Consider updating primevue +update
-(B) Remove Wisp +techdebt
+(B) Implement strictNullChecks in the TypeScript config dif:3 @backend +techdebt
 (B) Improve audit event retrieval/listings dif:2 @admin +adminconsole
 (B) Let admins manage projects dif:5 @admin +adminconsole
 (B) Let admins manage goals dif:3 @admin +adminconsole
 (B) Let admins manage leaderboards dif:3 @admin +adminconsole
-(C) Finish the work of renaming work to project dif:2 +techdebt
-(B) Allow participants to pick their own chart color (if they are not on teams) dif:2 @boards +boardsv2
-(B) Write help page for leaderboards dif:2 @docs +completehelp
-(B) Write help page for settings dif:2 @docs +completehelp
-(B) Write help page for tags dif:2 @docs +completehelp
-x (B) Graph widget overhaul: lines/bars toggle, full-screen, download dif:5 @charts +delight
 (B) Show starred leaderboards on dashboard dif:2 @dashboard +delight
 (B) Graph lifetime progress dif:1 @stats +delight
-(B) Implement a following system dif:5 @followers +followers
-(B) Change the public and friend profile choices to be a settings page instead of being in the configure pages dif:3 @followers @settings +followers
-(B) Add a Following page under the Dashboard section dif:3 @dashboard @followers +followers
-(B) Create a generic importer (h/t Trax) dif:5 @backend @frontend +import
-(B) Add user and other data to session spans dif:1 @backend +o11y
-(B) Split targets and habits dif:13 @goals +splitgoals
-(B) Improve tag inputs dif:? @boards @goals @projects @tags +taginputs
-(B) Fix winston warnings by creating a non-default logger to use and exporting that (which can be silenced during unit tests) dif:2 @backend +techdebt
 (B) Need to figure out accent vs success vs completion dif:3 @ui +themes
-(B) Cyclical leaderboards (renews or does new standings every week/month/year) (h/t Becca Stargazer) dif:5 @boards
-(B) Do some load testing to see if multiple containers is better dif:3 @deploy
-(B) Investigate Docker Swarm if it turns out multiple containers is better dif:? @deploy
 (B) Display the time/count/amount to go if a habit has an end date dif:2 @goals +delight
 (B) Allow leaderboard owners to ban users dif:3 @boards +boardsv2
 (B) Make a better loading thing to show than "Loading..." dif:2 +delight
-(C) Allow admins to rename user/displayName dif:2 @admin +adminconsole
-(C) Allow merging two accounts dif:5 @admin +adminconsole
+(B) Allow admins to rename user/displayName dif:2 @admin +adminconsole
+(B) Allow merging two accounts dif:5 @admin +adminconsole
+(B) Add optional TOTP setup dif:8 @backend @security
+(B) Double-check [Node.js Security Checklist](https://blog.risingstack.com/node-js-security-checklist/) dif:5 @security
+(B) Default the Enter Progress dialog on a project page to the last measure entered dif:3 @projects +delight
+(B) Don't count negative tallies in goals (should this be per-goal or per-user?) (h/t Dawn) dif:3 @goals
+(C) Consider updating tailwind +update
+(C) Consider updating primevue +update
+(C) Finish the work of renaming work to project dif:2 +techdebt
+(C) Split targets and habits dif:13 @goals +splitgoals
+(C) Cyclical leaderboards (renews or does new standings every week/month/year) (h/t Becca Stargazer) dif:5 @boards
 (C) Increase code coverage on the back end dif:34 @backend +coverage100
 (C) Increase code coverage on the front end dif:55 @frontend +coverage100
-(C) Redo the upload UI so it's more intuitive dif:2 @projects @settings +delight
-(C) Display positive (written) and negative (removed) word counts separately dif:3 @stats +delight
-(C) Project progress embed (h/t Laura) dif:3 @public +embeds
 (C) Grand Totals embed (h/t Laura) dif:1 @public +embeds
-(C) Leaderboard embed (h/t Jenai) dif:1 @public +embeds
 (C) Progress update widget (h/t Laura) dif:2 stage:considering @public +embeds
-(C) Create ping check dif:8 @backend +o11y
 (C) Create better seed data for testing dif:? @backend +scenarios
-(C) Do a better job with shared FE/BE data/functions dif:? +techdebt
 (C) Make a strategy for actual color systems: changelog, project phase, goal type, tag color, streak length dif:3 @ui +themes
 (C) Investigate 'progress-spinner-circle' (might need to look at colors on /progressspinner) dif:? @ui +themes
 (C) Lock-out multiple wrong sign-in attempts dif:2 @backend @security
-(C) Add optional TOTP setup dif:8 @backend @security
-(C) Double-check [Node.js Security Checklist](https://blog.risingstack.com/node-js-security-checklist/) dif:5 @security
 (C) Multiple goal points (a la "stretch goals") dif:5 @boards @goals
 (C) Totals by tag dif:2 @stats
-(C) Allow users to specify Sunday or Monday as the first day of the week (h/t Hester van Bork) @settings +localization +delight
-(D) Default the Enter Progress dialog on a project page to the last measure entered dif:3 @projects +delight
+(D) Do some load testing to see if multiple containers is better dif:3 @deploy
+(D) Investigate Docker Swarm if it turns out multiple containers is better dif:? @deploy
+(D) Create ping check dif:8 @backend +o11y
+(D) Do a better job with shared FE/BE data/functions dif:? +techdebt
 (D) Fix the required-auth page architecture dif:5 @frontend +techdebt
 (D) Improve the worker architecture dif:5 @backend +techdebt
 (D) Improve the queue architecture dif:5 @backend +techdebt
@@ -92,4 +90,3 @@ Allow users to configure Dashboard more (h/t K. A. J. Klok) @dashboard @settings
 Break down overall stat project graphs by project, or show "a leaderboard against myself" (h/t Katy F) stage:needs-refinement @stats
 Allow habit goals to designate specific days of the week (h/t Aminta) stage:considering @goals
 Allow tallies to be marked as "catch-up" (catching up the number after several days of not tracking) (h/t Gwen) stage:considering @tallies
-(B) Don't count negative tallies in goals (should this be per-goal or per-user?) (h/t Dawn) dif:3 @goals

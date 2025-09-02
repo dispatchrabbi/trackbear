@@ -34,6 +34,8 @@ model AuditEvent {
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3) // this should never differ from createdAt
+
+  // @@index([eventType, agentId, patientId, goalId])
 }
 
 model User {
@@ -183,6 +185,8 @@ model Tally {
   work   Work? @relation(fields: [workId], references: [id], onDelete: Cascade)
 
   tags Tag[]
+
+  // @@index([ownerId, date, workId])
 }
 
 model Work {
