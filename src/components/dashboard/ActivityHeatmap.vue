@@ -11,9 +11,12 @@ import PlotCalendarHeatMap, { type CalendarHeatMapDataPoint } from '../chart/Plo
 
 import Card from 'primevue/card';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   tallies: Array<Tally>;
-}>();
+  weekStartsOn?: number;
+}>(), {
+  weekStartsOn: 0, // Sunday
+});
 
 const data = computed(() => {
   const today = new Date();
@@ -71,6 +74,7 @@ const valueFormatFn = function(datum: CalendarHeatMapDataPoint) {
         constrain-width
         :normalizer-fn="normalizerFn"
         :value-format-fn="valueFormatFn"
+        :week-starts-on="props.weekStartsOn"
       />
     </template>
   </Card>

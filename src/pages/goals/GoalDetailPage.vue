@@ -6,6 +6,9 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
+import { useUserStore } from 'src/stores/user.ts';
+const userStore = useUserStore();
+
 import { useGoalStore } from 'src/stores/goal.ts';
 const goalStore = useGoalStore();
 
@@ -169,11 +172,13 @@ onMounted(async () => {
             <HabitStats
               :goal="goal as HabitGoal"
               :tallies="tallies"
+              :week-starts-on="userStore.user.userSettings.weekStartDay"
             />
           </div>
           <HabitHistory
             :goal="goal as HabitGoal"
             :tallies="tallies"
+            :week-starts-on="userStore.user.userSettings.weekStartDay"
           />
         </div>
       </div>

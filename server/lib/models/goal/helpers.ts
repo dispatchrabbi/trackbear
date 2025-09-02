@@ -1,4 +1,4 @@
-import { endOfDay, add } from 'date-fns';
+import { endOfDay, add, Day } from 'date-fns';
 import { formatDate, parseDateString } from 'src/lib/date.ts';
 
 import { type TallyMeasure } from '../tally/consts.ts';
@@ -25,7 +25,11 @@ export type HabitAnalysis = {
     all: HabitRange[][];
   };
 };
-export function analyzeStreaksForHabit(tallies: TallyLike[], cadence: GoalCadence, threshold: GoalThreshold, startDate?: string, endDate?: string): HabitAnalysis {
+export function analyzeStreaksForHabit(
+  tallies: TallyLike[],
+  cadence: GoalCadence, threshold: GoalThreshold,
+  startDate: string, endDate: string, weekStartsOn: Day,
+): HabitAnalysis {
   const today = formatDate(new Date());
   // we will only consider tallies up to and including today
   const filteredTalles = threshold === null ? tallies : tallies.filter(tally => tally.measure === threshold.measure && tally.date <= today);
@@ -44,7 +48,7 @@ export function analyzeStreaksForHabit(tallies: TallyLike[], cadence: GoalCadenc
   endDate = endDate ? endDate > today ? today : endDate : today;
 
   // first, get all the possible date ranges for the habit
-  const dateRanges = createDateRanges(cadence.period, cadence.unit, startDate, endDate);
+  const dateRanges = createDateRanges(cadence.period, cadence.unit, startDate, endDate, weekStartsOn);
 
   const streaks: HabitRange[][] = [[]];
   const ranges: HabitRange[] = [];
@@ -86,9 +90,9 @@ export function analyzeStreaksForHabit(tallies: TallyLike[], cadence: GoalCadenc
   };
 }
 
-function createDateRanges(period: number, unit: GoalCadenceUnit, startDate: string, endDate: string) {
+function createDateRanges(period: number, unit: GoalCadenceUnit, startDate: string, endDate: string, weekStartsOn: Day) {
   const fns = GOAL_CADENCE_UNIT_INFO[unit].fns;
-  const start = fns.startOf(parseDateString(startDate));
+  const start = fns.startOf(parseDateString(startDate), { weekStartsOn });
   const end = endOfDay(parseDateString(endDate));
 
   const ranges: { start: string; end: string }[] = [];

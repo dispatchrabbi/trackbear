@@ -13,10 +13,13 @@ import PlotCalendarHeatMap, { type CalendarHeatMapDataPoint } from '../chart/Plo
 
 import Card from 'primevue/card';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   work: Work;
   tallies: Array<Tally>;
-}>();
+  weekStartsOn?: number;
+}>(), {
+  weekStartsOn: 0, // Sunday
+});
 
 // for inactive projects, we'll show a heatmap for the time the project was active
 const INACTIVE_WORK_PHASES = [
@@ -83,6 +86,7 @@ const valueFormatFn = function(datum: CalendarHeatMapDataPoint) {
         constrain-width
         :normalizer-fn="normalizerFn"
         :value-format-fn="valueFormatFn"
+        :week-starts-on="props.weekStartsOn"
       />
     </template>
   </Card>

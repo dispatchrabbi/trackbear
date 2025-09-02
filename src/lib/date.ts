@@ -1,4 +1,4 @@
-import { parseISO, format } from 'date-fns';
+import { parseISO, format, Day } from 'date-fns';
 
 const DATE_STRING_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 export function parseDateString(dateString: string): Date {
@@ -94,4 +94,9 @@ export type Dated = {
 
 export function cmpByDate(a: Dated, b: Dated) {
   return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
+}
+
+export function getStartOfWeek(): Day {
+  // 0 is Sunday; 6 is Saturday
+  return 4;
 }

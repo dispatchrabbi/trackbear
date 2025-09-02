@@ -143,6 +143,7 @@ onMounted(() => {
           </div>
           <DayCountHeatmap
             :day-counts="dayCountsByYear[year]"
+            :week-starts-on="userStore.user.userSettings.weekStartDay"
           />
         </div>
       </div>

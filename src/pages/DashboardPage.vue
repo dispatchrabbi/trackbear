@@ -104,6 +104,7 @@ onMounted(async () => {
           <SectionTitle title="Activity" />
           <ActivityHeatmap
             :tallies="allTallies"
+            :week-starts-on="userStore.user.userSettings.weekStartDay"
           />
         </div>
         <div v-if="userStore.user.userSettings.displayStreaks">
@@ -126,6 +127,7 @@ onMounted(async () => {
           v-if="goal.type === GOAL_TYPE.HABIT"
           :goal="goal as HabitGoal"
           :tallies="filterTallies(allTallies, goal.workIds, goal.tagIds, goal.startDate, goal.endDate)"
+          :week-starts-on="userStore.user.userSettings.weekStartDay"
         />
         <TargetGoalStatus
           v-if="goal.type === GOAL_TYPE.TARGET"

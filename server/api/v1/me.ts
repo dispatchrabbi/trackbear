@@ -4,7 +4,7 @@ import { ApiResponse, success, failure } from '../../lib/api-response.ts';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
-import { addDays } from 'date-fns';
+import { addDays, type Day } from 'date-fns';
 
 import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();
@@ -29,8 +29,9 @@ import sendUsernameChangedEmail from '../../lib/tasks/send-username-changed-emai
 import sendAccountDeletedEmail from '../../lib/tasks/send-account-deleted-email.ts';
 import { getAvatarUploadFn, getAvatarUploadPath } from 'server/lib/upload.ts';
 
-type UserSettings = Omit<PrismaUserSettings, 'lifetimeStartingBalance'> & {
+type UserSettings = Omit<PrismaUserSettings, 'lifetimeStartingBalance' | 'weekStartDay'> & {
   lifetimeStartingBalance: Record<string, number>;
+  weekStartDay: Day;
 };
 export type FullUser = User & {
   userSettings: UserSettings;
@@ -251,12 +252,14 @@ export type SettingsEditPayload = Partial<{
   enablePublicProfile: boolean;
   displayCovers: boolean;
   displayStreaks: boolean;
+  weekStartDay: number;
 }>;
 const zSettingsEditPayload = z.object({
   lifetimeStartingBalance: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()),
   enablePublicProfile: z.boolean(),
   displayCovers: z.boolean(),
   displayStreaks: z.boolean(),
+  weekStartDay: z.number().int().min(0).max(6),
 }).strict().partial();
 
 // PATCH /me/settings - patch your settings

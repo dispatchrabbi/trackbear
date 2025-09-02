@@ -266,6 +266,7 @@ async function getProfileHabitSummaries(userId: number): Promise<ProfileHabitSum
     const { ranges, streaks } = analyzeStreaksForHabit(
       talliesForHabit, habit.parameters.cadence, habit.parameters.threshold,
       habit.startDate, habit.endDate,
+      0, // hard-code Sunday to avoid leaking info
     );
 
     const currentRange = (ranges.length > 0 && isRangeCurrent(ranges.at(-1))) ? ranges.at(-1) : null;

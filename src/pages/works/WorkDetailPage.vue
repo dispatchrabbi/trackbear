@@ -150,6 +150,7 @@ onMounted(async () => {
           <WorkActivityHeatmap
             :work="work"
             :tallies="tallies"
+            :week-starts-on="userStore.user.userSettings.weekStartDay"
           />
         </div>
         <div class="w-full">

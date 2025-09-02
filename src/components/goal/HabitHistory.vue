@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
-import { isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+import { isWithinInterval, startOfDay, endOfDay, type Day } from 'date-fns';
 
-import { Goal } from 'src/lib/api/goal.ts';
-import { Tally } from 'src/lib/api/tally.ts';
+import type { HabitGoal } from 'server/lib/models/goal/types';
+import type { Tally } from 'src/lib/api/tally.ts';
 
 import { analyzeStreaksForHabit } from 'server/lib/models/goal/helpers';
 import { type HabitGoalParameters } from 'server/lib/models/goal/types';
@@ -11,10 +11,13 @@ import { parseDateStringSafe } from 'src/lib/date.ts';
 
 import HabitGauge from 'src/components/goal/HabitGauge.vue';
 
-const props = defineProps<{
-  goal: Goal;
+const props = withDefaults(defineProps<{
+  goal: HabitGoal;
   tallies: Tally[];
-}>();
+  weekStartsOn?: Day;
+}>(), {
+  weekStartsOn: 0, // Sunday
+});
 
 const habitStats = computed(() => {
   const parameters = props.goal.parameters as HabitGoalParameters;
@@ -24,6 +27,7 @@ const habitStats = computed(() => {
     parameters.threshold,
     props.goal.startDate,
     props.goal.endDate,
+    props.weekStartsOn,
   );
 
   return stats;

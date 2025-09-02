@@ -14,8 +14,10 @@ import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 const props = withDefaults(defineProps<{
   dayCounts: Array<DayCount>;
   anchor?: 'start' | 'end';
+  weekStartsOn?: number;
 }>(), {
   anchor: 'start',
+  weekStartsOn: 0, // Sunday
 });
 
 const data = computed(() => {
@@ -81,6 +83,7 @@ const valueFormatFn = function(datum: CalendarHeatMapDataPoint) {
         :anchor="props.anchor"
         :normalizer-fn="normalizerFn"
         :value-format-fn="valueFormatFn"
+        :week-starts-on="props.weekStartsOn"
       />
     </template>
   </Card>

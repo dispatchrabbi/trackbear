@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: You can now set what day the week should start on for the purposes of your dashboard and habit goals. Public profiles will still use Sunday as the start of the week to avoid leaking information about users. (h/t Hester van Bork)
+
 ## 1.3.5
 
 - FIXED: The colors on the chart for a leaderboard in fundraiser mode now match the colors on the bar below it. (h/t Keelia)

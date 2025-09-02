@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
-import { isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+import { isWithinInterval, startOfDay, endOfDay, type Day } from 'date-fns';
 
 import { Tally } from 'src/lib/api/tally.ts';
 
@@ -15,10 +15,13 @@ import GoalCard from 'src/components/dashboard/GoalCard.vue';
 import HabitGauge from 'src/components/goal/HabitGauge.vue';
 import StatTile from 'src/components/goal/StatTile.vue';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   goal: HabitGoal;
   tallies: Tally[];
-}>();
+  weekStartsOn?: Day;
+}>(), {
+  weekStartsOn: 0, // Sunday
+});
 
 const habitStats = computed(() => {
   const now = new Date();
@@ -31,6 +34,7 @@ const habitStats = computed(() => {
     props.goal.parameters.threshold,
     props.goal.startDate,
     formatDate(endDate),
+    props.weekStartsOn,
   );
 
   return stats;

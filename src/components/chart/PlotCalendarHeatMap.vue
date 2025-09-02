@@ -3,7 +3,7 @@ import { ref, computed, watchEffect, withDefaults, onMounted, useTemplateRef } f
 import { useResizeObserver } from '@vueuse/core';
 import * as Plot from '@observablehq/plot';
 import * as d3 from 'd3';
-import { addWeeks, endOfWeek, startOfWeek, subWeeks } from 'date-fns';
+import { addWeeks, Day, endOfWeek, startOfWeek, subWeeks } from 'date-fns';
 
 import { useChartColors } from './chart-colors';
 const chartColors = useChartColors();
@@ -24,12 +24,32 @@ const props = withDefaults(defineProps<{
   constrainWidth?: boolean;
   normalizerFn?: NormalizerFn;
   valueFormatFn?: ValueFormatFn;
+  weekStartsOn?: number;
 }>(), {
   anchor: 'start',
   constrainWidth: false,
   normalizerFn: datum => datum.value == null ? null : (+datum.value) !== 0 ? 1 : 0,
   valueFormatFn: datum => datum.value.toString(),
+  weekStartsOn: 0, // Sunday
 });
+
+const weekStartsOn = computed<Day>(() => {
+  return ([0, 1, 2, 3, 4, 5, 6].includes(props.weekStartsOn) ? props.weekStartsOn : 0) as Day;
+});
+
+const d3TimeDays = [
+  d3.timeSunday,
+  d3.timeMonday,
+  d3.timeTuesday,
+  d3.timeWednesday,
+  d3.timeThursday,
+  d3.timeFriday,
+  d3.timeSaturday,
+];
+function getWeekNumber(targetDate, startDate) {
+  const d3Interval = d3TimeDays[weekStartsOn.value];
+  return d3Interval.count(d3Interval(startDate), d3.timeDay(targetDate));
+}
 
 const colorScale = computed(() => {
   // TODO: make better chart colors for this
@@ -71,10 +91,22 @@ const visibleData = computed(() => {
   };
   if(props.anchor === 'start') {
     // modify end date
-    bounds.endDate = endOfWeek(addWeeks(startOfWeek(bounds.startDate), maximumWeeksVisible.value - 1)); // minus 1 because we already have startDate's week
+    bounds.endDate = endOfWeek(
+      addWeeks(
+        startOfWeek(bounds.startDate, { weekStartsOn: weekStartsOn.value }),
+        maximumWeeksVisible.value - 1, // minus 1 because we already have startDate's week
+      ),
+      { weekStartsOn: weekStartsOn.value },
+    );
   } else if(props.anchor === 'end') {
     // modify start date
-    bounds.startDate = startOfWeek(subWeeks(endOfWeek(bounds.endDate), maximumWeeksVisible.value - 1)); // minus 1 because we already have endDate's week
+    bounds.startDate = startOfWeek(
+      subWeeks(
+        endOfWeek(bounds.endDate, { weekStartsOn: weekStartsOn.value }),
+        maximumWeeksVisible.value - 1, // minus 1 because we already have endDate's week
+      ),
+      { weekStartsOn: weekStartsOn.value },
+    );
   }
 
   return sortedData.value.filter(datum => datum.date >= bounds.startDate && datum.date <= bounds.endDate);
@@ -95,7 +127,8 @@ const dateBounds = computed(() => {
     startDate,
     endDate,
     // count is exclusive to the start date, so add 1 to count the first week
-    weeks: d3.timeSunday.count(d3.timeSunday(startDate), d3.timeDay(endDate)) + 1,
+    weeks: getWeekNumber(endDate, startDate) + 1,
+    // weeks: d3.timeSunday.count(d3.timeSunday(startDate), d3.timeDay(endDate)) + 1,
   };
 });
 
@@ -155,7 +188,7 @@ function renderChart() {
     x: {
       axis: 'top',
       tickFormat: d => {
-        const endOfThisWeek = addWeeks(endOfWeek(dateBounds.value.startDate), d);
+        const endOfThisWeek = addWeeks(endOfWeek(dateBounds.value.startDate, { weekStartsOn: weekStartsOn.value }), d);
         // did this week contain the first of the month? (or, is this the first column?)
         if(d === 0 || endOfThisWeek.getDate() <= 7) {
           return Plot.formatMonth('en', 'short')(endOfThisWeek.getMonth());
@@ -169,12 +202,13 @@ function renderChart() {
     y: {
       tickFormat: Plot.formatWeekday('en', 'narrow'),
       tickSize: 0,
-      domain: [0, 1, 2, 3, 4, 5, 6],
+      domain: [0, 1, 2, 3, 4, 5, 6].map(x => (x + weekStartsOn.value) % 7),
     },
     color: { interpolate: colorScale.value },
     marks: [
       Plot.cell(visibleData.value, {
-        x: d => d3.timeSunday.count(d3.timeDay(dateBounds.value.startDate), d3.timeDay(d.date)),
+        x: d => getWeekNumber(d.date, dateBounds.value.startDate),
+        // x: d => d3.timeSunday.count(d3.timeDay(dateBounds.value.startDate), d3.timeDay(d.date)),
         y: d => (new Date(d.date)).getDay(),
         // fill: d => (console.log(d, visibleData.value, props.normalizerFn(d, visibleData.value)), props.normalizerFn(d, visibleData.value)),
         fill: d => props.normalizerFn(d, visibleData.value),
@@ -182,7 +216,8 @@ function renderChart() {
         margin: 0,
       }),
       Plot.tip(visibleData.value, Plot.pointer({
-        x: d => d3.timeSunday.count(d3.timeDay(dateBounds.value.startDate), d3.timeDay(d.date)),
+        x: d => getWeekNumber(d.date, dateBounds.value.startDate),
+        // x: d => d3.timeSunday.count(d3.timeDay(dateBounds.value.startDate), d3.timeDay(d.date)),
         y: d => (new Date(d.date)).getDay(),
         // filter: d => Object.values(d.value).some(val => (val as number) !== 0),
         title: formatTooltip,

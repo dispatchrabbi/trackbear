@@ -120,6 +120,7 @@ model UserSettings {
   enablePublicProfile Boolean @default(false)
   displayCovers Boolean @default(true)
   displayStreaks Boolean @default(true)
+  weekStartDay Int @default(0)
 
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)

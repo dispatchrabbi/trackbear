@@ -20,6 +20,7 @@ import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import MultiMeasureInput from 'src/components/work/MultiMeasureInput.vue';
 import InputSwitch from 'primevue/inputswitch';
+import Dropdown from 'primevue/dropdown';
 
 const emit = defineEmits(['settings:edit', 'formSuccess']);
 
@@ -35,9 +36,20 @@ const validations = z.object({
   enablePublicProfile: z.boolean(),
   displayCovers: z.boolean(),
   displayStreaks: z.boolean(),
+  weekStartDay: z.number().int().min(0).max(6).default(0),
 });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
+
+const weekStartDayOptions = [
+  { label: 'Sunday', value: 0 },
+  { label: 'Monday', value: 1 },
+  { label: 'Tuesday', value: 2 },
+  { label: 'Wednesday', value: 3 },
+  { label: 'Thursday', value: 4 },
+  { label: 'Friday', value: 5 },
+  { label: 'Saturday', value: 6 },
+];
 
 const isLoading = ref<boolean>(false);
 const successMessage = ref<string | null>(null);
@@ -161,6 +173,22 @@ async function handleSubmit() {
             {{ formModel.displayStreaks ? 'Display streaks on the Dashboard' : 'Hide streaks on the Dashboard' }}
           </div>
         </div>
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      for="settings-form-week-start-day"
+      label="What day should start the week?"
+      :rule="ruleFor('weekStartDay')"
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <Dropdown
+          v-model="formModel.weekStartDay"
+          :invalid="!isFieldValid"
+          :options="weekStartDayOptions"
+          option-label="label"
+          option-value="value"
+          @update:model-value="onUpdate"
+        />
       </template>
     </FieldWrapper>
   </TbForm>
