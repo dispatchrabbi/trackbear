@@ -187,7 +187,7 @@ model Tally {
 
   tags Tag[]
 
-  // @@index([ownerId, date, workId])
+  @@index([ownerId, workId, date])
 }
 
 model Work {

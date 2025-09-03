@@ -1,5 +1,6 @@
 (A) Create a generic importer (h/t Trax) dif:5 @backend @frontend +import
 x (A) Allow users to specify Sunday or Monday as the first day of the week (h/t Hester van Bork) @settings +localization +delight
+(A) Add an error message to API token validation when the Authorization header doesn't start with 'Bearer' (h/t Mia) dif:1 @api +delight
 (A) Too many projects when making a goal scroll off the edge of the screen (h/t DarkJediQueen) dif:1 @goals +bugs
 (A) Make the tally table more mobile-friendly (h/t lailah) dif:2 @projects +delight
 (A) Redo the upload UI so it's more intuitive dif:2 @projects @settings +delight
