@@ -34,7 +34,7 @@ namespace Projects {
   alias ProjectCrud = Crud<
     Project,
     ListModel = SummarizedProject,
-    GetModel = ProjectWithTallies,
+    GetModel = Project,
     CreatePayload = CreateProjectPayload,
     UpdatePayload = UpdateProjectPayload
   >;

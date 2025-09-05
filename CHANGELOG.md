@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: (**BREAKING**) The `GET /project/:id` route now only returns info about the project. You'll need to use `GET /tally` to get the tallies associated with that project. (This technically should require versioning the endpoint, but my logs show that no one is using it. Sorry if this breaks your code!)
+
 ## 1.3.7
 
 - NEW: You can now set what day the week should start on for the purposes of your dashboard and habit goals. (h/t Hester van Bork)
