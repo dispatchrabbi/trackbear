@@ -1,36 +1,36 @@
 import { compare } from 'natural-orderby';
-import type { SummarizedWork, Work } from './api/work.ts';
-import { WORK_PHASE } from 'server/lib/models/work/consts.ts';
+import type { SummarizedProject, Project } from './api/project.ts';
+import { PROJECT_PHASE } from 'server/lib/models/project/consts.ts';
 
-export const WORK_PHASE_ORDER = [
-  WORK_PHASE.PLANNING,
-  WORK_PHASE.OUTLINING,
-  WORK_PHASE.DRAFTING,
-  WORK_PHASE.REVISING,
-  WORK_PHASE.ON_HOLD,
-  WORK_PHASE.FINISHED,
-  WORK_PHASE.ABANDONED,
+export const PROJECT_PHASE_ORDER = [
+  PROJECT_PHASE.PLANNING,
+  PROJECT_PHASE.OUTLINING,
+  PROJECT_PHASE.DRAFTING,
+  PROJECT_PHASE.REVISING,
+  PROJECT_PHASE.ON_HOLD,
+  PROJECT_PHASE.FINISHED,
+  PROJECT_PHASE.ABANDONED,
 ];
 
-export const DORMANT_WORK_PHASES = [
-  WORK_PHASE.ON_HOLD,
-  WORK_PHASE.FINISHED,
-  WORK_PHASE.ABANDONED,
+export const DORMANT_PROJECT_PHASES = [
+  PROJECT_PHASE.ON_HOLD,
+  PROJECT_PHASE.FINISHED,
+  PROJECT_PHASE.ABANDONED,
 ];
 
-export function isDormant(work: Work) {
-  return DORMANT_WORK_PHASES.includes(work.phase);
+export function isDormant(project: Project) {
+  return DORMANT_PROJECT_PHASES.includes(project.phase);
 }
 
-export function cmpWorkByPhase(a: Work, b: Work) {
+export function cmpByPhase(a: Project, b: Project) {
   return cmpStarred(a, b) || cmpPhase(a, b) || cmpTitle(a, b) || -cmpCreated(a, b);
 }
 
-export function cmpWorkByTitle(a: Work, b: Work) {
+export function cmpByTitle(a: Project, b: Project) {
   return cmpStarred(a, b) || cmpTitle(a, b) || -cmpCreated(a, b);
 }
 
-export function cmpWorkByLastUpdate(a: SummarizedWork, b: SummarizedWork) {
+export function cmpByLastUpdate(a: SummarizedProject, b: SummarizedProject) {
   return cmpStarred(a, b) || cmpLatestTally(a, b) || cmpTitle(a, b) || -cmpCreated(a, b);
 }
 
@@ -41,8 +41,8 @@ function cmpStarred(a: Starred, b: Starred) {
 
 interface Phased { phase: string }
 function cmpPhase(a: Phased, b: Phased) {
-  const aPhaseIndex = WORK_PHASE_ORDER.indexOf(a.phase);
-  const bPhaseIndex = WORK_PHASE_ORDER.indexOf(b.phase);
+  const aPhaseIndex = PROJECT_PHASE_ORDER.indexOf(a.phase);
+  const bPhaseIndex = PROJECT_PHASE_ORDER.indexOf(b.phase);
 
   if(aPhaseIndex !== bPhaseIndex) {
     return aPhaseIndex - bPhaseIndex;
@@ -62,9 +62,11 @@ function cmpCreated(a: Created, b: Created) {
 
 interface WithLastUpdated { lastUpdated: string | null }; // should be an ISO datestring
 function cmpLatestTally(a: WithLastUpdated, b: WithLastUpdated) {
+  /* eslint-disable @stylistic/multiline-ternary */
   // we do the equals case first to also catch when `lastUpdated` is null
   return a.lastUpdated === b.lastUpdated ? 0 : // we do the equals case first to also catch when `lastUpdated` is both null
     a.lastUpdated === null ? 1 : // null goes after
       b.lastUpdated === null ? -1 : // null goes after
         a.lastUpdated > b.lastUpdated ? -1 : 1; // more recently updated goes before
+  /* eslint-enable @stylistic/multiline-ternary */
 }

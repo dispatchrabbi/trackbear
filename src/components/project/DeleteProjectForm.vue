@@ -6,24 +6,24 @@ import wait from 'src/lib/wait.ts';
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
-import { deleteWork, Work } from 'src/lib/api/work.ts';
+import { deleteProject, Project } from 'src/lib/api/project';
 
 import InputText from 'primevue/inputtext';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 
 const props = defineProps<{
-  work: Work;
+  project: Project;
 }>();
-const emit = defineEmits(['work:delete', 'formSuccess']);
-const eventBus = useEventBus<{ work: Work }>('work:delete');
+const emit = defineEmits(['project:delete', 'formSuccess']);
+const eventBus = useEventBus<{ project: Project }>('project:delete');
 
 const formModel = reactive({
   deleteConfirmation: '',
 });
 
 const validations = z.object({
-  deleteConfirmation: z.string().refine(val => val === props.work.title, { message: 'You must type the title exactly.' }), // only allow exactly the work title
+  deleteConfirmation: z.string().refine(val => val === props.project.title, { message: 'You must type the title exactly.' }),
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);
@@ -41,12 +41,12 @@ async function handleSubmit() {
   errorMessage.value = null;
 
   try {
-    const deletedWork = await deleteWork(props.work.id);
+    const deletedProject = await deleteProject(props.project.id);
 
-    emit('work:delete', { work: deletedWork });
-    eventBus.emit({ work: deletedWork });
+    emit('project:delete', { project: deletedProject });
+    eventBus.emit({ project: deletedProject });
 
-    successMessage.value = `${deletedWork.title} has been deleted.`;
+    successMessage.value = `${deletedProject.title} has been deleted.`;
     await wait(1 * 1000);
 
     emit('formSuccess');
@@ -72,18 +72,18 @@ async function handleSubmit() {
     @submit="validate() && handleSubmit()"
   >
     <p class="font-bold text-danger-500 dark:text-danger-400">
-      You are about to delete {{ props.work.title }}. This will also delete all the progress you've logged on this work. There is no way to undo this.
+      You are about to delete {{ props.project.title }}. This will also delete all the progress you've logged on this project. There is no way to undo this.
     </p>
-    <p>In order to confirm that you want to delete this project, please type <span class="font-bold">{{ props.work.title }}</span> into the input below and click Delete.</p>
+    <p>In order to confirm that you want to delete this project, please type <span class="font-bold">{{ props.project.title }}</span> into the input below and click Delete.</p>
     <FieldWrapper
-      for="work-form-confirmation"
+      for="project-form-confirmation"
       label="Type the title to confirm deletion:"
       required
       :rule="ruleFor('deleteConfirmation')"
     >
       <template #default>
         <InputText
-          id="work-form-confirmation"
+          id="project-form-confirmation"
           v-model="formModel.deleteConfirmation"
           autocomplete="off"
         />

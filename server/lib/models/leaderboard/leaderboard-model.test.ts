@@ -9,7 +9,7 @@ import { Leaderboard, LeaderboardMember, LeaderboardSummary } from './types.ts';
 import { LEADERBOARD_STATE, LEADERBOARD_PARTICIPANT_STATE } from './consts.ts';
 import { type User } from '../user/user-model.ts';
 import { USER_STATE } from '../user/consts.ts';
-import { WORK_STATE } from '../work/consts.ts';
+import { PROJECT_STATE } from '../project/consts.ts';
 import { TAG_STATE } from '../tag/consts.ts';
 
 vi.mock('../../tracer.ts');
@@ -28,7 +28,7 @@ describe(LeaderboardModel, () => {
     worksIncluded: {
       where: {
         ownerId: testOwner.id,
-        state: WORK_STATE.ACTIVE,
+        state: PROJECT_STATE.ACTIVE,
       },
       select: { id: true },
     },

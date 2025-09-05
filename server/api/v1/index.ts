@@ -6,7 +6,7 @@ import leaderboardRoutes from './leaderboard.ts';
 import meRoutes from './me.ts';
 import pingRoutes from './ping.ts';
 import profileRoutes from './profile.ts';
-import projectRoutes from './work.ts';
+import projectRoutes from './project.ts';
 import statsRoutes from './stats.ts';
 import tagRoutes from './tag.ts';
 import tallyRoutes from './tally.ts';

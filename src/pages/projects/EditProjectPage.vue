@@ -6,15 +6,15 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
-import { useWorkStore } from 'src/stores/work.ts';
-const workStore = useWorkStore();
+import { useProjectStore } from 'src/stores/project';
+const projectStore = useProjectStore();
 
-import { deleteCover, type Work } from 'src/lib/api/work.ts';
+import { deleteCover, type Project } from 'src/lib/api/project';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
-import EditWorkForm from 'src/components/work/EditWorkForm.vue';
-import UploadCoverForm from 'src/components/work/UploadCoverForm.vue';
-import WorkCover from 'src/components/work/WorkCover.vue';
+import EditProjectForm from 'src/components/project/EditProjectForm.vue';
+import UploadCoverForm from 'src/components/project/UploadCoverForm.vue';
+import ProjectCover from 'src/components/project/ProjectCover.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import Panel from 'primevue/panel';
 import Button from 'primevue/button';
@@ -24,39 +24,39 @@ import { PrimeIcons } from 'primevue/api';
 import { useConfirm } from 'primevue/useconfirm';
 const confirm = useConfirm();
 
-const workId = ref<number>(+route.params.workId);
-watch(() => route.params.workId, newId => {
+const projectId = ref<number>(+route.params.projectId);
+watch(() => route.params.projectId, newId => {
   if(newId !== undefined) {
-    workId.value = +newId;
-    loadWork();
+    projectId.value = +newId;
+    loadProject();
   }
 });
 
-const work = ref<Work | null>(null);
-const isWorkLoading = ref<boolean>(false);
-const workErrorMessage = ref<string | null>(null);
-const loadWork = async function(force = false) {
-  isWorkLoading.value = true;
-  workErrorMessage.value = null;
+const project = ref<Project | null>(null);
+const isProjectLoading = ref<boolean>(false);
+const projectErrorMessage = ref<string | null>(null);
+const loadProject = async function(force = false) {
+  isProjectLoading.value = true;
+  projectErrorMessage.value = null;
 
   try {
     // we have to force a populate here because there's a race condition between
-    // the populate that happens after a cover is uploaded and the workStore.get()
+    // the populate that happens after a cover is uploaded and the projectStore.get()
     // here. So we need the await to guarantee that a force-populate has happened.
     // Not the best, but it'll work for now.
-    await workStore.populate(force);
-    work.value = workStore.get(workId.value);
+    await projectStore.populate(force);
+    project.value = projectStore.get(projectId.value);
   } catch (err) {
-    workErrorMessage.value = err.message;
-    router.push('/works');
+    projectErrorMessage.value = err.message;
+    router.push('/projects');
   } finally {
-    isWorkLoading.value = false;
+    isProjectLoading.value = false;
   }
 };
 
 const isUploadFormVisible = ref<boolean>(false);
 
-const eventBus = useEventBus<{ work: Work }>('work:cover');
+const eventBus = useEventBus<{ project: Project }>('project:cover');
 const handleRemoveCover = function(ev) {
   confirm.require({
     target: ev.currentTarget,
@@ -64,24 +64,24 @@ const handleRemoveCover = function(ev) {
     acceptClass: '!bg-danger-500 dark:!bg-danger-400 !border-danger-500 dark:!border-danger-400 !ring-danger-500 dark:!ring-danger-400 hover:!bg-danger-600 dark:hover:!bg-danger-300 hover:!border-danger-600 dark:hover:!border-danger-300 focus:!ring-danger-400/50 dark:!focus:ring-danger-300/50',
     rejectClass: '!text-surface-500 dark:!text-surface-400',
     accept: async () => {
-      const updatedWork = await deleteCover(work.value.id);
-      eventBus.emit({ work: updatedWork });
+      const updatedProject = await deleteCover(project.value.id);
+      eventBus.emit({ project: updatedProject });
 
-      work.value = updatedWork;
+      project.value = updatedProject;
     },
   });
 };
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
-    { label: 'Projects', url: '/works' },
-    { label: work.value === null ? 'Loading...' : work.value.title, url: `/works/${workId.value}` },
-    { label: work.value === null ? 'Loading...' : 'Edit', url: `/works/${workId.value}/edit` },
+    { label: 'Projects', url: '/projects' },
+    { label: project.value === null ? 'Loading...' : project.value.title, url: `/projects/${projectId.value}` },
+    { label: project.value === null ? 'Loading...' : 'Edit', url: `/projects/${projectId.value}/edit` },
   ];
   return crumbs;
 });
 
-onMounted(() => loadWork());
+onMounted(() => loadProject());
 
 </script>
 
@@ -90,17 +90,17 @@ onMounted(() => loadWork());
     :breadcrumbs="breadcrumbs"
   >
     <div
-      v-if="work"
+      v-if="project"
       class="flex flex-col justify-center max-w-screen-md"
     >
       <Panel
-        :header="`Edit ${work.title}`"
+        :header="`Edit ${project.title}`"
         class="m-2"
       >
-        <EditWorkForm
-          :work="work"
-          @form-success="router.push(`/works/${work.id}`)"
-          @form-cancel="router.push(`/works/${work.id}`)"
+        <EditProjectForm
+          :project="project"
+          @form-success="router.push(`/projects/${project.id}`)"
+          @form-cancel="router.push(`/projects/${project.id}`)"
         />
       </Panel>
       <Panel
@@ -108,7 +108,7 @@ onMounted(() => loadWork());
         class="m-2"
       >
         <div class="max-h-48 max-w-32">
-          <WorkCover :work="work" />
+          <ProjectCover :project="project" />
         </div>
         <div class="flex items-center mt-4 gap-2">
           <Button
@@ -118,7 +118,7 @@ onMounted(() => loadWork());
             @click="isUploadFormVisible = true"
           />
           <Button
-            v-if="work.cover"
+            v-if="project.cover"
             label="Remove"
             severity="danger"
             size="large"
@@ -137,8 +137,8 @@ onMounted(() => loadWork());
             </h2>
           </template>
           <UploadCoverForm
-            :work="work"
-            @work:cover="() => loadWork(true)"
+            :project="project"
+            @project:cover="() => loadProject(true)"
             @form-success="isUploadFormVisible = false"
           />
         </Dialog>

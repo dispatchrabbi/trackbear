@@ -5,7 +5,7 @@ import { add, Day } from 'date-fns';
 import { formatDate } from 'src/lib/date.ts';
 
 import { FullUser, User } from './user/user-model.ts';
-import { WORK_STATE } from './work/consts.ts';
+import { PROJECT_STATE } from './project/consts.ts';
 import { TALLY_MEASURE, TALLY_STATE } from './tally/consts.ts';
 import { MeasureCounts } from './tally/types.ts';
 import { GOAL_TYPE } from './goal/consts.ts';
@@ -14,7 +14,7 @@ import type { TargetGoalParameters, HabitGoalParameters, HabitGoal, TargetGoal }
 import { GoalModel } from './goal/goal-model.ts';
 import { getDayCounts, DayCount } from './stats.ts';
 
-type ProfileWorkSummary = {
+type ProfileProjectSummary = {
   uuid: string;
   title: string;
   totals: MeasureCounts;
@@ -52,7 +52,7 @@ export type PublicProfile = {
   avatar: string;
   lifetimeTotals: MeasureCounts;
   recentActivity: DayCount[];
-  workSummaries: ProfileWorkSummary[];
+  projectSummaries: ProfileProjectSummary[];
   targetSummaries: ProfileTargetSummary[];
   habitSummaries: ProfileHabitSummary[];
   config: ProfileConfig;
@@ -81,7 +81,7 @@ export async function getUserProfile(username): Promise<PublicProfile> {
   const [
     lifetimeTotals,
     recentActivity,
-    workSummaries,
+    projectSummaries,
     targetSummaries,
     habitSummaries,
   ] = await Promise.all([
@@ -89,8 +89,8 @@ export async function getUserProfile(username): Promise<PublicProfile> {
     getLifetimeTotals(user.id, user.userSettings.lifetimeStartingBalance),
     // we need activity going back a year for the heatmap
     getRecentActivity(user.id),
-    // we also give the option to display selected works
-    getProfileWorkSummaries(user.id),
+    // we also give the option to display selected projects
+    getProfileProjectSummaries(user.id),
     // not to mention the option to display selected habits and targets
     getProfileTargetSummaries(user.id),
     getProfileHabitSummaries(user.id, user.userSettings.weekStartDay),
@@ -102,7 +102,7 @@ export async function getUserProfile(username): Promise<PublicProfile> {
     avatar: user.avatar,
     lifetimeTotals,
     recentActivity,
-    workSummaries,
+    projectSummaries,
     targetSummaries,
     habitSummaries,
     config: {
@@ -112,8 +112,8 @@ export async function getUserProfile(username): Promise<PublicProfile> {
 }
 
 async function getLifetimeTotals(userId: number, lifetimeStartingBalance: MeasureCounts): Promise<MeasureCounts> {
-  // lifetime totals are: lifetime starting balance + work starting balances + total of tallies
-  const works = await getWorksWithStartingBalances(userId);
+  // lifetime totals are: lifetime starting balance + project starting balances + total of tallies
+  const projects = await getProjectsWithStartingBalances(userId);
   const tallyTotals = await getTallyTotals(userId);
   const lifetimeTotals = Object.values(TALLY_MEASURE).reduce((obj, measure) => {
     let didTheyUseThisMeasureEver = false;
@@ -124,9 +124,9 @@ async function getLifetimeTotals(userId: number, lifetimeStartingBalance: Measur
       didTheyUseThisMeasureEver = true;
     }
 
-    for(const work of works) {
-      if(measure in work.startingBalance) {
-        total += work.startingBalance[measure];
+    for(const project of projects) {
+      if(measure in project.startingBalance) {
+        total += project.startingBalance[measure];
         didTheyUseThisMeasureEver = true;
       }
     }
@@ -152,15 +152,15 @@ async function getRecentActivity(userId: number): Promise<DayCount[]> {
   return recentActivity;
 }
 
-type WorkStartingBalance = {
+type ProjectStartingBalance = {
   id: number;
   startingBalance: MeasureCounts;
 };
-async function getWorksWithStartingBalances(userId: number): Promise<WorkStartingBalance[]> {
-  const works = await dbClient.work.findMany({
+async function getProjectsWithStartingBalances(userId: number): Promise<ProjectStartingBalance[]> {
+  const projects = await dbClient.work.findMany({
     where: {
       ownerId: userId,
-      state: WORK_STATE.ACTIVE,
+      state: PROJECT_STATE.ACTIVE,
     },
     select: {
       id: true,
@@ -168,7 +168,7 @@ async function getWorksWithStartingBalances(userId: number): Promise<WorkStartin
     },
   });
 
-  return works as WorkStartingBalance[];
+  return projects as ProjectStartingBalance[];
 }
 
 async function getTallyTotals(userId: number): Promise<MeasureCounts> {
@@ -179,7 +179,7 @@ async function getTallyTotals(userId: number): Promise<MeasureCounts> {
       state: TALLY_STATE.ACTIVE,
       work: {
         ownerId: userId,
-        state: WORK_STATE.ACTIVE,
+        state: PROJECT_STATE.ACTIVE,
       },
     },
     _sum: { count: true },
@@ -193,11 +193,11 @@ async function getTallyTotals(userId: number): Promise<MeasureCounts> {
   return totals;
 }
 
-async function getProfileWorkSummaries(userId: number): Promise<ProfileWorkSummary[]> {
-  const worksOnProfile = await dbClient.work.findMany({
+async function getProfileProjectSummaries(userId: number): Promise<ProfileProjectSummary[]> {
+  const projectsOnProfile = await dbClient.work.findMany({
     where: {
       ownerId: userId,
-      state: WORK_STATE.ACTIVE,
+      state: PROJECT_STATE.ACTIVE,
       displayOnProfile: true,
     },
     select: {
@@ -212,22 +212,22 @@ async function getProfileWorkSummaries(userId: number): Promise<ProfileWorkSumma
     by: ['workId', 'date', 'measure'],
     where: {
       ownerId: userId,
-      workId: { in: worksOnProfile.map(work => work.id) },
+      workId: { in: projectsOnProfile.map(project => project.id) },
       state: TALLY_STATE.ACTIVE,
     },
     _sum: { count: true },
   });
 
   const oneYearAgo = formatDate(add(new Date(), { years: -1 }));
-  const summaries = worksOnProfile.map(work => {
-    const workCounts = dayCountsForProfile.filter(dayCount => dayCount.workId === work.id);
-    const totals = workCounts.reduce((obj, dayCount) => {
-      obj[dayCount.measure] = obj[dayCount.measure] || work.startingBalance[dayCount.measure] || 0;
+  const summaries = projectsOnProfile.map(project => {
+    const projectCounts = dayCountsForProfile.filter(dayCount => dayCount.workId === project.id);
+    const totals = projectCounts.reduce((obj, dayCount) => {
+      obj[dayCount.measure] = obj[dayCount.measure] || project.startingBalance[dayCount.measure] || 0;
       obj[dayCount.measure] += dayCount._sum.count;
       return obj;
     }, {});
 
-    const recentActivityObj = workCounts
+    const recentActivityObj = projectCounts
       .filter(dayCount => dayCount.date > oneYearAgo)
       .reduce<Record<string, DayCount>>((obj, dayCount) => {
         obj[dayCount.date] = obj[dayCount.date] || { date: dayCount.date, counts: {} };
@@ -237,8 +237,8 @@ async function getProfileWorkSummaries(userId: number): Promise<ProfileWorkSumma
     const recentActivity = Object.values(recentActivityObj);
 
     return {
-      uuid: work.uuid,
-      title: work.title,
+      uuid: project.uuid,
+      title: project.title,
       totals,
       recentActivity,
     };

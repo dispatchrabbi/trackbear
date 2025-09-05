@@ -5,7 +5,7 @@ import { initLoggers, getLogger } from '../../server/lib/logger.ts';
 import dbClient, { testDatabaseConnection } from '../../server/lib/db.ts';
 
 import { UserModel } from 'server/lib/models/user/user-model';
-import { WorkModel } from 'server/lib/models/work/work-model';
+import { ProjectModel } from 'server/lib/models/project/project-model.ts';
 import { TallyModel } from 'server/lib/models/tally/tally-model.wip';
 import { GoalModel } from 'server/lib/models/goal/goal-model';
 import { LeaderboardModel } from 'server/lib/models/leaderboard/leaderboard-model';

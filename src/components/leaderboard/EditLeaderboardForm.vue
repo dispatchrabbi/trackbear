@@ -19,7 +19,7 @@ import Checkbox from 'primevue/checkbox';
 import InputSwitch from 'primevue/inputswitch';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
-import MultiMeasureInput from 'src/components/work/MultiMeasureInput.vue';
+import MultiMeasureInput from 'src/components/project/MultiMeasureInput.vue';
 // import TbTag from 'src/components/tag/TbTag.vue';
 
 const props = defineProps<{
@@ -246,7 +246,7 @@ async function handleSubmit() {
     >
       <template #default="{ onUpdate, isFieldValid }">
         <MultiMeasureInput
-          id="work-form-goal"
+          id="leaderboard-form-goal"
           v-model="formModel.goal"
           :invalid="!isFieldValid"
           add-button-text="Add Goal"

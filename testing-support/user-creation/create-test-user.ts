@@ -12,7 +12,7 @@ import {
 } from './config-validator';
 
 import { UserModel, type User } from 'server/lib/models/user/user-model.ts';
-import { WorkModel, type Work } from 'server/lib/models/work/work-model.ts';
+import { ProjectModel, type Project } from 'server/lib/models/project/project-model';
 import { type TargetGoal, type HabitGoal, GoalModel, TargetGoalParameters, HabitGoalParameters } from 'server/lib/models/goal/goal-model.ts';
 import type { Leaderboard, LeaderboardMember } from 'server/lib/models/leaderboard/types.ts';
 import { TallyData, TallyModel, type Tally } from 'server/lib/models/tally/tally-model.wip.ts';
@@ -22,7 +22,7 @@ import { LeaderboardModel } from 'server/lib/models/leaderboard/leaderboard-mode
 import { eachDayOfInterval } from 'date-fns';
 import { formatDate, parseDateString } from 'src/lib/date';
 
-type ProjectMap = Record<string, Work>;
+type ProjectMap = Record<string, Project>;
 type LeaderboardMap = Record<string, Leaderboard>;
 
 type AccountResult = {
@@ -92,7 +92,7 @@ async function createUser(userConfig: UserSchema, reqCtx: RequestContext): Promi
 
 async function createProjects(user: User, projectConfigMap: Record<string, ProjectSchema>, reqCtx: RequestContext): Promise<ProjectMap> {
   const resultEntries = await Promise.all(Object.entries(projectConfigMap).map(async ([key, config]) => {
-    const created = await WorkModel.createWork(user, {
+    const created = await ProjectModel.createProject(user, {
       title: config.title,
       description: config.description,
       phase: config.phase,

@@ -18,7 +18,7 @@ import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
-import MultiMeasureInput from 'src/components/work/MultiMeasureInput.vue';
+import MultiMeasureInput from 'src/components/project/MultiMeasureInput.vue';
 import InputSwitch from 'primevue/inputswitch';
 import Dropdown from 'primevue/dropdown';
 

@@ -77,7 +77,7 @@ describe('goal api v1', () => {
 
       expect(GoalModel.createGoal).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.send).toHaveBeenCalled();
+      expect(res.send).toHaveBeenCalledWith(success(testGoal));
     });
   });
 
@@ -123,7 +123,7 @@ describe('goal api v1', () => {
       expect(GoalModel.getGoal).toHaveBeenCalledWith(req.user, +req.params.id);
       expect(GoalModel.updateGoal).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.send).toHaveBeenCalled();
+      expect(res.send).toHaveBeenCalledWith(success(testGoal));
     });
 
     it(`returns 404 when updating a goal that doesn't exist`, async () => {

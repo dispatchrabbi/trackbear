@@ -4,4 +4,4 @@ import "./stats.tsp";
 import "./ping.tsp";
 import "./tag.tsp";
 import "./tally.tsp";
-import "./work.tsp";
+import "./project.tsp";

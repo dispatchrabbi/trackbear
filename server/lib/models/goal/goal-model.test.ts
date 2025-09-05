@@ -11,7 +11,7 @@ import { TALLY_MEASURE, TALLY_STATE } from '../tally/consts.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 import { type Tally } from '../tally/tally-model.wip.ts';
 import { omit } from 'server/lib/obj.ts';
-import { WORK_STATE } from '../work/consts.ts';
+import { PROJECT_STATE } from '../project/consts.ts';
 import { TAG_STATE } from '../tag/consts.ts';
 import { ids2included } from '../helpers.ts';
 
@@ -31,7 +31,7 @@ describe(GoalModel, () => {
     worksIncluded: {
       where: {
         ownerId: testOwner.id,
-        state: WORK_STATE.ACTIVE,
+        state: PROJECT_STATE.ACTIVE,
       },
       select: { id: true },
     },
@@ -94,9 +94,9 @@ describe(GoalModel, () => {
     it('returns null if the goal is not found', async () => {
       dbClient.goal.findUnique.mockResolvedValue(null);
 
-      const work = await GoalModel.getGoal(testOwner, TEST_OBJECT_ID);
+      const goal = await GoalModel.getGoal(testOwner, TEST_OBJECT_ID);
 
-      expect(work).toBe(null);
+      expect(goal).toBe(null);
     });
   });
 
@@ -136,9 +136,9 @@ describe(GoalModel, () => {
 
           ...omit(testData, ['workIds', 'tagIds']),
           worksIncluded: { connect: [
-            { id: -20, ownerId: testOwner.id, state: WORK_STATE.ACTIVE },
-            { id: -21, ownerId: testOwner.id, state: WORK_STATE.ACTIVE },
-            { id: -22, ownerId: testOwner.id, state: WORK_STATE.ACTIVE },
+            { id: -20, ownerId: testOwner.id, state: PROJECT_STATE.ACTIVE },
+            { id: -21, ownerId: testOwner.id, state: PROJECT_STATE.ACTIVE },
+            { id: -22, ownerId: testOwner.id, state: PROJECT_STATE.ACTIVE },
           ] },
           tagsIncluded: { connect: [
             { id: -23, ownerId: testOwner.id, state: TAG_STATE.ACTIVE },
@@ -228,9 +228,9 @@ describe(GoalModel, () => {
           description: 'a more accurate description',
           endDate: null,
           worksIncluded: { set: [
-            { id: -27, ownerId: testOwner.id, state: WORK_STATE.ACTIVE },
-            { id: -28, ownerId: testOwner.id, state: WORK_STATE.ACTIVE },
-            { id: -29, ownerId: testOwner.id, state: WORK_STATE.ACTIVE },
+            { id: -27, ownerId: testOwner.id, state: PROJECT_STATE.ACTIVE },
+            { id: -28, ownerId: testOwner.id, state: PROJECT_STATE.ACTIVE },
+            { id: -29, ownerId: testOwner.id, state: PROJECT_STATE.ACTIVE },
           ] },
           tagsIncluded: { set: [
             { id: -30, ownerId: testOwner.id, state: TAG_STATE.ACTIVE },

@@ -14,11 +14,11 @@ const props = defineProps<{
   >
     <div
       v-if="$slots.image"
-      class="work-cover flex-none max-h-48 max-w-32"
+      class="cover-image flex-none max-h-48 max-w-32"
     >
       <slot name="image" />
     </div>
-    <div class="work-info flex flex-col items-start">
+    <div class="header-info flex flex-col items-start">
       <h1 class="text-2xl font-bold font-heading text-balance">
         {{ props.title }}
       </h1>

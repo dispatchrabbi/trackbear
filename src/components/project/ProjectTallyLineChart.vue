@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, defineProps } from 'vue';
-import type { Work } from 'src/lib/api/work.ts';
+import type { Project } from 'src/lib/api/project';
 import type { TallyWithTags } from 'src/lib/api/tally.ts';
 
 import { toTitleCase } from 'src/lib/str.ts';
@@ -11,7 +11,7 @@ import TabPanel from 'primevue/tabpanel';
 import ProgressChart, { SeriesTallyish } from '../chart/ProgressChart.vue';
 
 const props = defineProps<{
-  work: Work;
+  peoject: Project;
   tallies: Array<TallyWithTags>;
 }>();
 
@@ -35,12 +35,12 @@ const seriesTallies = computed<SeriesTallyish[]>(() => {
   return filteredTallies.value.map(tally => ({
     date: tally.date,
     count: tally.count,
-    series: props.work.title,
+    series: props.peoject.title,
   }));
 });
 
 const startingTotal = computed(() => {
-  return props.work.startingBalance[selectedMeasure.value] || 0;
+  return props.peoject.startingBalance[selectedMeasure.value] || 0;
 });
 
 </script>
@@ -59,7 +59,7 @@ const startingTotal = computed(() => {
         :measure-hint="measure"
         :starting-total="startingTotal"
         :show-legend="false"
-        :graph-title="props.work.title"
+        :graph-title="props.peoject.title"
       />
     </TabPanel>
   </TabView>

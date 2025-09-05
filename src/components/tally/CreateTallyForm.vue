@@ -7,9 +7,9 @@ const props = defineProps<{
   initialWorkId?: number;
 }>();
 
-import { useWorkStore } from 'src/stores/work.ts';
-const workStore = useWorkStore();
-workStore.populate();
+import { useProjectStore } from 'src/stores/project';
+const projectStore = useProjectStore();
+projectStore.populate();
 
 import { useTagStore } from 'src/stores/tag.ts';
 const tagStore = useTagStore();
@@ -23,7 +23,7 @@ import { useValidation } from 'src/lib/form.ts';
 import { createTally, type Tally, type TallyCreatePayload } from 'src/lib/api/tally.ts';
 import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally.ts';
-import { cmpWorkByTitle } from 'src/lib/work';
+import { cmpByTitle } from 'src/lib/project';
 
 import Calendar from 'primevue/calendar';
 import Dropdown from 'primevue/dropdown';
@@ -67,14 +67,14 @@ const validations = z.object({
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
 
-const workOptions = computed(() => {
-  const options = workStore.nonDormantWorks;
+const projectOptions = computed(() => {
+  const options = projectStore.nonDormantProjects;
 
-  // if we're on a work's page and that work is dormant, it won't be an option, so we need to add it
-  if(!options.find(work => work.id === formModel.workId)) {
-    const selectedWork = workStore.allWorks.find(work => work.id === formModel.workId);
-    if(selectedWork) {
-      return [...options, selectedWork].sort(cmpWorkByTitle);
+  // if we're on a project's page and that project is dormant, it won't be an option, so we need to add it
+  if(!options.find(project => project.id === formModel.workId)) {
+    const selectedProject = projectStore.allProjects.find(project => project.id === formModel.workId);
+    if(selectedProject) {
+      return [...options, selectedProject].sort(cmpByTitle);
     }
   }
 
@@ -164,22 +164,22 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
-      for="tally-form-work"
+      for="tally-form-project"
       label="Project"
       :required="true"
       :rule="ruleFor('workId')"
     >
       <template #default="{ onUpdate, isFieldValid }">
         <Dropdown
-          id="tally-form-work"
+          id="tally-form-project"
           v-model="formModel.workId"
-          :options="workOptions"
+          :options="projectOptions"
           option-label="title"
           option-value="id"
           placeholder="Select a project..."
           filter
           show-clear
-          :loading="workStore.works === null"
+          :loading="projectStore.projects === null"
           :invalid="!isFieldValid"
           @update:model-value="onUpdate"
         />

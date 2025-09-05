@@ -9,10 +9,10 @@ const router = useRouter();
 import { useUserStore } from 'src/stores/user.ts';
 const userStore = useUserStore();
 
-import { useWorkStore } from 'src/stores/work.ts';
-const workStore = useWorkStore();
+import { useProjectStore } from 'src/stores/project';
+const projectStore = useProjectStore();
 
-import { type Work } from 'src/lib/api/work.ts';
+import { type Project } from 'src/lib/api/project';
 import { type TallyWithWorkAndTags, type Tally, getTallies } from 'src/lib/api/tally.ts';
 
 import { PrimeIcons } from 'primevue/api';
@@ -20,20 +20,20 @@ import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
-import DeleteWorkForm from 'src/components/work/DeleteWorkForm.vue';
-import UploadCoverForm from 'src/components/work/UploadCoverForm.vue';
-import WorkActivityHeatmap from 'src/components/work/WorkActivityHeatmap.vue';
-import WorkTallyLineChart from 'src/components/work/WorkTallyLineChart.vue';
-import WorkTallyDataTable from 'src/components/work/WorkTallyDataTable.vue';
+import DeleteProjectForm from 'src/components/project/DeleteProjectForm.vue';
+import UploadCoverForm from 'src/components/project/UploadCoverForm.vue';
+import ProjectActivityHeatmap from 'src/components/project/ProjectActivityHeatmap.vue';
+import ProjectTallyLineChart from 'src/components/project/ProjectTallyLineChart.vue';
+import ProjectTallyDataTable from 'src/components/project/ProjectTallyDataTable.vue';
 import DetailPageHeader from 'src/components/layout/DetailPageHeader.vue';
-import WorkCover from 'src/components/work/WorkCover.vue';
+import ProjectCover from 'src/components/project/ProjectCover.vue';
 
-const workId = ref<number>(+route.params.workId);
+const projectId = ref<number>(+route.params.projectId);
 watch(
-  () => route.params.workId,
+  () => route.params.projectId,
   newId => {
     if(newId !== undefined) {
-      workId.value = +newId;
+      projectId.value = +newId;
       reloadData(); // this isn't a great pattern - it should get changed
     }
   },
@@ -42,26 +42,26 @@ watch(
 const isDeleteFormVisible = ref<boolean>(false);
 const isCoverFormVisible = ref<boolean>(false);
 
-const work = ref<Work | null>(null);
-const isWorkLoading = ref<boolean>(false);
-const workErrorMessage = ref<string | null>(null);
-const loadWork = async function() {
-  isWorkLoading.value = true;
-  workErrorMessage.value = null;
+const project = ref<Project | null>(null);
+const isProjectLoading = ref<boolean>(false);
+const projectErrorMessage = ref<string | null>(null);
+const loadProject = async function() {
+  isProjectLoading.value = true;
+  projectErrorMessage.value = null;
 
   try {
-    await workStore.populate();
-    work.value = workStore.get(+workId.value);
+    await projectStore.populate();
+    project.value = projectStore.get(+projectId.value);
   } catch (err) {
-    workErrorMessage.value = err.message;
-    // the ApplicationLayout takes care of this. Otherwise, this will redirect to /works before ApplicationLayout
+    projectErrorMessage.value = err.message;
+    // the ApplicationLayout takes care of this. Otherwise, this will redirect to /projects before ApplicationLayout
     // can redirect to /login.
     // TODO: figure out a better way to ensure that there's no race condition here
     if(err.code !== 'NOT_LOGGED_IN') {
-      router.push({ name: 'works' });
+      router.push({ name: 'projects' });
     }
   } finally {
-    isWorkLoading.value = false;
+    isProjectLoading.value = false;
   }
 };
 
@@ -73,11 +73,11 @@ const loadTallies = async function() {
   talliesErrorMessage.value = null;
 
   try {
-    const talliesForWork = await getTallies({
-      works: [work.value.id],
+    const talliesForProject = await getTallies({
+      works: [project.value.id],
     });
 
-    tallies.value = talliesForWork;
+    tallies.value = talliesForProject;
   } catch (err) {
     talliesErrorMessage.value = err.message;
   } finally {
@@ -86,14 +86,14 @@ const loadTallies = async function() {
 };
 
 const reloadData = async function() {
-  await loadWork();
+  await loadProject();
   await loadTallies();
 };
 
 const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
-    { label: 'Projects', url: '/works' },
-    { label: work.value === null ? 'Loading...' : work.value.title, url: `/works/${workId.value}` },
+    { label: 'Projects', url: '/projects' },
+    { label: project.value === null ? 'Loading...' : project.value.title, url: `/projects/${projectId.value}` },
   ];
   return crumbs;
 });
@@ -114,25 +114,25 @@ onMounted(async () => {
     :breadcrumbs="breadcrumbs"
   >
     <div
-      v-if="work && !isTalliesLoading"
+      v-if="project && !isTalliesLoading"
       class="max-w-screen-md"
     >
       <DetailPageHeader
-        :title="work.title"
-        :subtitle="work.description"
+        :title="project.title"
+        :subtitle="project.description"
       >
         <template
           v-if="userStore.user.userSettings.displayCovers"
           #image
         >
-          <WorkCover :work="work" />
+          <ProjectCover :project="project" />
         </template>
         <template #actions>
           <Button
             label="Configure Project"
             severity="info"
             :icon="PrimeIcons.COG"
-            @click="router.push({ name: 'edit-work', params: { workId: work.id } })"
+            @click="router.push({ name: 'edit-project', params: { projectId: project.id } })"
           />
           <Button
             severity="danger"
@@ -147,21 +147,21 @@ onMounted(async () => {
         class="flex flex-col gap-2 max-w-screen-md"
       >
         <div class="w-full">
-          <WorkActivityHeatmap
-            :work="work"
+          <ProjectActivityHeatmap
+            :project="project"
             :tallies="tallies"
             :week-starts-on="userStore.user.userSettings.weekStartDay"
           />
         </div>
         <div class="w-full">
-          <WorkTallyLineChart
-            :work="work"
+          <ProjectTallyLineChart
+            :peoject="project"
             :tallies="tallies"
           />
         </div>
         <div class="w-full">
-          <WorkTallyDataTable
-            :work="work"
+          <ProjectTallyDataTable
+            :project="project"
             :tallies="tallies"
           />
         </div>
@@ -179,9 +179,9 @@ onMounted(async () => {
             Delete Project
           </h2>
         </template>
-        <DeleteWorkForm
-          :work="work"
-          @form-success="router.push('/works')"
+        <DeleteProjectForm
+          :project="project"
+          @form-success="router.push('/projects')"
         />
       </Dialog>
       <Dialog
@@ -194,7 +194,7 @@ onMounted(async () => {
             Upload Cover
           </h2>
         </template>
-        <UploadCoverForm :work="work" />
+        <UploadCoverForm :project="project" />
       </Dialog>
     </div>
   </ApplicationLayout>

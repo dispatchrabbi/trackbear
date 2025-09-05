@@ -11,7 +11,7 @@ import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from '../server/lib/audit-events.t
 
 import { eachDayOfInterval } from 'date-fns';
 import { parseDateStringSafe, parseDateString, formatDate } from '../src/lib/date.ts';
-import { WORK_PHASE, WORK_STATE } from '../server/lib/models/work/consts.ts';
+import { PROJECT_PHASE, PROJECT_STATE } from '../server/lib/models/project/consts.ts';
 import { TALLY_MEASURE, TALLY_STATE } from '../server/lib/models/tally/consts.ts';
 
 const RANGE_SPREAD = 0.15;
@@ -79,10 +79,10 @@ async function main() {
     work = await dbClient.work.create({
       data: {
         ownerId: user.id,
-        state: WORK_STATE.ACTIVE,
+        state: PROJECT_STATE.ACTIVE,
         title: 'Seed',
         description: '',
-        phase: WORK_PHASE.DRAFTING,
+        phase: PROJECT_PHASE.DRAFTING,
         startingBalance: {},
         starred: false,
       },

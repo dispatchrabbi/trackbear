@@ -40,9 +40,9 @@ async function handleSubmit() {
   errorMessage.value = null;
 
   try {
-    const deletedWork = await deleteBanner(props.banner.id);
+    const deletedBanner = await deleteBanner(props.banner.id);
 
-    emit('banner:delete', { work: deletedWork });
+    emit('banner:delete', { banner: deletedBanner });
     successMessage.value = `The banner has been deleted.`;
     await wait(1 * 1000);
     emit('formSuccess');
@@ -68,23 +68,23 @@ async function handleSubmit() {
     @submit="validate() && handleSubmit()"
   >
     <p class="font-bold text-danger-500 dark:text-danger-400">
-      You are about to delete this banner. This will also delete all the progress you've logged on this work. There is no way to undo this.
+      You are about to delete this banner. There is no way to undo this.
     </p>
     <AnnouncementBanner
       :message="props.banner.message"
       :color="props.banner.color"
       :icon="props.banner.icon"
     />
-    <p>In order to confirm that you want to delete this project, please type <span class="font-bold">{{ props.banner.id }}</span> into the input below and click Delete.</p>
+    <p>In order to confirm that you want to delete this banner, please type <span class="font-bold">{{ props.banner.id }}</span> into the input below and click Delete.</p>
     <FieldWrapper
-      for="work-form-confirmation"
+      for="banner-form-confirmation"
       label="Type the ID to confirm deletion:"
       required
       :rule="ruleFor('deleteConfirmation')"
     >
       <template #default>
         <InputText
-          id="work-form-confirmation"
+          id="banner-form-confirmation"
           v-model="formModel.deleteConfirmation"
           autocomplete="off"
         />

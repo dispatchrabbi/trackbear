@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 
-export type WorkWithCover = {
+export type ProjectWithCover = {
   cover?: string;
   title: string;
 };
 const props = withDefaults(defineProps<{
-  work: WorkWithCover;
+  project: ProjectWithCover;
   rounded?: 'none' | 'normal' | 'md' | 'lg' | 'full';
   shadow?: 'none' | 'normal' | 'md' | 'lg';
   // size?: 'normal' | 'large' | 'xlarge';
@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<{
 });
 
 const src = computed(() => {
-  return props.work.cover ? `/uploads/covers/${props.work.cover}` : '/images/placeholder-cover.png';
+  return props.project.cover ? `/uploads/covers/${props.project.cover}` : '/images/placeholder-cover.png';
 });
 
 const ROUNDED_CLASSES = {

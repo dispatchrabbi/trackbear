@@ -112,28 +112,28 @@ import ProfileHabitGauge from './ProfileHabitGauge.vue';
         <SectionTitle :title="targetSummary.title" />
         <div class="target-chart mb-4">
           <TargetLineChart
-            :goal="targetSummary as Goalish"
+            :goal="targetSummary"
             :tallies="targetSummary.dayCounts"
           />
         </div>
       </div>
       <div
-        v-for="workSummary in props.profile.workSummaries"
-        :key="workSummary.uuid"
+        v-for="projectSummary in props.profile.projectSummaries"
+        :key="projectSummary.uuid"
       >
         <Divider />
-        <SectionTitle :title="workSummary.title" />
-        <div class="work-summary flex flex-wrap justify-evenly gap-2 mb-4">
+        <SectionTitle :title="projectSummary.title" />
+        <div class="project-summary flex flex-wrap justify-evenly gap-2 mb-4">
           <StatTile
-            v-for="measure in Object.keys(workSummary.totals)"
+            v-for="measure in Object.keys(projectSummary.totals)"
             :key="measure"
-            :highlight="formatCountValue(workSummary.totals[measure], measure)"
-            :suffix="formatCountCounter(workSummary.totals[measure], measure)"
+            :highlight="formatCountValue(projectSummary.totals[measure], measure)"
+            :suffix="formatCountCounter(projectSummary.totals[measure], measure)"
           />
         </div>
         <div class="recent-activity mb-4">
           <DayCountHeatmap
-            :day-counts="workSummary.recentActivity"
+            :day-counts="projectSummary.recentActivity"
             anchor="end"
           />
         </div>

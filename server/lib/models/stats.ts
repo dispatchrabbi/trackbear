@@ -1,5 +1,5 @@
 import dbClient from '../../lib/db.ts';
-import { WORK_STATE } from './work/consts.ts';
+import { PROJECT_STATE } from './project/consts.ts';
 import { TALLY_STATE } from './tally/consts.ts';
 import { MeasureCounts } from './tally/types.ts';
 
@@ -24,7 +24,7 @@ export async function getDayCounts(userId: number, startDate?: string, endDate?:
       state: TALLY_STATE.ACTIVE,
       work: {
         ownerId: userId,
-        state: WORK_STATE.ACTIVE,
+        state: PROJECT_STATE.ACTIVE,
       },
       date: dateFilter,
     },

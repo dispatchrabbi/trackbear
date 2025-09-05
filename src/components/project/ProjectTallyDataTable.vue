@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, defineProps } from 'vue';
 
-import type { Work } from 'src/lib/api/work.ts';
+import type { Project } from 'src/lib/api/project';
 import type { TallyWithTags } from 'src/lib/api/tally.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { formatCount } from 'src/lib/tally.ts';
@@ -17,7 +17,7 @@ import EditTallyForm from '../tally/EditTallyForm.vue';
 import DeleteTallyForm from '../tally/DeleteTallyForm.vue';
 
 const props = defineProps<{
-  work: Work;
+  project: Project;
   tallies: Array<TallyWithTags>;
 }>();
 
@@ -32,16 +32,16 @@ const sortedTallies = computed(() => props.tallies.toSorted((a, b) => {
 
 const chartRows = computed(() => {
   const totals = Object.values(TALLY_MEASURE).reduce((obj, measure: string) => {
-    obj[measure] = props.work.startingBalance[measure] || 0;
+    obj[measure] = props.project.startingBalance[measure] || 0;
     return obj;
   }, {});
-  const rows = Object.keys(props.work.startingBalance)
-    .filter(measure => props.work.startingBalance[measure] !== null)
+  const rows = Object.keys(props.project.startingBalance)
+    .filter(measure => props.project.startingBalance[measure] !== null)
     .map(measure => ({
       tally: null,
       date: null,
       progress: null,
-      total: formatCount(props.work.startingBalance[measure], measure),
+      total: formatCount(props.project.startingBalance[measure], measure),
       tags: [],
       note: 'Starting Balance',
     }));

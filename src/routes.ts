@@ -35,11 +35,11 @@ import AdminUserPage from 'src/pages/admin/UserPage.vue';
 
 import DashboardPage from 'src/pages/DashboardPage.vue';
 
-import WorksListPage from 'src/pages/works/WorksListPage.vue';
-import WorkDetailPage from 'src/pages/works/WorkDetailPage.vue';
-import EditWorkPage from 'src/pages/works/EditWorkPage.vue';
-import WorksImportPage from 'src/pages/works/import/WorksImportPage.vue';
-import WorksImportNanoManualPage from 'src/pages/works/import/WorksImportNanoManualPage.vue';
+import ProjectsListPage from 'src/pages/projects/ProjectsListPage.vue';
+import ProjectDetailPage from 'src/pages/projects/ProjectDetailPage.vue';
+import EditProjectPage from 'src/pages/projects/EditProjectPage.vue';
+import ImportProjectsPage from 'src/pages/projects/import/ImportProjectsPage.vue';
+import ImportNanoManuallyPage from 'src/pages/projects/import/ImportNanoManuallyPage.vue';
 
 import GoalsListPage from 'src/pages/goals/GoalsListPage.vue';
 import NewGoalPage from 'src/pages/goals/NewGoalPage.vue';
@@ -79,20 +79,11 @@ const routes: RouteRecordRaw[] = [
   { path: '/dashboard', name: 'dashboard', component: DashboardPage },
 
   // Projects
-  { path: '/projects', name: 'works', component: WorksListPage },
-  { path: '/projects/import', name: 'import-works', component: WorksImportPage },
-  { path: '/projects/import/manual-nano', name: 'import-works-nano-manual', component: WorksImportNanoManualPage },
-  { path: '/projects/:workId(\\d+)', name: 'work', component: WorkDetailPage },
-  { path: '/projects/:workId(\\d+)/edit', name: 'edit-work', component: EditWorkPage },
-
-  // Works (only redirects to projects)
-  { path: '/works', redirect: { name: 'works' } },
-  { path: '/works/import', redirect: { name: 'import-works' } },
-  { path: '/works/import/auto-nano', redirect: { name: 'import-works-nano-auto' } },
-  { path: '/works/import/auto-ywp', redirect: { name: 'import-works-ywp-auto' } },
-  { path: '/works/import/manual-nano', redirect: { name: 'import-works-nano-manual' } },
-  { path: '/works/:workId(\\d+)', redirect: { name: 'work' } },
-  { path: '/works/:workId(\\d+)/edit', redirect: { name: 'edit-work' } },
+  { path: '/projects', name: 'projects', component: ProjectsListPage },
+  { path: '/projects/import', name: 'import-projects', component: ImportProjectsPage },
+  { path: '/projects/import/manual-nano', name: 'import-projects-nano-manual', component: ImportNanoManuallyPage },
+  { path: '/projects/:projectId(\\d+)', name: 'project', component: ProjectDetailPage },
+  { path: '/projects/:projectId(\\d+)/edit', name: 'edit-projects', component: EditProjectPage },
 
   // Goals
   { path: '/goals', name: 'goals', component: GoalsListPage },

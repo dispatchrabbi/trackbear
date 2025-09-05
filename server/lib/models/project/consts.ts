@@ -1,12 +1,12 @@
 import { ValueEnum } from '../../obj';
 
-export const WORK_STATE = {
+export const PROJECT_STATE = {
   ACTIVE: 'active',
   DELETED: 'deleted',
 };
-export type WorkState = ValueEnum<typeof WORK_STATE>;
+export type ProjectState = ValueEnum<typeof PROJECT_STATE>;
 
-export const WORK_PHASE = {
+export const PROJECT_PHASE = {
   PLANNING: 'planning',
   OUTLINING: 'outlining',
   DRAFTING: 'drafting',
@@ -15,7 +15,7 @@ export const WORK_PHASE = {
   FINISHED: 'finished',
   ABANDONED: 'abandoned',
 };
-export type WorkPhase = ValueEnum<typeof WORK_PHASE>;
+export type ProjectPhase = ValueEnum<typeof PROJECT_PHASE>;
 
 export const ALLOWED_COVER_FORMATS = {
   'image/apng': 'apng',

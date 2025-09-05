@@ -7,11 +7,11 @@ import { formatDate } from 'src/lib/date.ts';
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
-import { useWorkStore } from 'src/stores/work.ts';
-const workStore = useWorkStore();
+import { useProjectStore } from 'src/stores/project';
+const projectStore = useProjectStore();
 
-import { createWork, WorkCreatePayload } from 'src/lib/api/work.ts';
-import { WORK_PHASE } from 'server/lib/models/work/consts';
+import { createProject, ProjectCreatePayload } from 'src/lib/api/project';
+import { PROJECT_PHASE } from 'server/lib/models/project/consts';
 import { batchCreateTallies, type TallyCreatePayload } from 'src/lib/api/tally.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { formatCount, cmpTallies } from 'src/lib/tally.ts';
@@ -32,12 +32,12 @@ import Column from 'primevue/column';
 import InlineMessage from 'primevue/inlinemessage';
 import { PrimeIcons } from 'primevue/api';
 
-const emit = defineEmits(['work:create']);
+const emit = defineEmits(['project:create']);
 
 const breadcrumbs: MenuItem[] = [
-  { label: 'Projects', url: '/works' },
-  { label: 'Import', url: '/works/import' },
-  { label: 'Manually from NaNoWriMo', url: '/works/import/nano-manual' },
+  { label: 'Projects', url: '/projects' },
+  { label: 'Import', url: '/projects/import' },
+  { label: 'Manually from NaNoWriMo', url: '/projects/import/nano-manual' },
 ];
 
 const formModel = reactive({
@@ -134,11 +134,11 @@ const isCountsTextValid = computed(() => {
   return validation.valid;
 });
 
-await workStore.populate();
+await projectStore.populate();
 const projectOptions = computed(() => {
   return [
     { title: '[New Project]', id: -1 },
-    ...workStore.works,
+    ...projectStore.projects,
   ];
 });
 
@@ -148,7 +148,7 @@ const selectedProjectTitle = computed(() => {
   } else if(formModel.workId === -1) {
     return formModel.workTitle;
   } else {
-    return workStore.works.find(work => work.id === formModel.workId).title;
+    return projectStore.projects.find(work => work.id === formModel.workId).title;
   }
 });
 
@@ -198,19 +198,19 @@ async function handleImportClick() {
   if(formModel.workId === -1) {
     progressMessage.value = `Creating ${formModel.workTitle}`;
 
-    const workToCreate: WorkCreatePayload = {
+    const workToCreate: ProjectCreatePayload = {
       title: formModel.workTitle,
       description: 'Imported from NaNoWriMo',
-      phase: WORK_PHASE.DRAFTING,
+      phase: PROJECT_PHASE.DRAFTING,
       startingBalance: {},
     };
 
     try {
-      const createdWork = await createWork(workToCreate);
-      workId = createdWork.id;
+      const createdProject = await createProject(workToCreate);
+      workId = createdProject.id;
 
-      emit('work:create', { work: createdWork });
-      workStore.populate(true);
+      emit('project:create', { work: createdProject });
+      projectStore.populate(true);
     } catch {
       errorMessage.value = 'Could not create the new project: something went wrong server-side.';
       isLoading.value = false;

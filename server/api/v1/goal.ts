@@ -9,7 +9,7 @@ import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
 import dbClient from '../../lib/db.ts';
 import { GOAL_TYPE, GOAL_CADENCE_UNIT } from '../../lib/models/goal/consts.ts';
 import type { HabitGoalParameters, TargetGoalParameters } from 'server/lib/models/goal/types.ts';
-import { WORK_STATE } from '../../lib/models/work/consts.ts';
+import { PROJECT_STATE } from '../../lib/models/project/consts.ts';
 import { TALLY_MEASURE } from '../../lib/models/tally/consts.ts';
 import { TAG_STATE } from '../../lib/models/tag/consts.ts';
 
@@ -110,14 +110,14 @@ export async function handleCreateGoals(req: RequestWithUser, res: ApiResponse<G
 
   const createdGoals = await dbClient.goal.createManyAndReturn({
     data: req.body.map(goalData => ({
-      state: WORK_STATE.ACTIVE,
+      state: PROJECT_STATE.ACTIVE,
       ownerId: user.id,
 
       ...omit(goalData, ['workIds', 'tagIds']),
       worksIncluded: { connect: goalData.works.map(workId => ({
         id: workId,
         ownerId: user.id,
-        state: WORK_STATE.ACTIVE,
+        state: PROJECT_STATE.ACTIVE,
       })) },
       tagsIncluded: { connect: goalData.tags.map(workId => ({
         id: workId,

@@ -12,7 +12,7 @@ import { TALLY_STATE, TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tall
 import { TAG_STATE, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts.ts';
 
 import { buildChangeRecord, logAuditEvent } from '../../lib/audit-events.ts';
-import { WORK_STATE } from 'server/lib/models/work/consts.ts';
+import { PROJECT_STATE } from 'server/lib/models/project/consts.ts';
 
 export type TallyWithWorkAndTags = Tally & { work: Work } & { tags: Tag[] };
 
@@ -103,7 +103,7 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
 
     const work = await dbClient.work.findUnique({
       where: {
-        state: WORK_STATE.ACTIVE,
+        state: PROJECT_STATE.ACTIVE,
         ownerId: user.id,
         id: payload.workId,
       },
@@ -231,7 +231,7 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
 
     const work = await dbClient.work.findUnique({
       where: {
-        state: WORK_STATE.ACTIVE,
+        state: PROJECT_STATE.ACTIVE,
         ownerId: user.id,
         id: payload.workId,
       },

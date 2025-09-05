@@ -12,9 +12,6 @@ import type { User } from 'server/lib/models/user/user-model.ts';
 
 import { TEST_SESSION_ID, TEST_SYSTEM_ID } from 'testing-support/util.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
-// import { WorkModel } from 'server/lib/models/work/work-model.ts';
-// import type { RequestContext } from 'server/lib/request-context.ts';
-// import { TagModel } from 'server/lib/models/tag/tag-model.ts';
 
 let testUser: User;
 

@@ -4,9 +4,9 @@ import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 
-import { useWorkStore } from 'src/stores/work.ts';
-const workStore = useWorkStore();
-workStore.populate();
+import { useProjectStore } from 'src/stores/project';
+const projectStore = useProjectStore();
+projectStore.populate();
 
 import { useTagStore } from 'src/stores/tag.ts';
 const tagStore = useTagStore();
@@ -407,17 +407,17 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
-      for="goal-form-works"
+      for="goal-form-projects"
       label="Projects to include"
       :rule="ruleFor('works')"
       info="Only progress entries from the selected projects will count toward your goal."
     >
       <template #default="{ onUpdate, isFieldValid }">
         <MultiSelect
-          id="goal-form-works"
+          id="goal-form-projects"
           v-model="formModel.works"
           display="chip"
-          :options="workStore.works"
+          :options="projectStore.projects"
           option-label="title"
           option-value="id"
           filter

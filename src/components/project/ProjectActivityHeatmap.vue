@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 
-import { type Work } from 'src/lib/api/work.ts';
-import { WORK_PHASE } from 'server/lib/models/work/consts';
+import { type Project } from 'src/lib/api/project';
+import { PROJECT_PHASE } from 'server/lib/models/project/consts';
 import type { Tally } from 'src/lib/api/tally.ts';
 
 import { formatDate, parseDateString } from 'src/lib/date.ts';
@@ -14,7 +14,7 @@ import PlotCalendarHeatMap, { type CalendarHeatMapDataPoint } from '../chart/Plo
 import Card from 'primevue/card';
 
 const props = withDefaults(defineProps<{
-  work: Work;
+  project: Project;
   tallies: Array<Tally>;
   weekStartsOn?: number;
 }>(), {
@@ -23,9 +23,9 @@ const props = withDefaults(defineProps<{
 
 // for inactive projects, we'll show a heatmap for the time the project was active
 const INACTIVE_WORK_PHASES = [
-  WORK_PHASE.ABANDONED,
-  WORK_PHASE.FINISHED,
-  WORK_PHASE.ON_HOLD,
+  PROJECT_PHASE.ABANDONED,
+  PROJECT_PHASE.FINISHED,
+  PROJECT_PHASE.ON_HOLD,
 ];
 
 const data = computed(() => {
@@ -39,7 +39,7 @@ const data = computed(() => {
   const compiledTallies = compileTallies(
     sortedTallies,
     sortedTallies[0].date, // we don't care about limiting the startDate — let the heatmap show as much data as it can
-    INACTIVE_WORK_PHASES.includes(props.work.phase) ? sortedTallies.at(-1).date : formatDate(today), // for inactive projects, don't show past the last tally
+    INACTIVE_WORK_PHASES.includes(props.project.phase) ? sortedTallies.at(-1).date : formatDate(today), // for inactive projects, don't show past the last tally
   );
 
   const compiledData = compiledTallies.map(compiledTally => ({

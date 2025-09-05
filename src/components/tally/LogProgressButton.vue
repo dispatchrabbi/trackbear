@@ -3,9 +3,9 @@ import { ref, computed } from 'vue';
 
 import { useRoute } from 'vue-router';
 const route = useRoute();
-const relevantWorkId = computed(() => {
-  if(route.name === 'work') {
-    return +route.params.workId;
+const relevantProjectId = computed(() => {
+  if(route.name === 'project') {
+    return +route.params.projectId;
   } else {
     return null;
   }
@@ -47,7 +47,7 @@ const toggleForm = function() {
       </h2>
     </template>
     <CreateTallyForm
-      :initial-work-id="relevantWorkId"
+      :initial-work-id="relevantProjectId"
       @form-success="isFormVisible = false"
     />
   </Dialog>

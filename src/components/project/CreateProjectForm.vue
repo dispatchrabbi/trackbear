@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, defineProps, defineEmits } from 'vue';
+import { ref, reactive, computed, defineEmits } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
@@ -8,8 +8,8 @@ import { z } from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { updateWork, Work, WorkUpdatePayload } from 'src/lib/api/work.ts';
-import { WORK_PHASE } from 'server/lib/models/work/consts';
+import { createProject, type ProjectCreatePayload, type Project } from 'src/lib/api/project';
+import { PROJECT_PHASE } from 'server/lib/models/project/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import InputText from 'primevue/inputtext';
@@ -17,28 +17,25 @@ import InputSwitch from 'primevue/inputswitch';
 import Dropdown from 'primevue/dropdown';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
-import MultiMeasureInput from 'src/components/work/MultiMeasureInput.vue';
+import MultiMeasureInput from 'src/components/project/MultiMeasureInput.vue';
 
-const props = defineProps<{
-  work: Work;
-}>();
-const emit = defineEmits(['work:edit', 'formSuccess']);
-const eventBus = useEventBus<{ work: Work }>('work:edit');
+const emit = defineEmits(['project:create', 'formSuccess']);
+const eventBus = useEventBus<{ project: Project }>('project:create');
 
 const formModel = reactive({
-  title: props.work.title,
-  description: props.work.description,
-  displayOnProfile: props.work.displayOnProfile,
+  title: '',
+  description: '',
+  displayOnProfile: false,
 
-  phase: props.work.phase,
-  startingBalance: props.work.startingBalance,
+  phase: PROJECT_PHASE.PLANNING,
+  startingBalance: {},
 });
 
 const validations = z.object({
   title: z.string().min(1, { message: 'Please enter a title.' }),
   description: z.string(),
   displayOnProfile: z.boolean(),
-  phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<typeof WORK_PHASE[keyof typeof WORK_PHASE]>, { required_error: 'Please pick a phase.' }),
+  phase: z.enum(Object.values(PROJECT_PHASE) as NonEmptyArray<typeof PROJECT_PHASE[keyof typeof PROJECT_PHASE]>, { required_error: 'Please pick a phase.' }),
   startingBalance: z.record(
     z.enum(Object.keys(TALLY_MEASURE_INFO) as NonEmptyArray<string>),
     z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' }),
@@ -48,9 +45,9 @@ const validations = z.object({
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
 
 const phaseOptions = computed(() => {
-  return Object.keys(WORK_PHASE).map(key => ({
-    label: toTitleCase(WORK_PHASE[key]),
-    value: WORK_PHASE[key],
+  return Object.keys(PROJECT_PHASE).map(key => ({
+    label: toTitleCase(PROJECT_PHASE[key]),
+    value: PROJECT_PHASE[key],
   }));
 });
 
@@ -65,17 +62,17 @@ async function handleSubmit() {
 
   try {
     const data = formData();
-    const updatedWork = await updateWork(props.work.id, data as WorkUpdatePayload);
+    const createdProject = await createProject(data as ProjectCreatePayload);
 
-    emit('work:edit', { work: updatedWork });
-    eventBus.emit({ work: updatedWork });
+    emit('project:create', { project: createdProject });
+    eventBus.emit({ project: createdProject });
 
-    successMessage.value = `${updatedWork.title} has been edited.`;
+    successMessage.value = `${createdProject.title} has been created.`;
     await wait(1 * 1000);
 
     emit('formSuccess');
   } catch {
-    errorMessage.value = 'Could not edit the project: something went wrong server-side.';
+    errorMessage.value = 'Could not create the project: something went wrong server-side.';
 
     return;
   } finally {
@@ -88,21 +85,21 @@ async function handleSubmit() {
 <template>
   <TbForm
     :is-valid="isValid"
-    submit-message="Edit"
-    :loading-message="isLoading ? 'Editing...' : null"
+    submit-message="Submit"
+    :loading-message="isLoading ? 'Creating...' : null"
     :success-message="successMessage"
     :error-message="errorMessage"
     @submit="validate() && handleSubmit()"
   >
     <FieldWrapper
-      for="work-form-title"
+      for="project-form-title"
       label="Title"
       required
       :rule="ruleFor('title')"
     >
       <template #default="{ onUpdate, isFieldValid }">
         <InputText
-          id="work-form-title"
+          id="project-form-title"
           v-model="formModel.title"
           :invalid="!isFieldValid"
           @update:model-value="onUpdate"
@@ -110,13 +107,13 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
-      for="work-form-description"
+      for="project-form-description"
       label="Description"
       :rule="ruleFor('description')"
     >
       <template #default="{ onUpdate, isFieldValid }">
         <InputText
-          id="work-form-description"
+          id="project-form-description"
           v-model="formModel.description"
           :invalid="!isFieldValid"
           @update:model-value="onUpdate"
@@ -124,7 +121,7 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
-      for="work-form-display-on-profile"
+      for="project-form-display-on-profile"
       label="Show on Profile?"
       :rule="ruleFor('displayOnProfile')"
       help="This only takes effect if you have enabled your public profile in Settings."
@@ -145,14 +142,14 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
-      for="work-form-phase"
+      for="project-form-phase"
       label="Phase"
       required
       :rule="ruleFor('phase')"
     >
       <template #default="{ onUpdate, isFieldValid }">
         <Dropdown
-          id="work-form-phase"
+          id="project-form-phase"
           v-model="formModel.phase"
           :options="phaseOptions"
           option-label="label"
@@ -163,14 +160,14 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
-      for="work-form-starting-balance"
+      for="project-form-starting-balance"
       label="Starting Balance"
       :rule="ruleFor('startingBalance')"
       help="Starting balances will be counted in totals but don't count as activity."
     >
       <template #default="{ onUpdate, isFieldValid }">
         <MultiMeasureInput
-          id="work-form-starting-balance"
+          id="project-form-starting-balance"
           v-model="formModel.startingBalance"
           :invalid="!isFieldValid"
           add-button-text="Add Starting Balance"
@@ -180,7 +177,3 @@ async function handleSubmit() {
     </FieldWrapper>
   </TbForm>
 </template>
-
-<style scoped>
-</style>
-server/lib/models/work

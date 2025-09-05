@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { TEST_OBJECT_ID, TEST_USER_ID } from 'testing-support/util';
 
-import { WORK_STATE } from './work/consts';
+import { PROJECT_STATE } from './project/consts';
 import { TAG_STATE } from './tag/consts';
 
 import {
@@ -78,14 +78,14 @@ describe('model helpers', () => {
       const expected = {
         worksIncluded: {
           connect: [
-            { id: -20, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
-            { id: -21, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+            { id: -20, ownerId: TEST_USER_ID, state: PROJECT_STATE.ACTIVE },
+            { id: -21, ownerId: TEST_USER_ID, state: PROJECT_STATE.ACTIVE },
           ],
         },
         tagsIncluded: {
           connect: [
-            { id: -22, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
-            { id: -23, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+            { id: -22, ownerId: TEST_USER_ID, state: PROJECT_STATE.ACTIVE },
+            { id: -23, ownerId: TEST_USER_ID, state: PROJECT_STATE.ACTIVE },
           ],
         },
       };
@@ -104,14 +104,14 @@ describe('model helpers', () => {
       const expected = {
         worksIncluded: {
           set: [
-            { id: -20, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
-            { id: -21, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+            { id: -20, ownerId: TEST_USER_ID, state: PROJECT_STATE.ACTIVE },
+            { id: -21, ownerId: TEST_USER_ID, state: PROJECT_STATE.ACTIVE },
           ],
         },
         tagsIncluded: {
           set: [
-            { id: -22, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
-            { id: -23, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+            { id: -22, ownerId: TEST_USER_ID, state: PROJECT_STATE.ACTIVE },
+            { id: -23, ownerId: TEST_USER_ID, state: PROJECT_STATE.ACTIVE },
           ],
         },
       };
@@ -129,8 +129,8 @@ describe('model helpers', () => {
         worksIncluded: undefined,
         tagsIncluded: {
           set: [
-            { id: -22, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
-            { id: -23, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+            { id: -22, ownerId: TEST_USER_ID, state: PROJECT_STATE.ACTIVE },
+            { id: -23, ownerId: TEST_USER_ID, state: PROJECT_STATE.ACTIVE },
           ],
         },
       };
@@ -146,8 +146,8 @@ describe('model helpers', () => {
       const expected = {
         worksIncluded: {
           set: [
-            { id: -20, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
-            { id: -21, ownerId: TEST_USER_ID, state: WORK_STATE.ACTIVE },
+            { id: -20, ownerId: TEST_USER_ID, state: PROJECT_STATE.ACTIVE },
+            { id: -21, ownerId: TEST_USER_ID, state: PROJECT_STATE.ACTIVE },
           ],
         },
         tagsIncluded: undefined,
@@ -167,7 +167,7 @@ describe('model helpers', () => {
         worksIncluded: {
           where: {
             ownerId: TEST_USER_ID,
-            state: WORK_STATE.ACTIVE,
+            state: PROJECT_STATE.ACTIVE,
           },
           select: { id: true },
         },

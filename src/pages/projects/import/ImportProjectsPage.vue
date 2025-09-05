@@ -8,8 +8,8 @@ import Card from 'primevue/card';
 import { PrimeIcons } from 'primevue/api';
 
 const breadcrumbs: MenuItem[] = [
-  { label: 'Projects', url: '/works' },
-  { label: 'Import', url: '/works/import' },
+  { label: 'Projects', url: '/projects' },
+  { label: 'Import', url: '/projects/import' },
 ];
 
 const importMethods = [
@@ -20,7 +20,7 @@ const importMethods = [
         title: 'Manual Import',
         icon: PrimeIcons.COPY,
         details: [`Import a single project by copying and pasting data from NaNoWriMo's website.`],
-        route: 'import-works-nano-manual',
+        route: 'import-projects-nano-manual',
       },
     ],
   },
@@ -31,15 +31,15 @@ const importMethods = [
         title: 'Upload a CSV',
         icon: PrimeIcons.UPLOAD,
         details: [`Import a single project by uploading a CSV file.`, `(Coming soon!)`],
-        // route: 'import-works-csv',
-        route: 'import-works',
+        // route: 'import-projects-csv',
+        route: 'import-projects',
       },
       {
         title: 'Manual Import',
         icon: PrimeIcons.COPY,
         details: [`Import a single project by copying and pasting data into TrackBear.`, `(Coming soon!)`],
-        // route: 'import-works-manual',
-        route: 'import-works',
+        // route: 'import-projects-manual',
+        route: 'import-projects',
       },
     ],
   },

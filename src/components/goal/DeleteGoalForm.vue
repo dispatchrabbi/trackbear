@@ -23,7 +23,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  deleteConfirmation: z.string().refine(val => val === props.goal.title, { message: 'You must type the title exactly.' }), // only allow exactly the work title
+  deleteConfirmation: z.string().refine(val => val === props.goal.title, { message: 'You must type the title exactly.' }), // only allow exactly the goal title
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);

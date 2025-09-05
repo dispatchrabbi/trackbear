@@ -7,10 +7,10 @@ export const AUDIT_EVENT_ENTITIES = {
   GOAL: 'goal',
   LEADERBOARD: 'leaderboard',
   LEADERBOARD_MEMBER: 'leaderboard-member',
+  PROJECT: 'work',
   TAG: 'tag',
   TALLY: 'tally',
   USER: 'user',
-  WORK: 'work',
 } as const;
 export type AuditEventEntity = ValueEnum<typeof AUDIT_EVENT_ENTITIES>;
 
@@ -41,6 +41,13 @@ export const AUDIT_EVENT_TYPE = {
   LEADERBOARD_MEMBER_UPDATE: 'leaderboard-member:update',
   LEADERBOARD_MEMBER_DELETE: 'leaderboard-member:delete',
 
+  // the values of these continue to be 'work:*' for legacy reasons
+  // TODO: make a database migration that converts these
+  PROJECT_CREATE: 'work:create',
+  PROJECT_UPDATE: 'work:update',
+  PROJECT_DELETE: 'work:delete',
+  PROJECT_UNDELETE: 'work:undelete',
+
   TAG_CREATE: 'tag:create',
   TAG_UPDATE: 'tag:update',
   TAG_DELETE: 'tag:delete',
@@ -62,11 +69,6 @@ export const AUDIT_EVENT_TYPE = {
   USER_REQUEST_PASSWORD_RESET: 'user:pwresetreq',
   USER_LOGIN: 'user:login',
   USER_FAILED_LOGIN: 'user:failedlogin',
-
-  WORK_CREATE: 'work:create',
-  WORK_UPDATE: 'work:update',
-  WORK_DELETE: 'work:delete',
-  WORK_UNDELETE: 'work:undelete',
 
   SYSTEM_NOOP: 'system:noop',
 };
@@ -272,24 +274,24 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
     patient: null,
     goal: null,
   },
-  [AUDIT_EVENT_TYPE.WORK_CREATE]: {
+  [AUDIT_EVENT_TYPE.PROJECT_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
-    patient: AUDIT_EVENT_ENTITIES.WORK,
+    patient: AUDIT_EVENT_ENTITIES.PROJECT,
     goal: null,
   },
-  [AUDIT_EVENT_TYPE.WORK_UPDATE]: {
+  [AUDIT_EVENT_TYPE.PROJECT_UPDATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
-    patient: AUDIT_EVENT_ENTITIES.WORK,
+    patient: AUDIT_EVENT_ENTITIES.PROJECT,
     goal: null,
   },
-  [AUDIT_EVENT_TYPE.WORK_DELETE]: {
+  [AUDIT_EVENT_TYPE.PROJECT_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
-    patient: AUDIT_EVENT_ENTITIES.WORK,
+    patient: AUDIT_EVENT_ENTITIES.PROJECT,
     goal: null,
   },
-  [AUDIT_EVENT_TYPE.WORK_UNDELETE]: {
+  [AUDIT_EVENT_TYPE.PROJECT_UNDELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
-    patient: AUDIT_EVENT_ENTITIES.WORK,
+    patient: AUDIT_EVENT_ENTITIES.PROJECT,
     goal: null,
   },
 };

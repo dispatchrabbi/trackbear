@@ -173,4 +173,3 @@ async function handleSubmit() {
 
 <style scoped>
 </style>
-server/lib/models/work

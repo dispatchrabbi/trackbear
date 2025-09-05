@@ -4,8 +4,8 @@ import { ref, computed, onMounted } from 'vue';
 import { useUserStore } from 'src/stores/user.ts';
 const userStore = useUserStore();
 
-import { useWorkStore } from 'src/stores/work';
-const workStore = useWorkStore();
+import { useProjectStore } from 'src/stores/project';
+const projectStore = useProjectStore();
 
 import { TALLY_MEASURE_INFO, formatCountValue, formatCountCounter } from 'src/lib/tally.ts';
 
@@ -21,16 +21,16 @@ const dailyStats = computed<DailyStats>(() => {
   return calculateDailyStats(dayCounts.value);
 });
 
-const workStartingBalances = computed(() => {
-  if(workStore.works === null) { return {}; }
+const projectStartingBalances = computed(() => {
+  if(projectStore.projects === null) { return {}; }
 
-  const startingBalances: MeasureCounts = workStore.works.reduce((balances, work) => {
-    for(const measure of Object.keys(work.startingBalance)) {
+  const startingBalances: MeasureCounts = projectStore.projects.reduce((balances, project) => {
+    for(const measure of Object.keys(project.startingBalance)) {
       if(!(measure in balances)) {
         balances[measure] = 0;
       }
 
-      balances[measure] += work.startingBalance[measure];
+      balances[measure] += project.startingBalance[measure];
     }
 
     return balances;
@@ -42,14 +42,14 @@ const workStartingBalances = computed(() => {
 const measures = computed<TallyMeasure[]>(() => {
   const measuresAvailable = Object.keys(dailyStats.value.days);
   const lifetimeStartingBalanceMeasures = Object.keys(userStore.user.userSettings.lifetimeStartingBalance);
-  const workStartingBalanceMeasures = Object.keys(workStartingBalances.value);
+  const projectStartingBalanceMeasures = Object.keys(projectStartingBalances.value);
   // this makes sure they're in a consistent order
-  return Object.keys(TALLY_MEASURE_INFO).filter(measure => measuresAvailable.includes(measure) || lifetimeStartingBalanceMeasures.includes(measure) || workStartingBalanceMeasures.includes(measure));
+  return Object.keys(TALLY_MEASURE_INFO).filter(measure => measuresAvailable.includes(measure) || lifetimeStartingBalanceMeasures.includes(measure) || projectStartingBalanceMeasures.includes(measure));
 });
 
 const totals = computed<MeasureCounts>(() => {
   return measures.value.reduce((obj, measure) => {
-    obj[measure] = (dailyStats.value.totals[measure] || 0) + (userStore.user.userSettings.lifetimeStartingBalance[measure] || 0) + (workStartingBalances.value[measure] || 0);
+    obj[measure] = (dailyStats.value.totals[measure] || 0) + (userStore.user.userSettings.lifetimeStartingBalance[measure] || 0) + (projectStartingBalances.value[measure] || 0);
     return obj;
   }, {});
 });
@@ -105,7 +105,7 @@ const breadcrumbs: MenuItem[] = [
 ];
 
 onMounted(() => {
-  workStore.populate();
+  projectStore.populate();
   loadDayCounts();
 });
 </script>

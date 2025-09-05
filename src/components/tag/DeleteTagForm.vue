@@ -27,7 +27,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  deleteConfirmation: z.string().refine(val => val === props.tag.name, { message: 'You must type the name exactly.' }), // only allow exactly the work title
+  deleteConfirmation: z.string().refine(val => val === props.tag.name, { message: 'You must type the name exactly.' }),
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);
@@ -47,7 +47,7 @@ async function handleSubmit() {
   try {
     const deletedTag = await deleteTag(props.tag.id);
 
-    emit('tag:delete', { work: deletedTag });
+    emit('tag:delete', { tag: deletedTag });
     eventBus.emit({ tag: deletedTag });
 
     successMessage.value = `${deletedTag.name} has been deleted.`;

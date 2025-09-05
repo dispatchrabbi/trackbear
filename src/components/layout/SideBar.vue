@@ -3,9 +3,9 @@ import { computed, defineEmits, onMounted } from 'vue';
 
 const emit = defineEmits(['menu-navigation']);
 
-import { useWorkStore } from 'src/stores/work.ts';
-import { cmpWorkByTitle } from 'src/lib/work.ts';
-const workStore = useWorkStore();
+import { useProjectStore } from 'src/stores/project';
+import { cmpByTitle } from 'src/lib/project';
+const projectStore = useProjectStore();
 
 import { useGoalStore } from 'src/stores/goal.ts';
 import { cmpGoalByCompletion } from 'src/lib/goal.ts';
@@ -35,13 +35,13 @@ const items = computed(() => {
       key: 'projects',
       label: 'Projects',
       icon: PrimeIcons.FILE_EDIT,
-      to: { name: 'works' },
+      to: { name: 'projects' },
       header: true,
     },
-    ...(workStore.starredWorks ?? []).toSorted(cmpWorkByTitle).map(work => ({
-      key: `work-${work.id}`,
-      label: work.title,
-      to: { name: 'work', params: { workId: work.id } },
+    ...(projectStore.starredProjects ?? []).toSorted(cmpByTitle).map(project => ({
+      key: `project-${project.id}`,
+      label: project.title,
+      to: { name: 'project', params: { projectId: project.id } },
     })),
     // goals
     {
@@ -80,7 +80,7 @@ const items = computed(() => {
 });
 
 onMounted(() => {
-  workStore.populate();
+  projectStore.populate();
   goalStore.populate();
   leaderboardStore.populate();
 });

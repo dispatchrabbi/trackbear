@@ -1,7 +1,7 @@
 import z from 'zod';
 import { NonEmptyArray } from 'server/lib/validators.ts';
 
-import { WORK_PHASE } from 'server/lib/models/work/consts.ts';
+import { PROJECT_PHASE } from 'server/lib/models/project/consts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 import { GOAL_CADENCE_UNIT } from 'server/lib/models/goal/consts.ts';
 
@@ -17,7 +17,7 @@ const zTagList = () => zKey().array().nullable();
 const projectSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(''),
-  phase: z.enum(Object.values(WORK_PHASE) as NonEmptyArray<string>).default(WORK_PHASE.PLANNING),
+  phase: z.enum(Object.values(PROJECT_PHASE) as NonEmptyArray<string>).default(PROJECT_PHASE.PLANNING),
   startingBalance: zMeasureCounts().default({}),
 });
 export type ProjectSchema = z.infer<typeof projectSchema>;

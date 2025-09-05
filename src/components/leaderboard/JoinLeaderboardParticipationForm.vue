@@ -3,9 +3,9 @@ import { ref, reactive, computed, defineProps, defineEmits } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 
-import { useWorkStore } from 'src/stores/work.ts';
-const workStore = useWorkStore();
-workStore.populate();
+import { useProjectStore } from 'src/stores/project';
+const projectStore = useProjectStore();
+projectStore.populate();
 
 import { useTagStore } from 'src/stores/tag.ts';
 const tagStore = useTagStore();
@@ -204,17 +204,17 @@ async function handleSubmit() {
     </div>
     <FieldWrapper
       v-if="formModel.isParticipant"
-      for="leaderboard-form-works"
+      for="leaderboard-form-projects"
       label="Projects to include"
       :rule="ruleFor('works')"
       info="Only progress entries from the selected projects will be included on this leaderboard."
     >
       <template #default="{ onUpdate, isFieldValid }">
         <MultiSelect
-          id="leaderboard-form-works"
+          id="leaderboard-form-projects"
           v-model="formModel.works"
           display="chip"
-          :options="workStore.works"
+          :options="projectStore.projects"
           option-label="title"
           option-value="id"
           filter

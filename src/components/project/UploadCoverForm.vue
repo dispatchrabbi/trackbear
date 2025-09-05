@@ -2,17 +2,17 @@
 import { ref, defineProps, defineEmits } from 'vue';
 import { useEventBus } from '@vueuse/core';
 
-import { uploadCover, type Work } from 'src/lib/api/work.ts';
-import { ALLOWED_COVER_FORMATS, MAX_COVER_SIZE_IN_BYTES } from 'server/lib/models/work/consts';
+import { uploadCover, type Project } from 'src/lib/api/project';
+import { ALLOWED_COVER_FORMATS, MAX_COVER_SIZE_IN_BYTES } from 'server/lib/models/project/consts';
 
 import FileUpload, { FileUploadUploaderEvent } from 'primevue/fileupload';
 
 const props = defineProps<{
-  work: Work;
+  project: Project;
 }>();
 
-const emit = defineEmits(['work:cover', 'formSuccess']);
-const eventBus = useEventBus<{ work: Work }>('work:cover');
+const emit = defineEmits(['project:cover', 'formSuccess']);
+const eventBus = useEventBus<{ project: Project }>('project:cover');
 
 const isLoading = ref<boolean>(false);
 const successMessage = ref<string | null>(null);
@@ -29,9 +29,9 @@ async function handleUpload(ev: FileUploadUploaderEvent) {
     const formData = new FormData();
     formData.append('cover', cover);
 
-    const updatedWork = await uploadCover(props.work.id, formData);
-    emit('work:cover', { id: props.work.id });
-    eventBus.emit({ work: updatedWork });
+    const updatedProject = await uploadCover(props.project.id, formData);
+    emit('project:cover', { id: props.project.id });
+    eventBus.emit({ project: updatedProject });
 
     successMessage.value = `Your new cover has been uploaded.`;
     emit('formSuccess');

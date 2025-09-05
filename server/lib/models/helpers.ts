@@ -1,5 +1,5 @@
 import { omit } from '../obj';
-import { WORK_STATE } from './work/consts';
+import { PROJECT_STATE } from './project/consts';
 import { TAG_STATE } from './tag/consts';
 
 export type WorksAndTagsIncluded = {
@@ -49,7 +49,7 @@ export function makeConnectWorksAndTagsIncluded<D extends WorksAndTagsIds>(data:
       connect: data.workIds.map(id => ({
         id,
         ownerId: ownerId,
-        state: WORK_STATE.ACTIVE,
+        state: PROJECT_STATE.ACTIVE,
       })),
     },
     tagsIncluded: {
@@ -69,7 +69,7 @@ export function makeSetWorksAndTagsIncluded<D extends Partial<WorksAndTagsIds>>(
           set: data.workIds.map(id => ({
             id,
             ownerId: ownerId,
-            state: WORK_STATE.ACTIVE,
+            state: PROJECT_STATE.ACTIVE,
           })),
         } :
       undefined,
@@ -90,7 +90,7 @@ export function makeIncludeWorkAndTagIds(ownerId: number) {
     worksIncluded: {
       where: {
         ownerId: ownerId,
-        state: WORK_STATE.ACTIVE,
+        state: PROJECT_STATE.ACTIVE,
       },
       select: { id: true },
     },
