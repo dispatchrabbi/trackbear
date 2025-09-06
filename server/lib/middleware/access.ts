@@ -53,8 +53,8 @@ export async function requireSession(req: WithSessionAuth<Request>, res: Respons
 }
 
 export async function requireUser(req: WithSessionAuth<Request>, res: Response, next: NextFunction) {
-  let user: User;
-  let accessType: AccessType;
+  let user: User | null = null;
+  let accessType: AccessType = ACCESS_TYPE.NONE;
   const apiToken = getApiTokenFromRequest(req);
 
   if(apiToken) {

@@ -27,7 +27,7 @@ async function main() {
   const contents = await readFile(userFilePath, { encoding: 'utf-8' });
   const lines = contents.trim().split('\n').map(line => line.trim());
 
-  const userIds = [];
+  const userIds: number[] = [];
   for(let lineNumber = 0; lineNumber < lines.length; ++lineNumber) {
     const line = lines[lineNumber];
     // skip empty lines and comments

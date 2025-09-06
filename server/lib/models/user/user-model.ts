@@ -73,7 +73,7 @@ type SendPasswordResetLinkOptions = Partial<{
 
 export class UserModel {
   @traced
-  static async getUsers(skip: number = 0, take: number = Infinity, search: string = null): Promise<User[]> {
+  static async getUsers(skip: number = 0, take: number = Infinity, search: string | null = null): Promise<User[]> {
     const users = await dbClient.user.findMany({
       where: this.buildSearchWhereClauses(search),
       orderBy: { createdAt: 'desc' },
@@ -85,7 +85,7 @@ export class UserModel {
   }
 
   @traced
-  static async getTotalUserCount(search: string = null): Promise<number> {
+  static async getTotalUserCount(search: string | null = null): Promise<number> {
     const total = await dbClient.user.count({
       where: this.buildSearchWhereClauses(search),
     });
@@ -93,7 +93,7 @@ export class UserModel {
     return total;
   }
 
-  private static buildSearchWhereClauses(search: string = null) {
+  private static buildSearchWhereClauses(search: string | null = null) {
     if(search === null) {
       return undefined;
     }
@@ -246,12 +246,12 @@ export class UserModel {
     const original = user;
 
     if('username' in data) {
-      data.username = await this.validateUsername(data.username);
+      data.username = await this.validateUsername(data.username!);
     }
 
     if('email' in data) {
       // refuse the change the email if it doesn't conform to the regex
-      if(!data.email.match(EMAIL_REGEX)) {
+      if(!data.email!.match(EMAIL_REGEX)) {
         throw new ValidationError('user', 'email', 'email must be a valid email address');
       }
     }
@@ -430,6 +430,9 @@ export class UserModel {
   @traced
   static async checkPassword(user: User, password: string): Promise<boolean> {
     const userAuth = await this.getUserAuth(user);
+    if(!userAuth) {
+      return false;
+    }
 
     const matches = await verifyHash(password, userAuth.password, userAuth.salt);
     return matches;
@@ -489,7 +492,7 @@ export class UserModel {
       data: {
         userId: user.id,
         newEmail: user.email,
-        expiresAt: options.expiresAt,
+        expiresAt: options.expiresAt!,
       },
     });
     pushTask(sendEmailVerificationEmail.makeTask(pending.uuid));
@@ -514,7 +517,7 @@ export class UserModel {
       data: {
         userId: user.id,
         state: PASSWORD_RESET_LINK_STATE.ACTIVE,
-        expiresAt: options.expiresAt,
+        expiresAt: options.expiresAt!,
       },
     });
     pushTask(sendPasswordResetEmail.makeTask(resetLink.uuid));

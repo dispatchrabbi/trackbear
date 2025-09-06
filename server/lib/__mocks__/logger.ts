@@ -8,7 +8,7 @@ const getLoggerMock = vi.spyOn(logger, 'getLogger').mockImplementation(() => ({
   info: () => void 0,
   debug: () => void 0,
 }));
-const closeLoggersMock = vi.spyOn(logger, 'closeLoggers').mockImplementation(async () => void 0);
+const closeLoggersMock = vi.spyOn(logger, 'closeLoggers').mockImplementation(async () => [void 0]);
 
 const initLoggers = initLoggersMock;
 const getLogger = getLoggerMock;

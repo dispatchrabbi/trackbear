@@ -10,15 +10,16 @@ const zMeasureCounts = () => z.record(zTallyMeasure(), z.number().int());
 
 const zKey = () => z.string().regex(/^\w+$/);
 const zDate = () => z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
-const zProjectList = () => zKey().array().nullable();
+const zNullableDate = () => zDate().nullable();
+const zProjectList = () => zKey().array();
 // TODO: implement tags
-const zTagList = () => zKey().array().nullable();
+const zTagList = () => zKey().array();
 
 const projectSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(''),
-  phase: z.enum(Object.values(PROJECT_PHASE) as NonEmptyArray<string>).default(PROJECT_PHASE.PLANNING),
-  startingBalance: zMeasureCounts().default({}),
+  phase: z.enum(Object.values(PROJECT_PHASE) as NonEmptyArray<string>).default(PROJECT_PHASE.PLANNING).optional(),
+  startingBalance: zMeasureCounts().default({}).optional(),
 });
 export type ProjectSchema = z.infer<typeof projectSchema>;
 
@@ -42,8 +43,8 @@ export type TallySchema = z.infer<typeof tallySchema>;
 const targetSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(''),
-  start: zDate().default(null),
-  end: zDate().default(null),
+  start: zNullableDate().default(null),
+  end: zNullableDate().default(null),
   measure: zTallyMeasure(),
   count: z.number().int(),
   // projects: [] indicates all projects
@@ -55,8 +56,8 @@ export type TargetSchema = z.infer<typeof targetSchema>;
 const habitSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(''),
-  start: zDate().default(null),
-  end: zDate().default(null),
+  start: zNullableDate().default(null),
+  end: zNullableDate().default(null),
   unit: z.enum(Object.values(GOAL_CADENCE_UNIT) as NonEmptyArray<string>),
   period: z.number().int().gte(1),
   // measure and count must both be included or omitted
@@ -71,15 +72,15 @@ export type HabitSchema = z.infer<typeof habitSchema>;
 
 const leaderboardSchema = z.object({
   title: z.string().min(1),
-  description: z.string().default(''),
-  start: zDate().default(null),
-  end: zDate().default(null),
-  individualGoalMode: z.boolean().default(false),
-  fundraiserMode: z.boolean().default(false),
+  description: z.string().default('').optional(),
+  start: zNullableDate().default(null),
+  end: zNullableDate().default(null),
+  individualGoalMode: z.boolean().default(false).optional(),
+  fundraiserMode: z.boolean().default(false).optional(),
   // measures is not used with individualGoalMode
   measures: z.array(zTallyMeasure()).optional(),
   // goal is not used with individualGoalMode
-  goal: zMeasureCounts().default({}),
+  goal: zMeasureCounts().default({}).optional(),
 });
 export type LeaderboardSchema = z.infer<typeof leaderboardSchema>;
 

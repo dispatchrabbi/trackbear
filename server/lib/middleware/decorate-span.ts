@@ -15,12 +15,15 @@ export type DecorateSpanConfig = {
 export function decorateApiCallSpan(config: DecorateSpanConfig) {
   return function decorate(req: Request, res: Response, next: NextFunction) {
     const apiSpan = trace.getActiveSpan();
+    if(!apiSpan) {
+      return;
+    }
 
     const spanName = `${config.method.toUpperCase()} ${config.routePath}`;
     apiSpan.updateName(spanName);
 
     apiSpan.setAttribute(ATTR_HTTP_ROUTE, config.routePath);
-    apiSpan.setAttribute(ATTR_CLIENT_ADDRESS, req.ip);
+    apiSpan.setAttribute(ATTR_CLIENT_ADDRESS, req.ip ?? '');
 
     next();
   };

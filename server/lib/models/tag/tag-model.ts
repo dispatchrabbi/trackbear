@@ -72,7 +72,7 @@ export class TagModel {
   }
 
   @traced
-  static async validateTagName(owner: User, name: string, exceptTagId: number = null): Promise<string> {
+  static async validateTagName(owner: User, name: string, exceptTagId: number | null = null): Promise<string> {
     const existingTagWithThatName = await this.getTagByName(owner, name);
     if(existingTagWithThatName && existingTagWithThatName.id !== exceptTagId) {
       throw new ValidationError('tag', 'name', 'A tag with that name already exists');
@@ -106,7 +106,7 @@ export class TagModel {
   @traced
   static async updateTag(owner: User, tag: Tag, data: Partial<TagData>, reqCtx: RequestContext): Promise<Tag> {
     if('name' in data) {
-      data.name = await this.validateTagName(owner, data.name, tag.id);
+      data.name = await this.validateTagName(owner, data.name!, tag.id);
     }
 
     const updated = await dbClient.tag.update({

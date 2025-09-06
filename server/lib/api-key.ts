@@ -16,10 +16,6 @@ export async function generateApiToken() {
 }
 
 export function censorApiKey(apiKey: ApiKey): ApiKey {
-  if(apiKey === null) {
-    return null;
-  }
-
   const randomToken = apiKey.token.split('.')[1];
   const censoredRandomToken = '0'.repeat(randomToken.length);
 

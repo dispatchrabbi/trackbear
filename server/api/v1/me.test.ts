@@ -9,8 +9,9 @@ import dbClientMock from '../../lib/__mocks__/db.ts';
 vi.mock('../../lib/audit-events.ts', { spy: true });
 import { logAuditEventMock } from '../../lib/__mocks__/audit-events.ts';
 
+import type { Ticket } from 'server/lib/better-queue.js';
 import * as queue from '../../lib/queue.ts';
-vi.spyOn(queue, 'pushTask').mockReturnValue(void 0);
+vi.spyOn(queue, 'pushTask').mockReturnValue(mockObject<Ticket>());
 import sendEmailverificationEmail from '../../lib/tasks/send-emailverification-email.ts';
 import sendUsernameChangedEmail from '../../lib/tasks/send-username-changed-email.ts';
 import sendAccountDeletedEmail from '../../lib/tasks/send-account-deleted-email.ts';

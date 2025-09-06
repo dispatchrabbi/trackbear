@@ -16,20 +16,15 @@ const TASK_NAME = 'send-emailverification-email';
 
 async function handler(task) {
   const taskLogger = queueLogger.child({ service: TASK_NAME });
-  taskLogger.debug('Starting task...');
 
-  let pendingEmailVerification: PendingEmailVerification & { user: User };
-  try {
-    taskLogger.debug(`Getting pending email verification record for uuid ${task.verificationUuid}`);
-    pendingEmailVerification = await dbClient.pendingEmailVerification.findUnique({
-      where: {
-        uuid: task.verificationUuid,
-        user: { state: USER_STATE.ACTIVE },
-      },
-      include: { user: true },
-    });
-  } catch {
-    taskLogger.error(`Could not find a pending email verification with uuid ${task.verificationUuid}`);
+  const pendingEmailVerification = await dbClient.pendingEmailVerification.findUnique({
+    where: {
+      uuid: task.verificationUuid,
+      user: { state: USER_STATE.ACTIVE },
+    },
+    include: { user: true },
+  });
+  if(pendingEmailVerification === null) {
     throw new Error(`Could not find a pending email verification with uuid ${task.verificationUuid}`);
   }
 
@@ -42,8 +37,6 @@ async function handler(task) {
   } else {
     taskLogger.error(`Sending email failed with status code ${response.statusCode}: ${JSON.stringify(response.body)}`);
   }
-
-  taskLogger.debug(`Task has been finished`);
 }
 
 async function sendEmailVerificationEmail(user: User, pendingEmailVerification: PendingEmailVerification) {

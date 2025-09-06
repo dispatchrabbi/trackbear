@@ -34,7 +34,7 @@ export type GetUsersResponsePayload = {
 export async function handleGetUsers(req: RequestWithUser, res: ApiResponse<GetUsersResponsePayload>) {
   const query = req.query as UserQuery;
 
-  const hasSearch = query.search?.length > 0;
+  const hasSearch = query.search && query.search.length > 0;
   const users = await UserModel.getUsers(
     query.skip ?? 0,
     query.take ?? Infinity,

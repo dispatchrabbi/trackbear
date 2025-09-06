@@ -105,7 +105,7 @@ export class ApiKeyModel {
   }
 
   @traced
-  static async touchApiKey(token: string): Promise<ApiKey> {
+  static async touchApiKey(token: string): Promise<ApiKey | null> {
     const now = new Date();
 
     const apiKeyToTouch = await dbClient.apiKey.findFirst({

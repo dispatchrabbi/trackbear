@@ -36,7 +36,7 @@ export async function handleCreateBanner(req: RequestWithUser, res: ApiResponse<
   const created = await BannerModel.createBanner({
     message: payload.message,
     enabled: payload.enabled,
-    showUntil: new Date(payload.showUntil),
+    showUntil: payload.showUntil ? new Date(payload.showUntil) : new Date(),
     icon: payload.icon,
     color: payload.color,
   }, reqCtx(req));
@@ -51,7 +51,7 @@ export async function handleUpdateBanner(req: RequestWithUser, res: ApiResponse<
   const payload = req.body as BannerUpdatePayload;
 
   const data: Partial<BannerData> = transformPayload(payload, {
-    showUntil: val => new Date(val),
+    showUntil: val => val ? new Date(val) : new Date(),
   });
 
   const updated = await BannerModel.updateBanner(+req.params.id, data, reqCtx(req));

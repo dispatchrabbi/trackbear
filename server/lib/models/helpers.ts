@@ -15,6 +15,8 @@ export type WorksAndTagsIds = {
 type WithIdsInstead<T extends WorksAndTagsIncluded> = Omit<T, 'worksIncluded' | 'tagsIncluded'> & WorksAndTagsIds;
 type WithIncludedInstead<T extends WorksAndTagsIds> = Omit<T, 'workIds' | 'tagIds'> & WorksAndTagsIncluded;
 
+export function included2ids<O extends WorksAndTagsIncluded>(obj: O): WithIdsInstead<O>;
+export function included2ids(obj: null): null;
 export function included2ids<O extends WorksAndTagsIncluded>(obj: O | null): WithIdsInstead<O> | null {
   if(obj === null) {
     return null;
@@ -29,7 +31,9 @@ export function included2ids<O extends WorksAndTagsIncluded>(obj: O | null): Wit
   );
 }
 
-export function ids2included<O extends WorksAndTagsIds>(obj: O): WithIncludedInstead<O> {
+export function ids2included<O extends WorksAndTagsIds>(obj: O): WithIncludedInstead<O>;
+export function ids2included(obj: null): null;
+export function ids2included<O extends WorksAndTagsIds>(obj: O | null): WithIncludedInstead<O> | null {
   if(obj === null) {
     return null;
   }

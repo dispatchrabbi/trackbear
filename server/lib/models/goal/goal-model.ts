@@ -41,12 +41,12 @@ export class GoalModel {
       include: makeIncludeWorkAndTagIds(owner.id),
     });
 
-    const goals = dbGoals.map(included2ids) as Goal[];
+    const goals = dbGoals.map(goal => included2ids(goal)) as Goal[];
     return goals;
   }
 
   @traced
-  static async getGoal(owner: User, id: number): Promise<Goal> {
+  static async getGoal(owner: User, id: number): Promise<Goal | null> {
     const dbGoal = await dbClient.goal.findUnique({
       where: {
         id: id,
@@ -55,6 +55,10 @@ export class GoalModel {
       },
       include: makeIncludeWorkAndTagIds(owner.id),
     });
+
+    if(dbGoal === null) {
+      return null;
+    }
 
     const goal = included2ids(dbGoal) as Goal;
     return goal;

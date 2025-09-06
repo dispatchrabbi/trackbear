@@ -1,6 +1,6 @@
 type Mapping<In, Out> = { [key in (keyof In & keyof Out)]: (value: In[key]) => Out[key] };
 
-export function transformPayload<In, Out>(payload: In, transformers: Partial<Mapping<In, Out>>): Out {
+export function transformPayload<In extends object, Out extends object>(payload: In, transformers: Partial<Mapping<In, Out>>): Out {
   const transformed = {} as Out;
 
   for(const key of Object.keys(payload)) {

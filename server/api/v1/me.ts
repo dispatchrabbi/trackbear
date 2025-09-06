@@ -10,7 +10,7 @@ import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();
 
 import dbClient from '../../lib/db.ts';
-import type { User } from 'generated/prisma/client';
+import { type User } from 'generated/prisma/client';
 import { USERNAME_REGEX, USER_STATE, ALLOWED_AVATAR_FORMATS } from '../../lib/models/user/consts.ts';
 import type { FullUser, UserSettings } from 'server/lib/models/user/user-model.ts';
 import { TALLY_MEASURE } from '../../lib/models/tally/consts.ts';
@@ -102,7 +102,7 @@ export async function handlePatchMe(req: RequestWithUser, res: ApiResponse<FullU
   }
 
   const pendingEmailVerificationData = {
-    newEmail: payload.email,
+    newEmail: payload.email!, // we can bang here because we only use this if `didEmailChange` is true
     expiresAt: addDays(new Date(), CONFIG.EMAIL_VERIFICATION_TIMEOUT_IN_DAYS),
   };
 
@@ -134,7 +134,10 @@ export async function handlePatchMe(req: RequestWithUser, res: ApiResponse<FullU
       orderBy: { createdAt: 'desc' },
     });
 
-    pushTask(sendEmailverificationEmail.makeTask(pendingEmailVerification.uuid));
+    if(pendingEmailVerification) {
+      // we just created this, so it *should* always exist
+      pushTask(sendEmailverificationEmail.makeTask(pendingEmailVerification.uuid));
+    }
   }
 
   if(didUsernameChange) {
@@ -174,16 +177,16 @@ export async function handleUploadAvatar(req: RequestWithUser, res: ApiResponse<
   }
 
   // is this a file format we accept for avatars?
-  const isAllowedFormat = Object.keys(ALLOWED_AVATAR_FORMATS).includes(req.file.mimetype);
+  const isAllowedFormat = Object.keys(ALLOWED_AVATAR_FORMATS).includes(req.file!.mimetype);
   if(!isAllowedFormat) {
-    return res.status(400).send(failure('INVALID_FILE_TYPE', `Avatars of type ${req.file.mimetype} are not allowed. Allowed types are: ${Object.keys(ALLOWED_AVATAR_FORMATS).join(', ')}`));
+    return res.status(400).send(failure('INVALID_FILE_TYPE', `Avatars of type ${req.file!.mimetype} are not allowed. Allowed types are: ${Object.keys(ALLOWED_AVATAR_FORMATS).join(', ')}`));
   }
 
   const avatarUploadPath = await getAvatarUploadPath();
 
   // move the uploaded file over to the avatar directory
-  const oldPath = req.file.path;
-  const filename = randomUUID() + '.' + ALLOWED_AVATAR_FORMATS[req.file.mimetype];
+  const oldPath = req.file!.path;
+  const filename = randomUUID() + '.' + ALLOWED_AVATAR_FORMATS[req.file!.mimetype];
   const newPath = path.join(avatarUploadPath, filename);
   try {
     await fs.copyFile(oldPath, newPath);

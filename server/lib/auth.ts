@@ -29,7 +29,7 @@ function _logOut(req: WithSessionAuth<Request>, cb: (err: unknown) => void): voi
 export const logOut = promisify(_logOut);
 
 export function getApiTokenFromRequest(req: Request): string | null {
-  let apiToken = null;
+  let apiToken: string | null = null;
 
   const prefix = AUTHORIZATION_SCHEME + ' ';
   const authorization = req.header('Authorization');

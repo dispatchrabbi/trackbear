@@ -42,7 +42,7 @@ export class TallyModel {
           gte: filter.startDate ?? undefined,
           lte: filter.endDate ?? undefined,
         },
-        workId: filter.workIds.length > 0 ? { in: filter.workIds } : undefined,
+        workId: (filter.workIds ?? []).length > 0 ? { in: filter.workIds } : undefined,
         tags: filter.tagIds ? { some: { id: { in: filter.tagIds } } } : undefined,
       },
     });
@@ -64,6 +64,7 @@ export class TallyModel {
 
   @traced
   static async createTally(/* owner: User, data: TallyData, reqCtx: RequestContext */): Promise<Tally> {
+    // @ts-expect-error
     return null;
   }
 
@@ -97,6 +98,7 @@ export class TallyModel {
 
   @traced
   static async updateTally(/* owner: User, tally: Tally, data: Partial<TallyData>, reqCtx: RequestContext */): Promise<Tally> {
+    // @ts-expect-error
     return null;
   }
 

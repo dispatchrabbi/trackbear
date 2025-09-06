@@ -54,7 +54,7 @@ describe(GoalModel, () => {
         workIds: [],
         tagIds: [],
       }));
-      dbClient.goal.findMany.mockResolvedValue(testGoals.map(ids2included));
+      dbClient.goal.findMany.mockResolvedValue(testGoals.map(goal => ids2included(goal)));
 
       const goals = await GoalModel.getGoals(testOwner);
 

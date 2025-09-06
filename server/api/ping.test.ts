@@ -37,8 +37,11 @@ describe('/api/ping', () => {
         expectedErr = err;
       }
 
+      // @ts-expect-error -- ironic, no? (TODO: fix this test so it doesn't need this)
       expect(expectedErr).toBeInstanceOf(Error);
+      // @ts-expect-error -- ironic, no? (TODO: fix this test so it doesn't need this)
       expect(expectedErr.message).toEqual('pong');
+
       expect(res.status).not.toHaveBeenCalled();
       expect(res.send).not.toHaveBeenCalled();
     });

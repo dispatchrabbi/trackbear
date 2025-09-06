@@ -12,7 +12,7 @@ import { TALLY_STATE, TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tall
 import { TAG_STATE, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts.ts';
 
 import { buildChangeRecord, logAuditEvent } from '../../lib/audit-events.ts';
-import { PROJECT_STATE } from 'server/lib/models/project/consts.ts';
+import { ProjectModel } from 'server/lib/models/project/project-model.ts';
 
 export type TallyWithWorkAndTags = Tally & { work: Work } & { tags: Tag[] };
 
@@ -46,7 +46,7 @@ export async function handleGetTallies(req: RequestWithUser, res: ApiResponse<Ta
       work: true,
       tags: true,
     },
-  });
+  }) as TallyWithWorkAndTags[];
 
   return res.status(200).send(success(tallies));
 }
@@ -62,7 +62,7 @@ export async function handleGetTally(req: RequestWithUser, res: ApiResponse<Tall
       work: true,
       tags: true,
     },
-  });
+  }) as TallyWithWorkAndTags;
 
   if(tally) {
     return res.status(200).send(success(tally));
@@ -101,14 +101,8 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
       return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total when no project is specified.'));
     }
 
-    const work = await dbClient.work.findUnique({
-      where: {
-        state: PROJECT_STATE.ACTIVE,
-        ownerId: user.id,
-        id: payload.workId,
-      },
-    });
-    if(!work) {
+    const project = await ProjectModel.getProject(user, payload.workId);
+    if(!project) {
       return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total because the project specified was not found.'));
     }
 
@@ -122,7 +116,7 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
       },
     });
 
-    const startingBalance = payload.measure in (work.startingBalance as Record<string, number>) ? work.startingBalance[payload.measure] : 0;
+    const startingBalance = payload.measure in project.startingBalance ? project.startingBalance[payload.measure] : 0;
     const currentTotal = startingBalance + tallies.reduce((total, tally) => total + tally.count, 0);
     const difference = count - currentTotal;
     count = difference;
@@ -159,7 +153,7 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
       work: true,
       tags: true,
     },
-  });
+  }) as TallyWithWorkAndTags;
 
   await logAuditEvent('tally:create', user.id, tally.id, null, null, req.sessionID);
 
@@ -205,6 +199,13 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
   const user = req.user;
   const payload = req.body as TallyUpdatePayload;
 
+  if(
+    ('count' in payload && !('measure' in payload)) ||
+    ('measure' in payload && !('count' in payload))
+  ) {
+    return res.status(400).send(failure('VALIDATION_FAILED', 'You must send both `measure` and `count` properties, or neither'));
+  }
+
   const existingTally = await dbClient.tally.findUnique({
     where: {
       id: +req.params.id,
@@ -219,24 +220,23 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
     return res.status(404).send(failure('NOT_FOUND', `Did not find any tally with id ${req.params.id}.`));
   }
 
-  const tagNamesToConnectOrCreate = payload.tags.filter(incomingTag => !existingTally.tags.some(existingTag => existingTag.name === incomingTag));
-  const tagsToDisconnect = existingTally.tags.filter(existingTag => !payload.tags.includes(existingTag.name));
+  const tagNamesToConnectOrCreate = payload.tags?.filter(incomingTag => !existingTally.tags.some(existingTag => existingTag.name === incomingTag)) ?? [];
+  const tagsToDisconnect = existingTally.tags.filter(existingTag => !(payload.tags ?? []).includes(existingTag.name));
 
   let count = payload.count;
   if(payload.setTotal) {
-    if(payload.workId === null) {
+    if(payload.workId == null) {
       // need a work to set a total, otherwise this doesn't make any sense
       return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total when no project is specified.'));
     }
 
-    const work = await dbClient.work.findUnique({
-      where: {
-        state: PROJECT_STATE.ACTIVE,
-        ownerId: user.id,
-        id: payload.workId,
-      },
-    });
-    if(!work) {
+    if(!('count' in payload && 'measure' in payload)) {
+      // need count and measure to set a total, otherwise this doesn't make any sense
+      return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total when no count or measure is specified.'));
+    }
+
+    const project = await ProjectModel.getProject(user, payload.workId);
+    if(!project) {
       return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total because the project specified was not found.'));
     }
 
@@ -251,9 +251,9 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
       },
     });
 
-    const startingBalance = payload.measure in (work.startingBalance as Record<string, number>) ? work.startingBalance[payload.measure] : 0;
+    const startingBalance = payload.measure! in project.startingBalance ? project.startingBalance[payload.measure!] : 0;
     const currentTotal = startingBalance + tallies.reduce((total, tally) => total + tally.count, 0);
-    const difference = count - currentTotal;
+    const difference = count! - currentTotal;
     count = difference;
   }
 
@@ -266,7 +266,7 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
     data: {
       date: payload.date,
       measure: payload.measure,
-      count: count,
+      count: 'count' in payload ? count : undefined,
       note: payload.note,
 
       workId: payload.workId, // could be null
@@ -291,7 +291,7 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
       work: true,
       tags: true,
     },
-  });
+  }) as TallyWithWorkAndTags;
 
   const changes = buildChangeRecord(existingTally, tally);
   await logAuditEvent('tally:update', user.id, tally.id, null, changes, req.sessionID);
@@ -313,7 +313,7 @@ export async function handleDeleteTally(req: RequestWithUser, res: ApiResponse<T
       work: true,
       tags: true,
     },
-  });
+  }) as TallyWithWorkAndTags;
 
   await logAuditEvent('tally:delete', user.id, tally.id, null, null, req.sessionID);
 

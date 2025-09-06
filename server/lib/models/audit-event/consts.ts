@@ -76,8 +76,8 @@ export type AuditEventType = ValueEnum<typeof AUDIT_EVENT_TYPE>;
 
 export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
   agent: AuditEventEntity;
-  patient: AuditEventEntity;
-  goal: AuditEventEntity;
+  patient: AuditEventEntity | null;
+  goal: AuditEventEntity | null;
 }> = {
   [AUDIT_EVENT_TYPE.API_KEY_CREATE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
@@ -294,7 +294,7 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
     patient: AUDIT_EVENT_ENTITIES.PROJECT,
     goal: null,
   },
-};
+} as const;
 
 export const AUDIT_EVENT_SOURCE = {
   ADMIN_CONSOLE: 'admin console',

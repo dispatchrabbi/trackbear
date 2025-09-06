@@ -7,7 +7,7 @@ export type Leaderboard = Expand<Omit<PrismaBoard, 'goal' | 'measures'> & {
   measures: TallyMeasure[];
   goal: LeaderboardGoal;
 }>;
-export type LeaderboardGoal = MeasureCounts | null;
+export type LeaderboardGoal = MeasureCounts;
 
 // Eventually, displayName will be in the BoardParticipant table and can move over from the User type
 // and we'll also have stuff like 'team' and 'color'

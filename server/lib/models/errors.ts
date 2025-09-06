@@ -1,7 +1,7 @@
 export class RecordNotFoundError extends Error {
-  constructor(model: string, id: number | string, idField: string = 'id', ...args: unknown[]) {
+  constructor(model: string, id: number | string, idField: string = 'id') {
     const message = `Did not find any ${model} with id ${id}`;
-    super(message, ...args);
+    super(message);
 
     if(Error.captureStackTrace) {
       Error.captureStackTrace(this, RecordNotFoundError);
@@ -23,9 +23,9 @@ export class RecordNotFoundError extends Error {
 }
 
 export class ValidationError extends Error {
-  constructor(model: string, invalidField: string, reason: string, ...args: unknown[]) {
+  constructor(model: string, invalidField: string, reason: string) {
     const message = `Invalid value on ${model} for ${invalidField}: ${reason}`;
-    super(message, ...args);
+    super(message);
 
     if(Error.captureStackTrace) {
       Error.captureStackTrace(this, ValidationError);

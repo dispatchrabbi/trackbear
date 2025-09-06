@@ -2,7 +2,7 @@ import { TRACKBEAR_SYSTEM_ID, UNKNOWN_ACTOR_ID } from './audit-events';
 import { } from './audit-events';
 
 export type RequestContext = {
-  userId: number | null;
+  userId: number;
   sessionId: string;
 };
 
@@ -13,7 +13,7 @@ interface RequestWithOrWithoutUser {
 
 export function reqCtx(req: RequestWithOrWithoutUser): RequestContext {
   return {
-    userId: ('user' in req) ? req.user.id : UNKNOWN_ACTOR_ID,
+    userId: req.user?.id ?? UNKNOWN_ACTOR_ID,
     sessionId: req.sessionID,
   };
 }

@@ -15,7 +15,7 @@ import _dbClient from '../../db.ts';
 vi.mock('../../db.ts');
 const dbClient = vi.mocked(_dbClient, { deep: true });
 
-import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
+import { logAuditEvent as _logAuditEvent, UNKNOWN_ACTOR_ID } from '../../audit-events.ts';
 vi.mock('../../audit-events.ts');
 const logAuditEvent = vi.mocked(_logAuditEvent);
 
@@ -180,12 +180,12 @@ describe(UserModel, () => {
 
     it('validates the username, creates a user, logs an audit event, and sends two emails', async () => {
       const testUser = mockObject<User>({ id: -10 });
-      const testReqCtx = { userId: null, sessionId: TEST_SESSION_ID };
+      const testReqCtx = getTestReqCtx(UNKNOWN_ACTOR_ID);
 
       validateUsername.mockImplementation(async username => username.toLowerCase());
       createUser.mockResolvedValue(testUser);
-      sendSignupEmail.mockResolvedValue(void 0);
-      sendEmailVerificationLink.mockResolvedValue(void 0);
+      sendSignupEmail.mockResolvedValue(true);
+      sendEmailVerificationLink.mockResolvedValue(mockObject<PendingEmailVerification>());
 
       const signedUpUser = await UserModel.signUpUser({
         username: 'alice',

@@ -12,7 +12,7 @@ import { HTTP_METHODS, ACCESS_LEVEL, RouteConfig } from 'server/lib/api.ts';
 
 export type { Changelog };
 export const handleGetChangelog: ApiHandler<Changelog> = (function() {
-  let memoizedParsedChangelog = null;
+  let memoizedParsedChangelog: Changelog | null = null;
 
   return async function(req: Request, res: ApiResponse<Changelog>) {
     if(memoizedParsedChangelog === null) {

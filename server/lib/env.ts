@@ -6,13 +6,15 @@ import { access, constants } from 'fs/promises';
 import path from 'path';
 const ROOT_DIR = path.resolve(import.meta.url.replace('file://', ''), '../../..');
 
-type TrackbearCommonEnv = {
+export type TrackbearEnv = {
   NODE_ENV: string;
 
   PORT: number;
   HAS_PROXY: boolean;
 
   ENABLE_TLS: boolean;
+  TLS_KEY_PATH: string | null;
+  TLS_CERT_PATH: string | null;
   TLS_ALLOW_SELF_SIGNED: boolean;
 
   LOG_PATH: string;
@@ -43,42 +45,27 @@ type TrackbearCommonEnv = {
   OTLP_URL: string;
 };
 
-type TrackbearTlsEnv =
-  | {
-    ENABLE_TLS: true;
-    TLS_KEY_PATH: string;
-    TLS_CERT_PATH: string;
-  }
-  | {
-    ENABLE_TLS: false;
-    TLS_KEY_PATH: string | null;
-    TLS_CERT_PATH: string | null;
-  }
-;
-
-export type TrackbearEnv = TrackbearCommonEnv & TrackbearTlsEnv;
-
 // TODO: turn this into a Zod schema
 async function normalizeEnv(): Promise<TrackbearEnv> {
   // first step is to check for valid values and supply defaults
 
-  if(!['', 'development', 'test', 'production'].includes(process.env.NODE_ENV)) { throw new Error(`NODE_ENV should only be either 'development', 'test', or 'production'; '${process.env.NODE_ENV}' given`); }
+  if(!['', 'development', 'test', 'production'].includes(process.env.NODE_ENV ?? '')) { throw new Error(`NODE_ENV should only be either 'development', 'test', or 'production'; '${process.env.NODE_ENV}' given`); }
   if(process.env.NODE_ENV === '') {
     console.info('No NODE_ENV provided; defaulting to `development`');
   }
   process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-  if(process.env.PORT !== '' && isNaN(Number.parseInt(process.env.PORT, 10))) {
+  if(process.env.PORT !== '' && isNaN(Number.parseInt(process.env.PORT ?? '', 10))) {
     throw new Error('PORT must be a number');
   } else if(process.env.PORT === '') {
     console.info('No PORT provided; defaulting to 3000');
   }
   process.env.PORT = process.env.PORT || '3000';
 
-  if(!['', '0', '1'].includes(process.env.HAS_PROXY)) { throw new Error('HAS_PROXY should only be either `0` or `1`'); }
+  if(!['', '0', '1'].includes(process.env.HAS_PROXY ?? '')) { throw new Error('HAS_PROXY should only be either `0` or `1`'); }
   process.env.HAS_PROXY = process.env.HAS_PROXY || '0';
 
-  if(!['', '0', '1'].includes(process.env.ENABLE_TLS)) { throw new Error('ENABLE_TLS should only be either `0` or `1`'); }
+  if(!['', '0', '1'].includes(process.env.ENABLE_TLS ?? '')) { throw new Error('ENABLE_TLS should only be either `0` or `1`'); }
   process.env.ENABLE_TLS = process.env.ENABLE_TLS || '0';
 
   const enableTls = !!+process.env.ENABLE_TLS;
@@ -100,12 +87,12 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
     }
   }
 
-  if(!['', '0', '1'].includes(process.env.TLS_ALLOW_SELF_SIGNED)) { throw new Error('TLS_ALLOW_SELF_SIGNED should only be either `0` or `1`'); }
+  if(!['', '0', '1'].includes(process.env.TLS_ALLOW_SELF_SIGNED ?? '')) { throw new Error('TLS_ALLOW_SELF_SIGNED should only be either `0` or `1`'); }
   process.env.TLS_ALLOW_SELF_SIGNED = process.env.TLS_ALLOW_SELF_SIGNED || '0';
 
   process.env.LOG_PATH = process.env.LOG_PATH || '/logs';
 
-  if(!['', 'debug', 'info', 'warn', 'error', 'critical'].includes(process.env.LOG_LEVEL)) { throw new Error('LOG_LEVEL should be one of: `debug`, `info`, `warn`, `error`, `critical`'); }
+  if(!['', 'debug', 'info', 'warn', 'error', 'critical'].includes(process.env.LOG_LEVEL ?? '')) { throw new Error('LOG_LEVEL should be one of: `debug`, `info`, `warn`, `error`, `critical`'); }
   process.env.LOG_LEVEL = process.env.LOG_LEVEL || 'info';
 
   if(!process.env.DATABASE_USER) { throw new Error('Missing DATABASE_USER value in .env'); }
@@ -122,7 +109,7 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
 
   process.env.DB_PATH = process.env.DB_PATH || '/db';
 
-  if(!['', '0', '1'].includes(process.env.DISABLE_RATE_LIMITS)) { throw new Error('DISABLE_RATE_LIMITS should only be either `0` or `1`'); }
+  if(!['', '0', '1'].includes(process.env.DISABLE_RATE_LIMITS ?? '')) { throw new Error('DISABLE_RATE_LIMITS should only be either `0` or `1`'); }
   process.env.DISABLE_RATE_LIMITS = process.env.DISABLE_RATE_LIMITS || '0';
 
   if(!process.env.COOKIE_SECRET) { throw new Error('Missing COOKIE_SECRET value in .env'); }
@@ -136,14 +123,14 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
 
   process.env.UPLOADS_PATH = process.env.UPLOADS_PATH || '/uploads';
 
-  if(!['', '0', '1'].includes(process.env.ENABLE_METRICS)) { throw new Error('ENABLE_METRICS should only be either `0` or `1`'); }
+  if(!['', '0', '1'].includes(process.env.ENABLE_METRICS ?? '')) { throw new Error('ENABLE_METRICS should only be either `0` or `1`'); }
   process.env.ENABLE_METRICS = process.env.ENABLE_METRICS || '0';
 
   if(process.env.ENABLE_METRICS && !process.env.PLAUSIBLE_HOST) { throw new Error('Missing PLAUSIBLE_HOST value in .env'); }
 
   if(process.env.ENABLE_METRICS && !process.env.PLAUSIBLE_DOMAIN) { throw new Error('Missing PLAUSIBLE_DOMAIN value in .env'); }
 
-  if(!['', '0', '1'].includes(process.env.ENABLE_INSTRUMENTATION)) { throw new Error('ENABLE_METRICS should only be either `0` or `1`'); }
+  if(!['', '0', '1'].includes(process.env.ENABLE_INSTRUMENTATION ?? '')) { throw new Error('ENABLE_METRICS should only be either `0` or `1`'); }
   process.env.ENABLE_INSTRUMENTATION = process.env.ENABLE_INSTRUMENTATION || '0';
 
   if(process.env.ENABLE_INSTRUMENTATION && !process.env.OTLP_URL) { throw new Error('Missing OTLP_URL value in .env'); }
@@ -156,8 +143,8 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
     HAS_PROXY: process.env.HAS_PROXY === '1',
 
     ENABLE_TLS: process.env.ENABLE_TLS === '1',
-    TLS_KEY_PATH: enableTls ? process.env.TLS_KEY_PATH : null,
-    TLS_CERT_PATH: enableTls ? process.env.TLS_CERT_PATH : null,
+    TLS_KEY_PATH: enableTls ? process.env.TLS_KEY_PATH ?? null : null,
+    TLS_CERT_PATH: enableTls ? process.env.TLS_CERT_PATH ?? null : null,
     TLS_ALLOW_SELF_SIGNED: process.env.TLS_ALLOW_SELF_SIGNED === '1',
 
     LOG_PATH: process.env.LOG_PATH,
@@ -181,15 +168,15 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
     UPLOADS_PATH: process.env.UPLOADS_PATH,
 
     ENABLE_METRICS: process.env.ENABLE_METRICS === '1',
-    PLAUSIBLE_HOST: process.env.PLAUSIBLE_HOST,
-    PLAUSIBLE_DOMAIN: process.env.PLAUSIBLE_DOMAIN,
+    PLAUSIBLE_HOST: process.env.PLAUSIBLE_HOST ?? '',
+    PLAUSIBLE_DOMAIN: process.env.PLAUSIBLE_DOMAIN ?? '',
 
     ENABLE_INSTRUMENTATION: process.env.ENABLE_INSTRUMENTATION === '1',
-    OTLP_URL: process.env.OTLP_URL,
+    OTLP_URL: process.env.OTLP_URL ?? '',
   };
 }
 
-let env = null;
+let env: TrackbearEnv | null = null;
 async function getNormalizedEnv(force: boolean = false): Promise<TrackbearEnv> {
   if(force === true || env === null) {
     env = await normalizeEnv();

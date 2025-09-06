@@ -33,7 +33,8 @@ export async function handleGetGoals(req: RequestWithUser, res: ApiResponse<Goal
 
   for(const goal of goals) {
     if(isTargetGoal(goal)) {
-      goal.achieved = isTargetAchieved(goal, targetTotals.get(goal.id));
+      const target = targetTotals.get(goal.id);
+      goal.achieved = target === undefined ? false : isTargetAchieved(goal, target);
     } else {
       goal.achieved = false;
     }

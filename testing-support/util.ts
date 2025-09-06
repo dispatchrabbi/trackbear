@@ -12,12 +12,12 @@ export function mockObject<T extends object>(partial: Partial<T> = {}): T {
   return partial as T;
 }
 
-type PropFn<T> = (ix?: number) => Partial<T>;
+type PropFn<T> = (ix: number) => Partial<T>;
 export function mockObjects<T extends object>(count: number, propFn: PropFn<T> = () => ({})): T[] {
   return Array(count).fill(null).map((_, ix) => propFn(ix)) as T[];
 }
 
-export function getTestReqCtx(overrideUserId: number = null): RequestContext {
+export function getTestReqCtx(overrideUserId: number | null = null): RequestContext {
   return {
     userId: overrideUserId ?? TEST_USER_ID,
     sessionId: TEST_SESSION_ID,

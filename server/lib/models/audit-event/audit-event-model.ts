@@ -31,7 +31,7 @@ export class AuditEventModel {
   }
 
   private static buildAuditEventTypeTuples(entity: AuditEventEntity) {
-    const query = [];
+    const query: [AuditEventType, string][] = [];
     for(const eventType of Object.keys(AUDIT_EVENT_TYPE_ARGUMENTS)) {
       if(AUDIT_EVENT_TYPE_ARGUMENTS[eventType].agent === entity) {
         query.push([eventType, 'agentId']);
@@ -53,7 +53,7 @@ export class AuditEventModel {
   static async createAuditEvent(
     eventType: AuditEventType,
     agentId: number, patientId: number | null = null, goalId: number | null = null,
-    auxInfo: Record<string, unknown> = null, sessionId: string | null = null,
+    auxInfo: Record<string, unknown> | null = null, sessionId: string | null = null,
   ): Promise<AuditEvent> {
     const stringifiedAuxInfo = JSON.stringify(auxInfo ?? {});
 

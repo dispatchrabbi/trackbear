@@ -10,7 +10,10 @@ export async function sendEmail(params: EmailParams) {
 
   if(!env.ENABLE_EMAIL) {
     logger.warn('Refusing to send this email because ENABLE_EMAIL is not set to `1`. Continuing...');
-    return;
+    return {
+      statusCode: 204,
+      body: 'No email sent; ENABLE_EMAIL is not set to `1`',
+    };
   }
 
   const mailerSend = new MailerSend({

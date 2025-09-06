@@ -1,20 +1,14 @@
 import { EmailParams, Sender, Recipient } from 'mailersend';
 import { sendEmail } from '../email.ts';
 
-import type { User } from 'generated/prisma/client';
-import dbClient from '../db.ts';
-
-import { logAuditEvent, TRACKBEAR_SYSTEM_ID } from '../audit-events.ts';
+import { UserModel } from '../models/user/user-model.ts';
 import { USER_STATE } from '../models/user/consts.ts';
 
+import { logAuditEvent, TRACKBEAR_SYSTEM_ID } from '../audit-events.ts';
+
 async function handler(task) {
-  let user: User;
-  try {
-    user = await dbClient.user.findUnique({ where: {
-      id: task.userId,
-      state: USER_STATE.DELETED,
-    } });
-  } catch {
+  const user = await UserModel.getUser(task.userId, { state: USER_STATE.DELETED });
+  if(user === null) {
     throw new Error(`Could not find a deleted user with id ${task.userId}`);
   }
 

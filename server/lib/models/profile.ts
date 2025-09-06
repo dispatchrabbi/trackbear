@@ -49,7 +49,7 @@ type ProfileConfig = {
 export type PublicProfile = {
   username: string;
   displayName: string;
-  avatar: string;
+  avatar: string | null;
   lifetimeTotals: MeasureCounts;
   recentActivity: DayCount[];
   projectSummaries: ProfileProjectSummary[];
@@ -58,7 +58,7 @@ export type PublicProfile = {
   config: ProfileConfig;
 };
 
-export async function getUserProfile(username): Promise<PublicProfile> {
+export async function getUserProfile(username): Promise<PublicProfile | null> {
   // first, get the active user with that username along with user settings
   const user = await dbClient.user.findUnique({
     where: {
@@ -222,7 +222,7 @@ async function getProfileProjectSummaries(userId: number): Promise<ProfileProjec
   const summaries = projectsOnProfile.map(project => {
     const projectCounts = dayCountsForProfile.filter(dayCount => dayCount.workId === project.id);
     const totals = projectCounts.reduce((obj, dayCount) => {
-      obj[dayCount.measure] = obj[dayCount.measure] || project.startingBalance[dayCount.measure] || 0;
+      obj[dayCount.measure] = obj[dayCount.measure] ?? project.startingBalance?.[dayCount.measure] ?? 0;
       obj[dayCount.measure] += dayCount._sum.count;
       return obj;
     }, {});
@@ -231,7 +231,7 @@ async function getProfileProjectSummaries(userId: number): Promise<ProfileProjec
       .filter(dayCount => dayCount.date > oneYearAgo)
       .reduce<Record<string, DayCount>>((obj, dayCount) => {
         obj[dayCount.date] = obj[dayCount.date] || { date: dayCount.date, counts: {} };
-        obj[dayCount.date].counts[dayCount.measure] = (obj[dayCount.date].counts[dayCount.measure] || 0) + dayCount._sum.count;
+        obj[dayCount.date].counts[dayCount.measure] = (obj[dayCount.date].counts[dayCount.measure] || 0) + (dayCount._sum.count ?? 0);
         return obj;
       }, {});
     const recentActivity = Object.values(recentActivityObj);
@@ -251,7 +251,7 @@ async function getProfileTargetSummaries(userId: number): Promise<ProfileTargetS
   const allGoals = await GoalModel.getGoals({ id: userId } as User);
   const eligibleTargets = allGoals.filter(goal => goal.type === GOAL_TYPE.TARGET && goal.displayOnProfile === true) as TargetGoal[];
 
-  const summaries = [];
+  const summaries: ProfileTargetSummary[] = [];
   for(const target of eligibleTargets) {
     // not happy about hitting the db once for every target but anything else is way too complicated
     const talliesForTarget = await GoalModel.DEPRECATED_getTalliesForGoal(target);
@@ -283,7 +283,7 @@ async function getProfileHabitSummaries(userId: number, weekStartDay: Day): Prom
   const allGoals = await GoalModel.getGoals({ id: userId } as User);
   const eligibleHabits = allGoals.filter(goal => goal.type === GOAL_TYPE.HABIT && goal.displayOnProfile === true) as HabitGoal[];
 
-  const summaries = [];
+  const summaries: ProfileHabitSummary[] = [];
   for(const habit of eligibleHabits) {
     const talliesForHabit = await GoalModel.DEPRECATED_getTalliesForGoal(habit);
 
@@ -293,7 +293,7 @@ async function getProfileHabitSummaries(userId: number, weekStartDay: Day): Prom
       weekStartDay,
     );
 
-    const currentRange = (ranges.length > 0 && isRangeCurrent(ranges.at(-1))) ? ranges.at(-1) : null;
+    const currentRange = (ranges.length > 0 && isRangeCurrent(ranges.at(-1)!)) ? ranges.at(-1)! : null;
     const successfulRanges = ranges.filter(range => range.isSuccess).length;
     const totalRanges = ranges.length;
 
@@ -303,7 +303,7 @@ async function getProfileHabitSummaries(userId: number, weekStartDay: Day): Prom
       parameters: habit.parameters,
       currentRange,
       currentStreakLength: streaks.current === null ? null : streaks.current.length,
-      longestStreakLength: streaks.longest.length,
+      longestStreakLength: streaks.longest?.length ?? 0,
       successfulRanges,
       totalRanges,
     });

@@ -14,7 +14,7 @@ type Version = {
 export type Changelog = Version[];
 
 export function parseChangelog(changelogContents: string): Changelog {
-  const versions = [];
+  const versions: Version[] = [];
 
   const lines = changelogContents.split('\n');
   for(let i = 0; i < lines.length; ++i) {

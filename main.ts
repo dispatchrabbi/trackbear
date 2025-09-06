@@ -140,8 +140,10 @@ async function main() {
         middlewareMode: true,
         https: env.ENABLE_TLS ?
             {
-              key: env.TLS_KEY_PATH,
-              cert: env.TLS_CERT_PATH,
+              // technically we don't know for sure that these aren't null,
+              // but it *should* error if they aren't so I'm okay with it
+              key: env.TLS_KEY_PATH!,
+              cert: env.TLS_CERT_PATH!,
             } :
           undefined,
       },
@@ -165,8 +167,10 @@ async function main() {
   let server: https.Server | http.Server;
   if(env.ENABLE_TLS) {
     server = https.createServer({
-      key: await readFile(env.TLS_KEY_PATH),
-      cert: await readFile(env.TLS_CERT_PATH),
+      // technically we don't know for sure that these aren't null,
+      // but it *should* error if they aren't so I'm okay with it
+      key: await readFile(env.TLS_KEY_PATH!),
+      cert: await readFile(env.TLS_CERT_PATH!),
     }, app);
   } else {
     server = http.createServer(app);

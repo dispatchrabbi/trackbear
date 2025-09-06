@@ -11,10 +11,10 @@ export type DayCount = {
 export async function getDayCounts(userId: number, startDate?: string, endDate?: string): Promise<DayCount[]> {
   const dateFilter: { gte?: string; lte?: string } | undefined = (startDate || endDate) ? {} : undefined;
   if(startDate) {
-    dateFilter.gte = startDate;
+    dateFilter!.gte = startDate;
   }
   if(endDate) {
-    dateFilter.lte = endDate;
+    dateFilter!.lte = endDate;
   }
 
   const dateAndMeasureSums = await dbClient.tally.groupBy({

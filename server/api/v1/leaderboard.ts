@@ -199,7 +199,7 @@ export async function handleRemoveMember(req: RequestWithUser, res: ApiResponse<
   return res.status(200).send(success(membership));
 }
 
-export async function handleGetMyParticipation(req: RequestWithUser, res: ApiResponse<Participation>) {
+export async function handleGetMyParticipation(req: RequestWithUser, res: ApiResponse<Participation | null>) {
   const userId = req.user.id;
   const uuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: userId });

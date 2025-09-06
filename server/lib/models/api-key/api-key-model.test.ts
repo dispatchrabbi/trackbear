@@ -109,7 +109,7 @@ describe(ApiKeyModel, () => {
         expect.any(Object), testReqCtx.sessionId,
       );
       // ensure that the tokens got censored
-      const changeRecord = logAuditEvent.mock.lastCall[4] as ChangeRecord<ApiKey>;
+      const changeRecord = logAuditEvent.mock.lastCall![4] as ChangeRecord<ApiKey>;
       expect(changeRecord.token.from).toBeNull();
       expect(changeRecord.token.to).toContain('t0.');
     });
@@ -172,7 +172,7 @@ describe(ApiKeyModel, () => {
       );
 
       // `token` should never be in the changeRecord because it should never be updated
-      const changeRecord = logAuditEvent.mock.lastCall[4] as ChangeRecord<ApiKey>;
+      const changeRecord = logAuditEvent.mock.lastCall![4] as ChangeRecord<ApiKey>;
       expect(changeRecord).not.toHaveProperty('token');
     });
   });
@@ -201,7 +201,7 @@ describe(ApiKeyModel, () => {
       );
 
       // no change record when deleting (and this ensures tokens don't leak)
-      const changeRecord = logAuditEvent.mock.lastCall[4] as ChangeRecord<ApiKey>;
+      const changeRecord = logAuditEvent.mock.lastCall![4] as ChangeRecord<ApiKey>;
       expect(changeRecord).toBeNull();
     });
   });

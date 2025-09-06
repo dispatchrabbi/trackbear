@@ -1,6 +1,6 @@
 import { traced } from '../../metrics/tracer.ts';
 
-import type { Prisma, BoardParticipant as PrismaBoardParticipant, User as PrismaUser } from 'generated/prisma/client';
+import { Prisma, BoardParticipant as PrismaBoardParticipant, User as PrismaUser } from 'generated/prisma/client';
 import dbClient from '../../db.ts';
 import type { Create, Update } from '../types.ts';
 
@@ -76,7 +76,7 @@ export class LeaderboardModel {
       ]),
       goal: board.goal as LeaderboardGoal,
       // use the starred property from the participant, not the leaderboard
-      starred: board.participants.find(p => p.userId === participantUserId).starred,
+      starred: board.participants.find(p => p.userId === participantUserId)?.starred ?? false,
       members: board.participants.map((participant): MemberBio => ({
         id: participant.id,
         isParticipant: participant.isParticipant,
@@ -92,7 +92,7 @@ export class LeaderboardModel {
   }
 
   @traced
-  static async get(id: number): Promise<Leaderboard> {
+  static async get(id: number): Promise<Leaderboard | null> {
     const leaderboard = await dbClient.board.findUnique({
       where: {
         id: id,
@@ -104,7 +104,7 @@ export class LeaderboardModel {
   }
 
   @traced
-  static async getByUuid(uuid: string, options: GetLeaderboardOptions = {}): Promise<Leaderboard> {
+  static async getByUuid(uuid: string, options: GetLeaderboardOptions = {}): Promise<Leaderboard | null> {
     const extraWhereClauses: Prisma.BoardWhereInput[] = [];
 
     if(options.memberUserId) {
@@ -149,7 +149,7 @@ export class LeaderboardModel {
   }
 
   @traced
-  static async getByJoinCode(joinCode: string): Promise<Leaderboard> {
+  static async getByJoinCode(joinCode: string): Promise<Leaderboard | null> {
     const leaderboard = await dbClient.board.findFirst({
       where: {
         // TODO: this will change when we implement rolling join codes
@@ -170,7 +170,7 @@ export class LeaderboardModel {
     }, data);
 
     const normalizedData = this.normalizeBoardData(dataWithDefaults);
-    const memberData: CreateMemberData & { userId: number; goal: null } = {
+    const memberData: CreateMemberData & { userId: number } = {
       userId: ownerId,
       isParticipant: false,
       isOwner: true,
@@ -185,11 +185,13 @@ export class LeaderboardModel {
         starred: false,
 
         ...normalizedData,
+        goal: normalizedData.goal ?? {},
 
         participants: {
           create: {
             state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
             ...memberData,
+            goal: memberData.goal ?? Prisma.JsonNull,
           },
         },
       },
@@ -293,7 +295,7 @@ export class LeaderboardModel {
   };
 
   @traced
-  static async getMember(leaderboard: Leaderboard, memberId: number): Promise<JustMember> {
+  static async getMember(leaderboard: Leaderboard, memberId: number): Promise<JustMember | null> {
     const dbMember = await dbClient.boardParticipant.findUnique({
       where: {
         state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
@@ -307,12 +309,16 @@ export class LeaderboardModel {
       },
     });
 
+    if(!dbMember) {
+      return null;
+    }
+
     const member = this.db2justmember(dbMember);
     return member;
   };
 
   @traced
-  static async getMemberByUserId(leaderboard: Leaderboard, userId: number): Promise<JustMember> {
+  static async getMemberByUserId(leaderboard: Leaderboard, userId: number): Promise<JustMember | null> {
     const dbMember = await dbClient.boardParticipant.findUnique({
       where: {
         state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
@@ -327,6 +333,9 @@ export class LeaderboardModel {
         user: true,
       },
     });
+    if(!dbMember) {
+      return null;
+    }
 
     const member = this.db2justmember(dbMember);
     return member;
@@ -353,13 +362,13 @@ export class LeaderboardModel {
   @traced
   static async createMember(leaderboard: Leaderboard, user: User, data: CreateMemberData, reqCtx: RequestContext): Promise<LeaderboardMember> {
     const dataWithDefaults = {
+      ...data,
       starred: false,
       isParticipant: false,
       isOwner: false,
       goal: null,
       workIds: [],
       tagIds: [],
-      ...data,
     };
 
     const dbCreated = await dbClient.boardParticipant.create({
@@ -370,6 +379,8 @@ export class LeaderboardModel {
 
         ...omit(dataWithDefaults, ['workIds', 'tagIds']),
         ...makeConnectWorksAndTagsIncluded(dataWithDefaults, user.id),
+
+        goal: dataWithDefaults.goal ?? Prisma.JsonNull,
       },
       include: {
         user: true,
@@ -398,6 +409,7 @@ export class LeaderboardModel {
       data: {
         ...omit(data, ['workIds', 'tagIds']),
         ...makeSetWorksAndTagsIncluded(data, member.userId),
+        goal: data.goal ?? Prisma.JsonNull,
       },
       include: {
         user: true,
@@ -420,6 +432,10 @@ export class LeaderboardModel {
   static async removeMember(member: JustMember, reqCtx: RequestContext): Promise<LeaderboardMember> {
     if(member.isOwner) {
       const leaderboard = await this.get(member.boardId);
+      if(!leaderboard) {
+        throw new Error(`Cannot remove member from a non-existent board`);
+      }
+
       const members = await this.listMembers(leaderboard);
       const owners = members.filter(member => member.isOwner);
 
@@ -449,29 +465,33 @@ export class LeaderboardModel {
     return removed;
   }
 
-  private static db2member(record: DbMember & WorksAndTagsIncluded): LeaderboardMember {
+  private static db2member(record: DbMember & WorksAndTagsIncluded): LeaderboardMember;
+  private static db2member(record: null): null;
+  private static db2member(record: (DbMember & WorksAndTagsIncluded) | null): LeaderboardMember | null {
     if(record === null) {
       return null;
     }
 
     const converted: LeaderboardMember = {
+      ...omit(included2ids(record), ['user']) as LeaderboardMember,
       displayName: record.user.displayName,
       avatar: record.user.avatar,
-      ...omit(included2ids(record), ['user']) as LeaderboardMember,
     };
 
     return converted;
   }
 
-  private static db2justmember(record: DbMember): JustMember {
+  private static db2justmember(record: DbMember): JustMember;
+  private static db2justmember(record: null): null;
+  private static db2justmember(record: DbMember | null): JustMember | null {
     if(record === null) {
       return null;
     }
 
     const converted: JustMember = {
+      ...omit(record, ['user']) as JustMember,
       displayName: record.user.displayName,
       avatar: record.user.avatar,
-      ...omit(record, ['user']) as JustMember,
     };
 
     return converted;
@@ -509,7 +529,7 @@ export class LeaderboardModel {
   }
 
   @traced
-  static async getMemberParticipation(leaderboardId: number, userId: number): Promise<Participation> {
+  static async getMemberParticipation(leaderboardId: number, userId: number): Promise<Participation | null> {
     const found = await dbClient.boardParticipant.findUnique({
       where: {
         userId_boardId: {
@@ -522,13 +542,17 @@ export class LeaderboardModel {
       },
       include: makeIncludeWorkAndTagIds(userId),
     });
+    if(!found) {
+      return null;
+    }
 
     const participation = this.db2participation(found);
-
     return participation;
   }
 
-  private static db2participation(record: DbParticipation): Participation {
+  private static db2participation(record: DbParticipation): Participation;
+  private static db2participation(record: null): null;
+  private static db2participation(record: DbParticipation | null): Participation | null {
     if(record === null) {
       return null;
     }

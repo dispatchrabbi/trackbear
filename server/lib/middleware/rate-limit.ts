@@ -29,8 +29,8 @@ async function rateLimit() {
         return sessionId;
       }
 
-      // otherwise, rate-limit on the IP
-      return req.ip;
+      // otherwise, rate-limit on the IP (and if for some reason there's no IP, just fall back to a default key)
+      return req.ip ?? '_';
     },
   });
 }

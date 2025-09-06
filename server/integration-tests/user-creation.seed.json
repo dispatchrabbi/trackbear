@@ -18,6 +18,7 @@
       "tallies": [
         {
           "project": "first",
+          "tags": [],
           "start": "2024-11-01",
           "end": "2024-11-30",
           "frequency": 1,
@@ -28,6 +29,7 @@
         },
         {
           "project": "second",
+          "tags": [],
           "start": "2024-11-15",
           "end": "2024-12-31",
           "frequency": 0.75,
@@ -125,6 +127,7 @@
       "tallies": [
         {
           "project": "first",
+          "tags": [],
           "start": "2024-11-01",
           "end": "2024-11-30",
           "frequency": 1,
@@ -135,6 +138,7 @@
         },
         {
           "project": "second",
+          "tags": [],
           "start": "2024-10-13",
           "end": "2024-12-28",
           "frequency": 0.9,
@@ -175,13 +179,13 @@
       "member": "seedbear1",
       "owner": "seedbear1",
       "key": "normal",
-      "participation": {}
+      "participation": null
     },
     {
       "member": "seedbear1",
       "owner": "seedbear1",
       "key": "fundraiser",
-      "participation": {}
+      "participation": null
     },
     {
       "member": "seedbear1",
@@ -198,13 +202,13 @@
       "member": "seedbear2",
       "owner": "seedbear1",
       "key": "normal",
-      "participation": {}
+      "participation": null
     },
     {
       "member": "seedbear2",
       "owner": "seedbear1",
       "key": "fundraiser",
-      "participation": {}
+      "participation": null
     },
     {
       "member": "seedbear2",

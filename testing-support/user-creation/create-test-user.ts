@@ -215,10 +215,10 @@ async function createLeaderboards(user: User, leaderboardConfigMap: Record<strin
       description: config.description,
       startDate: config.start,
       endDate: config.end,
-      individualGoalMode: config.individualGoalMode,
-      fundraiserMode: config.fundraiserMode,
-      goal: config.goal,
-      measures: config.measures,
+      individualGoalMode: config.individualGoalMode!,
+      fundraiserMode: config.fundraiserMode!,
+      goal: config.goal!,
+      measures: config.measures!,
       isJoinable: true,
       isPublic: false,
     }, user.id, reqCtx);
@@ -256,8 +256,8 @@ async function joinLeaderboards(joinConfigs: JoinLeaderboardSchema[], accountMap
           starred: false,
           goal: leaderboard.individualGoalMode ?
               {
-                count: config.participation.count,
-                measure: config.participation.measure,
+                count: config.participation.count!,
+                measure: config.participation.measure!,
               } :
             null,
           workIds: projectKeysToIds(config.participation.projects, projectMap),
@@ -268,8 +268,8 @@ async function joinLeaderboards(joinConfigs: JoinLeaderboardSchema[], accountMap
           isOwner: leaderboard.ownerId === user.id,
           starred: false,
           goal: null,
-          workIds: null,
-          tagIds: null,
+          workIds: [],
+          tagIds: [],
         };
 
     const member = await LeaderboardModel.getMemberByUserId(leaderboard, user.id);
@@ -295,7 +295,8 @@ async function joinLeaderboards(joinConfigs: JoinLeaderboardSchema[], accountMap
     account.memberships.push(member);
   }
 
-  return joined;
+  const filtered = joined.filter(x => x !== null);
+  return filtered;
 }
 
 function projectKeysToIds(keys: string[], projectMap: ProjectMap) {

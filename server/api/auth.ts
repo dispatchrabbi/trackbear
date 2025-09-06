@@ -31,7 +31,7 @@ const zLoginPayload = z.object({
 export async function handleLogin(req: Request, res: ApiResponse<User>) {
   const { username, password } = req.body as LoginPayload;
 
-  const user: User = await UserModel.getUserByUsername(username);
+  const user: User | null = await UserModel.getUserByUsername(username);
   if(!user) {
     logger.info(`LOGIN: ${username} attempted to log in but does not exist`);
     return res.status(400).send(failure('INCORRECT_CREDS', 'Incorrect username or password.'));

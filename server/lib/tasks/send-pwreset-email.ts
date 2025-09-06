@@ -10,17 +10,15 @@ import { logAuditEvent, TRACKBEAR_SYSTEM_ID } from '../audit-events.ts';
 import { USER_STATE } from '../models/user/consts.ts';
 
 async function handler(task) {
-  let resetLink: PasswordResetLink & { user: User };
-  try {
-    resetLink = await dbClient.passwordResetLink.findUnique({
-      where: {
-        uuid: task.resetUuid,
-        state: PASSWORD_RESET_LINK_STATE.ACTIVE,
-        user: { state: USER_STATE.ACTIVE },
-      },
-      include: { user: true },
-    });
-  } catch {
+  const resetLink = await dbClient.passwordResetLink.findUnique({
+    where: {
+      uuid: task.resetUuid,
+      state: PASSWORD_RESET_LINK_STATE.ACTIVE,
+      user: { state: USER_STATE.ACTIVE },
+    },
+    include: { user: true },
+  });
+  if(resetLink === null) {
     throw new Error(`Could not find an active password reset link with uuid ${task.resetUuid}`);
   }
 

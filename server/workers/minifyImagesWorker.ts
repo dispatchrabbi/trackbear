@@ -48,7 +48,7 @@ async function pruneAvatars() {
     where: { avatar: { not: null } },
     distinct: 'avatar',
   });
-  const existingAvatars = dbExistingAvatars.map(record => record.avatar);
+  const existingAvatars = dbExistingAvatars.map(record => record.avatar) as string[];
 
   await pruneUploads(avatarsDir, existingAvatars);
 }
@@ -62,7 +62,7 @@ async function pruneCovers() {
     where: { cover: { not: null } },
     distinct: 'cover',
   });
-  const existingCovers = dbExistingCovers.map(record => record.cover);
+  const existingCovers = dbExistingCovers.map(record => record.cover) as string[];
 
   await pruneUploads(coversDir, existingCovers);
 }
@@ -88,7 +88,7 @@ async function getAllImagesInFolder(path: string) {
 
   const unoptimized = filenames.filter(filename => {
     const parts = filename.split('.');
-    return isValidFormat(parts.at(-1)); // is it a valid file type?;
+    return isValidFormat(parts.at(-1)!); // is it a valid file type?;
   });
 
   return unoptimized;
@@ -147,7 +147,7 @@ async function optimizeImagesInDirectory(directory: string, onOptimizeImage: OnO
         await fs.copyFile(imagePath, optimizedPath);
       }
 
-      const optimizedFilename = optimizedPath.split('/').at(-1);
+      const optimizedFilename = optimizedPath.split('/').at(-1)!;
       await onOptimizeImage(imageFilename, optimizedFilename);
 
       if(!DRY_RUN) {
@@ -167,7 +167,7 @@ async function getUnoptimizedImagesInFolder(path: string) {
   const unoptimized = filenames.filter(filename => {
     const parts = filename.split('.');
     return (
-      isValidFormat(parts.at(-1)) && // is it a valid file type?
+      isValidFormat(parts.at(-1)!) && // is it a valid file type?
       parts.at(-2) !== OPTIMIZED_TAG && // is it an already-optimized file?
       (!filenames.includes(getOptimizedFilename(filename))) // did we already optimize it?
     );
@@ -180,7 +180,7 @@ async function optimizeImage(originalPath: string) {
   const originalStats = await fs.stat(originalPath);
   const originalSizeInBytes = originalStats.size;
 
-  const fileType = originalPath.split('.').at(-1);
+  const fileType = originalPath.split('.').at(-1)!;
   let outputOptions = { webp: {} };
 
   if(LOSSLESS_FILE_TYPES.includes(fileType)) {
@@ -216,7 +216,7 @@ function isValidFormat(fileType: string) {
 
 function getOptimizedFilename(filename: string, extension?: string) {
   const parts = filename.split('.');
-  return parts.toSpliced(-1, 1, OPTIMIZED_TAG, extension ?? parts.at(-1)).join('.');
+  return parts.toSpliced(-1, 1, OPTIMIZED_TAG, extension ?? parts.at(-1)!).join('.');
 }
 
 export default {

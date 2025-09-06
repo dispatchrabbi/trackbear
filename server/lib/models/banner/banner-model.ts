@@ -44,7 +44,7 @@ export class BannerModel {
 
   @traced
   static async getBanner(id: number): Promise<Banner | null> {
-    const banner: Banner = await dbClient.banner.findUnique({
+    const banner = await dbClient.banner.findUnique({
       where: { id },
     });
 

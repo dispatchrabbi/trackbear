@@ -4,6 +4,7 @@ import { formatDate, parseDateString } from 'src/lib/date.ts';
 import { type TallyMeasure } from '../tally/consts.ts';
 import type { Goal, GoalCadence, GoalThreshold, HabitGoal, TargetGoal } from './types.ts';
 import { type GoalCadenceUnit, GOAL_CADENCE_UNIT_INFO, GOAL_TYPE } from './consts.ts';
+import { NonEmptyArray } from 'server/lib/validators.ts';
 
 type TallyLike = {
   date: string;
@@ -20,15 +21,15 @@ export type HabitRange = {
 export type HabitAnalysis = {
   ranges: HabitRange[];
   streaks: {
-    longest: HabitRange[];
-    current: HabitRange[];
+    longest: HabitRange[] | null;
+    current: HabitRange[] | null;
     all: HabitRange[][];
   };
 };
 export function analyzeStreaksForHabit(
   tallies: TallyLike[],
-  cadence: GoalCadence, threshold: GoalThreshold,
-  startDate: string, endDate: string, weekStartsOn: Day,
+  cadence: GoalCadence, threshold: GoalThreshold | null,
+  startDate: string | null, endDate: string | null, weekStartsOn: Day,
 ): HabitAnalysis {
   const today = formatDate(new Date());
   // we will only consider tallies up to and including today
@@ -50,7 +51,7 @@ export function analyzeStreaksForHabit(
   // first, get all the possible date ranges for the habit
   const dateRanges = createDateRanges(cadence.period, cadence.unit, startDate, endDate, weekStartsOn);
 
-  const streaks: HabitRange[][] = [[]];
+  const streaks: NonEmptyArray<HabitRange[]> = [[]];
   const ranges: HabitRange[] = [];
   for(const dateRange of dateRanges) {
     const talliesInRange = sortedTallies.filter(tally => (tally.date >= dateRange.start && tally.date <= dateRange.end));
@@ -67,18 +68,18 @@ export function analyzeStreaksForHabit(
 
     if(range.isSuccess) {
       // if this range is a success, we add it to the current streak
-      streaks.at(-1).push(range);
+      streaks.at(-1)!.push(range);
     } else if(isRangeCurrent(range)) {
       // if this is the current range (and it wasn't a success), we don't add it to any streak
       // NO-OP
-    } else if(streaks.at(-1).length !== 0) {
+    } else if(streaks.at(-1)!.length !== 0) {
       // if this range isn't a success but we had a streak going, break that streak
       streaks.push([]);
     } // else the most recent streak is already 0, so no need to replace it
   }
 
-  const longestStreak = streaks.reduce((winner, streak) => winner === null ? streak : streak.length > winner.length ? streak : winner, null);
-  const currentStreak = isRangeCurrent(ranges.at(-1)) ? streaks.at(-1) : null;
+  const longestStreak = streaks.reduce((winner: HabitRange[] | null, streak) => winner === null ? streak : streak.length > winner.length ? streak : winner, null);
+  const currentStreak = (ranges.length > 0 && isRangeCurrent(ranges.at(-1)!)) ? streaks.at(-1)! : null;
 
   return {
     ranges,

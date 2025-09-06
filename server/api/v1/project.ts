@@ -111,16 +111,16 @@ export async function handlePostCover(req: RequestWithUser, res: ApiResponse<Pro
   }
 
   // is this a file format we accept for covers?
-  const isAllowedFormat = Object.keys(ALLOWED_COVER_FORMATS).includes(req.file.mimetype);
+  const isAllowedFormat = Object.keys(ALLOWED_COVER_FORMATS).includes(req.file!.mimetype);
   if(!isAllowedFormat) {
-    return res.status(400).send(failure('INVALID_FILE_TYPE', `Covers of type ${req.file.mimetype} are not allowed. Allowed types are: ${Object.keys(ALLOWED_COVER_FORMATS).join(', ')}`));
+    return res.status(400).send(failure('INVALID_FILE_TYPE', `Covers of type ${req.file!.mimetype} are not allowed. Allowed types are: ${Object.keys(ALLOWED_COVER_FORMATS).join(', ')}`));
   }
 
   const coverUploadPath = await getCoverUploadPath();
 
   // move the uploaded file over to the avatar directory
-  const oldPath = req.file.path;
-  const filename = randomUUID() + '.' + ALLOWED_COVER_FORMATS[req.file.mimetype];
+  const oldPath = req.file!.path;
+  const filename = randomUUID() + '.' + ALLOWED_COVER_FORMATS[req.file!.mimetype];
   const newPath = path.join(coverUploadPath, filename);
   try {
     await fs.copyFile(oldPath, newPath);

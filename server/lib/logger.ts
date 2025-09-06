@@ -7,10 +7,10 @@ export type LoggerInitOpts = {
 };
 
 const loggers: {
-  default: Logger;
-  access: Logger;
-  queue: Logger;
-  worker: Logger;
+  default: Logger | null;
+  access: Logger | null;
+  queue: Logger | null;
+  worker: Logger | null;
 } = {
   default: null,
   access: null,
@@ -155,7 +155,7 @@ export async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { 
   // if we're testing, don't log anything
   if(env.NODE_ENV === 'testing') {
     for(const logger of Object.values(loggers)) {
-      logger.silent = true;
+      logger!.silent = true;
     };
   }
 }
@@ -166,6 +166,10 @@ export function getLogger(logName: keyof typeof loggers = 'default') {
 
 export async function closeLoggers() {
   return Promise.all(Object.values(loggers).map(logger => {
+    if(logger === null) {
+      return;
+    }
+
     return new Promise<void>((res/* , rej */) => {
       logger.on('finish', () => res());
       logger.end();
