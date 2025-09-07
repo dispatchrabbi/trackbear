@@ -16,7 +16,7 @@ import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import JoinCodeForm from 'src/components/leaderboard/JoinCodeForm.vue';
 import JoinLeaderboardParticipationForm from 'src/components/leaderboard/JoinLeaderboardParticipationForm.vue';
 
-const leaderboard = ref<Leaderboard>(null);
+const leaderboard = ref<Leaderboard | null>(null);
 
 const handleJoinCodeConfirmation = function(leaderboardToJoin: Leaderboard) {
   leaderboard.value = leaderboardToJoin;

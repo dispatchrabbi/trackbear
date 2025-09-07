@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, defineProps, defineEmits, onMounted } from 'vue';
+import { ref, computed, defineProps, defineEmits, onMounted, useTemplateRef } from 'vue';
 
 import { RouterLink } from 'vue-router';
 
@@ -30,7 +30,7 @@ const toggleSidebar = function() {
   emit('sidebar:toggle');
 };
 
-const userMenu = ref(null);
+const userMenu = useTemplateRef('userMenu');
 const userMenuItems = computed(() => {
   const items = [
     {
@@ -60,7 +60,13 @@ const userMenuItems = computed(() => {
 
   return items;
 });
-const toggleUserMenu = ev => userMenu.value.toggle(ev);
+const toggleUserMenu = ev => {
+  if(!userMenu.value) {
+    return;
+  }
+
+  userMenu.value.toggle(ev);
+};
 
 async function checkForUpdates() {
   const latestVersion = getCurrentVersion();
@@ -123,12 +129,12 @@ onMounted(() => {
       @click="toggleUserMenu"
     >
       <UserAvatar
-        :user="userStore.user"
+        :user="userStore.user!"
         :icon="flagUpdates ? PrimeIcons.SPARKLES : null"
         icon-class="primary"
       />
       <div class="font-light">
-        {{ userStore.user.displayName }}
+        {{ userStore.user!.displayName }}
       </div>
     </div>
     <Menu

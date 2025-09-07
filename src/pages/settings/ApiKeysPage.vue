@@ -22,15 +22,16 @@ const breadcrumbs: MenuItem[] = [
   { label: 'API Keys', url: '/account/api-keys' },
 ];
 
-const apiKeys = ref<ApiKey[]>(null);
+const apiKeys = ref<ApiKey[] | null>(null);
 const [loadApiKeys, signals] = useAsyncSignals(async function() {
   const result = await getApiKeys();
 
   const now = new Date();
   apiKeys.value = result.toSorted((a, b) => {
+    const aExpired = a.expiresAt === null ? false : a.expiresAt < now;
+    const bExpired = b.expiresAt === null ? false : b.expiresAt < now;
+
     // unexpired goes before expired
-    const aExpired = a.expiresAt < now;
-    const bExpired = b.expiresAt < now;
     if(aExpired !== bExpired) {
       return aExpired ? 1 : -1;
     }

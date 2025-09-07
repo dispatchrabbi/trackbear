@@ -42,9 +42,9 @@ async function main() {
   await envStore.populate();
 
   initPlausible(
-    envStore.env.ENABLE_METRICS,
-    envStore.env.PLAUSIBLE_HOST,
-    envStore.env.PLAUSIBLE_DOMAIN,
+    envStore.env?.ENABLE_METRICS ?? false,
+    envStore.env?.PLAUSIBLE_HOST ?? '',
+    envStore.env?.PLAUSIBLE_DOMAIN ?? '',
   );
 
   app.mount('#app');

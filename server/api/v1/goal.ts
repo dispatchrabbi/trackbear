@@ -16,7 +16,7 @@ import { TAG_STATE } from '../../lib/models/tag/consts.ts';
 import { logAuditEvent } from '../../lib/audit-events.ts';
 
 import { omit } from '../../lib/obj.ts';
-import { GoalModel, type Goal } from 'server/lib/models/goal/goal-model.ts';
+import { CreateGoalData, GoalModel, UpdateGoalData, type Goal } from 'server/lib/models/goal/goal-model.ts';
 import { isTargetAchieved, isTargetGoal } from 'server/lib/models/goal/helpers.ts';
 import { reqCtx } from 'server/lib/request-context.ts';
 
@@ -98,7 +98,7 @@ export async function handleCreateGoal(req: RequestWithUser, res: ApiResponse<Go
   const user = req.user;
   const payload = req.body as GoalCreatePayload;
 
-  const goal = await GoalModel.createGoal(user, payload, reqCtx(req));
+  const goal = await GoalModel.createGoal(user, payload as CreateGoalData, reqCtx(req));
 
   return res.status(201).send(success(goal));
 }
@@ -145,7 +145,7 @@ export async function handleUpdateGoal(req: RequestWithUser, res: ApiResponse<Go
     return res.status(404).send(failure('NOT_FOUND', `Did not find any goal with id ${req.params.id}.`));
   }
 
-  const goal = await GoalModel.updateGoal(user, original, payload, reqCtx(req));
+  const goal = await GoalModel.updateGoal(user, original, payload as UpdateGoalData, reqCtx(req));
 
   return res.status(200).send(success(goal));
 }

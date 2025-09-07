@@ -2,7 +2,7 @@
 import { computed, defineProps } from 'vue';
 
 export type ProjectWithCover = {
-  cover?: string;
+  cover: string | null;
   title: string;
 };
 const props = withDefaults(defineProps<{

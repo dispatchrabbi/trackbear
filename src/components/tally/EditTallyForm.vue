@@ -13,7 +13,7 @@ tagStore.populate();
 
 import { z } from 'zod';
 import type { NonEmptyArray } from 'server/lib/validators.ts';
-import { formatDateSafe, parseDateStringSafe } from 'src/lib/date.ts';
+import { formatDateSafe, parseDateString } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { updateTally, type Tally, type TallyUpdatePayload, type TallyWithTags } from 'src/lib/api/tally.ts';
@@ -37,8 +37,17 @@ import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 
 const emit = defineEmits(['tally:edit', 'formSuccess']);
 
-const formModel = reactive({
-  date: parseDateStringSafe(props.tally.date),
+type EditTallyFormModel = {
+  date: Date;
+  workId: number | null;
+  tags: string[];
+  count: number | null;
+  measure: TallyMeasure;
+  setTotal: boolean;
+  note: string;
+};
+const formModel = reactive<EditTallyFormModel>({
+  date: parseDateString(props.tally.date),
   workId: props.tally.workId,
   tags: props.tally.tags.map(tag => tag.name),
   count: props.tally.count,
@@ -215,7 +224,7 @@ async function handleSubmit() {
           <div
             class="max-w-64 md:max-w-none"
           >
-            {{ formatCount(formModel.count, formModel.measure) }} will be <span class="font-bold">{{ formModel.setTotal ? `set as` : `added to` }} the total</span> for this project {{ formModel.setTotal ? `as of` : `on` }} {{ formatDateSafe(formModel.date) }}.
+            {{ formatCount(formModel.count ?? 0, formModel.measure) }} will be <span class="font-bold">{{ formModel.setTotal ? `set as` : `added to` }} the total</span> for this project {{ formModel.setTotal ? `as of` : `on` }} {{ formatDateSafe(formModel.date) }}.
           </div>
         </div>
       </template>
@@ -231,7 +240,7 @@ async function handleSubmit() {
           id="tally-form-tags"
           v-model="formModel.tags"
           display="chip"
-          :options="tagStore.tags"
+          :options="tagStore.allTags"
           option-label="name"
           option-value="name"
           filter

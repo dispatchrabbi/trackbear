@@ -19,12 +19,6 @@ const START_OF_TODAY = startOfDay(new Date());
 
 const emit = defineEmits(['api-key:create', 'formSuccess']);
 
-const formModel = reactive({
-  name: '',
-  expirationPreset: '',
-  expiresAt: null,
-});
-
 // presets
 type ExpirationPreset = {
   key: string;
@@ -38,6 +32,17 @@ const EXPIRATION_PRESETS: ExpirationPreset[] = [
   { key: 'never', label: 'Never', date: null },
   { key: 'custom', label: 'Pick a date:', date: undefined },
 ];
+
+type CreateApiKeyFormModel = {
+  name: string;
+  expirationPreset: ExpirationPreset['key'];
+  expiresAt: Date | null;
+};
+const formModel = reactive<CreateApiKeyFormModel>({
+  name: '',
+  expirationPreset: '',
+  expiresAt: null,
+});
 
 function handleSelectPreset(preset: ExpirationPreset) {
   if(preset.date !== undefined) {

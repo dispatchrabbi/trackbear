@@ -21,8 +21,8 @@ export const GOAL_COMPLETION_ORDER = [
 
 interface WithProgress {
   achieved: boolean;
-  startDate?: string;
-  endDate?: string;
+  startDate: string | null;
+  endDate: string | null;
 }
 export function getGoalProgress(goal: WithProgress) {
   const today = formatDate(new Date());
@@ -51,11 +51,6 @@ function cmpStarred(a: Starred, b: Starred) {
   return a.starred === b.starred ? 0 : (a.starred ? -1 : 1);
 }
 
-interface WithProgress {
-  achieved: boolean;
-  startDate?: string;
-  endDate?: string;
-}
 function cmpCompletion(a: WithProgress, b: WithProgress) {
   const aCompletionIndex = GOAL_COMPLETION_ORDER.indexOf(getGoalProgress(a));
   const bCompletionIndex = GOAL_COMPLETION_ORDER.indexOf(getGoalProgress(b));
@@ -64,8 +59,8 @@ function cmpCompletion(a: WithProgress, b: WithProgress) {
 }
 
 interface TimeBound {
-  startDate?: string;
-  endDate?: string;
+  startDate: string | null;
+  endDate: string | null;
 }
 // This function is probably not exactly correct, but it's close enough for now, and stable
 // TODO: base this off of the number of days between the dates and today

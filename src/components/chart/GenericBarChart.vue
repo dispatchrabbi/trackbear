@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect, defineProps, withDefaults, onMounted } from 'vue';
+import { ref, computed, watchEffect, defineProps, withDefaults, onMounted, useTemplateRef } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import * as Plot from '@observablehq/plot';
 
@@ -53,7 +53,7 @@ const colorScheme = computed(() => {
 });
 
 // now start configuring the chart
-const plotContainer = ref(null);
+const plotContainer = useTemplateRef('plotContainer');
 const plotContainerWidth = ref(0);
 onMounted(() => {
   useResizeObserver(plotContainer, entries => {
@@ -61,12 +61,14 @@ onMounted(() => {
   });
 
   watchEffect(() => {
-    const marks = [
+    if(!plotContainer.value) { return; }
+
+    const marks: Plot.Markish[] = [
       Plot.ruleY([0]),
     ];
 
     marks.push(
-      Plot.rectY(props.data, Plot.binX({ y: 'sum' }, {
+      Plot.rectY(props.data, Plot.binX<Plot.RectYOptions>({ y: 'sum' }, {
         x: { value: 'date', thresholds: props.config.interval },
         y: 'value',
         fill: 'series',

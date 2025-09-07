@@ -11,7 +11,11 @@ export function parseDateString(dateString: string): Date {
   return parseISO(dateString);
 }
 
-export function parseDateStringSafe(dateString: string): Date | null {
+export function parseDateStringSafe(dateString: string | null): Date | null {
+  if(dateString === null) {
+    return null;
+  }
+
   const isDateString = DATE_STRING_REGEX.test(dateString);
   if(!isDateString) { return null; }
 

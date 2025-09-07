@@ -6,9 +6,9 @@ import { Tally } from 'src/lib/api/tally.ts';
 
 import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal/consts';
 import type { HabitGoal } from 'server/lib/models/goal/types';
-import { analyzeStreaksForHabit } from 'server/lib/models/goal/helpers';
+import { analyzeStreaksForHabit, type HabitRange } from 'server/lib/models/goal/helpers';
 import { streakColors } from 'src/lib/tally.ts';
-import { formatDate, parseDateStringSafe } from 'src/lib/date.ts';
+import { formatDate, parseDateString, parseDateStringSafe } from 'src/lib/date.ts';
 import { commaify, formatPercent } from 'src/lib/number.ts';
 
 import GoalCard from 'src/components/dashboard/GoalCard.vue';
@@ -40,11 +40,11 @@ const habitStats = computed(() => {
   return stats;
 });
 
-const successfulRanges = computed(() => {
+const successfulRanges = computed<HabitRange[]>(() => {
   return habitStats.value.ranges.filter(range => range.isSuccess);
 });
 
-const currentRange = computed(() => {
+const currentRange = computed<HabitRange | null>(() => {
   const currentRanges = habitStats.value.ranges.filter(range => rangeContainsToday(range));
   if(currentRanges.length > 0) {
     return currentRanges[0];
@@ -53,10 +53,10 @@ const currentRange = computed(() => {
   }
 });
 
-function rangeContainsToday(range) {
+function rangeContainsToday(range: HabitRange) {
   const now = new Date();
-  const start = startOfDay(parseDateStringSafe(range.startDate));
-  const end = endOfDay(parseDateStringSafe(range.endDate));
+  const start = startOfDay(parseDateString(range.startDate));
+  const end = endOfDay(parseDateString(range.endDate));
 
   return isWithinInterval(now, { start, end });
 }

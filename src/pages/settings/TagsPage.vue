@@ -36,13 +36,13 @@ async function loadTags() {
 
 const isCreateFormVisible = ref<boolean>(false);
 
-const currentlyEditingTag = ref<Tag>(null);
+const currentlyEditingTag = ref<Tag | null>(null);
 const isEditFormVisible = computed({
   get: () => currentlyEditingTag.value !== null,
   set: () => currentlyEditingTag.value = null, // nothing sensible to set it to unless it's null
 });
 
-const currentlyDeletingTag = ref<Tag>(null);
+const currentlyDeletingTag = ref<Tag | null>(null);
 const isDeleteFormVisible = computed({
   get: () => currentlyDeletingTag.value !== null,
   set: () => currentlyDeletingTag.value = null, // nothing sensible to set it to unless it's null
@@ -140,7 +140,7 @@ onMounted(async () => {
           </h2>
         </template>
         <EditTagForm
-          :tag="currentlyEditingTag"
+          :tag="currentlyEditingTag!"
           @tag:edit="loadTags()"
           @form-success="currentlyEditingTag = null"
         />
@@ -156,7 +156,7 @@ onMounted(async () => {
           </h2>
         </template>
         <DeleteTagForm
-          :tag="currentlyDeletingTag"
+          :tag="currentlyDeletingTag!"
           @tag:delete="loadTags()"
           @form-success="currentlyDeletingTag = null"
         />

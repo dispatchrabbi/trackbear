@@ -9,7 +9,7 @@ export type TallyWithTags = Tally & { tags: Tag[] };
 
 const ENDPOINT = '/api/v1/tally';
 
-export async function getTallies(query: TallyQuery = null) {
+export async function getTallies(query?: TallyQuery) {
   return callApiV1<TallyWithWorkAndTags[]>(ENDPOINT, 'GET', null, query);
 }
 

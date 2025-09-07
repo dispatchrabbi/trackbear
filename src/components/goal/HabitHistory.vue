@@ -5,9 +5,9 @@ import { isWithinInterval, startOfDay, endOfDay, type Day } from 'date-fns';
 import type { HabitGoal } from 'server/lib/models/goal/types';
 import type { Tally } from 'src/lib/api/tally.ts';
 
-import { analyzeStreaksForHabit } from 'server/lib/models/goal/helpers';
+import { analyzeStreaksForHabit, type HabitRange, type HabitAnalysis } from 'server/lib/models/goal/helpers';
 import { type HabitGoalParameters } from 'server/lib/models/goal/types';
-import { parseDateStringSafe } from 'src/lib/date.ts';
+import { parseDateString } from 'src/lib/date.ts';
 
 import HabitGauge from 'src/components/goal/HabitGauge.vue';
 
@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<{
   weekStartsOn: 0, // Sunday
 });
 
-const habitStats = computed(() => {
+const habitStats = computed<HabitAnalysis>(() => {
   const parameters = props.goal.parameters as HabitGoalParameters;
   const stats = analyzeStreaksForHabit(
     props.tallies,
@@ -35,10 +35,10 @@ const habitStats = computed(() => {
 
 const ranges = computed(() => habitStats.value.ranges.toReversed());
 
-function rangeContainsToday(range) {
+function rangeContainsToday(range: HabitRange) {
   const now = new Date();
-  const start = startOfDay(parseDateStringSafe(range.startDate));
-  const end = endOfDay(parseDateStringSafe(range.endDate));
+  const start = startOfDay(parseDateString(range.startDate));
+  const end = endOfDay(parseDateString(range.endDate));
 
   return isWithinInterval(now, { start, end });
 }

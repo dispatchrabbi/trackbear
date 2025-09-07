@@ -18,9 +18,9 @@ import { formatDateSafe, parseDateStringSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { updateGoal, type GoalUpdatePayload, type Goal } from 'src/lib/api/goal.ts';
-import { GOAL_TYPE, GOAL_CADENCE_UNIT, GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal/consts';
+import { GOAL_TYPE, GOAL_CADENCE_UNIT, GOAL_CADENCE_UNIT_INFO, GoalCadenceUnit, GoalType } from 'server/lib/models/goal/consts';
 import { type GoalParameters } from 'server/lib/models/goal/types';
-import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
+import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import Calendar from 'primevue/calendar';
@@ -42,7 +42,24 @@ const props = defineProps<{
 const emit = defineEmits(['goal:edit', 'formSuccess', 'formCancel']);
 const eventBus = useEventBus<{ goal: Goal }>('goal:edit');
 
-const formModel = reactive({
+type EditGoalFormModel = {
+  title: string;
+  description: string;
+  displayOnProfile: boolean;
+
+  type: GoalType;
+  measure: TallyMeasure;
+  count: number | null;
+  unit: GoalCadenceUnit | null;
+  period: number | null;
+
+  startDate: Date | null;
+  endDate: Date | null;
+
+  works: number[];
+  tags: number[];
+};
+const formModel = reactive<EditGoalFormModel>({
   title: props.goal.title,
   description: props.goal.description,
   displayOnProfile: props.goal.displayOnProfile,
@@ -119,7 +136,16 @@ const onMeasureChange = function() {
   formModel.count = null;
 };
 
-const savedParams = reactive({
+type EditGoalSavedParams = {
+  period: number | null;
+  unit: GoalCadenceUnit | null;
+
+  count: number | null;
+  hours: number | null;
+  minutes: number | null;
+  measure: TallyMeasure;
+};
+const savedParams = reactive<EditGoalSavedParams>({
   period: null,
   unit: GOAL_CADENCE_UNIT.DAY,
 
@@ -342,7 +368,7 @@ async function handleSubmit() {
       label="How Much?"
       :required="formModel.type === GOAL_TYPE.TARGET"
       :rule="ruleFor('count')"
-      :help="formModel.type === GOAL_TYPE.HABIT ? `Leave this field blank for all progress logged to count for this habit.` : null"
+      :help="formModel.type === GOAL_TYPE.HABIT ? `Leave this field blank for all progress logged to count for this habit.` : undefined"
     >
       <template #default="{ onUpdate, isFieldValid }">
         <div class="count-fieldset-container flex gap-2">
@@ -417,7 +443,7 @@ async function handleSubmit() {
           id="goal-form-projects"
           v-model="formModel.works"
           display="chip"
-          :options="projectStore.projects"
+          :options="projectStore.allProjects"
           option-label="title"
           option-value="id"
           filter
@@ -438,7 +464,7 @@ async function handleSubmit() {
           id="goal-form-tags"
           v-model="formModel.tags"
           display="chip"
-          :options="tagStore.tags"
+          :options="tagStore.allTags"
           option-label="name"
           option-value="id"
           filter

@@ -10,7 +10,7 @@ import { formatDateSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createLeaderboard, type LeaderboardCreatePayload, type Leaderboard } from 'src/lib/api/leaderboard';
-import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
+import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import Calendar from 'primevue/calendar';
@@ -20,11 +20,27 @@ import InputSwitch from 'primevue/inputswitch';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import MultiMeasureInput from 'src/components/project/MultiMeasureInput.vue';
+import { MeasureCounts } from 'server/lib/models/tally/types';
 
 const emit = defineEmits(['leaderboard:create', 'formSuccess', 'formCancel']);
 const eventBus = useEventBus<{ leaderboard: Leaderboard }>('leaderboard:create');
 
-const formModel = reactive({
+type CreateLeaderboardFormModel = {
+  title: string;
+  description: string;
+
+  startDate: Date | null;
+  endDate: Date | null;
+
+  measures: TallyMeasure[];
+  goal: MeasureCounts;
+  individualGoalMode: boolean;
+  fundraiserMode: boolean;
+
+  isJoinable: boolean;
+  isPublic: boolean;
+};
+const formModel = reactive<CreateLeaderboardFormModel>({
   title: '',
   description: '',
 

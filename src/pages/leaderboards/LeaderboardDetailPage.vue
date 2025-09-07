@@ -40,7 +40,7 @@ import LeaderboardStandings from 'src/components/leaderboard/LeaderboardStanding
 import JoinCodeDisplay from 'src/components/leaderboard/JoinCodeDisplay.vue';
 import UserAvatar from 'src/components/UserAvatar.vue';
 
-const leaderboard = ref<LeaderboardSummary>(null);
+const leaderboard = ref<LeaderboardSummary | null>(null);
 const loadLeaderboard = async function() {
   leaderboard.value = leaderboardStore.get(route.params.boardUuid.toString());
   if(leaderboard.value === null) {
@@ -51,8 +51,15 @@ const loadLeaderboard = async function() {
 const participants = ref<Participant[]>([]);
 const participantsNeedToSetGoals = ref<boolean>(false);
 const isParticipantsLoading = ref<boolean>(false);
-const participantsErrorMessage = ref<string>(null);
+const participantsErrorMessage = ref<string | null>(null);
 const loadParticipants = async function() {
+  if(leaderboard.value === null) {
+    participantsNeedToSetGoals.value = false;
+    isParticipantsLoading.value = false;
+    participantsErrorMessage.value = null;
+    return;
+  }
+
   participantsNeedToSetGoals.value = false;
   participantsErrorMessage.value = null;
   isParticipantsLoading.value = true;
@@ -105,15 +112,15 @@ const isUserAMember = computed(() => {
     return false;
   }
 
-  return leaderboard.value.members.some(member => member.userUuid === userStore.user.uuid);
+  return leaderboard.value.members.some(member => member.userUuid === userStore.user!.uuid);
 });
 
 const participantMembers = computed(() => {
-  return leaderboard.value.members.filter(member => member.isParticipant);
+  return (leaderboard.value?.members ?? []).filter(member => member.isParticipant);
 });
 
 const spectatorMembers = computed(() => {
-  return leaderboard.value.members.filter(member => !member.isParticipant);
+  return (leaderboard.value?.members ?? []).filter(member => !member.isParticipant);
 });
 
 const handleConfigureClick = function() {

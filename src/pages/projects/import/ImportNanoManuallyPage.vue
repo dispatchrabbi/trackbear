@@ -13,7 +13,7 @@ const projectStore = useProjectStore();
 import { createProject, ProjectCreatePayload } from 'src/lib/api/project';
 import { PROJECT_PHASE } from 'server/lib/models/project/consts';
 import { batchCreateTallies, type TallyCreatePayload } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
+import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts';
 import { formatCount, cmpTallies } from 'src/lib/tally.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
@@ -40,7 +40,12 @@ const breadcrumbs: MenuItem[] = [
   { label: 'Manually from NaNoWriMo', url: '/projects/import/nano-manual' },
 ];
 
-const formModel = reactive({
+type ImportNanoManuallyFormModel = {
+  countsText: string;
+  workId: number | null;
+  workTitle: string;
+};
+const formModel = reactive<ImportNanoManuallyFormModel>({
   countsText: '',
   workId: null,
   workTitle: '',
@@ -84,7 +89,7 @@ const validateCountsText = function(countsText: string) {
   const lines = countsText.split('\n');
 
   // is the first line a valid header?
-  const firstLine = lines.shift();
+  const firstLine = lines.shift()!;
   const parts = firstLine.split(/\s+/);
   if(!(parts[0] === 'Date' && parts[1].startsWith('Count'))) {
     return {
@@ -138,7 +143,7 @@ await projectStore.populate();
 const projectOptions = computed(() => {
   return [
     { title: '[New Project]', id: -1 },
-    ...projectStore.projects,
+    ...projectStore.allProjects,
   ];
 });
 
@@ -148,7 +153,7 @@ const selectedProjectTitle = computed(() => {
   } else if(formModel.workId === -1) {
     return formModel.workTitle;
   } else {
-    return projectStore.projects.find(work => work.id === formModel.workId).title;
+    return projectStore.allProjects.find(project => project.id === formModel.workId)?.title ?? '(unknown project)';
   }
 });
 
@@ -157,7 +162,12 @@ const parsedCountsData = computed(() => {
     return [];
   }
 
-  const tallies = [];
+  type BareMinimumTally = {
+    date: string;
+    count: number;
+    measure: TallyMeasure;
+  };
+  const tallies: BareMinimumTally[] = [];
 
   const now = new Date();
   const lines = formModel.countsText.split('\n');

@@ -11,17 +11,20 @@ const props = defineProps<{
 }>();
 
 const filteredParticipants = computed(() => {
-  return props.participants.map(participant => ({
-    ...participant,
-    tallies: participant.tallies.filter(tally => tally.measure === participant.goal.measure),
-  })).filter(participant => participant.tallies.length > 0);
+  return props.participants
+    .filter(particpant => particpant.goal !== null)
+    .map(participant => ({
+      ...participant,
+      tallies: participant.tallies.filter(tally => tally.measure === participant.goal!.measure),
+    }))
+    .filter(participant => participant.tallies.length > 0);
 });
 
 const seriesTallies = computed<SeriesTallyish[]>(() => {
   return filteredParticipants.value.flatMap(participant => participant.tallies.map(tally => ({
     date: tally.date,
     // we have to pre-calculate these as percentages
-    count: 100 * (tally.count / participant.goal.count),
+    count: 100 * (tally.count / participant.goal!.count),
     series: participant.displayName,
   })));
 });

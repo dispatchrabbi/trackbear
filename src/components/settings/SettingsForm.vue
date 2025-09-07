@@ -25,7 +25,7 @@ import Dropdown from 'primevue/dropdown';
 const emit = defineEmits(['settings:edit', 'formSuccess']);
 
 const formModel = reactive({
-  ...userStore.user.userSettings,
+  ...userStore.user!.userSettings,
 });
 
 const validations = z.object({
@@ -113,8 +113,8 @@ async function handleSubmit() {
         If enabled, your profile will be accessible at <a
           class="underline text-primary-500 dark:text-primary-400"
           target="_blank"
-          :href="`${envStore.env.URL_PREFIX}/@${userStore.user.username}`"
-        >{{ envStore.env.URL_PREFIX }}/@{{ userStore.user.username }}</a>.
+          :href="`${envStore.env!.URL_PREFIX}/@${userStore.user!.username}`"
+        >{{ envStore.env!.URL_PREFIX }}/@{{ userStore.user!.username }}</a>.
       </template>
     </FieldWrapper>
     <FieldWrapper

@@ -11,7 +11,7 @@ import PorchLayout from 'src/layouts/PorchLayout.vue';
 import TextBlurb from 'src/components/layout/TextBlurb.vue';
 import ChangelogVersion from 'src/components/changelog/ChangelogVersion.vue';
 
-const changelog = ref<Changelog>(null);
+const changelog = ref<Changelog | null>(null);
 const errorMessage = ref<string>('');
 
 async function loadChangelog() {

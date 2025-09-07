@@ -26,7 +26,7 @@ export type BarChartParDataPoint = {
 
 const props = withDefaults(defineProps<{
   data: BarChartDataPoint[];
-  par?: BarChartParDataPoint[];
+  par?: BarChartParDataPoint[] | null;
   measureHint: TallyMeasure | 'percent';
   stacked?: boolean;
   valueFormatFn?: (value: number) => string;
@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<{
 }>(), ({
   par: null,
   stacked: false,
-  valueFormatFn: null,
+  valueFormatFn: undefined,
   showLegend: true,
   isFullscreen: false,
 }));
@@ -72,7 +72,7 @@ function renderChart() {
   // we will need to add anything that needs a tooltip to this
   const tooltipData: ChartDataPoint[] = [];
 
-  const marks = [];
+  const marks: Plot.Markish[] = [];
 
   const seriesOrder = orderSeries(props.data);
 
@@ -206,6 +206,8 @@ onMounted(() => {
   });
 
   watchEffect(() => {
+    if(!plotContainer.value) { return; }
+
     const chart = renderChart();
     plotContainer.value.replaceChildren(chart);
   });

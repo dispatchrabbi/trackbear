@@ -26,7 +26,7 @@ export type StackedAreaChartParDataPoint = {
 
 const props = withDefaults(defineProps<{
   data: StackedAreaChartDataPoint[];
-  par?: StackedAreaChartParDataPoint[];
+  par?: StackedAreaChartParDataPoint[] | null;
   measureHint: TallyMeasure;
   valueFormatFn?: (value: number) => string;
   showLegend?: boolean;
@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<{
   par: null,
   showLegend: true,
   isFullscreen: false,
-  valueFormatFn: null,
+  valueFormatFn: undefined,
 }));
 
 function formatCountWithMeasureHint(value) {
@@ -65,7 +65,7 @@ function renderChart() {
   // we will need to add anything that needs a tooltip to this
   const tooltipData: ChartDataPoint[] = [];
 
-  const marks = [];
+  const marks: Plot.Markish[] = [];
 
   // we need a zero axis
   marks.push(Plot.ruleY([0]));
@@ -179,6 +179,8 @@ onMounted(() => {
   });
 
   watchEffect(() => {
+    if(!plotContainer.value) { return; }
+
     const chart = renderChart();
     plotContainer.value.replaceChildren(chart);
   });

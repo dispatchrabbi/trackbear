@@ -41,7 +41,7 @@ onMounted(async () => {
   // grab admin user permissions and we're going to want to check them too
   await adminUserStore.populate()
     .then(() => {
-      if(!adminUserStore.perms.isAdmin) {
+      if(!adminUserStore.perms?.isAdmin) {
         router.push({ name: 'dashboard' });
       }
     })

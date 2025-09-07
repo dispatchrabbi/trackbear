@@ -15,6 +15,7 @@ import { TALLY_STATE } from '../tally/consts.ts';
 import { sumTallies } from '../tally/helpers.ts';
 import { omit } from 'server/lib/obj.ts';
 import { type MeasureCounts } from '../tally/types.ts';
+import { supplyDefaults } from '../helpers.ts';
 
 export type Project = Omit<PrismaWork, 'phase' | 'startingBalance'> & {
   phase: ProjectPhase;
@@ -96,14 +97,14 @@ export class ProjectModel {
 
   @traced
   static async createProject(owner: User, data: CreateProjectData, reqCtx: RequestContext): Promise<Project> {
-    const dataWithDefaults: Required<CreateProjectData> = Object.assign({
+    const dataWithDefaults = supplyDefaults(data, {
       description: '',
       phase: PROJECT_PHASE.PLANNING,
       startingBalance: {},
       cover: null,
       starred: false,
       displayOnProfile: false,
-    }, data);
+    });
 
     const created = await dbClient.work.create({
       data: {

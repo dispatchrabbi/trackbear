@@ -133,7 +133,7 @@ onMounted(async () => {
       <RouterLink :to="{ name: 'project', params: { projectId: project.id } }">
         <ProjectTile
           :project="project"
-          :show-cover="userStore.user.userSettings.displayCovers"
+          :show-cover="userStore.user!.userSettings.displayCovers"
         />
       </RouterLink>
     </div>

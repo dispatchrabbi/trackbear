@@ -13,7 +13,7 @@ tagStore.populate();
 
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
+import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts';
 import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
@@ -34,7 +34,14 @@ const props = defineProps<{
 const emit = defineEmits(['leaderboard:join', 'formSuccess', 'formCancel']);
 const eventBus = useEventBus<{ leaderboardUuid: string }>('leaderboard:join');
 
-const formModel = reactive({
+type JoinLeaderboardParticipationFormModel = {
+  isParticipant: boolean;
+  measure: TallyMeasure;
+  count: number | null;
+  works: number[];
+  tags: number[];
+};
+const formModel = reactive<JoinLeaderboardParticipationFormModel>({
   isParticipant: true,
   measure: TALLY_MEASURE.WORD,
   count: null,
@@ -98,7 +105,7 @@ async function handleSubmit() {
         // user is participating — send the info from the form
         {
           isParticipant: true,
-          goal: props.leaderboard.individualGoalMode ? { measure: data.measure, count: data.count } : null,
+          goal: props.leaderboard.individualGoalMode ? { measure: data.measure, count: data.count ?? 0 } : null,
           workIds: data.works,
           tagIds: data.tags,
         } :
@@ -214,7 +221,7 @@ async function handleSubmit() {
           id="leaderboard-form-projects"
           v-model="formModel.works"
           display="chip"
-          :options="projectStore.projects"
+          :options="projectStore.allProjects"
           option-label="title"
           option-value="id"
           filter
@@ -237,7 +244,7 @@ async function handleSubmit() {
           id="leaderboard-form-tags"
           v-model="formModel.tags"
           display="chip"
-          :options="tagStore.tags"
+          :options="tagStore.allTags"
           option-label="name"
           option-value="id"
           filter

@@ -13,7 +13,7 @@ import type { LeaderboardSummary, Leaderboard, LeaderboardMember, JustMember, Pa
 import { getTalliesForParticipants } from './helpers.ts';
 import type { User } from '../user/user-model.ts';
 import { USER_STATE } from '../user/consts.ts';
-import { makeIncludeWorkAndTagIds, included2ids, makeSetWorksAndTagsIncluded, type WorksAndTagsIncluded, makeConnectWorksAndTagsIncluded } from '../helpers.ts';
+import { makeIncludeWorkAndTagIds, included2ids, makeSetWorksAndTagsIncluded, type WorksAndTagsIncluded, makeConnectWorksAndTagsIncluded, supplyDefaults } from '../helpers.ts';
 
 import { omit, pick } from 'server/lib/obj.ts';
 
@@ -163,11 +163,11 @@ export class LeaderboardModel {
 
   @traced
   static async create(data: CreateLeaderboardData, ownerId: number, reqCtx: RequestContext): Promise<Leaderboard> {
-    const dataWithDefaults: Required<CreateLeaderboardData> = Object.assign({
+    const dataWithDefaults = supplyDefaults(data, {
       description: '',
       isJoinable: false,
       isPublic: false,
-    }, data);
+    });
 
     const normalizedData = this.normalizeBoardData(dataWithDefaults);
     const memberData: CreateMemberData & { userId: number } = {

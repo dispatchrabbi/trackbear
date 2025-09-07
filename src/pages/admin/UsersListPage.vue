@@ -29,7 +29,7 @@ const stats = ref<UserStats>({
   signedUpLast7Days: -1,
 });
 const isStatsLoading = ref<boolean>(false);
-const statsErrorMessage = ref<string>(null);
+const statsErrorMessage = ref<string | null>(null);
 
 const loadUserStats = async function() {
   isStatsLoading.value = true;
@@ -53,8 +53,8 @@ const usersSlice = ref<User[]>([]);
 const totalUsers = ref<number>(0);
 
 const isUsersLoading = ref<boolean>(false);
-const usersErrorMessage = ref<string>(null);
-const loadUsersSlice = async function(first: number, rows: number, search: string) {
+const usersErrorMessage = ref<string | null>(null);
+const loadUsersSlice = async function(first: number, rows: number, search?: string) {
   if(rows === 0) {
     return;
   }
@@ -86,7 +86,7 @@ watchDebounced(usersFilter, async () => {
 
 onMounted(async () => {
   await loadUserStats();
-  await loadUsersSlice(0, 50, null);
+  await loadUsersSlice(0, 50);
 });
 
 </script>

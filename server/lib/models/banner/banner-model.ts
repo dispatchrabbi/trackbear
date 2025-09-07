@@ -8,6 +8,7 @@ import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 import { traced } from '../../metrics/tracer.ts';
+import { supplyDefaults } from '../helpers.ts';
 
 export type { Banner };
 export type BannerData = {
@@ -57,12 +58,12 @@ export class BannerModel {
 
   @traced
   static async createBanner(data: BannerData, reqCtx: RequestContext): Promise<Banner> {
-    const dataWithDefaults: Required<BannerData> = Object.assign({
+    const dataWithDefaults = supplyDefaults(data, {
       enabled: false,
       showUntil: addDays(new Date(), 7),
       icon: 'campaign',
       color: 'info',
-    }, data);
+    });
 
     const created = await dbClient.banner.create({
       data: dataWithDefaults,

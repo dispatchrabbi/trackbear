@@ -1,6 +1,9 @@
 import Plausible from 'plausible-tracker';
 
-let plausible: ReturnType<typeof Plausible>;
+let plausible: ReturnType<typeof Plausible> = {
+  trackEvent: () => {},
+  trackPageview: () => {},
+} as unknown as ReturnType<typeof Plausible>;
 
 export function initPlausible(enable: boolean, apiHost: string, domain: string) {
   if(enable) {

@@ -1,6 +1,26 @@
-import { omit } from '../obj';
+import { Expand, omit } from '../obj';
 import { PROJECT_STATE } from './project/consts';
 import { TAG_STATE } from './tag/consts';
+
+type OptionalPropertyOf<T extends object> = Exclude<{
+  [K in keyof T]: T extends Record<K, T[K]>
+    ? never
+    : K
+}[keyof T], undefined>;
+type InferDefaults<T extends object> = {
+  [K in OptionalPropertyOf<T>]: T[K];
+};
+export function supplyDefaults<T extends object>(incomplete: T, defaults: Expand<InferDefaults<T>>): Expand<Required<T>> {
+  const supplied = {};
+
+  const allKeys = [...Object.keys(incomplete), ...Object.keys(defaults)];
+  for(const key of allKeys) {
+    const hasKey = key in incomplete && (incomplete[key] !== undefined);
+    supplied[key] = hasKey ? incomplete[key] : defaults[key];
+  }
+
+  return supplied as Expand<Required<T>>;
+}
 
 export type WorksAndTagsIncluded = {
   worksIncluded: { id: number }[];

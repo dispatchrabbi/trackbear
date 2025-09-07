@@ -16,7 +16,7 @@ import { Goal, HabitGoal, TargetGoal, HabitGoalParameters, TargetGoalParameters 
 import { TALLY_STATE } from '../tally/consts.ts';
 import type { Tally } from '../tally/tally-model.wip.ts';
 import { omit } from 'server/lib/obj.ts';
-import { makeIncludeWorkAndTagIds, included2ids, makeSetWorksAndTagsIncluded, makeConnectWorksAndTagsIncluded } from '../helpers.ts';
+import { makeIncludeWorkAndTagIds, included2ids, makeSetWorksAndTagsIncluded, makeConnectWorksAndTagsIncluded, supplyDefaults } from '../helpers.ts';
 
 const getTargetTotalsRawSql = await importRawSql(path.resolve(import.meta.dirname, './sql/get-target-totals.sql'));
 
@@ -66,11 +66,11 @@ export class GoalModel {
 
   @traced
   static async createGoal(owner: User, data: CreateGoalData, reqCtx: RequestContext): Promise<Goal> {
-    const dataWithDefaults: Required<CreateGoalData> = Object.assign({
+    const dataWithDefaults = supplyDefaults(data, {
       description: '',
       starred: false,
       displayOnProfile: false,
-    }, data);
+    });
 
     const dbCreated = await dbClient.goal.create({
       data: {

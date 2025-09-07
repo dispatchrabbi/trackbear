@@ -10,9 +10,9 @@ const chartColors = useChartColors();
 
 import { saveSvgAsPng } from 'src/lib/image.ts';
 
-export type CalendarHeatMapDataPoint = {
+export type CalendarHeatMapDataPoint<T = unknown> = {
   date: Date;
-  value: unknown;
+  value: T;
 };
 
 export type NormalizerFn = (datum: CalendarHeatMapDataPoint, data: CalendarHeatMapDataPoint[]) => number | null;
@@ -86,8 +86,8 @@ const visibleData = computed(() => {
   }
 
   const bounds = {
-    startDate: sortedData.value.at(0).date,
-    endDate: sortedData.value.at(-1).date,
+    startDate: sortedData.value.at(0)!.date,
+    endDate: sortedData.value.at(-1)!.date,
   };
   if(props.anchor === 'start') {
     // modify end date
@@ -121,8 +121,8 @@ const dateBounds = computed(() => {
     };
   }
 
-  const startDate = visibleData.value.at(0).date;
-  const endDate = visibleData.value.at(-1).date;
+  const startDate = visibleData.value.at(0)!.date;
+  const endDate = visibleData.value.at(-1)!.date;
   return {
     startDate,
     endDate,
@@ -164,6 +164,8 @@ const plotDimensions = computed(() => {
 function handlePlotDoubleclick(ev: MouseEvent) {
   // only do this if the alt/option key is held down
   if(!ev.altKey) { return; }
+
+  if(!chartContainer.value) { return; }
 
   const svgEl = chartContainer.value.querySelector(`svg`) as SVGSVGElement;
   saveSvgAsPng(svgEl, 'chart.png', chartColors.value.background);
@@ -236,6 +238,8 @@ onMounted(() => {
   });
 
   watchEffect(() => {
+    if(!plotContainer.value) { return; }
+
     const chart = renderChart();
     plotContainer.value.replaceChildren(chart);
   });

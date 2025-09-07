@@ -23,11 +23,11 @@ const props = defineProps<{
 }>();
 
 const getMeasure = function(participant: Participant): TallyMeasure {
-  return props.measure === 'percent' ? participant.goal.measure : props.measure;
+  return props.measure === 'percent' ? participant.goal!.measure : props.measure;
 };
 
 const getGoalCount = function(participant: Participant) {
-  return props.measure === 'percent' ? participant.goal.count : props.leaderboard.goal[props.measure];
+  return props.measure === 'percent' ? participant.goal!.count : props.leaderboard.goal[props.measure];
 };
 
 const determineStartAndEndDates = function(leaderboard: Leaderboard, participants: Participant[]) {
@@ -70,13 +70,20 @@ const getParForToday = function(participant: Participant, daysAlong: number, tot
 };
 
 const determinePositions = function(standingsRows: StandingsDataRow[], field: keyof StandingsDataRow) {
-  const sorted = standingsRows.toSorted((a, b) => a[field] > b[field] ?
-      -1 :
-    a[field] < b[field] ?
-      1 :
-        (
-          a.lastActivity < b.lastActivity ? -1 : a.lastActivity > b.lastActivity ? 1 : 0
-        ));
+  const sorted = standingsRows.toSorted((a, b) => {
+    const aVal = a[field];
+    const bVal = b[field];
+
+    if(aVal === bVal) {
+      return a.lastActivity < b.lastActivity ? -1 : a.lastActivity > b.lastActivity ? 1 : 0;
+    } else if(aVal === null) {
+      return 1;
+    } else if(bVal === null) {
+      return -1;
+    } else {
+      return aVal > bVal ? -1 : 1;
+    }
+  });
 
   const positions: Record<string, number> = {};
   for(let i = 0; i < sorted.length; ++i) {
@@ -85,8 +92,8 @@ const determinePositions = function(standingsRows: StandingsDataRow[], field: ke
 
     if(i === 0) {
       positions[row.uuid] = i + 1;
-    } else if(row[field] === previous[field] && row.lastActivity === previous.lastActivity) {
-      positions[row.uuid] = positions[previous.uuid];
+    } else if(row[field] === previous![field] && row.lastActivity === previous!.lastActivity) {
+      positions[row.uuid] = positions[previous!.uuid];
     } else {
       positions[row.uuid] = i + 1;
     }
@@ -106,7 +113,7 @@ const hasPar = computed(() => {
 type StandingsDataRow = {
   uuid: string;
   displayName: string;
-  avatar: string;
+  avatar: string | null;
 
   measure: TallyMeasure;
   goal: number;
@@ -129,7 +136,7 @@ const standingsRows = computed<StandingsDataRow[]>(() => {
   const today = formatDate(new Date());
   const yesterday = formatDate(addDays(new Date(), -1));
 
-  const rows = [];
+  const rows: StandingsDataRow[] = [];
   for(const participant of props.participants) {
     const measure = getMeasure(participant);
     const normalizedTallies = normalizeTallies(participant.tallies.filter(tally => tally.measure === measure));

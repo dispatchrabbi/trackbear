@@ -13,7 +13,7 @@ const props = defineProps<{
       {{ props.description }}
     </div>
     <slot>
-      <div>{{ props.stat.toString() }}</div>
+      <div>{{ (props.stat ?? '??').toString() }}</div>
     </slot>
   </div>
 </template>

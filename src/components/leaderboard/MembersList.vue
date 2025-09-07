@@ -26,7 +26,7 @@ function getMemberRoleTagSeverity(member: Membership) {
   return member.isOwner ? 'primary' : member.isParticipant ? 'success' : 'secondary';
 }
 
-const members = ref<Membership[]>(null);
+const members = ref<Membership[] | null>(null);
 const [loadMembers, signals] = useAsyncSignals(async function() {
   const result = await listMembers(props.leaderboard.uuid);
   members.value = result.sort(cmpMember);
@@ -67,7 +67,7 @@ onMounted(async () => {
   </div>
   <DataView
     v-else
-    :value="members"
+    :value="members ?? []"
     data-key="uuid"
   >
     <template #list="{ items }">

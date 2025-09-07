@@ -22,12 +22,12 @@ type CreateChartSeriesOptions = {
   densify: boolean;
   /** Whether to fill in missing days before and after the first data value (`true`) or not (`false`) */
   extend: boolean;
-  startDate: string;
-  endDate: string;
+  startDate: string | null;
+  endDate: string | null;
   /** the first date that appears in any of the data on this chart */
-  earliestData: string;
+  earliestData: string | null;
   /** the last date that appears in any of the data on this chart */
-  latestData: string;
+  latestData: string | null;
   /** What value the accumulated total starts at (though this only matters when `accumulate` is set to `true`) */
   startingTotal: number;
   series: string;
@@ -76,13 +76,13 @@ export function createChartSeries(tallies: Tallyish[], options: Partial<CreateCh
   }
 
   const series: ChartDataPoint[] = [];
-  let runningTotal = options.startingTotal;
+  let runningTotal = options.startingTotal!;
   for(const date of Array.from(dateCounts.keys()).sort()) {
-    const todayCount = dateCounts.get(date);
+    const todayCount = dateCounts.get(date)!;
     runningTotal += todayCount;
 
     series.push({
-      series: options.series,
+      series: options.series!,
       date,
       value: options.accumulate ? runningTotal : todayCount,
     });
@@ -93,8 +93,8 @@ export function createChartSeries(tallies: Tallyish[], options: Partial<CreateCh
 
 type CreateParSeriesOptions = {
   accumulate: boolean;
-  startDate: string;
-  endDate: string;
+  startDate: string | null;
+  endDate: string | null;
   series: string;
 };
 
@@ -114,13 +114,6 @@ export function createParSeries(goal: number, options: Partial<CreateParSeriesOp
     differenceInCalendarDays(endDateObj, startDateObj) + 1 : // add 1 so we count both the start and end date
     1; // use the whole goal for every day
   const perDayGoal = goal / numberOfDays;
-  // const extra = goal - (perDayGoal * numberOfDays);
-
-  // // if we don't do this, we just will add all the extras on at the end
-  // const extraGcd = gcd(numberOfDays, extra);
-  // const reducedNumberOfDays = numberOfDays / extraGcd;
-  // const reducedExtra = extra / extraGcd;
-  // const threshold = reducedNumberOfDays - reducedExtra;
 
   const series: ChartDataPoint[] = eachDayOfInterval({ start: startDateObj, end: endDateObj })
     .map((dateObj, ix) => {
@@ -133,25 +126,16 @@ export function createParSeries(goal: number, options: Partial<CreateParSeriesOp
       const value = options.accumulate ? todayAccumulated : todayAccumulated - yesterdayAccumulated;
 
       return {
-        series: options.series,
+        series: options.series!,
         date: formatDate(dateObj),
         value,
       };
     });
-    // .map((dateObj, ix) => ({
-    //   series: options.series,
-    //   date: formatDate(dateObj),
-    //   value: options.accumulate ?
-    //       // special-case the last day, otherwise it's day number * per day goal (unrounded)
-    //       (ix + 1 === numberOfDays ? goal : Math.round((ix + 1) * (goal / numberOfDays))) :
-    //     // add one extra at the end of the reducedNumberOfDaus cycle
-    //     perDayGoal + (extra && (ix % reducedNumberOfDays > threshold) ? 1 : 0),
-    // }));
 
   return series;
 }
 
-export function determineChartIntervals(tallies: Tallyish[], overrideStartDate?: string, overrideEndDate?: string) {
+export function determineChartIntervals(tallies: Tallyish[], overrideStartDate?: string | null, overrideEndDate?: string | null) {
   const sorted = tallies.toSorted(cmpByDate);
   const earliestData = sorted.at(0)?.date ?? null;
   const latestData = sorted.at(-1)?.date ?? null;
@@ -162,12 +146,16 @@ export function determineChartIntervals(tallies: Tallyish[], overrideStartDate?:
   return {
     startDate,
     endDate,
-    earliestData: earliestData < startDate ? startDate : earliestData,
-    latestData: latestData > endDate ? endDate : latestData,
+    earliestData: earliestData === null ?
+      null :
+      earliestData < startDate ? startDate : earliestData,
+    latestData: latestData === null ?
+      null :
+      latestData > endDate ? endDate : latestData,
   };
 }
 
-export function determineChartStartDate(firstUpdate?: string, overrideStartDate?: string): string {
+export function determineChartStartDate(firstUpdate?: string | null, overrideStartDate?: string | null): string {
   if(overrideStartDate) {
     return overrideStartDate;
   } else if(firstUpdate) {
@@ -176,7 +164,7 @@ export function determineChartStartDate(firstUpdate?: string, overrideStartDate?
     return formatDate(new Date()); // today
   }
 }
-export function determineChartEndDate(lastUpdate?: string, overrideEndDate?: string, overrideStartDate?: string): string {
+export function determineChartEndDate(lastUpdate?: string | null, overrideEndDate?: string | null, overrideStartDate?: string | null): string {
   if(overrideEndDate) {
     return overrideEndDate;
   } else if(lastUpdate) {
@@ -210,11 +198,12 @@ export function orderSeries(data: ChartDataPoint[]) {
   return sortedSeries;
 }
 
-export function getChartDomain(data: BareDataPoint[], par: BareDataPoint[], suggestedYAxisMaximum: number, stacked: boolean = false) {
+export function getChartDomain(data: BareDataPoint[], par: BareDataPoint[] | null, suggestedYAxisMaximum: number, stacked: boolean = false) {
   let dataValues: number[] = [];
   if(stacked) {
     // group the data points by date, then sum the positive values and the negative values for each date, and return each date's sums in an array
-    dataValues = Object.values(Object.groupBy(data, dataPoint => dataPoint.date))
+    const dataPointsByDate = Object.values(Object.groupBy(data, dataPoint => dataPoint.date)) as BareDataPoint[][];
+    dataValues = dataPointsByDate
       .flatMap(dataPoints => ([
         dataPoints.filter(dataPoint => dataPoint.value >= 0).reduce((total, dataPoint) => total + dataPoint.value, 0),
         dataPoints.filter(dataPoint => dataPoint.value <= 0).reduce((total, dataPoint) => total + dataPoint.value, 0),
@@ -264,7 +253,7 @@ export function normalizeTallies(tallies: Tallyish[]): CountedTallyPoint[] {
     dateTotals.set(tally.date, (dateTotals.get(tally.date) || 0) + tally.count);
   }
 
-  const normalizedTallies = [];
+  const normalizedTallies: CountedTallyPoint[] = [];
   for(const [date, value] of dateTotals) {
     normalizedTallies.push({
       date,

@@ -20,7 +20,7 @@ const breadcrumbs: MenuItem[] = [
   { label: 'New', url: '/account/api-keys/new' },
 ];
 
-const createdApiKey = ref<ApiKey>(null);
+const createdApiKey = ref<ApiKey | null>(null);
 async function handleApiKeyCreate({ created }: { created: ApiKey }, nextCallback) {
   createdApiKey.value = created;
   await wait(1 * 1000);

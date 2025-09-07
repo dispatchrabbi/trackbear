@@ -41,7 +41,7 @@ const projectStartingBalances = computed(() => {
 
 const measures = computed<TallyMeasure[]>(() => {
   const measuresAvailable = Object.keys(dailyStats.value.days);
-  const lifetimeStartingBalanceMeasures = Object.keys(userStore.user.userSettings.lifetimeStartingBalance);
+  const lifetimeStartingBalanceMeasures = Object.keys(userStore.user!.userSettings.lifetimeStartingBalance);
   const projectStartingBalanceMeasures = Object.keys(projectStartingBalances.value);
   // this makes sure they're in a consistent order
   return Object.keys(TALLY_MEASURE_INFO).filter(measure => measuresAvailable.includes(measure) || lifetimeStartingBalanceMeasures.includes(measure) || projectStartingBalanceMeasures.includes(measure));
@@ -49,7 +49,7 @@ const measures = computed<TallyMeasure[]>(() => {
 
 const totals = computed<MeasureCounts>(() => {
   return measures.value.reduce((obj, measure) => {
-    obj[measure] = (dailyStats.value.totals[measure] || 0) + (userStore.user.userSettings.lifetimeStartingBalance[measure] || 0) + (projectStartingBalances.value[measure] || 0);
+    obj[measure] = (dailyStats.value.totals[measure] || 0) + (userStore.user!.userSettings.lifetimeStartingBalance[measure] || 0) + (projectStartingBalances.value[measure] || 0);
     return obj;
   }, {});
 });
@@ -143,7 +143,7 @@ onMounted(() => {
           </div>
           <DayCountHeatmap
             :day-counts="dayCountsByYear[year]"
-            :week-starts-on="userStore.user.userSettings.weekStartDay"
+            :week-starts-on="userStore.user!.userSettings.weekStartDay"
           />
         </div>
       </div>

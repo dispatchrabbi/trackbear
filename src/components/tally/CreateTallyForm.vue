@@ -3,9 +3,11 @@ import { ref, reactive, computed, defineProps, defineEmits } from 'vue';
 import wait from 'src/lib/wait.ts';
 import { useEventBus, useLocalStorage } from '@vueuse/core';
 
-const props = defineProps<{
-  initialWorkId?: number;
-}>();
+const props = withDefaults(defineProps<{
+  initialWorkId?: number | null;
+}>(), {
+  initialWorkId: null,
+});
 
 import { useProjectStore } from 'src/stores/project';
 const projectStore = useProjectStore();
@@ -43,7 +45,16 @@ const lastTallyMeasure = useLocalStorage('last-tally-measure', TALLY_MEASURE.WOR
 // save the last state of the update/total toggle
 const lastSetTotal = useLocalStorage('last-set-total', false);
 
-const formModel = reactive({
+type CreateTallyFormModel = {
+  date: Date;
+  workId: number | null;
+  tags: string[];
+  count: number | null;
+  measure: TallyMeasure;
+  setTotal: boolean;
+  note: string;
+};
+const formModel = reactive<CreateTallyFormModel>({
   date: new Date(), // default to today
   workId: props.initialWorkId ?? null,
   tags: [],
@@ -231,7 +242,7 @@ async function handleSubmit() {
           <div
             class="max-w-64 md:max-w-none"
           >
-            {{ formatCount(formModel.count, formModel.measure) }} will be <span class="font-bold">{{ formModel.setTotal ? `set as` : `added to` }} the total</span> for this project {{ formModel.setTotal ? `as of` : `on` }} {{ formatDateSafe(formModel.date) }}.
+            {{ formatCount(formModel.count ?? 0, formModel.measure) }} will be <span class="font-bold">{{ formModel.setTotal ? `set as` : `added to` }} the total</span> for this project {{ formModel.setTotal ? `as of` : `on` }} {{ formatDateSafe(formModel.date) }}.
           </div>
         </div>
       </template>
@@ -247,7 +258,7 @@ async function handleSubmit() {
           id="tally-form-tags"
           v-model="formModel.tags"
           display="chip"
-          :options="tagStore.tags"
+          :options="tagStore.allTags"
           option-label="name"
           option-value="name"
           filter

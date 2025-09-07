@@ -6,7 +6,7 @@ type ApiResponse<T> = ApiResponsePayload<T> & { status: number };
 
 export async function callApi<T>(path: string, method: string = 'GET', payload: Record<string, unknown> | Record<string, unknown>[] | FormData | null = null, query: object | null = null): Promise<ApiResponse<T>> {
   const headers = {};
-  let body = null;
+  let body: FormData | string | null = null;
 
   if(payload instanceof FormData) {
     body = payload;

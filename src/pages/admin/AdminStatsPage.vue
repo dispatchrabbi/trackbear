@@ -8,7 +8,7 @@ import {
 
 import AdminLayout from 'src/layouts/AdminLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
-import PlotBarChart from 'src/components/chart/PlotBarChart.vue';
+import GenericBarChart from 'src/components/chart/GenericBarChart.vue';
 
 import type { MenuItem } from 'primevue/menuitem';
 
@@ -95,7 +95,7 @@ onMounted(() => {
       <div>
         <SectionTitle title="Weekly Active Users" />
         <div class="max-w-screen-lg">
-          <PlotBarChart
+          <GenericBarChart
             :data="weeklyActiveUsersData"
           />
         </div>
@@ -103,7 +103,7 @@ onMounted(() => {
       <div>
         <SectionTitle title="Weekly Signups" />
         <div class="max-w-screen-lg">
-          <PlotBarChart
+          <GenericBarChart
             :data="weeklySignupsData"
           />
         </div>
@@ -111,7 +111,7 @@ onMounted(() => {
       <div>
         <SectionTitle title="Daily Active Users" />
         <div class="max-w-screen-lg">
-          <PlotBarChart
+          <GenericBarChart
             :data="dailyActiveUsersData"
             :config="{ interval: 'day' }"
           />
@@ -120,7 +120,7 @@ onMounted(() => {
       <div>
         <SectionTitle title="Daily Signups" />
         <div class="max-w-screen-lg">
-          <PlotBarChart
+          <GenericBarChart
             :data="dailySignupsData"
             :config="{ interval: 'day' }"
           />

@@ -81,13 +81,13 @@ function isBannerActive(banner: Banner): boolean {
   return isBannerEnabled(banner) && isBannerCurrent(banner);
 }
 
-const currentlyEditingBanner = ref<Banner>(null);
+const currentlyEditingBanner = ref<Banner | null>(null);
 const isEditFormVisible = computed({
   get: () => currentlyEditingBanner.value !== null,
   set: () => currentlyEditingBanner.value = null, // nothing sensible to set it to unless it's null
 });
 
-const currentlyDeletingBanner = ref<Banner>(null);
+const currentlyDeletingBanner = ref<Banner | null>(null);
 const isDeleteFormVisible = computed({
   get: () => currentlyDeletingBanner.value !== null,
   set: () => currentlyDeletingBanner.value = null, // nothing sensible to set it to unless it's null
@@ -205,7 +205,7 @@ onMounted(() => loadBanners());
         </h2>
       </template>
       <EditBannerForm
-        :banner="currentlyEditingBanner"
+        :banner="currentlyEditingBanner!"
         @banner:edit="loadBanners()"
         @form-success="isEditFormVisible = false"
       />
@@ -222,7 +222,7 @@ onMounted(() => loadBanners());
         </h2>
       </template>
       <DeleteBannerForm
-        :banner="currentlyDeletingBanner"
+        :banner="currentlyDeletingBanner!"
         @banner:delete="loadBanners()"
         @form-success="isDeleteFormVisible = false"
       />

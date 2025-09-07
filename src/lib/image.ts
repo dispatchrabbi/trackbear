@@ -24,6 +24,9 @@ function makePngDataUriFromImage(imageEl: HTMLImageElement, backgroundColor?: st
   canvasEl.height = imageEl.height;
 
   const ctx = canvasEl.getContext('2d');
+  if(ctx === null) {
+    throw new Error('Could not get 2d context for ephemeral canvas');
+  }
   if(backgroundColor) {
     ctx.fillStyle = backgroundColor;
     ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);

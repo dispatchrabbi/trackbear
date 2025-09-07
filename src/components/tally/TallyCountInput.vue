@@ -16,7 +16,8 @@ const props = defineProps<{
 // why all the weird math for hours and minutes? we have to account for negative times
 const hours = computed({
   get() {
-    return model.value === null ? null : roundTowardZero(model.value / 60);
+    // intentional double equals to catch undefined as well
+    return model.value == null ? null : roundTowardZero(model.value / 60);
   },
   set(val) {
     // why are you here?
@@ -25,6 +26,7 @@ const hours = computed({
     if(val === null && minutes.value === null) {
       model.value = null;
     } else {
+      val = val ?? 0;
       const minutesVal = minutes.value ?? 0;
       model.value = (val * 60) + (decisiveSign(val) * minutesVal);
     }
@@ -33,7 +35,8 @@ const hours = computed({
 
 const minutes = computed({
   get() {
-    return model.value === null ? null : (Math.abs(model.value) % 60);
+    // intentional double equals to catch undefined as well
+    return model.value == null ? null : (Math.abs(model.value) % 60);
   },
   set(val) {
     // why are you here?
@@ -42,8 +45,9 @@ const minutes = computed({
     if(val === null && hours.value === null) {
       model.value = null;
     } else {
+      val = val ?? 0;
       const hoursVal = hours.value ?? 0;
-      model.value = (hours.value * 60) + (decisiveSign(hoursVal) * val);
+      model.value = (hoursVal * 60) + (decisiveSign(hoursVal) * val);
     }
   },
 });

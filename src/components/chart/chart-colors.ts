@@ -49,7 +49,7 @@ export function useChartColors() {
 }
 
 function createColorCycle(colorNames: string[], colorLevels: string[]) {
-  const cycle = [];
+  const cycle: string[] = [];
 
   for(const level of colorLevels) {
     for(const name of colorNames) {

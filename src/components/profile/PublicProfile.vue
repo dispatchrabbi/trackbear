@@ -17,7 +17,7 @@ import UserAvatar from '../UserAvatar.vue';
 import SectionTitle from '../layout/SectionTitle.vue';
 import StatTile from '../goal/StatTile.vue';
 import DayCountHeatmap from '../stats/DayCountHeatmap.vue';
-import TargetLineChart, { Goalish } from '../goal/TargetLineChart.vue';
+import TargetLineChart from '../goal/TargetLineChart.vue';
 import ProfileHabitGauge from './ProfileHabitGauge.vue';
 
 </script>

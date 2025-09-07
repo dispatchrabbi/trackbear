@@ -9,7 +9,7 @@ import DangerConfirmationForm from './DangerConfirmationForm.vue';
 
 const props = withDefaults(defineProps<{
   /** The label for the danger button */
-  label?: string;
+  label?: string | null;
   size?: string;
   icon?: string;
   outlined?: boolean;
@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<{
   disabled?: boolean;
 
   /** The title of the pop-up dialog (defaults to the same as the button label) */
-  dialogTitle?: string;
+  dialogTitle?: string | null;
   /** A middle-of-a-sentence description of the dangerous action. */
   actionDescription: string;
   /** A short command description of the dangerous action (for a submit button). */
@@ -58,7 +58,7 @@ const handleDangerFormSuccess = function() {
 <template>
   <Button
     severity="danger"
-    :label="props.label"
+    :label="props.label ?? undefined"
     :icon="props.icon"
     :outlined="props.outlined"
     :rounded="props.rounded"

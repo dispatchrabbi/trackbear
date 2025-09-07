@@ -30,18 +30,20 @@ import Panel from 'primevue/panel';
 const deleteEventBus = useEventBus<{ leaderboard: Leaderboard }>('leaderboard:delete');
 const leaveEventBus = useEventBus<{ leaderboardUuid: string }>('leaderboard:leave');
 
-const leaderboard = ref<LeaderboardSummary>(null);
+const leaderboard = ref<LeaderboardSummary | null>(null);
 const isCurrentUserAnOwner = ref<boolean>(false);
 const isCurrentUserTheOnlyOwner = ref<boolean>(false);
 const loadLeaderboard = async function() {
   leaderboard.value = leaderboardStore.get(route.params.boardUuid.toString());
   if(leaderboard.value === null) {
     router.push({ name: 'leaderboards' });
+    return;
   }
 
-  const currentMember = leaderboard.value.members.find(member => member.userUuid === userStore.user.uuid);
+  const currentMember = leaderboard.value.members.find(member => member.userUuid === userStore.user!.uuid);
   if(!currentMember) {
     router.push({ name: 'leaderboards' });
+    return;
   }
   isCurrentUserAnOwner.value = currentMember.isOwner;
 
@@ -49,8 +51,13 @@ const loadLeaderboard = async function() {
   isCurrentUserTheOnlyOwner.value = currentMember.isOwner && owners.length === 1;
 };
 
-const myParticipation = ref<Participation>(null);
+const myParticipation = ref<Participation | null>(null);
 const loadMyParticipation = async function() {
+  if(leaderboard.value === null) {
+    myParticipation.value = null;
+    return;
+  }
+
   try {
     myParticipation.value = await getMyParticipation(leaderboard.value.uuid);
   } catch (err) {
@@ -75,13 +82,13 @@ async function reloadData() {
 }
 
 const handleDeleteLeaderboardSubmit = async function() {
-  const deletedLeaderboard = await deleteLeaderboard(leaderboard.value.uuid);
+  const deletedLeaderboard = await deleteLeaderboard(leaderboard.value!.uuid);
   deleteEventBus.emit({ leaderboard: deletedLeaderboard });
 };
 
 const handleLeaveLeaderboardSubmit = async function() {
-  await leaveLeaderboard(leaderboard.value.uuid);
-  leaveEventBus.emit({ leaderboardUuid: leaderboard.value.uuid });
+  await leaveLeaderboard(leaderboard.value!.uuid);
+  leaveEventBus.emit({ leaderboardUuid: leaderboard.value!.uuid });
 };
 
 const breadcrumbs = computed(() => {
@@ -159,6 +166,7 @@ watch(() => route.params.boardUuid, newUuid => {
           <div class="flex flex-col gap-4 max-w-screen-md">
             <Panel header="What to Include">
               <EditLeaderboardParticipationForm
+                v-if="myParticipation"
                 :leaderboard="leaderboard"
                 :participation="myParticipation"
                 @form-success="router.push({ name: 'leaderboard', params: { boardUuid: route.params.boardUuid }})"

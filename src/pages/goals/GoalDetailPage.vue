@@ -67,6 +67,13 @@ const tallies = ref<TallyWithWorkAndTags[]>([]);
 const isTalliesLoading = ref<boolean>(false);
 const talliesErrorMessage = ref<string | null>(null);
 const loadTallies = async function() {
+  if(goal.value === null) {
+    tallies.value = [];
+    isTalliesLoading.value = false;
+    talliesErrorMessage.value = null;
+    return;
+  }
+
   isTalliesLoading.value = true;
   talliesErrorMessage.value = null;
 
@@ -172,13 +179,13 @@ onMounted(async () => {
             <HabitStats
               :goal="goal as HabitGoal"
               :tallies="tallies"
-              :week-starts-on="userStore.user.userSettings.weekStartDay"
+              :week-starts-on="userStore.user!.userSettings.weekStartDay"
             />
           </div>
           <HabitHistory
             :goal="goal as HabitGoal"
             :tallies="tallies"
-            :week-starts-on="userStore.user.userSettings.weekStartDay"
+            :week-starts-on="userStore.user!.userSettings.weekStartDay"
           />
         </div>
       </div>

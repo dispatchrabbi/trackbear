@@ -4,7 +4,7 @@ import { parseDateString, formatDate, Dated } from './date.ts';
 export function findStreaks(tallies: Dated[]): string[][] {
   const tallyDates = [...(new Set(tallies.map(tally => tally.date)))].sort();
 
-  const streaks = [];
+  const streaks: string[][] = [];
   for(let i = 0; i < tallyDates.length; ++i) {
     const thisTallyDate = tallyDates[i];
 

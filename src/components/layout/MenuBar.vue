@@ -41,8 +41,8 @@ function matchesCurrentRoute(to?: RouteLocationRaw, href?: string) {
           'rounded-md py-1 px-2 my-0.5 transition-shadow duration-200',
           'font-light',
           'hover:text-primary-600 dark:hover:text-primary-300 hover:bg-surface-100 dark:hover:bg-surface-400/10',
-          { 'text-surface-700 dark:text-surface-0': !matchesCurrentRoute(item.to as RouteLocationRaw, item.href) },
-          { 'bg-primary-100 dark:bg-primary-900 text-surface-950 dark:text-surface-50': matchesCurrentRoute(item.to as RouteLocationRaw, item.href) },
+          { 'text-surface-700 dark:text-surface-0': !matchesCurrentRoute(item.to ?? undefined, item.href ?? undefined) },
+          { 'bg-primary-100 dark:bg-primary-900 text-surface-950 dark:text-surface-50': matchesCurrentRoute(item.to ?? undefined, item.href ?? undefined) },
           { 'first:mt-0 mt-4': item.header },
           { 'ps-3': !item.header },
         ]"

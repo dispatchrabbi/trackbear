@@ -4,13 +4,13 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 const route = useRoute();
 
-import { getProfile } from 'src/lib/api/profile.ts';
+import { getProfile, type PublicProfile as TPublicProfile } from 'src/lib/api/profile.ts';
 
 import PorchLayout from 'src/layouts/PorchLayout.vue';
 import PublicProfile from 'src/components/profile/PublicProfile.vue';
 import TextBlurb from 'src/components/layout/TextBlurb.vue';
 
-const profile = ref(null);
+const profile = ref<TPublicProfile | null>(null);
 const profilePopulated = ref(false);
 const populateProfile = async function() {
   const username = (route.params.username as string).replace('@', '');

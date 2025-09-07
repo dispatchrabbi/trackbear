@@ -13,6 +13,7 @@ import { censorApiKey, generateApiToken } from '../../api-key.ts';
 import CONFIG from 'server/config.ts';
 
 import { traced } from '../../metrics/tracer.ts';
+import { supplyDefaults } from '../helpers.ts';
 
 export type { ApiKey };
 
@@ -52,9 +53,9 @@ export class ApiKeyModel {
   @traced
   static async createApiKey(owner: User, data: CreateApiKeyData, reqCtx: RequestContext): Promise<ApiKey> {
     const now = new Date();
-    const dataWithDefaults = Object.assign({
+    const dataWithDefaults = supplyDefaults(data, {
       expiresAt: addDays(now, CONFIG.DEFAULT_API_KEY_EXPIRATION_IN_DAYS),
-    }, data);
+    });
 
     const token = await generateApiToken();
     const created = await dbClient.apiKey.create({

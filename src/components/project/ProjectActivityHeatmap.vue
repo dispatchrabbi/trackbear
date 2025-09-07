@@ -12,6 +12,7 @@ import { cmpTallies, compileTallies, formatCount } from 'src/lib/tally.ts';
 import PlotCalendarHeatMap, { type CalendarHeatMapDataPoint } from '../chart/PlotCalendarHeatMap.vue';
 
 import Card from 'primevue/card';
+import { MeasureCounts } from 'server/lib/models/tally/types';
 
 const props = withDefaults(defineProps<{
   project: Project;
@@ -39,7 +40,7 @@ const data = computed(() => {
   const compiledTallies = compileTallies(
     sortedTallies,
     sortedTallies[0].date, // we don't care about limiting the startDate — let the heatmap show as much data as it can
-    INACTIVE_WORK_PHASES.includes(props.project.phase) ? sortedTallies.at(-1).date : formatDate(today), // for inactive projects, don't show past the last tally
+    INACTIVE_WORK_PHASES.includes(props.project.phase) ? sortedTallies.at(-1)!.date : formatDate(today), // for inactive projects, don't show past the last tally
   );
 
   const compiledData = compiledTallies.map(compiledTally => ({
@@ -60,12 +61,12 @@ const maxima = computed(() => {
   }, {});
 });
 
-const normalizerFn = function(datum: CalendarHeatMapDataPoint/* , data: CalendarHeatMapDataPoint[] */) {
+const normalizerFn = function(datum: CalendarHeatMapDataPoint<MeasureCounts>/* , data: CalendarHeatMapDataPoint[] */) {
   return Math.max(...Object.keys(datum.value).map(measure => (
     (maxima.value[measure] === 0 || datum.value[measure] === 0) ? 0 : (Math.abs(datum.value[measure]) / maxima.value[measure])
   )));
 };
-const valueFormatFn = function(datum: CalendarHeatMapDataPoint) {
+const valueFormatFn = function(datum: CalendarHeatMapDataPoint<MeasureCounts>) {
   return Object.keys(datum.value).filter(measure => datum.value[measure] !== 0).map(measure => formatCount(datum.value[measure], measure)).join('\n');
 };
 

@@ -16,11 +16,11 @@ const props = defineProps<TagInfoProps & {
 }>();
 
 const name = computed(() => {
-  return props.name || props.tag.name;
+  return props.name ?? props.tag?.name ?? '';
 });
 
 const color = computed(() => {
-  const givenColor = props.color || props.tag.color;
+  const givenColor = props.color ?? props.tag?.color ?? '';
   return isTagColor(givenColor) ? givenColor : TAG_DEFAULT_COLOR;
 });
 </script>

@@ -21,7 +21,7 @@ import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 
 const makeDirectLink = function(leaderboard) {
-  return `${envStore.env.URL_PREFIX}/leaderboards/join?joinCode=${leaderboard.uuid}`;
+  return `${envStore.env!.URL_PREFIX}/leaderboards/join?joinCode=${leaderboard.uuid}`;
 };
 
 const handleCopyCodeClick = function() {

@@ -69,6 +69,13 @@ const tallies = ref<TallyWithWorkAndTags[]>([]);
 const isTalliesLoading = ref<boolean>(false);
 const talliesErrorMessage = ref<string | null>(null);
 const loadTallies = async function() {
+  if(project.value === null) {
+    tallies.value = [];
+    isTalliesLoading.value = false;
+    talliesErrorMessage.value = null;
+    return;
+  }
+
   isTalliesLoading.value = true;
   talliesErrorMessage.value = null;
 
@@ -122,7 +129,7 @@ onMounted(async () => {
         :subtitle="project.description"
       >
         <template
-          v-if="userStore.user.userSettings.displayCovers"
+          v-if="userStore.user!.userSettings.displayCovers"
           #image
         >
           <ProjectCover :project="project" />
@@ -150,7 +157,7 @@ onMounted(async () => {
           <ProjectActivityHeatmap
             :project="project"
             :tallies="tallies"
-            :week-starts-on="userStore.user.userSettings.weekStartDay"
+            :week-starts-on="userStore.user!.userSettings.weekStartDay"
           />
         </div>
         <div class="w-full">

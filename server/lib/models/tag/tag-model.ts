@@ -13,6 +13,7 @@ import { TAG_DEFAULT_COLOR, TAG_STATE, TagColor } from './consts';
 
 import { traced } from '../../metrics/tracer.ts';
 import { ValidationError } from '../errors.ts';
+import { supplyDefaults } from '../helpers.ts';
 
 export type { Tag };
 export type TagData = {
@@ -85,9 +86,9 @@ export class TagModel {
   static async createTag(owner: User, data: TagData, reqCtx: RequestContext): Promise<Tag> {
     data.name = await this.validateTagName(owner, data.name);
 
-    const dataWithDefaults = Object.assign({
+    const dataWithDefaults = supplyDefaults(data, {
       color: TAG_DEFAULT_COLOR,
-    }, data);
+    });
 
     const created = await dbClient.tag.create({
       data: {

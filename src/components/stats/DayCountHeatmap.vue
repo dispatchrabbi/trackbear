@@ -10,6 +10,7 @@ import PlotCalendarHeatMap, { CalendarHeatMapDataPoint } from 'src/components/ch
 import { formatCount } from 'src/lib/tally.ts';
 import { eachDayOfInterval } from 'date-fns';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
+import { MeasureCounts } from 'server/lib/models/tally/types';
 
 const props = withDefaults(defineProps<{
   dayCounts: Array<DayCount>;
@@ -37,7 +38,7 @@ const data = computed(() => {
 
   const days = eachDayOfInterval({
     start: parseDateString(sortedCounts[0].date),
-    end: parseDateString(sortedCounts.at(-1).date),
+    end: parseDateString(sortedCounts.at(-1)!.date),
   });
 
   const densifiedCounts = days.map(day => ({
@@ -58,12 +59,12 @@ const maxima = computed(() => {
   }, {});
 });
 
-const normalizerFn = function(datum: CalendarHeatMapDataPoint/* , data: CalendarHeatMapDataPoint[] */) {
+const normalizerFn = function(datum: CalendarHeatMapDataPoint<MeasureCounts>/* , data: CalendarHeatMapDataPoint[] */) {
   return Math.max(...Object.keys(datum.value).map(measure => (
     (maxima.value[measure] === 0 || datum.value[measure] === 0) ? 0 : (Math.abs(datum.value[measure]) / maxima.value[measure])
   )));
 };
-const valueFormatFn = function(datum: CalendarHeatMapDataPoint) {
+const valueFormatFn = function(datum: CalendarHeatMapDataPoint<MeasureCounts>) {
   return Object.keys(datum.value).filter(measure => datum.value[measure] !== 0).map(measure => formatCount(datum.value[measure], measure)).join('\n');
 };
 

@@ -1,6 +1,6 @@
 import { type Goal as PrismaGoal } from 'generated/prisma/client';
 import { type TallyMeasure } from '../tally/consts';
-import { type GoalCadenceUnit, GOAL_TYPE } from './consts';
+import { type GoalCadenceUnit, GOAL_TYPE, GoalType } from './consts';
 import { Expand } from 'server/lib/obj';
 
 export type GoalThreshold = {
@@ -27,7 +27,7 @@ export type HabitGoalParameters = {
 export type GoalParameters = TargetGoalParameters | HabitGoalParameters;
 
 export type Goal = Expand<Omit<PrismaGoal, 'type' | 'parameters'> & {
-  type: string;
+  type: GoalType;
   parameters: Record<string, never> | GoalParameters;
   workIds: number[]; // empty array = don't filter by project
   tagIds: number[]; // empty array = don't filter by tag

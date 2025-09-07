@@ -11,7 +11,7 @@ type EmptyObject = Record<string, never>;
 
 const ENDPOINT = '/api/admin/user';
 
-export async function getUsers(query: UserQuery = null) {
+export async function getUsers(query?: UserQuery) {
   return callApiV1<GetUsersResponsePayload>(ENDPOINT, 'GET', null, query);
 }
 

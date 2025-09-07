@@ -56,10 +56,10 @@ const overallStats = computed(() => {
     const lastTally = compiledTallies.value.at(-1);
     const lastTallyIsToday = lastTally?.date === today;
 
-    stats.totalCount = lastTally.total[measure.value];
-    stats.isComplete = lastTally.total[measure.value] >= thresholdCount.value;
+    stats.totalCount = lastTally!.total[measure.value];
+    stats.isComplete = lastTally!.total[measure.value] >= thresholdCount.value;
     stats.todayCount = lastTallyIsToday ? lastTally.count[measure.value] : 0;
-    stats.beforeTodayCount = lastTallyIsToday ? lastTally.total[measure.value] - lastTally.count[measure.value] : lastTally.total[measure.value];
+    stats.beforeTodayCount = lastTallyIsToday ? lastTally.total[measure.value] - lastTally.count[measure.value] : lastTally!.total[measure.value];
   }
 
   return stats;
@@ -234,7 +234,7 @@ const daysToHitGoal = computed(() => {
     return 0;
   }
 
-  const completingTally = compiledTallies.value.find(tally => tally.total[measure.value] >= thresholdCount.value);
+  const completingTally = compiledTallies.value.find(tally => tally.total[measure.value] >= thresholdCount.value)!;
   const completionDate = completingTally.date;
 
   const startDate = props.goal.startDate ?? compiledTallies.value[0].date;

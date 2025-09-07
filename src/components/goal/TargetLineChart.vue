@@ -13,6 +13,7 @@ const props = defineProps<{
 }>();
 
 const measure = computed(() => (props.goal.parameters as TargetGoalParameters).threshold.measure);
+const count = computed(() => (props.goal.parameters as TargetGoalParameters).threshold.count);
 
 const seriesTallies = computed<SeriesTallyish[]>(() => {
   return props.tallies.map(tally => ({
@@ -30,7 +31,7 @@ const seriesTallies = computed<SeriesTallyish[]>(() => {
     :measure-hint="measure"
     :start-date="goal.startDate"
     :end-date="goal.endDate"
-    :goal-count="goal.parameters.threshold.count"
+    :goal-count="count"
     :show-legend="false"
     :graph-title="props.goal.title"
   />

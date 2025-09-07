@@ -20,8 +20,8 @@ const zTallyQuery = z.object({
   works: z.array(z.coerce.number().int().positive()),
   tags: z.array(z.coerce.number().int().positive()),
   measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<TallyMeasure>),
-  startDate: zDateStr(),
-  endDate: zDateStr(),
+  startDate: zDateStr().nullable(),
+  endDate: zDateStr().nullable(),
 }).partial();
 
 export type TallyQuery = z.infer<typeof zTallyQuery>;

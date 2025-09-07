@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { getBanners } from 'src/lib/api/banner.ts';
 
 interface BannerState {
-  currentBanners: Banner[];
+  currentBanners: Banner[] | null;
   closedBannerUuids: string[];
 }
 

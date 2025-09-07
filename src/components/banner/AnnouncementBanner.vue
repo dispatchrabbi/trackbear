@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { computed, defineProps, defineEmits } from 'vue';
+import { computed } from 'vue';
 import markdownit from 'markdown-it';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   message: string;
   color?: string;
   icon?: string;
-}>();
+}>(), {
+  color: 'info',
+  icon: 'campaign',
+});
 
 import Message from 'primevue/message';
 import MIcon from '../MIcon.vue';

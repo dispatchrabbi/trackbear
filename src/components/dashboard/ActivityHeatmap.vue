@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 import type { Tally } from 'src/lib/api/tally.ts';
+import type { MeasureCounts } from 'server/lib/models/tally/types.ts';
 
 import { addYears } from 'date-fns';
 import { maxDate, formatDate, parseDateString } from 'src/lib/date.ts';
@@ -48,12 +49,12 @@ const maxima = computed(() => {
   }, {});
 });
 
-const normalizerFn = function(datum: CalendarHeatMapDataPoint/* , data: CalendarHeatMapDataPoint[] */) {
+const normalizerFn = function(datum: CalendarHeatMapDataPoint<MeasureCounts>/* , data: CalendarHeatMapDataPoint[] */) {
   return Math.max(...Object.keys(datum.value).map(measure => (
     (maxima.value[measure] === 0 || datum.value[measure] === 0) ? 0 : (Math.abs(datum.value[measure]) / maxima.value[measure])
   )));
 };
-const valueFormatFn = function(datum: CalendarHeatMapDataPoint) {
+const valueFormatFn = function(datum: CalendarHeatMapDataPoint<MeasureCounts>) {
   return Object.keys(datum.value).filter(measure => datum.value[measure] !== 0).map(measure => formatCount(datum.value[measure], measure)).join('\n');
 };
 

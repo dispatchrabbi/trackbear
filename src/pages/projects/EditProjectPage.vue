@@ -64,7 +64,7 @@ const handleRemoveCover = function(ev) {
     acceptClass: '!bg-danger-500 dark:!bg-danger-400 !border-danger-500 dark:!border-danger-400 !ring-danger-500 dark:!ring-danger-400 hover:!bg-danger-600 dark:hover:!bg-danger-300 hover:!border-danger-600 dark:hover:!border-danger-300 focus:!ring-danger-400/50 dark:!focus:ring-danger-300/50',
     rejectClass: '!text-surface-500 dark:!text-surface-400',
     accept: async () => {
-      const updatedProject = await deleteCover(project.value.id);
+      const updatedProject = await deleteCover(project.value!.id);
       eventBus.emit({ project: updatedProject });
 
       project.value = updatedProject;

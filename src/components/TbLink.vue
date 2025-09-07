@@ -3,9 +3,9 @@ import { defineProps, defineEmits } from 'vue';
 import { RouterLink, RouteLocationRaw } from 'vue-router';
 
 export type LinkDestination = {
-  to?: RouteLocationRaw;
-  href?: string;
-  target?: string;
+  to: RouteLocationRaw | null;
+  href?: string | null;
+  target?: string | null;
 };
 
 const props = defineProps<LinkDestination>();
@@ -23,7 +23,7 @@ const emit = defineEmits(['click']);
   <a
     v-if="props.href"
     :href="props.href"
-    :target="props.target"
+    :target="props.target ?? undefined"
     @click="emit('click')"
   >
     <slot />

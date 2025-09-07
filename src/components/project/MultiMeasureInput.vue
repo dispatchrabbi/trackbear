@@ -3,13 +3,14 @@ import { reactive, computed, defineModel, defineProps, onMounted, watch } from '
 
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
-const model = defineModel<Record<keyof typeof TALLY_MEASURE_INFO, number>>();
+const model = defineModel<MeasureCounts>();
 const props = defineProps<{
   invalid: boolean;
   addButtonText?: string;
 }>();
 
-const entries = reactive<{ measure: keyof typeof TALLY_MEASURE_INFO; count: number }[]>([]);
+// TODO: convert this to a ref and figure out the rest of it
+const entries = reactive<{ measure: TallyMeasure; count: number }[]>([]);
 watch(entries, newEntries => {
   const collatedEntries = {};
   for(const entry of newEntries) {
@@ -30,6 +31,8 @@ import Dropdown from 'primevue/dropdown';
 import TallyCountInput from 'src/components/tally/TallyCountInput.vue';
 import Button from 'primevue/button';
 import { PrimeIcons } from 'primevue/api';
+import { MeasureCounts } from 'server/lib/models/tally/types';
+import { TallyMeasure } from 'server/lib/models/tally/consts';
 
 const dropdownOptions = Object.keys(TALLY_MEASURE_INFO).map(measure => ({
   label: TALLY_MEASURE_INFO[measure].label.plural,
@@ -50,6 +53,8 @@ const handleRemoveStartingEntryClick = function(measure) {
 };
 
 onMounted(() => {
+  if(model.value === undefined) { return; }
+
   for(const measure of Object.keys(model.value)) {
     entries.push({ measure, count: model.value[measure] });
   }

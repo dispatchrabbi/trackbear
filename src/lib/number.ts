@@ -10,7 +10,7 @@ export function commaify(n: number): string {
   const isNegative = n < 0;
   const [intStr, decimalStr] = Math.abs(n).toString().split('.');
 
-  const commaizedArr = [];
+  const commaizedArr: string[] = [];
   for(let i = 0; i < intStr.length; ++i) {
     if(i % 3 === 0 && i !== 0) {
       commaizedArr.unshift(',');

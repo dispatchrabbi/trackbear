@@ -69,8 +69,8 @@ describe('chart-functions', () => {
 
       const actual = createChartSeries(tallies, {
         densify: true,
-        earliestData: tallies.at(0).date,
-        latestData: tallies.at(-1).date,
+        earliestData: tallies.at(0)!.date,
+        latestData: tallies.at(-1)!.date,
       });
 
       expect(actual).toStrictEqual(expected);
@@ -145,8 +145,8 @@ describe('chart-functions', () => {
         densify: true,
         startDate,
         endDate,
-        earliestData: tallies.at(0).date,
-        latestData: tallies.at(-1).date,
+        earliestData: tallies.at(0)!.date,
+        latestData: tallies.at(-1)!.date,
       });
 
       expect(actual).toStrictEqual(expected);
@@ -181,8 +181,8 @@ describe('chart-functions', () => {
         extend: true,
         startDate,
         endDate,
-        earliestData: tallies.at(0).date,
-        latestData: tallies.at(-1).date,
+        earliestData: tallies.at(0)!.date,
+        latestData: tallies.at(-1)!.date,
       });
 
       expect(actual).toStrictEqual(expected);
@@ -506,7 +506,7 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: 200 },
       ];
 
-      const actual = getChartDomain(data, [], 0);
+      const actual = getChartDomain(data, null, 0);
 
       expect(actual).toEqual(expected);
     });
@@ -521,7 +521,7 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: 200 },
       ];
 
-      const actual = getChartDomain(data, [], 0, true);
+      const actual = getChartDomain(data, null, 0, true);
 
       expect(actual).toEqual(expected);
     });
@@ -534,7 +534,7 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: -200 },
       ];
 
-      const actual = getChartDomain(data, [], 0);
+      const actual = getChartDomain(data, null, 0);
 
       expect(actual).toEqual(expected);
     });
@@ -549,7 +549,7 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: -200 },
       ];
 
-      const actual = getChartDomain(data, [], 0, true);
+      const actual = getChartDomain(data, null, 0, true);
 
       expect(actual).toEqual(expected);
     });
@@ -564,7 +564,7 @@ describe('chart-functions', () => {
         { date: '2024-11-04', value: -400 },
       ];
 
-      const actual = getChartDomain(data, [], 0);
+      const actual = getChartDomain(data, null, 0);
 
       expect(actual).toEqual(expected);
     });
@@ -579,7 +579,7 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: -200 },
       ];
 
-      const actual = getChartDomain(data, [], 0, true);
+      const actual = getChartDomain(data, null, 0, true);
 
       expect(actual).toEqual(expected);
     });
@@ -592,7 +592,7 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: 200 },
       ];
 
-      const actual = getChartDomain(data, [], 500);
+      const actual = getChartDomain(data, null, 500);
 
       expect(actual).toEqual(expected);
     });
@@ -605,7 +605,7 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: -200 },
       ];
 
-      const actual = getChartDomain(data, [], 500);
+      const actual = getChartDomain(data, null, 500);
 
       expect(actual).toEqual(expected);
     });

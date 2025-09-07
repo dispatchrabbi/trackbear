@@ -22,10 +22,10 @@ export type SeriesTallyish = Tallyish & {
 const props = withDefaults(defineProps<{
   tallies: SeriesTallyish[];
   measureHint: TallyMeasure;
-  startDate?: string;
-  endDate?: string;
+  startDate?: string | null;
+  endDate?: string | null;
   startingTotal?: number;
-  goalCount?: number;
+  goalCount?: number | null;
   showLegend?: boolean;
   graphTitle?: string;
 }>(), {
@@ -67,7 +67,8 @@ const chartIntervals = computed(() => {
 });
 
 const allSeries = computed(() => {
-  const dataPoints = Object.entries(Object.groupBy(props.tallies, tally => tally.series))
+  const groupedBySeries = Object.groupBy(props.tallies, tally => tally.series) as Record<string, SeriesTallyish[]>;
+  const dataPoints = Object.entries(groupedBySeries)
     .flatMap(([seriesName, seriesTallies]) => createChartSeries(seriesTallies, {
       accumulate: chartTypeSettings[selectedChartType.value].accumulate,
       densify: chartTypeSettings[selectedChartType.value].densify,
@@ -107,9 +108,11 @@ function handleClickFullscreen() {
 const progressChartRef = useTemplateRef('progress-chart');
 const chartColors = useChartColors();
 function handleClickSave() {
-  const svgEl = progressChartRef.value.querySelector('svg[class^="plot-"]') as SVGSVGElement;
-  const filename = `${filenameify(props.graphTitle)}-${formatDate(new Date())}.png`;
-  saveSvgAsPng(svgEl, filename, chartColors.value.background);
+  if(progressChartRef.value) {
+    const svgEl = progressChartRef.value.querySelector('svg[class^="plot-"]') as SVGSVGElement;
+    const filename = `${filenameify(props.graphTitle)}-${formatDate(new Date())}.png`;
+    saveSvgAsPng(svgEl, filename, chartColors.value.background);
+  }
 }
 
 </script>

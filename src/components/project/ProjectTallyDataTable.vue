@@ -3,6 +3,7 @@ import { ref, computed, defineProps } from 'vue';
 
 import type { Project } from 'src/lib/api/project';
 import type { TallyWithTags } from 'src/lib/api/tally.ts';
+import type { Tag } from 'src/lib/api/tag.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { formatCount } from 'src/lib/tally.ts';
 
@@ -30,12 +31,21 @@ const sortedTallies = computed(() => props.tallies.toSorted((a, b) => {
       a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0;
 }));
 
+type ChartRow = {
+  tally: TallyWithTags | null;
+  date: string | null;
+  progress: string | null;
+  total: string;
+  tags: Tag[];
+  note: string;
+};
 const chartRows = computed(() => {
   const totals = Object.values(TALLY_MEASURE).reduce((obj, measure: string) => {
     obj[measure] = props.project.startingBalance[measure] || 0;
     return obj;
   }, {});
-  const rows = Object.keys(props.project.startingBalance)
+
+  const rows: ChartRow[] = Object.keys(props.project.startingBalance)
     .filter(measure => props.project.startingBalance[measure] !== null)
     .map(measure => ({
       tally: null,
@@ -62,13 +72,15 @@ const chartRows = computed(() => {
   return rows.toReversed();
 });
 
-const currentlyEditingTally = ref<TallyWithTags>(null);
+const currentlyEditingTally = ref<TallyWithTags | null>(null);
+// why not just use `currentlyEditingTally !== null`? because the <Dialog model:visible> attr requires a LHS-legal expression
 const isEditFormVisible = computed({
   get: () => currentlyEditingTally.value !== null,
   set: () => currentlyEditingTally.value = null, // nothing sensible to set it to unless it's null
 });
 
-const currentlyDeletingTally = ref<TallyWithTags>(null);
+const currentlyDeletingTally = ref<TallyWithTags | null>(null);
+// why not just use `currentlyDeletingTally !== null`? because the <Dialog model:visible> attr requires a LHS-legal expression
 const isDeleteFormVisible = computed({
   get: () => currentlyDeletingTally.value !== null,
   set: () => currentlyDeletingTally.value = null, // nothing sensible to set it to unless it's null
@@ -156,7 +168,7 @@ const isDeleteFormVisible = computed({
       </h2>
     </template>
     <EditTallyForm
-      :tally="currentlyEditingTally"
+      :tally="currentlyEditingTally!"
       @form-success="currentlyEditingTally = null"
     />
   </Dialog>
@@ -171,7 +183,7 @@ const isDeleteFormVisible = computed({
       </h2>
     </template>
     <DeleteTallyForm
-      :tally="currentlyDeletingTally"
+      :tally="currentlyDeletingTally!"
       @form-success="currentlyDeletingTally = null"
     />
   </Dialog>
