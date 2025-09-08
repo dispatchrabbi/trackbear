@@ -955,7 +955,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Projects.ProjectWithTallies"
+                  "$ref": "#/components/schemas/Projects.Project"
                 }
               }
             }
@@ -996,7 +996,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Projects.ProjectWithTallies"
+                  "$ref": "#/components/schemas/Projects.Project"
                 }
               }
             }
@@ -1025,7 +1025,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Projects.ProjectWithTallies"
+                  "$ref": "#/components/schemas/Projects.Project"
                 }
               }
             }
@@ -1064,7 +1064,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Projects.ProjectWithTallies"
+                  "$ref": "#/components/schemas/Projects.Project"
                 }
               }
             }
