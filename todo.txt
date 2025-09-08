@@ -30,7 +30,6 @@ x (A) Allow users to specify Sunday or Monday as the first day of the week (h/t 
 (B) Definitely need to figure out themed chart colors somehow dif:2 @charts @ui +themes
 (B) Actually make several themes dif:5 @ui +themes
 (B) Update zod +update
-(B) Implement strictNullChecks in the TypeScript config dif:3 @backend +techdebt
 (B) Improve audit event retrieval/listings dif:2 @admin +adminconsole
 (B) Let admins manage projects dif:5 @admin +adminconsole
 (B) Let admins manage goals dif:3 @admin +adminconsole

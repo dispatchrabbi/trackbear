@@ -83,7 +83,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/projects/import', name: 'import-projects', component: ImportProjectsPage },
   { path: '/projects/import/manual-nano', name: 'import-projects-nano-manual', component: ImportNanoManuallyPage },
   { path: '/projects/:projectId(\\d+)', name: 'project', component: ProjectDetailPage },
-  { path: '/projects/:projectId(\\d+)/edit', name: 'edit-projects', component: EditProjectPage },
+  { path: '/projects/:projectId(\\d+)/edit', name: 'edit-project', component: EditProjectPage },
 
   // Goals
   { path: '/goals', name: 'goals', component: GoalsListPage },
