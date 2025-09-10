@@ -1,14 +1,14 @@
 (A) Create a generic importer (h/t Trax) dif:5 @backend @frontend +import
-x (A) Allow users to specify Sunday or Monday as the first day of the week (h/t Hester van Bork) @settings +localization +delight
-(A) Add an error message to API token validation when the Authorization header doesn't start with 'Bearer' (h/t Mia) dif:1 @api +delight
-(A) Too many projects when making a goal scroll off the edge of the screen (h/t DarkJediQueen) dif:1 @goals +bugs
-(A) Make the tally table more mobile-friendly (h/t lailah) dif:2 @projects +delight
-(A) Redo the upload UI so it's more intuitive dif:2 @projects @settings +delight
-(A) Ensure that projects (etc.) on public profile have a consistent order (last updated?) (h/t K. A. J. Klok) dif:2 @profile +delight
 (A) Group participants into teams and compare team totals (h/t Asha) dif:5 @boards +boardsv2
 (A) Allow participants to pick their own chart color (if they are not on teams) dif:2 @boards +boardsv2
 (A) Separate join code from UUID and allow rolling the code dif:3 @boards +boardsv2
 (A) Allow viewing leaderboards without logging in dif:3 @boards
+x (A) Allow users to specify Sunday or Monday as the first day of the week (h/t Hester van Bork) @settings +localization +delight
+(B) Add an error message to API token validation when the Authorization header doesn't start with 'Bearer' (h/t Mia) dif:1 @api +delight
+(A) Too many projects when making a goal scroll off the edge of the screen (h/t DarkJediQueen) dif:1 @goals +bugs
+(A) Make the tally table more mobile-friendly (h/t lailah) dif:2 @projects +delight
+(A) Redo the upload UI so it's more intuitive dif:2 @projects @settings +delight
+(A) Ensure that projects (etc.) on public profile have a consistent order (last updated?) (h/t K. A. J. Klok) dif:2 @profile +delight
 (A) Leaderboard embed (h/t Jenai) dif:1 @public +embeds
 (A) Project progress embed (h/t Laura) dif:3 @public +embeds
 (A) Implement a following system dif:5 @followers +followers
@@ -90,3 +90,5 @@ Allow users to configure Dashboard more (h/t K. A. J. Klok) @dashboard @settings
 Break down overall stat project graphs by project, or show "a leaderboard against myself" (h/t Katy F) stage:needs-refinement @stats
 Allow habit goals to designate specific days of the week (h/t Aminta) stage:considering @goals
 Allow tallies to be marked as "catch-up" (catching up the number after several days of not tracking) (h/t Gwen) stage:considering @tallies
+(B) Link to or show associated goals and leaderboards next to projects @projects
+(B) Display what projects and tags are being considered in a goal or leaderboard @goals @leaderboards
