@@ -1,6 +1,6 @@
 import { vi, describe, expect, it, beforeEach, afterEach } from 'vitest';
 
-import { createChartSeries, createParSeries, determineChartStartDate, determineChartEndDate, getChartDomain } from './chart-functions';
+import { createChartSeries, createParSeries, determineChartStartDate, determineChartEndDate, determineChartDomain } from './chart-functions';
 
 describe('chart-functions', () => {
   describe(createChartSeries, () => {
@@ -497,7 +497,7 @@ describe('chart-functions', () => {
     });
   });
 
-  describe(getChartDomain, () => {
+  describe(determineChartDomain, () => {
     it('reports the domain with all positive values', () => {
       const expected = [0, 200];
 
@@ -506,7 +506,7 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: 200 },
       ];
 
-      const actual = getChartDomain(data, null, 0);
+      const actual = determineChartDomain(data, null, 0);
 
       expect(actual).toEqual(expected);
     });
@@ -521,7 +521,7 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: 200 },
       ];
 
-      const actual = getChartDomain(data, null, 0, true);
+      const actual = determineChartDomain(data, null, 0, true);
 
       expect(actual).toEqual(expected);
     });
@@ -534,7 +534,7 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: -200 },
       ];
 
-      const actual = getChartDomain(data, null, 0);
+      const actual = determineChartDomain(data, null, 0);
 
       expect(actual).toEqual(expected);
     });
@@ -549,7 +549,7 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: -200 },
       ];
 
-      const actual = getChartDomain(data, null, 0, true);
+      const actual = determineChartDomain(data, null, 0, true);
 
       expect(actual).toEqual(expected);
     });
@@ -564,7 +564,7 @@ describe('chart-functions', () => {
         { date: '2024-11-04', value: -400 },
       ];
 
-      const actual = getChartDomain(data, null, 0);
+      const actual = determineChartDomain(data, null, 0);
 
       expect(actual).toEqual(expected);
     });
@@ -579,12 +579,12 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: -200 },
       ];
 
-      const actual = getChartDomain(data, null, 0, true);
+      const actual = determineChartDomain(data, null, 0, true);
 
       expect(actual).toEqual(expected);
     });
 
-    it('it overrides the max with the suggested value', () => {
+    it('overrides the max with the suggested value', () => {
       const expected = [0, 500];
 
       const data = [
@@ -592,12 +592,12 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: 200 },
       ];
 
-      const actual = getChartDomain(data, null, 500);
+      const actual = determineChartDomain(data, null, 500);
 
       expect(actual).toEqual(expected);
     });
 
-    it('it overrides the min with the negative of the suggested value', () => {
+    it('overrides the min with the negative of the suggested value', () => {
       const expected = [-500, 0];
 
       const data = [
@@ -605,7 +605,7 @@ describe('chart-functions', () => {
         { date: '2024-11-02', value: -200 },
       ];
 
-      const actual = getChartDomain(data, null, 500);
+      const actual = determineChartDomain(data, null, 500);
 
       expect(actual).toEqual(expected);
     });

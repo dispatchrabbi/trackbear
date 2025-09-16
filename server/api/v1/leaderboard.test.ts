@@ -766,6 +766,7 @@ describe('leaderboard api v1', () => {
         isOwner: false,
         goal: null,
         displayName: 'just a member',
+        color: 'lime',
         avatar: 'some-avatar.png',
       };
 
@@ -776,6 +777,7 @@ describe('leaderboard api v1', () => {
         isParticipant: true,
         isOwner: false,
         displayName: 'just a member',
+        color: 'lime',
         avatar: 'some-avatar.png',
       };
 

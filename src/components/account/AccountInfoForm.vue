@@ -93,7 +93,7 @@ async function handleSubmit() {
     </FieldWrapper>
     <FieldWrapper
       for="account-info-form-displayName"
-      label="Display NAme"
+      label="Display Name"
       required
       :rule="ruleFor('displayName')"
       help="This name is used in group settings, such as on a leaderboard."

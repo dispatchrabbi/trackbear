@@ -1,11 +1,11 @@
-# TODO-BOARd
+# TODO-BOARD
 
 ## db
 - [ ] Rename BoardParticipant to BoardMember
 
 ## user superpowrs
-- [ ] Allow members to set their own colors
-- [ ] Allow members to set a per-leaderboard display name
+- [x] Allow members to set their own colors
+- [x] Allow members to set a per-leaderboard display name
 
 ## public leaderboards
 - [ ] Reset `isPublic` to false for all leaderboards

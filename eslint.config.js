@@ -33,6 +33,8 @@ export default ts_eslint.config(
     'generated/',
     'coverage/',
     'src/themes/primevue-presets/',
+    'help-docs/.vitepress/cache/',
+    'help-docs/.vitepress/dist/',
   ])]),
   eslint.configs.recommended,
   ts_eslint.configs.recommended,

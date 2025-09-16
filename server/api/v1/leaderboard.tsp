@@ -139,17 +139,20 @@ namespace Leaderboards {
   model UpdateLeaderboardPayload is Update<Leaderboard>;
 
   model Participant {
-    ...PickProperties<Member, "id" | "uuid" | "goal" | "avatar" | "displayName">;
+    ...PickProperties<Member, "id" | "uuid" | "goal" | "avatar" | "displayName" | "color">;
     tallies: LeaderboardTally[];
   }
 
   model Participation
-    is PickProperties<Member, "id" | "goal" | "isParticipant" | "workIds" | "tagIds">;
+    is PickProperties<
+      Member,
+      "id" | "goal" | "isParticipant" | "displayName" | "color" | "workIds" | "tagIds"
+    >;
 
   model Membership
     is PickProperties<
       Member,
-      "id" | "uuid" | "state" | "avatar" | "displayName" | "isOwner" | "isParticipant"
+      "id" | "uuid" | "state" | "avatar" | "displayName" | "color" | "isOwner" | "isParticipant"
     >;
 
   model LeaderboardTally is PickProperties<Tallies.Tally, "uuid" | "date" | "measure" | "count">;
@@ -161,6 +164,7 @@ namespace Leaderboards {
     state: LeaderboardParticipantState;
     displayName: string;
     avatar: string | null;
+    color: string | null;
     isParticipant: boolean;
     isOwner: boolean;
     goal: ParticipantGoal | null;

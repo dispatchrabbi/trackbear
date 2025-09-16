@@ -11,10 +11,12 @@ export type UserWithAvatar = {
 };
 const props = withDefaults(defineProps<{
   user: UserWithAvatar;
+  displayName?: string | null;
   size?: 'normal' | 'large' | 'xlarge';
   icon?: string | null;
   iconClass?: 'primary' | 'accent';
 }>(), {
+  displayName: null,
   size: 'normal',
   icon: null,
   iconClass: 'primary',
@@ -30,7 +32,7 @@ const props = withDefaults(defineProps<{
       shape="circle"
       :pt="{ image: { class: [ 'object-cover' ] } }"
       :pt-options="{ mergeSections: true, mergeProps: true }"
-      :title="props.user.displayName"
+      :title="props.displayName || props.user.displayName"
     />
     <div
       v-if="props.icon"

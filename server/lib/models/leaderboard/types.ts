@@ -9,8 +9,7 @@ export type Leaderboard = Expand<Omit<PrismaBoard, 'goal' | 'measures'> & {
 }>;
 export type LeaderboardGoal = MeasureCounts;
 
-// Eventually, displayName will be in the BoardParticipant table and can move over from the User type
-// and we'll also have stuff like 'team' and 'color'
+// Coming soon: 'team'
 export type LeaderboardMember = Expand<
   Omit<PrismaBoardParticipant, 'goal'>
   & {
@@ -18,7 +17,7 @@ export type LeaderboardMember = Expand<
     workIds: number[];
     tagIds: number[];
   }
-  & Pick<User, 'displayName' | 'avatar'>
+  & Pick<User, 'avatar'>
 >;
 export type ParticipantGoal = null | {
   measure: TallyMeasure;
@@ -35,13 +34,13 @@ export type MemberBio = Pick<LeaderboardMember, 'id' | 'isParticipant' | 'isOwne
 };
 
 export type Participant = Expand<
-  Pick<LeaderboardMember, 'id' | 'uuid' | 'goal' | 'avatar' | 'displayName'>
+  Pick<LeaderboardMember, 'id' | 'uuid' | 'goal' | 'avatar' | 'displayName' | 'color'>
   & {
     tallies: LeaderboardTally[];
   }
 >;
 export type LeaderboardTally = Pick<Tally, 'uuid' | 'date' | 'measure' | 'count'>;
 
-export type Participation = Expand<Pick<LeaderboardMember, 'id' | 'goal' | 'isParticipant' | 'workIds' | 'tagIds'>>;
+export type Participation = Expand<Pick<LeaderboardMember, 'id' | 'goal' | 'isParticipant' | 'displayName' | 'color' | 'workIds' | 'tagIds'>>;
 
-export type Membership = Pick<LeaderboardMember, 'id' | 'uuid' | 'state' | 'avatar' | 'displayName' | 'isOwner' | 'isParticipant'>;
+export type Membership = Pick<LeaderboardMember, 'id' | 'uuid' | 'state' | 'avatar' | 'displayName' | 'color' | 'isOwner' | 'isParticipant'>;

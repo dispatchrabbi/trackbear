@@ -5,6 +5,8 @@ import { PROJECT_PHASE } from 'server/lib/models/project/consts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 import { GOAL_CADENCE_UNIT } from 'server/lib/models/goal/consts.ts';
 
+import { USER_COLOR_NAMES } from 'src/components/chart/user-colors.ts';
+
 const zTallyMeasure = () => z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>);
 const zMeasureCounts = () => z.record(zTallyMeasure(), z.number().int());
 
@@ -14,6 +16,7 @@ const zNullableDate = () => zDate().nullable();
 const zProjectList = () => zKey().array();
 // TODO: implement tags
 const zTagList = () => zKey().array();
+const zName = () => z.string().min(3).max(24);
 
 const projectSchema = z.object({
   title: z.string().min(1),
@@ -24,7 +27,7 @@ const projectSchema = z.object({
 export type ProjectSchema = z.infer<typeof projectSchema>;
 
 const tallySchema = z.object({
-  project: z.string(),
+  project: zKey(),
   start: zDate(),
   end: zDate(),
   // chance that a tally is recorded on any given day
@@ -94,31 +97,37 @@ const zParticipation = () => z.object({
   measure: zTallyMeasure().optional(),
   // required for individual goal mode
   count: z.number().int().optional(),
+  // you can specify a color if you want
+  color: z.enum(USER_COLOR_NAMES as NonEmptyArray<string>).optional(),
 }).nullable();
 
+const joinLeaderboardCommon = () => ({
+  member: zKey(),
+  // if not included, displayName will default to the user's displayName
+  displayName: zName().optional(),
+  participation: zParticipation(),
+});
 const joinLeaderboardSchema = z.union([
   // pass a uuid for an existing board
   z.object({
     uuid: z.string().uuid(),
-    member: zKey(),
-    participation: zParticipation(),
+    ...joinLeaderboardCommon(),
   }),
-  // pass the appropriate key for a leaderboard created as part of this config
+  // pass the appropriate key and its owner's key for a leaderboard created as part of this config
   z.object({
     owner: zKey(),
     key: zKey(),
-    member: zKey(),
-    participation: zParticipation(),
+    ...joinLeaderboardCommon(),
   }),
 ]);
 export type JoinLeaderboardSchema = z.infer<typeof joinLeaderboardSchema>;
 
 const userSchema = z.object({
-  username: z.string().min(3),
+  username: zName(),
   // if not included, displayName will default to the username
-  displayName: z.string().min(3).optional(),
+  displayName: zName().optional(),
   // if not included, password will default to the username
-  password: z.string().min(3).optional(),
+  password: zName().optional(),
   email: z.string().email(),
 });
 export type UserSchema = z.infer<typeof userSchema>;

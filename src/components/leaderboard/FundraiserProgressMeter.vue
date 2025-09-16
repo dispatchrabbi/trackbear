@@ -7,6 +7,7 @@ import type { Leaderboard, Participant } from 'src/lib/api/leaderboard';
 import { TallyMeasure } from 'server/lib/models/tally/consts';
 
 import MeterGroup, { MeterItem } from 'primevue/metergroup';
+import { mapSeriesToColor, SeriesInfoMap } from '../chart/chart-functions';
 
 const props = defineProps<{
   leaderboard: Leaderboard;
@@ -34,11 +35,22 @@ const contributions = computed(() => {
 const chartColors = useChartColors();
 
 const meterValue = computed(() => {
+  const seriesInfo: SeriesInfoMap = Object.fromEntries(contributions.value.map(contribution => ([
+    contribution.participant.uuid,
+    {
+      uuid: contribution.participant.uuid,
+      name: contribution.participant.displayName,
+      color: contribution.participant.color,
+    },
+  ])));
+  const seriesOrder = contributions.value.map(contribution => contribution.participant.uuid);
+  const colorOrder = mapSeriesToColor(seriesInfo, seriesOrder, chartColors.value);
+
   const value = contributions.value.map((total, ix) => {
     return {
       label: total.participant.displayName,
       value: total.total,
-      color: chartColors.value.data[ix % chartColors.value.data.length],
+      color: colorOrder[ix],
     } as MeterItem;
   });
 

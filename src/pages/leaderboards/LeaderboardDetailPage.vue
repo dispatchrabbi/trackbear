@@ -207,6 +207,7 @@ watch(() => route.params.boardUuid, newUuid => {
                 v-for="participant of participantMembers"
                 :key="participant.id"
                 :user="participant"
+                :display-name="participant.displayName"
               />
             </div>
           </div>

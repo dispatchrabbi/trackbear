@@ -9,9 +9,10 @@ import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import ProgressChart, { SeriesTallyish } from '../chart/ProgressChart.vue';
+import { SeriesInfoMap } from '../chart/chart-functions';
 
 const props = defineProps<{
-  peoject: Project;
+  project: Project;
   tallies: Array<TallyWithTags>;
 }>();
 
@@ -35,12 +36,22 @@ const seriesTallies = computed<SeriesTallyish[]>(() => {
   return filteredTallies.value.map(tally => ({
     date: tally.date,
     count: tally.count,
-    series: props.peoject.title,
+    series: props.project.title,
   }));
 });
 
+const seriesInfoMap = computed<SeriesInfoMap>(() => {
+  return {
+    [props.project.title]: {
+      uuid: props.project.title,
+      name: props.project.title,
+      color: '',
+    },
+  };
+});
+
 const startingTotal = computed(() => {
-  return props.peoject.startingBalance[selectedMeasure.value] || 0;
+  return props.project.startingBalance[selectedMeasure.value] || 0;
 });
 
 </script>
@@ -57,9 +68,10 @@ const startingTotal = computed(() => {
       <ProgressChart
         :tallies="seriesTallies"
         :measure-hint="measure"
+        :series-info="seriesInfoMap"
         :starting-total="startingTotal"
         :show-legend="false"
-        :graph-title="props.peoject.title"
+        :graph-title="props.project.title"
       />
     </TabPanel>
   </TabView>

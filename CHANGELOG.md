@@ -12,6 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: You can now set a display name for each leaderboard you're on. If you don't set one, your account's display name will be used.
+- NEW: You can now pick a color for your line on leaderboards.
+
 ## 1.3.9
 
 - CHANGED: (**BREAKING**) The `GET /project/:id` API route now only returns data about the project iteslef. You'll need to use `GET /tally` to get the tallies associated with that project. (This technically should require versioning the endpoint, but my logs show that no one is using it. Sorry if this breaks your code!)

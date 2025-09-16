@@ -213,7 +213,7 @@ export class UserModel {
     const userData = {
       state: USER_STATE.ACTIVE,
       username: username,
-      displayName: data.displayName ?? data.username,
+      displayName: data.displayName || data.username,
       email: data.email,
       isEmailVerified: data.isEmailVerified ?? false,
     };

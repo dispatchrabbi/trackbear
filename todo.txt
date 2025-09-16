@@ -1,6 +1,6 @@
 (A) Create a generic importer (h/t Trax) dif:5 @backend @frontend +import
 (A) Group participants into teams and compare team totals (h/t Asha) dif:5 @boards +boardsv2
-(A) Allow participants to pick their own chart color (if they are not on teams) dif:2 @boards +boardsv2
+x (A) Allow participants to pick their own chart color (if they are not on teams) dif:2 @boards +boardsv2
 (A) Separate join code from UUID and allow rolling the code dif:3 @boards +boardsv2
 (A) Allow viewing leaderboards without logging in dif:3 @boards
 x (A) Allow users to specify Sunday or Monday as the first day of the week (h/t Hester van Bork) @settings +localization +delight
@@ -92,3 +92,4 @@ Allow habit goals to designate specific days of the week (h/t Aminta) stage:cons
 Allow tallies to be marked as "catch-up" (catching up the number after several days of not tracking) (h/t Gwen) stage:considering @tallies
 (B) Link to or show associated goals and leaderboards next to projects @projects
 (B) Display what projects and tags are being considered in a goal or leaderboard @goals @leaderboards
+(B) Add a user setting to show yesterday's date in Progress Entry a few hours after midnight dif:2 @settings

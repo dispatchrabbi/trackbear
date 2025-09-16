@@ -3,7 +3,8 @@ import { useTheme } from 'src/lib/theme';
 import twColors from 'tailwindcss/colors.js';
 import themeColors from 'src/themes/primevue.ts';
 
-type ChartColors = {
+export type ChartColors = {
+  theme: 'light' | 'dark';
   text: string;
   secondaryText: string;
   background: string;
@@ -12,24 +13,26 @@ type ChartColors = {
 };
 
 const LIGHT_CHART_COLORS: ChartColors = {
+  theme: 'light',
   text: themeColors.surface[900],
   secondaryText: themeColors.surface[300],
   background: themeColors.surface[50],
   par: themeColors.primary[500],
   data: createColorCycle(
-    ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
-    ['400', '600', '800'],
+    ['red', 'orange', 'green', 'blue', 'purple', 'pink'],
+    ['500', '600', '400'],
   ),
 };
 
 const DARK_CHART_COLORS: ChartColors = {
+  theme: 'dark',
   text: themeColors.surface[50],
   secondaryText: themeColors.surface[600],
   background: themeColors.surface[800],
   par: themeColors.primary[300],
   data: createColorCycle(
-    ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
-    ['700', '500', '300'],
+    ['red', 'orange', 'green', 'blue', 'purple', 'pink'],
+    ['500', '400', '600'],
 
   ),
 };

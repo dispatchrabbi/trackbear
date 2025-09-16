@@ -1,4 +1,5 @@
 #!/usr/bin/env -S node --import tsx
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import dotenv from 'dotenv';
 import { initLoggers, getLogger } from '../../server/lib/logger.ts';

@@ -278,14 +278,18 @@ model Board {
   startDate String?
   endDate   String?
   goal      Json
+  
   individualGoalMode  Boolean @default(false)
-  fundraiserMode  Boolean @default(false)
+  fundraiserMode      Boolean @default(false)
 
   starred Boolean @default(false)
 
-  isJoinable   Boolean            @default(false)
-  isPublic     Boolean            @default(false)
+  isJoinable   Boolean @default(false)
+  isPublic     Boolean @default(false)
+  
   participants BoardParticipant[]
+
+  @@index([uuid])
 }
 
 model BoardParticipant {
@@ -301,9 +305,12 @@ model BoardParticipant {
   boardId Int
   board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
-  starred Boolean @default(false)
+  starred       Boolean @default(false)
   isParticipant Boolean @default(true)
-  isOwner Boolean @default(false)
+  isOwner       Boolean @default(false)
+
+  displayName String @default("")
+  color       String @default("")
 
   worksIncluded Work[]
   tagsIncluded  Tag[]

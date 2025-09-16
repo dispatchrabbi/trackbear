@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import type { Leaderboard, Participant } from 'src/lib/api/leaderboard';
 
 import FundraiserChart, { SeriesTallyish } from '../chart/FundraiserChart.vue';
+import { type SeriesInfoMap } from '../chart/chart-functions';
 import { TallyMeasure } from 'server/lib/models/tally/consts.ts';
 
 const props = defineProps<{
@@ -23,8 +24,21 @@ const seriesTallies = computed<SeriesTallyish[]>(() => {
   return filteredParticipants.value.flatMap(participant => participant.tallies.map(tally => ({
     date: tally.date,
     count: tally.count,
-    series: participant.displayName,
+    series: participant.uuid,
   })));
+});
+
+const seriesInfo = computed<SeriesInfoMap>(() => {
+  const entries = filteredParticipants.value.map(participant => ([
+    participant.uuid,
+    {
+      uuid: participant.uuid,
+      name: participant.displayName,
+      color: participant.color,
+    },
+  ]));
+
+  return Object.fromEntries(entries);
 });
 
 </script>
@@ -33,6 +47,7 @@ const seriesTallies = computed<SeriesTallyish[]>(() => {
   <FundraiserChart
     :tallies="seriesTallies"
     :measure-hint="measure"
+    :series-info="seriesInfo"
     :start-date="leaderboard.startDate"
     :end-date="leaderboard.endDate"
     :goal-count="leaderboard.goal[measure]"

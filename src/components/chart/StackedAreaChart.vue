@@ -4,43 +4,30 @@ import { useResizeObserver } from '@vueuse/core';
 import * as Plot from '@observablehq/plot';
 import { utcFormat } from 'd3-time-format';
 
+import type { SeriesDataPoint, BareDataPoint, TooltipDataPoint } from './types';
 import { useChartColors } from './chart-colors';
-import { getChartDomain, orderSeries } from './chart-functions';
+import { determineChartDomain, formatCountForChart, getSeriesName, mapSeriesToColor, orderSeries, SeriesInfoMap } from './chart-functions';
 
 import { kify } from 'src/lib/number';
 import { formatDate, formatDuration, parseDateString } from 'src/lib/date';
 import { TallyMeasure, TALLY_MEASURE } from 'server/lib/models/tally/consts';
-import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally';
+import { TALLY_MEASURE_INFO } from 'src/lib/tally';
 import { addMilliseconds } from 'date-fns';
 
-export type StackedAreaChartDataPoint = {
-  series: string;
-  date: string;
-  value: number;
-};
-
-export type StackedAreaChartParDataPoint = {
-  date: string;
-  value: number;
-};
-
 const props = withDefaults(defineProps<{
-  data: StackedAreaChartDataPoint[];
-  par?: StackedAreaChartParDataPoint[] | null;
+  data: SeriesDataPoint[];
+  par?: BareDataPoint[] | null;
   measureHint: TallyMeasure;
   valueFormatFn?: (value: number) => string;
+  seriesInfo: SeriesInfoMap;
   showLegend?: boolean;
   isFullscreen?: boolean;
 }>(), ({
   par: null,
+  valueFormatFn: undefined,
   showLegend: true,
   isFullscreen: false,
-  valueFormatFn: undefined,
 }));
-
-function formatCountWithMeasureHint(value) {
-  return formatCount(value, props.measureHint);
-}
 
 const chartColors = useChartColors();
 
@@ -52,18 +39,12 @@ function getSuggestedYAxisMaximum(measureHint: TallyMeasure, numberOfSeries: num
   return TALLY_MEASURE_INFO[measureHint].defaultChartMaxTotal * numberOfSeries;
 };
 
-type ChartDataPoint = {
-  series: string;
-  date: Date;
-  value: number;
-};
-
 function renderChart() {
-  // determine the order of the series
   const seriesOrder = orderSeries(props.data);
+  const colorOrder = mapSeriesToColor(props.seriesInfo, seriesOrder, chartColors.value);
 
   // we will need to add anything that needs a tooltip to this
-  const tooltipData: ChartDataPoint[] = [];
+  const tooltipData: TooltipDataPoint[] = [];
 
   const marks: Plot.Markish[] = [];
 
@@ -109,7 +90,6 @@ function renderChart() {
   }
 
   // lastly, add the tooltip
-  const seriesNames = tooltipData.reduce((set, d) => set.add(d.series), new Set());
   const tooltipPointerMark = Plot.tip(tooltipData, Plot.pointer(Plot.stackY2({
     x: 'date',
     y: 'value',
@@ -122,8 +102,8 @@ function renderChart() {
     },
     format: {
       date: formatDate,
-      series: seriesNames.size > 1,
-      value: props.valueFormatFn ?? formatCountWithMeasureHint,
+      series: seriesOrder.length > 1 ? d => getSeriesName(props.seriesInfo, d) : false,
+      value: props.valueFormatFn ?? (d => formatCountForChart(d, props.measureHint)),
       x: false,
       y: false,
     },
@@ -145,9 +125,10 @@ function renderChart() {
     marginBottom: 36,
     color: {
       type: 'categorical',
-      domain: ['Par', ...seriesOrder],
-      range: [chartColors.value.par, ...chartColors.value.data],
+      domain: seriesOrder,
+      range: colorOrder,
       legend: props.showLegend,
+      tickFormat: d => getSeriesName(props.seriesInfo, d),
     },
     x: {
       type: 'utc',
@@ -165,7 +146,7 @@ function renderChart() {
         tick => formatDuration(tick) :
         tick => kify(tick),
       grid: true,
-      domain: getChartDomain(props.data, props.par, getSuggestedYAxisMaximum(props.measureHint, seriesOrder.length), true),
+      domain: determineChartDomain(props.data, props.par, getSuggestedYAxisMaximum(props.measureHint, seriesOrder.length), true),
     },
     marks: marks,
   });

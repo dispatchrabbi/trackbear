@@ -162,7 +162,7 @@ onMounted(async () => {
         </div>
         <div class="w-full">
           <ProjectTallyLineChart
-            :peoject="project"
+            :project="project"
             :tallies="tallies"
           />
         </div>

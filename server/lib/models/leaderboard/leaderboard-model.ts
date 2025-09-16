@@ -32,9 +32,8 @@ type OmitFromCreateLeaderboardFields = 'starred';
 export type CreateLeaderboardData = Create<Leaderboard, OptionalLeaderboardFields, OmitFromCreateLeaderboardFields>;
 export type UpdateLeaderboardData = Update<Leaderboard, OmitFromCreateLeaderboardFields>;
 
-type OptionalMemberFields = 'goal' | 'workIds' | 'tagIds' | 'isOwner';
-// TODO: remove `displayName` from the omitted fields when per-board display names are implemented
-type OmitFromCreateMemberFields = 'userId' | 'boardId' | 'avatar' | 'displayName';
+type OptionalMemberFields = 'goal' | 'workIds' | 'tagIds' | 'isOwner' | 'isParticipant' | 'displayName' | 'color';
+type OmitFromCreateMemberFields = 'userId' | 'boardId' | 'avatar';
 export type CreateMemberData = Create<LeaderboardMember, OptionalMemberFields, OmitFromCreateMemberFields>;
 export type UpdateMemberData = Update<LeaderboardMember, OmitFromCreateMemberFields>;
 
@@ -83,7 +82,7 @@ export class LeaderboardModel {
         isOwner: participant.isOwner,
         userUuid: participant.user.uuid,
         // TODO: this will change when we have per-board display names
-        displayName: participant.user.displayName,
+        displayName: participant.displayName || participant.user.displayName,
         avatar: participant.user.avatar,
       })),
     }));
@@ -361,15 +360,16 @@ export class LeaderboardModel {
 
   @traced
   static async createMember(leaderboard: Leaderboard, user: User, data: CreateMemberData, reqCtx: RequestContext): Promise<LeaderboardMember> {
-    const dataWithDefaults = {
-      ...data,
+    const dataWithDefaults = supplyDefaults(data, {
       starred: false,
       isParticipant: false,
       isOwner: false,
+      displayName: '',
+      color: '',
       goal: null,
       workIds: [],
       tagIds: [],
-    };
+    });
 
     const dbCreated = await dbClient.boardParticipant.create({
       data: {
@@ -490,7 +490,8 @@ export class LeaderboardModel {
 
     const converted: JustMember = {
       ...omit(record, ['user']) as JustMember,
-      displayName: record.user.displayName,
+      // if there's no board-specific displayName, fall back to the user's normal displayName
+      displayName: record.displayName || record.user.displayName,
       avatar: record.user.avatar,
     };
 
@@ -521,7 +522,8 @@ export class LeaderboardModel {
       ...pick(participant, ['id', 'uuid']),
       goal: participant.goal as ParticipantGoal,
       avatar: participant.user.avatar,
-      displayName: participant.user.displayName,
+      displayName: participant.displayName || participant.user.displayName,
+      color: participant.color,
       tallies: tallies.filter(tally => tally.ownerId === participant.userId).map((tally): LeaderboardTally => pick(tally, ['uuid', 'date', 'measure', 'count'])),
     }));
 
@@ -558,7 +560,7 @@ export class LeaderboardModel {
     }
 
     return included2ids(pick(record, [
-      'id', 'isParticipant', 'goal', 'worksIncluded', 'tagsIncluded',
+      'id', 'isParticipant', 'displayName', 'color', 'goal', 'worksIncluded', 'tagsIncluded',
     ])) as Participation;
   }
 

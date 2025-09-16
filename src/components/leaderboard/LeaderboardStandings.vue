@@ -10,7 +10,7 @@ import { formatDate, parseDateString } from 'src/lib/date.ts';
 import { formatCount } from 'src/lib/tally.ts';
 import { formatPercent } from 'src/lib/number.ts';
 
-import { normalizeTallies, accumulateTallies, determineChartStartDate, determineChartEndDate } from '../chart/chart-functions.ts';
+import { determineChartStartDate, determineChartEndDate, createChartSeries } from '../chart/chart-functions.ts';
 
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -139,11 +139,14 @@ const standingsRows = computed<StandingsDataRow[]>(() => {
   const rows: StandingsDataRow[] = [];
   for(const participant of props.participants) {
     const measure = getMeasure(participant);
-    const normalizedTallies = normalizeTallies(participant.tallies.filter(tally => tally.measure === measure));
-    const accumulatedTallies = accumulateTallies(normalizedTallies);
+    const filteredTallies = participant.tallies.filter(tally => tally.measure === measure);
+    const participantSeries = createChartSeries(filteredTallies, {
+      accumulate: true,
+      series: participant.uuid,
+    });
 
-    const todayTally = accumulatedTallies.findLast(tally => tally.date <= today) ?? { date: 'Never', value: 0, count: 0, accumulated: 0 };
-    const yesterdayTally = accumulatedTallies.findLast(tally => tally.date <= yesterday) ?? { date: 'Never', value: 0, count: 0, accumulated: 0 };
+    const todayTally = participantSeries.findLast(tally => tally.date <= today) ?? { date: 'Never', value: 0, count: 0, accumulated: 0 };
+    const yesterdayTally = participantSeries.findLast(tally => tally.date <= yesterday) ?? { date: 'Never', value: 0, count: 0, accumulated: 0 };
 
     const row: StandingsDataRow = {
       uuid: participant.uuid,
@@ -157,13 +160,13 @@ const standingsRows = computed<StandingsDataRow[]>(() => {
       position: 0,
       yesterdayPosition: 0,
 
-      progress: todayTally.accumulated,
-      yesterdayProgress: yesterdayTally.accumulated,
+      progress: todayTally.value,
+      yesterdayProgress: yesterdayTally.value,
 
-      versusPar: hasPar.value ? todayTally.accumulated - getParForToday(participant, daysAlong, totalDays) : null,
-      percent: formatPercent(todayTally.accumulated, getGoalCount(participant)) + '%',
-      percentRaw: todayTally.accumulated / getGoalCount(participant),
-      yesterdayPercentRaw: yesterdayTally.accumulated / getGoalCount(participant),
+      versusPar: hasPar.value ? todayTally.value - getParForToday(participant, daysAlong, totalDays) : null,
+      percent: formatPercent(todayTally.value, getGoalCount(participant)) + '%',
+      percentRaw: todayTally.value / getGoalCount(participant),
+      yesterdayPercentRaw: yesterdayTally.value / getGoalCount(participant),
     };
     rows.push(row);
   }

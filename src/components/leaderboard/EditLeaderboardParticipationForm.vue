@@ -16,15 +16,22 @@ import { useValidation } from 'src/lib/form.ts';
 import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts';
 import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
+import { userColorOrFallback, USER_COLOR_NAMES, userColorLevel } from '../chart/user-colors';
+
+import { useTheme } from 'src/lib/theme';
+const { theme } = useTheme();
 
 import { updateMyParticipation, type Leaderboard, type Participation, type LeaderboardParticipationPayload } from 'src/lib/api/leaderboard';
 
 import InputSwitch from 'primevue/inputswitch';
+import InputText from 'primevue/inputtext';
 import MultiSelect from 'primevue/multiselect';
 import Dropdown from 'primevue/dropdown';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import TallyCountInput from '../tally/TallyCountInput.vue';
+import { toTitleCase } from 'src/lib/str';
+import { mapObject } from 'src/lib/obj';
 // import TbTag from 'src/components/tag/TbTag.vue';
 
 const props = defineProps<{
@@ -41,6 +48,8 @@ type EditLeaderboardParticipationFormModel = {
   count: number | null;
   works: number[];
   tags: number[];
+  displayName: string;
+  color: string;
 };
 const formModel = reactive<EditLeaderboardParticipationFormModel>({
   isParticipant: props.participation.isParticipant,
@@ -48,6 +57,8 @@ const formModel = reactive<EditLeaderboardParticipationFormModel>({
   count: props.participation.goal?.count ?? 0,
   works: props.participation.workIds,
   tags: props.participation.tagIds,
+  displayName: props.participation.displayName || '',
+  color: userColorOrFallback(props.participation.color),
 });
 
 const validations = z.object({
@@ -58,6 +69,13 @@ const validations = z.object({
     .refine(v => props.leaderboard.individualGoalMode ? v !== null : true, { message: 'Please input your goal for this leaderboard.' }),
   works: z.array(z.number({ invalid_type_error: 'Please select only valid projects.' }).int({ message: 'Please select only valid projects.' }).positive({ message: 'Please select only valid projects.' })),
   tags: z.array(z.number({ invalid_type_error: 'Please select only valid tags.' }).int({ message: 'Please select only valid tags.' }).positive({ message: 'Please select only valid tags.' })),
+  displayName: z.union([
+    z.string().max(0),
+    z.string()
+      .min(3, { message: 'Display name must be at least 3 characters long.' })
+      .max(24, { message: 'Display name may not be longer than 24 characters.' }),
+  ]),
+  color: z.enum(['', ...USER_COLOR_NAMES]),
 });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);
@@ -91,6 +109,15 @@ const onMeasureChange = function() {
   formModel.count = null;
 };
 
+const colorOptionsMap = mapObject({
+  '': { name: '', bg: 'bg-gradient-to-r from-indigo-500 to-amber-500' },
+  ...Object.fromEntries(USER_COLOR_NAMES.map(name => ([name, { name, bg: `bg-${name}-${userColorLevel(theme.value)}` }]))),
+}, (key, val) => ({
+  label: toTitleCase(val.name || 'auto'),
+  value: val.name,
+  swatchClass: val.bg,
+}));
+
 const isLoading = ref<boolean>(false);
 const successMessage = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
@@ -109,6 +136,8 @@ async function handleSubmit() {
           goal: props.leaderboard.individualGoalMode ? { measure: data.measure, count: data.count ?? 0 } : null,
           workIds: data.works,
           tagIds: data.tags,
+          displayName: data.displayName,
+          color: data.color,
         } :
         // user is not participating — save their previous participation info
         {
@@ -116,6 +145,8 @@ async function handleSubmit() {
           goal: props.leaderboard.individualGoalMode ? props.participation.goal : null,
           workIds: props.participation.workIds,
           tagIds: props.participation.tagIds,
+          displayName: data.displayName,
+          color: data.color,
         };
 
     const updated = await updateMyParticipation(props.leaderboard.uuid, payload);
@@ -172,6 +203,21 @@ async function handleSubmit() {
       </template>
     </FieldWrapper>
     <FieldWrapper
+      for="leaderboard-form-display-name"
+      label="Display Name"
+      :rule="ruleFor('displayName')"
+      help="If you leave this blank, your usual display name will be used. To set that, go to Account Settings."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <InputText
+          id="leaderboard-form-displayName"
+          v-model="formModel.displayName"
+          :invalid="!isFieldValid"
+          @update:model-value="onUpdate"
+        />
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
       v-if="formModel.isParticipant && props.leaderboard.individualGoalMode"
       for="leaderboard-form-goal-count"
       label="Your individual goal"
@@ -205,9 +251,7 @@ async function handleSubmit() {
         </div>
       </template>
     </FieldWrapper>
-    <div
-      v-if="formModel.isParticipant"
-    >
+    <div v-if="formModel.isParticipant">
       Select which progress updates you want to include on this leaderboard. You can filter by project, tag, or both.
     </div>
     <FieldWrapper
@@ -254,6 +298,47 @@ async function handleSubmit() {
           :disabled="!formModel.isParticipant"
           @update:model-value="onUpdate"
         />
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      v-if="formModel.isParticipant"
+      for="leaderboard-form-color"
+      label="Color"
+      :rule="ruleFor('color')"
+      help="This determines what color your progress will be on the graph."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <Dropdown
+          id="leaderboard-form-color"
+          v-model="formModel.color"
+          :options="Object.values(colorOptionsMap)"
+          option-value="value"
+          :invalid="!isFieldValid"
+          @update:model-value="onUpdate"
+        >
+          <template #value="{value}">
+            <div class="flex gap-2 items-center">
+              <div
+                :class="[
+                  'h-4 w-4',
+                  colorOptionsMap[value].swatchClass
+                ]"
+              />
+              <div>{{ colorOptionsMap[value].label }}</div>
+            </div>
+          </template>
+          <template #option="{option}">
+            <div class="flex gap-2 items-center">
+              <div
+                :class="[
+                  'h-4 w-4',
+                  option.swatchClass
+                ]"
+              />
+              <div>{{ option.label }}</div>
+            </div>
+          </template>
+        </Dropdown>
       </template>
     </FieldWrapper>
   </TbForm>

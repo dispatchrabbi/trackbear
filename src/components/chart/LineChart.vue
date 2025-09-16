@@ -4,47 +4,30 @@ import { useResizeObserver } from '@vueuse/core';
 import * as Plot from '@observablehq/plot';
 import { utcFormat } from 'd3-time-format';
 
+import type { SeriesDataPoint, BareDataPoint, TooltipDataPoint } from './types';
 import { useChartColors } from './chart-colors';
-import { getChartDomain, orderSeries } from './chart-functions';
+import { determineChartDomain, formatCountForChart, getSeriesName, mapSeriesToColor, orderSeries, SeriesInfoMap } from './chart-functions';
 
-import { formatPercent, kify } from 'src/lib/number';
+import { kify } from 'src/lib/number';
 import { formatDate, formatDuration, parseDateString } from 'src/lib/date';
 import { TallyMeasure, TALLY_MEASURE } from 'server/lib/models/tally/consts';
-import { TALLY_MEASURE_INFO, formatCount } from 'src/lib/tally';
+import { TALLY_MEASURE_INFO } from 'src/lib/tally';
 import { addMilliseconds } from 'date-fns';
 
-export type LineChartDataPoint = {
-  series: string;
-  date: string;
-  value: number;
-};
-
-export type LineChartParDataPoint = {
-  date: string;
-  value: number;
-};
-
 const props = withDefaults(defineProps<{
-  data: LineChartDataPoint[];
-  par?: LineChartParDataPoint[] | null;
+  data: SeriesDataPoint[];
+  par?: BareDataPoint[] | null;
   measureHint: TallyMeasure | 'percent';
   valueFormatFn?: (value: number) => string;
+  seriesInfo: SeriesInfoMap;
   showLegend?: boolean;
   isFullscreen?: boolean;
 }>(), ({
   par: null,
+  valueFormatFn: undefined,
   showLegend: true,
   isFullscreen: false,
-  valueFormatFn: undefined,
 }));
-
-function formatCountWithMeasureHint(value) {
-  if(props.measureHint === 'percent') {
-    return formatPercent(value, 100) + '%';
-  } else {
-    return formatCount(value, props.measureHint);
-  }
-}
 
 const chartColors = useChartColors();
 
@@ -60,15 +43,12 @@ function getSuggestedYAxisMaximum(measureHint: TallyMeasure | 'percent') {
   }
 };
 
-type ChartDataPoint = {
-  series: string;
-  date: Date;
-  value: number;
-};
-
 function renderChart() {
+  const seriesOrder = orderSeries(props.data);
+  const colorOrder = mapSeriesToColor(props.seriesInfo, seriesOrder, chartColors.value);
+
   // we will need to add anything that needs a tooltip to this
-  const tooltipData: ChartDataPoint[] = [];
+  const tooltipData: TooltipDataPoint[] = [];
 
   const marks: Plot.Markish[] = [];
 
@@ -114,7 +94,6 @@ function renderChart() {
   }
 
   // lastly, add the tooltip
-  const seriesNames = tooltipData.reduce((set, d) => set.add(d.series), new Set());
   const tooltipPointerMark = Plot.tip(tooltipData, Plot.pointer({
     x: 'date',
     y: 'value',
@@ -126,8 +105,8 @@ function renderChart() {
     },
     format: {
       date: formatDate,
-      series: seriesNames.size > 1,
-      value: props.valueFormatFn ?? formatCountWithMeasureHint,
+      series: seriesOrder.length > 1 ? d => getSeriesName(props.seriesInfo, d) : false,
+      value: props.valueFormatFn ?? (d => formatCountForChart(d, props.measureHint)),
       x: false,
       y: false,
       z: false,
@@ -136,8 +115,6 @@ function renderChart() {
   }));
 
   marks.push(tooltipPointerMark);
-
-  const seriesOrder = orderSeries(props.data);
 
   const chart = Plot.plot({
     style: {
@@ -153,8 +130,9 @@ function renderChart() {
     color: {
       type: 'categorical',
       domain: props.par ? ['Par', ...seriesOrder] : seriesOrder,
-      range: props.par ? [chartColors.value.par, ...chartColors.value.data] : chartColors.value.data,
+      range: props.par ? [chartColors.value.par, ...colorOrder] : colorOrder,
       legend: props.showLegend,
+      tickFormat: d => getSeriesName(props.seriesInfo, d),
     },
     x: {
       type: 'utc',
@@ -175,7 +153,7 @@ function renderChart() {
             tick => `${tick}%` :
             tick => kify(tick),
       grid: true,
-      domain: getChartDomain(props.data, props.par, getSuggestedYAxisMaximum(props.measureHint)),
+      domain: determineChartDomain(props.data, props.par, getSuggestedYAxisMaximum(props.measureHint)),
     },
     marks: marks,
   });

@@ -1,19 +1,20 @@
 import { addDays, eachDayOfInterval, differenceInCalendarDays } from 'date-fns';
+import twColors from 'tailwindcss/colors.js';
+
 import { formatDate, parseDateString, maxDate, cmpByDate } from 'src/lib/date.ts';
 
-import { cmpTallies } from 'src/lib/tally.ts';
+import type { SeriesDataPoint, BareDataPoint } from './types.ts';
+import { USER_COLOR_NAMES, userColorLevel } from './user-colors';
+import { type ChartColors } from './chart-colors.ts';
+
+import { TallyMeasure } from 'server/lib/models/tally/consts.ts';
+import { formatCount } from 'src/lib/tally.ts';
+import { formatPercent } from 'src/lib/number.ts';
 
 export type Tallyish = {
   date: string;
   count: number;
 };
-
-type ChartDataPoint = {
-  series: string;
-  date: string;
-  value: number;
-};
-type BareDataPoint = Omit<ChartDataPoint, 'series'>;
 
 type CreateChartSeriesOptions = {
   /** Whether the value is a running total (`true`) or the day's value by itself (`false`) */
@@ -33,7 +34,7 @@ type CreateChartSeriesOptions = {
   series: string;
 };
 
-export function createChartSeries(tallies: Tallyish[], options: Partial<CreateChartSeriesOptions> = {}): ChartDataPoint[] {
+export function createChartSeries(tallies: Tallyish[], options: Partial<CreateChartSeriesOptions> = {}): SeriesDataPoint[] {
   options = Object.assign<CreateChartSeriesOptions, Partial<CreateChartSeriesOptions>>({
     accumulate: false,
     densify: false,
@@ -75,7 +76,7 @@ export function createChartSeries(tallies: Tallyish[], options: Partial<CreateCh
     }
   }
 
-  const series: ChartDataPoint[] = [];
+  const series: SeriesDataPoint[] = [];
   let runningTotal = options.startingTotal!;
   for(const date of Array.from(dateCounts.keys()).sort()) {
     const todayCount = dateCounts.get(date)!;
@@ -88,7 +89,7 @@ export function createChartSeries(tallies: Tallyish[], options: Partial<CreateCh
     });
   }
 
-  return series;
+  return series.sort(cmpByDate);
 }
 
 type CreateParSeriesOptions = {
@@ -98,7 +99,7 @@ type CreateParSeriesOptions = {
   series: string;
 };
 
-export function createParSeries(goal: number, options: Partial<CreateParSeriesOptions> = {}): ChartDataPoint[] {
+export function createParSeries(goal: number, options: Partial<CreateParSeriesOptions> = {}): SeriesDataPoint[] {
   options = Object.assign<CreateParSeriesOptions, Partial<CreateParSeriesOptions>>({
     /** Whether Par is a running total (`true`) or the same every day (`false`) */
     accumulate: false,
@@ -115,7 +116,7 @@ export function createParSeries(goal: number, options: Partial<CreateParSeriesOp
     1; // use the whole goal for every day
   const perDayGoal = goal / numberOfDays;
 
-  const series: ChartDataPoint[] = eachDayOfInterval({ start: startDateObj, end: endDateObj })
+  const series: SeriesDataPoint[] = eachDayOfInterval({ start: startDateObj, end: endDateObj })
     .map((dateObj, ix) => {
       const dayNumber = ix + 1;
 
@@ -180,7 +181,15 @@ export function determineChartEndDate(lastUpdate?: string | null, overrideEndDat
   }
 }
 
-export function orderSeries(data: ChartDataPoint[]) {
+export function formatCountForChart(count: number, measure: TallyMeasure | 'percent') {
+  if(measure === 'percent') {
+    return formatPercent(count, 100) + '%';
+  } else {
+    return formatCount(count, measure);
+  }
+}
+
+export function orderSeries(data: SeriesDataPoint[]) {
   const mins = {};
   const maxes = {};
 
@@ -198,7 +207,38 @@ export function orderSeries(data: ChartDataPoint[]) {
   return sortedSeries;
 }
 
-export function getChartDomain(data: BareDataPoint[], par: BareDataPoint[] | null, suggestedYAxisMaximum: number, stacked: boolean = false) {
+export type SeriesInfoMap = Record<string, {
+  uuid: string;
+  name: string;
+  color: string;
+}>;
+export function mapSeriesToColor(seriesInfo: SeriesInfoMap, orderedSeries: string[], chartColors: ChartColors): string[] {
+  const orderedColors: string[] = [];
+
+  let colorIndex = 0;
+  for(const series of orderedSeries) {
+    if(series in seriesInfo && USER_COLOR_NAMES.includes(seriesInfo[series].color)) {
+      const userColor = twColors[seriesInfo[series].color][userColorLevel(chartColors.theme)];
+      orderedColors.push(userColor);
+    } else {
+      orderedColors.push(chartColors.data[colorIndex % chartColors.data.length]);
+      colorIndex++;
+    }
+  }
+
+  return orderedColors;
+}
+export function getSeriesName(seriesInfo: SeriesInfoMap, series: string): string {
+  if(series in seriesInfo) {
+    return seriesInfo[series].name;
+  } else if(series === 'Par') {
+    return 'Par';
+  } else {
+    return series;
+  }
+}
+
+export function determineChartDomain(data: BareDataPoint[], par: BareDataPoint[] | null, suggestedYAxisMaximum: number, stacked: boolean = false) {
   let dataValues: number[] = [];
   if(stacked) {
     // group the data points by date, then sum the positive values and the negative values for each date, and return each date's sums in an array
@@ -231,71 +271,4 @@ export function getChartDomain(data: BareDataPoint[], par: BareDataPoint[] | nul
   }
 
   return [min, max];
-}
-
-export interface TallyPoint {
-  date: string;
-  value: number;
-}
-
-export interface CountedTallyPoint extends TallyPoint {
-  count: number;
-}
-
-export interface AccumulatedTallyPoint extends CountedTallyPoint {
-  accumulated: number;
-}
-
-export function normalizeTallies(tallies: Tallyish[]): CountedTallyPoint[] {
-  // total all the tallies by day
-  const dateTotals = new Map<string, number>();
-  for(const tally of tallies) {
-    dateTotals.set(tally.date, (dateTotals.get(tally.date) || 0) + tally.count);
-  }
-
-  const normalizedTallies: CountedTallyPoint[] = [];
-  for(const [date, value] of dateTotals) {
-    normalizedTallies.push({
-      date,
-      value,
-      count: value,
-    });
-  }
-
-  return normalizedTallies.sort(cmpTallies);
-}
-
-export function accumulateTallies(sortedTallies: TallyPoint[], startingTotal = 0): AccumulatedTallyPoint[] {
-  const accumulatedTallies: AccumulatedTallyPoint[] = [];
-  let runningTotal = startingTotal;
-
-  for(const tally of sortedTallies) {
-    accumulatedTallies.push({
-      date: tally.date,
-      value: runningTotal + tally.value,
-      accumulated: runningTotal + tally.value,
-      count: tally.value,
-    });
-
-    runningTotal = runningTotal + tally.value;
-  }
-
-  return accumulatedTallies;
-}
-
-export function listEachDayOfData(nominalStartDate?: string, nominalEndDate?: string, firstUpdate?: string, lastUpdate?: string): string[] {
-  const start = determineChartStartDate(firstUpdate, nominalStartDate);
-  const end = determineChartEndDate(lastUpdate, nominalEndDate, nominalStartDate);
-
-  let dates = { start: parseDateString(start), end: parseDateString(end) };
-  if(dates.end < dates.start) {
-    dates = { start: dates.end, end: dates.start };
-  }
-
-  const eachDay = eachDayOfInterval(dates).map(formatDate).sort();
-  return eachDay;
-}
-
-export function densifyTallies(sparseTallies: TallyPoint[], eachDay: string[]): TallyPoint[] {
-  return eachDay.map(date => (sparseTallies.find(tally => tally.date === date) || ({ date, count: 0, value: 0 })));
 }

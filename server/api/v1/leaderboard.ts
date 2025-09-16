@@ -216,6 +216,8 @@ export type LeaderboardParticipationPayload = {
   goal: ParticipantGoal;
   workIds: number[];
   tagIds: number[];
+  displayName?: string;
+  color?: string;
 };
 const zLeaderboardParticipationPayload = z.object({
   isParticipant: z.boolean(),
@@ -225,6 +227,13 @@ const zLeaderboardParticipationPayload = z.object({
   }).nullable(),
   workIds: z.array(z.number().int()),
   tagIds: z.array(z.number().int()),
+  displayName: z.union([
+    z.string().max(0),
+    z.string()
+      .min(3, { message: 'Display name must be at least 3 characters long.' })
+      .max(24, { message: 'Display name may not be longer than 24 characters.' }),
+  ]).optional(),
+  color: z.string().optional(),
 }).strict();
 
 export async function handleJoinBoard(req: RequestWithUser, res: ApiResponse<LeaderboardMember>) {
@@ -300,7 +309,7 @@ export async function handleLeaveBoard(req: RequestWithUser, res: ApiResponse<Le
 }
 
 export function member2membership(member: JustMember): Membership {
-  return pick(member, ['id', 'uuid', 'state', 'isOwner', 'isParticipant', 'displayName', 'avatar']);
+  return pick(member, ['id', 'uuid', 'state', 'isOwner', 'isParticipant', 'displayName', 'avatar', 'color']);
 }
 
 /**

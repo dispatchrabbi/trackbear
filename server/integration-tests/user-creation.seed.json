@@ -179,6 +179,7 @@
       "member": "seedbear1",
       "owner": "seedbear1",
       "key": "normal",
+      "displayName": "A seedy bear",
       "participation": null
     },
     {
@@ -202,6 +203,7 @@
       "member": "seedbear2",
       "owner": "seedbear1",
       "key": "normal",
+      "displayName": "A second seedy bear",
       "participation": null
     },
     {
@@ -218,7 +220,8 @@
         "projects": [],
         "tags": [],
         "measure": "word",
-        "count": 10000
+        "count": 10000,
+        "color": "lime"
       }
     }
   ]

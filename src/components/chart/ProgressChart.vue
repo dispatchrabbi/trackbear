@@ -3,7 +3,7 @@ import { ref, computed, useTemplateRef } from 'vue';
 
 import { type ValueEnum } from 'server/lib/obj';
 import { type TallyMeasure } from 'server/lib/models/tally/consts';
-import { type Tallyish, createChartSeries, createParSeries, determineChartIntervals } from './chart-functions';
+import { type SeriesInfoMap, type Tallyish, createChartSeries, createParSeries, determineChartIntervals } from './chart-functions';
 import { formatDate } from 'src/lib/date';
 import { useChartColors } from './chart-colors';
 import { saveSvgAsPng } from 'src/lib/image';
@@ -22,6 +22,7 @@ export type SeriesTallyish = Tallyish & {
 const props = withDefaults(defineProps<{
   tallies: SeriesTallyish[];
   measureHint: TallyMeasure | 'percent';
+  seriesInfo: SeriesInfoMap;
   startDate?: string | null;
   endDate?: string | null;
   startingTotal?: number;
@@ -69,7 +70,7 @@ const chartIntervals = computed(() => {
 const allSeries = computed(() => {
   const groupedBySeries = Object.groupBy(props.tallies, tally => tally.series) as Record<string, SeriesTallyish[]>;
   const dataPoints = Object.entries(groupedBySeries)
-    .flatMap(([seriesName, seriesTallies]) => createChartSeries(seriesTallies, {
+    .flatMap(([seriesUuid, seriesTallies]) => createChartSeries(seriesTallies, {
       accumulate: chartTypeSettings[selectedChartType.value].accumulate,
       densify: chartTypeSettings[selectedChartType.value].densify,
       extend: chartTypeSettings[selectedChartType.value].extend,
@@ -78,7 +79,7 @@ const allSeries = computed(() => {
       earliestData: chartIntervals.value.earliestData,
       latestData: chartIntervals.value.latestData,
       startingTotal: props.startingTotal, // only matters if `accumulate` is `true`, so no need to ?: here too
-      series: seriesName,
+      series: seriesUuid,
     }));
 
   return dataPoints;
@@ -160,6 +161,7 @@ function handleClickSave() {
         :data="allSeries"
         :par="par"
         :measure-hint="props.measureHint"
+        :series-info="seriesInfo"
         :show-legend="props.showLegend"
       />
       <BarChart
@@ -167,6 +169,7 @@ function handleClickSave() {
         :data="allSeries"
         :par="par"
         :measure-hint="props.measureHint"
+        :series-info="seriesInfo"
         :show-legend="props.showLegend"
       />
     </div>
@@ -185,6 +188,7 @@ function handleClickSave() {
           :data="allSeries"
           :par="par"
           :measure-hint="props.measureHint"
+          :series-info="props.seriesInfo"
           :show-legend="props.showLegend"
         />
         <BarChart
@@ -193,6 +197,7 @@ function handleClickSave() {
           :data="allSeries"
           :par="par"
           :measure-hint="props.measureHint"
+          :series-info="props.seriesInfo"
           :show-legend="props.showLegend"
         />
       </div>

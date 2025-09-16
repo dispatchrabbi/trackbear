@@ -18,12 +18,15 @@ vi.mock('../../db.ts');
 const dbClient = vi.mocked(_dbClient, { deep: true });
 
 vi.mock('../../audit-events.ts');
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- until we fill out the tests
 const logAuditEvent = vi.mocked(_logAuditEvent);
 
 describe(LeaderboardModel, () => {
   const testOwner = mockObject<User>({ id: TEST_USER_ID });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- until we fill out the tests
   const testReqCtx = getTestReqCtx();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- until we fill out the tests
   const includeWorkAndTagIds = {
     worksIncluded: {
       where: {

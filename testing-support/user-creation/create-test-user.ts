@@ -244,16 +244,13 @@ async function joinLeaderboards(joinConfigs: JoinLeaderboardSchema[], accountMap
     const user = account.user;
     const projectMap = account.projects;
 
-    // if the user owns the board, they are already a spectator, nothing to do here
-    if(leaderboard.ownerId === user.id && config.participation === null) {
-      return null;
-    }
-
     const membershipData = config.participation ?
         {
           isParticipant: true,
           isOwner: leaderboard.ownerId === user.id,
           starred: false,
+          displayName: config.displayName || user.displayName,
+          color: config.participation.color ?? '',
           goal: leaderboard.individualGoalMode ?
               {
                 count: config.participation.count!,
@@ -267,6 +264,8 @@ async function joinLeaderboards(joinConfigs: JoinLeaderboardSchema[], accountMap
           isParticipant: false,
           isOwner: leaderboard.ownerId === user.id,
           starred: false,
+          displayName: config.displayName || user.displayName,
+          color: '',
           goal: null,
           workIds: [],
           tagIds: [],

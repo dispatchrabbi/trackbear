@@ -2,7 +2,7 @@
 import { computed, defineProps } from 'vue';
 import type { Goal } from 'src/lib/api/goal.ts';
 
-import { Tallyish } from '../chart/chart-functions.ts';
+import { SeriesInfoMap, Tallyish } from '../chart/chart-functions.ts';
 import { TargetGoalParameters } from 'server/lib/models/goal/types.ts';
 import ProgressChart, { SeriesTallyish } from '../chart/ProgressChart.vue';
 
@@ -23,12 +23,23 @@ const seriesTallies = computed<SeriesTallyish[]>(() => {
   }));
 });
 
+const seriesInfoMap = computed<SeriesInfoMap>(() => {
+  return {
+    [props.goal.title]: {
+      uuid: props.goal.title,
+      name: props.goal.title,
+      color: '',
+    },
+  };
+});
+
 </script>
 
 <template>
   <ProgressChart
     :tallies="seriesTallies"
     :measure-hint="measure"
+    :series-info="seriesInfoMap"
     :start-date="goal.startDate"
     :end-date="goal.endDate"
     :goal-count="count"

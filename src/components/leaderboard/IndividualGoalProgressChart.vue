@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import type { Leaderboard, Participant } from 'src/lib/api/leaderboard';
 
 import ProgressChart, { SeriesTallyish } from '../chart/ProgressChart.vue';
+import { type SeriesInfoMap } from '../chart/chart-functions';
 
 const props = defineProps<{
   leaderboard: Leaderboard;
@@ -25,8 +26,21 @@ const seriesTallies = computed<SeriesTallyish[]>(() => {
     date: tally.date,
     // we have to pre-calculate these as percentages
     count: 100 * (tally.count / participant.goal!.count),
-    series: participant.displayName,
+    series: participant.uuid,
   })));
+});
+
+const seriesInfo = computed<SeriesInfoMap>(() => {
+  const entries = filteredParticipants.value.map(participant => ([
+    participant.uuid,
+    {
+      uuid: participant.uuid,
+      name: participant.displayName,
+      color: participant.color,
+    },
+  ]));
+
+  return Object.fromEntries(entries);
 });
 
 </script>
@@ -35,6 +49,7 @@ const seriesTallies = computed<SeriesTallyish[]>(() => {
   <ProgressChart
     :tallies="seriesTallies"
     measure-hint="percent"
+    :series-info="seriesInfo"
     :start-date="leaderboard.startDate"
     :end-date="leaderboard.endDate"
     :goal-count="100"
