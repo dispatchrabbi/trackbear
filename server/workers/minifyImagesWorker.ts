@@ -13,7 +13,7 @@ const NAME = 'optimizeUploadsWorker';
 
 const DRY_RUN: boolean = false;
 const SHOULD_PRUNE: boolean = true;
-const SHOULD_OPTIMIZE: boolean = false;
+const SHOULD_OPTIMIZE: boolean = true;
 
 // run every day at 3:24 (time chosen at random)
 const CRONTAB = '24 3 * * *';
