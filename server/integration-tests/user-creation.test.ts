@@ -8,7 +8,7 @@ vi.mock('../lib/db.ts', () => ({
 
 import { reqCtxForScript } from 'server/lib/request-context.ts';
 
-import { createSeed } from 'testing-support/user-creation/create-test-user.ts';
+import { createSeed } from 'testing-support/user-creation/seed.ts';
 import seedConfig from './user-creation.seed.json' with { type: 'json' };
 
 describe('user seeding', () => {

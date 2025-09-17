@@ -5,7 +5,9 @@ import { RequestWithUser } from '../../lib/middleware/access.ts';
 import { z } from 'zod';
 import { zUuidParam, NonEmptyArray, zStrInt } from '../../lib/validators.ts';
 
-import { CreateLeaderboardData, CreateMemberData, LeaderboardModel, UpdateLeaderboardData, UpdateMemberData } from 'server/lib/models/leaderboard/leaderboard-model.ts';
+import {
+  LeaderboardModel, type CreateLeaderboardData, type UpdateLeaderboardData } from 'server/lib/models/leaderboard/leaderboard-model.ts';
+import { LeaderboardMemberModel, type CreateMemberData, type UpdateMemberData } from 'server/lib/models/leaderboard/leaderboard-member-model.ts';
 import type { Leaderboard, LeaderboardSummary, LeaderboardMember, JustMember, Participant, ParticipantGoal, Participation, Membership } from 'server/lib/models/leaderboard/types.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 import { reqCtx } from 'server/lib/request-context.ts';
@@ -100,7 +102,7 @@ export async function handleStar(req: RequestWithUser, res: ApiResponse<Leaderbo
   }
 
   const memberId = +req.user.id;
-  const member = await LeaderboardModel.getMemberByUserId(leaderboard, memberId);
+  const member = await LeaderboardMemberModel.getByUserId(leaderboard, memberId);
   if(!member) {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any member with id ${memberId} on that leaderboard.`));
   }
@@ -109,7 +111,7 @@ export async function handleStar(req: RequestWithUser, res: ApiResponse<Leaderbo
   const updatedData: UpdateMemberData = {
     starred: payload.starred,
   };
-  const updated = await LeaderboardModel.updateMember(member, updatedData, reqCtx(req));
+  const updated = await LeaderboardMemberModel.update(member, updatedData, reqCtx(req));
 
   return res.status(200).send(success({ starred: updated.starred }));
 }
@@ -143,7 +145,7 @@ export async function handleListMembers(req: RequestWithUser, res: ApiResponse<M
     return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
   }
 
-  const members = await LeaderboardModel.listMembers(leaderboard);
+  const members = await LeaderboardMemberModel.list(leaderboard);
   const memberships = members.map(member2membership);
 
   return res.status(200).send(success(memberships));
@@ -163,13 +165,13 @@ export async function handleUpdateMember(req: RequestWithUser, res: ApiResponse<
   }
 
   const memberId = +req.params.memberId;
-  const member = await LeaderboardModel.getMember(leaderboard, memberId);
+  const member = await LeaderboardMemberModel.get(leaderboard, memberId);
   if(!member) {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any member with id ${memberId} on that leaderboard.`));
   }
 
   const payload = req.body as LeaderboardMemberUpdatePayload;
-  const updated = await LeaderboardModel.updateMember(member, payload, reqCtx(req));
+  const updated = await LeaderboardMemberModel.update(member, payload, reqCtx(req));
   const membership = member2membership(updated);
 
   return res.status(200).send(success(membership));
@@ -183,14 +185,14 @@ export async function handleRemoveMember(req: RequestWithUser, res: ApiResponse<
   }
 
   const memberId = +req.params.memberId;
-  const member = await LeaderboardModel.getMember(leaderboard, memberId);
+  const member = await LeaderboardMemberModel.get(leaderboard, memberId);
   if(!member) {
     return res.status(404).send(failure('NOT_FOUND', `Did not find any member with id ${memberId} on that leaderboard.`));
   }
 
   let membership: Membership;
   try {
-    const removed = await LeaderboardModel.removeMember(member, reqCtx(req));
+    const removed = await LeaderboardMemberModel.remove(member, reqCtx(req));
     membership = member2membership(removed);
   } catch {
     return res.status(409).send(failure('ONLY_OWNER', `Cannot remove member with id ${memberId} because they are the only owner of this leaderboard.`));
@@ -207,7 +209,7 @@ export async function handleGetMyParticipation(req: RequestWithUser, res: ApiRes
     return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
   }
 
-  const participation = await LeaderboardModel.getMemberParticipation(leaderboard.id, userId);
+  const participation = await LeaderboardMemberModel.getParticipation(leaderboard.id, userId);
   return res.status(200).send(success(participation));
 }
 
@@ -248,7 +250,7 @@ export async function handleJoinBoard(req: RequestWithUser, res: ApiResponse<Lea
   }
 
   const user = req.user;
-  const existing = await LeaderboardModel.getMemberByUserId(leaderboard, user.id);
+  const existing = await LeaderboardMemberModel.getByUserId(leaderboard, user.id);
   if(existing) {
     return res.status(409).send(failure('ALREADY_JOINED', `You are already part of this leaderboard.`));
   }
@@ -261,7 +263,7 @@ export async function handleJoinBoard(req: RequestWithUser, res: ApiResponse<Lea
     workIds: payload.workIds,
     tagIds: payload.tagIds,
   };
-  const created = await LeaderboardModel.createMember(leaderboard, user, memberData, reqCtx(req));
+  const created = await LeaderboardMemberModel.create(leaderboard, user, memberData, reqCtx(req));
 
   return res.status(201).send(success(created));
 }
@@ -274,13 +276,13 @@ export async function handleUpdateMyParticipation(req: RequestWithUser, res: Api
   }
 
   const user = req.user;
-  const existing = await LeaderboardModel.getMemberByUserId(leaderboard, user.id);
+  const existing = await LeaderboardMemberModel.getByUserId(leaderboard, user.id);
   if(!existing) {
     return res.status(404).send(failure('NOT_FOUND', `You are not part of this leaderboard.`));
   }
 
   const payload = req.body as LeaderboardParticipationPayload;
-  const updated = await LeaderboardModel.updateMember(existing, payload, reqCtx(req));
+  const updated = await LeaderboardMemberModel.update(existing, payload, reqCtx(req));
 
   return res.status(200).send(success(updated));
 }
@@ -293,14 +295,14 @@ export async function handleLeaveBoard(req: RequestWithUser, res: ApiResponse<Le
   }
 
   const user = req.user;
-  const existing = await LeaderboardModel.getMemberByUserId(leaderboard, user.id);
+  const existing = await LeaderboardMemberModel.getByUserId(leaderboard, user.id);
   if(!existing) {
     return res.status(404).send(failure('NOT_FOUND', `You are not part of this leaderboard.`));
   }
 
   let removed: LeaderboardMember;
   try {
-    removed = await LeaderboardModel.removeMember(existing, reqCtx(req));
+    removed = await LeaderboardMemberModel.remove(existing, reqCtx(req));
   } catch {
     return res.status(409).send(failure('ONLY_OWNER', `Cannot remove you because you are the only owner of this leaderboard.`));
   }
@@ -309,7 +311,7 @@ export async function handleLeaveBoard(req: RequestWithUser, res: ApiResponse<Le
 }
 
 export function member2membership(member: JustMember): Membership {
-  return pick(member, ['id', 'uuid', 'state', 'isOwner', 'isParticipant', 'displayName', 'avatar', 'color']);
+  return pick(member, ['id', 'uuid', 'state', 'isOwner', 'isParticipant', 'displayName', 'avatar', 'color', 'teamId']);
 }
 
 /**

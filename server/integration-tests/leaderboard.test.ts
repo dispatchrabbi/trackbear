@@ -7,6 +7,7 @@ vi.mock('../lib/db.ts', () => ({
 }));
 
 import { LeaderboardModel } from 'server/lib/models/leaderboard/leaderboard-model.ts';
+import { LeaderboardMemberModel } from 'server/lib/models/leaderboard/leaderboard-member-model.ts';
 import { UserModel } from 'server/lib/models/user/user-model.ts';
 import type { User } from 'server/lib/models/user/user-model.ts';
 
@@ -40,12 +41,13 @@ describe('leaderboards', () => {
       goal: { [TALLY_MEASURE.WORD]: 50000 },
       individualGoalMode: false,
       fundraiserMode: false,
+      enableTeams: false,
     }, testUser.id, {
       userId: testUser.id,
       sessionId: TEST_SESSION_ID,
     });
 
-    const members = await LeaderboardModel.listMembers(leaderboard);
+    const members = await LeaderboardMemberModel.list(leaderboard);
 
     expect(members.length).toBe(1);
     expect(members[0].userId).toEqual(testUser.id);

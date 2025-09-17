@@ -70,10 +70,10 @@ const validations = z.object({
   works: z.array(z.number({ invalid_type_error: 'Please select only valid projects.' }).int({ message: 'Please select only valid projects.' }).positive({ message: 'Please select only valid projects.' })),
   tags: z.array(z.number({ invalid_type_error: 'Please select only valid tags.' }).int({ message: 'Please select only valid tags.' }).positive({ message: 'Please select only valid tags.' })),
   displayName: z.union([
-    z.string().max(0),
     z.string()
-      .min(3, { message: 'Display name must be at least 3 characters long.' })
-      .max(24, { message: 'Display name may not be longer than 24 characters.' }),
+      .min(3, { message: 'Display name must be between 3 and 24 characters long.' })
+      .max(24, { message: 'Display name must be between 3 and 24 characters long.' }),
+    z.string().max(0),
   ]),
   color: z.enum(['', ...USER_COLOR_NAMES]),
 });

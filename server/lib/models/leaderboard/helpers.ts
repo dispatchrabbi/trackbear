@@ -1,11 +1,15 @@
 import dbClient from '../../db.ts';
 
-import type { BoardParticipant } from 'generated/prisma/client';
-import type { Leaderboard, ParticipantGoal } from './types';
+import type { BoardParticipant, User } from 'generated/prisma/client';
+import type { Leaderboard, LeaderboardMember, JustMember, ParticipantGoal, Participation } from './types';
 import type { WorksAndTagsIncluded } from '../helpers';
 import { TALLY_STATE } from '../tally/consts.ts';
 
+import { included2ids } from '../helpers.ts';
+import { omit, pick } from 'server/lib/obj.ts';
+
 type BoardParticipantWithWorksAndTags = BoardParticipant & WorksAndTagsIncluded;
+type BoardParticipantWithUser = BoardParticipant & { user: User };
 
 export async function getTalliesForParticipants(leaderboard: Leaderboard, participants: BoardParticipantWithWorksAndTags[]) {
   if(participants.length === 0) {
@@ -38,4 +42,49 @@ export async function getTalliesForParticipants(leaderboard: Leaderboard, partic
   });
 
   return tallies;
+}
+
+export function db2member(record: BoardParticipantWithUser & WorksAndTagsIncluded): LeaderboardMember;
+export function db2member(record: null): null;
+export function db2member(record: (BoardParticipantWithUser & WorksAndTagsIncluded) | null): LeaderboardMember | null {
+  if(record === null) {
+    return null;
+  }
+
+  const converted: LeaderboardMember = {
+    ...omit(included2ids(record), ['user']) as LeaderboardMember,
+    displayName: record.user.displayName,
+    avatar: record.user.avatar,
+  };
+
+  return converted;
+}
+
+export function db2justmember(record: BoardParticipantWithUser): JustMember;
+export function db2justmember(record: null): null;
+export function db2justmember(record: BoardParticipantWithUser | null): JustMember | null {
+  if(record === null) {
+    return null;
+  }
+
+  const converted: JustMember = {
+    ...omit(record, ['user']) as JustMember,
+    // if there's no board-specific displayName, fall back to the user's normal displayName
+    displayName: record.displayName || record.user.displayName,
+    avatar: record.user.avatar,
+  };
+
+  return converted;
+}
+
+export function db2participation(record: BoardParticipantWithWorksAndTags): Participation;
+export function db2participation(record: null): null;
+export function db2participation(record: BoardParticipantWithWorksAndTags | null): Participation | null {
+  if(record === null) {
+    return null;
+  }
+
+  return included2ids(pick(record, [
+    'id', 'isParticipant', 'displayName', 'color', 'goal', 'worksIncluded', 'tagsIncluded',
+  ])) as Participation;
 }

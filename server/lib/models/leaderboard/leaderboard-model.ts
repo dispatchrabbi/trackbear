@@ -1,6 +1,6 @@
 import { traced } from '../../metrics/tracer.ts';
 
-import { Prisma, BoardParticipant as PrismaBoardParticipant, User as PrismaUser } from 'generated/prisma/client';
+import { Prisma } from 'generated/prisma/client';
 import dbClient from '../../db.ts';
 import type { Create, Update } from '../types.ts';
 
@@ -9,17 +9,16 @@ import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 import { LEADERBOARD_STATE, LEADERBOARD_PARTICIPANT_STATE } from './consts.ts';
-import type { LeaderboardSummary, Leaderboard, LeaderboardMember, JustMember, Participant, Participation, ParticipantGoal, MemberBio, LeaderboardGoal, LeaderboardTally } from './types.ts';
-import { getTalliesForParticipants } from './helpers.ts';
-import type { User } from '../user/user-model.ts';
+import type {
+  LeaderboardSummary, Leaderboard,
+  LeaderboardMember, Participant, ParticipantGoal, MemberBio,
+  LeaderboardGoal, LeaderboardTally,
+} from './types.ts';
+import { db2justmember, getTalliesForParticipants } from './helpers.ts';
 import { USER_STATE } from '../user/consts.ts';
-import { makeIncludeWorkAndTagIds, included2ids, makeSetWorksAndTagsIncluded, type WorksAndTagsIncluded, makeConnectWorksAndTagsIncluded, supplyDefaults } from '../helpers.ts';
+import { supplyDefaults } from '../helpers.ts';
 
 import { omit, pick } from 'server/lib/obj.ts';
-
-// used for db2participation and db2member
-type DbParticipation = PrismaBoardParticipant & WorksAndTagsIncluded;
-type DbMember = PrismaBoardParticipant & { user: PrismaUser };
 
 type GetLeaderboardOptions = {
   memberUserId?: number;
@@ -70,7 +69,7 @@ export class LeaderboardModel {
         'id', 'uuid', 'state', 'ownerId', 'createdAt', 'updatedAt',
         'title', 'description',
         'measures', 'startDate', 'endDate',
-        'individualGoalMode', 'fundraiserMode',
+        'individualGoalMode', 'fundraiserMode', 'enableTeams',
         'isJoinable', 'isPublic',
       ]),
       goal: board.goal as LeaderboardGoal,
@@ -81,7 +80,6 @@ export class LeaderboardModel {
         isParticipant: participant.isParticipant,
         isOwner: participant.isOwner,
         userUuid: participant.user.uuid,
-        // TODO: this will change when we have per-board display names
         displayName: participant.displayName || participant.user.displayName,
         avatar: participant.user.avatar,
       })),
@@ -175,6 +173,7 @@ export class LeaderboardModel {
       isOwner: true,
       starred: false,
       goal: null,
+      teamId: null,
     };
 
     const createdWithParticipants = await dbClient.board.create({
@@ -202,7 +201,7 @@ export class LeaderboardModel {
     });
 
     const created = omit(createdWithParticipants, ['participants']) as Leaderboard;
-    const createdParticipant = this.db2justmember(createdWithParticipants.participants[0]);
+    const createdParticipant = db2justmember(createdWithParticipants.participants[0]);
 
     const leaderboardChangeRecord = buildChangeRecord({}, created);
     await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_CREATE,
@@ -272,84 +271,15 @@ export class LeaderboardModel {
     return data;
   }
 
-  // Member methods
-
-  @traced
-  static async listMembers(leaderboard: Leaderboard): Promise<JustMember[]> {
-    const dbMembers = await dbClient.boardParticipant.findMany({
-      where: {
-        state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-        boardId: leaderboard.id,
-        board: { state: LEADERBOARD_STATE.ACTIVE },
-        user: { state: USER_STATE.ACTIVE },
-      },
-      include: {
-        user: true,
-      },
-    });
-
-    const members = dbMembers.map(dbMember => this.db2justmember(dbMember));
-
-    return members;
-  };
-
-  @traced
-  static async getMember(leaderboard: Leaderboard, memberId: number): Promise<JustMember | null> {
-    const dbMember = await dbClient.boardParticipant.findUnique({
-      where: {
-        state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-        id: memberId,
-        boardId: leaderboard.id,
-        board: { state: LEADERBOARD_STATE.ACTIVE },
-        user: { state: USER_STATE.ACTIVE },
-      },
-      include: {
-        user: true,
-      },
-    });
-
-    if(!dbMember) {
-      return null;
-    }
-
-    const member = this.db2justmember(dbMember);
-    return member;
-  };
-
-  @traced
-  static async getMemberByUserId(leaderboard: Leaderboard, userId: number): Promise<JustMember | null> {
-    const dbMember = await dbClient.boardParticipant.findUnique({
-      where: {
-        state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-        userId_boardId: {
-          boardId: leaderboard.id,
-          userId: userId,
-        },
-        board: { state: LEADERBOARD_STATE.ACTIVE },
-        user: { state: USER_STATE.ACTIVE },
-      },
-      include: {
-        user: true,
-      },
-    });
-    if(!dbMember) {
-      return null;
-    }
-
-    const member = this.db2justmember(dbMember);
-    return member;
-  };
-
   @traced
   static async isUserOwner(leaderboard: Leaderboard, userId: number): Promise<boolean> {
     const dbMember = await dbClient.boardParticipant.findUnique({
       where: {
-        state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
         userId_boardId: {
           boardId: leaderboard.id,
           userId: userId,
         },
-        board: { state: LEADERBOARD_STATE.ACTIVE },
+        state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
         user: { state: USER_STATE.ACTIVE },
         isOwner: true,
       },
@@ -357,148 +287,6 @@ export class LeaderboardModel {
 
     return dbMember !== null;
   }
-
-  @traced
-  static async createMember(leaderboard: Leaderboard, user: User, data: CreateMemberData, reqCtx: RequestContext): Promise<LeaderboardMember> {
-    const dataWithDefaults = supplyDefaults(data, {
-      starred: false,
-      isParticipant: false,
-      isOwner: false,
-      displayName: '',
-      color: '',
-      goal: null,
-      workIds: [],
-      tagIds: [],
-    });
-
-    const dbCreated = await dbClient.boardParticipant.create({
-      data: {
-        state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-        boardId: leaderboard.id,
-        userId: user.id,
-
-        ...omit(dataWithDefaults, ['workIds', 'tagIds']),
-        ...makeConnectWorksAndTagsIncluded(dataWithDefaults, user.id),
-
-        goal: dataWithDefaults.goal ?? Prisma.JsonNull,
-      },
-      include: {
-        user: true,
-        ...makeIncludeWorkAndTagIds(user.id),
-      },
-    });
-
-    const created = this.db2member(dbCreated);
-
-    const changes = buildChangeRecord({}, created);
-    await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_CREATE,
-      reqCtx.userId, created.id, leaderboard.id,
-      changes, reqCtx.sessionId,
-    );
-
-    return created;
-  }
-
-  @traced
-  static async updateMember(member: JustMember, data: UpdateMemberData, reqCtx: RequestContext): Promise<LeaderboardMember> {
-    const dbUpdated = await dbClient.boardParticipant.update({
-      where: {
-        id: member.id,
-        state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-      },
-      data: {
-        ...omit(data, ['workIds', 'tagIds']),
-        ...makeSetWorksAndTagsIncluded(data, member.userId),
-        goal: data.goal ?? Prisma.JsonNull,
-      },
-      include: {
-        user: true,
-        ...makeIncludeWorkAndTagIds(member.userId),
-      },
-    });
-
-    const updated = this.db2member(dbUpdated);
-
-    const changes = buildChangeRecord(member, updated);
-    await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_UPDATE,
-      reqCtx.userId, updated.id, member.boardId,
-      changes, reqCtx.sessionId,
-    );
-
-    return updated;
-  }
-
-  @traced
-  static async removeMember(member: JustMember, reqCtx: RequestContext): Promise<LeaderboardMember> {
-    if(member.isOwner) {
-      const leaderboard = await this.get(member.boardId);
-      if(!leaderboard) {
-        throw new Error(`Cannot remove member from a non-existent board`);
-      }
-
-      const members = await this.listMembers(leaderboard);
-      const owners = members.filter(member => member.isOwner);
-
-      if(owners.length === 1 && owners[0].id === member.id) {
-        throw new Error('Cannot remove member because they are the last owner of this leaderboard');
-      }
-    }
-
-    const dbRemoved = await dbClient.boardParticipant.delete({
-      where: {
-        id: member.id,
-        state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-      },
-      include: {
-        user: true,
-        ...makeIncludeWorkAndTagIds(member.userId),
-      },
-    });
-    const removed = this.db2member(dbRemoved);
-
-    const changes = buildChangeRecord(member, removed);
-    await logAuditEvent(AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_DELETE,
-      reqCtx.userId, removed.id, member.boardId,
-      changes, reqCtx.sessionId,
-    );
-
-    return removed;
-  }
-
-  private static db2member(record: DbMember & WorksAndTagsIncluded): LeaderboardMember;
-  private static db2member(record: null): null;
-  private static db2member(record: (DbMember & WorksAndTagsIncluded) | null): LeaderboardMember | null {
-    if(record === null) {
-      return null;
-    }
-
-    const converted: LeaderboardMember = {
-      ...omit(included2ids(record), ['user']) as LeaderboardMember,
-      displayName: record.user.displayName,
-      avatar: record.user.avatar,
-    };
-
-    return converted;
-  }
-
-  private static db2justmember(record: DbMember): JustMember;
-  private static db2justmember(record: null): null;
-  private static db2justmember(record: DbMember | null): JustMember | null {
-    if(record === null) {
-      return null;
-    }
-
-    const converted: JustMember = {
-      ...omit(record, ['user']) as JustMember,
-      // if there's no board-specific displayName, fall back to the user's normal displayName
-      displayName: record.displayName || record.user.displayName,
-      avatar: record.user.avatar,
-    };
-
-    return converted;
-  }
-
-  // Participation methods
 
   @traced
   static async listParticipants(leaderboard: Leaderboard): Promise<Participant[]> {
@@ -529,40 +317,4 @@ export class LeaderboardModel {
 
     return participants;
   }
-
-  @traced
-  static async getMemberParticipation(leaderboardId: number, userId: number): Promise<Participation | null> {
-    const found = await dbClient.boardParticipant.findUnique({
-      where: {
-        userId_boardId: {
-          userId: userId,
-          boardId: leaderboardId,
-        },
-        state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
-        board: { state: LEADERBOARD_STATE.ACTIVE },
-        user: { state: USER_STATE.ACTIVE },
-      },
-      include: makeIncludeWorkAndTagIds(userId),
-    });
-    if(!found) {
-      return null;
-    }
-
-    const participation = this.db2participation(found);
-    return participation;
-  }
-
-  private static db2participation(record: DbParticipation): Participation;
-  private static db2participation(record: null): null;
-  private static db2participation(record: DbParticipation | null): Participation | null {
-    if(record === null) {
-      return null;
-    }
-
-    return included2ids(pick(record, [
-      'id', 'isParticipant', 'displayName', 'color', 'goal', 'worksIncluded', 'tagsIncluded',
-    ])) as Participation;
-  }
-
-  // TODO: listBannedMembers(), banMember(), unbanMember()
 }

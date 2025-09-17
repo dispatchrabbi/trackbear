@@ -178,16 +178,4 @@ describe(LeaderboardModel, () => {
   describe.skip(LeaderboardModel.delete, () => {});
 
   describe.skip(LeaderboardModel.listParticipants, () => {});
-
-  describe.skip(LeaderboardModel.getMemberParticipation, () => {});
-
-  describe.skip(LeaderboardModel.listMembers, () => {});
-
-  describe.skip(LeaderboardModel.getMember, () => {});
-
-  describe.skip(LeaderboardModel.createMember, () => {});
-
-  describe.skip(LeaderboardModel.updateMember, () => {});
-
-  describe.skip(LeaderboardModel.removeMember, () => {});
 });

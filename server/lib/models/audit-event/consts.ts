@@ -7,6 +7,7 @@ export const AUDIT_EVENT_ENTITIES = {
   GOAL: 'goal',
   LEADERBOARD: 'leaderboard',
   LEADERBOARD_MEMBER: 'leaderboard-member',
+  LEADERBOARD_TEAM: 'leaderboard-team',
   PROJECT: 'work',
   TAG: 'tag',
   TALLY: 'tally',
@@ -40,6 +41,10 @@ export const AUDIT_EVENT_TYPE = {
   LEADERBOARD_MEMBER_CREATE: 'leaderboard-member:create',
   LEADERBOARD_MEMBER_UPDATE: 'leaderboard-member:update',
   LEADERBOARD_MEMBER_DELETE: 'leaderboard-member:delete',
+
+  LEADERBOARD_TEAM_CREATE: 'leaderboard-team:create',
+  LEADERBOARD_TEAM_UPDATE: 'leaderboard-team:update',
+  LEADERBOARD_TEAM_DELETE: 'leaderboard-team:delete',
 
   // the values of these continue to be 'work:*' for legacy reasons
   // TODO: make a database migration that converts these
@@ -177,6 +182,21 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
   [AUDIT_EVENT_TYPE.LEADERBOARD_MEMBER_DELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.LEADERBOARD_MEMBER,
+    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD,
+  },
+  [AUDIT_EVENT_TYPE.LEADERBOARD_TEAM_CREATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.LEADERBOARD_TEAM,
+    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD,
+  },
+  [AUDIT_EVENT_TYPE.LEADERBOARD_TEAM_UPDATE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.LEADERBOARD_TEAM,
+    goal: AUDIT_EVENT_ENTITIES.LEADERBOARD,
+  },
+  [AUDIT_EVENT_TYPE.LEADERBOARD_TEAM_DELETE]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.LEADERBOARD_TEAM,
     goal: AUDIT_EVENT_ENTITIES.LEADERBOARD,
   },
   [AUDIT_EVENT_TYPE.TAG_CREATE]: {

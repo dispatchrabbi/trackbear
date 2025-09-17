@@ -80,6 +80,7 @@ const leaderboardSchema = z.object({
   end: zNullableDate().default(null),
   individualGoalMode: z.boolean().default(false).optional(),
   fundraiserMode: z.boolean().default(false).optional(),
+  enableTeams: z.boolean().default(false).optional(),
   // measures is not used with individualGoalMode
   measures: z.array(zTallyMeasure()).optional(),
   // goal is not used with individualGoalMode
@@ -106,6 +107,7 @@ const joinLeaderboardCommon = () => ({
   // if not included, displayName will default to the user's displayName
   displayName: zName().optional(),
   participation: zParticipation(),
+  // TODO: teams
 });
 const joinLeaderboardSchema = z.union([
   // pass a uuid for an existing board

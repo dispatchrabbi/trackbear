@@ -19,6 +19,7 @@ import { TallyData, TallyModel, type Tally } from 'server/lib/models/tally/tally
 import { type RequestContext } from 'server/lib/request-context';
 import { GOAL_TYPE } from 'server/lib/models/goal/consts';
 import { LeaderboardModel } from 'server/lib/models/leaderboard/leaderboard-model';
+import { LeaderboardMemberModel } from 'server/lib/models/leaderboard/leaderboard-member-model';
 import { eachDayOfInterval } from 'date-fns';
 import { formatDate, parseDateString } from 'src/lib/date';
 
@@ -217,6 +218,7 @@ async function createLeaderboards(user: User, leaderboardConfigMap: Record<strin
       endDate: config.end,
       individualGoalMode: config.individualGoalMode!,
       fundraiserMode: config.fundraiserMode!,
+      enableTeams: config.enableTeams!,
       goal: config.goal!,
       measures: config.measures!,
       isJoinable: true,
@@ -271,11 +273,11 @@ async function joinLeaderboards(joinConfigs: JoinLeaderboardSchema[], accountMap
           tagIds: [],
         };
 
-    const member = await LeaderboardModel.getMemberByUserId(leaderboard, user.id);
+    const member = await LeaderboardMemberModel.getByUserId(leaderboard, user.id);
     if(member) {
-      return await LeaderboardModel.updateMember(member, membershipData, reqCtx);
+      return await LeaderboardMemberModel.update(member, membershipData, reqCtx);
     } else {
-      return await LeaderboardModel.createMember(leaderboard, user, membershipData, reqCtx);
+      return await LeaderboardMemberModel.create(leaderboard, user, membershipData, reqCtx);
     }
   }));
 

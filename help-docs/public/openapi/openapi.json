@@ -2542,6 +2542,7 @@
           "state",
           "displayName",
           "avatar",
+          "color",
           "isParticipant",
           "isOwner",
           "goal",
@@ -2597,6 +2598,16 @@
               }
             ]
           },
+          "color": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "isParticipant": {
             "type": "boolean"
           },
@@ -2635,6 +2646,7 @@
           "state",
           "displayName",
           "avatar",
+          "color",
           "isParticipant",
           "isOwner"
         ],
@@ -2671,6 +2683,16 @@
               }
             ]
           },
+          "color": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "isParticipant": {
             "type": "boolean"
           },
@@ -2687,6 +2709,7 @@
           "uuid",
           "displayName",
           "avatar",
+          "color",
           "goal",
           "tallies"
         ],
@@ -2711,6 +2734,16 @@
             "type": "string"
           },
           "avatar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "color": {
             "anyOf": [
               {
                 "type": "string"
@@ -2758,6 +2791,8 @@
         "type": "object",
         "required": [
           "id",
+          "displayName",
+          "color",
           "isParticipant",
           "goal",
           "workIds",
@@ -2771,6 +2806,19 @@
               }
             ],
             "readOnly": true
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "isParticipant": {
             "type": "boolean"
@@ -2884,12 +2932,27 @@
       "Leaderboards.UpdateParticipation": {
         "type": "object",
         "required": [
+          "displayName",
+          "color",
           "isParticipant",
           "goal",
           "workIds",
           "tagIds"
         ],
         "properties": {
+          "displayName": {
+            "type": "string"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "isParticipant": {
             "type": "boolean"
           },

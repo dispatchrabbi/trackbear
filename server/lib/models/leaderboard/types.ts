@@ -1,4 +1,4 @@
-import type { Board as PrismaBoard, User, Tally, BoardParticipant as PrismaBoardParticipant } from 'generated/prisma/client';
+import type { Board as PrismaBoard, User, Tally, BoardParticipant as PrismaBoardParticipant, BoardTeam as PrismaBoardTeam } from 'generated/prisma/client';
 import type { TallyMeasure } from '../tally/consts.ts';
 import type { MeasureCounts } from '../tally/types.ts';
 import type { Expand } from 'server/lib/obj.ts';
@@ -43,4 +43,6 @@ export type LeaderboardTally = Pick<Tally, 'uuid' | 'date' | 'measure' | 'count'
 
 export type Participation = Expand<Pick<LeaderboardMember, 'id' | 'goal' | 'isParticipant' | 'displayName' | 'color' | 'workIds' | 'tagIds'>>;
 
-export type Membership = Pick<LeaderboardMember, 'id' | 'uuid' | 'state' | 'avatar' | 'displayName' | 'color' | 'isOwner' | 'isParticipant'>;
+export type Membership = Pick<LeaderboardMember, 'id' | 'uuid' | 'state' | 'avatar' | 'displayName' | 'color' | 'isOwner' | 'isParticipant' | 'teamId'>;
+
+export type LeaderboardTeam = PrismaBoardTeam;

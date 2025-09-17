@@ -3,7 +3,7 @@
 
 generator client {
   provider        = "prisma-client"
-  previewFeatures = ["queryCompiler", "driverAdapters"]
+  previewFeatures = []
   output          = "../generated/prisma"
   moduleFormat    = "esm"
 }
@@ -278,6 +278,8 @@ model Board {
   startDate String?
   endDate   String?
   goal      Json
+
+  enableTeams Boolean @default(false)
   
   individualGoalMode  Boolean @default(false)
   fundraiserMode      Boolean @default(false)
@@ -288,6 +290,7 @@ model Board {
   isPublic     Boolean @default(false)
   
   participants BoardParticipant[]
+  teams BoardTeam[]
 
   @@index([uuid])
 }
@@ -306,11 +309,15 @@ model BoardParticipant {
   board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
 
   starred       Boolean @default(false)
+
   isParticipant Boolean @default(true)
   isOwner       Boolean @default(false)
 
   displayName String @default("")
   color       String @default("")
+
+  teamId Int?
+  team BoardTeam? @relation(fields: [teamId], references: [id], onDelete: SetNull)
 
   worksIncluded Work[]
   tagsIncluded  Tag[]
@@ -318,4 +325,19 @@ model BoardParticipant {
   goal Json?
 
   @@unique([userId, boardId])
+}
+
+model BoardTeam {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  name  String @default("")
+  color String @default("")
+
+  boardId Int
+  board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  participants BoardParticipant[]
 }
