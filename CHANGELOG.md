@@ -16,6 +16,7 @@ Types of changes include:
 
 - NEW: You can now set a display name for each leaderboard you're on. If you don't set one, your account's display name will be used.
 - NEW: You can now pick your own color on a leaderboard!
+- CHANGED: The submit button on various edit forms (like Edit Project and Edit Goal) now reads "Save" for better clarity. (h/t Binna)
 - CHANGED: Uploaded covers and avatars will now be minified/optimized to a smaller file size. This should not impact quality but if you see any issues, please let me know.
 
 ## 1.3.9

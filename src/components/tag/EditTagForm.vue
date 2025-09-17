@@ -89,8 +89,8 @@ async function handleSubmit() {
 <template>
   <TbForm
     :is-valid="isValid"
-    submit-message="Edit"
-    :loading-message="isLoading ? 'Editing...' : null"
+    submit-message="Save"
+    :loading-message="isLoading ? 'Saving...' : null"
     :success-message="successMessage"
     :error-message="errorMessage"
     @submit="validate() && handleSubmit()"
