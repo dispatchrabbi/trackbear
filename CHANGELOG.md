@@ -21,7 +21,7 @@ Types of changes include:
 
 ## 1.3.9
 
-- CHANGED: (**BREAKING**) The `GET /project/:id` API route now only returns data about the project iteslef. You'll need to use `GET /tally` to get the tallies associated with that project. (This technically should require versioning the endpoint, but my logs show that no one is using it. Sorry if this breaks your code!)
+- CHANGED: (**BREAKING**) The `GET /project/:id` API route now only returns data about the project itself. You'll need to use `GET /tally` to get the tallies associated with that project. (This technically should require versioning the endpoint, but my logs show that no one is using it. Sorry if this breaks your code!)
 
 ## 1.3.7
 

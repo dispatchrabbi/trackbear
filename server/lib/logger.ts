@@ -136,7 +136,7 @@ export async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { 
   });
 
   // also log queue and worker to the console if we're in development mode
-  if(forceConsoles || env.NODE_ENV === 'production') {
+  if(forceConsoles || env.NODE_ENV === 'development') {
     loggers.queue.add(new transports.Console({
       format: format.combine(
         format.colorize(),

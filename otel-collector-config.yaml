@@ -26,19 +26,27 @@ extensions:
 service:
   extensions: [health_check, pprof, zpages]
   pipelines:
-    traces:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [otlp/signoz]
+    # traces:
+    #   receivers: [otlp]
+    #   processors: [batch]
+    #   exporters: [otlp/signoz]
     traces/debug:
       receivers: [otlp]
       processors: [batch]
       exporters: [debug]
-    metrics:
+    # metrics:
+    #   receivers: [otlp]
+    #   processors: [batch]
+    #   exporters: [otlp/signoz]
+    metrics/debug:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/signoz]
-    logs:
+      exporters: [debug]
+    # logs:
+    #   receivers: [otlp]
+    #   processors: [batch]
+    #   exporters: [otlp/signoz]
+    logs/debug:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/signoz]
+      exporters: [debug]
