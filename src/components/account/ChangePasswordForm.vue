@@ -57,7 +57,7 @@ async function handleSubmit() {
 <template>
   <TbForm
     :is-valid="isValid"
-    submit-message="Reset password"
+    submit-label="Reset password"
     :loading-message="isLoading ? 'Resetting password...' : null"
     :success-message="successMessage"
     :error-message="errorMessage"

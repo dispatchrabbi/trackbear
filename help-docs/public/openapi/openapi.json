@@ -12,6 +12,15 @@
       "name": "Leaderboards"
     },
     {
+      "name": "Leaderboard Teams"
+    },
+    {
+      "name": "Leaderboard Members"
+    },
+    {
+      "name": "Leaderboard Participation"
+    },
+    {
       "name": "Stats"
     },
     {
@@ -439,7 +448,7 @@
     },
     "/leaderboard/{uuid}/me": {
       "get": {
-        "operationId": "Leaderboards_getMyParticipation",
+        "operationId": "LeaderboardParticipation_getMyParticipation",
         "summary": "Get your participation",
         "parameters": [
           {
@@ -464,11 +473,11 @@
           }
         },
         "tags": [
-          "Leaderboards"
+          "Leaderboard Participation"
         ]
       },
       "post": {
-        "operationId": "Leaderboards_joinBoard",
+        "operationId": "LeaderboardParticipation_joinBoard",
         "summary": "Join a leaderboard",
         "parameters": [
           {
@@ -526,7 +535,7 @@
           }
         },
         "tags": [
-          "Leaderboards"
+          "Leaderboard Participation"
         ],
         "requestBody": {
           "required": true,
@@ -540,7 +549,7 @@
         }
       },
       "patch": {
-        "operationId": "Leaderboards_updateMyParticipation",
+        "operationId": "LeaderboardParticipation_updateMyParticipation",
         "summary": "Update your participation",
         "parameters": [
           {
@@ -565,7 +574,7 @@
           }
         },
         "tags": [
-          "Leaderboards"
+          "Leaderboard Participation"
         ],
         "requestBody": {
           "required": true,
@@ -579,7 +588,7 @@
         }
       },
       "delete": {
-        "operationId": "Leaderboards_leaveBoard",
+        "operationId": "LeaderboardParticipation_leaveBoard",
         "summary": "Leave a leaderboard",
         "parameters": [
           {
@@ -636,13 +645,13 @@
           }
         },
         "tags": [
-          "Leaderboards"
+          "Leaderboard Participation"
         ]
       }
     },
     "/leaderboard/{uuid}/members": {
       "get": {
-        "operationId": "Leaderboards_listMembers",
+        "operationId": "LeaderboardMembers_listMembers",
         "summary": "List leaderboard members",
         "description": "Lists members of the leaderboard as leaderboard owners see them.",
         "parameters": [
@@ -671,13 +680,13 @@
           }
         },
         "tags": [
-          "Leaderboards"
+          "Leaderboard Members"
         ]
       }
     },
     "/leaderboard/{uuid}/members/{memberId}": {
       "patch": {
-        "operationId": "Leaderboards_updateMember",
+        "operationId": "LeaderboardMembers_updateMember",
         "summary": "Update a leaderboard member",
         "parameters": [
           {
@@ -710,7 +719,7 @@
           }
         },
         "tags": [
-          "Leaderboards"
+          "Leaderboard Members"
         ],
         "requestBody": {
           "required": true,
@@ -724,7 +733,7 @@
         }
       },
       "delete": {
-        "operationId": "Leaderboards_removeMember",
+        "operationId": "LeaderboardMembers_removeMember",
         "summary": "Remove a leaderboard member",
         "parameters": [
           {
@@ -789,7 +798,7 @@
           }
         },
         "tags": [
-          "Leaderboards"
+          "Leaderboard Members"
         ]
       }
     },
@@ -867,6 +876,202 @@
             }
           }
         }
+      }
+    },
+    "/leaderboard/{uuid}/teams": {
+      "get": {
+        "operationId": "LeaderboardTeams_listTeams",
+        "summary": "List leaderboard teams",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Leaderboards.Team"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboard Teams"
+        ]
+      },
+      "post": {
+        "operationId": "LeaderboardTeams_createTeam",
+        "summary": "Create a leaderboard team",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The request has succeeded and a new resource has been created as a result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Team"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboard Teams"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Leaderboards.CreateTeam"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/leaderboard/{uuid}/teams/{teamId}": {
+      "get": {
+        "operationId": "LeaderboardTeams_getTeam",
+        "summary": "Get a leaderboard team",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          },
+          {
+            "name": "teamId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Team"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboard Teams"
+        ]
+      },
+      "patch": {
+        "operationId": "LeaderboardTeams_updateTeam",
+        "summary": "Update a leaderboard team",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          },
+          {
+            "name": "teamId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Team"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboard Teams"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Leaderboards.UpdateTeam"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "LeaderboardTeams_deleteTeam",
+        "summary": "Delete a leaderboard team",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          },
+          {
+            "name": "teamId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Leaderboards.Team"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Leaderboard Teams"
+        ]
       }
     },
     "/ping": {
@@ -2309,6 +2514,26 @@
         },
         "description": ""
       },
+      "Leaderboards.CreateTeam": {
+        "type": "object",
+        "required": [
+          "boardId",
+          "name",
+          "color"
+        ],
+        "properties": {
+          "boardId": {
+            "$ref": "#/components/schemas/id"
+          },
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          }
+        },
+        "description": ""
+      },
       "Leaderboards.Leaderboard": {
         "type": "object",
         "required": [
@@ -2859,6 +3084,55 @@
           }
         }
       },
+      "Leaderboards.Team": {
+        "type": "object",
+        "required": [
+          "id",
+          "uuid",
+          "createdAt",
+          "updatedAt",
+          "boardId",
+          "name",
+          "color"
+        ],
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/id"
+              }
+            ],
+            "readOnly": true
+          },
+          "uuid": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/uuid"
+              }
+            ],
+            "readOnly": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "boardId": {
+            "$ref": "#/components/schemas/id"
+          },
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          }
+        }
+      },
       "Leaderboards.UpdateLeaderboardPayload": {
         "type": "object",
         "properties": {
@@ -2977,6 +3251,21 @@
             "items": {
               "$ref": "#/components/schemas/id"
             }
+          }
+        },
+        "description": ""
+      },
+      "Leaderboards.UpdateTeam": {
+        "type": "object",
+        "properties": {
+          "boardId": {
+            "$ref": "#/components/schemas/id"
+          },
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
           }
         },
         "description": ""

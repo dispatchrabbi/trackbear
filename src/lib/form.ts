@@ -1,6 +1,71 @@
-import { computed } from 'vue';
+import { computed, watch, type Ref } from 'vue';
 import { ZodObject, ZodRawShape, ZodTypeAny } from 'zod';
 import type { RoundTrip } from 'src/lib/api';
+import wait from './wait';
+import { mapObject } from './obj';
+
+function useDirtyTracker<M extends object>(model: Ref<M>) {
+  const initialCopy = Object.assign({}, model.value);
+  const dirtyFields = new Set<string>();
+
+  watch(model, newModel => {
+    for(const key of Object.keys(newModel)) {
+      if(newModel[key] !== initialCopy[key]) {
+        dirtyFields.add(key);
+      }
+    }
+  }, { deep: 1 });
+
+  return dirtyFields;
+}
+
+export function useModelValidation<M extends object, S extends ZodObject<ZodRawShape> = ZodObject<ZodRawShape>>(schema: S, model: Ref<M>) {
+  const dirtyTracker = useDirtyTracker(model);
+
+  const validationResults = computed(() => {
+    return schema.safeParse(model.value);
+  });
+
+  const isValid = computed(() => {
+    return validationResults.value.success;
+  });
+
+  const allValidationMessages = computed(() => {
+    const errors = validationResults.value.error?.errors ?? [];
+    const groupedByPath = Object.groupBy(errors, error => error.path.join('.'));
+
+    // remove any paths that aren't dirty
+    // TODO: this only works down to depth 1
+    for(const pathKey of Object.keys(groupedByPath)) {
+      if(!dirtyTracker.has(pathKey)) {
+        delete groupedByPath[pathKey];
+      }
+    }
+
+    return groupedByPath;
+  });
+
+  const validationMessages = computed(() => {
+    return mapObject(allValidationMessages.value, (key, errors) => errors!.length > 0 ? errors![0].message : null);
+  });
+
+  const isFieldInvalid = computed(() => {
+    return mapObject(allValidationMessages.value, (key, errors) => errors!.length > 0);
+  });
+
+  const getParsedData = function() {
+    return schema.parse(model.value);
+  };
+
+  return {
+    isValid,
+    validationResults,
+    allValidationMessages,
+    validationMessages,
+    isFieldInvalid,
+    getParsedData,
+  };
+}
 
 export function useValidation<T extends object, V extends ZodObject<ZodRawShape> = ZodObject<ZodRawShape>>(schema: V, model: T) {
   const ruleFor = function(field: string) {
@@ -63,5 +128,14 @@ export function useValidation<T extends object, V extends ZodObject<ZodRawShape>
     isValid,
     validationResults,
     formData,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type formSuccessEmitFn = (event: 'formSuccess', ...args: any[]) => void;
+export function emitSuccess(emit: formSuccessEmitFn) {
+  return async function() {
+    await wait(1000);
+    emit('formSuccess');
   };
 }

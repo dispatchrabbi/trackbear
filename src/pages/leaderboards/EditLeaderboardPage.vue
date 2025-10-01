@@ -12,10 +12,11 @@ const userStore = useUserStore();
 import { useLeaderboardStore } from 'src/stores/leaderboard';
 const leaderboardStore = useLeaderboardStore();
 
-import { type Participation, type LeaderboardSummary, type Leaderboard, getMyParticipation, deleteLeaderboard, leaveLeaderboard } from 'src/lib/api/leaderboard';
+import { type Participation, type Leaderboard, getMyParticipation, deleteLeaderboard, leaveLeaderboard } from 'src/lib/api/leaderboard';
 
 import EditLeaderboardForm from 'src/components/leaderboard/EditLeaderboardForm.vue';
-import MembersList from 'src/components/leaderboard/MembersList.vue';
+import MembersList from 'src/components/leaderboard/members/MembersList.vue';
+import TeamsList from 'src/components/leaderboard/teams/TeamsList.vue';
 import EditLeaderboardParticipationForm from 'src/components/leaderboard/EditLeaderboardParticipationForm.vue';
 import DangerPanel from 'src/components/layout/DangerPanel.vue';
 import DangerButton from 'src/components/shared/DangerButton.vue';
@@ -29,27 +30,48 @@ import Panel from 'primevue/panel';
 
 const deleteEventBus = useEventBus<{ leaderboard: Leaderboard }>('leaderboard:delete');
 const leaveEventBus = useEventBus<{ leaderboardUuid: string }>('leaderboard:leave');
+const memberUpdateEventBus = useEventBus('member:update');
+const memberRemoveEventBus = useEventBus('member:remove');
+const teamUpdateEventBus = useEventBus('team:update');
+const teamDeleteEventBus = useEventBus('team:delete');
 
-const leaderboard = ref<LeaderboardSummary | null>(null);
-const isCurrentUserAnOwner = ref<boolean>(false);
-const isCurrentUserTheOnlyOwner = ref<boolean>(false);
-const loadLeaderboard = async function() {
-  leaderboard.value = leaderboardStore.get(route.params.boardUuid.toString());
-  if(leaderboard.value === null) {
-    router.push({ name: 'leaderboards' });
-    return;
+const leaderboard = computed(() => {
+  if(route.params.boardUuid) {
+    return leaderboardStore.get(route.params.boardUuid.toString());
+  } else {
+    return null;
   }
-
-  const currentMember = leaderboard.value.members.find(member => member.userUuid === userStore.user!.uuid);
-  if(!currentMember) {
+});
+watch(leaderboard, val => {
+  if(!val) {
     router.push({ name: 'leaderboards' });
-    return;
   }
-  isCurrentUserAnOwner.value = currentMember.isOwner;
+});
 
-  const owners = leaderboard.value.members.filter(member => member.isOwner);
-  isCurrentUserTheOnlyOwner.value = currentMember.isOwner && owners.length === 1;
-};
+const teams = computed(() => {
+  return leaderboard.value?.teams ?? [];
+});
+
+const currentMember = computed(() => {
+  return leaderboard.value?.members.find(member => member.userUuid === userStore.user!.uuid);
+});
+watch(currentMember, val => {
+  if(!val) {
+    router.push({ name: 'leaderboards' });
+  }
+});
+
+const isCurrentUserAnOwner = computed(() => {
+  return currentMember.value?.isOwner ?? false;
+});
+
+const owners = computed(() => {
+  return leaderboard.value?.members.filter(member => member.isOwner) ?? [];
+});
+
+const isCurrentUserTheOnlyOwner = computed(() => {
+  return owners.value.length === 1 && isCurrentUserAnOwner.value;
+});
 
 const myParticipation = ref<Participation | null>(null);
 const loadMyParticipation = async function() {
@@ -75,7 +97,6 @@ async function reloadData() {
   isLoading.value = true;
 
   await leaderboardStore.populate(true);
-  await loadLeaderboard();
   await loadMyParticipation();
 
   isLoading.value = false;
@@ -104,6 +125,11 @@ onMounted(() => {
   reloadData();
 });
 
+memberUpdateEventBus.on(reloadData);
+memberRemoveEventBus.on(reloadData);
+teamUpdateEventBus.on(reloadData);
+teamDeleteEventBus.on(reloadData);
+
 watch(() => route.params.boardUuid, newUuid => {
   if(newUuid !== undefined) {
     reloadData();
@@ -116,58 +142,20 @@ watch(() => route.params.boardUuid, newUuid => {
   <ApplicationLayout
     :breadcrumbs="breadcrumbs"
   >
-    <div v-if="isLoading">
-      Loading...
-    </div>
     <div
-      v-else-if="leaderboard !== null"
+      v-if="leaderboard !== null"
     >
       <TabView>
-        <TabPanel
-          v-if="isCurrentUserAnOwner"
-          key="leaderboard"
-          header="Leaderboard"
-        >
-          <div class="flex flex-col gap-4 max-w-screen-md">
-            <Panel header="Configure Leaderboard">
-              <EditLeaderboardForm
-                :leaderboard="leaderboard"
-                @form-success="router.push({ name: 'leaderboard', params: { boardUuid: route.params.boardUuid }})"
-                @form-cancel="router.push({ name: 'leaderboard', params: { boardUuid: route.params.boardUuid }})"
-              />
-            </Panel>
-            <DangerPanel header="Delete this Leaderboard">
-              <DangerButton
-                label="Delete this leaderboard"
-                :icon="PrimeIcons.TRASH"
-                action-description="delete this leaderboard"
-                action-command="Delete"
-                action-in-progress-message="Deleting..."
-                action-success-message="This leaderboard has been deleted."
-                :confirmation-code="leaderboard.title"
-                confirmation-code-description="this leaderboard's title"
-                :action-fn="handleDeleteLeaderboardSubmit"
-                @inner-form-success="router.push({ name: 'leaderboards' })"
-              />
-            </DangerPanel>
-          </div>
-        </TabPanel>
-        <TabPanel
-          v-if="isCurrentUserAnOwner"
-          key="members"
-          header="Members"
-        >
-          <MembersList :leaderboard="leaderboard" />
-        </TabPanel>
         <TabPanel
           key="participation"
           header="My Participation"
         >
           <div class="flex flex-col gap-4 max-w-screen-md">
-            <Panel header="What to Include">
+            <Panel header="Participation Settings">
               <EditLeaderboardParticipationForm
-                v-if="myParticipation"
+                v-if="myParticipation && !isLoading"
                 :leaderboard="leaderboard"
+                :teams="teams"
                 :participation="myParticipation"
                 @form-success="router.push({ name: 'leaderboard', params: { boardUuid: route.params.boardUuid }})"
                 @form-cancel="router.push({ name: 'leaderboard', params: { boardUuid: route.params.boardUuid }})"
@@ -194,6 +182,49 @@ watch(() => route.params.boardUuid, newUuid => {
               />
             </DangerPanel>
           </div>
+        </TabPanel>
+        <TabPanel
+          v-if="isCurrentUserAnOwner"
+          key="leaderboard"
+          header="Leaderboard Settings"
+        >
+          <div class="flex flex-col gap-4 max-w-screen-md">
+            <Panel header="Configure Leaderboard">
+              <EditLeaderboardForm
+                :leaderboard="leaderboard"
+                @form-success="router.push({ name: 'leaderboard', params: { boardUuid: route.params.boardUuid }})"
+                @form-cancel="router.push({ name: 'leaderboard', params: { boardUuid: route.params.boardUuid }})"
+              />
+            </Panel>
+            <DangerPanel header="Delete this Leaderboard">
+              <DangerButton
+                label="Delete this leaderboard"
+                :icon="PrimeIcons.TRASH"
+                action-description="delete this leaderboard"
+                action-command="Delete"
+                action-in-progress-message="Deleting..."
+                action-success-message="This leaderboard has been deleted."
+                :confirmation-code="leaderboard.title"
+                confirmation-code-description="this leaderboard's title"
+                :action-fn="handleDeleteLeaderboardSubmit"
+                @inner-form-success="router.push({ name: 'leaderboards' })"
+              />
+            </DangerPanel>
+          </div>
+        </TabPanel>
+        <TabPanel
+          v-if="isCurrentUserAnOwner && leaderboard.enableTeams"
+          key="teams"
+          header="Teams"
+        >
+          <TeamsList :leaderboard="leaderboard" />
+        </TabPanel>
+        <TabPanel
+          v-if="isCurrentUserAnOwner"
+          key="members"
+          header="Members"
+        >
+          <MembersList :leaderboard="leaderboard" />
         </TabPanel>
       </TabView>
     </div>

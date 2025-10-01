@@ -74,7 +74,7 @@ async function handleSubmit() {
 <template>
   <TbForm
     :is-valid="isValid"
-    submit-message="Delete"
+    submit-label="Delete"
     submit-severity="danger"
     :loading-message="isLoading ? 'Deleting...' : null"
     :success-message="successMessage"

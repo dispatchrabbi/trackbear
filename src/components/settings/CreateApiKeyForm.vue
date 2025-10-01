@@ -81,7 +81,7 @@ const [handleSubmit, signals] = useAsyncSignals(
 <template>
   <TbForm
     :is-valid="isValid"
-    submit-message="Create"
+    submit-label="Create"
     :loading-message="signals.isLoading ? 'Creating...' : null"
     :success-message="signals.successMessage"
     :error-message="signals.errorMessage"

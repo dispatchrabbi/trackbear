@@ -35,6 +35,8 @@ const successMessage = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 
 async function handleSubmit() {
+  if(!validate()) { return; }
+
   isLoading.value = true;
   successMessage.value = null;
   errorMessage.value = null;
@@ -61,8 +63,6 @@ async function handleSubmit() {
     } else {
       errorMessage.value = 'Could not look up the join code: something went wrong server-side.';
     }
-
-    return;
   } finally {
     isLoading.value = false;
   }
@@ -77,11 +77,11 @@ onMounted(async () => {
 <template>
   <TbForm
     :is-valid="isValid"
-    submit-message="Submit"
+    submit-label="Submit"
     :loading-message="isLoading ? 'Checking...' : null"
     :success-message="successMessage"
     :error-message="errorMessage"
-    @submit="validate() && handleSubmit()"
+    @submit="handleSubmit"
   >
     <p>Please enter the leaderboard's Join Code below. If you don't have one, you can get it from the leaderboard's owner.</p>
     <FieldWrapper

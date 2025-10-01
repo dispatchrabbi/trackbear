@@ -7,13 +7,14 @@ import InlineMessage from 'primevue/inlinemessage';
 const props = defineProps<{
   isValid: boolean;
 
-  submitMessage: string;
+  submitLabel: string;
+  submitSeverity?: string;
+  cancelButton?: boolean;
+  cancelLabel?: string;
+
   loadingMessage: string | null;
   successMessage: string | null;
   errorMessage: string | null;
-
-  submitSeverity?: string;
-  cancelButton?: boolean;
 }>();
 
 const emit = defineEmits(['submit', 'cancel']);
@@ -35,7 +36,7 @@ const handleSubmit = function() {
       <div class="actions flex flex-col-reverse md:flex-row gap-2">
         <div class="buttons flex gap-2">
           <Button
-            :label="loadingMessage || submitMessage"
+            :label="loadingMessage || submitLabel"
             size="large"
             :severity="props.submitSeverity || undefined"
             :disabled="!props.isValid"
@@ -45,7 +46,7 @@ const handleSubmit = function() {
           />
           <Button
             v-if="props.cancelButton"
-            :label="'Cancel'"
+            :label="cancelLabel || 'Cancel'"
             size="large"
             :disabled="loadingMessage !== null"
             severity="secondary"

@@ -8,7 +8,7 @@ import stylistic from '@stylistic/eslint-plugin';
 
 import vueParser from 'vue-eslint-parser';
 
-export default ts_eslint.config(
+export default defineConfig(
   {
     files: ['**/*.js', '**/*.ts', '**/*.vue'],
     languageOptions: {

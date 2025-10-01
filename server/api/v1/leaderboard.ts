@@ -1,20 +1,20 @@
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
-import { ApiResponse, success, failure } from '../../lib/api-response.ts';
+import { ApiResponse, success, failure, FAILURE_CODES } from '../../lib/api-response.ts';
 import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
-import { zUuidParam, NonEmptyArray, zStrInt } from '../../lib/validators.ts';
+import { zUuidParam, NonEmptyArray, zStrInt, zUuidAndIdParams } from '../../lib/validators.ts';
 
-import {
-  LeaderboardModel, type CreateLeaderboardData, type UpdateLeaderboardData } from 'server/lib/models/leaderboard/leaderboard-model.ts';
+import type { Leaderboard, LeaderboardSummary, LeaderboardMember, JustMember, Participant, ParticipantGoal, LeaderboardTeam, Participation, Membership } from 'server/lib/models/leaderboard/types.ts';
+import { LeaderboardModel, type CreateLeaderboardData, type UpdateLeaderboardData } from 'server/lib/models/leaderboard/leaderboard-model.ts';
 import { LeaderboardMemberModel, type CreateMemberData, type UpdateMemberData } from 'server/lib/models/leaderboard/leaderboard-member-model.ts';
-import type { Leaderboard, LeaderboardSummary, LeaderboardMember, JustMember, Participant, ParticipantGoal, Participation, Membership } from 'server/lib/models/leaderboard/types.ts';
+import { LeaderboardTeamModel, type CreateLeaderboardTeamData, type UpdateLeaderboardTeamData } from 'server/lib/models/leaderboard/leaderboard-team-model.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 import { reqCtx } from 'server/lib/request-context.ts';
 import { pick } from 'server/lib/obj.ts';
 
 export type {
-  LeaderboardSummary, Leaderboard, LeaderboardMember, Participant, Participation, Membership,
+  LeaderboardSummary, Leaderboard, LeaderboardTeam, LeaderboardMember, Participant, Participation, Membership,
 };
 
 export async function handleList(req: RequestWithUser, res: ApiResponse<LeaderboardSummary[]>) {
@@ -23,22 +23,22 @@ export async function handleList(req: RequestWithUser, res: ApiResponse<Leaderbo
   return res.status(200).send(success(summaries));
 }
 
-export async function handleGetByUuid(req: RequestWithUser, res: ApiResponse<Leaderboard>) {
+export async function handleGetByUuid(req: RequestWithUser, res: ApiResponse<LeaderboardSummary>) {
   const uuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: req.user.id });
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${uuid}.`));
   }
 
   return res.status(200).send(success(leaderboard));
 }
 
 const zJoinCodeParam = z.object({ joincode: z.string().uuid() });
-export async function handleGetByJoinCode(req: RequestWithUser, res: ApiResponse<Leaderboard>) {
+export async function handleGetByJoinCode(req: RequestWithUser, res: ApiResponse<LeaderboardSummary>) {
   const joinCode = req.params.joincode;
   const leaderboard = await LeaderboardModel.getByJoinCode(joinCode);
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with join code ${joinCode}.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with join code ${joinCode}.`));
   }
 
   if(!leaderboard.isJoinable) {
@@ -56,6 +56,7 @@ const zLeaderboardCreatePayload = z.object({
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
   goal: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()).nullable(),
+  enableTeams: z.boolean().nullable().default(false),
   individualGoalMode: z.boolean().nullable().default(false),
   fundraiserMode: z.boolean().nullable().default(false),
   isJoinable: z.boolean().nullable().default(false),
@@ -76,7 +77,7 @@ export async function handleUpdate(req: RequestWithUser, res: ApiResponse<Leader
   const uuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(uuid, { ownerUserId: req.user.id });
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${uuid}.`));
   }
 
   const payload = req.body as LeaderboardUpdatePayload;
@@ -98,13 +99,13 @@ export async function handleStar(req: RequestWithUser, res: ApiResponse<Leaderbo
   const leaderboardUuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { memberUserId: req.user.id });
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
   }
 
   const memberId = +req.user.id;
   const member = await LeaderboardMemberModel.getByUserId(leaderboard, memberId);
   if(!member) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any member with id ${memberId} on that leaderboard.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any member with id ${memberId} on that leaderboard.`));
   }
 
   const payload = req.body as LeaderboardStarPayload;
@@ -120,7 +121,7 @@ export async function handleDelete(req: RequestWithUser, res: ApiResponse<Leader
   const uuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(uuid, { ownerUserId: req.user.id });
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${uuid}.`));
   }
 
   const deleted = await LeaderboardModel.delete(leaderboard, reqCtx(req));
@@ -131,18 +132,108 @@ export async function handleListParticipants(req: RequestWithUser, res: ApiRespo
   const uuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: req.user.id, includePublicLeaderboards: true });
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${uuid}.`));
   }
 
   const participants = await LeaderboardModel.listParticipants(leaderboard);
   return res.status(200).send(success(participants));
 }
 
+export async function handleListTeams(req: RequestWithUser, res: ApiResponse<LeaderboardTeam[]>) {
+  const leaderboardUuid = req.params.uuid;
+  const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { memberUserId: req.user.id });
+  if(!leaderboard) {
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
+  }
+
+  const teams = await LeaderboardTeamModel.list(leaderboard);
+
+  return res.status(200).send(success(teams));
+}
+
+export async function handleGetTeam(req: RequestWithUser, res: ApiResponse<LeaderboardTeam>) {
+  // we don't need the leaderboard object later but this functions as a check that the user is a member of the leaderboard
+  const leaderboardUuid = req.params.uuid;
+  const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { memberUserId: req.user.id });
+  if(!leaderboard) {
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
+  }
+
+  const teamId = +req.params.id;
+  const team = await LeaderboardTeamModel.get(teamId);
+  if(!team) {
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any team with ID ${teamId}.`));
+  }
+
+  return res.status(200).send(success(team));
+}
+
+export type LeaderboardTeamCreatePayload = CreateLeaderboardTeamData;
+const zLeaderboardTeamCreatePayload = z.object({
+  name: z.string().min(1),
+  color: z.string().default(''),
+}).strict();
+export async function handleCreateTeam(req: RequestWithUser, res: ApiResponse<LeaderboardTeam>) {
+  const leaderboardUuid = req.params.uuid;
+  const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { ownerUserId: req.user.id });
+  if(!leaderboard) {
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
+  }
+
+  const payload = req.body as LeaderboardTeamCreatePayload;
+  const created = await LeaderboardTeamModel.create(leaderboard, payload, reqCtx(req));
+
+  return res.status(201).send(success(created));
+}
+
+export type LeaderboardTeamUpdatePayload = UpdateLeaderboardTeamData;
+const zLeaderboardTeamUpdatePayload = z.object({
+  name: z.string().min(1),
+  color: z.string().default(''),
+}).strict().partial();
+export async function handleUpdateTeam(req: RequestWithUser, res: ApiResponse<LeaderboardTeam>) {
+  // we don't need the leaderboard object later but this functions as a check that the user is an owner of the leaderboard
+  const leaderboardUuid = req.params.uuid;
+  const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { ownerUserId: req.user.id });
+  if(!leaderboard) {
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
+  }
+
+  const teamId = +req.params.id;
+  const team = await LeaderboardTeamModel.get(teamId);
+  if(!team) {
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any team with ID ${teamId}.`));
+  }
+
+  const payload = req.body as LeaderboardTeamUpdatePayload;
+  const updated = await LeaderboardTeamModel.update(team, payload, reqCtx(req));
+
+  return res.status(200).send(success(updated));
+}
+
+export async function handleDeleteTeam(req: RequestWithUser, res: ApiResponse<LeaderboardTeam>) {
+  // we don't need the leaderboard object later but this functions as a check that the user is an owner of the leaderboard
+  const leaderboardUuid = req.params.uuid;
+  const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { ownerUserId: req.user.id });
+  if(!leaderboard) {
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
+  }
+
+  const teamId = +req.params.id;
+  const team = await LeaderboardTeamModel.get(teamId);
+  if(!team) {
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any team with ID ${teamId}.`));
+  }
+
+  const deleted = await LeaderboardTeamModel.delete(team, reqCtx(req));
+  return res.status(200).send(success(deleted));
+}
+
 export async function handleListMembers(req: RequestWithUser, res: ApiResponse<Membership[]>) {
   const leaderboardUuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { memberUserId: req.user.id });
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
   }
 
   const members = await LeaderboardMemberModel.list(leaderboard);
@@ -153,21 +244,23 @@ export async function handleListMembers(req: RequestWithUser, res: ApiResponse<M
 
 export type LeaderboardMemberUpdatePayload = {
   isOwner?: boolean;
+  teamId?: number | null;
 };
 const zLeaderboardMemberUpdatePayload = z.object({
   isOwner: z.boolean(),
+  teamId: z.number().int().nullable(),
 }).strict().partial();
 export async function handleUpdateMember(req: RequestWithUser, res: ApiResponse<Membership>) {
   const leaderboardUuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { ownerUserId: req.user.id });
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
   }
 
   const memberId = +req.params.memberId;
   const member = await LeaderboardMemberModel.get(leaderboard, memberId);
   if(!member) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any member with id ${memberId} on that leaderboard.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any member with id ${memberId} on that leaderboard.`));
   }
 
   const payload = req.body as LeaderboardMemberUpdatePayload;
@@ -181,13 +274,13 @@ export async function handleRemoveMember(req: RequestWithUser, res: ApiResponse<
   const leaderboardUuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { ownerUserId: req.user.id });
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${leaderboardUuid}.`));
   }
 
   const memberId = +req.params.memberId;
   const member = await LeaderboardMemberModel.get(leaderboard, memberId);
   if(!member) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any member with id ${memberId} on that leaderboard.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any member with id ${memberId} on that leaderboard.`));
   }
 
   let membership: Membership;
@@ -206,7 +299,7 @@ export async function handleGetMyParticipation(req: RequestWithUser, res: ApiRes
   const uuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: userId });
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${uuid}.`));
   }
 
   const participation = await LeaderboardMemberModel.getParticipation(leaderboard.id, userId);
@@ -219,6 +312,7 @@ export type LeaderboardParticipationPayload = {
   workIds: number[];
   tagIds: number[];
   displayName?: string;
+  teamId?: number | null;
   color?: string;
 };
 const zLeaderboardParticipationPayload = z.object({
@@ -235,6 +329,7 @@ const zLeaderboardParticipationPayload = z.object({
       .min(3, { message: 'Display name must be at least 3 characters long.' })
       .max(24, { message: 'Display name may not be longer than 24 characters.' }),
   ]).optional(),
+  teamId: z.number().int().optional().nullable(),
   color: z.string().optional(),
 }).strict();
 
@@ -242,7 +337,7 @@ export async function handleJoinBoard(req: RequestWithUser, res: ApiResponse<Lea
   const uuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(uuid);
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${uuid}.`));
   }
 
   if(!leaderboard.isJoinable) {
@@ -257,11 +352,8 @@ export async function handleJoinBoard(req: RequestWithUser, res: ApiResponse<Lea
 
   const payload = req.body as LeaderboardParticipationPayload;
   const memberData: CreateMemberData = {
-    isParticipant: payload.isParticipant,
+    ...payload,
     isOwner: false,
-    goal: payload.goal,
-    workIds: payload.workIds,
-    tagIds: payload.tagIds,
   };
   const created = await LeaderboardMemberModel.create(leaderboard, user, memberData, reqCtx(req));
 
@@ -272,13 +364,13 @@ export async function handleUpdateMyParticipation(req: RequestWithUser, res: Api
   const uuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: req.user.id });
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${uuid}.`));
   }
 
   const user = req.user;
   const existing = await LeaderboardMemberModel.getByUserId(leaderboard, user.id);
   if(!existing) {
-    return res.status(404).send(failure('NOT_FOUND', `You are not part of this leaderboard.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `You are not part of this leaderboard.`));
   }
 
   const payload = req.body as LeaderboardParticipationPayload;
@@ -291,13 +383,13 @@ export async function handleLeaveBoard(req: RequestWithUser, res: ApiResponse<Le
   const uuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(uuid, { memberUserId: req.user.id });
   if(!leaderboard) {
-    return res.status(404).send(failure('NOT_FOUND', `Did not find any leaderboard with UUID ${uuid}.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `Did not find any leaderboard with UUID ${uuid}.`));
   }
 
   const user = req.user;
   const existing = await LeaderboardMemberModel.getByUserId(leaderboard, user.id);
   if(!existing) {
-    return res.status(404).send(failure('NOT_FOUND', `You are not part of this leaderboard.`));
+    return res.status(404).send(failure(FAILURE_CODES.NOT_FOUND, `You are not part of this leaderboard.`));
   }
 
   let removed: LeaderboardMember;
@@ -322,7 +414,9 @@ export function member2membership(member: JustMember): Membership {
  * Here is the detailed breakdown:
  * - Basic leaderboard CRUD is more or less as expected.
  *   - Even though a leaderboard's starred status is per-user, it is still done via the usual PATCH /:uuid/star endpoint.
- *   - In order to get a list of tallies for each participant, use GET /:uuid/participants. (TODO: should this be /:uuid/tallies?)
+ *   - In order to get a list of tallies for each participant, use GET /:uuid/participants.
+ *   - TODO: For a list of datapoints aggregated into series (teams or participants, depending on the board), use GET /:uuid/series.
+ * - Team CRUD for the leaderboard is also more or less as expected, under /:uuid/teams.
  * - There is only one way to create a member:
  *   - A prospective member must first request leaderboard info via the GET /joincode/:joincode endpoint. Then they can
  *     join the leaderboard via POST /:uuid/me endpoint and subsequently edit their participation via the PATCH /:uuid/me endpoint.
@@ -403,6 +497,49 @@ const routes: RouteConfig[] = [
     handler: handleListParticipants,
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: zUuidParam(),
+  },
+  //
+  // GET /:uuid/teams - get all teams for a board
+  {
+    path: '/:uuid/teams',
+    method: HTTP_METHODS.GET,
+    handler: handleListTeams,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidParam(),
+  },
+  // GET /:uuid/teams/:id - get a single team in a board
+  {
+    path: '/:uuid/teams/:id',
+    method: HTTP_METHODS.GET,
+    handler: handleGetTeam,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidAndIdParams(),
+  },
+  // POST /:uuid/teams - create a new team
+  {
+    path: '/:uuid/teams',
+    method: HTTP_METHODS.POST,
+    handler: handleCreateTeam,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidParam(),
+    bodySchema: zLeaderboardTeamCreatePayload,
+  },
+  // PATCH /:uuid/teams/:id - update a team
+  {
+    path: '/:uuid/teams/:id',
+    method: HTTP_METHODS.PATCH,
+    handler: handleUpdateTeam,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidAndIdParams(),
+    bodySchema: zLeaderboardTeamUpdatePayload,
+  },
+  // DELETE /:uuid/teams/:id - delete a team
+  {
+    path: '/:uuid/teams/:id',
+    method: HTTP_METHODS.DELETE,
+    handler: handleDeleteTeam,
+    accessLevel: ACCESS_LEVEL.USER,
+    paramsSchema: zUuidAndIdParams(),
   },
   //
   // GET /:uuid/members - get all members for a board

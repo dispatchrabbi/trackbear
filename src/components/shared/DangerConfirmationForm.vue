@@ -71,7 +71,7 @@ async function handleSubmit() {
 <template>
   <TbForm
     :is-valid="isValid"
-    :submit-message="props.actionCommand"
+    :submit-label="props.actionCommand"
     submit-severity="danger"
     :loading-message="isLoading ? props.actionInProgressMessage : null"
     :success-message="successMessage"

@@ -5,8 +5,8 @@ export const USER_COLOR_NAMES = [
   'fuchsia', 'pink', 'rose',
   'gray',
 ];
-export function userColorOrFallback(color: string): string {
-  return USER_COLOR_NAMES.includes(color) ? color : '';
+export function userColorOrFallback(color: string, fallback: string = ''): string {
+  return USER_COLOR_NAMES.includes(color) ? color : fallback;
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function userColorLevel(theme: string) {

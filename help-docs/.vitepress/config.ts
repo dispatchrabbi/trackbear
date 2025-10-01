@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress';
 
 import { useSidebar } from 'vitepress-openapi';
 import spec from '../public/openapi/openapi.json' with { type: 'json' };
+import { cmpSidebarItems, sortSidebarGroupItems } from './sidebar-helpers';
 
 const apiSidebar = useSidebar({
   spec,
@@ -56,9 +57,9 @@ export default defineConfig({
           ],
         },
         ...apiSidebar.generateSidebarGroups({
-          tags: ['Tallies', 'Projects', 'Goals', 'Leaderboards', 'Tags', 'Stats', 'Other'],
+          tags: ['Tallies', 'Projects', 'Goals', 'Leaderboards', 'Leaderboard Teams', 'Leaderboard Members', 'Leaderboard Participation', 'Tags', 'Stats', 'Other'],
           linkPrefix: '/api/',
-        }),
+        }).map(group => sortSidebarGroupItems(group, cmpSidebarItems)),
       ],
       '/': [
         {

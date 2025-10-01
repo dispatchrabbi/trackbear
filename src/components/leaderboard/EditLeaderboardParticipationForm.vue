@@ -16,12 +16,9 @@ import { useValidation } from 'src/lib/form.ts';
 import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts';
 import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
-import { userColorOrFallback, USER_COLOR_NAMES, userColorLevel } from '../chart/user-colors';
+import { userColorOrFallback, USER_COLOR_NAMES } from '../chart/user-colors';
 
-import { useTheme } from 'src/lib/theme';
-const { theme } = useTheme();
-
-import { updateMyParticipation, type Leaderboard, type Participation, type LeaderboardParticipationPayload } from 'src/lib/api/leaderboard';
+import { updateMyParticipation, type Leaderboard, type Participation, type LeaderboardParticipationPayload, LeaderboardTeam } from 'src/lib/api/leaderboard';
 
 import InputSwitch from 'primevue/inputswitch';
 import InputText from 'primevue/inputtext';
@@ -30,51 +27,57 @@ import Dropdown from 'primevue/dropdown';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import TallyCountInput from '../tally/TallyCountInput.vue';
-import { toTitleCase } from 'src/lib/str';
-import { mapObject } from 'src/lib/obj';
+import TeamDropdown from './teams/TeamDropdown.vue';
+import ColorDropdown from './ColorDropdown.vue';
 // import TbTag from 'src/components/tag/TbTag.vue';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   leaderboard: Leaderboard;
+  teams?: LeaderboardTeam[];
   participation: Participation;
-}>();
+}>(), {
+  teams: () => ([] as LeaderboardTeam[]),
+});
 
 const emit = defineEmits(['leaderboard:edit-participation', 'formSuccess', 'formCancel']);
 const eventBus = useEventBus<{ leaderboard: Leaderboard; participation: Participation }>('board:edit-participation');
 
 type EditLeaderboardParticipationFormModel = {
   isParticipant: boolean;
+  displayName: string;
   measure: TallyMeasure;
   count: number | null;
   works: number[];
   tags: number[];
-  displayName: string;
+  teamId: number | null;
   color: string;
 };
 const formModel = reactive<EditLeaderboardParticipationFormModel>({
   isParticipant: props.participation.isParticipant,
+  displayName: props.participation.displayName || '',
   measure: props.participation.goal?.measure ?? TALLY_MEASURE.WORD,
   count: props.participation.goal?.count ?? 0,
   works: props.participation.workIds,
   tags: props.participation.tagIds,
-  displayName: props.participation.displayName || '',
+  teamId: props.participation.teamId,
   color: userColorOrFallback(props.participation.color),
 });
 
 const validations = z.object({
   isParticipant: z.boolean({ invalid_type_error: 'Please pick whether you want to be a participant or a spectator.' }),
-  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>).nullable(),
-  count: z
-    .number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }).nullable()
-    .refine(v => props.leaderboard.individualGoalMode ? v !== null : true, { message: 'Please input your goal for this leaderboard.' }),
-  works: z.array(z.number({ invalid_type_error: 'Please select only valid projects.' }).int({ message: 'Please select only valid projects.' }).positive({ message: 'Please select only valid projects.' })),
-  tags: z.array(z.number({ invalid_type_error: 'Please select only valid tags.' }).int({ message: 'Please select only valid tags.' }).positive({ message: 'Please select only valid tags.' })),
   displayName: z.union([
     z.string()
       .min(3, { message: 'Display name must be between 3 and 24 characters long.' })
       .max(24, { message: 'Display name must be between 3 and 24 characters long.' }),
     z.string().max(0),
   ]),
+  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>).nullable(),
+  count: z
+    .number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }).nullable()
+    .refine(v => props.leaderboard.individualGoalMode ? v !== null : true, { message: 'Please input your goal for this leaderboard.' }),
+  works: z.array(z.number({ invalid_type_error: 'Please select only valid projects.' }).int({ message: 'Please select only valid projects.' }).positive({ message: 'Please select only valid projects.' })),
+  tags: z.array(z.number({ invalid_type_error: 'Please select only valid tags.' }).int({ message: 'Please select only valid tags.' }).positive({ message: 'Please select only valid tags.' })),
+  teamId: z.number({ invalid_type_error: 'Please select a valid team.' }).int({ message: 'Please select a valid team.' }).positive({ message: 'Please select a valid team.' }).nullable().default(null),
   color: z.enum(['', ...USER_COLOR_NAMES]),
 });
 
@@ -109,15 +112,6 @@ const onMeasureChange = function() {
   formModel.count = null;
 };
 
-const colorOptionsMap = mapObject({
-  '': { name: '', bg: 'bg-gradient-to-r from-indigo-500 to-amber-500' },
-  ...Object.fromEntries(USER_COLOR_NAMES.map(name => ([name, { name, bg: `bg-${name}-${userColorLevel(theme.value)}` }]))),
-}, (key, val) => ({
-  label: toTitleCase(val.name || 'auto'),
-  value: val.name,
-  swatchClass: val.bg,
-}));
-
 const isLoading = ref<boolean>(false);
 const successMessage = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
@@ -137,6 +131,7 @@ async function handleSubmit() {
           workIds: data.works,
           tagIds: data.tags,
           displayName: data.displayName,
+          teamId: data.teamId,
           color: data.color,
         } :
         // user is not participating — save their previous participation info
@@ -146,6 +141,7 @@ async function handleSubmit() {
           workIds: props.participation.workIds,
           tagIds: props.participation.tagIds,
           displayName: data.displayName,
+          teamId: data.teamId,
           color: data.color,
         };
 
@@ -172,7 +168,7 @@ async function handleSubmit() {
 <template>
   <TbForm
     :is-valid="isWholeFormValid"
-    submit-message="Save"
+    submit-label="Save"
     :loading-message="isLoading ? 'Saving...' : null"
     :success-message="successMessage"
     :error-message="errorMessage"
@@ -212,6 +208,39 @@ async function handleSubmit() {
         <InputText
           id="leaderboard-form-displayName"
           v-model="formModel.displayName"
+          :invalid="!isFieldValid"
+          @update:model-value="onUpdate"
+        />
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      v-if="formModel.isParticipant && props.leaderboard.enableTeams"
+      for="leaderboard-form-team"
+      label="Team"
+      :rule="ruleFor('teamId')"
+      help="This leaderboard has split its participants into teams. Pick a team to join."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <TeamDropdown
+          v-model="formModel.teamId"
+          id-prefix="leaderboard-form"
+          :teams="props.teams"
+          :invalid="!isFieldValid"
+          @update:model-value="onUpdate"
+        />
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      v-if="formModel.isParticipant && !props.leaderboard.enableTeams"
+      for="leaderboard-form-color"
+      label="Color"
+      :rule="ruleFor('color')"
+      help="This determines what color your progress will be on the graph."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <ColorDropdown
+          v-model="formModel.color"
+          id-prefix="leaderboard-form"
           :invalid="!isFieldValid"
           @update:model-value="onUpdate"
         />
@@ -298,47 +327,6 @@ async function handleSubmit() {
           :disabled="!formModel.isParticipant"
           @update:model-value="onUpdate"
         />
-      </template>
-    </FieldWrapper>
-    <FieldWrapper
-      v-if="formModel.isParticipant"
-      for="leaderboard-form-color"
-      label="Color"
-      :rule="ruleFor('color')"
-      help="This determines what color your progress will be on the graph."
-    >
-      <template #default="{ onUpdate, isFieldValid }">
-        <Dropdown
-          id="leaderboard-form-color"
-          v-model="formModel.color"
-          :options="Object.values(colorOptionsMap)"
-          option-value="value"
-          :invalid="!isFieldValid"
-          @update:model-value="onUpdate"
-        >
-          <template #value="{value}">
-            <div class="flex gap-2 items-center">
-              <div
-                :class="[
-                  'h-4 w-4',
-                  colorOptionsMap[value].swatchClass
-                ]"
-              />
-              <div>{{ colorOptionsMap[value].label }}</div>
-            </div>
-          </template>
-          <template #option="{option}">
-            <div class="flex gap-2 items-center">
-              <div
-                :class="[
-                  'h-4 w-4',
-                  option.swatchClass
-                ]"
-              />
-              <div>{{ option.label }}</div>
-            </div>
-          </template>
-        </Dropdown>
       </template>
     </FieldWrapper>
   </TbForm>

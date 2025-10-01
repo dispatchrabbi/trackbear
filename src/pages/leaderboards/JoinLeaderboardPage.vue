@@ -5,7 +5,7 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
-import { type Leaderboard } from 'src/lib/api/leaderboard';
+import { type LeaderboardSummary } from 'src/lib/api/leaderboard';
 
 import type { MenuItem } from 'primevue/menuitem';
 import Stepper from 'primevue/stepper';
@@ -16,9 +16,9 @@ import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import JoinCodeForm from 'src/components/leaderboard/JoinCodeForm.vue';
 import JoinLeaderboardParticipationForm from 'src/components/leaderboard/JoinLeaderboardParticipationForm.vue';
 
-const leaderboard = ref<Leaderboard | null>(null);
+const leaderboard = ref<LeaderboardSummary | null>(null);
 
-const handleJoinCodeConfirmation = function(leaderboardToJoin: Leaderboard) {
+const handleJoinCodeConfirmation = async function(leaderboardToJoin: LeaderboardSummary) {
   leaderboard.value = leaderboardToJoin;
 };
 
@@ -60,6 +60,7 @@ const breadcrumbs = computed(() => {
             <JoinLeaderboardParticipationForm
               v-if="leaderboard"
               :leaderboard="leaderboard"
+              :teams="leaderboard.teams"
               @form-success="router.push({ name: 'leaderboard', params: { boardUuid: leaderboard.uuid } })"
               @form-cancel="prevCallback"
             />

@@ -27,11 +27,15 @@ export type ParticipantGoal = null | {
 export type JustMember = Omit<LeaderboardMember, 'workIds' | 'tagIds'>;
 
 export type LeaderboardSummary = Leaderboard & {
+  teams: LeaderboardTeam[];
   members: MemberBio[];
 };
-export type MemberBio = Pick<LeaderboardMember, 'id' | 'isParticipant' | 'isOwner' | 'displayName' | 'avatar'> & {
-  userUuid: string;
-};
+export type MemberBio = Expand<
+  Pick<LeaderboardMember, 'id' | 'isParticipant' | 'isOwner' | 'displayName' | 'avatar'>
+  & {
+    userUuid: string;
+  }
+>;
 
 export type Participant = Expand<
   Pick<LeaderboardMember, 'id' | 'uuid' | 'goal' | 'avatar' | 'displayName' | 'color'>
@@ -41,7 +45,7 @@ export type Participant = Expand<
 >;
 export type LeaderboardTally = Pick<Tally, 'uuid' | 'date' | 'measure' | 'count'>;
 
-export type Participation = Expand<Pick<LeaderboardMember, 'id' | 'goal' | 'isParticipant' | 'displayName' | 'color' | 'workIds' | 'tagIds'>>;
+export type Participation = Expand<Pick<LeaderboardMember, 'id' | 'goal' | 'isParticipant' | 'displayName' | 'color' | 'teamId' | 'workIds' | 'tagIds'>>;
 
 export type Membership = Pick<LeaderboardMember, 'id' | 'uuid' | 'state' | 'avatar' | 'displayName' | 'color' | 'isOwner' | 'isParticipant' | 'teamId'>;
 

@@ -1,5 +1,5 @@
 import { compare } from 'natural-orderby';
-import type { Leaderboard, Membership } from 'src/lib/api/leaderboard';
+import type { Leaderboard, LeaderboardTeam, Membership } from 'src/lib/api/leaderboard';
 
 const cmp = compare();
 export function cmpBoard(a: Leaderboard, b: Leaderboard) {
@@ -25,4 +25,8 @@ export function cmpMember(a: Membership, b: Membership) {
   } else {
     return cmp(a.displayName.toLowerCase(), b.displayName.toLowerCase());
   }
+}
+
+export function cmpTeam(a: LeaderboardTeam, b: LeaderboardTeam) {
+  return cmp(a.name, b.name);
 }

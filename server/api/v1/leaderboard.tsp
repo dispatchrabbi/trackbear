@@ -52,61 +52,108 @@ namespace Leaderboards {
   @doc("Lists the participants of a leaderboard and relevant tallies.")
   @get
   op listParticipants(@path uuid: uuid): Success<OkResponse, Participant[]>;
+}
 
+@route("/leaderboard")
+@tag("Leaderboard Teams")
+namespace LeaderboardTeams {
+  @route("/{uuid}/teams")
+  @summary("List leaderboard teams")
+  @get
+  op listTeams(@path uuid: uuid): Success<OkResponse, Leaderboards.Team[]>;
+
+  @route("/{uuid}/teams/{teamId}")
+  @summary("Get a leaderboard team")
+  @get
+  op getTeam(@path uuid: uuid, @path teamId: id): Success<OkResponse, Leaderboards.Team>;
+
+  @route("/{uuid}/teams")
+  @summary("Create a leaderboard team")
+  @post
+  op createTeam(@path uuid: uuid, @body payload: Leaderboards.CreateTeam): Success<
+    CreatedResponse,
+    Leaderboards.Team
+  >;
+
+  @route("/{uuid}/teams/{teamId}")
+  @summary("Update a leaderboard team")
+  @patch(#{ implicitOptionality: true })
+  op updateTeam(
+    @path uuid: uuid,
+    @path teamId: id,
+    @body payload: Leaderboards.UpdateTeam,
+  ): Success<OkResponse, Leaderboards.Team>;
+
+  @route("/{uuid}/teams/{teamId}")
+  @summary("Delete a leaderboard team")
+  @delete
+  op deleteTeam(@path uuid: uuid, @path teamId: id): Success<OkResponse, Leaderboards.Team>;
+}
+
+@route("/leaderboard")
+@tag("Leaderboard Members")
+namespace LeaderboardMembers {
   @route("/{uuid}/members")
   @summary("List leaderboard members")
   @doc("Lists members of the leaderboard as leaderboard owners see them.")
   @get
-  op listMembers(@path uuid: uuid): Success<OkResponse, Membership[]>;
+  op listMembers(@path uuid: uuid): Success<OkResponse, Leaderboards.Membership[]>;
 
   @route("/{uuid}/members/{memberId}")
   @summary("Update a leaderboard member")
   @patch(#{ implicitOptionality: true })
-  op updateMember(@path uuid: uuid, @path memberId: id, @body payload: UpdateMember): Success<
-    OkResponse,
-    Membership
-  >;
+  op updateMember(
+    @path uuid: uuid,
+    @path memberId: id,
+    @body payload: Leaderboards.UpdateMember,
+  ): Success<OkResponse, Leaderboards.Membership>;
 
   @route("/{uuid}/members/{memberId}")
   @summary("Remove a leaderboard member")
   @errorsDoc("Returns 409 if the member being removed is the only owner of the leaderboard.")
   @delete
-  op removeMember(@path uuid: uuid, @path memberId: id): Success<OkResponse, Membership> | Failure<
-    ConflictResponse,
-    "ONLY_OWNER"
-  >;
+  op removeMember(@path uuid: uuid, @path memberId: id): Success<
+    OkResponse,
+    Leaderboards.Membership
+  > | Failure<ConflictResponse, "ONLY_OWNER">;
+}
 
+@route("/leaderboard")
+@tag("Leaderboard Participation")
+namespace LeaderboardParticipation {
   @route("/{uuid}/me")
   @summary("Get your participation")
   @get
-  op getMyParticipation(@path uuid: uuid): Success<OkResponse, Participation>;
+  op getMyParticipation(@path uuid: uuid): Success<OkResponse, Leaderboards.Participation>;
 
   @route("/{uuid}/me")
   @summary("Join a leaderboard")
   @errorsDoc("Returns 409 if the requested leaderboard is not currently joinable or if you have already joined.")
   @post
-  op joinBoard(@path uuid: uuid, @body payload: UpdateParticipation): Success<
+  op joinBoard(@path uuid: uuid, @body payload: Leaderboards.UpdateParticipation): Success<
     OkResponse,
-    Member
+    Leaderboards.Member
   > | Failure<ConflictResponse, "CANNOT_JOIN" | "ALREADY_JOINED">;
 
   @route("/{uuid}/me")
   @summary("Update your participation")
   @patch(#{ implicitOptionality: false })
-  op updateMyParticipation(@path uuid: uuid, @body payload: UpdateParticipation): Success<
-    OkResponse,
-    Member
-  >;
+  op updateMyParticipation(
+    @path uuid: uuid,
+    @body payload: Leaderboards.UpdateParticipation,
+  ): Success<OkResponse, Leaderboards.Member>;
 
   @route("/{uuid}/me")
   @summary("Leave a leaderboard")
   @errorsDoc("Returns 409 if you are the only owner of the leaderboard.")
   @delete
-  op leaveBoard(@path uuid: uuid): Success<OkResponse, Member> | Failure<
+  op leaveBoard(@path uuid: uuid): Success<OkResponse, Leaderboards.Member> | Failure<
     ConflictResponse,
     "ONLY_OWNER"
   >;
+}
 
+namespace Leaderboards {
   model Leaderboard {
     ...DbProps;
     ...StateProps<LeaderboardState>;
@@ -128,6 +175,7 @@ namespace Leaderboards {
   }
 
   model LeaderboardSummary extends Leaderboard {
+    teams: Team[];
     members: MemberBio[];
   }
   alias MemberBio = {
@@ -142,6 +190,16 @@ namespace Leaderboards {
     ...PickProperties<Member, "id" | "uuid" | "goal" | "avatar" | "displayName" | "color">;
     tallies: LeaderboardTally[];
   }
+
+  model Team {
+    ...DbProps;
+    boardId: id;
+    name: string;
+    color: string;
+  }
+
+  model CreateTeam is Create<Team>;
+  model UpdateTeam is Update<Team>;
 
   model Participation
     is PickProperties<

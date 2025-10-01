@@ -11,10 +11,10 @@ import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 import { LEADERBOARD_STATE, LEADERBOARD_PARTICIPANT_STATE } from './consts.ts';
 import type {
   LeaderboardSummary, Leaderboard,
-  LeaderboardMember, Participant, ParticipantGoal, MemberBio,
-  LeaderboardGoal, LeaderboardTally,
+  LeaderboardMember, Participant, ParticipantGoal,
+  LeaderboardTally,
 } from './types.ts';
-import { db2justmember, getTalliesForParticipants } from './helpers.ts';
+import { db2justmember, db2summary, getTalliesForParticipants } from './helpers.ts';
 import { USER_STATE } from '../user/consts.ts';
 import { supplyDefaults } from '../helpers.ts';
 
@@ -41,7 +41,7 @@ export class LeaderboardModel {
 
   @traced
   static async list(participantUserId: number): Promise<LeaderboardSummary[]> {
-    const leaderboardsWithMembers = await dbClient.board.findMany({
+    const leaderboardsWithMembersAndTeams = await dbClient.board.findMany({
       where: {
         state: LEADERBOARD_STATE.ACTIVE,
         participants: {
@@ -52,6 +52,7 @@ export class LeaderboardModel {
         },
       },
       include: {
+        teams: true,
         participants: {
           where: {
             state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
@@ -64,26 +65,7 @@ export class LeaderboardModel {
       },
     });
 
-    const summaries = leaderboardsWithMembers.map((board): LeaderboardSummary => ({
-      ...pick(board, [
-        'id', 'uuid', 'state', 'ownerId', 'createdAt', 'updatedAt',
-        'title', 'description',
-        'measures', 'startDate', 'endDate',
-        'individualGoalMode', 'fundraiserMode', 'enableTeams',
-        'isJoinable', 'isPublic',
-      ]),
-      goal: board.goal as LeaderboardGoal,
-      // use the starred property from the participant, not the leaderboard
-      starred: board.participants.find(p => p.userId === participantUserId)?.starred ?? false,
-      members: board.participants.map((participant): MemberBio => ({
-        id: participant.id,
-        isParticipant: participant.isParticipant,
-        isOwner: participant.isOwner,
-        userUuid: participant.user.uuid,
-        displayName: participant.displayName || participant.user.displayName,
-        avatar: participant.user.avatar,
-      })),
-    }));
+    const summaries = leaderboardsWithMembersAndTeams.map(board => db2summary(board, participantUserId));
 
     return summaries;
   }
@@ -101,7 +83,7 @@ export class LeaderboardModel {
   }
 
   @traced
-  static async getByUuid(uuid: string, options: GetLeaderboardOptions = {}): Promise<Leaderboard | null> {
+  static async getByUuid(uuid: string, options: GetLeaderboardOptions = {}): Promise<LeaderboardSummary | null> {
     const extraWhereClauses: Prisma.BoardWhereInput[] = [];
 
     if(options.memberUserId) {
@@ -140,22 +122,57 @@ export class LeaderboardModel {
         // Prisma doesn't treat an empty OR array as though there's nothing there, so we have to do it ourselves
         OR: extraWhereClauses.length > 0 ? extraWhereClauses : undefined,
       },
-    }) as Leaderboard;
+      include: {
+        teams: true,
+        participants: {
+          where: {
+            state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
+            user: { state: USER_STATE.ACTIVE },
+          },
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
 
-    return leaderboard;
+    if(!leaderboard) {
+      return null;
+    }
+
+    const participantUserId = options.memberUserId ?? options.ownerUserId ?? undefined;
+    const summary = db2summary(leaderboard, participantUserId);
+    return summary;
   }
 
   @traced
-  static async getByJoinCode(joinCode: string): Promise<Leaderboard | null> {
+  static async getByJoinCode(joinCode: string): Promise<LeaderboardSummary | null> {
     const leaderboard = await dbClient.board.findFirst({
       where: {
         // TODO: this will change when we implement rolling join codes
         uuid: joinCode,
         state: LEADERBOARD_STATE.ACTIVE,
       },
-    }) as Leaderboard;
+      include: {
+        teams: true,
+        participants: {
+          where: {
+            state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
+            user: { state: USER_STATE.ACTIVE },
+          },
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
 
-    return leaderboard;
+    if(!leaderboard) {
+      return null;
+    }
+
+    const summary = db2summary(leaderboard);
+    return summary;
   }
 
   @traced

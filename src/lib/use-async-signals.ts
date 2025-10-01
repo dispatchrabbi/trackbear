@@ -3,7 +3,7 @@ import { reactive } from 'vue';
 type WorkFunction<T, A extends unknown[]> = (...args: A) => Promise<T>;
 type OnErrorFunction = (e: Error) => Promise<string | null>;
 type OnSuccessFunction<T> = (result: T) => Promise<string | null>;
-type OnFinallyFunction = () => Promise<void>;
+type OnFinallyFunction = (successful: boolean | null) => Promise<void>;
 
 type WorkSignals = {
   isLoading: boolean;
@@ -32,17 +32,20 @@ export function useAsyncSignals<T, A extends unknown[]>(
     signals.successMessage = null;
     signals.errorMessage = null;
 
+    let successful: boolean | null = null;
     try {
       const result = await workFn(...args);
 
       const successMessage = await onSuccess(result);
       signals.successMessage = successMessage ?? null;
+      successful = true;
     } catch (e) {
       const errorMessage = await onError(e);
       signals.errorMessage = errorMessage ?? null;
+      successful = false;
     } finally {
       signals.isLoading = false;
-      await onFinally();
+      await onFinally(successful);
     }
   };
 

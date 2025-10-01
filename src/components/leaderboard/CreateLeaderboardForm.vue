@@ -34,6 +34,8 @@ type CreateLeaderboardFormModel = {
 
   measures: TallyMeasure[];
   goal: MeasureCounts;
+
+  enableTeams: boolean;
   individualGoalMode: boolean;
   fundraiserMode: boolean;
 
@@ -49,6 +51,8 @@ const formModel = reactive<CreateLeaderboardFormModel>({
 
   measures: Object.values(TALLY_MEASURE),
   goal: {},
+
+  enableTeams: false,
   individualGoalMode: false,
   fundraiserMode: false,
 
@@ -80,6 +84,8 @@ const validations = z
       z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
       z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' }),
     ),
+
+    enableTeams: z.boolean(),
     individualGoalMode: z.boolean(),
     fundraiserMode: z.boolean(),
 
@@ -129,7 +135,7 @@ async function handleSubmit() {
 <template>
   <TbForm
     :is-valid="isValid"
-    submit-message="Submit"
+    submit-label="Submit"
     :loading-message="isLoading ? 'Creating...' : null"
     :success-message="successMessage"
     :error-message="errorMessage"
@@ -202,6 +208,26 @@ async function handleSubmit() {
           :invalid="!isFieldValid"
           @update:model-value="onUpdate"
         />
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      label="Enable Teams?"
+      for="leaderboard-form-enableTeams"
+      :required="true"
+      :rule="ruleFor('enableTeams')"
+      help="If enabled, the leaderboard will show the totals of each team instead of individual participant totals."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <div class="flex gap-4 max-w-full items-center">
+          <InputSwitch
+            v-model="formModel.enableTeams"
+            :invalid="!isFieldValid"
+            @update:model-value="onUpdate"
+          />
+          <div class="max-w-64 md:max-w-none">
+            Teams are <span class="font-bold">{{ formModel.enableTeams ? `enabled` : `disabled` }}</span> for this leaderboard.
+          </div>
+        </div>
       </template>
     </FieldWrapper>
     <FieldWrapper

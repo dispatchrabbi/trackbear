@@ -68,7 +68,7 @@ async function handleSubmit() {
 <template>
   <TbForm
     :is-valid="isValid"
-    submit-message="Sign up"
+    submit-label="Sign up"
     :loading-message="isLoading ? 'Signing up' : null"
     :success-message="successMessage"
     :error-message="errorMessage"

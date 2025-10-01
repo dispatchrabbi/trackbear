@@ -1,7 +1,7 @@
 import dbClient from '../../db.ts';
 
-import type { BoardParticipant, User } from 'generated/prisma/client';
-import type { Leaderboard, LeaderboardMember, JustMember, ParticipantGoal, Participation } from './types';
+import type { Board, BoardParticipant, User } from 'generated/prisma/client';
+import type { Leaderboard, LeaderboardMember, JustMember, ParticipantGoal, Participation, LeaderboardTeam, LeaderboardSummary, LeaderboardGoal, MemberBio } from './types';
 import type { WorksAndTagsIncluded } from '../helpers';
 import { TALLY_STATE } from '../tally/consts.ts';
 
@@ -10,6 +10,10 @@ import { omit, pick } from 'server/lib/obj.ts';
 
 type BoardParticipantWithWorksAndTags = BoardParticipant & WorksAndTagsIncluded;
 type BoardParticipantWithUser = BoardParticipant & { user: User };
+type BoardWithTeamsAndParticipants = Board & {
+  teams: LeaderboardTeam[];
+  participants: BoardParticipantWithUser[];
+};
 
 export async function getTalliesForParticipants(leaderboard: Leaderboard, participants: BoardParticipantWithWorksAndTags[]) {
   if(participants.length === 0) {
@@ -42,6 +46,38 @@ export async function getTalliesForParticipants(leaderboard: Leaderboard, partic
   });
 
   return tallies;
+}
+
+export function db2summary(record: BoardWithTeamsAndParticipants, participantUserId?: number): LeaderboardSummary;
+export function db2summary(record: null, participantUserId?: number): null;
+export function db2summary(record: BoardWithTeamsAndParticipants | null, participantUserId?: number): LeaderboardSummary | null {
+  if(record === null) {
+    return null;
+  }
+
+  const summary = {
+    ...pick(record, [
+      'id', 'uuid', 'state', 'ownerId', 'createdAt', 'updatedAt',
+      'title', 'description',
+      'measures', 'startDate', 'endDate',
+      'individualGoalMode', 'fundraiserMode', 'enableTeams',
+      'isJoinable', 'isPublic',
+    ]),
+    goal: record.goal as LeaderboardGoal,
+    // use the starred property from the participant, not the leaderboard
+    starred: record.participants.find(p => p.userId === participantUserId)?.starred ?? false,
+    teams: record.teams,
+    members: record.participants.map((participant): MemberBio => ({
+      id: participant.id,
+      isParticipant: participant.isParticipant,
+      isOwner: participant.isOwner,
+      userUuid: participant.user.uuid,
+      displayName: participant.displayName || participant.user.displayName,
+      avatar: participant.user.avatar,
+    })),
+  };
+
+  return summary;
 }
 
 export function db2member(record: BoardParticipantWithUser & WorksAndTagsIncluded): LeaderboardMember;
@@ -85,6 +121,6 @@ export function db2participation(record: BoardParticipantWithWorksAndTags | null
   }
 
   return included2ids(pick(record, [
-    'id', 'isParticipant', 'displayName', 'color', 'goal', 'worksIncluded', 'tagsIncluded',
+    'id', 'isParticipant', 'displayName', 'color', 'goal', 'teamId', 'worksIncluded', 'tagsIncluded',
   ])) as Participation;
 }

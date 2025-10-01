@@ -16,26 +16,36 @@ import { useValidation } from 'src/lib/form.ts';
 import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts';
 import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
+import { USER_COLOR_NAMES } from '../chart/user-colors';
 
-import { joinLeaderboard, type Leaderboard, type LeaderboardParticipationPayload } from 'src/lib/api/leaderboard';
+import { joinLeaderboard, type Leaderboard, type LeaderboardTeam, type LeaderboardParticipationPayload } from 'src/lib/api/leaderboard';
 
 import InputSwitch from 'primevue/inputswitch';
+import InputText from 'primevue/inputtext';
 import MultiSelect from 'primevue/multiselect';
 import Dropdown from 'primevue/dropdown';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import TallyCountInput from '../tally/TallyCountInput.vue';
+import TeamDropdown from './teams/TeamDropdown.vue';
+import ColorDropdown from './ColorDropdown.vue';
 // import TbTag from 'src/components/tag/TbTag.vue';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   leaderboard: Leaderboard;
-}>();
+  teams?: LeaderboardTeam[];
+}>(), {
+  teams: () => ([] as LeaderboardTeam[]),
+});
 
 const emit = defineEmits(['leaderboard:join', 'formSuccess', 'formCancel']);
 const eventBus = useEventBus<{ leaderboardUuid: string }>('leaderboard:join');
 
 type JoinLeaderboardParticipationFormModel = {
   isParticipant: boolean;
+  displayName: string;
+  teamId: number | null;
+  color: string;
   measure: TallyMeasure;
   count: number | null;
   works: number[];
@@ -43,6 +53,9 @@ type JoinLeaderboardParticipationFormModel = {
 };
 const formModel = reactive<JoinLeaderboardParticipationFormModel>({
   isParticipant: true,
+  displayName: '',
+  teamId: null,
+  color: '',
   measure: TALLY_MEASURE.WORD,
   count: null,
   works: [],
@@ -51,6 +64,14 @@ const formModel = reactive<JoinLeaderboardParticipationFormModel>({
 
 const validations = z.object({
   isParticipant: z.boolean({ invalid_type_error: 'Please pick whether you want to be a participant or a spectator.' }),
+  displayName: z.union([
+    z.string()
+      .min(3, { message: 'Display name must be between 3 and 24 characters long.' })
+      .max(24, { message: 'Display name must be between 3 and 24 characters long.' }),
+    z.string().max(0),
+  ]),
+  teamId: z.number({ invalid_type_error: 'Please select a valid team.' }).int({ message: 'Please select a valid team.' }).positive({ message: 'Please select a valid team.' }).nullable(),
+  color: z.enum(['', ...USER_COLOR_NAMES]),
   measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>).nullable(),
   count: z
     .number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }).nullable()
@@ -101,21 +122,15 @@ async function handleSubmit() {
 
   try {
     const data = formData();
-    const payload: LeaderboardParticipationPayload = data.isParticipant ?
-        // user is participating — send the info from the form
-        {
-          isParticipant: true,
-          goal: props.leaderboard.individualGoalMode ? { measure: data.measure, count: data.count ?? 0 } : null,
-          workIds: data.works,
-          tagIds: data.tags,
-        } :
-        // user is not participating — save their previous participation info
-        {
-          isParticipant: false,
-          goal: null,
-          workIds: [],
-          tagIds: [],
-        };
+    const payload: LeaderboardParticipationPayload = {
+      isParticipant: data.isParticipant,
+      displayName: data.displayName,
+      teamId: data.teamId,
+      color: data.color,
+      goal: data.isParticipant ? props.leaderboard.individualGoalMode ? { measure: data.measure, count: data.count ?? 0 } : null : null,
+      workIds: data.isParticipant ? data.works : [],
+      tagIds: data.isParticipant ? data.tags : [],
+    };
 
     const joinedMember = await joinLeaderboard(props.leaderboard.uuid, payload);
 
@@ -140,7 +155,7 @@ async function handleSubmit() {
 <template>
   <TbForm
     :is-valid="isWholeFormValid"
-    submit-message="Join"
+    submit-label="Join"
     :loading-message="isLoading ? 'Joining...' : null"
     :success-message="successMessage"
     :error-message="errorMessage"
@@ -168,6 +183,54 @@ async function handleSubmit() {
             I am <b>{{ formModel.isParticipant ? 'participating in' : `just spectating` }}</b> this leaderboard.
           </div>
         </div>
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      for="leaderboard-form-display-name"
+      label="Display Name"
+      :rule="ruleFor('displayName')"
+      help="If you leave this blank, your usual display name will be used. To set that, go to Account Settings."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <InputText
+          id="leaderboard-form-displayName"
+          v-model="formModel.displayName"
+          :invalid="!isFieldValid"
+          @update:model-value="onUpdate"
+        />
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      v-if="formModel.isParticipant && props.leaderboard.enableTeams"
+      for="leaderboard-form-team"
+      label="Team"
+      :rule="ruleFor('teamId')"
+      help="This leaderboard has split its participants into teams. Pick a team to join."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <TeamDropdown
+          v-model="formModel.teamId"
+          id-prefix="leaderboard-form"
+          :teams="props.teams"
+          :invalid="!isFieldValid"
+          @update:model-value="onUpdate"
+        />
+      </template>
+    </FieldWrapper>
+    <FieldWrapper
+      v-if="formModel.isParticipant && !props.leaderboard.enableTeams"
+      for="leaderboard-form-color"
+      label="Color"
+      :rule="ruleFor('color')"
+      help="This determines what color your progress will be on the graph."
+    >
+      <template #default="{ onUpdate, isFieldValid }">
+        <ColorDropdown
+          v-model="formModel.color"
+          id-prefix="leaderboard-form"
+          :invalid="!isFieldValid"
+          @update:model-value="onUpdate"
+        />
       </template>
     </FieldWrapper>
     <FieldWrapper
@@ -204,9 +267,7 @@ async function handleSubmit() {
         </div>
       </template>
     </FieldWrapper>
-    <div
-      v-if="formModel.isParticipant"
-    >
+    <div v-if="formModel.isParticipant">
       Select which progress updates you want to include on this leaderboard. You can filter by project, tag, or both.
     </div>
     <FieldWrapper
