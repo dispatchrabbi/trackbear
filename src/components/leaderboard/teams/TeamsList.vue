@@ -14,7 +14,7 @@ import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 
 import WarningButton from 'src/components/shared/WarningButton.vue';
-import TeamAvatar from 'src/components/TeamAvatar.vue';
+import TeamAvatar from 'src/components/avatar/TeamAvatar.vue';
 import CreateTeamForm from './CreateTeamForm.vue';
 import EditTeamForm from './EditTeamForm.vue';
 // import UserAvatar from 'src/components/UserAvatar.vue';

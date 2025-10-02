@@ -16,7 +16,7 @@ import Menu from 'primevue/menu';
 import Breadcrumb from 'primevue/breadcrumb';
 import type { MenuItem } from 'primevue/menuitem';
 import TrackbearMasthead from './TrackbearMasthead.vue';
-import UserAvatar from '../UserAvatar.vue';
+import UserAvatar from '../avatar/UserAvatar.vue';
 import Tag from 'primevue/tag';
 
 const props = defineProps<{

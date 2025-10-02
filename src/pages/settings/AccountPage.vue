@@ -22,7 +22,7 @@ import AccountInfoForm from 'src/components/account/AccountInfoForm.vue';
 import UploadAvatarForm from 'src/components/account/UploadAvatarForm.vue';
 import ChangePasswordForm from 'src/components/account/ChangePasswordForm.vue';
 import DeleteUserForm from 'src/components/account/DeleteUserForm.vue';
-import UserAvatar from 'src/components/UserAvatar.vue';
+import UserAvatar from 'src/components/avatar/UserAvatar.vue';
 
 import { useConfirm } from 'primevue/useconfirm';
 import DangerPanel from 'src/components/layout/DangerPanel.vue';

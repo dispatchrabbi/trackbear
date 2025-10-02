@@ -13,7 +13,7 @@ import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal/consts';
 
 import Card from 'primevue/card';
 import Divider from 'primevue/divider';
-import UserAvatar from '../UserAvatar.vue';
+import UserAvatar from '../avatar/UserAvatar.vue';
 import SectionTitle from '../layout/SectionTitle.vue';
 import StatTile from '../goal/StatTile.vue';
 import DayCountHeatmap from '../stats/DayCountHeatmap.vue';

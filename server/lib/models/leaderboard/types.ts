@@ -31,14 +31,14 @@ export type LeaderboardSummary = Leaderboard & {
   members: MemberBio[];
 };
 export type MemberBio = Expand<
-  Pick<LeaderboardMember, 'id' | 'isParticipant' | 'isOwner' | 'displayName' | 'avatar'>
+  Pick<LeaderboardMember, 'id' | 'isParticipant' | 'isOwner' | 'displayName' | 'avatar' | 'teamId'>
   & {
     userUuid: string;
   }
 >;
 
 export type Participant = Expand<
-  Pick<LeaderboardMember, 'id' | 'uuid' | 'goal' | 'avatar' | 'displayName' | 'color'>
+  Pick<LeaderboardMember, 'id' | 'uuid' | 'goal' | 'avatar' | 'displayName' | 'color' | 'teamId'>
   & {
     tallies: LeaderboardTally[];
   }

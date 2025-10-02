@@ -14,7 +14,7 @@ import { determineChartStartDate, determineChartEndDate, createChartSeries } fro
 
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import UserAvatar from 'src/components/UserAvatar.vue';
+import UserAvatar from 'src/components/avatar/UserAvatar.vue';
 
 const props = defineProps<{
   leaderboard: Leaderboard;

@@ -38,7 +38,8 @@ import FundraiserProgressChart from 'src/components/leaderboard/FundraiserProgre
 import FundraiserProgressMeter from 'src/components/leaderboard/FundraiserProgressMeter.vue';
 import LeaderboardStandings from 'src/components/leaderboard/LeaderboardStandings.vue';
 import JoinCodeDisplay from 'src/components/leaderboard/JoinCodeDisplay.vue';
-import UserAvatar from 'src/components/UserAvatar.vue';
+import MembersRoster from 'src/components/leaderboard/members/MembersRoster.vue';
+import { useAsyncSignals } from 'src/lib/use-async-signals';
 
 const leaderboard = ref<LeaderboardSummary | null>(null);
 const loadLeaderboard = async function() {
@@ -48,42 +49,49 @@ const loadLeaderboard = async function() {
   }
 };
 
-const participants = ref<Participant[]>([]);
-const participantsNeedToSetGoals = ref<boolean>(false);
-const isParticipantsLoading = ref<boolean>(false);
-const participantsErrorMessage = ref<string | null>(null);
-const loadParticipants = async function() {
-  if(leaderboard.value === null) {
-    participantsNeedToSetGoals.value = false;
-    isParticipantsLoading.value = false;
-    participantsErrorMessage.value = null;
-    return;
-  }
-
-  participantsNeedToSetGoals.value = false;
-  participantsErrorMessage.value = null;
-  isParticipantsLoading.value = true;
-
-  try {
-    const allParticipants = await listParticipants(leaderboard.value.uuid);
-    participants.value = leaderboard.value.individualGoalMode ? allParticipants.filter(participant => participant.goal !== null) : allParticipants;
-
-    // set a flag if there are participants but all of them need to set goals
-    if(leaderboard.value.individualGoalMode && participants.value.length === 0 && allParticipants.length > 0) {
-      participantsNeedToSetGoals.value = true;
+const allParticipants = ref<Participant[]>([]);
+const [loadParticipants, participantsSignals] = useAsyncSignals(
+  async function() {
+    if(leaderboard.value === null) {
+      return [];
+    } else {
+      return await listParticipants(leaderboard.value.uuid);
     }
-  } catch (err) {
-    participantsErrorMessage.value = err.message;
+  },
+  async function(err) {
+    // @ts-expect-error
     if(err.code !== 'NOT_LOGGED_IN') {
       // the ApplicationLayout takes care of this. If we don't exclude NOT_LOGGED_IN, this will redirect to /leaderboards
       // before ApplicationLayout can redirect to /login.
       // TODO: figure out a better way to ensure that there's no race condition here
       router.push({ name: 'leaderboards' });
     }
-  } finally {
-    isParticipantsLoading.value = false;
+
+    return err.message;
+  },
+  async function(participantsResult) {
+    allParticipants.value = participantsResult;
+    return null;
+  },
+);
+
+const participants = computed(() => {
+  if(!leaderboard.value) {
+    return [];
   }
-};
+  if(leaderboard.value.individualGoalMode) {
+    return allParticipants.value.filter(participant => participant.goal !== null);
+  } else {
+    return allParticipants.value;
+  }
+});
+const participantsNeedToSetGoals = computed(() => {
+  if(!leaderboard.value) {
+    return false;
+  }
+
+  return leaderboard.value.individualGoalMode && participants.value.length === 0 && allParticipants.value.length > 0;
+});
 
 async function reloadData() {
   await leaderboardStore.populate(true);
@@ -96,7 +104,7 @@ const measuresAvailable = computed(() => {
     return [TALLY_MEASURE.WORD];
   }
 
-  const measuresPresent = new Set(participants.value.flatMap(participant => participant.tallies.map(tally => tally.measure)));
+  const measuresPresent = new Set(allParticipants.value.flatMap(participant => participant.tallies.map(tally => tally.measure)));
   return leaderboard.value.measures.filter(measure => measuresPresent.has(measure));
 });
 
@@ -113,14 +121,6 @@ const isUserAMember = computed(() => {
   }
 
   return leaderboard.value.members.some(member => member.userUuid === userStore.user!.uuid);
-});
-
-const participantMembers = computed(() => {
-  return (leaderboard.value?.members ?? []).filter(member => member.isParticipant);
-});
-
-const spectatorMembers = computed(() => {
-  return (leaderboard.value?.members ?? []).filter(member => !member.isParticipant);
 });
 
 const handleConfigureClick = function() {
@@ -149,9 +149,9 @@ onMounted(async () => {
   await envStore.populate();
 });
 
-watch(() => route.params.boardUuid, newUuid => {
+watch(() => route.params.boardUuid, async newUuid => {
   if(newUuid !== undefined) {
-    reloadData();
+    await reloadData();
   }
 });
 </script>
@@ -166,18 +166,6 @@ watch(() => route.params.boardUuid, newUuid => {
         :subtitle="leaderboard.description"
       >
         <template #actions>
-          <!--
-            TODO:
-            - Join button if not a participant and joinable
-            - Configure button if a participant
-            - Copy join code if joinable
-          -->
-          <!-- <Button
-            label="Configure Leaderboard"
-            severity="info"
-            :icon="PrimeIcons.COG"
-            @click="router.push({ name: 'edit-leaderboard', params: { boardUuid: leaderboard.uuid } })"
-          /> -->
           <Button
             v-if="isUserAMember"
             label="Configure Leaderboard"
@@ -195,33 +183,14 @@ watch(() => route.params.boardUuid, newUuid => {
         </template>
       </DetailPageHeader>
       <div
+        v-if="!participantsSignals.isLoading"
         class="flex flex-col lg:flex-row-reverse flex-wrap justify-end gap-8"
       >
         <!-- Members -->
         <div class="max-w-screen-md">
-          <div v-if="participantMembers.length > 0">
-            <SubsectionTitle title="Participants" />
-            <div class="mb-4 flex flex-wrap gap-2">
-              <!-- TODO: add a crown for owners, or something-->
-              <UserAvatar
-                v-for="participant of participantMembers"
-                :key="participant.id"
-                :user="participant"
-                :display-name="participant.displayName"
-              />
-            </div>
-          </div>
-          <div v-if="spectatorMembers.length > 0">
-            <SubsectionTitle title="Spectators" />
-            <div class="mb-4 flex flex-wrap gap-2">
-              <!-- TODO: add a crown for owners, or something-->
-              <UserAvatar
-                v-for="spectator of spectatorMembers"
-                :key="spectator.id"
-                :user="spectator"
-              />
-            </div>
-          </div>
+          <MembersRoster
+            :leaderboard="leaderboard"
+          />
         </div>
         <!-- Standings -->
         <div class="w-full max-w-screen-md">

@@ -7,7 +7,7 @@ const theme = useTheme();
 import Avatar from 'primevue/avatar';
 
 import CLASSES from 'src/components/classes.ts';
-import { userColorLevel, userColorOrFallback } from './chart/user-colors';
+import { userColorLevel, userColorOrFallback } from '../chart/user-colors';
 
 const props = withDefaults(defineProps<{
   name: string;
@@ -39,6 +39,7 @@ const initial = computed(() => {
       shape="circle"
       :title="props.name"
       :class="[
+        `!text-white/90`,
         `!bg-${userColorOrFallback(color, 'primary')}-${userColorLevel(theme.theme.value)}`,
         `dark:!bg-${userColorOrFallback(color, 'primary')}-${userColorLevel(theme.theme.value)}`,
         'font-bold'

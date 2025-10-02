@@ -3,7 +3,7 @@ import { computed } from 'vue';
 
 import { type LeaderboardTeam } from 'server/api/v1/leaderboard';
 
-import TeamAvatar from 'src/components/TeamAvatar.vue';
+import TeamAvatar from 'src/components/avatar/TeamAvatar.vue';
 import Dropdown from 'primevue/dropdown';
 
 const model = defineModel<number | null>({ required: true });

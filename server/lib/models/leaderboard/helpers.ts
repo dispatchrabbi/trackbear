@@ -74,6 +74,7 @@ export function db2summary(record: BoardWithTeamsAndParticipants | null, partici
       userUuid: participant.user.uuid,
       displayName: participant.displayName || participant.user.displayName,
       avatar: participant.user.avatar,
+      teamId: participant.teamId,
     })),
   };
 

@@ -13,7 +13,7 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 
-import UserAvatar from '../../UserAvatar.vue';
+import UserAvatar from '../../avatar/UserAvatar.vue';
 import MemberTeamForm from './MemberTeamForm.vue';
 import DangerButton from 'src/components/shared/DangerButton.vue';
 

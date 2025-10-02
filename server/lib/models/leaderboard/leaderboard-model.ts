@@ -329,6 +329,7 @@ export class LeaderboardModel {
       avatar: participant.user.avatar,
       displayName: participant.displayName || participant.user.displayName,
       color: participant.color,
+      teamId: participant.teamId,
       tallies: tallies.filter(tally => tally.ownerId === participant.userId).map((tally): LeaderboardTally => pick(tally, ['uuid', 'date', 'measure', 'count'])),
     }));
 
