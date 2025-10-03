@@ -12,6 +12,7 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: After creating a leaderboard, you will now be redirected to that leaderboard instead of to the list of leaderboards.
 - FIXED: Fixed a bug that would remove your leaderboard goal if you starred or unstarred a leaderboard. If you recently starred or unstarred a loaderboard where you have an individual goal, you should go reset it. Sorry about that! (h/t Cassie Cassette)
 
 ## 1.3.10

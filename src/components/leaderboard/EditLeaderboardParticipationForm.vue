@@ -3,6 +3,9 @@ import { ref, reactive, computed, defineProps, defineEmits } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 
+import { useUserStore } from 'src/stores/user';
+const userStore = useUserStore();
+
 import { useProjectStore } from 'src/stores/project';
 const projectStore = useProjectStore();
 projectStore.populate();
@@ -208,6 +211,7 @@ async function handleSubmit() {
         <InputText
           id="leaderboard-form-displayName"
           v-model="formModel.displayName"
+          :placeholder="userStore.user!.displayName"
           :invalid="!isFieldValid"
           @update:model-value="onUpdate"
         />
