@@ -210,7 +210,7 @@ async function handleSubmit() {
         />
       </template>
     </FieldWrapper>
-    <FieldWrapper
+    <!-- <FieldWrapper
       label="Enable Teams?"
       for="leaderboard-form-enableTeams"
       :required="true"
@@ -229,7 +229,7 @@ async function handleSubmit() {
           </div>
         </div>
       </template>
-    </FieldWrapper>
+    </FieldWrapper> -->
     <FieldWrapper
       label="Same goal or individual goals?"
       for="leaderboard-form-individual-goal-mode"

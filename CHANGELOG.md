@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Fixed a bug that would remove your leaderboard goal if you starred or unstarred a leaderboard. If you recently starred or unstarred a loaderboard where you have an individual goal, you should go reset it. Sorry about that! (h/t Cassie Cassette)
+
 ## 1.3.10
 
 - NEW: You can now set a display name for each leaderboard you're on. If you don't set one, your account's display name will be used.

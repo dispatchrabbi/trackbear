@@ -145,7 +145,7 @@ export class LeaderboardMemberModel {
       data: {
         ...omit(data, ['workIds', 'tagIds']),
         ...makeSetWorksAndTagsIncluded(data, member.userId),
-        goal: data.goal ?? Prisma.JsonNull,
+        goal: data.goal === null ? Prisma.JsonNull : data.goal,
       },
       include: {
         user: true,
