@@ -2669,9 +2669,16 @@
       "Leaderboards.LeaderboardSummary": {
         "type": "object",
         "required": [
+          "teams",
           "members"
         ],
         "properties": {
+          "teams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Leaderboards.Team"
+            }
+          },
           "members": {
             "type": "array",
             "items": {

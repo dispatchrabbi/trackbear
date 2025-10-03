@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { ref } from 'vue';
 import { useEventBus } from '@vueuse/core';
 
 import { createTeam, type Leaderboard, type LeaderboardTeam } from 'src/lib/api/leaderboard';
@@ -12,7 +12,7 @@ const props = defineProps<{
   leaderboard: Leaderboard;
 }>();
 
-const model = reactive<TeamFormModel>({
+const model = ref<TeamFormModel>({
   name: '',
   color: '',
 });
@@ -22,7 +22,7 @@ const eventBus = useEventBus<{ team: LeaderboardTeam; leaderboard: Leaderboard }
 
 const [handleCreateTeam, signals] = useAsyncSignals(
   async () => {
-    const team = await createTeam(props.leaderboard.uuid, model);
+    const team = await createTeam(props.leaderboard.uuid, model.value);
     emit('team:create', { team, leaderboard: props.leaderboard });
     eventBus.emit({ team, leaderboard: props.leaderboard });
     return team;

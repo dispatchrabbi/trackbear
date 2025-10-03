@@ -52,27 +52,33 @@ describe(LeaderboardModel, () => {
     it('gets a list of leaderboard summaries', async () => {
       const testDbLeaderboards = [
         {
-          ...mockObject<Leaderboard>(),
+          ...mockObject<Leaderboard>({
+            goal: { words: 12345 },
+          }),
+          teams: [],
           participants: [
             {
-              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: false, isParticipant: false, isOwner: true }),
+              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: false, isParticipant: false, isOwner: true, teamId: null }),
               user: mockObject<User>({ id: TEST_USER_ID, uuid: TEST_UUID, displayName: 'test0', avatar: null }),
             },
             {
-              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID - 1, userId: TEST_USER_ID - 1, starred: true, isParticipant: true, isOwner: false }),
+              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID - 1, userId: TEST_USER_ID - 1, starred: true, isParticipant: true, isOwner: false, teamId: null }),
               user: mockObject<User>({ id: TEST_USER_ID - 1, uuid: TEST_UUID, displayName: 'test1', avatar: null }),
             },
           ],
         },
         {
-          ...mockObject<Leaderboard>(),
+          ...mockObject<Leaderboard>({
+            goal: { words: 54321 },
+          }),
+          teams: [],
           participants: [
             {
-              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: true, isParticipant: true, isOwner: true }),
+              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: true, isParticipant: true, isOwner: true, teamId: null }),
               user: mockObject<User>({ id: TEST_USER_ID, uuid: TEST_UUID, displayName: 'test0', avatar: null }),
             },
             {
-              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID - 2, userId: TEST_USER_ID - 2, starred: false, isParticipant: true, isOwner: false }),
+              ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID - 2, userId: TEST_USER_ID - 2, starred: false, isParticipant: true, isOwner: false, teamId: null }),
               user: mockObject<User>({ id: TEST_USER_ID - 2, uuid: TEST_UUID, displayName: 'test2', avatar: null }),
             },
           ],
@@ -83,18 +89,22 @@ describe(LeaderboardModel, () => {
       const expected: LeaderboardSummary[] = [
         {
           ...mockObject<Leaderboard>(),
+          goal: { words: 12345 },
           starred: false,
+          teams: [],
           members: [
-            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, userUuid: TEST_UUID, isParticipant: false, isOwner: true },
-            { id: TEST_OBJECT_ID - 1, displayName: 'test1', avatar: null, userUuid: TEST_UUID, isParticipant: true, isOwner: false },
+            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, userUuid: TEST_UUID, isParticipant: false, isOwner: true, teamId: null },
+            { id: TEST_OBJECT_ID - 1, displayName: 'test1', avatar: null, userUuid: TEST_UUID, isParticipant: true, isOwner: false, teamId: null },
           ],
         },
         {
           ...mockObject<Leaderboard>(),
+          goal: { words: 54321 },
           starred: true,
+          teams: [],
           members: [
-            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, userUuid: TEST_UUID, isParticipant: true, isOwner: true },
-            { id: TEST_OBJECT_ID - 2, displayName: 'test2', avatar: null, userUuid: TEST_UUID, isParticipant: true, isOwner: false },
+            { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, userUuid: TEST_UUID, isParticipant: true, isOwner: true, teamId: null },
+            { id: TEST_OBJECT_ID - 2, displayName: 'test2', avatar: null, userUuid: TEST_UUID, isParticipant: true, isOwner: false, teamId: null },
           ],
         },
       ];
@@ -113,6 +123,7 @@ describe(LeaderboardModel, () => {
           },
         },
         include: {
+          teams: true,
           participants: {
             where: {
               state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
@@ -146,12 +157,32 @@ describe(LeaderboardModel, () => {
 
   describe(LeaderboardModel.getByUuid, () => {
     it('gets a leaderboard by uuid', async () => {
-      const testLeaderboard = mockObject<Leaderboard>();
+      const testLeaderboard = {
+        ...mockObject<Leaderboard>({
+          goal: { words: 12345 },
+        }),
+        teams: [],
+        participants: [{
+          ...mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID, userId: TEST_USER_ID, starred: true, isParticipant: true, isOwner: true, teamId: null }),
+          user: mockObject<User>({ id: TEST_USER_ID, uuid: TEST_UUID, displayName: 'test0', avatar: null }),
+        }],
+      };
       dbClient.board.findUnique.mockResolvedValue(testLeaderboard);
+
+      const expected: LeaderboardSummary = {
+        ...mockObject<Leaderboard>({
+          goal: { words: 12345 },
+        }),
+        starred: true,
+        teams: [],
+        members: [
+          { id: TEST_OBJECT_ID, displayName: 'test0', avatar: null, userUuid: TEST_UUID, isParticipant: true, isOwner: true, teamId: null },
+        ],
+      };
 
       const actual = await LeaderboardModel.getByUuid(TEST_UUID, { memberUserId: TEST_USER_ID });
 
-      expect(actual).toBe(testLeaderboard);
+      expect(actual).toEqual(expected);
       expect(dbClient.board.findUnique).toBeCalledWith({
         where: {
           uuid: TEST_UUID,
@@ -166,6 +197,18 @@ describe(LeaderboardModel, () => {
               },
             },
           ],
+        },
+        include: {
+          teams: true,
+          participants: {
+            where: {
+              state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
+              user: { state: USER_STATE.ACTIVE },
+            },
+            include: {
+              user: true,
+            },
+          },
         },
       });
     });

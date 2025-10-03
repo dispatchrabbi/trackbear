@@ -44,7 +44,7 @@ describe('leaderboard api v1', () => {
 
   describe(handleGetByUuid, () => {
     it('returns a leaderboard when it finds one', async () => {
-      const testLeaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const testLeaderboard = mockObject<LeaderboardSummary>({ uuid: TEST_UUID });
       LeaderboardModel.getByUuid.mockResolvedValue(testLeaderboard);
 
       const { req, res } = getHandlerMocksWithUser({
@@ -76,7 +76,7 @@ describe('leaderboard api v1', () => {
   describe(handleGetByJoinCode, () => {
     it('returns a leaderboard when it finds one', async () => {
       const joincode = 'JOIN-M3';
-      const testLeaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID, isJoinable: true });
+      const testLeaderboard = mockObject<LeaderboardSummary>({ uuid: TEST_UUID, isJoinable: true });
       LeaderboardModel.getByJoinCode.mockResolvedValue(testLeaderboard);
 
       const { req, res } = getHandlerMocksWithUser({
@@ -129,7 +129,7 @@ describe('leaderboard api v1', () => {
 
   describe(handleUpdate, () => {
     it('updates a leaderboard if one with that UUID exists', async () => {
-      const found = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const found = mockObject<LeaderboardSummary>({ uuid: TEST_UUID });
       LeaderboardModel.getByUuid.mockResolvedValue(found);
 
       const updated = mockObject<Leaderboard>({ uuid: TEST_UUID });
@@ -175,7 +175,7 @@ describe('leaderboard api v1', () => {
     it('stars a leaderboard if one with that UUID exists', async () => {
       const willBeStarred = true;
 
-      const found = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const found = mockObject<LeaderboardSummary>({ uuid: TEST_UUID });
       LeaderboardModel.getByUuid.mockResolvedValue(found);
 
       const member = mockObject<LeaderboardMember>();
@@ -220,7 +220,7 @@ describe('leaderboard api v1', () => {
     });
 
     it('returns a 404 if the user is not a member of the leaderboard', async () => {
-      const found = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const found = mockObject<LeaderboardSummary>({ uuid: TEST_UUID });
       LeaderboardModel.getByUuid.mockResolvedValue(found);
 
       LeaderboardMemberModel.getByUserId.mockResolvedValue(null);
@@ -244,7 +244,7 @@ describe('leaderboard api v1', () => {
 
   describe(handleDelete, () => {
     it('updates a leaderboard if one with that UUID exists', async () => {
-      const found = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const found = mockObject<LeaderboardSummary>({ uuid: TEST_UUID });
       LeaderboardModel.getByUuid.mockResolvedValue(found);
 
       const deleted = mockObject<Leaderboard>({ uuid: TEST_UUID });
@@ -276,7 +276,7 @@ describe('leaderboard api v1', () => {
 
   describe(handleListMembers, () => {
     it('returns a list of members', async () => {
-      const leaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const leaderboard = mockObject<LeaderboardSummary>({ uuid: TEST_UUID });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       const members = mockObjects<LeaderboardMember>(3);
@@ -310,7 +310,7 @@ describe('leaderboard api v1', () => {
 
   describe(handleUpdateMember, () => {
     it('returns an updated member', async () => {
-      const leaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const leaderboard = mockObject<LeaderboardSummary>({ uuid: TEST_UUID });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       const member = mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID });
@@ -356,7 +356,7 @@ describe('leaderboard api v1', () => {
     });
 
     it('returns 404 if there is no member for that ID', async () => {
-      const leaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const leaderboard = mockObject<LeaderboardSummary>({ uuid: TEST_UUID });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       LeaderboardMemberModel.get.mockResolvedValue(null);
@@ -378,7 +378,7 @@ describe('leaderboard api v1', () => {
 
   describe(handleRemoveMember, () => {
     it('returns the membership after removing a member', async () => {
-      const leaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const leaderboard = mockObject<LeaderboardSummary>({ uuid: TEST_UUID });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       const member = mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID });
@@ -420,7 +420,7 @@ describe('leaderboard api v1', () => {
     });
 
     it('returns 404 if there is no member for that ID', async () => {
-      const leaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const leaderboard = mockObject<LeaderboardSummary>({ uuid: TEST_UUID });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       LeaderboardMemberModel.get.mockResolvedValue(null);
@@ -440,7 +440,7 @@ describe('leaderboard api v1', () => {
     });
 
     it('returns 409 if the member to remove is the last owner', async () => {
-      const leaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const leaderboard = mockObject<LeaderboardSummary>({ uuid: TEST_UUID });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       const member = mockObject<LeaderboardMember>();
@@ -465,7 +465,7 @@ describe('leaderboard api v1', () => {
 
   describe(handleListParticipants, () => {
     it('returns a list of participants', async () => {
-      const leaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID });
+      const leaderboard = mockObject<LeaderboardSummary>({ uuid: TEST_UUID });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       const participants = mockObjects<Participant>(3);
@@ -497,7 +497,7 @@ describe('leaderboard api v1', () => {
 
   describe(handleGetMyParticipation, () => {
     it(`returns the user's participation`, async () => {
-      const leaderboard = mockObject<Leaderboard>({ id: TEST_OBJECT_ID });
+      const leaderboard = mockObject<LeaderboardSummary>({ id: TEST_OBJECT_ID });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       const participation = mockObject<Participation>();
@@ -529,7 +529,7 @@ describe('leaderboard api v1', () => {
 
   describe(handleJoinBoard, () => {
     it('creates a member with default settings and returns it', async () => {
-      const leaderboard = mockObject<Leaderboard>({ uuid: TEST_UUID, isJoinable: true });
+      const leaderboard = mockObject<LeaderboardSummary>({ uuid: TEST_UUID, isJoinable: true });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       // no existing member
@@ -582,7 +582,7 @@ describe('leaderboard api v1', () => {
     });
 
     it('returns 409 if the leaderboard is not joinable', async () => {
-      const leaderboard = mockObject<Leaderboard>({ id: TEST_OBJECT_ID, isJoinable: false });
+      const leaderboard = mockObject<LeaderboardSummary>({ id: TEST_OBJECT_ID, isJoinable: false });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       const { req, res } = getHandlerMocksWithUser({
@@ -599,7 +599,7 @@ describe('leaderboard api v1', () => {
     });
 
     it('returns 409 if the user is already a member', async () => {
-      const leaderboard = mockObject<Leaderboard>({ id: TEST_OBJECT_ID, isJoinable: true });
+      const leaderboard = mockObject<LeaderboardSummary>({ id: TEST_OBJECT_ID, isJoinable: true });
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       const existing = mockObject<LeaderboardMember>({ id: TEST_OBJECT_ID });
@@ -621,7 +621,7 @@ describe('leaderboard api v1', () => {
 
   describe(handleUpdateMyParticipation, () => {
     it(`updates participation for a user who is already a member of the board`, async () => {
-      const leaderboard = mockObject<Leaderboard>();
+      const leaderboard = mockObject<LeaderboardSummary>();
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       const member = mockObject<LeaderboardMember>();
@@ -664,7 +664,7 @@ describe('leaderboard api v1', () => {
     });
 
     it('returns a 404 if the current user is not a member of the leaderboard', async () => {
-      const leaderboard = mockObject<Leaderboard>();
+      const leaderboard = mockObject<LeaderboardSummary>();
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       LeaderboardMemberModel.getByUserId.mockResolvedValue(null);
@@ -683,7 +683,7 @@ describe('leaderboard api v1', () => {
 
   describe(handleLeaveBoard, () => {
     it('removes the member from the board and returns it', async () => {
-      const leaderboard = mockObject<Leaderboard>();
+      const leaderboard = mockObject<LeaderboardSummary>();
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       const member = mockObject<LeaderboardMember>();
@@ -718,7 +718,7 @@ describe('leaderboard api v1', () => {
     });
 
     it('returns a 404 if the current user is not a member of the leaderboard', async () => {
-      const leaderboard = mockObject<Leaderboard>();
+      const leaderboard = mockObject<LeaderboardSummary>();
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       LeaderboardMemberModel.getByUserId.mockResolvedValue(null);
@@ -735,7 +735,7 @@ describe('leaderboard api v1', () => {
     });
 
     it('returns 409 if the current user is the only owner of the leaderboard', async () => {
-      const leaderboard = mockObject<Leaderboard>();
+      const leaderboard = mockObject<LeaderboardSummary>();
       LeaderboardModel.getByUuid.mockResolvedValue(leaderboard);
 
       const member = mockObject<LeaderboardMember>();
