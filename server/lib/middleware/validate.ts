@@ -1,6 +1,7 @@
 import { ZodSchema } from 'zod';
 import type { Request, Response, NextFunction } from 'express';
-import { failure, FAILURE_CODES } from '../api-response.ts';
+import { failure } from '../../lib/api-response.ts';
+import { FAILURE_CODES } from '../../lib/api-response-codes.ts';
 
 function validateBody(schema: ZodSchema) {
   return function validateBody(req: Request, res: Response, next: NextFunction) {

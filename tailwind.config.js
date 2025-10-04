@@ -33,7 +33,7 @@ export default {
   darkMode: ['selector', '[data-theme="dark"]'],
   safelist: [
     // custom chart colors for leaderboards — otherwise we have to list them all
-    { pattern: /(?:!)?bg-(?:red|orange|amber|yellow|lime|green|teal|cyan|sky|blue|violet|purple|fuchsia|pink|rose|gray)-(?:500)/ },
+    { pattern: /(?:!)?bg-(?:red|orange|amber|yellow|lime|green|teal|cyan|sky|blue|violet|purple|fuchsia|pink|rose|gray|primary|accent)-(?:500)/ },
   ],
   theme: {
     extend: {

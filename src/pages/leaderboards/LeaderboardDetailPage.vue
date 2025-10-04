@@ -17,9 +17,13 @@ const envStore = useEnvStore();
 
 import { LeaderboardSummary, listParticipants, Participant } from 'src/lib/api/leaderboard';
 import type { Tally } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
+import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally';
 import { toTitleCase } from 'src/lib/str';
+
+import { useAsyncSignals } from 'src/lib/use-async-signals';
+import { useLeaderboardSeries } from 'src/components/leaderboard/use-leaderboard-series';
+import { LEADERBOARD_MEASURE } from 'server/lib/models/leaderboard/consts';
 
 import { PrimeIcons } from 'primevue/api';
 import type { MenuItem } from 'primevue/menuitem';
@@ -31,46 +35,82 @@ import TabPanel from 'primevue/tabpanel';
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import DetailPageHeader from 'src/components/layout/DetailPageHeader.vue';
 import SubsectionTitle from 'src/components/layout/SubsectionTitle.vue';
-import IndividualGoalProgressChart from 'src/components/leaderboard/IndividualGoalProgressChart.vue';
 import LeaderboardStats from 'src/components/leaderboard/LeaderboardStats.vue';
-import ChallengeProgressChart from 'src/components/leaderboard/ChallengeProgressChart.vue';
-import FundraiserProgressChart from 'src/components/leaderboard/FundraiserProgressChart.vue';
+import FundraiserChart from 'src/components/chart/FundraiserChart.vue';
+import ProgressChart from 'src/components/chart/ProgressChart.vue';
 import FundraiserProgressMeter from 'src/components/leaderboard/FundraiserProgressMeter.vue';
 import LeaderboardStandings from 'src/components/leaderboard/LeaderboardStandings.vue';
 import JoinCodeDisplay from 'src/components/leaderboard/JoinCodeDisplay.vue';
 import MembersRoster from 'src/components/leaderboard/members/MembersRoster.vue';
-import { useAsyncSignals } from 'src/lib/use-async-signals';
+import { FAILURE_CODES } from 'server/lib/api-response-codes.ts';
 
 const leaderboard = ref<LeaderboardSummary | null>(null);
-const loadLeaderboard = async function() {
-  leaderboard.value = leaderboardStore.get(route.params.boardUuid.toString());
-  if(leaderboard.value === null) {
-    router.push({ name: 'leaderboards' });
-  }
-};
+// const loadLeaderboard = async function() {
+//   leaderboard.value = leaderboardStore.get(route.params.boardUuid.toString());
+//   if(leaderboard.value === null) {
+//     router.push({ name: 'leaderboards' });
+//   }
+// };
 
 const allParticipants = ref<Participant[]>([]);
-const [loadParticipants, participantsSignals] = useAsyncSignals(
+// const [loadParticipants, participantsSignals] = useAsyncSignals(
+//   async function() {
+//     if(leaderboard.value === null) {
+//       return [];
+//     } else {
+//       return await listParticipants(leaderboard.value.uuid);
+//     }
+//   },
+//   async function(err) {
+//     // @ts-expect-error
+//     if(err.code !== 'NOT_LOGGED_IN') {
+//       // the ApplicationLayout takes care of this. If we don't exclude NOT_LOGGED_IN, this will redirect to /leaderboards
+//       // before ApplicationLayout can redirect to /login.
+//       // TODO: figure out a better way to ensure that there's no race condition here
+//       router.push({ name: 'leaderboards' });
+//     }
+
+//     return err.message;
+//   },
+//   async function(participantsResult) {
+//     allParticipants.value = participantsResult;
+//     return null;
+//   },
+// );
+
+const [load, signals] = useAsyncSignals(
   async function() {
-    if(leaderboard.value === null) {
-      return [];
-    } else {
-      return await listParticipants(leaderboard.value.uuid);
+    const uuid = route.params.boardUuid.toString();
+    await leaderboardStore.refreshByUuid(uuid);
+
+    const loadedLeaderboard = leaderboardStore.get(uuid);
+    if(loadedLeaderboard === null) {
+      throw new Error(`Could not find a leaderboard with uuid ${route.params.boardUuid.toString()}`);
     }
+
+    const loadedParticipants = await listParticipants(uuid);
+
+    return {
+      leaderboard: loadedLeaderboard,
+      participants: loadedParticipants,
+    };
   },
   async function(err) {
-    // @ts-expect-error
-    if(err.code !== 'NOT_LOGGED_IN') {
+    // @ts-expect-error -- need to type this error so it possibly has an error code
+    if(err.code !== FAILURE_CODES.NOT_LOGGED_IN) {
       // the ApplicationLayout takes care of this. If we don't exclude NOT_LOGGED_IN, this will redirect to /leaderboards
       // before ApplicationLayout can redirect to /login.
       // TODO: figure out a better way to ensure that there's no race condition here
       router.push({ name: 'leaderboards' });
     }
 
+    leaderboard.value = null;
+    allParticipants.value = [];
     return err.message;
   },
-  async function(participantsResult) {
-    allParticipants.value = participantsResult;
+  async function(result) {
+    leaderboard.value = result.leaderboard;
+    allParticipants.value = result.participants;
     return null;
   },
 );
@@ -93,12 +133,6 @@ const participantsNeedToSetGoals = computed(() => {
   return leaderboard.value.individualGoalMode && participants.value.length === 0 && allParticipants.value.length > 0;
 });
 
-async function reloadData() {
-  await leaderboardStore.populate(true);
-  await loadLeaderboard();
-  await loadParticipants();
-}
-
 const measuresAvailable = computed(() => {
   if(leaderboard.value === null) {
     return [TALLY_MEASURE.WORD];
@@ -108,12 +142,14 @@ const measuresAvailable = computed(() => {
   return leaderboard.value.measures.filter(measure => measuresPresent.has(measure));
 });
 
-const selectedMeasure = ref(TALLY_MEASURE.WORD);
+const selectedMeasure = ref<TallyMeasure>(TALLY_MEASURE.WORD);
 watch(measuresAvailable, newMeasuresAvailable => {
   if(!newMeasuresAvailable.includes(selectedMeasure.value)) {
     selectedMeasure.value = measuresAvailable.value[0];
   }
 });
+
+const { series, seriesTallies, seriesInfo, eligibleParticipants } = useLeaderboardSeries(leaderboard, participants, selectedMeasure);
 
 const isUserAMember = computed(() => {
   if(!leaderboard.value) {
@@ -139,6 +175,13 @@ const breadcrumbs = computed(() => {
   ];
   return crumbs;
 });
+
+async function reloadData() {
+  // await leaderboardStore.populate(true);
+  await load();
+  // await loadLeaderboard();
+  // await loadParticipants();
+}
 
 onMounted(async () => {
   useEventBus<{ tally: Tally }>('tally:create').on(reloadData);
@@ -183,15 +226,9 @@ watch(() => route.params.boardUuid, async newUuid => {
         </template>
       </DetailPageHeader>
       <div
-        v-if="!participantsSignals.isLoading"
-        class="flex flex-col lg:flex-row-reverse flex-wrap justify-end gap-8"
+        v-if="!signals.isLoading"
+        class="flex flex-col lg:flex-row flex-wrap justify-start gap-8"
       >
-        <!-- Members -->
-        <div class="max-w-screen-md">
-          <MembersRoster
-            :leaderboard="leaderboard"
-          />
-        </div>
         <!-- Standings -->
         <div class="w-full max-w-screen-md">
           <SubsectionTitle title="Standings" />
@@ -203,15 +240,20 @@ watch(() => route.params.boardUuid, async newUuid => {
           </div>
           <div v-else-if="leaderboard.individualGoalMode">
             <div class="w-full flex flex-col gap-4">
-              <IndividualGoalProgressChart
-                class="w-full"
-                :leaderboard="leaderboard"
-                :participants="participants"
+              <ProgressChart
+                :tallies="seriesTallies"
+                :measure-hint="LEADERBOARD_MEASURE.PERCENT"
+                :series-info="seriesInfo"
+                :start-date="leaderboard.startDate"
+                :end-date="leaderboard.endDate"
+                :goal-count="100"
+                :show-legend="true"
+                :graph-title="leaderboard.title"
               />
               <LeaderboardStandings
                 :leaderboard="leaderboard"
-                :participants="participants"
-                measure="percent"
+                :participants="eligibleParticipants"
+                :measure="LEADERBOARD_MEASURE.PERCENT"
               />
             </div>
           </div>
@@ -234,35 +276,52 @@ watch(() => route.params.boardUuid, async newUuid => {
                     :participants="participants"
                     :measure="selectedMeasure"
                   />
-                  <FundraiserProgressChart
+                  <FundraiserChart
                     v-if="leaderboard.fundraiserMode"
                     class="w-full"
-                    :leaderboard="leaderboard"
-                    :participants="participants"
-                    :measure="selectedMeasure"
+                    :tallies="seriesTallies"
+                    :measure-hint="measure"
+                    :series-info="seriesInfo"
+                    :start-date="leaderboard.startDate"
+                    :end-date="leaderboard.endDate"
+                    :goal-count="leaderboard.goal[measure]"
+                    :show-legend="true"
+                    :graph-title="leaderboard.title"
                   />
-                  <ChallengeProgressChart
+                  <ProgressChart
                     v-if="!leaderboard.fundraiserMode"
                     class="w-full"
-                    :leaderboard="leaderboard"
-                    :participants="participants"
-                    :measure="selectedMeasure"
+                    :tallies="seriesTallies"
+                    :measure-hint="measure"
+                    :series-info="seriesInfo"
+                    :start-date="leaderboard.startDate"
+                    :end-date="leaderboard.endDate"
+                    :goal-count="leaderboard.goal[measure]"
+                    :show-legend="true"
+                    :graph-title="leaderboard.title"
                   />
                   <FundraiserProgressMeter
                     v-if="leaderboard.fundraiserMode"
                     :leaderboard="leaderboard"
-                    :participants="participants"
+                    :series="series"
+                    :series-info="seriesInfo"
                     :measure="selectedMeasure"
                   />
                   <LeaderboardStandings
                     :leaderboard="leaderboard"
-                    :participants="participants"
+                    :participants="eligibleParticipants"
                     :measure="selectedMeasure"
                   />
                 </div>
               </TabPanel>
             </TabView>
           </div>
+        </div>
+        <!-- Members -->
+        <div class="w-full xl:w-auto xl:grow max-w-screen-md">
+          <MembersRoster
+            :leaderboard="leaderboard"
+          />
         </div>
       </div>
       <Dialog

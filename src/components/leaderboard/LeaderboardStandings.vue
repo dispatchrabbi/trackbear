@@ -3,6 +3,7 @@ import { computed } from 'vue';
 
 import type { Leaderboard, Participant } from 'src/lib/api/leaderboard';
 import type { TallyMeasure } from 'server/lib/models/tally/consts.ts';
+import { LEADERBOARD_MEASURE, type LeaderboardMeasure } from 'server/lib/models/leaderboard/consts.ts';
 
 import { addDays, differenceInCalendarDays } from 'date-fns';
 
@@ -14,20 +15,20 @@ import { determineChartStartDate, determineChartEndDate, createChartSeries } fro
 
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import UserAvatar from 'src/components/avatar/UserAvatar.vue';
+import TbAvatar from 'src/components/avatar/TbAvatar.vue';
 
 const props = defineProps<{
   leaderboard: Leaderboard;
   participants: Participant[];
-  measure: TallyMeasure | 'percent';
+  measure: LeaderboardMeasure;
 }>();
 
 const getMeasure = function(participant: Participant): TallyMeasure {
-  return props.measure === 'percent' ? participant.goal!.measure : props.measure;
+  return props.measure === LEADERBOARD_MEASURE.PERCENT ? participant.goal!.measure : props.measure;
 };
 
-const getGoalCount = function(participant: Participant) {
-  return props.measure === 'percent' ? participant.goal!.count : props.leaderboard.goal[props.measure];
+const getGoalCount = function(participant: Participant, leaderboard: Leaderboard) {
+  return props.measure === LEADERBOARD_MEASURE.PERCENT ? participant.goal!.count : leaderboard.goal[props.measure];
 };
 
 const determineStartAndEndDates = function(leaderboard: Leaderboard, participants: Participant[]) {
@@ -55,9 +56,9 @@ const determineStartAndEndDates = function(leaderboard: Leaderboard, participant
   };
 };
 
-const getParForToday = function(participant: Participant, daysAlong: number, totalDays: number) {
-  const goalCount = getGoalCount(participant);
-  if(props.leaderboard.endDate === null) {
+const getParForToday = function(participant: Participant, leaderboard: Leaderboard, daysAlong: number, totalDays: number) {
+  const goalCount = getGoalCount(participant, leaderboard);
+  if(leaderboard.endDate === null) {
     // if there's no end date, we can't do the calculation, so just use 100% of the goal
     return goalCount;
   } else if(daysAlong >= totalDays) {
@@ -114,6 +115,7 @@ type StandingsDataRow = {
   uuid: string;
   displayName: string;
   avatar: string | null;
+  color: string;
 
   measure: TallyMeasure;
   goal: number;
@@ -152,9 +154,10 @@ const standingsRows = computed<StandingsDataRow[]>(() => {
       uuid: participant.uuid,
       displayName: participant.displayName,
       avatar: participant.avatar,
+      color: participant.color,
 
       measure: getMeasure(participant),
-      goal: getGoalCount(participant),
+      goal: getGoalCount(participant, props.leaderboard),
       lastActivity: todayTally.date,
 
       position: 0,
@@ -163,10 +166,10 @@ const standingsRows = computed<StandingsDataRow[]>(() => {
       progress: todayTally.value,
       yesterdayProgress: yesterdayTally.value,
 
-      versusPar: hasPar.value ? todayTally.value - getParForToday(participant, daysAlong, totalDays) : null,
-      percent: formatPercent(todayTally.value, getGoalCount(participant)) + '%',
-      percentRaw: todayTally.value / getGoalCount(participant),
-      yesterdayPercentRaw: yesterdayTally.value / getGoalCount(participant),
+      versusPar: hasPar.value ? todayTally.value - getParForToday(participant, props.leaderboard, daysAlong, totalDays) : null,
+      percent: formatPercent(todayTally.value, getGoalCount(participant, props.leaderboard)) + '%',
+      percentRaw: todayTally.value / getGoalCount(participant, props.leaderboard),
+      yesterdayPercentRaw: yesterdayTally.value / getGoalCount(participant, props.leaderboard),
     };
     rows.push(row);
   }
@@ -204,6 +207,14 @@ const formatPositionChange = function(today: number, yesterday: number) {
 
 <template>
   <DataTable :value="standingsRows">
+    <template #empty>
+      <div v-if="leaderboard.enableTeams">
+        There aren't any participants assigned to a team, so there's no one to show here yet.
+      </div>
+      <div v-else>
+        All the members of this leaderboard are spectators, so there's no one to show here yet.
+      </div>
+    </template>
     <Column
       header="#"
       field="position"
@@ -223,36 +234,29 @@ const formatPositionChange = function(today: number, yesterday: number) {
       sortable
       class="whitespace-nowrap"
     >
-      <template #body="slotProps">
+      <template #body="{ data }">
         <div class="flex items-center gap-2">
-          <UserAvatar
-            :user="{ displayName: slotProps.data.displayName, avatar: slotProps.data.avatar }"
+          <TbAvatar
+            :name="data.displayName"
+            :avatar-image="data.avatar"
+            :color="props.leaderboard.enableTeams ? undefined : data.color"
+            use-bear-initial
           />
           <div>
-            {{ slotProps.data.displayName }}
+            {{ data.displayName }}
           </div>
         </div>
       </template>
     </Column>
     <Column
       v-if="hasGoal"
-      header="Percent"
+      header="% of Goal"
       field="percent"
       sortable
       class="whitespace-nowrap text-right"
     >
       <template #body="slotProps">
         {{ slotProps.data.percent }}
-      </template>
-    </Column>
-    <Column
-      header="Total"
-      field="progress"
-      sortable
-      class="whitespace-nowrap text-right"
-    >
-      <template #body="slotProps">
-        {{ formatCount(slotProps.data.progress, slotProps.data.measure) }}
       </template>
     </Column>
     <Column
@@ -264,6 +268,16 @@ const formatPositionChange = function(today: number, yesterday: number) {
     >
       <template #body="slotProps">
         {{ formatCount(slotProps.data.goal, slotProps.data.measure) }}
+      </template>
+    </Column>
+    <Column
+      header="Total"
+      field="progress"
+      sortable
+      class="whitespace-nowrap text-right"
+    >
+      <template #body="slotProps">
+        {{ formatCount(slotProps.data.progress, slotProps.data.measure) }}
       </template>
     </Column>
     <Column

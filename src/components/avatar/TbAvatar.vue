@@ -20,6 +20,8 @@ const props = withDefaults(defineProps<{
    * When not provided, the first character of the name will be used.
    */
   initial?: string | null;
+  /** Whether to instead use the bear emoji when no initial is provided. */
+  useBearInitial?: boolean;
   /** What size this avatar is. */
   size?: 'normal' | 'large' | 'xlarge';
   /** An icon to decorate the avatar with. */
@@ -30,12 +32,17 @@ const props = withDefaults(defineProps<{
   color: '',
   avatarImage: null,
   initial: null,
+  useBearInitial: false,
   size: 'normal',
   decorationIcon: null,
   decorationIconColor: 'primary',
 });
 
 const initial = computed(() => {
+  if(props.useBearInitial && props.initial === null) {
+    return theme.theme.value === 'dark' ? '🐻‍❄️' : '🐻';
+  }
+
   const sourceStr = props.initial ?? props.name ?? '';
   if(sourceStr.length > 0) {
     return String.fromCodePoint(sourceStr.codePointAt(0)!);
@@ -47,20 +54,25 @@ const initial = computed(() => {
 const imagePath = computed(() => {
   return props.avatarImage ? '/uploads/avatars/' + props.avatarImage : undefined;
 });
+
+const isUserColor = computed(() => {
+  return userColorOrFallback(props.color, 'fallback') !== 'fallback';
+});
 </script>
 
 <template>
-  <div class="relative leading-[0]">
+  <div class="tb-avatar relative leading-[0]">
     <Avatar
+      v-tooltip.bottom="props.name"
       :image="imagePath"
       :label="imagePath ? undefined : initial"
       :size="props.size"
       shape="circle"
       :title="props.name"
       :class="[
-        `!text-white/90`,
-        `!bg-${userColorOrFallback(color, 'primary')}-${userColorLevel(theme.theme.value)}`,
-        `dark:!bg-${userColorOrFallback(color, 'primary')}-${userColorLevel(theme.theme.value)}`,
+        isUserColor ? `!text-white/90` : `!text-surface-900`,
+        `!bg-${userColorOrFallback(color, 'surface')}-${userColorLevel(theme.theme.value)}`,
+        `dark:!bg-${userColorOrFallback(color, 'surface')}-${userColorLevel(theme.theme.value)}`,
         'font-bold'
       ]"
       :pt="{ image: { class: [ 'object-cover' ] } }"
@@ -77,3 +89,9 @@ const imagePath = computed(() => {
     </div>
   </div>
 </template>
+
+<style>
+.tb-avatar {
+  cursor: default;
+}
+</style>

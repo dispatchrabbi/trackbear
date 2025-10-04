@@ -1,5 +1,6 @@
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
-import { ApiResponse, success, failure, FAILURE_CODES } from '../../lib/api-response.ts';
+import { type ApiResponse, success, failure } from '../../lib/api-response.ts';
+import { FAILURE_CODES } from '../../lib/api-response-codes.ts';
 import { RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';

@@ -3,52 +3,46 @@ import { computed, defineProps } from 'vue';
 
 import { useChartColors } from '../chart/chart-colors';
 
-import type { Leaderboard, Participant } from 'src/lib/api/leaderboard';
-import { TallyMeasure } from 'server/lib/models/tally/consts';
+import type { Leaderboard } from 'src/lib/api/leaderboard';
+import type { TallyMeasure } from 'server/lib/models/tally/consts';
+import type { LeaderboardSeries } from './use-leaderboard-series';
 
 import MeterGroup, { MeterItem } from 'primevue/metergroup';
 import { mapSeriesToColor, SeriesInfoMap } from '../chart/chart-functions';
 
 const props = defineProps<{
   leaderboard: Leaderboard;
-  participants: Participant[];
+  series: LeaderboardSeries[];
+  seriesInfo: SeriesInfoMap;
   measure: TallyMeasure;
 }>();
 
 const contributions = computed(() => {
-  const participantContributions = props.participants.map(participant => {
-    const total = participant.tallies.reduce((totalSoFar, tally) => (
+  const seriesContributions = props.series.map(s => {
+    const total = s.tallies.reduce((totalSoFar, tally) => (
       totalSoFar + (tally.measure === props.measure ? tally.count : 0)
     ), 0);
 
     return {
-      participant,
+      series: s,
       total,
     };
   })
-    .filter(participant => participant.total > 0)
+    .filter(s => s.total > 0)
     .sort((a, b) => a.total < b.total ? 1 : a.total > b.total ? -1 : 0);
 
-  return participantContributions;
+  return seriesContributions;
 });
 
 const chartColors = useChartColors();
 
 const meterValue = computed(() => {
-  const seriesInfo: SeriesInfoMap = Object.fromEntries(contributions.value.map(contribution => ([
-    contribution.participant.uuid,
-    {
-      uuid: contribution.participant.uuid,
-      name: contribution.participant.displayName,
-      color: contribution.participant.color,
-    },
-  ])));
-  const seriesOrder = contributions.value.map(contribution => contribution.participant.uuid);
-  const colorOrder = mapSeriesToColor(seriesInfo, seriesOrder, chartColors.value);
+  const seriesOrder = contributions.value.map(contribution => contribution.series.uuid);
+  const colorOrder = mapSeriesToColor(props.seriesInfo, seriesOrder, chartColors.value);
 
   const value = contributions.value.map((total, ix) => {
     return {
-      label: total.participant.displayName,
+      label: total.series.name,
       value: total.total,
       color: colorOrder[ix],
     } as MeterItem;

@@ -3,7 +3,7 @@ import { ref, computed, useTemplateRef } from 'vue';
 
 import { type ValueEnum } from 'server/lib/obj';
 import { type TallyMeasure } from 'server/lib/models/tally/consts';
-import { type Tallyish, type SeriesInfoMap, createChartSeries, createParSeries, determineChartIntervals } from './chart-functions';
+import { type SeriesTallyish, type SeriesInfoMap, createChartSeries, createParSeries, determineChartIntervals } from './chart-functions';
 import { formatDate } from 'src/lib/date';
 import { useChartColors } from './chart-colors';
 import { saveSvgAsPng } from 'src/lib/image';
@@ -14,10 +14,6 @@ import Dialog from 'primevue/dialog';
 import StackedAreaChart from './StackedAreaChart.vue';
 import BarChart from './BarChart.vue';
 import { filenameify } from 'src/lib/str';
-
-export type SeriesTallyish = Tallyish & {
-  series: string;
-};
 
 const props = withDefaults(defineProps<{
   tallies: SeriesTallyish[];

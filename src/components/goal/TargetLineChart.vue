@@ -4,7 +4,8 @@ import type { Goal } from 'src/lib/api/goal.ts';
 
 import { SeriesInfoMap, Tallyish } from '../chart/chart-functions.ts';
 import { TargetGoalParameters } from 'server/lib/models/goal/types.ts';
-import ProgressChart, { SeriesTallyish } from '../chart/ProgressChart.vue';
+import ProgressChart from '../chart/ProgressChart.vue';
+import type { SeriesTallyish } from '../chart/chart-functions.ts';
 
 export type Goalish = Pick<Goal, 'title' | 'parameters' | 'startDate' | 'endDate'>;
 const props = defineProps<{

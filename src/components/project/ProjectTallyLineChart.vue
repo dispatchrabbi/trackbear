@@ -8,8 +8,8 @@ import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import ProgressChart, { SeriesTallyish } from '../chart/ProgressChart.vue';
-import { SeriesInfoMap } from '../chart/chart-functions';
+import ProgressChart from '../chart/ProgressChart.vue';
+import type { SeriesTallyish, SeriesInfoMap } from '../chart/chart-functions';
 
 const props = defineProps<{
   project: Project;

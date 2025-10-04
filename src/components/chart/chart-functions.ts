@@ -7,13 +7,17 @@ import type { SeriesDataPoint, BareDataPoint } from './types.ts';
 import { USER_COLOR_NAMES, userColorLevel } from './user-colors';
 import { type ChartColors } from './chart-colors.ts';
 
-import { TallyMeasure } from 'server/lib/models/tally/consts.ts';
 import { formatCount } from 'src/lib/tally.ts';
 import { formatPercent } from 'src/lib/number.ts';
+import { LEADERBOARD_MEASURE, type LeaderboardMeasure } from 'server/lib/models/leaderboard/consts.ts';
 
 export type Tallyish = {
   date: string;
   count: number;
+};
+
+export type SeriesTallyish = Tallyish & {
+  series: string;
 };
 
 type CreateChartSeriesOptions = {
@@ -181,8 +185,8 @@ export function determineChartEndDate(lastUpdate?: string | null, overrideEndDat
   }
 }
 
-export function formatCountForChart(count: number, measure: TallyMeasure | 'percent') {
-  if(measure === 'percent') {
+export function formatCountForChart(count: number, measure: LeaderboardMeasure) {
+  if(measure === LEADERBOARD_MEASURE.PERCENT) {
     return formatPercent(count, 100) + '%';
   } else {
     return formatCount(count, measure);

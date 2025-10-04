@@ -41,7 +41,7 @@ const orderedGroups = computed(() => {
   if(groupMemberMap.value.get(NULL_TEAM_ID)?.length) {
     teams.push({
       id: NULL_TEAM_ID,
-      name: props.leaderboard.enableTeams ? 'No Team' : 'Participants',
+      name: props.leaderboard.enableTeams ? 'Not on a team' : 'Participants',
       color: '',
     });
   }
@@ -59,21 +59,35 @@ const orderedGroups = computed(() => {
 </script>
 
 <template>
-  <div
-    v-for="group of orderedGroups"
-    :key="group.id"
-  >
-    <SubsectionTitle
-      :title="group.name"
-    />
-    <div class="mb-4 flex flex-wrap gap-2">
-      <!-- TODO: add a crown for owners, or something-->
-      <TbAvatar
-        v-for="member of groupMemberMap.get(group.id)"
-        :key="member.id"
-        :name="member.displayName"
-        :avatar-image="member.avatar"
-      />
+  <SubsectionTitle
+    :title="props.leaderboard.enableTeams ? 'Teams' : 'Members'"
+  />
+  <div class="flex flex-row flex-wrap gap-2 w-full">
+    <div
+      v-for="group of orderedGroups"
+      :key="group.id"
+      class="flex-auto member-roster-group"
+    >
+      <h3 class="text-l font-light font-heading text-balance">
+        {{ group.name }}
+      </h3>
+      <div class="mb-4 flex flex-wrap gap-2">
+        <!-- TODO: add a crown for owners, or something-->
+        <TbAvatar
+          v-for="member of groupMemberMap.get(group.id)"
+          :key="member.id"
+          :name="member.displayName"
+          :avatar-image="member.avatar"
+          use-bear-initial
+        />
+      </div>
     </div>
   </div>
 </template>
+
+<style>
+.member-roster-group {
+  /* This gets us two groups across while taking into account the gap */
+  flex-basis: calc(50% - 0.5rem);
+}
+</style>

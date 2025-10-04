@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import { RecordNotFoundError } from './models/errors';
-import { ValueEnum } from './obj';
+import { RecordNotFoundError } from './models/errors.ts';
+import { type FailureCode, FAILURE_CODES } from './api-response-codes.ts';
 
 import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();
@@ -28,15 +28,6 @@ export function success<T>(data: T): ApiSuccessPayload<T> {
     data,
   };
 }
-
-export const FAILURE_CODES = {
-  FORBIDDEN: 'FORBIDDEN',
-  NOT_LOGGED_IN: 'NOT_LOGGED_IN',
-  NO_API_TOKEN: 'NO_API_TOKEN',
-  NOT_FOUND: 'NOT_FOUND',
-  VALIDATION_FAILED: 'VALIDATION_FAILED',
-} as const;
-export type FailureCode = ValueEnum<typeof FAILURE_CODES>;
 
 export function failure(code: FailureCode | string, message: string): ApiFailurePayload {
   return {

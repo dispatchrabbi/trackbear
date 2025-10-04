@@ -2,8 +2,8 @@
 import { ref, computed, useTemplateRef } from 'vue';
 
 import { type ValueEnum } from 'server/lib/obj';
-import { type TallyMeasure } from 'server/lib/models/tally/consts';
-import { type SeriesInfoMap, type Tallyish, createChartSeries, createParSeries, determineChartIntervals } from './chart-functions';
+import { type LeaderboardMeasure } from 'server/lib/models/leaderboard/consts';
+import { type SeriesInfoMap, type SeriesTallyish, createChartSeries, createParSeries, determineChartIntervals } from './chart-functions';
 import { formatDate } from 'src/lib/date';
 import { useChartColors } from './chart-colors';
 import { saveSvgAsPng } from 'src/lib/image';
@@ -15,13 +15,9 @@ import LineChart from './LineChart.vue';
 import BarChart from './BarChart.vue';
 import { filenameify } from 'src/lib/str';
 
-export type SeriesTallyish = Tallyish & {
-  series: string;
-};
-
 const props = withDefaults(defineProps<{
   tallies: SeriesTallyish[];
-  measureHint: TallyMeasure | 'percent';
+  measureHint: LeaderboardMeasure;
   seriesInfo: SeriesInfoMap;
   startDate?: string | null;
   endDate?: string | null;

@@ -10,14 +10,15 @@ import { determineChartDomain, formatCountForChart, getSeriesName, mapSeriesToCo
 
 import { kify } from 'src/lib/number';
 import { formatDate, formatDuration, parseDateString } from 'src/lib/date';
-import { TallyMeasure, TALLY_MEASURE } from 'server/lib/models/tally/consts';
+import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
+import { LEADERBOARD_MEASURE, type LeaderboardMeasure } from 'server/lib/models/leaderboard/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally';
 import { addMilliseconds } from 'date-fns';
 
 const props = withDefaults(defineProps<{
   data: SeriesDataPoint[];
   par?: BareDataPoint[] | null;
-  measureHint: TallyMeasure | 'percent';
+  measureHint: LeaderboardMeasure;
   stacked?: boolean;
   valueFormatFn?: (value: number) => string;
   seriesInfo: SeriesInfoMap;
@@ -37,8 +38,8 @@ const chartColors = useChartColors();
 const plotContainer = useTemplateRef('plot-container');
 const plotContainerWidth = ref(0);
 
-function getSuggestedYAxisMaximum(measureHint: TallyMeasure | 'percent') {
-  if(measureHint === 'percent') {
+function getSuggestedYAxisMaximum(measureHint: LeaderboardMeasure) {
+  if(measureHint === LEADERBOARD_MEASURE.PERCENT) {
     return 100;
   } else {
     return TALLY_MEASURE_INFO[measureHint].defaultChartMaxEach;
