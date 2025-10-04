@@ -24,6 +24,7 @@ import DangerButton from 'src/components/shared/DangerButton.vue';
 import { PrimeIcons } from 'primevue/api';
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';
+import Button from 'primevue/button';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Panel from 'primevue/panel';
@@ -102,12 +103,16 @@ async function reloadData() {
   isLoading.value = false;
 }
 
-const handleDeleteLeaderboardSubmit = async function() {
+async function handleBack() {
+  router.push({ name: 'leaderboard', params: { boardUuid: leaderboard.value?.uuid } });
+}
+
+async function handleDeleteLeaderboardSubmit() {
   const deletedLeaderboard = await deleteLeaderboard(leaderboard.value!.uuid);
   deleteEventBus.emit({ leaderboard: deletedLeaderboard });
 };
 
-const handleLeaveLeaderboardSubmit = async function() {
+async function handleLeaveLeaderboardSubmit() {
   await leaveLeaderboard(leaderboard.value!.uuid);
   leaveEventBus.emit({ leaderboardUuid: leaderboard.value!.uuid });
 };
@@ -145,6 +150,14 @@ watch(() => route.params.boardUuid, newUuid => {
     <div
       v-if="leaderboard !== null"
     >
+      <Button
+        :label="`Back to ${leaderboard.title}`"
+        severity="secondary"
+        :icon="PrimeIcons.ARROW_LEFT"
+        text
+        class="mb-1"
+        @click="handleBack"
+      />
       <TabView>
         <TabPanel
           key="participation"

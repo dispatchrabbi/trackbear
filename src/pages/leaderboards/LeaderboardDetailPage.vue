@@ -203,7 +203,7 @@ watch(() => route.params.boardUuid, async newUuid => {
   <ApplicationLayout
     :breadcrumbs="breadcrumbs"
   >
-    <div v-if="leaderboard">
+    <div v-if="leaderboard && !signals.isLoading">
       <DetailPageHeader
         :title="leaderboard.title"
         :subtitle="leaderboard.description"
@@ -226,7 +226,6 @@ watch(() => route.params.boardUuid, async newUuid => {
         </template>
       </DetailPageHeader>
       <div
-        v-if="!signals.isLoading"
         class="flex flex-col lg:flex-row flex-wrap justify-start gap-8"
       >
         <!-- Standings -->
