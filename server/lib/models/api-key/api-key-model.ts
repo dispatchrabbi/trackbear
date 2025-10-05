@@ -1,6 +1,6 @@
 import { addDays } from 'date-fns';
 
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import type { ApiKey } from 'generated/prisma/client';
 import type { Create, Update } from '../types.ts';
 
@@ -25,7 +25,8 @@ export type UpdateApiKeyData = Update<ApiKey, ExcludedFields>;
 export class ApiKeyModel {
   @traced
   static async getApiKeys(owner: User): Promise<ApiKey[]> {
-    const keys = await dbClient.apiKey.findMany({
+    const db = getDbClient();
+    const keys = await db.apiKey.findMany({
       where: {
         ownerId: owner.id,
       },
@@ -36,7 +37,8 @@ export class ApiKeyModel {
 
   @traced
   static async getApiKey(owner: User, id: number): Promise<ApiKey | null> {
-    const key = await dbClient.apiKey.findUnique({
+    const db = getDbClient();
+    const key = await db.apiKey.findUnique({
       where: {
         id: id,
         ownerId: owner.id,
@@ -58,7 +60,8 @@ export class ApiKeyModel {
     });
 
     const token = await generateApiToken();
-    const created = await dbClient.apiKey.create({
+    const db = getDbClient();
+    const created = await db.apiKey.create({
       data: {
         ...dataWithDefaults,
         token: token,
@@ -74,7 +77,8 @@ export class ApiKeyModel {
 
   @traced
   static async updateApiKey(owner: User, apiKey: ApiKey, data: UpdateApiKeyData, reqCtx: RequestContext): Promise<ApiKey> {
-    const updated = await dbClient.apiKey.update({
+    const db = getDbClient();
+    const updated = await db.apiKey.update({
       where: {
         id: apiKey.id,
         ownerId: owner.id,
@@ -93,7 +97,8 @@ export class ApiKeyModel {
 
   @traced
   static async deleteApiKey(owner: User, apiKey: ApiKey, reqCtx: RequestContext): Promise<ApiKey> {
-    const deleted = await dbClient.apiKey.delete({
+    const db = getDbClient();
+    const deleted = await db.apiKey.delete({
       where: {
         id: apiKey.id,
         ownerId: owner.id,
@@ -109,7 +114,8 @@ export class ApiKeyModel {
   static async touchApiKey(token: string): Promise<ApiKey | null> {
     const now = new Date();
 
-    const apiKeyToTouch = await dbClient.apiKey.findFirst({
+    const db = getDbClient();
+    const apiKeyToTouch = await db.apiKey.findFirst({
       where: { token },
     });
 
@@ -117,7 +123,7 @@ export class ApiKeyModel {
       return null;
     }
 
-    const touched = await dbClient.apiKey.update({
+    const touched = await db.apiKey.update({
       where: {
         id: apiKeyToTouch.id,
       },

@@ -9,9 +9,9 @@ import { TAG_DEFAULT_COLOR, TAG_STATE } from './consts.ts';
 
 vi.mock('../../tracer.ts');
 
-import _dbClient from '../../db.ts';
-vi.mock('../../db.ts');
-const dbClient = vi.mocked(_dbClient, { deep: true });
+import { getDbClient } from 'server/lib/db.ts';
+vi.mock('server/lib/db.ts');
+const db = vi.mocked(getDbClient(), { deep: true });
 
 import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
 vi.mock('../../audit-events.ts');
@@ -28,12 +28,12 @@ describe(TagModel, () => {
   describe(TagModel.getTags, () => {
     it('gets a list of tags', async () => {
       const testTags = mockObjects<Tag>(4);
-      dbClient.tag.findMany.mockResolvedValue(testTags);
+      db.tag.findMany.mockResolvedValue(testTags);
 
       const tags = await TagModel.getTags(testOwner);
 
       expect(tags).toBe(testTags);
-      expect(dbClient.tag.findMany).toBeCalledWith({
+      expect(db.tag.findMany).toBeCalledWith({
         where: {
           ownerId: testOwner.id,
           state: TAG_STATE.ACTIVE,
@@ -45,12 +45,12 @@ describe(TagModel, () => {
   describe(TagModel.getTag, () => {
     it('gets a tag by its id', async () => {
       const testTag = mockObject<Tag>({ id: TEST_OBJECT_ID });
-      dbClient.tag.findUnique.mockResolvedValue(testTag);
+      db.tag.findUnique.mockResolvedValue(testTag);
 
       const tag = await TagModel.getTag(testOwner, TEST_OBJECT_ID);
 
       expect(tag).toBe(testTag);
-      expect(dbClient.tag.findUnique).toBeCalledWith({
+      expect(db.tag.findUnique).toBeCalledWith({
         where: {
           id: TEST_OBJECT_ID,
           ownerId: testOwner.id,
@@ -60,7 +60,7 @@ describe(TagModel, () => {
     });
 
     it('returns null if there is no tag with that id', async () => {
-      dbClient.tag.findUnique.mockResolvedValue(null);
+      db.tag.findUnique.mockResolvedValue(null);
 
       const tag = await TagModel.getTag(testOwner, TEST_OBJECT_ID);
 
@@ -72,12 +72,12 @@ describe(TagModel, () => {
     it('gets a tag by its name', async () => {
       const testName = 'fake tag';
       const testTag = mockObject<Tag>({ id: TEST_OBJECT_ID, name: testName });
-      dbClient.tag.findMany.mockResolvedValue([testTag]);
+      db.tag.findMany.mockResolvedValue([testTag]);
 
       const tag = await TagModel.getTagByName(testOwner, testName);
 
       expect(tag).toBe(testTag);
-      expect(dbClient.tag.findMany).toBeCalledWith({
+      expect(db.tag.findMany).toBeCalledWith({
         where: {
           name: testName,
           ownerId: testOwner.id,
@@ -89,7 +89,7 @@ describe(TagModel, () => {
     it('returns only the first tag if (for some reason) there are multiple tags with that name', async () => {
       const testName = 'fake tag';
       const testTag = mockObject<Tag>({ id: TEST_OBJECT_ID, name: testName });
-      dbClient.tag.findMany.mockResolvedValue([
+      db.tag.findMany.mockResolvedValue([
         testTag,
         ...mockObjects<Tag>(2),
       ]);
@@ -100,7 +100,7 @@ describe(TagModel, () => {
     });
 
     it('returns null if there are no tags with that name', async () => {
-      dbClient.tag.findMany.mockResolvedValue([]);
+      db.tag.findMany.mockResolvedValue([]);
 
       const tag = await TagModel.getTagByName(testOwner, 'no matches');
 
@@ -168,13 +168,13 @@ describe(TagModel, () => {
         color: 'purple',
       };
       const testTag = mockObject<Tag>({ id: TEST_OBJECT_ID });
-      dbClient.tag.create.mockResolvedValue(testTag);
+      db.tag.create.mockResolvedValue(testTag);
 
       const created = await TagModel.createTag(testOwner, testData, testReqCtx);
 
       expect(created).toBe(testTag);
       expect(validateTagNameMock).toBeCalledWith(testOwner, testData.name);
-      expect(dbClient.tag.create).toBeCalledWith({
+      expect(db.tag.create).toBeCalledWith({
         data: {
           name: testData.name,
           color: testData.color,
@@ -194,11 +194,11 @@ describe(TagModel, () => {
         name: 'new tag',
       };
       const testTag = mockObject<Tag>({ id: TEST_OBJECT_ID });
-      dbClient.tag.create.mockResolvedValue(testTag);
+      db.tag.create.mockResolvedValue(testTag);
 
       await TagModel.createTag(testOwner, testData, testReqCtx);
 
-      expect(dbClient.tag.create).toBeCalledWith({
+      expect(db.tag.create).toBeCalledWith({
         data: {
           name: testData.name,
           color: TAG_DEFAULT_COLOR,
@@ -225,12 +225,12 @@ describe(TagModel, () => {
         color: 'white',
       };
       const testTag = mockObject<Tag>({ id: TEST_OBJECT_ID });
-      dbClient.tag.update.mockResolvedValue(testTag);
+      db.tag.update.mockResolvedValue(testTag);
 
       const updated = await TagModel.updateTag(testOwner, testTag, testData, testReqCtx);
 
       expect(updated).toBe(testTag);
-      expect(dbClient.tag.update).toBeCalledWith({
+      expect(db.tag.update).toBeCalledWith({
         where: {
           id: testTag.id,
           ownerId: testOwner.id,
@@ -251,7 +251,7 @@ describe(TagModel, () => {
         name: 'needs validation',
       };
       const testTag = mockObject<Tag>({ id: TEST_OBJECT_ID });
-      dbClient.tag.update.mockResolvedValue(testTag);
+      db.tag.update.mockResolvedValue(testTag);
 
       await TagModel.updateTag(testOwner, testTag, testData, testReqCtx);
 
@@ -262,12 +262,12 @@ describe(TagModel, () => {
   describe(TagModel.deleteTag, () => {
     it('deletes a tag', async () => {
       const testTag = mockObject<Tag>({ id: TEST_OBJECT_ID });
-      dbClient.tag.delete.mockResolvedValue(testTag);
+      db.tag.delete.mockResolvedValue(testTag);
 
       const deleted = await TagModel.deleteTag(testOwner, testTag, testReqCtx);
 
       expect(deleted).toBe(testTag);
-      expect(dbClient.tag.delete).toBeCalledWith({
+      expect(db.tag.delete).toBeCalledWith({
         where: {
           id: testTag.id,
           ownerId: testOwner.id,

@@ -1,6 +1,6 @@
 import { traced } from '../../metrics/tracer.ts';
 
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import type { Create, Update } from '../types.ts';
 import { supplyDefaults } from '../helpers.ts';
 
@@ -16,7 +16,8 @@ export type UpdateLeaderboardTeamData = Update<LeaderboardTeam, 'boardId'>;
 export class LeaderboardTeamModel {
   @traced
   static async list(leaderboard: Leaderboard): Promise<LeaderboardTeam[]> {
-    const teams = await dbClient.boardTeam.findMany({
+    const db = getDbClient();
+    const teams = await db.boardTeam.findMany({
       where: {
         boardId: leaderboard.id,
       },
@@ -27,7 +28,8 @@ export class LeaderboardTeamModel {
 
   @traced
   static async get(id: number): Promise<LeaderboardTeam | null> {
-    const team = await dbClient.boardTeam.findUnique({
+    const db = getDbClient();
+    const team = await db.boardTeam.findUnique({
       where: {
         id: id,
       },
@@ -40,7 +42,8 @@ export class LeaderboardTeamModel {
   static async create(leaderboard: Leaderboard, data: CreateLeaderboardTeamData, reqCtx: RequestContext): Promise<LeaderboardTeam> {
     const dataWithDefaults = supplyDefaults(data, { color: '' });
 
-    const created = await dbClient.boardTeam.create({
+    const db = getDbClient();
+    const created = await db.boardTeam.create({
       data: {
         ...dataWithDefaults,
         boardId: leaderboard.id,
@@ -55,7 +58,8 @@ export class LeaderboardTeamModel {
 
   @traced
   static async update(team: LeaderboardTeam, data: UpdateLeaderboardTeamData, reqCtx: RequestContext): Promise<LeaderboardTeam> {
-    const updated = await dbClient.boardTeam.update({
+    const db = getDbClient();
+    const updated = await db.boardTeam.update({
       where: {
         id: team.id,
       },
@@ -70,7 +74,8 @@ export class LeaderboardTeamModel {
 
   @traced
   static async delete(team: LeaderboardTeam, reqCtx: RequestContext): Promise<LeaderboardTeam> {
-    const deleted = await dbClient.boardTeam.delete({
+    const db = getDbClient();
+    const deleted = await db.boardTeam.delete({
       where: {
         id: team.id,
       },

@@ -1,6 +1,6 @@
 import { addDays } from 'date-fns';
 
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { type Banner } from 'generated/prisma/client';
 
 import { type RequestContext } from '../../request-context.ts';
@@ -22,7 +22,8 @@ export type BannerData = {
 export class BannerModel {
   @traced
   static async getBanners(): Promise<Banner[]> {
-    const banners = await dbClient.banner.findMany({
+    const db = getDbClient();
+    const banners = await db.banner.findMany({
       orderBy: { updatedAt: 'asc' },
     });
 
@@ -32,7 +33,8 @@ export class BannerModel {
   @traced
   static async getActiveBanners(): Promise<Banner[]> {
     const now = new Date();
-    const banners = await dbClient.banner.findMany({
+    const db = getDbClient();
+    const banners = await db.banner.findMany({
       where: {
         enabled: true,
         showUntil: { gte: now },
@@ -45,7 +47,8 @@ export class BannerModel {
 
   @traced
   static async getBanner(id: number): Promise<Banner | null> {
-    const banner = await dbClient.banner.findUnique({
+    const db = getDbClient();
+    const banner = await db.banner.findUnique({
       where: { id },
     });
 
@@ -65,7 +68,8 @@ export class BannerModel {
       color: 'info',
     });
 
-    const created = await dbClient.banner.create({
+    const db = getDbClient();
+    const created = await db.banner.create({
       data: dataWithDefaults,
     });
 
@@ -82,7 +86,8 @@ export class BannerModel {
       return null;
     }
 
-    const updated = await dbClient.banner.update({
+    const db = getDbClient();
+    const updated = await db.banner.update({
       where: { id },
       data: { ...data },
     });
@@ -100,7 +105,8 @@ export class BannerModel {
       return null;
     }
 
-    const deleted = await dbClient.banner.delete({ where: { id } });
+    const db = getDbClient();
+    const deleted = await db.banner.delete({ where: { id } });
 
     await logAuditEvent(AUDIT_EVENT_TYPE.BANNER_DELETE, reqCtx.userId, deleted.id, null, null, reqCtx.sessionId);
 

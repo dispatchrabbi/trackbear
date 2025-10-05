@@ -6,7 +6,7 @@ import { initLoggers, getLogger, closeLoggers } from 'server/lib/logger.ts';
 
 import { createAvatarUploadDirectory, createCoverUploadDirectory } from 'server/lib/upload';
 
-import dbClient, { testDatabaseConnection } from 'server/lib/db.ts';
+import { initDbClient, getDbClient, testDatabaseConnection } from 'server/lib/db';
 
 import { initQueue } from 'server/lib/queue.ts';
 import initWorkers from 'server/lib/workers.ts';
@@ -41,7 +41,9 @@ async function main() {
   await createCoverUploadDirectory();
   logger.info('Avatar and cover upload directories exist');
 
-  // test the database connection
+  // initialize the db connection
+  // TODO: add DATABASE_SCHEMA to env
+  initDbClient(env.DATABASE_USER, env.DATABASE_PASSWORD, env.DATABASE_HOST, env.DATABASE_NAME);
   try {
     await testDatabaseConnection();
     logger.info('Database connection established');
@@ -112,7 +114,7 @@ async function main() {
     resave: false,
     saveUninitialized: false,
     rolling: true,
-    store: new PrismaSessionStore(dbClient, {
+    store: new PrismaSessionStore(getDbClient(), {
       checkPeriod: 2 * 60 * 1000, // 2 minutes in ms, how often to delete expired sessions
       dbRecordIdIsSessionId: true,
       dbRecordIdFunction: undefined,

@@ -3,7 +3,7 @@ import { addDays, addMinutes, type Day } from 'date-fns';
 import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();
 
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import type { PasswordResetLink, PendingEmailVerification, User, UserAuth, UserSettings as PrismaUserSettings, Prisma } from 'generated/prisma/client';
 import { hash, verifyHash } from '../../hash.ts';
 
@@ -74,7 +74,8 @@ type SendPasswordResetLinkOptions = Partial<{
 export class UserModel {
   @traced
   static async getUsers(skip: number = 0, take: number = Infinity, search: string | null = null): Promise<User[]> {
-    const users = await dbClient.user.findMany({
+    const db = getDbClient();
+    const users = await db.user.findMany({
       where: this.buildSearchWhereClauses(search),
       orderBy: { createdAt: 'desc' },
       skip,
@@ -86,7 +87,8 @@ export class UserModel {
 
   @traced
   static async getTotalUserCount(search: string | null = null): Promise<number> {
-    const total = await dbClient.user.count({
+    const db = getDbClient();
+    const total = await db.user.count({
       where: this.buildSearchWhereClauses(search),
     });
 
@@ -118,7 +120,8 @@ export class UserModel {
 
   @traced
   static async getUser(id: number, options: GetUserOptions = {}): Promise<User | null> {
-    const user = await dbClient.user.findUnique({
+    const db = getDbClient();
+    const user = await db.user.findUnique({
       where: {
         id,
         state: options.state ?? undefined,
@@ -130,7 +133,8 @@ export class UserModel {
 
   @traced
   static async getUserByUsername(username: string): Promise<User | null> {
-    const user = await dbClient.user.findUnique({
+    const db = getDbClient();
+    const user = await db.user.findUnique({
       where: { username: username.toLowerCase() },
     });
 
@@ -139,8 +143,9 @@ export class UserModel {
 
   @traced
   static async getUserByApiToken(apiToken: string): Promise<User | null> {
+    const db = getDbClient();
     const now = new Date();
-    const key = await dbClient.apiKey.findUnique({
+    const key = await db.apiKey.findUnique({
       where: {
         token: apiToken,
         owner: {
@@ -173,7 +178,8 @@ export class UserModel {
 
   @traced
   static async getUserAuth(user: User): Promise<UserAuth | null> {
-    const userAuth = await dbClient.userAuth.findUnique({
+    const db = getDbClient();
+    const userAuth = await db.userAuth.findUnique({
       where: { userId: user.id },
     });
 
@@ -228,7 +234,8 @@ export class UserModel {
       salt: salt,
     };
 
-    const created = await dbClient.user.create({
+    const db = getDbClient();
+    const created = await db.user.create({
       data: {
         ...userData,
         userSettings: { create: userSettingsData },
@@ -256,7 +263,8 @@ export class UserModel {
       }
     }
 
-    const updated = await dbClient.user.update({
+    const db = getDbClient();
+    const updated = await db.user.update({
       where: { id: user.id },
       data: {
         ...data,
@@ -273,7 +281,8 @@ export class UserModel {
   static async setUserState(user: User, state: UserState, reqCtx: RequestContext): Promise<User> {
     const original = user;
 
-    const updated = await dbClient.user.update({
+    const db = getDbClient();
+    const updated = await db.user.update({
       where: { id: user.id },
       data: {
         state,
@@ -301,7 +310,8 @@ export class UserModel {
    */
   @traced
   static async verifyEmail(verificationUuid: string, reqCtx: RequestContext): Promise<boolean> {
-    const verification = await dbClient.pendingEmailVerification.findUnique({
+    const db = getDbClient();
+    const verification = await db.pendingEmailVerification.findUnique({
       where: {
         uuid: verificationUuid,
         expiresAt: { gt: new Date() },
@@ -323,7 +333,7 @@ export class UserModel {
     }
 
     // mark the user as verified and delete all existing pending email verifications
-    await dbClient.user.update({
+    await db.user.update({
       data: {
         isEmailVerified: true,
         pendingEmailVerifications: { deleteMany: [] },
@@ -354,7 +364,8 @@ export class UserModel {
   @traced
   static async verifyEmailByFiat(user: User, source: typeof AUDIT_EVENT_SOURCE.SCRIPT | typeof AUDIT_EVENT_SOURCE.ADMIN_CONSOLE, reqCtx: RequestContext): Promise<boolean> {
     // mark the user as verified and delete all existing pending email verifications
-    await dbClient.user.update({
+    const db = getDbClient();
+    await db.user.update({
       data: {
         isEmailVerified: true,
         pendingEmailVerifications: { deleteMany: [] },
@@ -386,7 +397,8 @@ export class UserModel {
   @traced
   static async resetPassword(passwordResetUuid: string, newPassword: string, reqCtx: RequestContext): Promise<boolean> {
     // first make sure the link is valid
-    const resetLink = await dbClient.passwordResetLink.findUnique({
+    const db = getDbClient();
+    const resetLink = await db.passwordResetLink.findUnique({
       where: {
         uuid: passwordResetUuid,
         expiresAt: { gt: new Date() },
@@ -405,7 +417,7 @@ export class UserModel {
     await this.setPassword(resetLink.user, newPassword, reqCtx);
 
     // lastly, mark this link as used
-    await dbClient.passwordResetLink.update({
+    await db.passwordResetLink.update({
       data: {
         state: PASSWORD_RESET_LINK_STATE.USED,
       },
@@ -441,7 +453,9 @@ export class UserModel {
   @traced
   static async setPassword(user: User, newPassword: string, reqCtx: RequestContext): Promise<void> {
     const { hashedPassword, salt } = await hash(newPassword);
-    await dbClient.userAuth.update({
+
+    const db = getDbClient();
+    await db.userAuth.update({
       data: {
         password: hashedPassword,
         salt: salt,
@@ -488,7 +502,8 @@ export class UserModel {
       return null;
     }
 
-    const pending = await dbClient.pendingEmailVerification.create({
+    const db = getDbClient();
+    const pending = await db.pendingEmailVerification.create({
       data: {
         userId: user.id,
         newEmail: user.email,
@@ -513,7 +528,8 @@ export class UserModel {
       return null;
     }
 
-    const resetLink = await dbClient.passwordResetLink.create({
+    const db = getDbClient();
+    const resetLink = await db.passwordResetLink.create({
       data: {
         userId: user.id,
         state: PASSWORD_RESET_LINK_STATE.ACTIVE,

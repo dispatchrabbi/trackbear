@@ -1,7 +1,7 @@
 import { vi, expect, describe, it, afterEach } from 'vitest';
 import { mockObject, TEST_USER_ID } from 'testing-support/util';
 
-import _dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 
 import { USER_STATE } from '../user/consts.ts';
 import { RecordNotFoundError } from '../errors.ts';
@@ -10,8 +10,8 @@ import { AdminPermsModel, type AdminPerms } from './admin-perms-model.ts';
 
 vi.mock('../tracer.ts');
 
-vi.mock('../../db.ts');
-const dbClient = vi.mocked(_dbClient, { deep: true });
+vi.mock('server/lib/db.ts');
+const db = vi.mocked(getDbClient(), { deep: true });
 
 describe(AdminPermsModel, () => {
   describe(AdminPermsModel.getAdminPerms, () => {
@@ -21,12 +21,12 @@ describe(AdminPermsModel, () => {
 
     it('gets admin perms', async () => {
       const testAdminPerms = mockObject<AdminPerms>();
-      dbClient.adminPerms.findUnique.mockResolvedValue(testAdminPerms);
+      db.adminPerms.findUnique.mockResolvedValue(testAdminPerms);
 
       const result = await AdminPermsModel.getAdminPerms(TEST_USER_ID);
 
       expect(result).toBe(testAdminPerms);
-      expect(dbClient.adminPerms.findUnique).toBeCalledWith({
+      expect(db.adminPerms.findUnique).toBeCalledWith({
         where: {
           userId: TEST_USER_ID,
           user: { state: USER_STATE.ACTIVE },
@@ -35,7 +35,7 @@ describe(AdminPermsModel, () => {
     });
 
     it('throws if there are no perms to get', async () => {
-      dbClient.adminPerms.findUnique.mockResolvedValue(null);
+      db.adminPerms.findUnique.mockResolvedValue(null);
 
       await expect(
         async () => await AdminPermsModel.getAdminPerms(TEST_USER_ID),

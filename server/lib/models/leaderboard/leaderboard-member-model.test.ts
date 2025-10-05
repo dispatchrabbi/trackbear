@@ -2,7 +2,7 @@
 import { vi, expect, describe, it, afterEach } from 'vitest';
 import { getTestReqCtx, mockObject, TEST_OBJECT_ID, TEST_USER_ID, TEST_UUID } from 'testing-support/util';
 
-import _dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
 
 import { LeaderboardMemberModel } from './leaderboard-member-model.ts';
@@ -15,8 +15,8 @@ import { TAG_STATE } from '../tag/consts.ts';
 
 vi.mock('../../tracer.ts');
 
-vi.mock('../../db.ts');
-const dbClient = vi.mocked(_dbClient, { deep: true });
+vi.mock('server/lib/db.ts');
+const db = vi.mocked(getDbClient(), { deep: true });
 
 vi.mock('../../audit-events.ts');
 

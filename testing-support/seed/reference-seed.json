@@ -1,0 +1,132 @@
+{
+  "accounts":
+  {
+    "grizzly": {
+      "user": {
+        "username": "grizzly",
+        "email": "grizzly@example.com"
+      },
+      "projects": {
+        "autobio": {
+          "title": "My Life in the Woods",
+          "description": "My Autobiography",
+          "startingBalance": {
+            "word": 10000
+          }
+        },
+        "bears_in_space": {
+          "title": "Bears! In! Space!",
+          "phase": "revising"
+        }
+      },
+      "tallies": [
+        {
+          "method": "list",
+          "tallies": [
+            {
+              "project": "autobio",
+              "date": "2024-11-01",
+              "measure": "word",
+              "count": 1667,
+              "note": "I got bored after this"
+            }
+          ]
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "bears_in_space",
+            "start": "2025-06-01",
+            "end": "2025-06-30",
+            "measure": "time",
+            "min": 60,
+            "max": 180
+          }
+        }
+      ],
+      "targets": {
+        "lifestory": {
+          "title": "Write my life story",
+          "start": "2024-11-01",
+          "end": "2024-11-30",
+          "measure": "word",
+          "count": 50000,
+          "projects": ["autobio"]
+        }
+      },
+      "habits": {
+        "edithabit": {
+          "title": "Edit every day",
+          "start": "2025-06-01",
+          "end": "2025-06-30",
+          "unit": "day",
+          "period": 1,
+          "projects": ["bears_in_space"]
+        }
+      },
+      "leaderboards": {
+        "bearoff": {
+          "title": "Bear Off",
+          "description": "To settle once and for all which bear is the best",
+          "start": "2024-04-15",
+          "end": "2024-12-15",
+          "enableTeams": true,
+          "teams": {
+            "north": {
+              "name": "North",
+              "color": "blue"
+            },
+            "forest": {
+              "name": "Forest",
+              "color": "green"
+            }
+          },
+          "members": [
+            {
+              "user": "grizzly",
+              "displayName": "Grizzly the Bear",
+              "isOwner": true,
+              "participation": {
+                "team": "forest"
+              }
+            },
+            {
+              "user": "polar",
+              "displayName": "Polar the Bear",
+              "isOwner": false,
+              "participation": {
+                "team": "north"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "polar": {
+      "user": {
+        "username": "polar",
+        "email": "polar@example.com"
+      },
+      "projects": {
+        "adopan": {
+          "title": "A Den of Paws and Noses"
+        }
+      },
+      "tallies": [
+        {
+          "method": "generate",
+          "config": {
+            "project": "adopan",
+            "start": "2024-04-01",
+            "end": "2024-10-31",
+            "frequency": 0.9,
+            "repeat": 0.01,
+            "measure": "word",
+            "min": 1000,
+            "max": 3000
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,11 +1,13 @@
 import { vi, describe, it, expect, afterEach } from 'vitest';
+
 import { mockObject, mockObjects, TEST_OBJECT_ID, TEST_SESSION_ID, TEST_USER_ID } from '../../../testing-support/util.ts';
 import { getHandlerMocksWithUser } from '../../lib/__mocks__/express.ts';
 
 import { success } from 'server/lib/api-response.ts';
 
-vi.mock('../../lib/db.ts');
-import dbClientMock from '../../lib/__mocks__/db.ts';
+vi.mock('server/lib/db.ts');
+import { getDbClient } from 'server/lib/db.ts';
+const db = vi.mocked(getDbClient(), { deep: true });
 
 vi.mock('../../lib/audit-events.ts', { spy: true });
 import { logAuditEventMock } from '../../lib/__mocks__/audit-events.ts';
@@ -84,8 +86,7 @@ describe('goal api v1', () => {
   describe(handleCreateGoals, () => {
     it('creates multiple goals', async () => {
       const GOAL_IDS = [-10, -11, -12];
-      // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-      dbClientMock.goal.createManyAndReturn.mockResolvedValue(
+      db.goal.createManyAndReturn.mockResolvedValue(
         GOAL_IDS.map(id => mockObject<Goal>({ id })),
       );
 
@@ -98,8 +99,7 @@ describe('goal api v1', () => {
       });
       await handleCreateGoals(req, res);
 
-      // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-      expect(dbClientMock.goal.createManyAndReturn).toHaveBeenCalled();
+      expect(db.goal.createManyAndReturn).toHaveBeenCalled();
       expect(logAuditEventMock).toHaveBeenCalledTimes(3);
       expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', TEST_USER_ID, GOAL_IDS[0], null, null, TEST_SESSION_ID);
       expect(logAuditEventMock).toHaveBeenCalledWith('goal:create', TEST_USER_ID, GOAL_IDS[1], null, null, TEST_SESSION_ID);

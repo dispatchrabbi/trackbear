@@ -6,7 +6,7 @@ import { RequestWithUser } from 'server/lib/middleware/access.ts';
 import { z } from 'zod';
 import { zIdParam, zDateStr, NonEmptyArray } from 'server/lib/validators.ts';
 
-import dbClient from '../../lib/db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import type { Tally, Work, Tag } from 'generated/prisma/client';
 import { TALLY_STATE, TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts.ts';
 import { TAG_STATE, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts.ts';
@@ -29,7 +29,8 @@ export type TallyQuery = z.infer<typeof zTallyQuery>;
 export async function handleGetTallies(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags[]>) {
   const query = req.query as TallyQuery;
 
-  const tallies = await dbClient.tally.findMany({
+  const db = getDbClient();
+  const tallies = await db.tally.findMany({
     where: {
       ownerId: req.user.id,
       state: TALLY_STATE.ACTIVE,
@@ -52,7 +53,8 @@ export async function handleGetTallies(req: RequestWithUser, res: ApiResponse<Ta
 }
 
 export async function handleGetTally(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) {
-  const tally = await dbClient.tally.findUnique({
+  const db = getDbClient();
+  const tally = await db.tally.findUnique({
     where: {
       id: +req.params.id,
       ownerId: req.user.id,
@@ -94,6 +96,8 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
   const user = req.user;
   const payload = req.body as TallyCreatePayload;
 
+  const db = getDbClient();
+
   let count = payload.count;
   if(payload.setTotal) {
     if(payload.workId === null) {
@@ -106,7 +110,7 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
       return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total because the project specified was not found.'));
     }
 
-    const tallies = await dbClient.tally.findMany({
+    const tallies = await db.tally.findMany({
       where: {
         state: TALLY_STATE.ACTIVE,
         ownerId: user.id,
@@ -122,7 +126,7 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
     count = difference;
   }
 
-  const tally = await dbClient.tally.create({
+  const tally = await db.tally.create({
     data: {
       state: TALLY_STATE.ACTIVE,
       ownerId: user.id,
@@ -173,7 +177,8 @@ const zBatchTallyCreatePayload = z.array(z.object({
 export async function handleCreateTallies(req: RequestWithUser, res: ApiResponse<Tally[]>) {
   const user = req.user;
 
-  const createdTallies = await dbClient.tally.createManyAndReturn({
+  const db = getDbClient();
+  const createdTallies = await db.tally.createManyAndReturn({
     data: req.body.map(tallyData => ({
       state: TALLY_STATE.ACTIVE,
       ownerId: user.id,
@@ -206,7 +211,8 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
     return res.status(400).send(failure('VALIDATION_FAILED', 'You must send both `measure` and `count` properties, or neither'));
   }
 
-  const existingTally = await dbClient.tally.findUnique({
+  const db = getDbClient();
+  const existingTally = await db.tally.findUnique({
     where: {
       id: +req.params.id,
       ownerId: user.id,
@@ -240,7 +246,7 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
       return res.status(400).send(failure('CANNOT_SET_TOTAL', 'Cannot set total because the project specified was not found.'));
     }
 
-    const tallies = await dbClient.tally.findMany({
+    const tallies = await db.tally.findMany({
       where: {
         state: TALLY_STATE.ACTIVE,
         ownerId: user.id,
@@ -257,7 +263,7 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
     count = difference;
   }
 
-  const tally = await dbClient.tally.update({
+  const tally = await db.tally.update({
     where: {
       id: +req.params.id,
       ownerId: user.id,
@@ -303,7 +309,8 @@ export async function handleDeleteTally(req: RequestWithUser, res: ApiResponse<T
   const user = req.user;
 
   // we actually delete deleted tallies
-  const tally = await dbClient.tally.delete({
+  const db = getDbClient();
+  const tally = await db.tally.delete({
     where: {
       id: +req.params.id,
       ownerId: req.user.id,

@@ -1,4 +1,4 @@
-import dbClient from '../lib/db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { addDays } from 'date-fns';
 
 import { getLogger } from 'server/lib/logger.ts';
@@ -14,7 +14,8 @@ async function run() {
 
   try {
     const now = new Date();
-    const result = await dbClient.pendingEmailVerification.deleteMany({
+    const db = getDbClient();
+    const result = await db.pendingEmailVerification.deleteMany({
       where: {
         expiresAt: { lt: addDays(now, -7) }, // keep expired verifications an extra 7 days, for troubleshooting
       },

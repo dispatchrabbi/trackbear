@@ -6,7 +6,8 @@ import { addDays } from 'date-fns';
 
 import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
-import dbClient from '../server/lib/db.ts';
+import { initDbClient, getDbClient } from 'server/lib/db.ts';
+
 import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from '../server/lib/audit-events.ts';
 
 async function main() {
@@ -19,6 +20,14 @@ async function main() {
   dotenv.config();
   await initLoggers();
   const scriptLogger = getLogger('default').child({ service: 'add-banner.ts' });
+
+  initDbClient(
+    process.env.DATABASE_USER!,
+    process.env.DATABASE_PASSWORD!,
+    process.env.DATABASE_HOST!,
+    process.env.DATABASE_NAME!,
+  );
+  const db = getDbClient();
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 
@@ -33,7 +42,7 @@ async function main() {
 
   scriptLogger.info(`Going to add a banner with message: ${message}, color: ${color}, and icon ${icon}`);
   try {
-    const banner = await dbClient.banner.create({
+    const banner = await db.banner.create({
       data: bannerData,
     });
 

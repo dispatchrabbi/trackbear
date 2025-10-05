@@ -2,7 +2,7 @@ import { EmailParams, Sender, Recipient } from 'mailersend';
 import { sendEmail } from '../email.ts';
 
 import type { User, PendingEmailVerification } from 'generated/prisma/client';
-import dbClient from '../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 
 // use the queue log to log info about the queue
 import { getLogger } from 'server/lib/logger.ts';
@@ -17,7 +17,8 @@ const TASK_NAME = 'send-emailverification-email';
 async function handler(task) {
   const taskLogger = queueLogger.child({ service: TASK_NAME });
 
-  const pendingEmailVerification = await dbClient.pendingEmailVerification.findUnique({
+  const db = getDbClient();
+  const pendingEmailVerification = await db.pendingEmailVerification.findUnique({
     where: {
       uuid: task.verificationUuid,
       user: { state: USER_STATE.ACTIVE },

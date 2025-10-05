@@ -4,10 +4,11 @@ import dotenv from 'dotenv';
 
 import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
+import { initDbClient, getDbClient } from 'server/lib/db.ts';
+
 import { subYears, addDays, isBefore } from 'date-fns';
 import { formatDate } from '../src/lib/date.ts';
 
-import dbClient from '../server/lib/db.ts';
 import { User, Work } from 'generated/prisma/client';
 import { USER_STATE } from '../server/lib/models/user/consts.ts';
 import { PROJECT_STATE } from '../server/lib/models/project/consts.ts';
@@ -37,6 +38,14 @@ async function main() {
   await initLoggers();
   const scriptLogger = getLogger('default').child({ service: 'insert-history.ts' });
 
+  initDbClient(
+    process.env.DATABASE_USER!,
+    process.env.DATABASE_PASSWORD!,
+    process.env.DATABASE_HOST!,
+    process.env.DATABASE_NAME!,
+  );
+  const db = getDbClient();
+
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 
   const [userId, workId] = process.argv.slice(2);
@@ -52,7 +61,7 @@ async function main() {
 
   let user: User | null = null;
   try {
-    user = await dbClient.user.findUnique({
+    user = await db.user.findUnique({
       where: {
         id: +userId,
         state: USER_STATE.ACTIVE,
@@ -70,7 +79,7 @@ async function main() {
 
   let work: Work | null = null;
   try {
-    work = await dbClient.work.findUnique({
+    work = await db.work.findUnique({
       where: {
         id: +workId,
         ownerId: +userId,
@@ -113,7 +122,7 @@ async function main() {
 
   scriptLogger.info(`Queued ${tallies.length} tallies`);
 
-  const createdTallies = await dbClient.tally.createManyAndReturn({ data: tallies });
+  const createdTallies = await db.tally.createManyAndReturn({ data: tallies });
   scriptLogger.info(`Created ${createdTallies.length} tallies`);
   await Promise.all(createdTallies.map(createdTally => logAuditEvent('tally:create', TRACKBEAR_SYSTEM_ID, createdTally.id)));
 

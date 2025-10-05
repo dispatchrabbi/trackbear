@@ -1,7 +1,7 @@
 import { vi, expect, describe, it, afterEach } from 'vitest';
 import { getTestReqCtx, mockObject, mockObjects, TEST_OBJECT_ID, TEST_USER_ID } from 'testing-support/util';
 
-import _dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
 
 import { CreateProjectData, SummarizedProject, UpdateProjectData, ProjectModel, ProjectWithTallies, type Project } from './project-model.ts';
@@ -13,8 +13,8 @@ import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 vi.mock('../../tracer.ts');
 
-vi.mock('../../db.ts');
-const dbClient = vi.mocked(_dbClient, { deep: true });
+vi.mock('server/lib/db.ts');
+const db = vi.mocked(getDbClient(), { deep: true });
 
 vi.mock('../../audit-events.ts');
 const logAuditEvent = vi.mocked(_logAuditEvent);
@@ -30,12 +30,12 @@ describe(ProjectModel, () => {
   describe(ProjectModel.getProjects, () => {
     it('gets a list of projects', async () => {
       const testProjects = mockObjects<Project>(3);
-      dbClient.work.findMany.mockResolvedValue(testProjects);
+      db.work.findMany.mockResolvedValue(testProjects);
 
       const projects = await ProjectModel.getProjects(testOwner);
 
       expect(projects).toBe(testProjects);
-      expect(dbClient.work.findMany).toBeCalledWith({
+      expect(db.work.findMany).toBeCalledWith({
         where: {
           ownerId: testOwner.id,
           state: PROJECT_STATE.ACTIVE,
@@ -53,7 +53,7 @@ describe(ProjectModel, () => {
           count: 1000,
         })),
       }));
-      dbClient.work.findMany.mockResolvedValue(testProjectsWithTallies);
+      db.work.findMany.mockResolvedValue(testProjectsWithTallies);
 
       const expectedSummarizedProjects = mockObjects<SummarizedProject>(3, () => ({
         totals: { [TALLY_MEASURE.WORD]: 4000 },
@@ -63,7 +63,7 @@ describe(ProjectModel, () => {
       const projects = await ProjectModel.getSummarizedProjects(testOwner);
 
       expect(projects).toEqual(expectedSummarizedProjects);
-      expect(dbClient.work.findMany).toBeCalledWith({
+      expect(db.work.findMany).toBeCalledWith({
         where: {
           ownerId: testOwner.id,
           state: PROJECT_STATE.ACTIVE,
@@ -90,7 +90,7 @@ describe(ProjectModel, () => {
           count: ix % 2 ? 5 : 100,
         })),
       }));
-      dbClient.work.findMany.mockResolvedValue(testProjectsWithTallies);
+      db.work.findMany.mockResolvedValue(testProjectsWithTallies);
 
       const expectedSummarizedWorks = mockObjects<SummarizedProject>(1, () => ({
         totals: {
@@ -109,7 +109,7 @@ describe(ProjectModel, () => {
       const testProjectsWithTallies = mockObjects<ProjectWithTallies>(1, () => ({
         tallies: [],
       }));
-      dbClient.work.findMany.mockResolvedValue(testProjectsWithTallies);
+      db.work.findMany.mockResolvedValue(testProjectsWithTallies);
 
       const expectedSummarizedWorks = mockObjects<SummarizedProject>(1, () => ({
         totals: {},
@@ -125,12 +125,12 @@ describe(ProjectModel, () => {
   describe(ProjectModel.getProject, () => {
     it('gets a project', async () => {
       const testWork = mockObject<Project>({ id: TEST_OBJECT_ID });
-      dbClient.work.findUnique.mockResolvedValue(testWork);
+      db.work.findUnique.mockResolvedValue(testWork);
 
       const project = await ProjectModel.getProject(testOwner, TEST_OBJECT_ID);
 
       expect(project).toBe(testWork);
-      expect(dbClient.work.findUnique).toBeCalledWith({
+      expect(db.work.findUnique).toBeCalledWith({
         where: {
           id: TEST_OBJECT_ID,
           ownerId: testOwner.id,
@@ -140,7 +140,7 @@ describe(ProjectModel, () => {
     });
 
     it('returns null if the project is not found', async () => {
-      dbClient.work.findUnique.mockResolvedValue(null);
+      db.work.findUnique.mockResolvedValue(null);
 
       const project = await ProjectModel.getProject(testOwner, TEST_OBJECT_ID);
 
@@ -160,12 +160,12 @@ describe(ProjectModel, () => {
         displayOnProfile: true,
       };
       const testProject = mockObject<Project>({ id: TEST_OBJECT_ID });
-      dbClient.work.create.mockResolvedValue(testProject);
+      db.work.create.mockResolvedValue(testProject);
 
       const created = await ProjectModel.createProject(testOwner, testData, testReqCtx);
 
       expect(created).toBe(testProject);
-      expect(dbClient.work.create).toBeCalledWith({
+      expect(db.work.create).toBeCalledWith({
         data: {
           ...testData,
           state: PROJECT_STATE.ACTIVE,
@@ -184,11 +184,11 @@ describe(ProjectModel, () => {
         title: 'barebones title',
       };
       const testProject = mockObject<Project>({ id: TEST_OBJECT_ID });
-      dbClient.work.create.mockResolvedValue(testProject);
+      db.work.create.mockResolvedValue(testProject);
 
       await ProjectModel.createProject(testOwner, testData, testReqCtx);
 
-      expect(dbClient.work.create).toBeCalledWith({
+      expect(db.work.create).toBeCalledWith({
         data: {
           title: testData.title,
           description: '',
@@ -211,12 +211,12 @@ describe(ProjectModel, () => {
         phase: PROJECT_PHASE.FINISHED,
       };
       const testProject = mockObject<Project>({ id: TEST_OBJECT_ID });
-      dbClient.work.update.mockResolvedValue(testProject);
+      db.work.update.mockResolvedValue(testProject);
 
       const updated = await ProjectModel.updateProject(testOwner, testProject, testData, testReqCtx);
 
       expect(updated).toBe(testProject);
-      expect(dbClient.work.update).toBeCalledWith({
+      expect(db.work.update).toBeCalledWith({
         where: {
           id: testProject.id,
           ownerId: testOwner.id,
@@ -237,12 +237,12 @@ describe(ProjectModel, () => {
   describe(ProjectModel.deleteProject, () => {
     it('deletes a project', async () => {
       const testWork = mockObject<Project>({ id: TEST_OBJECT_ID });
-      dbClient.work.update.mockResolvedValue(testWork);
+      db.work.update.mockResolvedValue(testWork);
 
       const deleted = await ProjectModel.deleteProject(testOwner, testWork, testReqCtx);
 
       expect(deleted).toBe(testWork);
-      expect(dbClient.work.update).toBeCalledWith({
+      expect(db.work.update).toBeCalledWith({
         where: {
           id: testWork.id,
           ownerId: testOwner.id,
@@ -269,11 +269,11 @@ describe(ProjectModel, () => {
   describe(ProjectModel.undeleteProject, () => {
     it('undeletes a project', async () => {
       const testWork = mockObject<Project>({ id: TEST_OBJECT_ID });
-      dbClient.work.update.mockResolvedValue(testWork);
+      db.work.update.mockResolvedValue(testWork);
 
       const deleted = await ProjectModel.undeleteProject(testOwner, testWork, testReqCtx);
       expect(deleted).toBe(testWork);
-      expect(dbClient.work.update).toBeCalledWith({
+      expect(db.work.update).toBeCalledWith({
         where: {
           id: testWork.id,
           ownerId: testOwner.id,

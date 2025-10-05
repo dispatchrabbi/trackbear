@@ -6,9 +6,9 @@ import { AUDIT_EVENT_ENTITIES, AUDIT_EVENT_TYPE, AuditEventEntity } from './cons
 
 vi.mock('../../tracer.ts');
 
-import _dbClient from '../../db.ts';
-vi.mock('../../db.ts');
-const dbClient = vi.mocked(_dbClient, { deep: true });
+import { getDbClient } from 'server/lib/db.ts';
+vi.mock('server/lib/db.ts');
+const db = vi.mocked(getDbClient(), { deep: true });
 
 describe(AuditEventModel, () => {
   afterEach(() => {
@@ -18,12 +18,12 @@ describe(AuditEventModel, () => {
   describe(AuditEventModel.getAuditEvents, () => {
     it('gets audit events based on the given entity', async () => {
       const testAuditEvents = mockObjects<AuditEvent>(10);
-      dbClient.auditEvent.findMany.mockResolvedValue(testAuditEvents);
+      db.auditEvent.findMany.mockResolvedValue(testAuditEvents);
 
       const results = await AuditEventModel.getAuditEvents(TEST_USER_ID, AUDIT_EVENT_ENTITIES.USER);
 
       expect(results).toBe(testAuditEvents);
-      expect(dbClient.auditEvent.findMany).toBeCalledWith({
+      expect(db.auditEvent.findMany).toBeCalledWith({
         where: {
           OR: expect.any(Array),
         },
@@ -37,7 +37,7 @@ describe(AuditEventModel, () => {
       const results = await AuditEventModel.getAuditEvents(TEST_USER_ID, 'unused-entity' as AuditEventEntity);
 
       expect(results.length).toBe(0);
-      expect(dbClient.auditEvent.findMany).not.toBeCalled();
+      expect(db.auditEvent.findMany).not.toBeCalled();
     });
   });
 
@@ -50,7 +50,7 @@ describe(AuditEventModel, () => {
       const testSessionId = TEST_SESSION_ID;
 
       const testAuditEvent = mockObject<AuditEvent>();
-      dbClient.auditEvent.create.mockResolvedValue(testAuditEvent);
+      db.auditEvent.create.mockResolvedValue(testAuditEvent);
 
       const created = await AuditEventModel.createAuditEvent(
         AUDIT_EVENT_TYPE.SYSTEM_NOOP,
@@ -59,7 +59,7 @@ describe(AuditEventModel, () => {
       );
 
       expect(created).toBe(testAuditEvent);
-      expect(dbClient.auditEvent.create).toHaveBeenCalledWith({
+      expect(db.auditEvent.create).toHaveBeenCalledWith({
         data: {
           eventType: AUDIT_EVENT_TYPE.SYSTEM_NOOP,
           agentId: testAgentId,
@@ -75,7 +75,7 @@ describe(AuditEventModel, () => {
       const testAgentId = TEST_USER_ID;
 
       const testAuditEvent = mockObject<AuditEvent>();
-      dbClient.auditEvent.create.mockResolvedValue(testAuditEvent);
+      db.auditEvent.create.mockResolvedValue(testAuditEvent);
 
       const created = await AuditEventModel.createAuditEvent(
         AUDIT_EVENT_TYPE.SYSTEM_NOOP,
@@ -83,7 +83,7 @@ describe(AuditEventModel, () => {
       );
 
       expect(created).toBe(testAuditEvent);
-      expect(dbClient.auditEvent.create).toHaveBeenCalledWith({
+      expect(db.auditEvent.create).toHaveBeenCalledWith({
         data: {
           eventType: AUDIT_EVENT_TYPE.SYSTEM_NOOP,
           agentId: testAgentId,

@@ -1,7 +1,7 @@
 import { vi, expect, describe, it, afterEach } from 'vitest';
 import { getTestReqCtx, mockObject, mockObjects, TEST_API_TOKEN, TEST_OBJECT_ID, TEST_USER_ID } from 'testing-support/util';
 
-import _dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { logAuditEvent as _logAuditEvent, type ChangeRecord } from '../../audit-events.ts';
 
 import { ApiKeyModel, type ApiKey, type CreateApiKeyData, type UpdateApiKeyData } from './api-key-model.ts';
@@ -11,8 +11,8 @@ import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 vi.mock('../../tracer.ts');
 
-vi.mock('../../db.ts');
-const dbClient = vi.mocked(_dbClient, { deep: true });
+vi.mock('server/lib/db.ts');
+const db = vi.mocked(getDbClient(), { deep: true });
 
 vi.mock('../../audit-events.ts', async () => {
   const originalModule = await vi.importActual('../../audit-events.ts');
@@ -39,12 +39,12 @@ describe(ApiKeyModel, () => {
   describe(ApiKeyModel.getApiKeys, () => {
     it('gets a list of api keys', async () => {
       const testApiKeys = mockObjects<ApiKey>(3);
-      dbClient.apiKey.findMany.mockResolvedValue(testApiKeys);
+      db.apiKey.findMany.mockResolvedValue(testApiKeys);
 
       const apiKeys = await ApiKeyModel.getApiKeys(testUser);
 
       expect(apiKeys).toBe(testApiKeys);
-      expect(dbClient.apiKey.findMany).toBeCalledWith({
+      expect(db.apiKey.findMany).toBeCalledWith({
         where: {
           ownerId: testUser.id,
         },
@@ -55,12 +55,12 @@ describe(ApiKeyModel, () => {
   describe(ApiKeyModel.getApiKey, () => {
     it('gets an api key', async () => {
       const testApiKey = mockObject<ApiKey>({ id: TEST_OBJECT_ID });
-      dbClient.apiKey.findUnique.mockResolvedValue(testApiKey);
+      db.apiKey.findUnique.mockResolvedValue(testApiKey);
 
       const apiKey = await ApiKeyModel.getApiKey(testUser, TEST_OBJECT_ID);
 
       expect(apiKey).toBe(testApiKey);
-      expect(dbClient.apiKey.findUnique).toBeCalledWith({
+      expect(db.apiKey.findUnique).toBeCalledWith({
         where: {
           id: TEST_OBJECT_ID,
           ownerId: testUser.id,
@@ -69,7 +69,7 @@ describe(ApiKeyModel, () => {
     });
 
     it('returns null if the apiKey is not found', async () => {
-      dbClient.apiKey.findUnique.mockResolvedValue(null);
+      db.apiKey.findUnique.mockResolvedValue(null);
 
       const apiKey = await ApiKeyModel.getApiKey(testUser, TEST_OBJECT_ID);
 
@@ -91,12 +91,12 @@ describe(ApiKeyModel, () => {
         token: TEST_API_TOKEN,
         ...testData,
       });
-      dbClient.apiKey.create.mockResolvedValue(testApiKey);
+      db.apiKey.create.mockResolvedValue(testApiKey);
 
       const created = await ApiKeyModel.createApiKey(testUser, testData, testReqCtx);
 
       expect(created).toBe(testApiKey);
-      expect(dbClient.apiKey.create).toBeCalledWith({
+      expect(db.apiKey.create).toBeCalledWith({
         data: {
           ...testData,
           token: TEST_API_TOKEN,
@@ -126,11 +126,11 @@ describe(ApiKeyModel, () => {
         token: TEST_API_TOKEN,
         ...testData,
       });
-      dbClient.apiKey.create.mockResolvedValue(testApiKey);
+      db.apiKey.create.mockResolvedValue(testApiKey);
 
       await ApiKeyModel.createApiKey(testUser, testData, testReqCtx);
 
-      expect(dbClient.apiKey.create).toBeCalledWith({
+      expect(db.apiKey.create).toBeCalledWith({
         data: {
           name: testData.name,
           expiresAt: expect.any(Date),
@@ -151,12 +151,12 @@ describe(ApiKeyModel, () => {
         token: TEST_API_TOKEN,
         ...testData,
       });
-      dbClient.apiKey.update.mockResolvedValue(testApiKey);
+      db.apiKey.update.mockResolvedValue(testApiKey);
 
       const updated = await ApiKeyModel.updateApiKey(testUser, testApiKey, testData, testReqCtx);
 
       expect(updated).toBe(testApiKey);
-      expect(dbClient.apiKey.update).toBeCalledWith({
+      expect(db.apiKey.update).toBeCalledWith({
         where: {
           id: testApiKey.id,
           ownerId: testUser.id,
@@ -183,12 +183,12 @@ describe(ApiKeyModel, () => {
         id: TEST_OBJECT_ID,
         token: TEST_API_TOKEN,
       });
-      dbClient.apiKey.delete.mockResolvedValue(testApiKey);
+      db.apiKey.delete.mockResolvedValue(testApiKey);
 
       const deleted = await ApiKeyModel.deleteApiKey(testUser, testApiKey, testReqCtx);
 
       expect(deleted).toBe(testApiKey);
-      expect(dbClient.apiKey.delete).toBeCalledWith({
+      expect(db.apiKey.delete).toBeCalledWith({
         where: {
           id: testApiKey.id,
           ownerId: testUser.id,
@@ -212,18 +212,18 @@ describe(ApiKeyModel, () => {
         id: TEST_OBJECT_ID,
         token: TEST_API_TOKEN,
       });
-      dbClient.apiKey.findFirst.mockResolvedValue(testApiKey);
-      dbClient.apiKey.update.mockResolvedValue(testApiKey);
+      db.apiKey.findFirst.mockResolvedValue(testApiKey);
+      db.apiKey.update.mockResolvedValue(testApiKey);
 
       const touched = await ApiKeyModel.touchApiKey(TEST_API_TOKEN);
 
       expect(touched).toBe(testApiKey);
-      expect(dbClient.apiKey.findFirst).toBeCalledWith({
+      expect(db.apiKey.findFirst).toBeCalledWith({
         where: {
           token: testApiKey.token,
         },
       });
-      expect(dbClient.apiKey.update).toBeCalledWith({
+      expect(db.apiKey.update).toBeCalledWith({
         where: {
           id: testApiKey.id,
         },
@@ -239,17 +239,17 @@ describe(ApiKeyModel, () => {
         id: TEST_OBJECT_ID,
         token: TEST_API_TOKEN,
       });
-      dbClient.apiKey.findFirst.mockResolvedValue(null);
+      db.apiKey.findFirst.mockResolvedValue(null);
 
       const touched = await ApiKeyModel.touchApiKey(TEST_API_TOKEN);
 
       expect(touched).toBeNull();
-      expect(dbClient.apiKey.findFirst).toBeCalledWith({
+      expect(db.apiKey.findFirst).toBeCalledWith({
         where: {
           token: testApiKey.token,
         },
       });
-      expect(dbClient.apiKey.update).not.toBeCalled();
+      expect(db.apiKey.update).not.toBeCalled();
       expect(logAuditEvent).not.toBeCalled();
     });
   });

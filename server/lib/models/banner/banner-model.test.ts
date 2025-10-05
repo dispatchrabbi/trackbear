@@ -1,7 +1,7 @@
 import { vi, expect, describe, it, afterEach, beforeEach, MockInstance } from 'vitest';
 import { mockObject, mockObjects, TEST_OBJECT_ID, getTestReqCtx } from 'testing-support/util';
 
-import _dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
 
 import { BannerModel, type Banner, type BannerData } from './banner-model.ts';
@@ -9,8 +9,8 @@ import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 vi.mock('../tracer.ts');
 
-vi.mock('../../db.ts');
-const dbClient = vi.mocked(_dbClient, { deep: true });
+vi.mock('server/lib/db.ts');
+const db = vi.mocked(getDbClient(), { deep: true });
 
 vi.mock('../../audit-events.ts');
 const logAuditEvent = vi.mocked(_logAuditEvent);
@@ -23,24 +23,24 @@ describe(BannerModel, () => {
   describe(BannerModel.getBanners, () => {
     it('gets banners', async () => {
       const testBanners = mockObjects<Banner>(4);
-      dbClient.banner.findMany.mockResolvedValue(testBanners);
+      db.banner.findMany.mockResolvedValue(testBanners);
 
       const results = await BannerModel.getBanners();
 
       expect(results).toBe(testBanners);
-      expect(dbClient.banner.findMany).toBeCalled();
+      expect(db.banner.findMany).toBeCalled();
     });
   });
 
   describe(BannerModel.getActiveBanners, () => {
     it('gets active banners', async () => {
       const testBanners = mockObjects<Banner>(4);
-      dbClient.banner.findMany.mockResolvedValue(testBanners);
+      db.banner.findMany.mockResolvedValue(testBanners);
 
       const results = await BannerModel.getActiveBanners();
 
       expect(results).toBe(testBanners);
-      expect(dbClient.banner.findMany).toBeCalledWith(expect.objectContaining({
+      expect(db.banner.findMany).toBeCalledWith(expect.objectContaining({
         where: {
           enabled: true,
           showUntil: { gte: expect.any(Date) },
@@ -52,18 +52,18 @@ describe(BannerModel, () => {
   describe(BannerModel.getBanner, () => {
     it('gets a banner', async () => {
       const testBanner = mockObject<Banner>();
-      dbClient.banner.findUnique.mockResolvedValue(testBanner);
+      db.banner.findUnique.mockResolvedValue(testBanner);
 
       const results = await BannerModel.getBanner(TEST_OBJECT_ID);
 
       expect(results).toBe(testBanner);
-      expect(dbClient.banner.findUnique).toBeCalledWith({
+      expect(db.banner.findUnique).toBeCalledWith({
         where: { id: TEST_OBJECT_ID },
       });
     });
 
     it('returns null if does not find a banner', async () => {
-      dbClient.banner.findUnique.mockResolvedValue(null);
+      db.banner.findUnique.mockResolvedValue(null);
 
       const results = await BannerModel.getBanner(TEST_OBJECT_ID);
 
@@ -82,12 +82,12 @@ describe(BannerModel, () => {
         color: 'danger',
       };
       const testBanner = mockObject<Banner>({ id: TEST_OBJECT_ID, ...testBannerData });
-      dbClient.banner.create.mockResolvedValue(testBanner);
+      db.banner.create.mockResolvedValue(testBanner);
 
       const created = await BannerModel.createBanner(testBannerData, reqCtx);
 
       expect(created).toBe(testBanner);
-      expect(dbClient.banner.create).toBeCalledWith({
+      expect(db.banner.create).toBeCalledWith({
         data: testBannerData,
       });
 
@@ -104,12 +104,12 @@ describe(BannerModel, () => {
         message: 'This is a test banner',
       };
       const testBanner = mockObject<Banner>({ id: TEST_OBJECT_ID, ...testBannerData });
-      dbClient.banner.create.mockResolvedValue(testBanner);
+      db.banner.create.mockResolvedValue(testBanner);
 
       const created = await BannerModel.createBanner(testBannerData, reqCtx);
 
       expect(created).toBe(testBanner);
-      expect(dbClient.banner.create).toBeCalledWith({
+      expect(db.banner.create).toBeCalledWith({
         data: {
           message: testBannerData.message,
           enabled: false,
@@ -145,12 +145,12 @@ describe(BannerModel, () => {
         color: 'success',
       };
       const testBanner = mockObject<Banner>({ id: TEST_OBJECT_ID, ...testBannerData });
-      dbClient.banner.update.mockResolvedValue(testBanner);
+      db.banner.update.mockResolvedValue(testBanner);
 
       const updated = await BannerModel.updateBanner(TEST_OBJECT_ID, testBannerData, reqCtx);
 
       expect(updated).toBe(testBanner);
-      expect(dbClient.banner.update).toBeCalledWith({
+      expect(db.banner.update).toBeCalledWith({
         where: { id: TEST_OBJECT_ID },
         data: testBannerData,
       });
@@ -173,7 +173,7 @@ describe(BannerModel, () => {
       const updated = await BannerModel.updateBanner(TEST_OBJECT_ID, testBannerData, reqCtx);
 
       expect(updated).toBe(null);
-      expect(dbClient.banner.update).not.toBeCalled();
+      expect(db.banner.update).not.toBeCalled();
 
       expect(logAuditEvent).not.toBeCalled();
     });
@@ -193,12 +193,12 @@ describe(BannerModel, () => {
     it('deletes a banner', async () => {
       const reqCtx = getTestReqCtx();
       const testBanner = mockObject<Banner>({ id: TEST_OBJECT_ID });
-      dbClient.banner.delete.mockResolvedValue(testBanner);
+      db.banner.delete.mockResolvedValue(testBanner);
 
       const deleted = await BannerModel.deleteBanner(TEST_OBJECT_ID, reqCtx);
 
       expect(deleted).toBe(testBanner);
-      expect(dbClient.banner.delete).toBeCalledWith({
+      expect(db.banner.delete).toBeCalledWith({
         where: { id: TEST_OBJECT_ID },
       });
 
@@ -216,7 +216,7 @@ describe(BannerModel, () => {
       const deleted = await BannerModel.deleteBanner(TEST_OBJECT_ID, reqCtx);
 
       expect(deleted).toBe(null);
-      expect(dbClient.banner.delete).not.toBeCalled();
+      expect(db.banner.delete).not.toBeCalled();
 
       expect(logAuditEvent).not.toBeCalled();
     });

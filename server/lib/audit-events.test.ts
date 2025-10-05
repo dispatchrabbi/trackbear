@@ -1,24 +1,25 @@
 import { expect, describe, it, vi } from 'vitest';
 import { logAuditEvent, buildChangeRecord } from './audit-events.ts';
 
-vi.mock('./db.ts');
-import dbClientMock from './__mocks__/db.ts';
+vi.mock('server/lib/db.ts');
+import { getDbClient } from 'server/lib/db.ts';
+const db = vi.mocked(getDbClient(), { deep: true });
 
 describe('logAuditEvent', () => {
   it('creates an audit event in the database', async () => {
     await logAuditEvent('test:event', 12, 34, null, { extra: 'info' }, 'some-fake-session-id');
 
     // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-    expect(dbClientMock.auditEvent.create).toBeCalled();
+    expect(db.auditEvent.create).toBeCalled();
   });
 
   it('does not complain if creating the audit event fails', async () => {
-    dbClientMock.auditEvent.create.mockRejectedValue(new Error('test error'));
+    db.auditEvent.create.mockRejectedValue(new Error('test error'));
 
     const result = await logAuditEvent('test:event', 12, 34, null, { extra: 'info' }, 'some-fake-session-id');
 
     // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-    expect(dbClientMock.auditEvent.create).toBeCalled();
+    expect(db.auditEvent.create).toBeCalled();
     expect(result).toBe(undefined);
   });
 });

@@ -1,6 +1,6 @@
 import { traced } from '../../metrics/tracer.ts';
 
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { type Work as PrismaWork } from 'generated/prisma/client';
 import type { Create, Update } from '../types.ts';
 
@@ -36,7 +36,8 @@ export type UpdateProjectData = Update<Project>;
 export class ProjectModel {
   @traced
   static async getProjects(owner: User): Promise<Project[]> {
-    const projects = await dbClient.work.findMany({
+    const db = getDbClient();
+    const projects = await db.work.findMany({
       where: {
         ownerId: owner.id,
         state: PROJECT_STATE.ACTIVE,
@@ -48,7 +49,8 @@ export class ProjectModel {
 
   @traced
   static async getSummarizedProjects(owner: User): Promise<SummarizedProject[]> {
-    const projectsWithTallies = await dbClient.work.findMany({
+    const db = getDbClient();
+    const projectsWithTallies = await db.work.findMany({
       where: {
         ownerId: owner.id,
         state: PROJECT_STATE.ACTIVE,
@@ -84,7 +86,8 @@ export class ProjectModel {
 
   @traced
   static async getProject(owner: User, id: number): Promise<Project | null> {
-    const project = await dbClient.work.findUnique({
+    const db = getDbClient();
+    const project = await db.work.findUnique({
       where: {
         id,
         ownerId: owner.id,
@@ -106,7 +109,8 @@ export class ProjectModel {
       displayOnProfile: false,
     });
 
-    const created = await dbClient.work.create({
+    const db = getDbClient();
+    const created = await db.work.create({
       data: {
         ...dataWithDefaults,
         state: PROJECT_STATE.ACTIVE,
@@ -126,7 +130,8 @@ export class ProjectModel {
 
   @traced
   static async updateProject(owner: User, project: Project, data: UpdateProjectData, reqCtx: RequestContext): Promise<Project> {
-    const updated = await dbClient.work.update({
+    const db = getDbClient();
+    const updated = await db.work.update({
       where: {
         id: project.id,
         ownerId: owner.id,
@@ -151,7 +156,8 @@ export class ProjectModel {
   static async deleteProject(owner: User, project: Project, reqCtx: RequestContext): Promise<Project> {
     // when deleting a project, we set the status to deleted and set the associated tally statuses to deleted as well
     // that makes it easy to un-delete a project if a user asks us to
-    const deleted = await dbClient.work.update({
+    const db = getDbClient();
+    const deleted = await db.work.update({
       where: {
         id: project.id,
         ownerId: owner.id,
@@ -181,7 +187,8 @@ export class ProjectModel {
   @traced
   static async undeleteProject(owner: User, project: Project, reqCtx: RequestContext): Promise<Project> {
     // this is the inverse of deleting: the project is activated and the tallies are as well
-    const undeleted = await dbClient.work.update({
+    const db = getDbClient();
+    const undeleted = await db.work.update({
       where: {
         id: project.id,
         ownerId: owner.id,

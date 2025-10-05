@@ -11,9 +11,9 @@ import { USER_STATE, PASSWORD_RESET_LINK_STATE } from './consts.ts';
 
 vi.mock('../../tracer.ts');
 
-import _dbClient from '../../db.ts';
-vi.mock('../../db.ts');
-const dbClient = vi.mocked(_dbClient, { deep: true });
+import { getDbClient } from 'server/lib/db.ts';
+vi.mock('server/lib/db.ts');
+const db = vi.mocked(getDbClient(), { deep: true });
 
 import { logAuditEvent as _logAuditEvent, UNKNOWN_ACTOR_ID } from '../../audit-events.ts';
 vi.mock('../../audit-events.ts');
@@ -33,11 +33,11 @@ describe(UserModel, () => {
   describe(UserModel.getUsers, () => {
     it('gets a list of users', async () => {
       const testUsers = mockObjects<User>(3);
-      dbClient.user.findMany.mockResolvedValue(testUsers);
+      db.user.findMany.mockResolvedValue(testUsers);
 
       const users = await UserModel.getUsers();
 
-      expect(dbClient.user.findMany).toBeCalled();
+      expect(db.user.findMany).toBeCalled();
       expect(users).toEqual(testUsers);
     });
   });
@@ -46,22 +46,22 @@ describe(UserModel, () => {
     it('gets a user by id', async () => {
       const testId = -10;
       const mockUser = mockObject<User>({ id: testId });
-      dbClient.user.findUnique.mockResolvedValue(mockUser);
+      db.user.findUnique.mockResolvedValue(mockUser);
 
       const user = await UserModel.getUser(testId);
 
-      expect(dbClient.user.findUnique).toBeCalled();
+      expect(db.user.findUnique).toBeCalled();
       expect(user).toEqual(mockUser);
     });
 
     it(`returns null if it doesn't find a user`, async () => {
       const testId = -10;
-      dbClient.user.findUnique.mockResolvedValue(null);
+      db.user.findUnique.mockResolvedValue(null);
 
       const user = await UserModel.getUser(testId);
 
       expect(user).toBeNull();
-      expect(dbClient.user.findUnique).toBeCalled();
+      expect(db.user.findUnique).toBeCalled();
     });
   });
 
@@ -69,22 +69,22 @@ describe(UserModel, () => {
     it('gets a userauth by user id', async () => {
       const testUser = mockObject<User>({ id: -10 });
       const mockUserAuth = mockObject<UserAuth>({ userId: testUser.id });
-      dbClient.userAuth.findUnique.mockResolvedValue(mockUserAuth);
+      db.userAuth.findUnique.mockResolvedValue(mockUserAuth);
 
       const userAuth = await UserModel.getUserAuth(testUser);
 
-      expect(dbClient.userAuth.findUnique).toBeCalled();
+      expect(db.userAuth.findUnique).toBeCalled();
       expect(userAuth).toEqual(mockUserAuth);
     });
 
     it(`returns null if it doesn't find a userauth`, async () => {
       const testUser = mockObject<User>({ id: -10 });
-      dbClient.userAuth.findUnique.mockResolvedValue(null);
+      db.userAuth.findUnique.mockResolvedValue(null);
 
       const userAuth = await UserModel.getUserAuth(testUser);
 
       expect(userAuth).toBeNull();
-      expect(dbClient.userAuth.findUnique).toBeCalled();
+      expect(db.userAuth.findUnique).toBeCalled();
     });
   });
 
@@ -92,22 +92,22 @@ describe(UserModel, () => {
     it('gets a user by username', async () => {
       const testUsername = 'alice';
       const mockUser = mockObject<User>({ username: testUsername });
-      dbClient.user.findUnique.mockResolvedValue(mockUser);
+      db.user.findUnique.mockResolvedValue(mockUser);
 
       const user = await UserModel.getUserByUsername(testUsername);
 
-      expect(dbClient.user.findUnique).toBeCalled();
+      expect(db.user.findUnique).toBeCalled();
       expect(user).toEqual(mockUser);
     });
 
     it(`returns null if it doesn't find a user`, async () => {
       const testUsername = 'bob';
-      dbClient.user.findUnique.mockResolvedValue(null);
+      db.user.findUnique.mockResolvedValue(null);
 
       const user = await UserModel.getUserByUsername(testUsername);
 
       expect(user).toBeNull();
-      expect(dbClient.user.findUnique).toBeCalled();
+      expect(db.user.findUnique).toBeCalled();
     });
   });
 
@@ -218,14 +218,14 @@ describe(UserModel, () => {
         isEmailVerified: true,
       };
       const testUser = mockObject<User>({ id: -10 });
-      dbClient.user.create.mockResolvedValue(testUser);
+      db.user.create.mockResolvedValue(testUser);
 
       const reqCtx = getTestReqCtx();
       const created = await UserModel.createUser(testCreateData, reqCtx);
 
       expect(created).toBe(testUser);
 
-      expect(dbClient.user.create).toBeCalledWith({
+      expect(db.user.create).toBeCalledWith({
         data: expect.objectContaining({
           username: testCreateData.username,
           email: testCreateData.email,
@@ -251,11 +251,11 @@ describe(UserModel, () => {
         email: 'test-alice@example.com',
       };
       const testUser = mockObject<User>({ id: -10 });
-      dbClient.user.create.mockResolvedValue(testUser);
+      db.user.create.mockResolvedValue(testUser);
 
       await UserModel.createUser(testCreateData, getTestReqCtx());
 
-      expect(dbClient.user.create).toBeCalledWith({
+      expect(db.user.create).toBeCalledWith({
         data: expect.objectContaining({
           state: USER_STATE.ACTIVE,
         }),
@@ -269,11 +269,11 @@ describe(UserModel, () => {
         email: 'test-alice@example.com',
       };
       const testUser = mockObject<User>({ id: -10 });
-      dbClient.user.create.mockResolvedValue(testUser);
+      db.user.create.mockResolvedValue(testUser);
 
       await UserModel.createUser(testCreateData, getTestReqCtx());
 
-      expect(dbClient.user.create).toBeCalledWith({
+      expect(db.user.create).toBeCalledWith({
         data: expect.objectContaining({
           username: testCreateData.username,
           displayName: testCreateData.username,
@@ -288,11 +288,11 @@ describe(UserModel, () => {
         email: 'test-alice@example.com',
       };
       const testUser = mockObject<User>({ id: -10 });
-      dbClient.user.create.mockResolvedValue(testUser);
+      db.user.create.mockResolvedValue(testUser);
 
       await UserModel.createUser(testCreateData, getTestReqCtx());
 
-      expect(dbClient.user.create).toBeCalledWith({
+      expect(db.user.create).toBeCalledWith({
         data: expect.objectContaining({
           isEmailVerified: false,
         }),
@@ -318,14 +318,14 @@ describe(UserModel, () => {
         username: 'alice',
         email: 'alice@example.com',
       };
-      dbClient.user.update.mockResolvedValue(testUser);
+      db.user.update.mockResolvedValue(testUser);
 
       const reqCtx = getTestReqCtx();
       const updated = await UserModel.updateUser(testUser, testUpdateData, reqCtx);
 
       expect(updated).toBe(testUser);
 
-      expect(dbClient.user.update).toBeCalledWith({
+      expect(db.user.update).toBeCalledWith({
         where: { id: testUser.id },
         data: {
           displayName: testUpdateData.displayName,
@@ -355,7 +355,7 @@ describe(UserModel, () => {
       }).rejects.toThrow(ValidationError);
 
       expect(UserModel.validateUsername).toBeCalled();
-      expect(dbClient.user.update).not.toBeCalled();
+      expect(db.user.update).not.toBeCalled();
       expect(logAuditEvent).not.toBeCalled();
     });
 
@@ -370,7 +370,7 @@ describe(UserModel, () => {
         await UserModel.updateUser(testUser, testUpdateData, reqCtx);
       }).rejects.toThrow(ValidationError);
 
-      expect(dbClient.user.update).not.toBeCalled();
+      expect(db.user.update).not.toBeCalled();
       expect(logAuditEvent).not.toBeCalled();
     });
   });
@@ -379,14 +379,14 @@ describe(UserModel, () => {
     it('updates a user with the given state', async () => {
       const testUser = mockObject<User>({ id: -10 });
       const testNewState = USER_STATE.ACTIVE;
-      dbClient.user.update.mockResolvedValue(testUser);
+      db.user.update.mockResolvedValue(testUser);
 
       const reqCtx = getTestReqCtx();
       const updated = await UserModel.setUserState(testUser, testNewState, reqCtx);
 
       expect(updated).toBe(testUser);
 
-      expect(dbClient.user.update).toBeCalledWith({
+      expect(db.user.update).toBeCalledWith({
         where: { id: testUser.id },
         data: {
           state: testNewState,
@@ -401,7 +401,7 @@ describe(UserModel, () => {
     ])('logs an audit event of type $event when setting state to $state', async ({ state, event }) => {
       const testUser = mockObject<User>({ id: -10 });
       const testNewState = state;
-      dbClient.user.update.mockResolvedValue(testUser);
+      db.user.update.mockResolvedValue(testUser);
 
       const reqCtx = getTestReqCtx();
       await UserModel.setUserState(testUser, testNewState, reqCtx);
@@ -426,21 +426,21 @@ describe(UserModel, () => {
         newEmail: 'alice@example.com',
         user: testUser,
       });
-      dbClient.pendingEmailVerification.findUnique.mockResolvedValue(testPendingVerification);
-      dbClient.user.update.mockResolvedValue(testUser);
+      db.pendingEmailVerification.findUnique.mockResolvedValue(testPendingVerification);
+      db.user.update.mockResolvedValue(testUser);
 
       const isVerified = await UserModel.verifyEmail(TEST_UUID, getTestReqCtx());
 
       expect(isVerified).toBe(true);
 
-      expect(dbClient.pendingEmailVerification.findUnique).toBeCalledWith(expect.objectContaining({
+      expect(db.pendingEmailVerification.findUnique).toBeCalledWith(expect.objectContaining({
         where: expect.objectContaining({
           uuid: TEST_UUID,
           expiresAt: { gt: expect.any(Date) },
         }),
       }));
 
-      expect(dbClient.user.update).toBeCalledWith({
+      expect(db.user.update).toBeCalledWith({
         data: {
           isEmailVerified: true,
           pendingEmailVerifications: { deleteMany: [] },
@@ -457,15 +457,15 @@ describe(UserModel, () => {
     });
 
     it(`will not verify for a missing verification`, async () => {
-      dbClient.pendingEmailVerification.findUnique.mockResolvedValue(null);
+      db.pendingEmailVerification.findUnique.mockResolvedValue(null);
 
       const isVerified = await UserModel.verifyEmail(TEST_UUID, getTestReqCtx());
 
       expect(isVerified).toBe(false);
 
-      expect(dbClient.pendingEmailVerification.findUnique).toBeCalled();
+      expect(db.pendingEmailVerification.findUnique).toBeCalled();
 
-      expect(dbClient.user.update).not.toBeCalled();
+      expect(db.user.update).not.toBeCalled();
 
       expect(logAuditEvent).not.toBeCalled();
     });
@@ -480,17 +480,17 @@ describe(UserModel, () => {
         newEmail: 'alice@example.com',
         user: testUser,
       });
-      dbClient.pendingEmailVerification.findUnique.mockResolvedValue(testPendingVerification);
+      db.pendingEmailVerification.findUnique.mockResolvedValue(testPendingVerification);
 
       const isVerified = await UserModel.verifyEmail(TEST_UUID, getTestReqCtx());
 
       expect(isVerified).toBe(false);
 
-      expect(dbClient.pendingEmailVerification.findUnique).toBeCalledWith(expect.objectContaining({
+      expect(db.pendingEmailVerification.findUnique).toBeCalledWith(expect.objectContaining({
         where: expect.objectContaining({ uuid: TEST_UUID }),
       }));
 
-      expect(dbClient.user.update).not.toBeCalled();
+      expect(db.user.update).not.toBeCalled();
 
       expect(logAuditEvent).not.toBeCalled();
     });
@@ -502,13 +502,13 @@ describe(UserModel, () => {
         id: TEST_USER_ID,
         email: 'alice@example.com',
       });
-      dbClient.user.update.mockResolvedValue(testUser);
+      db.user.update.mockResolvedValue(testUser);
 
       const isVerified = await UserModel.verifyEmailByFiat(testUser, AUDIT_EVENT_SOURCE.ADMIN_CONSOLE, getTestReqCtx(TEST_SYSTEM_ID));
 
       expect(isVerified).toBe(true);
 
-      expect(dbClient.user.update).toBeCalledWith({
+      expect(db.user.update).toBeCalledWith({
         data: {
           isEmailVerified: true,
           pendingEmailVerifications: { deleteMany: [] },
@@ -532,13 +532,13 @@ describe(UserModel, () => {
         id: TEST_USER_ID,
         email: 'alice@example.com',
       });
-      dbClient.user.update.mockResolvedValue(testUser);
+      db.user.update.mockResolvedValue(testUser);
 
       const isVerified = await UserModel.verifyEmailByFiat(testUser, AUDIT_EVENT_SOURCE.SCRIPT, getTestReqCtx(TEST_SYSTEM_ID));
 
       expect(isVerified).toBe(true);
 
-      expect(dbClient.user.update).toBeCalledWith({
+      expect(db.user.update).toBeCalledWith({
         data: {
           isEmailVerified: true,
           pendingEmailVerifications: { deleteMany: [] },
@@ -581,13 +581,13 @@ describe(UserModel, () => {
       const testNewPassword = 'secrets secrets';
       const testReqCtx = getTestReqCtx();
 
-      dbClient.passwordResetLink.findUnique.mockResolvedValue(testPasswordResetLink);
+      db.passwordResetLink.findUnique.mockResolvedValue(testPasswordResetLink);
 
       const isReset = await UserModel.resetPassword(TEST_UUID, testNewPassword, testReqCtx);
 
       expect(isReset).toBe(true);
 
-      expect(dbClient.passwordResetLink.findUnique).toBeCalledWith(expect.objectContaining({
+      expect(db.passwordResetLink.findUnique).toBeCalledWith(expect.objectContaining({
         where: expect.objectContaining({
           uuid: TEST_UUID,
           expiresAt: { gt: expect.any(Date) },
@@ -597,7 +597,7 @@ describe(UserModel, () => {
 
       expect(mockSetUserPassword).toBeCalledWith(testUser, testNewPassword, testReqCtx);
 
-      expect(dbClient.passwordResetLink.update).toBeCalledWith({
+      expect(db.passwordResetLink.update).toBeCalledWith({
         data: {
           state: PASSWORD_RESET_LINK_STATE.USED,
         },
@@ -620,7 +620,7 @@ describe(UserModel, () => {
       const testNewPassword = 'secrets secrets';
       const testReqCtx = getTestReqCtx();
 
-      dbClient.passwordResetLink.findUnique.mockResolvedValue(null);
+      db.passwordResetLink.findUnique.mockResolvedValue(null);
 
       const isReset = await UserModel.resetPassword(TEST_UUID, testNewPassword, testReqCtx);
 
@@ -628,7 +628,7 @@ describe(UserModel, () => {
 
       expect(mockSetUserPassword).not.toBeCalled();
 
-      expect(dbClient.passwordResetLink.update).not.toBeCalled();
+      expect(db.passwordResetLink.update).not.toBeCalled();
 
       expect(logAuditEvent).not.toBeCalled();
 
@@ -703,7 +703,7 @@ describe(UserModel, () => {
       expect(hashSpy).toHaveBeenCalled();
       const { hashedPassword, salt } = hashSpy.mock.settledResults.at(-1).value as Awaited<ReturnType<typeof _hash.hash>>;
 
-      expect(dbClient.userAuth.update).toBeCalledWith({
+      expect(db.userAuth.update).toBeCalledWith({
         data: {
           password: hashedPassword,
           salt: salt,
@@ -788,13 +788,13 @@ describe(UserModel, () => {
       pushTask.mockReturnValue(mockObject<Ticket>());
 
       const testPendingVerification = mockObject<PendingEmailVerification>({ uuid: TEST_UUID });
-      dbClient.pendingEmailVerification.create.mockResolvedValue(testPendingVerification);
+      db.pendingEmailVerification.create.mockResolvedValue(testPendingVerification);
 
       const link = await UserModel.sendEmailVerificationLink(testUser, {}, getTestReqCtx());
 
       expect(link).toBe(testPendingVerification);
 
-      expect(dbClient.pendingEmailVerification.create).toHaveBeenCalledWith({
+      expect(db.pendingEmailVerification.create).toHaveBeenCalledWith({
         data: {
           userId: testUser.id,
           newEmail: testUser.email,
@@ -823,7 +823,7 @@ describe(UserModel, () => {
 
       expect(link).toBe(null);
 
-      expect(dbClient.pendingEmailVerification.create).not.toHaveBeenCalled();
+      expect(db.pendingEmailVerification.create).not.toHaveBeenCalled();
 
       expect(pushTask).not.toHaveBeenCalled();
 
@@ -839,13 +839,13 @@ describe(UserModel, () => {
       pushTask.mockReturnValue(mockObject<Ticket>());
 
       const testPendingVerification = mockObject<PendingEmailVerification>({ uuid: TEST_UUID });
-      dbClient.pendingEmailVerification.create.mockResolvedValue(testPendingVerification);
+      db.pendingEmailVerification.create.mockResolvedValue(testPendingVerification);
 
       const link = await UserModel.sendEmailVerificationLink(testUser, { force: true }, getTestReqCtx());
 
       expect(link).toBe(testPendingVerification);
 
-      expect(dbClient.pendingEmailVerification.create).toHaveBeenCalledWith({
+      expect(db.pendingEmailVerification.create).toHaveBeenCalledWith({
         data: {
           userId: testUser.id,
           newEmail: testUser.email,
@@ -873,13 +873,13 @@ describe(UserModel, () => {
       pushTask.mockReturnValue(mockObject<Ticket>());
 
       const testPasswordResetLink = mockObject<PasswordResetLink>({ uuid: TEST_UUID });
-      dbClient.passwordResetLink.create.mockResolvedValue(testPasswordResetLink);
+      db.passwordResetLink.create.mockResolvedValue(testPasswordResetLink);
 
       const link = await UserModel.sendPasswordResetLink(testUser, {}, getTestReqCtx());
 
       expect(link).toBe(testPasswordResetLink);
 
-      expect(dbClient.passwordResetLink.create).toHaveBeenCalledWith({
+      expect(db.passwordResetLink.create).toHaveBeenCalledWith({
         data: {
           userId: testUser.id,
           state: PASSWORD_RESET_LINK_STATE.ACTIVE,
@@ -907,7 +907,7 @@ describe(UserModel, () => {
 
       expect(link).toBe(null);
 
-      expect(dbClient.passwordResetLink.create).not.toHaveBeenCalled();
+      expect(db.passwordResetLink.create).not.toHaveBeenCalled();
 
       expect(pushTask).not.toHaveBeenCalled();
 

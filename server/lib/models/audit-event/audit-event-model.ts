@@ -1,4 +1,4 @@
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { type AuditEvent } from 'generated/prisma/client';
 
 import { traced } from '../../metrics/tracer.ts';
@@ -15,7 +15,8 @@ export class AuditEventModel {
       return [];
     }
 
-    const events = dbClient.auditEvent.findMany({
+    const db = getDbClient();
+    const events = db.auditEvent.findMany({
       where: {
         OR: tuples.map(([eventType, field]) => ({
           eventType,
@@ -57,7 +58,8 @@ export class AuditEventModel {
   ): Promise<AuditEvent> {
     const stringifiedAuxInfo = JSON.stringify(auxInfo ?? {});
 
-    const created = await dbClient.auditEvent.create({
+    const db = getDbClient();
+    const created = await db.auditEvent.create({
       data: {
         eventType,
         agentId, patientId, goalId,

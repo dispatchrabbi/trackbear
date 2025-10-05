@@ -6,7 +6,7 @@ import { RequestWithUser } from '../../lib/middleware/access.ts';
 import { z } from 'zod';
 import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
 
-import dbClient from '../../lib/db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { GOAL_TYPE, GOAL_CADENCE_UNIT } from '../../lib/models/goal/consts.ts';
 import type { HabitGoalParameters, TargetGoalParameters } from 'server/lib/models/goal/types.ts';
 import { PROJECT_STATE } from '../../lib/models/project/consts.ts';
@@ -109,7 +109,8 @@ const zBatchGoalCreatePayload = z.array(zGoalCreatePayload);
 export async function handleCreateGoals(req: RequestWithUser, res: ApiResponse<Goal[]>) {
   const user = req.user;
 
-  const createdGoals = await dbClient.goal.createManyAndReturn({
+  const db = getDbClient();
+  const createdGoals = await db.goal.createManyAndReturn({
     data: req.body.map(goalData => ({
       state: PROJECT_STATE.ACTIVE,
       ownerId: user.id,

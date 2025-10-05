@@ -1,5 +1,5 @@
 import { USER_STATE } from './user/consts.ts';
-import dbClient from '../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 
 import { add, Day } from 'date-fns';
 import { formatDate } from 'src/lib/date.ts';
@@ -60,7 +60,8 @@ export type PublicProfile = {
 
 export async function getUserProfile(username): Promise<PublicProfile | null> {
   // first, get the active user with that username along with user settings
-  const user = await dbClient.user.findUnique({
+  const db = getDbClient();
+  const user = await db.user.findUnique({
     where: {
       username: username,
       state: USER_STATE.ACTIVE,
@@ -157,7 +158,8 @@ type ProjectStartingBalance = {
   startingBalance: MeasureCounts;
 };
 async function getProjectsWithStartingBalances(userId: number): Promise<ProjectStartingBalance[]> {
-  const projects = await dbClient.work.findMany({
+  const db = getDbClient();
+  const projects = await db.work.findMany({
     where: {
       ownerId: userId,
       state: PROJECT_STATE.ACTIVE,
@@ -172,7 +174,8 @@ async function getProjectsWithStartingBalances(userId: number): Promise<ProjectS
 }
 
 async function getTallyTotals(userId: number): Promise<MeasureCounts> {
-  const totalsResult = await dbClient.tally.groupBy({
+  const db = getDbClient();
+  const totalsResult = await db.tally.groupBy({
     by: ['measure'],
     where: {
       ownerId: userId,
@@ -194,7 +197,8 @@ async function getTallyTotals(userId: number): Promise<MeasureCounts> {
 }
 
 async function getProfileProjectSummaries(userId: number): Promise<ProfileProjectSummary[]> {
-  const projectsOnProfile = await dbClient.work.findMany({
+  const db = getDbClient();
+  const projectsOnProfile = await db.work.findMany({
     where: {
       ownerId: userId,
       state: PROJECT_STATE.ACTIVE,
@@ -208,7 +212,7 @@ async function getProfileProjectSummaries(userId: number): Promise<ProfileProjec
     },
   });
 
-  const dayCountsForProfile = await dbClient.tally.groupBy({
+  const dayCountsForProfile = await db.tally.groupBy({
     by: ['workId', 'date', 'measure'],
     where: {
       ownerId: userId,

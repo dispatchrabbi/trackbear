@@ -1,7 +1,7 @@
 import { traced } from '../../metrics/tracer.ts';
 
 import { Prisma } from 'generated/prisma/client';
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import type { Create, Update } from '../types.ts';
 
 import { type RequestContext } from '../../request-context.ts';
@@ -41,7 +41,8 @@ export class LeaderboardModel {
 
   @traced
   static async list(participantUserId: number): Promise<LeaderboardSummary[]> {
-    const leaderboardsWithMembersAndTeams = await dbClient.board.findMany({
+    const db = getDbClient();
+    const leaderboardsWithMembersAndTeams = await db.board.findMany({
       where: {
         state: LEADERBOARD_STATE.ACTIVE,
         participants: {
@@ -72,7 +73,8 @@ export class LeaderboardModel {
 
   @traced
   static async get(id: number): Promise<Leaderboard | null> {
-    const leaderboard = await dbClient.board.findUnique({
+    const db = getDbClient();
+    const leaderboard = await db.board.findUnique({
       where: {
         id: id,
         state: LEADERBOARD_STATE.ACTIVE,
@@ -115,7 +117,8 @@ export class LeaderboardModel {
       });
     }
 
-    const leaderboard = await dbClient.board.findUnique({
+    const db = getDbClient();
+    const leaderboard = await db.board.findUnique({
       where: {
         uuid: uuid,
         state: LEADERBOARD_STATE.ACTIVE,
@@ -147,7 +150,8 @@ export class LeaderboardModel {
 
   @traced
   static async getByJoinCode(joinCode: string): Promise<LeaderboardSummary | null> {
-    const leaderboard = await dbClient.board.findFirst({
+    const db = getDbClient();
+    const leaderboard = await db.board.findFirst({
       where: {
         // TODO: this will change when we implement rolling join codes
         uuid: joinCode,
@@ -193,7 +197,8 @@ export class LeaderboardModel {
       teamId: null,
     };
 
-    const createdWithParticipants = await dbClient.board.create({
+    const db = getDbClient();
+    const createdWithParticipants = await db.board.create({
       data: {
         state: LEADERBOARD_STATE.ACTIVE,
         ownerId: ownerId,
@@ -239,7 +244,8 @@ export class LeaderboardModel {
   static async update(leaderboard: Leaderboard, data: UpdateLeaderboardData, reqCtx: RequestContext): Promise<Leaderboard> {
     const normalizedData = this.normalizeBoardData(data);
 
-    const updated = await dbClient.board.update({
+    const db = getDbClient();
+    const updated = await db.board.update({
       where: {
         id: leaderboard.id,
         state: LEADERBOARD_STATE.ACTIVE,
@@ -258,7 +264,8 @@ export class LeaderboardModel {
 
   @traced
   static async delete(leaderboard: Leaderboard, reqCtx: RequestContext): Promise<Leaderboard> {
-    const deleted = await dbClient.board.update({
+    const db = getDbClient();
+    const deleted = await db.board.update({
       where: {
         id: leaderboard.id,
         state: LEADERBOARD_STATE.ACTIVE,
@@ -290,7 +297,8 @@ export class LeaderboardModel {
 
   @traced
   static async isUserOwner(leaderboard: Leaderboard, userId: number): Promise<boolean> {
-    const dbMember = await dbClient.boardParticipant.findUnique({
+    const db = getDbClient();
+    const dbMember = await db.boardParticipant.findUnique({
       where: {
         userId_boardId: {
           boardId: leaderboard.id,
@@ -307,7 +315,8 @@ export class LeaderboardModel {
 
   @traced
   static async listParticipants(leaderboard: Leaderboard): Promise<Participant[]> {
-    const rawParticipants = await dbClient.boardParticipant.findMany({
+    const db = getDbClient();
+    const rawParticipants = await db.boardParticipant.findMany({
       where: {
         boardId: leaderboard.id,
         state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,

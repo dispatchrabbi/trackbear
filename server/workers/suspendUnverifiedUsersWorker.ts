@@ -1,5 +1,5 @@
 import type { User, PendingEmailVerification } from 'generated/prisma/client';
-import dbClient from '../lib/db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 
 import { getLogger } from 'server/lib/logger.ts';
 const workerLogger = getLogger('worker');
@@ -18,9 +18,11 @@ const CRONTAB = '24 2 * * *';
 async function run() {
   workerLogger.debug(`Worker has started`, { service: NAME });
 
+  const db = getDbClient();
+
   let users: UserWithVerifications[] | null;
   try {
-    users = await dbClient.user.findMany({
+    users = await db.user.findMany({
       where: {
         state: USER_STATE.ACTIVE,
         isEmailVerified: false,
@@ -46,7 +48,7 @@ async function run() {
   workerLogger.info(`About to suspend ${userIdsToSuspend.length} users for unverified emails: ${userIdsToSuspend.join(', ')}`);
 
   try {
-    await dbClient.user.updateMany({
+    await db.user.updateMany({
       data: {
         state: USER_STATE.SUSPENDED,
       },

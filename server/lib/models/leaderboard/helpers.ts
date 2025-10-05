@@ -1,4 +1,4 @@
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 
 import type { Board, BoardParticipant, User } from 'generated/prisma/client';
 import type { Leaderboard, LeaderboardMember, JustMember, ParticipantGoal, Participation, LeaderboardTeam, LeaderboardSummary, LeaderboardGoal, MemberBio } from './types';
@@ -20,7 +20,8 @@ export async function getTalliesForParticipants(leaderboard: Leaderboard, partic
     return [];
   }
 
-  const tallies = await dbClient.tally.findMany({
+  const db = getDbClient();
+  const tallies = await db.tally.findMany({
     where: {
       state: TALLY_STATE.ACTIVE,
       // if there's an overall board goal, only include tallies with the board's measures

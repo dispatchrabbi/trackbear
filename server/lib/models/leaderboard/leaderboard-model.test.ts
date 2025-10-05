@@ -1,7 +1,7 @@
 import { vi, expect, describe, it, afterEach } from 'vitest';
 import { getTestReqCtx, mockObject, TEST_OBJECT_ID, TEST_USER_ID, TEST_UUID } from 'testing-support/util';
 
-import _dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
 
 import { LeaderboardModel } from './leaderboard-model.ts';
@@ -14,8 +14,8 @@ import { TAG_STATE } from '../tag/consts.ts';
 
 vi.mock('../../tracer.ts');
 
-vi.mock('../../db.ts');
-const dbClient = vi.mocked(_dbClient, { deep: true });
+vi.mock('server/lib/db.ts');
+const db = vi.mocked(getDbClient(), { deep: true });
 
 vi.mock('../../audit-events.ts');
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- until we fill out the tests
@@ -84,7 +84,7 @@ describe(LeaderboardModel, () => {
           ],
         },
       ];
-      dbClient.board.findMany.mockResolvedValue(testDbLeaderboards);
+      db.board.findMany.mockResolvedValue(testDbLeaderboards);
 
       const expected: LeaderboardSummary[] = [
         {
@@ -112,7 +112,7 @@ describe(LeaderboardModel, () => {
       const actual = await LeaderboardModel.list(TEST_USER_ID);
 
       expect(actual).toEqual(expected);
-      expect(dbClient.board.findMany).toBeCalledWith({
+      expect(db.board.findMany).toBeCalledWith({
         where: {
           state: LEADERBOARD_STATE.ACTIVE,
           participants: {
@@ -141,12 +141,12 @@ describe(LeaderboardModel, () => {
   describe(LeaderboardModel.get, () => {
     it('gets a leaderboard by id', async () => {
       const testLeaderboard = mockObject<Leaderboard>();
-      dbClient.board.findUnique.mockResolvedValue(testLeaderboard);
+      db.board.findUnique.mockResolvedValue(testLeaderboard);
 
       const actual = await LeaderboardModel.get(TEST_OBJECT_ID);
 
       expect(actual).toBe(testLeaderboard);
-      expect(dbClient.board.findUnique).toBeCalledWith({
+      expect(db.board.findUnique).toBeCalledWith({
         where: {
           id: TEST_OBJECT_ID,
           state: LEADERBOARD_STATE.ACTIVE,
@@ -167,7 +167,7 @@ describe(LeaderboardModel, () => {
           user: mockObject<User>({ id: TEST_USER_ID, uuid: TEST_UUID, displayName: 'test0', avatar: null }),
         }],
       };
-      dbClient.board.findUnique.mockResolvedValue(testLeaderboard);
+      db.board.findUnique.mockResolvedValue(testLeaderboard);
 
       const expected: LeaderboardSummary = {
         ...mockObject<Leaderboard>({
@@ -183,7 +183,7 @@ describe(LeaderboardModel, () => {
       const actual = await LeaderboardModel.getByUuid(TEST_UUID, { memberUserId: TEST_USER_ID });
 
       expect(actual).toEqual(expected);
-      expect(dbClient.board.findUnique).toBeCalledWith({
+      expect(db.board.findUnique).toBeCalledWith({
         where: {
           uuid: TEST_UUID,
           state: LEADERBOARD_STATE.ACTIVE,

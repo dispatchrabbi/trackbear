@@ -4,7 +4,8 @@ import dotenv from 'dotenv';
 
 import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
-import dbClient from '../server/lib/db.ts';
+import { initDbClient, getDbClient } from 'server/lib/db.ts';
+
 import { User } from 'generated/prisma/client';
 import { USER_STATE } from '../server/lib/models/user/consts.ts';
 import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from '../server/lib/audit-events.ts';
@@ -20,6 +21,14 @@ async function main() {
   await initLoggers();
   const scriptLogger = getLogger('default').child({ service: 'add-admin.ts' });
 
+  initDbClient(
+    process.env.DATABASE_USER!,
+    process.env.DATABASE_PASSWORD!,
+    process.env.DATABASE_HOST!,
+    process.env.DATABASE_NAME!,
+  );
+  const db = getDbClient();
+
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 
   const [userId] = process.argv.slice(2);
@@ -30,7 +39,7 @@ async function main() {
 
   let user: User | null = null;
   try {
-    user = await dbClient.user.findUnique({
+    user = await db.user.findUnique({
       where: {
         id: +userId,
         state: USER_STATE.ACTIVE,
@@ -48,7 +57,7 @@ async function main() {
 
   scriptLogger.info(`Going to add ${user.username} as an admin...`);
   try {
-    await dbClient.adminPerms.create({
+    await db.adminPerms.create({
       data: {
         isAdmin: true,
         userId: user.id,

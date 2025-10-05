@@ -1,7 +1,7 @@
 import { vi, expect, describe, it, afterEach } from 'vitest';
 import { mockObject } from 'testing-support/util';
 
-import _dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 
 import { getTalliesForParticipants } from './helpers.ts';
 import { Leaderboard } from './types.ts';
@@ -9,8 +9,8 @@ import { TALLY_MEASURE, TALLY_STATE } from '../tally/consts.ts';
 
 vi.mock('../../tracer.ts');
 
-vi.mock('../../db.ts');
-const dbClient = vi.mocked(_dbClient, { deep: true });
+vi.mock('server/lib/db.ts');
+const db = vi.mocked(getDbClient(), { deep: true });
 
 describe(getTalliesForParticipants, () => {
   afterEach(() => {
@@ -23,11 +23,11 @@ describe(getTalliesForParticipants, () => {
     const actual = await getTalliesForParticipants(testLeaderboard, []);
 
     expect(actual.length).toBe(0);
-    expect(dbClient.tally.findMany).not.toBeCalled();
+    expect(db.tally.findMany).not.toBeCalled();
   });
 
   it('gets tallies for participants within date bounds', async () => {
-    dbClient.tally.findMany.mockResolvedValue([]);
+    db.tally.findMany.mockResolvedValue([]);
 
     const testLeaderboard = mockObject<Leaderboard>({
       individualGoalMode: false,
@@ -43,7 +43,7 @@ describe(getTalliesForParticipants, () => {
 
     await getTalliesForParticipants(testLeaderboard, testParticipants);
 
-    expect(dbClient.tally.findMany).toBeCalledWith({
+    expect(db.tally.findMany).toBeCalledWith({
       where: {
         state: TALLY_STATE.ACTIVE,
         measure: { in: [TALLY_MEASURE.WORD] },
@@ -56,7 +56,7 @@ describe(getTalliesForParticipants, () => {
   });
 
   it('gets tallies for participants with a leaderboard goal', async () => {
-    dbClient.tally.findMany.mockResolvedValue([]);
+    db.tally.findMany.mockResolvedValue([]);
 
     const testLeaderboard = mockObject<Leaderboard>({
       individualGoalMode: false,
@@ -72,7 +72,7 @@ describe(getTalliesForParticipants, () => {
 
     await getTalliesForParticipants(testLeaderboard, testParticipants);
 
-    expect(dbClient.tally.findMany).toBeCalledWith({
+    expect(db.tally.findMany).toBeCalledWith({
       where: {
         state: TALLY_STATE.ACTIVE,
         measure: { in: [TALLY_MEASURE.WORD] },
@@ -87,7 +87,7 @@ describe(getTalliesForParticipants, () => {
   });
 
   it('gets tallies for participants with individual goals', async () => {
-    dbClient.tally.findMany.mockResolvedValue([]);
+    db.tally.findMany.mockResolvedValue([]);
 
     const testLeaderboard = mockObject<Leaderboard>({
       individualGoalMode: true,
@@ -101,7 +101,7 @@ describe(getTalliesForParticipants, () => {
 
     await getTalliesForParticipants(testLeaderboard, testParticipants);
 
-    expect(dbClient.tally.findMany).toBeCalledWith({
+    expect(db.tally.findMany).toBeCalledWith({
       where: {
         state: TALLY_STATE.ACTIVE,
         measure: undefined,

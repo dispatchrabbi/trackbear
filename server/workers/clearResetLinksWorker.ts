@@ -1,5 +1,5 @@
 import { Prisma } from 'generated/prisma/client';
-import dbClient from '../lib/db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { PASSWORD_RESET_LINK_STATE } from '../lib/models/user/consts.ts';
 
 import { getLogger } from 'server/lib/logger.ts';
@@ -15,7 +15,8 @@ async function run() {
 
   let deleted: Prisma.BatchPayload | null;
   try {
-    deleted = await dbClient.passwordResetLink.deleteMany({
+    const db = getDbClient();
+    deleted = await db.passwordResetLink.deleteMany({
       where: {
         OR: [
           { state: PASSWORD_RESET_LINK_STATE.USED },

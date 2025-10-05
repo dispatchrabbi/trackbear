@@ -1,4 +1,4 @@
-import dbClient from '../../lib/db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { PROJECT_STATE } from './project/consts.ts';
 import { TALLY_STATE } from './tally/consts.ts';
 import { MeasureCounts } from './tally/types.ts';
@@ -17,7 +17,8 @@ export async function getDayCounts(userId: number, startDate?: string, endDate?:
     dateFilter!.lte = endDate;
   }
 
-  const dateAndMeasureSums = await dbClient.tally.groupBy({
+  const db = getDbClient();
+  const dateAndMeasureSums = await db.tally.groupBy({
     by: ['date', 'measure'],
     where: {
       ownerId: userId,

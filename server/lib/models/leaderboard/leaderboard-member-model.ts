@@ -1,6 +1,6 @@
 import { traced } from '../../metrics/tracer.ts';
 
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { Prisma } from 'generated/prisma/client';
 import type { Create, Update } from '../types.ts';
 import {
@@ -31,7 +31,8 @@ export type UpdateMemberData = Update<LeaderboardMember, OmitFromCreateMemberFie
 export class LeaderboardMemberModel {
   @traced
   static async list(leaderboard: Leaderboard): Promise<JustMember[]> {
-    const dbMembers = await dbClient.boardParticipant.findMany({
+    const db = getDbClient();
+    const dbMembers = await db.boardParticipant.findMany({
       where: {
         boardId: leaderboard.id,
         state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
@@ -49,7 +50,8 @@ export class LeaderboardMemberModel {
 
   @traced
   static async get(leaderboard: Leaderboard, memberId: number): Promise<JustMember | null> {
-    const dbMember = await dbClient.boardParticipant.findUnique({
+    const db = getDbClient();
+    const dbMember = await db.boardParticipant.findUnique({
       where: {
         id: memberId,
         boardId: leaderboard.id,
@@ -71,7 +73,8 @@ export class LeaderboardMemberModel {
 
   @traced
   static async getByUserId(leaderboard: Leaderboard, userId: number): Promise<JustMember | null> {
-    const dbMember = await dbClient.boardParticipant.findUnique({
+    const db = getDbClient();
+    const dbMember = await db.boardParticipant.findUnique({
       where: {
         userId_boardId: {
           boardId: leaderboard.id,
@@ -107,7 +110,8 @@ export class LeaderboardMemberModel {
       teamId: null,
     });
 
-    const dbCreated = await dbClient.boardParticipant.create({
+    const db = getDbClient();
+    const dbCreated = await db.boardParticipant.create({
       data: {
         state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
         boardId: leaderboard.id,
@@ -137,7 +141,8 @@ export class LeaderboardMemberModel {
 
   @traced
   static async update(member: JustMember, data: UpdateMemberData, reqCtx: RequestContext): Promise<LeaderboardMember> {
-    const dbUpdated = await dbClient.boardParticipant.update({
+    const db = getDbClient();
+    const dbUpdated = await db.boardParticipant.update({
       where: {
         id: member.id,
         state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
@@ -180,7 +185,8 @@ export class LeaderboardMemberModel {
       }
     }
 
-    const dbRemoved = await dbClient.boardParticipant.delete({
+    const db = getDbClient();
+    const dbRemoved = await db.boardParticipant.delete({
       where: {
         id: member.id,
         state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
@@ -203,7 +209,8 @@ export class LeaderboardMemberModel {
 
   @traced
   static async getParticipation(leaderboardId: number, userId: number): Promise<Participation | null> {
-    const found = await dbClient.boardParticipant.findUnique({
+    const db = getDbClient();
+    const found = await db.boardParticipant.findUnique({
       where: {
         userId_boardId: {
           userId: userId,

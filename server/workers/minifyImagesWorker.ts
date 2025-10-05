@@ -2,7 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 
 import sharp from 'sharp';
-import dbClient from '../lib/db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 
 import { getLogger } from 'server/lib/logger.ts';
 const workerLogger = getLogger('worker');
@@ -43,7 +43,8 @@ async function pruneAvatars() {
   const env = await getNormalizedEnv();
   const avatarsDir = path.join(env.UPLOADS_PATH, 'avatars');
 
-  const dbExistingAvatars = await dbClient.user.findMany({
+  const db = getDbClient();
+  const dbExistingAvatars = await db.user.findMany({
     select: { avatar: true },
     where: { avatar: { not: null } },
     distinct: 'avatar',
@@ -57,7 +58,8 @@ async function pruneCovers() {
   const env = await getNormalizedEnv();
   const coversDir = path.join(env.UPLOADS_PATH, 'covers');
 
-  const dbExistingCovers = await dbClient.work.findMany({
+  const db = getDbClient();
+  const dbExistingCovers = await db.work.findMany({
     select: { cover: true },
     where: { cover: { not: null } },
     distinct: 'cover',
@@ -100,7 +102,8 @@ async function optimizeAvatars() {
 
   await optimizeImagesInDirectory(avatarsDir, async function(oldFilename, newFilename) {
     if(!DRY_RUN) {
-      await dbClient.user.updateMany({
+      const db = getDbClient();
+      await db.user.updateMany({
         data: { avatar: newFilename },
         where: { avatar: oldFilename },
       });
@@ -114,7 +117,8 @@ async function optimizeCovers() {
 
   await optimizeImagesInDirectory(coversDir, async function(oldFilename, newFilename) {
     if(!DRY_RUN) {
-      await dbClient.work.updateMany({
+      const db = getDbClient();
+      await db.work.updateMany({
         data: { cover: newFilename },
         where: { cover: oldFilename },
       });

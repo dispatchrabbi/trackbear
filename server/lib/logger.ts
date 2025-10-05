@@ -160,7 +160,7 @@ export async function initLoggers({ forceConsoles = false }: LoggerInitOpts = { 
   }
 }
 
-export function getLogger(logName: keyof typeof loggers = 'default') {
+export function getLogger(logName: keyof typeof loggers = 'default'): Logger {
   return loggerProxies[logName];
 }
 

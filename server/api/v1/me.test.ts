@@ -3,8 +3,9 @@ import { mockObject, NIL_UUID, TEST_SESSION_ID, TEST_USER_ID } from '../../../te
 import { getHandlerMocksWithUser } from '../../lib/__mocks__/express.ts';
 import type { PendingEmailVerification, User } from 'generated/prisma/client';
 
-vi.mock('../../lib/db.ts');
-import dbClientMock from '../../lib/__mocks__/db.ts';
+vi.mock('server/lib/db.ts');
+import { getDbClient } from 'server/lib/db.ts';
+const db = vi.mocked(getDbClient(), { deep: true });
 
 vi.mock('../../lib/audit-events.ts', { spy: true });
 import { logAuditEventMock } from '../../lib/__mocks__/audit-events.ts';
@@ -33,23 +34,23 @@ describe('me api v1', () => {
   describe(handleGetMe, () => {
     it('returns the current user', async () => {
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-      dbClientMock.user.findUnique.mockResolvedValue(mockObject<FullUser>());
+      db.user.findUnique.mockResolvedValue(mockObject<FullUser>());
 
       const { req, res } = getHandlerMocksWithUser();
       await handleGetMe(req, res);
 
-      expect(dbClientMock.user.findUnique).toHaveBeenCalled();
+      expect(db.user.findUnique).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
 
     it('returns a 404 if there is no current user', async () => {
-      dbClientMock.user.findUnique.mockResolvedValue(null);
+      db.user.findUnique.mockResolvedValue(null);
 
       const { req, res } = getHandlerMocksWithUser();
       await handleGetMe(req, res);
 
-      expect(dbClientMock.user.findUnique).toHaveBeenCalled();
+      expect(db.user.findUnique).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.send).toHaveBeenCalled();
     });
@@ -77,16 +78,16 @@ describe('me api v1', () => {
       const NEW_USERNAME = 'new-username';
       req.body = { username: NEW_USERNAME };
 
-      dbClientMock.user.findMany.mockResolvedValue([]);
-      dbClientMock.user.update.mockResolvedValue(mockObject<User>({
+      db.user.findMany.mockResolvedValue([]);
+      db.user.update.mockResolvedValue(mockObject<User>({
         ...mockUserData,
         username: NEW_USERNAME,
       }));
 
       await handlePatchMe(req, res);
 
-      expect(dbClientMock.user.findMany).toHaveBeenCalled();
-      expect(dbClientMock.user.update).toHaveBeenCalledWith(expect.objectContaining({
+      expect(db.user.findMany).toHaveBeenCalled();
+      expect(db.user.update).toHaveBeenCalledWith(expect.objectContaining({
         data: {
           username: NEW_USERNAME,
           isEmailVerified: true,
@@ -95,7 +96,7 @@ describe('me api v1', () => {
       }));
       expect(logAuditEventMock).toHaveBeenCalledWith('user:update', TEST_USER_ID, TEST_USER_ID, null, expect.anything(), TEST_SESSION_ID);
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-      expect(dbClientMock.pendingEmailVerification.findFirst).not.toHaveBeenCalled();
+      expect(db.pendingEmailVerification.findFirst).not.toHaveBeenCalled();
       expect(queue.pushTask).toHaveBeenCalledWith(sendUsernameChangedEmail.makeTask(TEST_USER_ID));
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
@@ -105,12 +106,12 @@ describe('me api v1', () => {
       const NEW_USERNAME = 'new-username';
       req.body = { username: NEW_USERNAME };
 
-      dbClientMock.user.findMany.mockResolvedValue([mockObject<User>()]);
+      db.user.findMany.mockResolvedValue([mockObject<User>()]);
 
       await handlePatchMe(req, res);
 
-      expect(dbClientMock.user.findMany).toHaveBeenCalled();
-      expect(dbClientMock.user.update).not.toHaveBeenCalled();
+      expect(db.user.findMany).toHaveBeenCalled();
+      expect(db.user.update).not.toHaveBeenCalled();
       expect(logAuditEventMock).not.toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(409);
       expect(res.send).toHaveBeenCalled();
@@ -120,15 +121,15 @@ describe('me api v1', () => {
       const NEW_DISPLAY_NAME = 'New Display Name';
       req.body = { displayName: NEW_DISPLAY_NAME };
 
-      dbClientMock.user.update.mockResolvedValue(mockObject<User>({
+      db.user.update.mockResolvedValue(mockObject<User>({
         ...mockUserData,
         displayName: NEW_DISPLAY_NAME,
       }));
 
       await handlePatchMe(req, res);
 
-      expect(dbClientMock.user.findMany).not.toHaveBeenCalled();
-      expect(dbClientMock.user.update).toHaveBeenCalledWith(expect.objectContaining({
+      expect(db.user.findMany).not.toHaveBeenCalled();
+      expect(db.user.update).toHaveBeenCalledWith(expect.objectContaining({
         data: {
           displayName: NEW_DISPLAY_NAME,
           isEmailVerified: true,
@@ -136,7 +137,7 @@ describe('me api v1', () => {
         },
       }));
       expect(logAuditEventMock).toHaveBeenCalledWith('user:update', TEST_USER_ID, TEST_USER_ID, null, expect.anything(), TEST_SESSION_ID);
-      expect(dbClientMock.pendingEmailVerification.findFirst).not.toHaveBeenCalled();
+      expect(db.pendingEmailVerification.findFirst).not.toHaveBeenCalled();
       expect(queue.pushTask).not.toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
@@ -146,12 +147,12 @@ describe('me api v1', () => {
       const NEW_EMAIL = 'new@example.com';
       req.body = { email: NEW_EMAIL };
 
-      dbClientMock.user.findMany.mockResolvedValue([]);
-      dbClientMock.user.update.mockResolvedValue(mockObject<User>({
+      db.user.findMany.mockResolvedValue([]);
+      db.user.update.mockResolvedValue(mockObject<User>({
         ...mockUserData,
         email: NEW_EMAIL,
       }));
-      dbClientMock.pendingEmailVerification.findFirst.mockResolvedValue(mockObject<PendingEmailVerification>({
+      db.pendingEmailVerification.findFirst.mockResolvedValue(mockObject<PendingEmailVerification>({
         uuid: NIL_UUID,
         newEmail: NEW_EMAIL,
       }));
@@ -159,8 +160,8 @@ describe('me api v1', () => {
       await handlePatchMe(req, res);
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-      expect(dbClientMock.user.findMany).not.toHaveBeenCalled();
-      expect(dbClientMock.user.update).toHaveBeenCalledWith(expect.objectContaining({
+      expect(db.user.findMany).not.toHaveBeenCalled();
+      expect(db.user.update).toHaveBeenCalledWith(expect.objectContaining({
         data: {
           email: NEW_EMAIL,
           isEmailVerified: false,
@@ -168,21 +169,21 @@ describe('me api v1', () => {
         },
       }));
       expect(logAuditEventMock).toHaveBeenCalledWith('user:update', TEST_USER_ID, TEST_USER_ID, null, expect.anything(), TEST_SESSION_ID);
-      expect(dbClientMock.pendingEmailVerification.findFirst).toHaveBeenCalled();
+      expect(db.pendingEmailVerification.findFirst).toHaveBeenCalled();
       expect(queue.pushTask).toHaveBeenCalledWith(sendEmailverificationEmail.makeTask(NIL_UUID));
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalled();
     });
 
     it('returns a 404 if there is no current user', async () => {
-      dbClientMock.user.findUnique.mockResolvedValue(null);
+      db.user.findUnique.mockResolvedValue(null);
 
       req.body = {
         displayName: 'New Display Name',
       };
       await handleGetMe(req, res);
 
-      expect(dbClientMock.user.findUnique).toHaveBeenCalled();
+      expect(db.user.findUnique).toHaveBeenCalled();
       expect(logAuditEventMock).not.toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.send).toHaveBeenCalled();
@@ -191,7 +192,7 @@ describe('me api v1', () => {
 
   describe(handleDeleteMe, () => {
     it('deletes the current user', async () => {
-      dbClientMock.user.update.mockResolvedValue(
+      db.user.update.mockResolvedValue(
         mockObject<User>({ id: TEST_USER_ID }),
       );
 
@@ -199,7 +200,7 @@ describe('me api v1', () => {
       await handleDeleteMe(req, res);
 
       // @ts-ignore until strictNullChecks is turned on in the codebase (see tip at https://www.prisma.io/docs/orm/prisma-client/testing/unit-testing#dependency-injection)
-      expect(dbClientMock.user.update).toHaveBeenCalled();
+      expect(db.user.update).toHaveBeenCalled();
       expect(logAuditEventMock).toHaveBeenCalledWith('user:delete', TEST_USER_ID, TEST_USER_ID, null, null, TEST_SESSION_ID);
       expect(queue.pushTask).toHaveBeenCalledWith(sendAccountDeletedEmail.makeTask(TEST_USER_ID));
       expect(res.status).toHaveBeenCalledWith(200);

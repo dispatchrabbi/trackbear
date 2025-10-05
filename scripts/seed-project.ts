@@ -4,7 +4,8 @@ import dotenv from 'dotenv';
 
 import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
-import dbClient from '../server/lib/db.ts';
+import { initDbClient, getDbClient } from 'server/lib/db.ts';
+
 import { Tally, User, Work } from 'generated/prisma/client';
 import { USER_STATE } from '../server/lib/models/user/consts.ts';
 import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from '../server/lib/audit-events.ts';
@@ -28,6 +29,14 @@ async function main() {
   dotenv.config();
   await initLoggers();
   const scriptLogger = getLogger('default').child({ service: 'seed-project.ts' });
+
+  initDbClient(
+    process.env.DATABASE_USER!,
+    process.env.DATABASE_PASSWORD!,
+    process.env.DATABASE_HOST!,
+    process.env.DATABASE_NAME!,
+  );
+  const db = getDbClient();
 
   scriptLogger.info(`Script initialization complete`);
 
@@ -57,7 +66,7 @@ async function main() {
 
   let user: User | null = null;
   try {
-    user = await dbClient.user.findUnique({
+    user = await db.user.findUnique({
       where: {
         id: +userId,
         state: USER_STATE.ACTIVE,
@@ -76,7 +85,7 @@ async function main() {
   scriptLogger.info(`Creating new project...`);
   let work: Work | null = null;
   try {
-    work = await dbClient.work.create({
+    work = await db.work.create({
       data: {
         ownerId: user.id,
         state: PROJECT_STATE.ACTIVE,
@@ -108,7 +117,7 @@ async function main() {
     let tally: Tally | null = null;
     try {
       const count = getRandomTallyCount(avgTally);
-      tally = await dbClient.tally.create({
+      tally = await db.tally.create({
         data: {
           state: TALLY_STATE.ACTIVE,
           ownerId: user.id,
@@ -135,7 +144,7 @@ async function main() {
       let butWhatAboutSecondTally: Tally | null = null;
       try {
         const count2 = getRandomTallyCount(avgTally);
-        butWhatAboutSecondTally = await dbClient.tally.create({
+        butWhatAboutSecondTally = await db.tally.create({
           data: {
             state: TALLY_STATE.ACTIVE,
             ownerId: user.id,

@@ -1,7 +1,7 @@
 import { vi, expect, describe, it, afterEach } from 'vitest';
 import { getTestReqCtx, mockObject, mockObjects, TEST_OBJECT_ID, TEST_USER_ID } from 'testing-support/util';
 
-import _dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
 
 import { CreateGoalData, GoalModel, UpdateGoalData, type Goal } from './goal-model.ts';
@@ -17,8 +17,8 @@ import { ids2included } from '../helpers.ts';
 
 vi.mock('../../tracer.ts');
 
-vi.mock('../../db.ts');
-const dbClient = vi.mocked(_dbClient, { deep: true });
+vi.mock('server/lib/db.ts');
+const db = vi.mocked(getDbClient(), { deep: true });
 
 vi.mock('../../audit-events.ts');
 const logAuditEvent = vi.mocked(_logAuditEvent);
@@ -54,12 +54,12 @@ describe(GoalModel, () => {
         workIds: [],
         tagIds: [],
       }));
-      dbClient.goal.findMany.mockResolvedValue(testGoals.map(goal => ids2included(goal)));
+      db.goal.findMany.mockResolvedValue(testGoals.map(goal => ids2included(goal)));
 
       const goals = await GoalModel.getGoals(testOwner);
 
       expect(goals).toEqual(testGoals);
-      expect(dbClient.goal.findMany).toBeCalledWith({
+      expect(db.goal.findMany).toBeCalledWith({
         where: {
           ownerId: testOwner.id,
           state: GOAL_STATE.ACTIVE,
@@ -76,12 +76,12 @@ describe(GoalModel, () => {
         workIds: [],
         tagIds: [],
       });
-      dbClient.goal.findUnique.mockResolvedValue(ids2included(testGoal));
+      db.goal.findUnique.mockResolvedValue(ids2included(testGoal));
 
       const goal = await GoalModel.getGoal(testOwner, TEST_OBJECT_ID);
 
       expect(goal).toEqual(testGoal);
-      expect(dbClient.goal.findUnique).toBeCalledWith({
+      expect(db.goal.findUnique).toBeCalledWith({
         where: {
           id: TEST_OBJECT_ID,
           ownerId: testOwner.id,
@@ -92,7 +92,7 @@ describe(GoalModel, () => {
     });
 
     it('returns null if the goal is not found', async () => {
-      dbClient.goal.findUnique.mockResolvedValue(null);
+      db.goal.findUnique.mockResolvedValue(null);
 
       const goal = await GoalModel.getGoal(testOwner, TEST_OBJECT_ID);
 
@@ -124,12 +124,12 @@ describe(GoalModel, () => {
         workIds: [-20, -21, -22],
         tagIds: [-23, -24, -25],
       });
-      dbClient.goal.create.mockResolvedValue(ids2included(testGoal));
+      db.goal.create.mockResolvedValue(ids2included(testGoal));
 
       const created = await GoalModel.createGoal(testOwner, testData, testReqCtx);
 
       expect(created).toEqual(testGoal);
-      expect(dbClient.goal.create).toBeCalledWith({
+      expect(db.goal.create).toBeCalledWith({
         data: {
           state: GOAL_STATE.ACTIVE,
           ownerId: testOwner.id,
@@ -176,11 +176,11 @@ describe(GoalModel, () => {
         workIds: [],
         tagIds: [],
       });
-      dbClient.goal.create.mockResolvedValue(ids2included(testGoal));
+      db.goal.create.mockResolvedValue(ids2included(testGoal));
 
       await GoalModel.createGoal(testOwner, testData, testReqCtx);
 
-      expect(dbClient.goal.create).toBeCalledWith({
+      expect(db.goal.create).toBeCalledWith({
         data: {
           title: testData.title,
           description: '',
@@ -213,12 +213,12 @@ describe(GoalModel, () => {
         workIds: [-27, -28, -29],
         tagIds: [-30, -31, -32],
       });
-      dbClient.goal.update.mockResolvedValue(ids2included(testGoal));
+      db.goal.update.mockResolvedValue(ids2included(testGoal));
 
       const updated = await GoalModel.updateGoal(testOwner, testGoal, testData, testReqCtx);
 
       expect(updated).toEqual(testGoal);
-      expect(dbClient.goal.update).toBeCalledWith({
+      expect(db.goal.update).toBeCalledWith({
         where: {
           id: testGoal.id,
           ownerId: testOwner.id,
@@ -257,11 +257,11 @@ describe(GoalModel, () => {
         workIds: [-27, -28, -29],
         tagIds: [-30, -31, -32],
       });
-      dbClient.goal.update.mockResolvedValue(ids2included(testGoal));
+      db.goal.update.mockResolvedValue(ids2included(testGoal));
 
       await GoalModel.updateGoal(testOwner, testGoal, testData, testReqCtx);
 
-      expect(dbClient.goal.update).toBeCalledWith({
+      expect(db.goal.update).toBeCalledWith({
         where: {
           id: testGoal.id,
           ownerId: testOwner.id,
@@ -279,12 +279,12 @@ describe(GoalModel, () => {
   describe(GoalModel.deleteGoal, () => {
     it('deletes a goal', async () => {
       const testGoal = mockObject<Goal>({ id: TEST_OBJECT_ID, workIds: [], tagIds: [] });
-      dbClient.goal.update.mockResolvedValue(ids2included(testGoal));
+      db.goal.update.mockResolvedValue(ids2included(testGoal));
 
       const deleted = await GoalModel.deleteGoal(testOwner, testGoal, testReqCtx);
 
       expect(deleted).toEqual(testGoal);
-      expect(dbClient.goal.update).toBeCalledWith({
+      expect(db.goal.update).toBeCalledWith({
         where: {
           id: testGoal.id,
           ownerId: testOwner.id,
@@ -306,12 +306,12 @@ describe(GoalModel, () => {
   describe(GoalModel.undeleteGoal, () => {
     it('undeletes a goal', async () => {
       const testGoal = mockObject<Goal>({ id: TEST_OBJECT_ID, workIds: [], tagIds: [] });
-      dbClient.goal.update.mockResolvedValue(ids2included(testGoal));
+      db.goal.update.mockResolvedValue(ids2included(testGoal));
 
       const deleted = await GoalModel.undeleteGoal(testOwner, testGoal, testReqCtx);
 
       expect(deleted).toEqual(testGoal);
-      expect(dbClient.goal.update).toBeCalledWith({
+      expect(db.goal.update).toBeCalledWith({
         where: {
           id: testGoal.id,
           ownerId: testOwner.id,
@@ -332,7 +332,7 @@ describe(GoalModel, () => {
 
   describe(GoalModel.getTargetTotals, () => {
     it('gets totals for all the targets belonging to a user', async () => {
-      dbClient.$queryRawUnsafe.mockResolvedValue([
+      db.$queryRawUnsafe.mockResolvedValue([
         { goalId: TEST_OBJECT_ID, total: 1000 },
         { goalId: TEST_OBJECT_ID - 1, total: 2000 },
         { goalId: TEST_OBJECT_ID - 2, total: 3000 },
@@ -363,12 +363,12 @@ describe(GoalModel, () => {
         endDate: '2024-07-15',
       });
       const testTallies = mockObjects<Tally>(10);
-      dbClient.tally.findMany.mockResolvedValue(testTallies);
+      db.tally.findMany.mockResolvedValue(testTallies);
 
       const tallies = await GoalModel.DEPRECATED_getTalliesForGoal(testGoal);
 
       expect(tallies).toBe(testTallies);
-      expect(dbClient.tally.findMany).toBeCalledWith({
+      expect(db.tally.findMany).toBeCalledWith({
         where: {
           ownerId: testGoal.ownerId,
           state: TALLY_STATE.ACTIVE,
@@ -398,12 +398,12 @@ describe(GoalModel, () => {
         endDate: null,
       });
       const testTallies = mockObjects<Tally>(11);
-      dbClient.tally.findMany.mockResolvedValue(testTallies);
+      db.tally.findMany.mockResolvedValue(testTallies);
 
       const tallies = await GoalModel.DEPRECATED_getTalliesForGoal(testGoal);
 
       expect(tallies).toBe(testTallies);
-      expect(dbClient.tally.findMany).toBeCalledWith({
+      expect(db.tally.findMany).toBeCalledWith({
         where: {
           ownerId: testGoal.ownerId,
           state: TALLY_STATE.ACTIVE,
@@ -433,12 +433,12 @@ describe(GoalModel, () => {
         endDate: null,
       });
       const testTallies = mockObjects<Tally>(11);
-      dbClient.tally.findMany.mockResolvedValue(testTallies);
+      db.tally.findMany.mockResolvedValue(testTallies);
 
       const tallies = await GoalModel.DEPRECATED_getTalliesForGoal(testGoal);
 
       expect(tallies).toBe(testTallies);
-      expect(dbClient.tally.findMany).toBeCalledWith({
+      expect(db.tally.findMany).toBeCalledWith({
         where: {
           ownerId: testGoal.ownerId,
           state: TALLY_STATE.ACTIVE,

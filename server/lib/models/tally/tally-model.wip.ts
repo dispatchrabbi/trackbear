@@ -1,4 +1,4 @@
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { type Tally } from 'generated/prisma/client';
 
 import { type RequestContext } from '../../request-context.ts';
@@ -32,7 +32,8 @@ export type TallyFilter = {
 export class TallyModel {
   @traced
   static async getTallies(owner: User, filter: TallyFilter = {}): Promise<Tally[]> {
-    const tallies = await dbClient.tally.findMany({
+    const db = getDbClient();
+    const tallies = await db.tally.findMany({
       where: {
         ownerId: owner.id,
         state: TALLY_STATE.ACTIVE,
@@ -52,7 +53,8 @@ export class TallyModel {
 
   @traced
   static async getTally(owner: User, id: number): Promise<Tally | null> {
-    const tally = await dbClient.tally.findUnique({
+    const db = getDbClient();
+    const tally = await db.tally.findUnique({
       where: {
         id: id,
         ownerId: owner.id,
@@ -71,7 +73,8 @@ export class TallyModel {
   // TODO: move this to a batch creation domain
   @traced
   static async batchCreateTallies(owner: User, data: BatchTallyData[], reqCtx: RequestContext): Promise<Tally[]> {
-    const createds = await dbClient.tally.createManyAndReturn({
+    const db = getDbClient();
+    const createds = await db.tally.createManyAndReturn({
       data: data.map(tallyData => ({
         state: TALLY_STATE.ACTIVE,
         ownerId: owner.id,
@@ -105,7 +108,8 @@ export class TallyModel {
   @traced
   static async deleteTally(owner: User, tally: Tally, reqCtx: RequestContext): Promise<Tally> {
     // we actually delete deleted tallies
-    const deleted = await dbClient.tally.delete({
+    const db = getDbClient();
+    const deleted = await db.tally.delete({
       where: {
         id: tally.id,
         ownerId: owner.id,

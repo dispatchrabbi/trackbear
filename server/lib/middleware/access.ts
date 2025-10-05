@@ -1,7 +1,7 @@
 import type { User } from 'generated/prisma/client';
 import type { Request, Response, NextFunction } from 'express';
 
-import dbClient from '../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { failure } from '../../lib/api-response.ts';
 import { FAILURE_CODES } from '../../lib/api-response-codes.ts';
 import { ACCESS_TYPE, AccessType, AUTHORIZATION_SCHEME } from '../auth-consts.ts';
@@ -93,7 +93,8 @@ export async function requireAdminUser(req: WithSessionAuth<Request>, res: Respo
   }
   setUserOnRequest(req, user, ACCESS_TYPE.LOGIN);
 
-  const adminPerms = await dbClient.adminPerms.findUnique({ where: { userId: user.id } });
+  const db = getDbClient();
+  const adminPerms = await db.adminPerms.findUnique({ where: { userId: user.id } });
   // don't leak info about whether they even ever have been an admin
   if(!adminPerms || !adminPerms.isAdmin) {
     return forbidden(res);

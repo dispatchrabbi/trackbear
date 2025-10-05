@@ -2,7 +2,7 @@ import { EmailParams, Sender, Recipient } from 'mailersend';
 import { sendEmail } from '../email.ts';
 
 import type { User, PasswordResetLink } from 'generated/prisma/client';
-import dbClient from '../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { PASSWORD_RESET_LINK_STATE } from '../models/user/consts.ts';
 
 import { getNormalizedEnv } from '../env.ts';
@@ -10,7 +10,8 @@ import { logAuditEvent, TRACKBEAR_SYSTEM_ID } from '../audit-events.ts';
 import { USER_STATE } from '../models/user/consts.ts';
 
 async function handler(task) {
-  const resetLink = await dbClient.passwordResetLink.findUnique({
+  const db = getDbClient();
+  const resetLink = await db.passwordResetLink.findUnique({
     where: {
       uuid: task.resetUuid,
       state: PASSWORD_RESET_LINK_STATE.ACTIVE,

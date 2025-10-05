@@ -3,7 +3,7 @@ import { parse, format, startOfDay, subDays } from 'date-fns';
 
 import { traced } from '../../metrics/tracer.ts';
 
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { importRawSql } from 'server/lib/sql.ts';
 import { USER_STATE } from '../user/consts.ts';
 
@@ -32,7 +32,8 @@ const weeklyUsersSql = await importRawSql(path.resolve(import.meta.dirname, './s
 export class ServiceStatsModel {
   @traced
   static async getDailySignups(): Promise<DailyStat[]> {
-    const results: { date: string; signups: number }[] = await dbClient.$queryRawUnsafe(dailySignupsSql);
+    const db = getDbClient();
+    const results: { date: string; signups: number }[] = await db.$queryRawUnsafe(dailySignupsSql);
 
     const signupsByDay = results.map(({ date, signups }) => ({ date, count: Number(signups) }));
 
@@ -41,7 +42,8 @@ export class ServiceStatsModel {
 
   @traced
   static async getWeeklySignups(): Promise<WeeklyStat[]> {
-    const results: { weekNumber: string; signups: number }[] = await dbClient.$queryRawUnsafe(weeklySignupsSql);
+    const db = getDbClient();
+    const results: { weekNumber: string; signups: number }[] = await db.$queryRawUnsafe(weeklySignupsSql);
 
     const now = new Date();
     const signupsByWeek = results.map(({ weekNumber, signups }) => {
@@ -55,7 +57,8 @@ export class ServiceStatsModel {
 
   @traced
   static async getDailyUsers(): Promise<DailyStat[]> {
-    const results: { date: string; activeUsers: number }[] = await dbClient.$queryRawUnsafe(dailyUsersSql);
+    const db = getDbClient();
+    const results: { date: string; activeUsers: number }[] = await db.$queryRawUnsafe(dailyUsersSql);
 
     const usersByDay = results.map(({ date, activeUsers }) => ({ date, count: Number(activeUsers) }));
 
@@ -64,7 +67,8 @@ export class ServiceStatsModel {
 
   @traced
   static async getWeeklyUsers(): Promise<WeeklyStat[]> {
-    const results: { weekNumber: string; activeUsers: number }[] = await dbClient.$queryRawUnsafe(weeklyUsersSql);
+    const db = getDbClient();
+    const results: { weekNumber: string; activeUsers: number }[] = await db.$queryRawUnsafe(weeklyUsersSql);
 
     const now = new Date();
     const usersByWeek = results.map(({ weekNumber, activeUsers }) => {
@@ -78,13 +82,14 @@ export class ServiceStatsModel {
 
   @traced
   static async getUserStats(): Promise<UserStats> {
-    const active = await dbClient.user.count({
+    const db = getDbClient();
+    const active = await db.user.count({
       where: {
         state: USER_STATE.ACTIVE,
       },
     });
 
-    const verified = await dbClient.user.count({
+    const verified = await db.user.count({
       where: {
         state: USER_STATE.ACTIVE,
         isEmailVerified: true,
@@ -93,7 +98,7 @@ export class ServiceStatsModel {
 
     const now = new Date();
 
-    const signedUpLast7Days = await dbClient.user.count({
+    const signedUpLast7Days = await db.user.count({
       where: {
         state: USER_STATE.ACTIVE,
         createdAt: {
@@ -102,7 +107,7 @@ export class ServiceStatsModel {
       },
     });
 
-    const signedUpLast30Days = await dbClient.user.count({
+    const signedUpLast30Days = await db.user.count({
       where: {
         state: USER_STATE.ACTIVE,
         createdAt: {

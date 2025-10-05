@@ -9,7 +9,7 @@ import { addDays } from 'date-fns';
 import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();
 
-import dbClient from '../../lib/db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { type User } from 'generated/prisma/client';
 import { USERNAME_REGEX, USER_STATE, ALLOWED_AVATAR_FORMATS } from '../../lib/models/user/consts.ts';
 import type { FullUser, UserSettings } from 'server/lib/models/user/user-model.ts';
@@ -34,7 +34,8 @@ export type { FullUser };
 
 // GET /me - get your own user information
 export async function handleGetMe(req: RequestWithUser, res: ApiResponse<FullUser>) {
-  const me = await dbClient.user.findUnique({
+  const db = getDbClient();
+  const me = await db.user.findUnique({
     where: {
       id: req.user.id,
       state: USER_STATE.ACTIVE,
@@ -86,9 +87,11 @@ export async function handlePatchMe(req: RequestWithUser, res: ApiResponse<FullU
   const didUsernameChange = 'username' in payload;
   const didEmailChange = 'email' in payload;
 
+  const db = getDbClient();
+
   // ensure this username doesn't already exist for some other user
   if(didUsernameChange) {
-    const existingUserWithThisUsername = await dbClient.user.findMany({
+    const existingUserWithThisUsername = await db.user.findMany({
       where: {
         username: payload.username,
         NOT: {
@@ -106,7 +109,7 @@ export async function handlePatchMe(req: RequestWithUser, res: ApiResponse<FullU
     expiresAt: addDays(new Date(), CONFIG.EMAIL_VERIFICATION_TIMEOUT_IN_DAYS),
   };
 
-  const updated = await dbClient.user.update({
+  const updated = await db.user.update({
     data: {
       ...payload,
       isEmailVerified: didEmailChange ? false : req.user.isEmailVerified,
@@ -130,7 +133,7 @@ export async function handlePatchMe(req: RequestWithUser, res: ApiResponse<FullU
   await logAuditEvent('user:update', req.user.id, req.user.id, null, changeRecord, req.sessionID);
 
   if(didEmailChange) {
-    const pendingEmailVerification = await dbClient.pendingEmailVerification.findFirst({
+    const pendingEmailVerification = await db.pendingEmailVerification.findFirst({
       orderBy: { createdAt: 'desc' },
     });
 
@@ -149,7 +152,8 @@ export async function handlePatchMe(req: RequestWithUser, res: ApiResponse<FullU
 }
 
 export async function handleDeleteMe(req: RequestWithUser, res: ApiResponse<User>) {
-  const deleted = await dbClient.user.update({
+  const db = getDbClient();
+  const deleted = await db.user.update({
     data: {
       state: USER_STATE.DELETED,
     },
@@ -203,7 +207,8 @@ export async function handleUploadAvatar(req: RequestWithUser, res: ApiResponse<
   }
 
   // save this as the user's avatar
-  const updated = await dbClient.user.update({
+  const db = getDbClient();
+  const updated = await db.user.update({
     where: { id: req.user.id },
     data: {
       avatar: filename,
@@ -225,7 +230,8 @@ export async function handleUploadAvatar(req: RequestWithUser, res: ApiResponse<
 
 // DELETE /me/avatar - delete your avatar
 export async function handleDeleteAvatar(req: RequestWithUser, res: ApiResponse<User>) {
-  const updated = await dbClient.user.update({
+  const db = getDbClient();
+  const updated = await db.user.update({
     where: { id: req.user.id },
     data: {
       avatar: null,
@@ -262,7 +268,8 @@ const zSettingsEditPayload = z.object({
 
 // PATCH /me/settings - patch your settings
 export async function handleUpdateSettings(req: RequestWithUser, res: ApiResponse<UserSettings>) {
-  const current = await dbClient.userSettings.findUnique({ where: {
+  const db = getDbClient();
+  const current = await db.userSettings.findUnique({ where: {
     userId: req.user.id,
     user: { state: USER_STATE.ACTIVE },
   } }) as UserSettings;
@@ -279,7 +286,7 @@ export async function handleUpdateSettings(req: RequestWithUser, res: ApiRespons
     }
   }
 
-  const updated = await dbClient.userSettings.update({
+  const updated = await db.userSettings.update({
     data: {
       ...payload,
     },

@@ -1,10 +1,6 @@
-import { vi, expect, describe, it, beforeAll, beforeEach } from 'vitest';
+import { expect, describe, it, beforeAll, beforeEach } from 'vitest';
 
 import { disableEmail } from 'testing-support/env.ts';
-import _testDbClient from '../../testing-support/test-db.ts';
-vi.mock('../lib/db.ts', () => ({
-  default: _testDbClient,
-}));
 
 import { LeaderboardModel } from 'server/lib/models/leaderboard/leaderboard-model.ts';
 import { LeaderboardMemberModel } from 'server/lib/models/leaderboard/leaderboard-member-model.ts';

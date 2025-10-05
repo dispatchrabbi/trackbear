@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import { traced } from '../../metrics/tracer.ts';
 
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { importRawSql } from 'server/lib/sql.ts';
 import type { Create } from '../types.ts';
 
@@ -33,7 +33,8 @@ export type UpdateGoalData = Partial<CreateGoalData>;
 export class GoalModel {
   @traced
   static async getGoals(owner: User): Promise<Goal[]> {
-    const dbGoals = await dbClient.goal.findMany({
+    const db = getDbClient();
+    const dbGoals = await db.goal.findMany({
       where: {
         ownerId: owner.id,
         state: GOAL_STATE.ACTIVE,
@@ -47,7 +48,8 @@ export class GoalModel {
 
   @traced
   static async getGoal(owner: User, id: number): Promise<Goal | null> {
-    const dbGoal = await dbClient.goal.findUnique({
+    const db = getDbClient();
+    const dbGoal = await db.goal.findUnique({
       where: {
         id: id,
         ownerId: owner.id,
@@ -72,7 +74,8 @@ export class GoalModel {
       displayOnProfile: false,
     });
 
-    const dbCreated = await dbClient.goal.create({
+    const db = getDbClient();
+    const dbCreated = await db.goal.create({
       data: {
         state: GOAL_STATE.ACTIVE,
         ownerId: owner.id,
@@ -96,7 +99,8 @@ export class GoalModel {
 
   @traced
   static async updateGoal(owner: User, goal: Goal, data: UpdateGoalData, reqCtx: RequestContext): Promise<Goal> {
-    const dbUpdated = await dbClient.goal.update({
+    const db = getDbClient();
+    const dbUpdated = await db.goal.update({
       where: {
         id: goal.id,
         ownerId: owner.id,
@@ -122,7 +126,8 @@ export class GoalModel {
 
   @traced
   static async deleteGoal(owner: User, goal: Goal, reqCtx: RequestContext): Promise<Goal> {
-    const dbDeleted = await dbClient.goal.update({
+    const db = getDbClient();
+    const dbDeleted = await db.goal.update({
       where: {
         id: goal.id,
         ownerId: owner.id,
@@ -147,7 +152,8 @@ export class GoalModel {
 
   @traced
   static async undeleteGoal(owner: User, goal: Goal, reqCtx: RequestContext): Promise<Goal> {
-    const dbUndeleted = await dbClient.goal.update({
+    const db = getDbClient();
+    const dbUndeleted = await db.goal.update({
       where: {
         id: goal.id,
         ownerId: owner.id,
@@ -172,8 +178,10 @@ export class GoalModel {
 
   @traced
   static async getTargetTotals(owner: User): Promise<Map<number, number>> {
+    const db = getDbClient();
+
     type TargetTotal = { goalId: number; total: number };
-    const results: TargetTotal[] = await dbClient.$queryRawUnsafe(getTargetTotalsRawSql, owner.id);
+    const results: TargetTotal[] = await db.$queryRawUnsafe(getTargetTotalsRawSql, owner.id);
 
     const resultsMap = new Map<number, number>();
     for(const result of results) {
@@ -187,7 +195,8 @@ export class GoalModel {
   static async DEPRECATED_getTalliesForGoal(goal: Goal): Promise<Tally[]> {
     const measure = this.DEPRECATED_getMeasureFromGoal(goal);
 
-    return await dbClient.tally.findMany({
+    const db = getDbClient();
+    return await db.tally.findMany({
       where: {
         ownerId: goal.ownerId,
         state: TALLY_STATE.ACTIVE,

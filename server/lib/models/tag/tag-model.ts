@@ -1,7 +1,7 @@
 import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();
 
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { type Tag } from 'generated/prisma/client';
 
 import { type RequestContext } from '../../request-context.ts';
@@ -24,7 +24,8 @@ export type TagData = {
 export class TagModel {
   @traced
   static async getTags(owner: User): Promise<Tag[]> {
-    const tags = await dbClient.tag.findMany({
+    const db = getDbClient();
+    const tags = await db.tag.findMany({
       where: {
         ownerId: owner.id,
         state: TAG_STATE.ACTIVE,
@@ -36,7 +37,8 @@ export class TagModel {
 
   @traced
   static async getTag(owner: User, id: number): Promise<Tag | null> {
-    const tag = await dbClient.tag.findUnique({
+    const db = getDbClient();
+    const tag = await db.tag.findUnique({
       where: {
         id: id,
         ownerId: owner.id,
@@ -53,7 +55,8 @@ export class TagModel {
 
   @traced
   static async getTagByName(owner: User, name: string): Promise<Tag | null> {
-    const tags = await dbClient.tag.findMany({
+    const db = getDbClient();
+    const tags = await db.tag.findMany({
       where: {
         name: name,
         ownerId: owner.id,
@@ -90,7 +93,8 @@ export class TagModel {
       color: TAG_DEFAULT_COLOR,
     });
 
-    const created = await dbClient.tag.create({
+    const db = getDbClient();
+    const created = await db.tag.create({
       data: {
         ...dataWithDefaults,
         state: TAG_STATE.ACTIVE,
@@ -110,7 +114,8 @@ export class TagModel {
       data.name = await this.validateTagName(owner, data.name!, tag.id);
     }
 
-    const updated = await dbClient.tag.update({
+    const db = getDbClient();
+    const updated = await db.tag.update({
       where: {
         id: tag.id,
         ownerId: owner.id,
@@ -126,7 +131,8 @@ export class TagModel {
 
   @traced
   static async deleteTag(owner: User, tag: Tag, reqCtx: RequestContext): Promise<Tag> {
-    const deleted = await dbClient.tag.delete({
+    const db = getDbClient();
+    const deleted = await db.tag.delete({
       where: {
         id: tag.id,
         ownerId: owner.id,

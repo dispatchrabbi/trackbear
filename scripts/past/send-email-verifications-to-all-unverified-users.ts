@@ -6,7 +6,7 @@ import { addDays } from 'date-fns';
 
 import { initLoggers, getLogger } from '../../server/lib/logger.ts';
 
-import dbClient from '../../server/lib/db.ts';
+import { initDbClient, getDbClient } from 'server/lib/db.ts';
 import type { User } from 'generated/prisma/client';
 import { USER_STATE } from '../../server/lib/models/user/consts.ts';
 
@@ -20,13 +20,21 @@ async function main() {
   await initLoggers();
   const scriptLogger = getLogger('default').child({ service: 'send-email-verifications-to-all-unverified-users.ts' });
 
+  initDbClient(
+    process.env.DATABASE_USER!,
+    process.env.DATABASE_PASSWORD!,
+    process.env.DATABASE_HOST!,
+    process.env.DATABASE_NAME!,
+  );
+  const db = getDbClient();
+
   await initQueue();
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 
   let users: User[];
   try {
-    users = await dbClient.user.findMany({
+    users = await db.user.findMany({
       where: {
         isEmailVerified: false,
         state: USER_STATE.ACTIVE,
@@ -44,7 +52,7 @@ async function main() {
   for(const user of users) {
     try {
       scriptLogger.info(`Creating the pending email verification for ${user.id}...`);
-      const verification = await dbClient.pendingEmailVerification.create({
+      const verification = await db.pendingEmailVerification.create({
         data: {
           userId: user.id,
           newEmail: user.email,

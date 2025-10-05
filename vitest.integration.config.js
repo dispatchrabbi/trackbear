@@ -6,6 +6,7 @@ export default defineConfig({
     include: 'server/integration-tests/**/*.test.ts',
     setupFiles: [
       'testing-support/test-setup/mock-logger.ts',
+      'testing-support/test-setup/test-db.ts',
     ],
   },
   plugins: [

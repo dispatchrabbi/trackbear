@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 import { initLoggers, getLogger } from '../../server/lib/logger.ts';
 
-import dbClient from '../../server/lib/db.ts';
+import { initDbClient, getDbClient } from 'server/lib/db.ts';
 
 import { addDays, isBefore } from 'date-fns';
 import { parseDateString, formatDate } from '../../src/lib/date.ts';
@@ -60,6 +60,14 @@ async function main() {
   dotenv.config();
   await initLoggers();
   const scriptLogger = getLogger('default').child({ service: 'add-demo-data.ts' });
+
+  initDbClient(
+    process.env.DATABASE_USER!,
+    process.env.DATABASE_PASSWORD!,
+    process.env.DATABASE_HOST!,
+    process.env.DATABASE_NAME!,
+  );
+  const db = getDbClient();
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 
@@ -136,7 +144,7 @@ async function main() {
   }
 
   scriptLogger.info('Entering the data into the database...');
-  const result = await dbClient.tally.createMany({
+  const result = await db.tally.createMany({
     data: tallies,
   });
 
@@ -144,11 +152,7 @@ async function main() {
 }
 
 main()
-  .then(async () => {
-    await dbClient.$disconnect();
-  })
   .catch(async e => {
     console.error(e);
-    await dbClient.$disconnect();
     process.exit(1);
   });

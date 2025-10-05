@@ -1,4 +1,4 @@
-import dbClient from '../../db.ts';
+import { getDbClient } from 'server/lib/db.ts';
 import { type AdminPerms } from 'generated/prisma/client';
 
 import { RecordNotFoundError } from '../errors.ts';
@@ -11,7 +11,8 @@ export type { AdminPerms };
 export class AdminPermsModel {
   @traced
   static async getAdminPerms(userId: number): Promise<AdminPerms> {
-    const adminPerms = await dbClient.adminPerms.findUnique({
+    const db = getDbClient();
+    const adminPerms = await db.adminPerms.findUnique({
       where: {
         userId,
         user: { state: USER_STATE.ACTIVE },

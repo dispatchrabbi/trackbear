@@ -1,18 +1,78 @@
-import process from 'node:process';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from 'generated/prisma/client';
 
-// using getNormalizedEnv here inserts the need for an env into a _lot_ of places it doesn't otherwise need to be
-// and in particular screws up testing. We'll be fine for now just accessing the DB like this...
-// but in the future, we should probably make a function to get a dbClient or make it a Proxy or something so that we
-// can in fact use the type safety of getNormalizedEnv.
-const connectionString = `postgresql://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}/${process.env.DATABASE_NAME}`;
+let client: PrismaClient | null = null;
 
-const adapter = new PrismaPg({ connectionString });
-const dbClient = new PrismaClient({ adapter });
+export function initDbClient(
+  dbUser: string,
+  dbPassword: string,
+  dbHost: string,
+  dbName: string,
+  dbSchema: string = 'public',
+) {
+  const connectionString = makeConnectionString(
+    dbUser,
+    dbPassword,
+    dbHost,
+    dbName,
+    dbSchema,
+  );
+  const adapter = new PrismaPg({ connectionString }, { schema: dbSchema });
+  client = new PrismaClient({ adapter });
+}
 
-export default dbClient;
+export async function disconnectDbClient() {
+  await client?.$disconnect();
+  client = null;
+}
+
+export function getDbClient(): PrismaClient {
+  if(client === null) {
+    throw new Error('Cannot get database client because it has not yet been initialized!');
+  }
+
+  return client;
+}
 
 export async function testDatabaseConnection() {
-  await dbClient.$queryRaw`SELECT 1 + 1 AS two;`;
+  const db = getDbClient();
+  await db.$queryRaw`SELECT 1 + 1 AS two;`;
+}
+export async function testDatabaseConnectionSafe() {
+  try {
+    await testDatabaseConnection();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function makeConnectionString(
+  dbUser: string,
+  dbPassword: string,
+  dbHost: string,
+  dbName: string,
+  dbSchema: string = 'public',
+) {
+  if(dbUser.length === 0) {
+    throw new Error('Database user was not set');
+  }
+
+  if(dbPassword.length === 0) {
+    throw new Error('Database password was not set');
+  }
+
+  if(dbHost.length === 0) {
+    throw new Error('Database host was not set');
+  }
+
+  if(dbName.length === 0) {
+    throw new Error('Database name was not set');
+  }
+
+  if(dbSchema.length === 0) {
+    throw new Error('Database schema was not set');
+  }
+
+  return `postgresql://${dbUser}:${dbPassword}@${dbHost}/${dbName}?schema=${dbSchema}`;
 }

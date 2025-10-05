@@ -5,7 +5,7 @@ import { getNormalizedEnv } from '../../server/lib/env.ts';
 
 import { initLoggers, getLogger } from '../../server/lib/logger.ts';
 
-import dbClient from '../../server/lib/db.ts';
+import { initDbClient, getDbClient } from 'server/lib/db.ts';
 import { LEADERBOARD_PARTICIPANT_STATE } from '../../server/lib/models/leaderboard/consts.ts';
 
 async function main() {
@@ -15,6 +15,14 @@ async function main() {
 
   await initLoggers();
   const scriptLogger = getLogger('default').child({ service: 'add-owners-to-boards.ts' });
+
+  initDbClient(
+    process.env.DATABASE_USER!,
+    process.env.DATABASE_PASSWORD!,
+    process.env.DATABASE_HOST!,
+    process.env.DATABASE_NAME!,
+  );
+  const db = getDbClient();
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 
@@ -29,14 +37,14 @@ async function main() {
   };
 
   scriptLogger.info(`Getting all boards...`);
-  const allBoards = await dbClient.board.findMany();
+  const allBoards = await db.board.findMany();
 
   for(const board of allBoards) {
     scriptLogger.info(`Examining board ${board.id}/${board.uuid} (${board.title}), owned by ${board.ownerId}`);
     report.boardsExamined++;
 
     scriptLogger.info(`  - Finding the participant record for the owner...`);
-    const ownerParticipant = await dbClient.boardParticipant.findUnique({
+    const ownerParticipant = await db.boardParticipant.findUnique({
       where: {
         userId_boardId: {
           userId: board.ownerId,
@@ -48,7 +56,7 @@ async function main() {
     if(ownerParticipant) {
       scriptLogger.info(`  - Found! Setting the isOwner flag...`);
 
-      await dbClient.boardParticipant.update({
+      await db.boardParticipant.update({
         where: {
           id: ownerParticipant.id,
         },
@@ -61,7 +69,7 @@ async function main() {
     } else {
       scriptLogger.info(`  - Not found! Creating a participant with the isOwner flag but NOT the isParticipant flag...`);
 
-      await dbClient.boardParticipant.create({
+      await db.boardParticipant.create({
         data: {
           state: LEADERBOARD_PARTICIPANT_STATE.ACTIVE,
           userId: board.ownerId,
@@ -77,14 +85,14 @@ async function main() {
   }
 
   scriptLogger.info(`Double-checking our work...`);
-  const allBoardsAgain = await dbClient.board.findMany();
+  const allBoardsAgain = await db.board.findMany();
 
   for(const board of allBoardsAgain) {
     scriptLogger.info(`Examining board ${board.id}/${board.uuid} (${board.title}), owned by ${board.ownerId}`);
     report.boardsRecalled++;
 
     scriptLogger.info(`  - Finding the participant record for the owner...`);
-    const ownerParticipant = await dbClient.boardParticipant.findUnique({
+    const ownerParticipant = await db.boardParticipant.findUnique({
       where: {
         userId_boardId: {
           userId: board.ownerId,
