@@ -168,7 +168,7 @@ function handlePlotDoubleclick(ev: MouseEvent) {
   if(!chartContainer.value) { return; }
 
   const svgEl = chartContainer.value.querySelector(`svg`) as SVGSVGElement;
-  saveSvgAsPng(svgEl, 'chart.png', chartColors.value.background);
+  saveSvgAsPng(svgEl, 'chart.png');
 }
 
 function renderChart() {

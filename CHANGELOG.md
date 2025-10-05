@@ -12,6 +12,12 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.4.0
+
+- NEW: Teams have come to leaderboards! You can now make teams for your leaderboard and assign your members to those teams, or let your members assign themselves. When teams are enabled, leaderboard charts will show totals and progress by team rather than by member. Teams are available for all kinds of leaderboards, even in individual goal mode! (h/t Asha)
+- CHANGED: When saving a chart, the image now has some extra padding.
+- FIXED: When saving a chart in dark mode, the image now has the correct colors. (h/t Alexandra)
+
 ## 1.3.11
 
 - CHANGED: After creating a leaderboard, you will now be redirected to that leaderboard instead of to the list of leaderboards.

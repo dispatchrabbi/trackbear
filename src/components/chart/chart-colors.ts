@@ -14,9 +14,9 @@ export type ChartColors = {
 
 const LIGHT_CHART_COLORS: ChartColors = {
   theme: 'light',
-  text: themeColors.surface[900],
+  text: themeColors.surface[950],
   secondaryText: themeColors.surface[300],
-  background: themeColors.surface[50],
+  background: themeColors.surface[0],
   par: themeColors.primary[500],
   data: createColorCycle(
     ['red', 'orange', 'green', 'blue', 'purple', 'pink'],
@@ -26,7 +26,7 @@ const LIGHT_CHART_COLORS: ChartColors = {
 
 const DARK_CHART_COLORS: ChartColors = {
   theme: 'dark',
-  text: themeColors.surface[50],
+  text: themeColors.surface[0],
   secondaryText: themeColors.surface[600],
   background: themeColors.surface[800],
   par: themeColors.primary[300],

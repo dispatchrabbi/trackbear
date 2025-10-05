@@ -5,7 +5,6 @@ import { type ValueEnum } from 'server/lib/obj';
 import { type LeaderboardMeasure } from 'server/lib/models/leaderboard/consts';
 import { type SeriesInfoMap, type SeriesTallyish, createChartSeries, createParSeries, determineChartIntervals } from './chart-functions';
 import { formatDate } from 'src/lib/date';
-import { useChartColors } from './chart-colors';
 import { saveSvgAsPng } from 'src/lib/image';
 
 import { PrimeIcons } from 'primevue/api';
@@ -104,13 +103,12 @@ function handleClickFullscreen() {
 }
 
 const progressChartRef = useTemplateRef('progress-chart');
-const chartColors = useChartColors();
 function handleClickSave() {
   if(!progressChartRef.value) { return; }
 
   const svgEl = progressChartRef.value.querySelector('svg[class^="plot-"]') as SVGSVGElement;
   const filename = `${filenameify(props.graphTitle)}-${formatDate(new Date())}.png`;
-  saveSvgAsPng(svgEl, filename, chartColors.value.background);
+  saveSvgAsPng(svgEl, filename);
 }
 
 </script>

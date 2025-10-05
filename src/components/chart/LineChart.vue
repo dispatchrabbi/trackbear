@@ -121,6 +121,8 @@ function renderChart() {
     style: {
       fontFamily: 'Jost, sans-serif',
       fontSize: '0.75rem',
+      color: chartColors.value.text,
+      backgroundColor: chartColors.value.background,
     },
     figure: true,
     // the plot should be a 16:9 aspect ratio

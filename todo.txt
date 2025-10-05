@@ -1,5 +1,5 @@
 (A) Create a generic importer (h/t Trax) dif:5 @backend @frontend +import
-(A) Group participants into teams and compare team totals (h/t Asha) dif:5 @boards +boardsv2
+x (A) Group participants into teams and compare team totals (h/t Asha) dif:5 @boards +boardsv2
 x (A) Allow participants to pick their own chart color (if they are not on teams) dif:2 @boards +boardsv2
 (A) Separate join code from UUID and allow rolling the code dif:3 @boards +boardsv2
 (A) Allow viewing leaderboards without logging in dif:3 @boards
