@@ -66,7 +66,7 @@ const orderedGroups = computed(() => {
     <div
       v-for="group of orderedGroups"
       :key="group.id"
-      class="flex-auto member-roster-group"
+      class="grow shrink member-roster-group"
     >
       <h3 class="text-l font-light font-heading text-balance">
         {{ group.name }}
