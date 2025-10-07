@@ -16,7 +16,7 @@ const testSchemaName = `test-${v4()}`;
 const connectionString = makeTestDatabaseConnectionString();
 const connectionStringWithSchema = connectionString + '?schema=' + testSchemaName;
 
-console.log(`Creating client for database ${connectionString}...`);
+console.log(`Creating client for database ${connectionStringWithSchema}...`);
 const adapter = new PrismaPg({ connectionString }, { schema: testSchemaName });
 const dbClient = new PrismaClient({
   adapter,
@@ -26,14 +26,16 @@ export default dbClient;
 
 // create the database
 const prismaBinary = path.join(import.meta.dirname, '../node_modules/.bin/prisma');
-beforeEach(() => {
-  console.log(`Creating database ${connectionString}...`);
+beforeEach(async () => {
+  console.log(`Creating database ${connectionStringWithSchema}...`);
   execSync(`${prismaBinary} db push`, {
     env: {
       ...process.env,
       DATABASE_URL: connectionStringWithSchema,
     },
   });
+
+  await dbClient.$queryRaw`SELECT 1 + 1 AS two;`;
 });
 
 // remove the database
