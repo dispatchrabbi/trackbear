@@ -54,7 +54,7 @@ function renderChart() {
   // now we add the data points
   const data = props.data.map(datapoint => ({
     series: datapoint.series,
-    date: parseDateString(datapoint.date),
+    date: parseDateString(datapoint.date, true),
     value: datapoint.value,
   }));
 

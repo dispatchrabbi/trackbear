@@ -1,17 +1,17 @@
 import { parseISO, format, Day } from 'date-fns';
 
 const DATE_STRING_REGEX = /^\d{4}-\d{2}-\d{2}$/;
-export function parseDateString(dateString: string): Date {
+export function parseDateString(dateString: string, forceUTC: boolean = false): Date {
   const isDateString = DATE_STRING_REGEX.test(dateString);
   if(!isDateString) {
     throw new Error(`${dateString} is not a datestring!`);
   }
 
   // Temporal when
-  return parseISO(dateString);
+  return parseISO(dateString + (forceUTC ? 'T00:00:00Z' : ''));
 }
 
-export function parseDateStringSafe(dateString: string | null): Date | null {
+export function parseDateStringSafe(dateString: string | null, forceUTC: boolean = false): Date | null {
   if(dateString === null) {
     return null;
   }
@@ -20,7 +20,7 @@ export function parseDateStringSafe(dateString: string | null): Date | null {
   if(!isDateString) { return null; }
 
   // Temporal when
-  return parseISO(dateString);
+  return parseISO(dateString + (forceUTC ? 'T00:00:00Z' : ''));
 }
 
 export function formatDate(date: Date): string {

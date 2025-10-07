@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Fixed a bug that sometimes caused graph axes to be one day behind where they should be for users in the eastern hemisphere. (h/t LucyGodwing)
+
 ## 1.4.0
 
 - NEW: Teams have come to leaderboards! You can now make teams for your leaderboard and assign your members to those teams, or let your members assign themselves. When teams are enabled, leaderboard charts will show totals and progress by team rather than by member. Teams are available for all kinds of leaderboards, even in individual goal mode! (h/t Asha)

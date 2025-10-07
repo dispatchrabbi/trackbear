@@ -61,7 +61,7 @@ function renderChart() {
   // now we add the data points
   const data = props.data.map(datapoint => ({
     series: datapoint.series,
-    date: parseDateString(datapoint.date),
+    date: parseDateString(datapoint.date, true),
     value: datapoint.value,
   }));
 
@@ -72,14 +72,14 @@ function renderChart() {
         z: 'series',
         fill: 'series',
         order: seriesOrder,
-      } :
+      } satisfies Plot.BarYOptions :
       {
         x: 'date',
         y1: () => 0,
         y2: 'value',
         z: 'series',
         fill: 'series',
-      };
+      } satisfies Plot.BarYOptions;
   const dataBarMark = Plot.barY(data, barMarkConfig);
 
   marks.push(dataBarMark);
