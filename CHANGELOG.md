@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.4.1
+
 - FIXED: Fixed a bug that sometimes caused graph axes to be one day behind where they should be for users in the eastern hemisphere. (h/t LucyGodwing)
 
 ## 1.4.0
