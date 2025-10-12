@@ -35,7 +35,7 @@
   },
   "include": [
     "help-docs/**/*.ts", "help-docs/.vitepress/**/*.ts",
-    "prisma/**/*.ts",
+    "prisma.config.ts", "prisma/**/*.ts",
     "scripts/**/*.ts", "scripts/**/*.js",
     "src/**/*.ts", "src/**/*.js", "src/**/*.vue",
     "server/**/*.ts",

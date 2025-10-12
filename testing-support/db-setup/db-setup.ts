@@ -5,7 +5,15 @@ import { PrismaClient } from 'generated/prisma/client';
 import { makeConnectionString } from 'server/lib/db.ts';
 
 export function createDatabase(schemaName: string) {
-  const connectionString = makeConnectionStringFromEnv(schemaName);
+  process.env.DATABASE_SCHEMA = schemaName;
+  const connectionString = makeConnectionStringFromEnv();
+
+  execSync(`npx prisma validate`, {
+    env: {
+      ...process.env,
+      DATABASE_URL: connectionString,
+    },
+  });
 
   execSync(`npx prisma db push`, {
     env: {
@@ -22,7 +30,7 @@ export async function dropDatabase(schemaName: string, db: PrismaClient) {
   await db.$disconnect();
 }
 
-export function makeConnectionStringFromEnv(schemaName: string) {
+export function makeConnectionStringFromEnv() {
   for(const envVar of [
     'DATABASE_USER',
     'DATABASE_PASSWORD',
@@ -39,7 +47,7 @@ export function makeConnectionStringFromEnv(schemaName: string) {
     process.env.DATABASE_PASSWORD!,
     process.env.DATABASE_HOST!,
     process.env.DATABASE_NAME!,
-    schemaName,
+    process.env.DATABASE_SCHEMA ?? undefined,
   );
   return connectionString;
 }

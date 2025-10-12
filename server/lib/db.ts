@@ -1,6 +1,7 @@
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from 'generated/prisma/client';
+import { PrismaClient } from '../../generated/prisma/client';
 
+let adapter: PrismaPg | null = null;
 let client: PrismaClient | null = null;
 
 export function initDbClient(
@@ -17,13 +18,21 @@ export function initDbClient(
     dbName,
     dbSchema,
   );
-  const adapter = new PrismaPg({ connectionString }, { schema: dbSchema });
+  adapter = new PrismaPg({ connectionString }, { schema: dbSchema });
   client = new PrismaClient({ adapter });
 }
 
 export async function disconnectDbClient() {
   await client?.$disconnect();
   client = null;
+}
+
+export function getDbAdapter(): PrismaPg {
+  if(adapter === null) {
+    throw new Error('Cannot get adapter client because it has not yet been initialized!');
+  }
+
+  return adapter;
 }
 
 export function getDbClient(): PrismaClient {
