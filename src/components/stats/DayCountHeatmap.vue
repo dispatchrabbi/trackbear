@@ -5,12 +5,12 @@ import type { DayCount } from 'src/lib/api/stats.ts';
 import { parseDateString, cmpByDate, formatDate } from 'src/lib/date.ts';
 
 import Card from 'primevue/card';
-import PlotCalendarHeatMap, { CalendarHeatMapDataPoint } from 'src/components/chart/PlotCalendarHeatMap.vue';
+import PlotCalendarHeatMap, { type CalendarHeatMapDataPoint } from 'src/components/chart/PlotCalendarHeatMap.vue';
 
 import { formatCount } from 'src/lib/tally.ts';
 import { eachDayOfInterval } from 'date-fns';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
-import { MeasureCounts } from 'server/lib/models/tally/types';
+import { type MeasureCounts } from 'server/lib/models/tally/types';
 
 const props = withDefaults(defineProps<{
   dayCounts: Array<DayCount>;

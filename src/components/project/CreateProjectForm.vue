@@ -5,7 +5,7 @@ import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 
 import { z } from 'zod';
-import { NonEmptyArray } from 'server/lib/validators.ts';
+import { type NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createProject, type ProjectCreatePayload, type Project } from 'src/lib/api/project';

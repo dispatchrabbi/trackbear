@@ -2,8 +2,8 @@
 import { ref, computed, onMounted } from 'vue';
 
 import {
-  getWeeklyActiveUsers, getWeeklySignups, WeeklyStat,
-  getDailyActiveUsers, getDailySignups, DailyStat,
+  getWeeklyActiveUsers, getWeeklySignups, type WeeklyStat,
+  getDailyActiveUsers, getDailySignups, type DailyStat,
 } from 'src/lib/api/admin/stats.ts';
 
 import AdminLayout from 'src/layouts/AdminLayout.vue';

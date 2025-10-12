@@ -1,4 +1,4 @@
-import { parseISO, format, Day } from 'date-fns';
+import { parseISO, format, type Day } from 'date-fns';
 
 const DATE_STRING_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 export function parseDateString(dateString: string, forceUTC: boolean = false): Date {

@@ -1,6 +1,6 @@
-import { Request, ErrorRequestHandler, RequestHandler, Application } from 'express';
+import { type Request, type ErrorRequestHandler, type RequestHandler, type Application } from 'express';
 import type { WithSessionAuth } from 'server/lib/auth.ts';
-import { ApiResponse, failure } from 'server/lib/api-response.ts';
+import { type ApiResponse, failure } from 'server/lib/api-response.ts';
 import { mountEndpoints, prefixRoutes, type RouteConfig } from 'server/lib/api.ts';
 
 import cors from 'cors';

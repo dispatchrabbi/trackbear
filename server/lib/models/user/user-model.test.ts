@@ -1,8 +1,8 @@
-import { vi, expect, describe, it, afterEach, beforeEach, MockInstance } from 'vitest';
+import { vi, expect, describe, it, afterEach, beforeEach, type MockInstance } from 'vitest';
 import { getTestReqCtx, mockObject, mockObjects, TEST_SESSION_ID, TEST_SYSTEM_ID, TEST_USER_ID, TEST_UUID } from 'testing-support/util';
 
-import { Ticket } from 'better-queue';
-import { CreateUserData, UpdateUserData, UserModel } from './user-model.ts';
+import { type Ticket } from 'better-queue';
+import { type CreateUserData, type UpdateUserData, UserModel } from './user-model.ts';
 import { hash } from '../../hash.ts';
 import type { PasswordResetLink, PendingEmailVerification, User, UserAuth } from 'generated/prisma/client';
 import { ValidationError } from '../errors.ts';

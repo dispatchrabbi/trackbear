@@ -5,10 +5,10 @@ import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 
 import { z } from 'zod';
-import { NonEmptyArray } from 'server/lib/validators.ts';
+import { type NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { updateProject, Project, ProjectUpdatePayload } from 'src/lib/api/project';
+import { updateProject, type Project, type ProjectUpdatePayload } from 'src/lib/api/project';
 import { PROJECT_PHASE } from 'server/lib/models/project/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 

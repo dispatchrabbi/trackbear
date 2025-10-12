@@ -1,10 +1,10 @@
-import { endOfDay, add, Day } from 'date-fns';
+import { endOfDay, add, type Day } from 'date-fns';
 import { formatDate, parseDateString } from 'src/lib/date.ts';
 
 import { type TallyMeasure } from '../tally/consts.ts';
 import type { Goal, GoalCadence, GoalThreshold, HabitGoal, TargetGoal } from './types.ts';
 import { type GoalCadenceUnit, GOAL_CADENCE_UNIT_INFO, GOAL_TYPE } from './consts.ts';
-import { NonEmptyArray } from 'server/lib/validators.ts';
+import { type NonEmptyArray } from 'server/lib/validators.ts';
 
 type TallyLike = {
   date: string;

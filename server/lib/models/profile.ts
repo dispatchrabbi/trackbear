@@ -1,18 +1,18 @@
 import { USER_STATE } from './user/consts.ts';
 import { getDbClient } from 'server/lib/db.ts';
 
-import { add, Day } from 'date-fns';
+import { add, type Day } from 'date-fns';
 import { formatDate } from 'src/lib/date.ts';
 
-import { FullUser, User } from './user/user-model.ts';
+import { type FullUser, type User } from './user/user-model.ts';
 import { PROJECT_STATE } from './project/consts.ts';
 import { TALLY_MEASURE, TALLY_STATE } from './tally/consts.ts';
-import { MeasureCounts } from './tally/types.ts';
+import { type MeasureCounts } from './tally/types.ts';
 import { GOAL_TYPE } from './goal/consts.ts';
-import { analyzeStreaksForHabit, HabitRange, isRangeCurrent } from './goal/helpers.ts';
+import { analyzeStreaksForHabit, type HabitRange, isRangeCurrent } from './goal/helpers.ts';
 import type { TargetGoalParameters, HabitGoalParameters, HabitGoal, TargetGoal } from './goal/types.ts';
 import { GoalModel } from './goal/goal-model.ts';
-import { getDayCounts, DayCount } from './stats.ts';
+import { getDayCounts, type DayCount } from './stats.ts';
 
 type ProfileProjectSummary = {
   uuid: string;

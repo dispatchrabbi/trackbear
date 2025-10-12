@@ -1,4 +1,4 @@
-import { Banner } from 'generated/prisma/client';
+import { type Banner } from 'generated/prisma/client';
 import { defineStore } from 'pinia';
 import { getBanners } from 'src/lib/api/banner.ts';
 

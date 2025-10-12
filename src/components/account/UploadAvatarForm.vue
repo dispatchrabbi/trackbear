@@ -4,7 +4,7 @@ import { ref, defineEmits } from 'vue';
 import { uploadAvatar } from 'src/lib/api/me.ts';
 import { ALLOWED_AVATAR_FORMATS, MAX_AVATAR_SIZE_IN_BYTES } from 'server/lib/models/user/consts';
 
-import FileUpload, { FileUploadUploaderEvent } from 'primevue/fileupload';
+import FileUpload, { type FileUploadUploaderEvent } from 'primevue/fileupload';
 
 const emit = defineEmits(['user:avatar', 'formSuccess']);
 

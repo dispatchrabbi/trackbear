@@ -3,7 +3,7 @@ import { ref, computed, watchEffect, withDefaults, onMounted, useTemplateRef } f
 import { useResizeObserver } from '@vueuse/core';
 import * as Plot from '@observablehq/plot';
 import * as d3 from 'd3';
-import { addWeeks, Day, endOfWeek, startOfWeek, subWeeks } from 'date-fns';
+import { addWeeks, type Day, endOfWeek, startOfWeek, subWeeks } from 'date-fns';
 
 import { useChartColors } from './chart-colors';
 const chartColors = useChartColors();

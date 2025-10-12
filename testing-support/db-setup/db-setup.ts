@@ -1,6 +1,6 @@
 import process from 'node:process';
 import { execSync } from 'node:child_process';
-import { PrismaClient } from 'generated/prisma/client';
+import { type PrismaClient } from 'generated/prisma/client';
 
 import { makeConnectionString } from 'server/lib/db.ts';
 

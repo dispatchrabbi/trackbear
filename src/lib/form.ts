@@ -1,5 +1,5 @@
 import { computed, watch, type Ref } from 'vue';
-import { ZodObject, ZodRawShape, ZodTypeAny } from 'zod';
+import { type ZodObject, type ZodRawShape, type ZodTypeAny } from 'zod';
 import type { RoundTrip } from 'src/lib/api';
 import wait from './wait';
 import { mapObject } from './obj';

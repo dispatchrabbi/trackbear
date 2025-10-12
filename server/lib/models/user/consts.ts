@@ -1,4 +1,4 @@
-import { ValueEnum } from '../../obj';
+import { type ValueEnum } from '../../obj';
 
 export const USER_STATE = {
   ACTIVE: 'active',

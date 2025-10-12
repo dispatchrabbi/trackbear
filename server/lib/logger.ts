@@ -167,7 +167,7 @@ export function getLogger(logName: keyof typeof loggers = 'default'): Logger {
 export async function closeLoggers() {
   return Promise.all(Object.values(loggers).map(logger => {
     if(logger === null) {
-      return;
+      return Promise.resolve();
     }
 
     return new Promise<void>((res/* , rej */) => {

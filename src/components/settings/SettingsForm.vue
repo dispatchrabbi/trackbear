@@ -10,10 +10,10 @@ import { useEnvStore } from 'src/stores/env';
 const envStore = useEnvStore();
 
 import { z } from 'zod';
-import { NonEmptyArray } from 'server/lib/validators.ts';
+import { type NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { updateSettings, SettingsEditPayload } from 'src/lib/api/me.ts';
+import { updateSettings, type SettingsEditPayload } from 'src/lib/api/me.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import TbForm from 'src/components/form/TbForm.vue';

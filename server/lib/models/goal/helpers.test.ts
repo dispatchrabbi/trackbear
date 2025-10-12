@@ -6,7 +6,7 @@ import {
   isTargetGoal, isHabitGoal,
 } from './helpers';
 import { mockObject } from 'testing-support/util';
-import { Goal, TargetGoal } from './types';
+import { type Goal, type TargetGoal } from './types';
 import { GOAL_TYPE } from './consts';
 import { TALLY_MEASURE } from '../tally/consts';
 

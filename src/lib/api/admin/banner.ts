@@ -1,7 +1,7 @@
-import { callApiV1, RoundTrip } from 'src/lib/api';
+import { callApiV1, type RoundTrip } from 'src/lib/api';
 
 import type { Banner as PrismaBanner } from 'generated/prisma/client';
-import { BannerCreatePayload, BannerUpdatePayload } from 'server/api/admin/banner.ts';
+import { type BannerCreatePayload, type BannerUpdatePayload } from 'server/api/admin/banner.ts';
 
 export type Banner = RoundTrip<PrismaBanner>;
 export type { BannerCreatePayload, BannerUpdatePayload };

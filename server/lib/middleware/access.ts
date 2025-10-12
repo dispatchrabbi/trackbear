@@ -4,7 +4,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { getDbClient } from 'server/lib/db.ts';
 import { failure } from '../../lib/api-response.ts';
 import { FAILURE_CODES } from '../../lib/api-response-codes.ts';
-import { ACCESS_TYPE, AccessType, AUTHORIZATION_SCHEME } from '../auth-consts.ts';
+import { ACCESS_TYPE, type AccessType, AUTHORIZATION_SCHEME } from '../auth-consts.ts';
 import { deserializeUser, getApiTokenFromRequest, getUserFromApiToken } from '../auth.ts';
 import { ApiKeyModel } from '../models/api-key/api-key-model.ts';
 

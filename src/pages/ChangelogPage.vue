@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 
-import { Changelog } from 'server/lib/parse-changelog.ts';
+import { type Changelog } from 'server/lib/parse-changelog.ts';
 import { getChangelog } from 'src/lib/api/info.ts';
 
 import { useLastChangelogViewed, getCurrentVersion } from 'src/lib/changelog.ts';

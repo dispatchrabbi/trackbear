@@ -6,7 +6,7 @@ import { utcFormat } from 'd3-time-format';
 
 import type { SeriesDataPoint, BareDataPoint, TooltipDataPoint } from './types';
 import { useChartColors } from './chart-colors';
-import { determineChartDomain, formatCountForChart, getSeriesName, mapSeriesToColor, orderSeries, SeriesInfoMap } from './chart-functions';
+import { determineChartDomain, formatCountForChart, getSeriesName, mapSeriesToColor, orderSeries, type SeriesInfoMap } from './chart-functions';
 
 import { kify } from 'src/lib/number';
 import { formatDate, formatDuration, parseDateString } from 'src/lib/date';

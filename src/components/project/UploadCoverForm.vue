@@ -5,7 +5,7 @@ import { useEventBus } from '@vueuse/core';
 import { uploadCover, type Project } from 'src/lib/api/project';
 import { ALLOWED_COVER_FORMATS, MAX_COVER_SIZE_IN_BYTES } from 'server/lib/models/project/consts';
 
-import FileUpload, { FileUploadUploaderEvent } from 'primevue/fileupload';
+import FileUpload, { type FileUploadUploaderEvent } from 'primevue/fileupload';
 
 const props = defineProps<{
   project: Project;

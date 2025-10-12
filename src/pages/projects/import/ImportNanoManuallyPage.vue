@@ -10,10 +10,10 @@ import { useValidation } from 'src/lib/form.ts';
 import { useProjectStore } from 'src/stores/project';
 const projectStore = useProjectStore();
 
-import { createProject, ProjectCreatePayload } from 'src/lib/api/project';
+import { createProject, type ProjectCreatePayload } from 'src/lib/api/project';
 import { PROJECT_PHASE } from 'server/lib/models/project/consts';
 import { batchCreateTallies, type TallyCreatePayload } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts';
+import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally/consts';
 import { formatCount, cmpTallies } from 'src/lib/tally.ts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';

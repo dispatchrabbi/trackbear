@@ -1,12 +1,12 @@
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
-import { ApiResponse, success } from '../../lib/api-response.ts';
+import { type ApiResponse, success } from '../../lib/api-response.ts';
 
-import { RequestWithUser } from '../../lib/middleware/access.ts';
+import { type RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
 
 import type { Work, Tally, Tag } from 'generated/prisma/client';
-import { TallyMeasure } from '../../lib/models/tally/consts.ts';
+import { type TallyMeasure } from '../../lib/models/tally/consts.ts';
 import { getDayCounts } from 'server/lib/models/stats.ts';
 
 export type WorkWithTotals = Work & { totals: Record<string, number> };

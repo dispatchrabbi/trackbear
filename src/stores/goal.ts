@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { useEventBus } from '@vueuse/core';
 
 import { cmpGoalByCompletion } from 'src/lib/goal.ts';
-import { getGoals, Goal, GoalWithAchievement } from 'src/lib/api/goal.ts';
+import { getGoals, type Goal, type GoalWithAchievement } from 'src/lib/api/goal.ts';
 
 export const useGoalStore = defineStore('goal', () => {
   const goals = ref<GoalWithAchievement[] | null>(null);

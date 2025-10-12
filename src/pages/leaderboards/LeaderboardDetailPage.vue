@@ -15,9 +15,9 @@ const leaderboardStore = useLeaderboardStore();
 import { useEnvStore } from 'src/stores/env';
 const envStore = useEnvStore();
 
-import { LeaderboardSummary, listParticipants, Participant } from 'src/lib/api/leaderboard';
+import { type LeaderboardSummary, listParticipants, type Participant } from 'src/lib/api/leaderboard';
 import type { Tally } from 'src/lib/api/tally.ts';
-import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts';
+import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally';
 import { toTitleCase } from 'src/lib/str';
 

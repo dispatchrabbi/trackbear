@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
+import { type Request, type Response } from 'express';
 import type { User } from 'generated/prisma/client';
 
-import { vi, Mock } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import { mockObject, TEST_USER_ID } from '../../../testing-support/util';
-import { RequestWithUser } from '../middleware/access';
+import { type RequestWithUser } from '../middleware/access';
 
 type MockRequest = Request & {
   sessionID: string;

@@ -12,7 +12,7 @@ import { cmpTallies, compileTallies, formatCount } from 'src/lib/tally.ts';
 import PlotCalendarHeatMap, { type CalendarHeatMapDataPoint } from '../chart/PlotCalendarHeatMap.vue';
 
 import Card from 'primevue/card';
-import { MeasureCounts } from 'server/lib/models/tally/types';
+import { type MeasureCounts } from 'server/lib/models/tally/types';
 
 const props = withDefaults(defineProps<{
   project: Project;

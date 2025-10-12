@@ -2,7 +2,7 @@ import { vi, describe, it, expect, afterEach } from 'vitest';
 import { mockObject, mockObjects, TEST_USER_ID, TEST_UUID, getTestReqCtx, TEST_OBJECT_ID } from '../../../testing-support/util.ts';
 import { getHandlerMocksWithUser } from '../../lib/__mocks__/express.ts';
 
-import { JustMember, Leaderboard, LeaderboardMember, Membership, Participant, Participation, type LeaderboardSummary } from 'server/lib/models/leaderboard/types.ts';
+import { type JustMember, type Leaderboard, type LeaderboardMember, type Membership, type Participant, type Participation, type LeaderboardSummary } from 'server/lib/models/leaderboard/types.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 
 vi.mock('../../lib/models/leaderboard/leaderboard-model.ts');
@@ -20,7 +20,7 @@ import {
   handleListParticipants, handleGetMyParticipation,
   handleJoinBoard, handleUpdateMyParticipation, handleLeaveBoard,
   member2membership,
-  LeaderboardParticipationPayload,
+  type LeaderboardParticipationPayload,
 } from './leaderboard.ts';
 import { LEADERBOARD_PARTICIPANT_STATE } from 'server/lib/models/leaderboard/consts.ts';
 

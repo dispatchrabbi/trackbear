@@ -4,7 +4,7 @@ import { differenceInCalendarDays } from 'date-fns';
 
 import type { Goal } from 'src/lib/api/goal.ts';
 import { formatDate } from 'src/lib/date.ts';
-import { TargetGoalParameters } from 'server/lib/models/goal/types';
+import { type TargetGoalParameters } from 'server/lib/models/goal/types';
 import type { Tally } from 'src/lib/api/tally.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO, compileTallies, formatCount } from 'src/lib/tally.ts';
@@ -16,7 +16,7 @@ import { parseDateString } from 'src/lib/date.ts';
 import { commaifyWithPrecision, formatPercent, roundAwayFromZero } from 'src/lib/number.ts';
 import FullCircleGauge from '../stats/FullCircleGauge.vue';
 import { getRandomElement } from 'src/lib/arr';
-import { NonEmptyArray } from 'server/lib/validators';
+import { type NonEmptyArray } from 'server/lib/validators';
 
 const props = defineProps<{
   goal: Goal;

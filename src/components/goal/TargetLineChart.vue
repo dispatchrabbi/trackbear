@@ -2,8 +2,8 @@
 import { computed, defineProps } from 'vue';
 import type { Goal } from 'src/lib/api/goal.ts';
 
-import { SeriesInfoMap, Tallyish } from '../chart/chart-functions.ts';
-import { TargetGoalParameters } from 'server/lib/models/goal/types.ts';
+import { type SeriesInfoMap, type Tallyish } from '../chart/chart-functions.ts';
+import { type TargetGoalParameters } from 'server/lib/models/goal/types.ts';
 import ProgressChart from '../chart/ProgressChart.vue';
 import type { SeriesTallyish } from '../chart/chart-functions.ts';
 

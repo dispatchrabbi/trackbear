@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
 
-import { Goal } from 'src/lib/api/goal.ts';
+import { type Goal } from 'src/lib/api/goal.ts';
 import { describeGoal } from 'src/lib/goal.ts';
 
 import Card from 'primevue/card';

@@ -1,6 +1,6 @@
 import { vi, afterEach } from 'vitest';
 import { mockObject } from 'testing-support/util';
-import { Ticket } from 'better-queue';
+import { type Ticket } from 'better-queue';
 
 import * as _queue from '../queue';
 

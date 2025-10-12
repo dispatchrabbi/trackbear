@@ -4,7 +4,7 @@ import { getTestReqCtx, mockObject, mockObjects, TEST_OBJECT_ID, TEST_USER_ID } 
 import { getDbClient } from 'server/lib/db.ts';
 import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
 
-import { CreateProjectData, SummarizedProject, UpdateProjectData, ProjectModel, ProjectWithTallies, type Project } from './project-model.ts';
+import { type CreateProjectData, type SummarizedProject, type UpdateProjectData, ProjectModel, type ProjectWithTallies, type Project } from './project-model.ts';
 import { PROJECT_PHASE, PROJECT_STATE } from './consts.ts';
 import { type User } from '../user/user-model.ts';
 import { type Tally } from '../tally/tally-model.wip.ts';

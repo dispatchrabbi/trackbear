@@ -6,7 +6,7 @@ import wait from 'src/lib/wait.ts';
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
-import { deleteProject, Project } from 'src/lib/api/project';
+import { deleteProject, type Project } from 'src/lib/api/project';
 
 import InputText from 'primevue/inputtext';
 import TbForm from 'src/components/form/TbForm.vue';

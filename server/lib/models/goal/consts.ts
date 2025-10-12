@@ -5,7 +5,7 @@ import {
   eachYearOfInterval, startOfYear, endOfYear, addYears,
 } from 'date-fns';
 
-import { ValueEnum } from '../../obj.ts';
+import { type ValueEnum } from '../../obj.ts';
 
 export const GOAL_STATE = {
   ACTIVE: 'active',

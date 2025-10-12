@@ -1,4 +1,4 @@
-import { Prisma } from 'generated/prisma/client';
+import { type Prisma } from 'generated/prisma/client';
 import { getDbClient } from 'server/lib/db.ts';
 import { PASSWORD_RESET_LINK_STATE } from '../lib/models/user/consts.ts';
 

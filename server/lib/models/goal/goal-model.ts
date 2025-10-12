@@ -12,7 +12,7 @@ import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 import type { User } from '../user/user-model.ts';
 import { GOAL_STATE, GOAL_TYPE } from './consts.ts';
-import { Goal, HabitGoal, TargetGoal, HabitGoalParameters, TargetGoalParameters } from './types.ts';
+import { type Goal, type HabitGoal, type TargetGoal, type HabitGoalParameters, type TargetGoalParameters } from './types.ts';
 import { TALLY_STATE } from '../tally/consts.ts';
 import type { Tally } from '../tally/tally-model.wip.ts';
 import { omit } from 'server/lib/obj.ts';
@@ -213,7 +213,7 @@ export class GoalModel {
         // only include tallies of the appropriate measure, if it exists
         measure: measure ?? undefined,
       },
-    }) as Tally[];
+    });
   }
 
   private static DEPRECATED_getMeasureFromGoal(goal: Goal): string | null | undefined {

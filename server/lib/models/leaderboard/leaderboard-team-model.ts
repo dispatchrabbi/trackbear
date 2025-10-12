@@ -8,7 +8,7 @@ import { type RequestContext } from '../../request-context.ts';
 import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
-import { Leaderboard, LeaderboardTeam } from './types.ts';
+import { type Leaderboard, type LeaderboardTeam } from './types.ts';
 
 export type CreateLeaderboardTeamData = Create<LeaderboardTeam, 'color', 'boardId'>;
 export type UpdateLeaderboardTeamData = Update<LeaderboardTeam, 'boardId'>;

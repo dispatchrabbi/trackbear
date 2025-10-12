@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LeaderboardSummary, Membership } from 'server/api/v1/leaderboard';
+import { type LeaderboardSummary, type Membership } from 'server/api/v1/leaderboard';
 import { updateMember } from 'src/lib/api/leaderboard';
 import { useAsyncSignals } from 'src/lib/use-async-signals';
 import wait from 'src/lib/wait';

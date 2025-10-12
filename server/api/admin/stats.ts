@@ -1,6 +1,6 @@
 import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from 'server/lib/api.ts';
-import { ApiResponse, success } from '../../lib/api-response.ts';
-import { RequestWithUser } from '../../lib/middleware/access.ts';
+import { type ApiResponse, success } from '../../lib/api-response.ts';
+import { type RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { ServiceStatsModel, type WeeklyStat, type DailyStat, type UserStats } from 'server/lib/models/service-stats/service-stats-model.ts';
 

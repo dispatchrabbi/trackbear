@@ -1,5 +1,5 @@
 import { callApiV1 } from '../api.ts';
-import { UserSettings } from 'generated/prisma/client';
+import { type UserSettings } from 'generated/prisma/client';
 
 import type { FullUser, MeEditPayload, SettingsEditPayload } from 'server/api/v1/me.ts';
 

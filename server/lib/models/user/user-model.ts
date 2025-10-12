@@ -362,7 +362,7 @@ export class UserModel {
    * @returns Whether the verification succeeded
    */
   @traced
-  static async verifyEmailByFiat(user: User, source: typeof AUDIT_EVENT_SOURCE.SCRIPT | typeof AUDIT_EVENT_SOURCE.ADMIN_CONSOLE, reqCtx: RequestContext): Promise<boolean> {
+  static async verifyEmailByFiat(user: User, source: typeof AUDIT_EVENT_SOURCE.SCRIPT, reqCtx: RequestContext): Promise<boolean> {
     // mark the user as verified and delete all existing pending email verifications
     const db = getDbClient();
     await db.user.update({

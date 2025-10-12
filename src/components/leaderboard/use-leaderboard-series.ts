@@ -1,7 +1,7 @@
 import { computed, type Ref } from 'vue';
 import type { LeaderboardSummary, LeaderboardTally, Participant } from 'server/lib/models/leaderboard/types.ts';
 import { LEADERBOARD_MEASURE } from 'server/lib/models/leaderboard/consts';
-import { SeriesInfoMap, type SeriesTallyish } from '../chart/chart-functions';
+import { type SeriesInfoMap, type SeriesTallyish } from '../chart/chart-functions';
 import type { TallyMeasure } from 'server/lib/models/tally/consts';
 
 export type LeaderboardSeries = {

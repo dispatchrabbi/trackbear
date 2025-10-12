@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 
 import type { Participant } from 'src/lib/api/leaderboard';
-import { TallyMeasure } from 'server/lib/models/tally/consts';
+import { type TallyMeasure } from 'server/lib/models/tally/consts';
 import { formatCountValue, formatCountCounter } from 'src/lib/tally.ts';
 
 import StatTile from '../goal/StatTile.vue';

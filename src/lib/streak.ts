@@ -1,5 +1,5 @@
 import { addDays } from 'date-fns';
-import { parseDateString, formatDate, Dated } from './date.ts';
+import { parseDateString, formatDate, type Dated } from './date.ts';
 
 export function findStreaks(tallies: Dated[]): string[][] {
   const tallyDates = [...(new Set(tallies.map(tally => tally.date)))].sort();

@@ -13,7 +13,7 @@ import RadioButton from 'primevue/radiobutton';
 import Calendar from 'primevue/calendar';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
-import { NonEmptyArray } from 'server/lib/validators';
+import { type NonEmptyArray } from 'server/lib/validators';
 
 const START_OF_TODAY = startOfDay(new Date());
 

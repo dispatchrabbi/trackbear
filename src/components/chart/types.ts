@@ -1,4 +1,4 @@
-import { Expand } from 'server/lib/obj';
+import { type Expand } from 'server/lib/obj';
 
 export type BareDataPoint = {
   date: string;

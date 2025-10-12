@@ -1,4 +1,4 @@
-import { ValueEnum } from '../../obj';
+import { type ValueEnum } from '../../obj';
 
 export const AUDIT_EVENT_ENTITIES = {
   API_KEY: 'api-key',

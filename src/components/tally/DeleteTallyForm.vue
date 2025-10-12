@@ -3,7 +3,7 @@ import { ref, defineProps, defineEmits } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 
-import { deleteTally, Tally } from 'src/lib/api/tally.ts';
+import { deleteTally, type Tally } from 'src/lib/api/tally.ts';
 import { formatCount } from 'src/lib/tally.ts';
 
 import TbForm from 'src/components/form/TbForm.vue';

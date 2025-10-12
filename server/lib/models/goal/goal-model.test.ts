@@ -4,7 +4,7 @@ import { getTestReqCtx, mockObject, mockObjects, TEST_OBJECT_ID, TEST_USER_ID } 
 import { getDbClient } from 'server/lib/db.ts';
 import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
 
-import { CreateGoalData, GoalModel, UpdateGoalData, type Goal } from './goal-model.ts';
+import { type CreateGoalData, GoalModel, type UpdateGoalData, type Goal } from './goal-model.ts';
 import { GOAL_CADENCE_UNIT, GOAL_STATE, GOAL_TYPE } from './consts.ts';
 import { type User } from '../user/user-model.ts';
 import { TALLY_MEASURE, TALLY_STATE } from '../tally/consts.ts';

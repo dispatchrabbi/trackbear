@@ -4,7 +4,7 @@ import { h, type ApiHandler } from './api-response';
 import { decorateApiCallSpan, instrumentMiddleware } from './middleware/decorate-span';
 import { requirePublic, requireApiKey, requireSession, requireUser, requireAdminUser, requirePrivate } from './middleware/access';
 import { validateBody, validateParams, validateQuery } from './middleware/validate';
-import { ValueEnum } from './obj';
+import { type ValueEnum } from './obj';
 
 import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();

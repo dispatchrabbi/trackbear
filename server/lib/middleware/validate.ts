@@ -1,4 +1,4 @@
-import { ZodSchema } from 'zod';
+import { type ZodSchema } from 'zod';
 import type { Request, Response, NextFunction } from 'express';
 import { failure } from '../../lib/api-response.ts';
 import { FAILURE_CODES } from '../../lib/api-response-codes.ts';

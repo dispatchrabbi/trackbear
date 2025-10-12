@@ -6,7 +6,7 @@ import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 import type { User } from '../user/user-model.ts';
-import { TALLY_STATE, TallyMeasure } from './consts.ts';
+import { TALLY_STATE, type TallyMeasure } from './consts.ts';
 
 import { traced } from '../../metrics/tracer.ts';
 

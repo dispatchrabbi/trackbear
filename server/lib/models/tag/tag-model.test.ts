@@ -1,4 +1,4 @@
-import { vi, expect, describe, it, afterEach, beforeEach, MockInstance } from 'vitest';
+import { vi, expect, describe, it, afterEach, beforeEach, type MockInstance } from 'vitest';
 import { getTestReqCtx, mockObject, mockObjects, TEST_OBJECT_ID, TEST_SESSION_ID, TEST_USER_ID } from 'testing-support/util';
 
 import { TagModel, type Tag, type TagData } from './tag-model.ts';

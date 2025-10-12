@@ -5,12 +5,12 @@ import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 
 import { z } from 'zod';
-import { NonEmptyArray } from 'server/lib/validators.ts';
+import { type NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createLeaderboard, type LeaderboardCreatePayload, type Leaderboard } from 'src/lib/api/leaderboard';
-import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts';
+import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import Calendar from 'primevue/calendar';
@@ -20,7 +20,7 @@ import InputSwitch from 'primevue/inputswitch';
 import TbForm from 'src/components/form/TbForm.vue';
 import FieldWrapper from 'src/components/form/FieldWrapper.vue';
 import MultiMeasureInput from 'src/components/project/MultiMeasureInput.vue';
-import { MeasureCounts } from 'server/lib/models/tally/types';
+import { type MeasureCounts } from 'server/lib/models/tally/types';
 
 const emit = defineEmits(['leaderboard:create', 'formSuccess', 'formCancel']);
 const eventBus = useEventBus<{ leaderboard: Leaderboard }>('leaderboard:create');

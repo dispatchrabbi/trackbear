@@ -1,7 +1,7 @@
 import { type Goal as PrismaGoal } from 'generated/prisma/client';
 import { type TallyMeasure } from '../tally/consts';
-import { type GoalCadenceUnit, GOAL_TYPE, GoalType } from './consts';
-import { Expand } from 'server/lib/obj';
+import { type GoalCadenceUnit, type GOAL_TYPE, type GoalType } from './consts';
+import { type Expand } from 'server/lib/obj';
 
 export type GoalThreshold = {
   measure: TallyMeasure;

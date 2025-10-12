@@ -6,7 +6,7 @@ import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
 import { initDbClient, getDbClient } from 'server/lib/db.ts';
 
-import { Tally, User, Work } from 'generated/prisma/client';
+import { type Tally, type User, type Work } from 'generated/prisma/client';
 import { USER_STATE } from '../server/lib/models/user/consts.ts';
 import { TRACKBEAR_SYSTEM_ID, logAuditEvent } from '../server/lib/audit-events.ts';
 

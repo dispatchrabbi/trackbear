@@ -9,7 +9,7 @@ import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 import type { User } from '../user/user-model.ts';
-import { TAG_DEFAULT_COLOR, TAG_STATE, TagColor } from './consts';
+import { TAG_DEFAULT_COLOR, TAG_STATE, type TagColor } from './consts';
 
 import { traced } from '../../metrics/tracer.ts';
 import { ValidationError } from '../errors.ts';

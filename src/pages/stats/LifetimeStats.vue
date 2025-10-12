@@ -95,8 +95,8 @@ import type { MenuItem } from 'primevue/menuitem';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
 import StatTile from 'src/components/goal/StatTile.vue';
 import DayCountHeatmap from 'src/components/stats/DayCountHeatmap.vue';
-import { MeasureCounts } from 'server/lib/models/tally/types';
-import { TallyMeasure } from 'server/lib/models/tally/consts';
+import { type MeasureCounts } from 'server/lib/models/tally/types';
+import { type TallyMeasure } from 'server/lib/models/tally/consts';
 // import StreakCounter from 'src/components/dashboard/StreakCounter.vue';
 
 const breadcrumbs: MenuItem[] = [

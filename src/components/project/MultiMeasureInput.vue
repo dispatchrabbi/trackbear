@@ -31,8 +31,8 @@ import Dropdown from 'primevue/dropdown';
 import TallyCountInput from 'src/components/tally/TallyCountInput.vue';
 import Button from 'primevue/button';
 import { PrimeIcons } from 'primevue/api';
-import { MeasureCounts } from 'server/lib/models/tally/types';
-import { TallyMeasure } from 'server/lib/models/tally/consts';
+import { type MeasureCounts } from 'server/lib/models/tally/types';
+import { type TallyMeasure } from 'server/lib/models/tally/consts';
 
 const dropdownOptions = Object.keys(TALLY_MEASURE_INFO).map(measure => ({
   label: TALLY_MEASURE_INFO[measure].label.plural,

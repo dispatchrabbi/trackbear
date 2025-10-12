@@ -7,8 +7,8 @@ import type { Leaderboard } from 'src/lib/api/leaderboard';
 import type { TallyMeasure } from 'server/lib/models/tally/consts';
 import type { LeaderboardSeries } from './use-leaderboard-series';
 
-import MeterGroup, { MeterItem } from 'primevue/metergroup';
-import { mapSeriesToColor, SeriesInfoMap } from '../chart/chart-functions';
+import MeterGroup, { type MeterItem } from 'primevue/metergroup';
+import { mapSeriesToColor, type SeriesInfoMap } from '../chart/chart-functions';
 
 const props = defineProps<{
   leaderboard: Leaderboard;

@@ -1,4 +1,4 @@
-import { MailerSend, EmailParams } from 'mailersend';
+import { MailerSend, type EmailParams } from 'mailersend';
 
 import { getLogger } from 'server/lib/logger.ts';
 

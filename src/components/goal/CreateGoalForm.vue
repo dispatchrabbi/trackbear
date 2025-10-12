@@ -13,14 +13,14 @@ const tagStore = useTagStore();
 tagStore.populate();
 
 import { z } from 'zod';
-import { NonEmptyArray } from 'server/lib/validators.ts';
+import { type NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createGoal, type GoalCreatePayload, type Goal } from 'src/lib/api/goal.ts';
 import { GOAL_TYPE, GOAL_CADENCE_UNIT, GOAL_CADENCE_UNIT_INFO, type GoalType, type GoalCadenceUnit } from 'server/lib/models/goal/consts';
 import { type GoalParameters } from 'server/lib/models/goal/types';
-import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts';
+import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 
 import Calendar from 'primevue/calendar';

@@ -9,7 +9,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 import { signUp } from 'src/lib/api/auth.ts';
-import { CreateUserPayload } from 'server/api/auth.ts';
+import { type CreateUserPayload } from 'server/api/auth.ts';
 
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';

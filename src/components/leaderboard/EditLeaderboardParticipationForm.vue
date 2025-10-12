@@ -16,12 +16,12 @@ tagStore.populate();
 
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
-import { TALLY_MEASURE, TallyMeasure } from 'server/lib/models/tally/consts';
+import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally/consts';
 import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 import { userColorOrFallback, USER_COLOR_NAMES } from '../chart/user-colors';
 
-import { updateMyParticipation, type Leaderboard, type Participation, type LeaderboardParticipationPayload, LeaderboardTeam } from 'src/lib/api/leaderboard';
+import { updateMyParticipation, type Leaderboard, type Participation, type LeaderboardParticipationPayload, type LeaderboardTeam } from 'src/lib/api/leaderboard';
 
 import InputSwitch from 'primevue/inputswitch';
 import InputText from 'primevue/inputtext';

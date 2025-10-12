@@ -1,4 +1,4 @@
-import { Expand, omit } from '../obj';
+import { type Expand, omit } from '../obj';
 import { PROJECT_STATE } from './project/consts';
 import { TAG_STATE } from './tag/consts';
 

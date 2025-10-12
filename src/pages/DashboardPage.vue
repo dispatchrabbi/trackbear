@@ -11,7 +11,7 @@ const userStore = useUserStore();
 import { useGoalStore } from 'src/stores/goal.ts';
 const goalStore = useGoalStore();
 
-import { getTallies, TallyWithWorkAndTags, type Tally } from 'src/lib/api/tally.ts';
+import { getTallies, type TallyWithWorkAndTags, type Tally } from 'src/lib/api/tally.ts';
 import { GOAL_TYPE } from 'server/lib/models/goal/consts';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
@@ -23,7 +23,7 @@ import StreakCounter from 'src/components/dashboard/StreakCounter.vue';
 import HabitGoalStatus from 'src/components/dashboard/HabitGoalStatus.vue';
 import TargetGoalStatus from 'src/components/dashboard/TargetGoalStatus.vue';
 import { filterTallies } from 'src/lib/tally';
-import { HabitGoal, TargetGoal } from 'server/lib/models/goal/types';
+import { type HabitGoal, type TargetGoal } from 'server/lib/models/goal/types';
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Dashboard', url: '/dashboard' },

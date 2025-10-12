@@ -3,10 +3,10 @@ import { ref, reactive, defineProps, defineEmits } from 'vue';
 import wait from 'src/lib/wait.ts';
 
 import { z } from 'zod';
-import { NonEmptyArray } from 'server/lib/validators.ts';
+import { type NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { updateBanner, Banner, BannerUpdatePayload } from 'src/lib/api/admin/banner.ts';
+import { updateBanner, type Banner, type BannerUpdatePayload } from 'src/lib/api/admin/banner.ts';
 
 import Textarea from 'primevue/textarea';
 import Calendar from 'primevue/calendar';

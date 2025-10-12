@@ -1,4 +1,4 @@
-import { Expand } from '../obj';
+import { type Expand } from '../obj';
 
 type KeysWithDefaults = 'starred' | 'displayOnProfile';
 type AutomaticKeys = 'id' | 'uuid' | 'createdAt' | 'updatedAt' | 'ownerId' | 'state';

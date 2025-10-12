@@ -1,6 +1,6 @@
 import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from 'server/lib/api.ts';
-import { ApiResponse, success, failure } from '../../lib/api-response.ts';
-import { RequestWithUser } from '../../lib/middleware/access.ts';
+import { type ApiResponse, success, failure } from '../../lib/api-response.ts';
+import { type RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
 import { zIdParam } from '../../lib/validators.ts';

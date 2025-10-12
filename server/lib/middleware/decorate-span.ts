@@ -5,7 +5,7 @@ import { ATTR_TB_SESSION_ID, ATTR_TB_USER_ID, ATTR_TB_ACCESS_TYPE } from '../met
 
 import type { Request, Response, NextFunction } from 'express';
 import { getTracer } from '../metrics/tracer';
-import { RequestWithUser } from './access';
+import { type RequestWithUser } from './access';
 import { ACCESS_TYPE } from '../auth-consts';
 
 export type DecorateSpanConfig = {

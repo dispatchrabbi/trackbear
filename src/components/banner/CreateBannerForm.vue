@@ -4,10 +4,10 @@ import { addDays, set } from 'date-fns';
 import wait from 'src/lib/wait.ts';
 
 import { z } from 'zod';
-import { NonEmptyArray } from 'server/lib/validators.ts';
+import { type NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 
-import { createBanner, BannerCreatePayload } from 'src/lib/api/admin/banner.ts';
+import { createBanner, type BannerCreatePayload } from 'src/lib/api/admin/banner.ts';
 
 import Textarea from 'primevue/textarea';
 import Calendar from 'primevue/calendar';

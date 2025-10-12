@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
 
-import { useRouter, RouteLocationRaw } from 'vue-router';
+import { useRouter, type RouteLocationRaw } from 'vue-router';
 const router = useRouter();
 
-import TbLink, { LinkDestination } from 'src/components/TbLink.vue';
+import TbLink, { type LinkDestination } from 'src/components/TbLink.vue';
 
 export type MenuBarItem = {
   key: string;

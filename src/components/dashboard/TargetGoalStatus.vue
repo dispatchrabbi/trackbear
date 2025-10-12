@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 
-import { Tally } from 'src/lib/api/tally.ts';
+import { type Tally } from 'src/lib/api/tally.ts';
 
 import { compileTallies } from 'src/lib/tally.ts';
 import { formatDate } from 'src/lib/date.ts';

@@ -1,10 +1,10 @@
 import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
-import { ApiResponse, success, failure } from '../../lib/api-response.ts';
+import { type ApiResponse, success, failure } from '../../lib/api-response.ts';
 
-import { RequestWithUser } from '../../lib/middleware/access.ts';
+import { type RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
-import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
+import { zIdParam, type NonEmptyArray } from '../../lib/validators.ts';
 
 import { getDbClient } from 'server/lib/db.ts';
 import { GOAL_TYPE, GOAL_CADENCE_UNIT } from '../../lib/models/goal/consts.ts';
@@ -16,7 +16,7 @@ import { TAG_STATE } from '../../lib/models/tag/consts.ts';
 import { logAuditEvent } from '../../lib/audit-events.ts';
 
 import { omit } from '../../lib/obj.ts';
-import { CreateGoalData, GoalModel, UpdateGoalData, type Goal } from 'server/lib/models/goal/goal-model.ts';
+import { type CreateGoalData, GoalModel, type UpdateGoalData, type Goal } from 'server/lib/models/goal/goal-model.ts';
 import { isTargetAchieved, isTargetGoal } from 'server/lib/models/goal/helpers.ts';
 import { reqCtx } from 'server/lib/request-context.ts';
 

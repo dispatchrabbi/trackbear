@@ -1,14 +1,14 @@
 import path from 'path';
 const ROOT_DIR = path.resolve(import.meta.url.replace('file://', ''), '../../..');
 
-import { Request } from 'express';
-import { ApiHandler, ApiResponse, success } from '../lib/api-response.ts';
+import { type Request } from 'express';
+import { type ApiHandler, type ApiResponse, success } from '../lib/api-response.ts';
 
 import { readFile } from 'fs/promises';
-import { parseChangelog, Changelog } from '../lib/parse-changelog.ts';
+import { parseChangelog, type Changelog } from '../lib/parse-changelog.ts';
 
 import { getNormalizedEnv } from 'server/lib/env.ts';
-import { HTTP_METHODS, ACCESS_LEVEL, RouteConfig } from 'server/lib/api.ts';
+import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts';
 
 export type { Changelog };
 export const handleGetChangelog: ApiHandler<Changelog> = (function() {

@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 
 import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
-import { User, UserModel } from '../server/lib/models/user/user-model.ts';
+import { type User, UserModel } from '../server/lib/models/user/user-model.ts';
 import { reqCtxForScript } from '../server/lib/request-context.ts';
 import { AUDIT_EVENT_SOURCE } from 'server/lib/models/audit-event/consts.ts';
 

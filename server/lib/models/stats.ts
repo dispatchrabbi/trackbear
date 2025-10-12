@@ -1,7 +1,7 @@
 import { getDbClient } from 'server/lib/db.ts';
 import { PROJECT_STATE } from './project/consts.ts';
 import { TALLY_STATE } from './tally/consts.ts';
-import { MeasureCounts } from './tally/types.ts';
+import { type MeasureCounts } from './tally/types.ts';
 
 export type DayCount = {
   date: string;

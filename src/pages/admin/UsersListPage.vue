@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { watchDebounced } from '@vueuse/core';
 
-import { getUsers, User } from 'src/lib/api/admin/user.ts';
+import { getUsers, type User } from 'src/lib/api/admin/user.ts';
 import { getUserStats, type UserStats } from 'src/lib/api/admin/stats.ts';
 import { USER_STATE_INFO } from 'src/lib/user.ts';
 

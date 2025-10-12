@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { getMyAdminPerms, AdminPerms } from 'src/lib/api/admin/me.ts';
+import { getMyAdminPerms, type AdminPerms } from 'src/lib/api/admin/me.ts';
 
 export const useAdminUserStore = defineStore('admin-user', {
   state: (): { perms: AdminPerms | null } => {

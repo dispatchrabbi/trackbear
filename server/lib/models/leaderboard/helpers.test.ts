@@ -4,7 +4,7 @@ import { mockObject } from 'testing-support/util';
 import { getDbClient } from 'server/lib/db.ts';
 
 import { getTalliesForParticipants } from './helpers.ts';
-import { Leaderboard } from './types.ts';
+import { type Leaderboard } from './types.ts';
 import { TALLY_MEASURE, TALLY_STATE } from '../tally/consts.ts';
 
 vi.mock('../../tracer.ts');

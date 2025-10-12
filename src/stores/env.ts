@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { getEnv, EnvInfo } from 'src/lib/api/info.ts';
+import { getEnv, type EnvInfo } from 'src/lib/api/info.ts';
 
 export const useEnvStore = defineStore('env', {
   state: (): { env: EnvInfo | null } => {

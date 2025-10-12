@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { useEventBus } from '@vueuse/core';
 
 import { cmpTag } from 'src/lib/tag';
-import { getTags, Tag } from 'src/lib/api/tag.ts';
+import { getTags, type Tag } from 'src/lib/api/tag.ts';
 
 export const useTagStore = defineStore('tag', () => {
   const tags = ref<Tag[] | null>(null);

@@ -1,10 +1,10 @@
 import { ACCESS_LEVEL, HTTP_METHODS, type RouteConfig } from 'server/lib/api.ts';
-import { ApiResponse, success, failure } from '../../lib/api-response.ts';
+import { type ApiResponse, success, failure } from '../../lib/api-response.ts';
 
 import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();
 
-import { RequestWithUser } from '../../lib/middleware/access.ts';
+import { type RequestWithUser } from '../../lib/middleware/access.ts';
 
 import path from 'node:path';
 import fs from 'node:fs/promises';
@@ -12,7 +12,7 @@ import { randomUUID } from 'node:crypto';
 import { getCoverUploadFn, getCoverUploadPath } from 'server/lib/upload.ts';
 
 import { z } from 'zod';
-import { zIdParam, NonEmptyArray } from '../../lib/validators.ts';
+import { zIdParam, type NonEmptyArray } from '../../lib/validators.ts';
 
 import { ProjectModel, type Project, type SummarizedProject, type ProjectWithTallies } from 'server/lib/models/project/project-model.ts';
 import { PROJECT_PHASE, ALLOWED_COVER_FORMATS } from '../../lib/models/project/consts.ts';

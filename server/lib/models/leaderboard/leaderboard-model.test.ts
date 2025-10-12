@@ -5,7 +5,7 @@ import { getDbClient } from 'server/lib/db.ts';
 import { logAuditEvent as _logAuditEvent } from '../../audit-events.ts';
 
 import { LeaderboardModel } from './leaderboard-model.ts';
-import { Leaderboard, LeaderboardMember, LeaderboardSummary } from './types.ts';
+import { type Leaderboard, type LeaderboardMember, type LeaderboardSummary } from './types.ts';
 import { LEADERBOARD_STATE, LEADERBOARD_PARTICIPANT_STATE } from './consts.ts';
 import { type User } from '../user/user-model.ts';
 import { USER_STATE } from '../user/consts.ts';

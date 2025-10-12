@@ -1,4 +1,4 @@
-import { trace, Span, SpanStatusCode } from '@opentelemetry/api';
+import { trace, type Span, SpanStatusCode } from '@opentelemetry/api';
 
 import packageJson from '../../../package.json' assert { type: 'json' };
 

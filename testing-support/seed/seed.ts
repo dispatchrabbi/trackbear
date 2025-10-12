@@ -16,9 +16,9 @@ import {
 import { UserModel, type User } from 'server/lib/models/user/user-model.ts';
 import { type Tag } from 'server/lib/models/tag/tag-model.ts';
 import { ProjectModel, type Project } from 'server/lib/models/project/project-model';
-import { type TargetGoal, type HabitGoal, GoalModel, TargetGoalParameters, HabitGoalParameters } from 'server/lib/models/goal/goal-model.ts';
+import { type TargetGoal, type HabitGoal, GoalModel, type TargetGoalParameters, type HabitGoalParameters } from 'server/lib/models/goal/goal-model.ts';
 import type { Leaderboard, LeaderboardMember } from 'server/lib/models/leaderboard/types.ts';
-import { TallyData, TallyModel, type Tally } from 'server/lib/models/tally/tally-model.wip.ts';
+import { type TallyData, TallyModel, type Tally } from 'server/lib/models/tally/tally-model.wip.ts';
 import { type RequestContext } from 'server/lib/request-context';
 import { GOAL_TYPE } from 'server/lib/models/goal/consts';
 import { LeaderboardModel } from 'server/lib/models/leaderboard/leaderboard-model';

@@ -1,7 +1,7 @@
-import { callApiV1, RoundTrip } from 'src/lib/api';
+import { callApiV1, type RoundTrip } from 'src/lib/api';
 
 import type { User as PrismaUser, AuditEvent as PrismaAuditEvent } from 'generated/prisma/client';
-import { UserUpdatePayload, UserStatePayload, UserQuery, GetUsersResponsePayload as _GetUsersResponsePayload } from 'server/api/admin/user.ts';
+import { type UserUpdatePayload, type UserStatePayload, type UserQuery, type GetUsersResponsePayload as _GetUsersResponsePayload } from 'server/api/admin/user.ts';
 
 export type GetUsersResponsePayload = RoundTrip<_GetUsersResponsePayload>;
 export type User = RoundTrip<PrismaUser>;

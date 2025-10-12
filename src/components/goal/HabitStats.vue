@@ -3,9 +3,9 @@ import { computed, defineProps } from 'vue';
 import { type Day } from 'date-fns';
 
 import type { HabitGoal } from 'server/lib/models/goal/types';
-import { Tally } from 'src/lib/api/tally.ts';
+import { type Tally } from 'src/lib/api/tally.ts';
 
-import { analyzeStreaksForHabit, HabitAnalysis } from 'server/lib/models/goal/helpers';
+import { analyzeStreaksForHabit, type HabitAnalysis } from 'server/lib/models/goal/helpers';
 
 import StatTile from 'src/components/goal/StatTile.vue';
 import { commaify } from 'src/lib/number.ts';

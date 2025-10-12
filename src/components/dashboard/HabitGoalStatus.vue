@@ -2,7 +2,7 @@
 import { computed, defineProps } from 'vue';
 import { isWithinInterval, startOfDay, endOfDay, type Day } from 'date-fns';
 
-import { Tally } from 'src/lib/api/tally.ts';
+import { type Tally } from 'src/lib/api/tally.ts';
 
 import { GOAL_CADENCE_UNIT_INFO } from 'server/lib/models/goal/consts';
 import type { HabitGoal } from 'server/lib/models/goal/types';

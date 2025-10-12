@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
-import { RouterLink, RouteLocationRaw } from 'vue-router';
+import { RouterLink, type RouteLocationRaw } from 'vue-router';
 
 export type LinkDestination = {
   to: RouteLocationRaw | null;

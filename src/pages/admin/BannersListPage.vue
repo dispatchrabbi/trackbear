@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { format, parseISO } from 'date-fns';
 
-import { getBanners, Banner } from 'src/lib/api/admin/banner.ts';
+import { getBanners, type Banner } from 'src/lib/api/admin/banner.ts';
 
 import AdminLayout from 'src/layouts/AdminLayout.vue';
 import type { MenuItem } from 'primevue/menuitem';

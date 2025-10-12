@@ -3,7 +3,7 @@ import { computed, defineProps, withDefaults } from 'vue';
 
 import AvatarGroup from 'primevue/avatargroup';
 import Avatar from 'primevue/avatar';
-import UserAvatar, { UserWithAvatar } from 'src/components/avatar/UserAvatar.vue';
+import UserAvatar, { type UserWithAvatar } from 'src/components/avatar/UserAvatar.vue';
 
 const props = withDefaults(defineProps<{
   users: UserWithAvatar[];

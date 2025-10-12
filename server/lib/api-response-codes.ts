@@ -1,4 +1,4 @@
-import { ValueEnum } from './obj.ts';
+import { type ValueEnum } from './obj.ts';
 
 export const FAILURE_CODES = {
   FORBIDDEN: 'FORBIDDEN',

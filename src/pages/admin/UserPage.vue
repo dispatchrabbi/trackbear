@@ -6,7 +6,7 @@ const route = useRoute();
 
 import { parseISO, format } from 'date-fns';
 
-import { getUser, updateUserState, verifyEmailByFiat, sendEmailVerificationEmail, sendResetPasswordEmail, User, AuditEvent } from 'src/lib/api/admin/user.ts';
+import { getUser, updateUserState, verifyEmailByFiat, sendEmailVerificationEmail, sendResetPasswordEmail, type User, type AuditEvent } from 'src/lib/api/admin/user.ts';
 import { USER_STATE } from 'server/lib/models/user/consts';
 import { USER_STATE_INFO } from 'src/lib/user.ts';
 

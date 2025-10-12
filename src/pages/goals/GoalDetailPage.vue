@@ -14,7 +14,7 @@ const goalStore = useGoalStore();
 
 import type { Goal } from 'src/lib/api/goal.ts';
 import type { TargetGoalParameters, HabitGoalParameters, TargetGoal, HabitGoal } from 'server/lib/models/goal/types';
-import { getTallies, Tally, TallyWithWorkAndTags } from 'src/lib/api/tally.ts';
+import { getTallies, type Tally, type TallyWithWorkAndTags } from 'src/lib/api/tally.ts';
 import { describeGoal } from 'src/lib/goal.ts';
 
 import { PrimeIcons } from 'primevue/api';

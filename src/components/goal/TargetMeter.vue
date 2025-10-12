@@ -6,7 +6,7 @@ import { useTheme } from 'src/lib/theme';
 
 import { formatCount } from 'src/lib/tally.ts';
 
-import MeterGroup, { MeterItem } from 'primevue/metergroup';
+import MeterGroup, { type MeterItem } from 'primevue/metergroup';
 
 const props = defineProps<{
   past: number;

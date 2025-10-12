@@ -1,4 +1,4 @@
-import { vi, expect, describe, it, afterEach, beforeEach, MockInstance } from 'vitest';
+import { vi, expect, describe, it, afterEach, beforeEach, type MockInstance } from 'vitest';
 import { mockObject, mockObjects, TEST_OBJECT_ID, getTestReqCtx } from 'testing-support/util';
 
 import { getDbClient } from 'server/lib/db.ts';

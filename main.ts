@@ -14,7 +14,7 @@ import initWorkers from 'server/lib/workers.ts';
 import http from 'http';
 import https from 'https';
 import { promisify } from 'util';
-import express, { ErrorRequestHandler } from 'express';
+import express, { type ErrorRequestHandler } from 'express';
 import morgan from 'morgan';
 import helmet from 'server/lib/middleware/helmet.ts';
 import compression from 'compression';

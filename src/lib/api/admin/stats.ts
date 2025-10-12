@@ -1,6 +1,6 @@
 import { callApiV1 } from 'src/lib/api';
 
-import { WeeklyStat, DailyStat, UserStats } from 'server/api/admin/stats.ts';
+import { type WeeklyStat, type DailyStat, type UserStats } from 'server/api/admin/stats.ts';
 
 export type { WeeklyStat, DailyStat, UserStats };
 
