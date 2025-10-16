@@ -15,6 +15,8 @@ import Button from 'primevue/button';
 
 import LeaderboardTile from 'src/components/leaderboard/LeaderboardTile.vue';
 import { PrimeIcons } from 'primevue/api';
+import { formatDate } from 'src/lib/date';
+import SubsectionTitle from 'src/components/layout/SubsectionTitle.vue';
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Leaderboards', url: '/leaderboards' },
@@ -42,6 +44,22 @@ const filteredLeaderboards = computed(() => {
   const sortedLeaderboards = leaderboardStore.allLeaderboards;
   const searchTerm = filter.value.toLowerCase();
   return sortedLeaderboards.filter(leaderboard => leaderboard.title.toLowerCase().includes(searchTerm) || leaderboard.description.toLowerCase().includes(searchTerm));
+});
+
+const today = formatDate(new Date());
+const activeUnstarredLeaderboards = computed(() => {
+  const sortedLeaderboards = leaderboardStore.allLeaderboards;
+  return sortedLeaderboards.filter(leaderboard => (
+    leaderboard.starred === false &&
+    (leaderboard.endDate === null || leaderboard.endDate >= today)
+  ));
+});
+const inactiveUnstarredLeaderboards = computed(() => {
+  const sortedLeaderboards = leaderboardStore.allLeaderboards;
+  return sortedLeaderboards.filter(leaderboard => (
+    leaderboard.starred === false &&
+    (leaderboard.endDate !== null && leaderboard.endDate < today)
+  ));
 });
 
 onMounted(async () => {
@@ -93,20 +111,67 @@ onMounted(async () => {
     <div v-else-if="leaderboardStore.allLeaderboards.length === 0">
       You haven't made any leaderboards yet. Click the <span class="font-bold">New</span> button to get started!
     </div>
-    <div v-else-if="filteredLeaderboards.length === 0">
-      No matching leaderboards found.
-    </div>
-    <div
-      v-for="leaderboard in filteredLeaderboards"
-      v-else
-      :key="leaderboard.uuid"
-      class="mb-2"
-    >
-      <RouterLink :to="{ name: 'leaderboard', params: { boardUuid: leaderboard.uuid } }">
-        <LeaderboardTile
-          :leaderboard="leaderboard"
-        />
-      </RouterLink>
-    </div>
+    <template v-else-if="filter.length > 0">
+      <SubsectionTitle title="Search results" />
+      <div v-if="filteredLeaderboards.length === 0">
+        No matching leaderboards found.
+      </div>
+      <div
+        v-for="leaderboard in filteredLeaderboards"
+        v-else
+        :key="leaderboard.uuid"
+        class="mb-2"
+      >
+        <RouterLink :to="{ name: 'leaderboard', params: { boardUuid: leaderboard.uuid } }">
+          <LeaderboardTile
+            :leaderboard="leaderboard"
+          />
+        </RouterLink>
+      </div>
+    </template>
+    <template v-else>
+      <SubsectionTitle title="Starred leaderboards" />
+      <div
+        v-for="leaderboard in leaderboardStore.starredLeaderboards"
+        :key="leaderboard.uuid"
+        class="mb-2"
+      >
+        <RouterLink :to="{ name: 'leaderboard', params: { boardUuid: leaderboard.uuid } }">
+          <LeaderboardTile
+            :leaderboard="leaderboard"
+          />
+        </RouterLink>
+      </div>
+      <SubsectionTitle
+        class="mt-8"
+        title="Current leaderboards"
+      />
+      <div
+        v-for="leaderboard in activeUnstarredLeaderboards"
+        :key="leaderboard.uuid"
+        class="mb-2"
+      >
+        <RouterLink :to="{ name: 'leaderboard', params: { boardUuid: leaderboard.uuid } }">
+          <LeaderboardTile
+            :leaderboard="leaderboard"
+          />
+        </RouterLink>
+      </div>
+      <SubsectionTitle
+        class="mt-8"
+        title="Finished leaderboards"
+      />
+      <div
+        v-for="leaderboard in inactiveUnstarredLeaderboards"
+        :key="leaderboard.uuid"
+        class="mb-2"
+      >
+        <RouterLink :to="{ name: 'leaderboard', params: { boardUuid: leaderboard.uuid } }">
+          <LeaderboardTile
+            :leaderboard="leaderboard"
+          />
+        </RouterLink>
+      </div>
+    </template>
   </ApplicationLayout>
 </template>

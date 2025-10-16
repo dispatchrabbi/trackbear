@@ -12,6 +12,7 @@ const eventBus = useEventBus<{ leaderboard: LeaderboardSummary }>('leaderboard:s
 import Card from 'primevue/card';
 import UserAvatarGroup from '../UserAvatarGroup.vue';
 import { PrimeIcons } from 'primevue/api';
+import { describeLeaderboard } from 'src/lib/board';
 
 const isStarLoading = ref<boolean>(false);
 async function onStarClick() {
@@ -39,7 +40,12 @@ async function onStarClick() {
           ]"
           @click.prevent="onStarClick"
         />
-        <div>{{ props.leaderboard.title }}</div>
+        <div class="flex-auto">
+          {{ props.leaderboard.title }}
+        </div>
+        <div class="font-light italic text-sm text-right">
+          {{ describeLeaderboard(props.leaderboard) }}
+        </div>
       </div>
     </template>
     <template #content>
