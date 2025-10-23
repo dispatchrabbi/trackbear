@@ -1,4 +1,4 @@
-import { parseISO, format, type Day } from 'date-fns';
+import { parseISO, format } from 'date-fns';
 
 const DATE_STRING_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 export function parseDateString(dateString: string, forceUTC: boolean = false): Date {
@@ -23,15 +23,15 @@ export function parseDateStringSafe(dateString: string | null, forceUTC: boolean
   return parseISO(dateString + (forceUTC ? 'T00:00:00Z' : ''));
 }
 
-export function formatDate(date: Date): string {
-  const year = '' + date.getFullYear();
+export function formatDate(date: Date, forceUTC: boolean = false): string {
+  const year = String(forceUTC ? date.getUTCFullYear() : date.getFullYear());
 
-  let month = '' + (date.getMonth() + 1);
+  let month = String((forceUTC ? date.getUTCMonth() : date.getMonth()) + 1);
   if(month.length === 1) {
     month = '0' + month;
   }
 
-  let day = '' + date.getDate();
+  let day = String(forceUTC ? date.getUTCDate() : date.getDate());
   if(day.length === 1) {
     day = '0' + day;
   }
@@ -39,11 +39,11 @@ export function formatDate(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-export function formatDateSafe(date: Date | null | undefined): string | null {
+export function formatDateSafe(date: Date | null | undefined, forceUTC: boolean = false): string | null {
   if(date === null || date === undefined) {
     return null;
   } else {
-    return formatDate(date);
+    return formatDate(date, forceUTC);
   }
 }
 
@@ -81,9 +81,9 @@ export function validateTimeString(timeString: string) {
   return timeIsValid;
 }
 
-export function formatDateRange(startDate: string, endDate: string, formatString?: string) {
-  const startDateFormatted = formatString ? format(parseDateString(startDate), formatString) : startDate;
-  const endDateFormatted = formatString ? format(parseDateString(endDate), formatString) : endDate;
+export function formatDateRange(startDate: string, endDate: string, formatString: string, forceUTC: boolean = false) {
+  const startDateFormatted = formatString ? format(parseDateString(startDate, forceUTC), formatString) : startDate;
+  const endDateFormatted = formatString ? format(parseDateString(endDate, forceUTC), formatString) : endDate;
 
   if(startDate === endDate) {
     return startDateFormatted;
@@ -98,9 +98,4 @@ export type Dated = {
 
 export function cmpByDate(a: Dated, b: Dated) {
   return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
-}
-
-export function getStartOfWeek(): Day {
-  // 0 is Sunday; 6 is Saturday
-  return 4;
 }

@@ -67,10 +67,10 @@ const validations = z
 
     startDate: z
       .date({ invalid_type_error: 'Please select a valid start date or clear the field.' }).nullable()
-      .refine(v => v === null || formModel.endDate === null || v <= formModel.endDate, { message: 'Start date must be before end date.' }).transform(formatDateSafe),
+      .refine(v => v === null || formModel.endDate === null || v <= formModel.endDate, { message: 'Start date must be before end date.' }).transform(val => formatDateSafe(val)),
     endDate: z
       .date({ invalid_type_error: 'Please select a valid end date or clear the field.' }).nullable()
-      .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.' }).transform(formatDateSafe),
+      .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.' }).transform(val => formatDateSafe(val)),
 
     measures: z.array(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>))
       .refine(arr => {

@@ -59,7 +59,7 @@ const formModel = reactive<EditTallyFormModel>({
 const MAXIMUM_NOTE_LENGTH = 140;
 
 const validations = z.object({
-  date: z.date({ invalid_type_error: 'Please select a date.' }).transform(formatDateSafe),
+  date: z.date({ invalid_type_error: 'Please select a date.' }).transform(val => formatDateSafe(val)),
   workId: z.number({ invalid_type_error: 'Please select a project.' }).positive({ message: 'Please select a project.' }),
   tags: z.array(z.string()),
   count: z.number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }),

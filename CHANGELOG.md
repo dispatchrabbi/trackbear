@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Fixed a bug that sometimes caused chart tooltips to be one day behind where they should be. (h/t Chaotics)
+
 ## 1.4.2
 
 - CHANGED: The leaderboard and goals pages now separate their lists into starred, ongoing, and ended sections. (h/t DemonEmpressTheordora)

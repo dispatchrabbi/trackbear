@@ -101,7 +101,7 @@ function renderChart() {
       value: { label: '', value: 'value' },
     },
     format: {
-      date: formatDate,
+      date: d => formatDate(d, true),
       series: seriesOrder.length > 1 ? d => getSeriesName(props.seriesInfo, d) : false,
       value: props.valueFormatFn ?? (d => formatCountForChart(d, props.measureHint)),
       x: false,
