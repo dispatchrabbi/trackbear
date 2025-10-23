@@ -56,7 +56,7 @@ type CreateTallyFormModel = {
 };
 const formModel = reactive<CreateTallyFormModel>({
   date: new Date(), // default to today
-  workId: props.initialWorkId ?? null,
+  workId: props.initialWorkId ?? (projectStore.allProjects.length === 1 ? projectStore.allProjects[0].id : null),
   tags: [],
   count: null,
   measure: lastTallyMeasure.value,
