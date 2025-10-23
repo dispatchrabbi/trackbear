@@ -70,7 +70,7 @@ async function handleSubmit() {
     successMessage.value = `${createdProject.title} has been created.`;
     await wait(1 * 1000);
 
-    emit('formSuccess');
+    emit('formSuccess', { project: createdProject });
   } catch {
     errorMessage.value = 'Could not create the project: something went wrong server-side.';
 

@@ -2,8 +2,7 @@
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-// import { useGoalStore } from 'src/stores/goal.ts';
-// const goalStore = useGoalStore();
+import type { Goal } from 'server/api/v1/goal';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
 import SectionTitle from 'src/components/layout/SectionTitle.vue';
@@ -16,6 +15,14 @@ const breadcrumbs: MenuItem[] = [
   { label: 'Goals', url: '/goals' },
   { label: 'New Goal', url: '/goals/new' },
 ];
+
+function handleFormSuccess({ goal }: { goal: Goal }) {
+  router.push({ name: 'goal', params: { goalId: goal.id } });
+}
+
+function handleFormFailure() {
+  router.push({ name: 'goals' });
+}
 
 </script>
 
@@ -31,8 +38,8 @@ const breadcrumbs: MenuItem[] = [
       </template>
       <template #content>
         <CreateGoalForm
-          @form-success="router.push('/goals')"
-          @form-cancel="router.push('/goals')"
+          @form-success="handleFormSuccess"
+          @form-cancel="handleFormFailure"
         />
       </template>
     </Card>

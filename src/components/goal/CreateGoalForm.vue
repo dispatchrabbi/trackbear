@@ -234,7 +234,7 @@ async function handleSubmit() {
     successMessage.value = `${createdGoal.title} has been created.`;
     await wait(1 * 1000);
 
-    emit('formSuccess');
+    emit('formSuccess', { goal: createdGoal });
   } catch {
     errorMessage.value = 'Could not create the goal: something went wrong server-side.';
 

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useLocalStorage } from '@vueuse/core';
-import { RouterLink } from 'vue-router';
+
+import { RouterLink, useRouter } from 'vue-router';
+const router = useRouter();
 
 import { useUserStore } from 'src/stores/user.ts';
 const userStore = useUserStore();
@@ -9,6 +11,7 @@ const userStore = useUserStore();
 import { useProjectStore } from 'src/stores/project';
 const projectStore = useProjectStore();
 
+import type { Project } from 'server/api/v1/project';
 import { cmpByTitle, cmpByPhase, cmpByLastUpdate } from 'src/lib/project';
 
 import ApplicationLayout from 'src/layouts/ApplicationLayout.vue';
@@ -28,6 +31,10 @@ const breadcrumbs: MenuItem[] = [
 ];
 
 const isCreateFormVisible = ref<boolean>(false);
+function handleCreateProjectFormSuccess({ project }: { project: Project }) {
+  isCreateFormVisible.value = false;
+  router.push({ name: 'project', params: { projectId: project.id } });
+}
 
 const isLoading = ref<boolean>(false);
 const errorMessage = ref<string | null>(null);
@@ -148,7 +155,7 @@ onMounted(async () => {
         </h2>
       </template>
       <CreateProjectForm
-        @form-success="isCreateFormVisible = false"
+        @form-success="handleCreateProjectFormSuccess"
       />
     </Dialog>
   </ApplicationLayout>
