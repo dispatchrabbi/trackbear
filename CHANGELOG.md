@@ -12,9 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-- FIXED: Fixed a bug that sometimes caused chart tooltips to be one day behind where they should be. (h/t Chaotics)
 - CHANGED: When creating a new project or goal, you are now taken to that project or goal's page after creation. This matches the already-existing behavior for leaderboards.
 - CHANGED: If you only have one project, the Enter Progress dialog will automatically select that project. (h/t Lara)
+- FIXED: Fixed a bug that sometimes caused chart tooltips to be one day behind where they should be. (h/t Chaotics)
+- FIXED: Very long leaderboard descriptions no longer overflow their cards on the leaderboard list page. (h/t Lady Jane)
 
 ## 1.4.2
 

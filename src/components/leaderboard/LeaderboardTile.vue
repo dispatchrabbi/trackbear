@@ -49,7 +49,7 @@ async function onStarClick() {
       </div>
     </template>
     <template #content>
-      <div class="flex flex-col md:flex-row md:h-8 md:items-end gap-2">
+      <div class="flex flex-col md:flex-row md:items-end gap-2">
         <div class="font-light italic grow">
           {{ props.leaderboard.description }}
         </div>
