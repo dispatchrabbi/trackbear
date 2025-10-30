@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Fixed a bug that sometimes caused chart tooltips for the par line to be one day behind where they should be for users in the eastern hemisphere. (h/t Elluna, Etlu-Yume)
+
 ## 1.4.3
 
 - CHANGED: When creating a new project or goal, you are now taken to that project or goal's page after creation. This matches the already-existing behavior for leaderboards.

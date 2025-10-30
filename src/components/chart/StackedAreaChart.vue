@@ -74,7 +74,7 @@ function renderChart() {
     const par = props.par.map(datapoint => ({
       series: 'Par',
       // we need to add 1 millisecond so that these are different from the dates in the main data stack
-      date: addMilliseconds(parseDateString(datapoint.date), 1),
+      date: addMilliseconds(parseDateString(datapoint.date, true), 1),
       value: datapoint.value,
     }));
 
