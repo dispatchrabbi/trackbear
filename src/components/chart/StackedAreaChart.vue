@@ -21,11 +21,13 @@ const props = withDefaults(defineProps<{
   valueFormatFn?: (value: number) => string;
   seriesInfo: SeriesInfoMap;
   showLegend?: boolean;
+  forceSeriesNameInTooltip?: boolean;
   isFullscreen?: boolean;
 }>(), ({
   par: null,
   valueFormatFn: undefined,
   showLegend: true,
+  forceSeriesNameInTooltip: false,
   isFullscreen: false,
 }));
 
@@ -102,7 +104,7 @@ function renderChart() {
     },
     format: {
       date: d => formatDate(d, true),
-      series: seriesOrder.length > 1 ? d => getSeriesName(props.seriesInfo, d) : false,
+      series: (props.forceSeriesNameInTooltip || seriesOrder.length > 1) ? d => getSeriesName(props.seriesInfo, d) : false,
       value: props.valueFormatFn ?? (d => formatCountForChart(d, props.measureHint)),
       x: false,
       y: false,

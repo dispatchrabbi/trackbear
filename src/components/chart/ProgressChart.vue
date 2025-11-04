@@ -23,6 +23,7 @@ const props = withDefaults(defineProps<{
   startingTotal?: number;
   goalCount?: number | null;
   showLegend?: boolean;
+  forceSeriesNameInTooltip?: boolean;
   graphTitle?: string;
 }>(), {
   startDate: null,
@@ -30,6 +31,7 @@ const props = withDefaults(defineProps<{
   startingTotal: 0,
   goalCount: null,
   showLegend: true,
+  forceSeriesNameInTooltip: false,
   graphTitle: 'trackbear',
 });
 
@@ -157,14 +159,17 @@ function handleClickSave() {
         :measure-hint="props.measureHint"
         :series-info="seriesInfo"
         :show-legend="props.showLegend"
+        :force-series-name-in-tooltip="props.forceSeriesNameInTooltip"
       />
       <BarChart
         v-if="selectedChartType === CHART_TYPES.BAR"
         :data="allSeries"
         :par="par"
         :measure-hint="props.measureHint"
+        :stacked="true"
         :series-info="seriesInfo"
         :show-legend="props.showLegend"
+        :force-series-name-in-tooltip="props.forceSeriesNameInTooltip"
       />
     </div>
     <Dialog
@@ -184,6 +189,7 @@ function handleClickSave() {
           :measure-hint="props.measureHint"
           :series-info="props.seriesInfo"
           :show-legend="props.showLegend"
+          :force-series-name-in-tooltip="props.forceSeriesNameInTooltip"
         />
         <BarChart
           v-if="selectedChartType === CHART_TYPES.BAR"
@@ -191,8 +197,10 @@ function handleClickSave() {
           :data="allSeries"
           :par="par"
           :measure-hint="props.measureHint"
+          :stacked="true"
           :series-info="props.seriesInfo"
           :show-legend="props.showLegend"
+          :force-series-name-in-tooltip="props.forceSeriesNameInTooltip"
         />
       </div>
     </Dialog>

@@ -147,6 +147,8 @@ const standingsRows = computed<StandingsDataRow[]>(() => {
       series: participant.uuid,
     });
 
+    const goalCount = getGoalCount(participant, props.leaderboard);
+
     const todayTally = participantSeries.findLast(tally => tally.date <= today) ?? { date: 'Never', value: 0, count: 0, accumulated: 0 };
     const yesterdayTally = participantSeries.findLast(tally => tally.date <= yesterday) ?? { date: 'Never', value: 0, count: 0, accumulated: 0 };
 
@@ -157,7 +159,7 @@ const standingsRows = computed<StandingsDataRow[]>(() => {
       color: participant.color,
 
       measure: getMeasure(participant),
-      goal: getGoalCount(participant, props.leaderboard),
+      goal: goalCount,
       lastActivity: todayTally.date,
 
       position: 0,
@@ -167,9 +169,9 @@ const standingsRows = computed<StandingsDataRow[]>(() => {
       yesterdayProgress: yesterdayTally.value,
 
       versusPar: hasPar.value ? todayTally.value - getParForToday(participant, props.leaderboard, daysAlong, totalDays) : null,
-      percent: formatPercent(todayTally.value, getGoalCount(participant, props.leaderboard)) + '%',
-      percentRaw: todayTally.value / getGoalCount(participant, props.leaderboard),
-      yesterdayPercentRaw: yesterdayTally.value / getGoalCount(participant, props.leaderboard),
+      percent: goalCount === 0 ? 'N/A' : (formatPercent(todayTally.value, goalCount) + '%'),
+      percentRaw: goalCount === 0 ? 0 : (todayTally.value / goalCount),
+      yesterdayPercentRaw: goalCount === 0 ? 0 : (yesterdayTally.value / goalCount),
     };
     rows.push(row);
   }

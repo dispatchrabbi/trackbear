@@ -160,6 +160,6 @@ function convertTalliesToPercentage(tallies: LeaderboardTally[], participant: Pa
     uuid: participant.uuid,
     date: tally.date,
     measure: LEADERBOARD_MEASURE.PERCENT,
-    count: (tally.count / participant.goal!.count) * 100,
+    count: participant.goal!.count === 0 ? 0 : (tally.count / participant.goal!.count) * 100,
   }));
 }

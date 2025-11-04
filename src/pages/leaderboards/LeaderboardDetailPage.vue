@@ -45,38 +45,7 @@ import MembersRoster from 'src/components/leaderboard/members/MembersRoster.vue'
 import { FAILURE_CODES } from 'server/lib/api-response-codes.ts';
 
 const leaderboard = ref<LeaderboardSummary | null>(null);
-// const loadLeaderboard = async function() {
-//   leaderboard.value = leaderboardStore.get(route.params.boardUuid.toString());
-//   if(leaderboard.value === null) {
-//     router.push({ name: 'leaderboards' });
-//   }
-// };
-
 const allParticipants = ref<Participant[]>([]);
-// const [loadParticipants, participantsSignals] = useAsyncSignals(
-//   async function() {
-//     if(leaderboard.value === null) {
-//       return [];
-//     } else {
-//       return await listParticipants(leaderboard.value.uuid);
-//     }
-//   },
-//   async function(err) {
-//     // @ts-expect-error
-//     if(err.code !== 'NOT_LOGGED_IN') {
-//       // the ApplicationLayout takes care of this. If we don't exclude NOT_LOGGED_IN, this will redirect to /leaderboards
-//       // before ApplicationLayout can redirect to /login.
-//       // TODO: figure out a better way to ensure that there's no race condition here
-//       router.push({ name: 'leaderboards' });
-//     }
-
-//     return err.message;
-//   },
-//   async function(participantsResult) {
-//     allParticipants.value = participantsResult;
-//     return null;
-//   },
-// );
 
 const [load, signals] = useAsyncSignals(
   async function() {
@@ -177,10 +146,7 @@ const breadcrumbs = computed(() => {
 });
 
 async function reloadData() {
-  // await leaderboardStore.populate(true);
   await load();
-  // await loadLeaderboard();
-  // await loadParticipants();
 }
 
 onMounted(async () => {
@@ -247,6 +213,7 @@ watch(() => route.params.boardUuid, async newUuid => {
                 :end-date="leaderboard.endDate"
                 :goal-count="100"
                 :show-legend="true"
+                :force-series-name-in-tooltip="true"
                 :graph-title="leaderboard.title"
               />
               <LeaderboardStandings
@@ -285,6 +252,7 @@ watch(() => route.params.boardUuid, async newUuid => {
                     :end-date="leaderboard.endDate"
                     :goal-count="leaderboard.goal[measure]"
                     :show-legend="true"
+                    :force-series-name-in-tooltip="true"
                     :graph-title="leaderboard.title"
                   />
                   <ProgressChart
@@ -297,6 +265,7 @@ watch(() => route.params.boardUuid, async newUuid => {
                     :end-date="leaderboard.endDate"
                     :goal-count="leaderboard.goal[measure]"
                     :show-legend="true"
+                    :force-series-name-in-tooltip="true"
                     :graph-title="leaderboard.title"
                   />
                   <FundraiserProgressMeter
