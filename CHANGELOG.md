@@ -12,6 +12,12 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.4.5
+
+- FIXED: Fixed a bug where leaderboard charts were being rendered too correctly when a participant had a goal of 0 (meaning that their progress would always be ∞%). Participants with a goal of 0 will now sit at 0% progress and have a standing of 'N/A'. (h/t Lara)
+
+## 1.4.4
+
 - FIXED: Fixed a bug that sometimes caused chart tooltips for the par line to be one day behind where they should be for users in the eastern hemisphere. (h/t Elluna, Etlu-Yume)
 
 ## 1.4.3
