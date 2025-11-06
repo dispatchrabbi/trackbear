@@ -1,6 +1,6 @@
 import { getDbClient } from 'server/lib/db.ts';
 
-import type { Board, BoardParticipant, User } from 'generated/prisma/client';
+import { type Board, type BoardParticipant, type User } from 'generated/prisma/client';
 import type { Leaderboard, LeaderboardMember, JustMember, ParticipantGoal, Participation, LeaderboardTeam, LeaderboardSummary, LeaderboardGoal, MemberBio } from './types';
 import type { WorksAndTagsIncluded } from '../helpers';
 import { TALLY_STATE } from '../tally/consts.ts';

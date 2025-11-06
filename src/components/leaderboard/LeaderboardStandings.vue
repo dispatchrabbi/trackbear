@@ -46,14 +46,16 @@ const determineStartAndEndDates = function(leaderboard: Leaderboard, participant
   const startDate = determineChartStartDate(earliestDate, leaderboard.startDate);
   const endDate = determineChartEndDate(latestDate, leaderboard.endDate);
   const totalDays = differenceInCalendarDays(parseDateString(endDate), parseDateString(startDate)) + 1; // +1 because it's inclusive
-  const daysAlong = differenceInCalendarDays(new Date(), parseDateString(startDate)) + 1; // +1 so that it counts today
 
   return {
     startDate,
     endDate,
-    daysAlong,
     totalDays,
   };
+};
+
+const determineDaysAlong = function(startDate: string, targetDate: string) {
+  return differenceInCalendarDays(parseDateString(targetDate), parseDateString(startDate)) + 1; // +1 so that it's inclusive
 };
 
 const getParForToday = function(participant: Participant, leaderboard: Leaderboard, daysAlong: number, totalDays: number) {
@@ -134,8 +136,7 @@ type StandingsDataRow = {
 };
 
 const standingsRows = computed<StandingsDataRow[]>(() => {
-  const { daysAlong, totalDays } = determineStartAndEndDates(props.leaderboard, props.participants);
-  const today = formatDate(new Date());
+  const { startDate, totalDays } = determineStartAndEndDates(props.leaderboard, props.participants);
   const yesterday = formatDate(addDays(new Date(), -1));
 
   const rows: StandingsDataRow[] = [];
@@ -147,10 +148,11 @@ const standingsRows = computed<StandingsDataRow[]>(() => {
       series: participant.uuid,
     });
 
-    const goalCount = getGoalCount(participant, props.leaderboard);
+    const latestTally = participantSeries.at(-1) ?? { date: 'Never', value: 0, series: participant.uuid };
+    const yesterdayTally = participantSeries.findLast(tally => tally.date <= yesterday) ?? { date: 'Never', value: 0, series: participant.uuid };
 
-    const todayTally = participantSeries.findLast(tally => tally.date <= today) ?? { date: 'Never', value: 0, count: 0, accumulated: 0 };
-    const yesterdayTally = participantSeries.findLast(tally => tally.date <= yesterday) ?? { date: 'Never', value: 0, count: 0, accumulated: 0 };
+    const goalCount = getGoalCount(participant, props.leaderboard);
+    const daysAlong = determineDaysAlong(startDate, latestTally.date);
 
     const row: StandingsDataRow = {
       uuid: participant.uuid,
@@ -160,17 +162,17 @@ const standingsRows = computed<StandingsDataRow[]>(() => {
 
       measure: getMeasure(participant),
       goal: goalCount,
-      lastActivity: todayTally.date,
+      lastActivity: latestTally.date,
 
       position: 0,
       yesterdayPosition: 0,
 
-      progress: todayTally.value,
+      progress: latestTally.value,
       yesterdayProgress: yesterdayTally.value,
 
-      versusPar: hasPar.value ? todayTally.value - getParForToday(participant, props.leaderboard, daysAlong, totalDays) : null,
-      percent: goalCount === 0 ? 'N/A' : (formatPercent(todayTally.value, goalCount) + '%'),
-      percentRaw: goalCount === 0 ? 0 : (todayTally.value / goalCount),
+      versusPar: hasPar.value ? latestTally.value - getParForToday(participant, props.leaderboard, daysAlong, totalDays) : null,
+      percent: goalCount === 0 ? 'N/A' : (formatPercent(latestTally.value, goalCount) + '%'),
+      percentRaw: goalCount === 0 ? 0 : (latestTally.value / goalCount),
       yesterdayPercentRaw: goalCount === 0 ? 0 : (yesterdayTally.value / goalCount),
     };
     rows.push(row);

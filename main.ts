@@ -43,7 +43,7 @@ async function main() {
 
   // initialize the db connection
   // TODO: add DATABASE_SCHEMA to env
-  initDbClient(env.DATABASE_USER, env.DATABASE_PASSWORD, env.DATABASE_HOST, env.DATABASE_NAME);
+  initDbClient(env.DATABASE_USER, env.DATABASE_PASSWORD, env.DATABASE_HOST, env.DATABASE_NAME, env.DATABASE_SCHEMA);
   try {
     await testDatabaseConnection();
     logger.info('Database connection established');

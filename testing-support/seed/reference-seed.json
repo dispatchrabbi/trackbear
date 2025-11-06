@@ -70,6 +70,7 @@
           "description": "To settle once and for all which bear is the best",
           "start": "2024-04-15",
           "end": "2024-12-15",
+          "measures": ["word"],
           "enableTeams": true,
           "teams": {
             "north": {

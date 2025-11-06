@@ -23,6 +23,7 @@ export type TrackbearEnv = {
   DATABASE_USER: string;
   DATABASE_PASSWORD: string;
   DATABASE_NAME: string;
+  DATABASE_SCHEMA: string;
   DATABASE_HOST: string;
 
   DB_PATH: string;
@@ -104,6 +105,9 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   if(!process.env.DATABASE_NAME) { throw new Error('Missing DATABASE_NAME value in .env'); }
   if(process.env.DATABASE_NAME.startsWith('"') && process.env.DATABASE_NAME.endsWith('"')) { console.warn('DATABASE_NAME value is quoted; it probably should not be.'); }
 
+  process.env.DATABASE_SCHEMA = process.env.DATABASE_SCHEMA || 'public';
+  if(process.env.DATABASE_SCHEMA.startsWith('"') && process.env.DATABASE_SCHEMA.endsWith('"')) { console.warn('DATABASE_SCHEMA value is quoted; it probably should not be.'); }
+
   if(!process.env.DATABASE_HOST) { throw new Error('Missing DATABASE_HOST value in .env'); }
   if(process.env.DATABASE_HOST.startsWith('"') && process.env.DATABASE_HOST.endsWith('"')) { console.warn('DATABASE_HOST value is quoted; it probably should not be.'); }
 
@@ -153,6 +157,7 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
     DATABASE_USER: process.env.DATABASE_USER,
     DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
     DATABASE_NAME: process.env.DATABASE_NAME,
+    DATABASE_SCHEMA: process.env.DATABASE_SCHEMA,
     DATABASE_HOST: process.env.DATABASE_HOST,
 
     DB_PATH: process.env.DB_PATH,

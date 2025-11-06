@@ -68,20 +68,20 @@ function renderChart() {
   }));
 
   const barMarkConfig = props.stacked ?
-      {
-        x: 'date',
-        y: 'value',
-        z: 'series',
-        fill: 'series',
-        order: seriesOrder,
-      } satisfies Plot.BarYOptions :
-      {
-        x: 'date',
-        y1: () => 0,
-        y2: 'value',
-        z: 'series',
-        fill: 'series',
-      } satisfies Plot.BarYOptions;
+    {
+      x: 'date',
+      y: 'value',
+      z: 'series',
+      fill: 'series',
+      order: seriesOrder,
+    } satisfies Plot.BarYOptions :
+    {
+      x: 'date',
+      y1: () => 0,
+      y2: 'value',
+      z: 'series',
+      fill: 'series',
+    } satisfies Plot.BarYOptions;
   const dataBarMark = Plot.barY(data, barMarkConfig);
 
   marks.push(dataBarMark);
@@ -129,7 +129,7 @@ function renderChart() {
     order: seriesOrder,
   };
   if(props.stacked) {
-    tooltipPointerConfig = Plot.stackY2(tooltipPointerConfig);
+    tooltipPointerConfig = Plot.stackY(tooltipPointerConfig);
   }
   // @ts-expect-error -- not sure why the types don't line up here, but scale: 'color' is what we need
   const tooltipPointerMark = Plot.tip(tooltipData, Plot.pointer(tooltipPointerConfig));
@@ -173,7 +173,7 @@ function renderChart() {
             tick => `${tick}%` :
             tick => kify(tick),
       grid: true,
-      domain: determineChartDomain(props.data, props.par, getSuggestedYAxisMaximum(props.measureHint)),
+      domain: determineChartDomain(props.data, props.par, getSuggestedYAxisMaximum(props.measureHint), props.stacked),
     },
     marks: marks,
   });

@@ -1,0 +1,77 @@
+{
+  "accounts": {
+    "behind": {
+      "user": {
+        "username": "fixture-behind",
+        "email": "dispatch.rabbi+tb_fixture-behind@gmail.com"
+      },
+      "projects": {
+        "behind_november": { "title": "Behind: November" }
+      },
+      "tallies": [{
+        "method": "generate",
+        "config": {
+          "project": "behind_november",
+          "start": "2025-11-01",
+          "end": "2025-11-02",
+          "measure": "word",
+          "min": 1200,
+          "max": 2000
+        }
+      }],
+      "leaderboards": {
+        "relative": {
+          "title": "Behind, Ahead, and Today: November",
+          "start": "2025-11-01",
+          "end": "2025-11-30",
+          "members": [
+            { "user": "behind", "participation": {}, "isOwner": true },
+            { "user": "today", "participation": {} },
+            { "user": "ahead", "participation": {} }
+          ],
+          "teams": {}
+        }
+      }
+    },
+    "today": {
+      "user": {
+        "username": "fixture-today",
+        "email": "dispatch.rabbi+tb_fixture-today@gmail.com"
+      },
+      "projects": {
+        "today_november": { "title": "Today: November" }
+      },
+      "tallies": [{
+        "method": "generate",
+        "config": {
+          "project": "today_november",
+          "start": "2025-11-01",
+          "end": "2025-11-05",
+          "measure": "word",
+          "min": 1200,
+          "max": 2000
+        }
+      }]
+    },
+    "ahead": {
+      "user": {
+        "username": "fixture-ahead",
+        "email": "dispatch.rabbi+tb_fixture-on-time@gmail.com"
+      },
+      "projects": {
+        "ahead_november": { "title": "Ahead: November" }
+      },
+      "tallies": [{
+        "method": "generate",
+        "config": {
+          "project": "ahead_november",
+          "start": "2025-11-01",
+          "end": "2025-11-07",
+          "measure": "word",
+          "min": 1200,
+          "max": 2000
+        }
+      }]
+    }
+  }
+}

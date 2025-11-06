@@ -12,6 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: The standings for leaderboards now show all participants' progress as it is shown on the chart, even if some of that progress is in the future from your perspective. The standings changes are versus your yesterday. This one's for you, global writer communities. (h/t varve and various others in the Rogue Writers discord)
+- FIXED: Bar charts for leaderboards now show bars for all participants, stacked. (h/t Amaras)
+
 ## 1.4.5
 
 - FIXED: Fixed a bug where leaderboard charts were being rendered too correctly when a participant had a goal of 0 (meaning that their progress would always be ∞%). Participants with a goal of 0 will now sit at 0% progress and have a standing of 'N/A'. (h/t Lara)

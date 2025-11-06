@@ -10,6 +10,7 @@ import { initDbClient, getDbClient, testDatabaseConnection } from 'server/lib/db
 import { createDatabase } from 'testing-support/db-setup/db-setup.ts';
 import { reqCtxForScript } from '../server/lib/request-context.ts';
 import { validateSeed, createSeed } from 'testing-support/seed/seed.ts';
+import { ZodError } from 'zod';
 
 async function main() {
   if(process.argv.includes('-h') || process.argv.includes('--help') || process.argv.length < 3 || process.argv.length > 4) {
@@ -50,6 +51,19 @@ async function main() {
     process.exit(1);
   }
 
+  scriptLogger.info('Validating the seed config...');
+  try {
+    validateSeed(seedJson);
+  } catch (err) {
+    if(err instanceof ZodError) {
+      scriptLogger.error(`Seed config was not valid:`, err.format());
+    } else {
+      scriptLogger.error(`Encountered error while validating seed:`, err.message);
+    }
+
+    process.exit(1);
+  }
+
   const schemaName = dbNameArg ?? ('seed-' + v4());
   scriptLogger.info(`Creating schema ${schemaName}...`);
   createDatabase(schemaName);
@@ -72,7 +86,6 @@ async function main() {
   }
 
   scriptLogger.info(`Seeding the database...`);
-  validateSeed(seedJson);
   const reqCtx = reqCtxForScript('create-test-database.ts');
   await createSeed(seedJson, reqCtx);
 
