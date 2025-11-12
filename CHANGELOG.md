@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.4.7
+
 - FIXED: Bar chart tooltips now show up where they ought to, instead of slightly above that day's bar. The tooltips are now once again at the top of the bars as well. Hopefully this is the last fix to bar charts for a while! (h/t Amaras)
 - FIXED: The `startDate` and `endDate` query parameters for the `GET /api/v1/stats/days` API endpoint now actually filter the results. (h/t Preocts)
 
