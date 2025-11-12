@@ -9,7 +9,7 @@ export type SeriesDataPoint = Expand<BareDataPoint & {
   series: string;
 }>;
 
-export type TooltipDataPoint = {
+export type PlotDataPoint = {
   series: string;
   date: Date;
   value: number;

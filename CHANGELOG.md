@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Bar chart tooltips now show up where they ought to, instead of slightly above that day's bar. The tooltips are now once again at the top of the bars as well. Hopefully this is the last fix to bar charts for a while! (h/t Amaras)
+
 ## 1.4.6
 
 - CHANGED: The standings for leaderboards now show all participants' progress as it is shown on the chart, even if some of that progress is in the future from your perspective. The standings changes are versus your yesterday. This one's for you, global writer communities. (h/t varve and various others in the Rogue Writers discord)

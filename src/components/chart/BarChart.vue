@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, watchEffect, defineProps, withDefaults, onMounted, useTemplateRef } from 'vue';
+import { ref, watchEffect, defineProps, withDefaults, onMounted, useTemplateRef, computed } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import * as Plot from '@observablehq/plot';
 import { utcFormat } from 'd3-time-format';
 
-import type { SeriesDataPoint, BareDataPoint, TooltipDataPoint } from './types';
+import type { SeriesDataPoint, BareDataPoint, PlotDataPoint } from './types';
 import { useChartColors } from './chart-colors';
 import { determineChartDomain, formatCountForChart, getSeriesName, mapSeriesToColor, orderSeries, type SeriesInfoMap } from './chart-functions';
 
@@ -13,7 +13,7 @@ import { formatDate, formatDuration, parseDateString } from 'src/lib/date';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts';
 import { LEADERBOARD_MEASURE, type LeaderboardMeasure } from 'server/lib/models/leaderboard/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally';
-import { addMilliseconds } from 'date-fns';
+import { addHours, addMilliseconds } from 'date-fns';
 
 const props = withDefaults(defineProps<{
   data: SeriesDataPoint[];
@@ -34,12 +34,6 @@ const props = withDefaults(defineProps<{
   isFullscreen: false,
 }));
 
-const chartColors = useChartColors();
-
-// now we can start configuring the chart
-const plotContainer = useTemplateRef('plot-container');
-const plotContainerWidth = ref(0);
-
 function getSuggestedYAxisMaximum(measureHint: LeaderboardMeasure) {
   if(measureHint === LEADERBOARD_MEASURE.PERCENT) {
     return 100;
@@ -48,95 +42,45 @@ function getSuggestedYAxisMaximum(measureHint: LeaderboardMeasure) {
   }
 };
 
-function renderChart() {
-  const seriesOrder = orderSeries(props.data);
-  const colorOrder = mapSeriesToColor(props.seriesInfo, seriesOrder, chartColors.value);
+const seriesOrder = computed(() => {
+  return orderSeries(props.data);
+});
 
-  // we will need to add anything that needs a tooltip to this
-  const tooltipData: TooltipDataPoint[] = [];
+const chartColors = useChartColors();
+const colorOrder = computed(() => {
+  return mapSeriesToColor(props.seriesInfo, seriesOrder.value, chartColors.value);
+});
 
-  const marks: Plot.Markish[] = [];
-
-  // we need a zero axis
-  marks.push(Plot.ruleY([0]));
-
-  // now we add the data points
-  const data = props.data.map(datapoint => ({
-    series: datapoint.series,
-    date: parseDateString(datapoint.date, true),
-    value: datapoint.value,
+const data = computed<PlotDataPoint[]>(() => {
+  return props.data.map(d => ({
+    series: d.series,
+    date: parseDateString(d.date, true),
+    value: d.value,
   }));
+});
 
-  const barMarkConfig = props.stacked ?
-    {
-      x: 'date',
-      y: 'value',
-      z: 'series',
-      fill: 'series',
-      order: seriesOrder,
-    } satisfies Plot.BarYOptions :
-    {
-      x: 'date',
-      y1: () => 0,
-      y2: 'value',
-      z: 'series',
-      fill: 'series',
-    } satisfies Plot.BarYOptions;
-  const dataBarMark = Plot.barY(data, barMarkConfig);
+const par = computed<PlotDataPoint[]>(() => {
+  return props.par?.map(d => ({
+    series: 'Par',
+    date: addMilliseconds(parseDateString(d.date, true), 1),
+    value: d.value,
+  })) ?? [];
+});
 
-  marks.push(dataBarMark);
-  tooltipData.push(...data);
+const tooltipData = computed<PlotDataPoint[]>(() => {
+  return ([] as PlotDataPoint[]).concat(
+    data.value.filter(d => d.value !== 0),
+    par.value,
+  );
+});
 
-  // if there's par, let's add par
-  if(props.par !== null) {
-    const par = props.par.map(datapoint => ({
-      series: 'Par',
-      // we need to add 1 millisecond so that these are different from the dates in the main data stack
-      date: addMilliseconds(parseDateString(datapoint.date, true), 1),
-      value: datapoint.value,
-    }));
+// now we can start configuring the chart
+const plotContainer = useTemplateRef('plot-container');
+const plotContainerWidth = ref(0);
 
-    const parLineMark = Plot.lineY(par, {
-      x: 'date',
-      y: 'value',
-      stroke: chartColors.value.par,
-      strokeDasharray: 8,
-    });
-
-    marks.push(parLineMark);
-    tooltipData.push(...par);
-  }
-
-  // lastly, add the tooltip
-  let tooltipPointerConfig = {
-    x: 'date',
-    y: 'value',
-    z: 'series',
-    channels: {
-      date: { label: '', value: 'date' },
-      series: { label: '', value: 'series', scale: 'color' },
-      value: { label: '', value: 'value' },
-    },
-    format: {
-      date: d => formatDate(d, true),
-      series: (props.forceSeriesNameInTooltip || seriesOrder.length > 1) ? d => getSeriesName(props.seriesInfo, d) : false,
-      value: props.valueFormatFn ?? (d => formatCountForChart(d, props.measureHint)),
-      x: false,
-      y: false,
-      z: false,
-    },
-    fill: chartColors.value.background,
-    order: seriesOrder,
-  };
-  if(props.stacked) {
-    tooltipPointerConfig = Plot.stackY(tooltipPointerConfig);
-  }
-  // @ts-expect-error -- not sure why the types don't line up here, but scale: 'color' is what we need
-  const tooltipPointerMark = Plot.tip(tooltipData, Plot.pointer(tooltipPointerConfig));
-
-  marks.push(tooltipPointerMark);
-
+function renderChart() {
   const chart = Plot.plot({
+    // style and placement
     style: {
       fontFamily: 'Jost, sans-serif',
       fontSize: '0.75rem',
@@ -147,25 +91,14 @@ function renderChart() {
     height: (plotContainerWidth.value * 9) / 16,
     marginLeft: props.measureHint === TALLY_MEASURE.TIME ? 60 : undefined,
     marginBottom: 36,
-    color: {
-      type: 'categorical',
-      domain: props.par ? ['Par', ...seriesOrder] : seriesOrder,
-      range: props.par ? [chartColors.value.par, ...colorOrder] : colorOrder,
-      legend: props.showLegend,
-      tickFormat: d => getSeriesName(props.seriesInfo, d),
-    },
+
+    // scales
     x: {
-      type: 'band',
-      interval: 'day',
-      tickFormat: (d: Date) => {
-        if(d.getUTCHours() === 0) {
-          return utcFormat('%-d\n%b')(d);
-        } else {
-          return '';
-        }
-      },
+      type: 'utc',
+      tickFormat: (d: Date) => (d.getUTCHours() === 0) ? utcFormat('%-d\n%b')(d) : '',
     },
     y: {
+      domain: determineChartDomain(props.data, props.par, getSuggestedYAxisMaximum(props.measureHint), props.stacked),
       tickFormat:
         props.measureHint === TALLY_MEASURE.TIME ?
           tick => formatDuration(tick) :
@@ -173,9 +106,64 @@ function renderChart() {
             tick => `${tick}%` :
             tick => kify(tick),
       grid: true,
-      domain: determineChartDomain(props.data, props.par, getSuggestedYAxisMaximum(props.measureHint), props.stacked),
+      nice: true,
+      zero: true,
     },
-    marks: marks,
+    color: {
+      type: 'categorical',
+      domain: props.par ? ['Par', ...seriesOrder.value] : seriesOrder.value,
+      range: props.par ? [chartColors.value.par, ...colorOrder.value] : colorOrder.value,
+      legend: props.showLegend,
+      tickFormat: d => getSeriesName(props.seriesInfo, d),
+    },
+
+    marks: [
+      // zero axis
+      Plot.ruleY([0]),
+      // bars
+      Plot.rectY(data.value, {
+        x: 'date',
+        // we have to move the x position back half a day so it's centered on the axis tick
+        x1: d => addHours(d.date, -12),
+        x2: d => addHours(d.date, 12),
+        y: 'value',
+        z: 'series',
+        fill: 'series',
+        order: seriesOrder.value,
+        insetLeft: 1,
+        insetRight: 1,
+      }),
+      // par line
+      props.par === null ?
+        null :
+          Plot.lineY(par.value, {
+            x: 'date',
+            y: 'value',
+            stroke: chartColors.value.par,
+            strokeDasharray: 8,
+          }),
+      // tooltips
+      Plot.tip(tooltipData.value, Plot.pointer(Plot.stackY2({
+        x: 'date',
+        y: 'value',
+        z: 'series',
+        channels: {
+          date: { label: '', value: 'date' },
+          series: { label: '', value: 'series', scale: 'color' },
+          value: { label: '', value: 'value' },
+        },
+        format: {
+          date: d => formatDate(d, true),
+          series: (props.forceSeriesNameInTooltip || seriesOrder.value.length > 1) ? d => getSeriesName(props.seriesInfo, d) : false,
+          value: props.valueFormatFn ?? (d => formatCountForChart(d, props.measureHint)),
+          x: false,
+          y: false,
+          z: false,
+        },
+        fill: chartColors.value.background,
+        order: seriesOrder.value,
+      }))),
+    ],
   });
 
   return chart;
@@ -193,7 +181,6 @@ onMounted(() => {
     plotContainer.value.replaceChildren(chart);
   });
 });
-
 </script>
 
 <template>

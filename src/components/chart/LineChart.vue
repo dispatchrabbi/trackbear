@@ -4,7 +4,7 @@ import { useResizeObserver } from '@vueuse/core';
 import * as Plot from '@observablehq/plot';
 import { utcFormat } from 'd3-time-format';
 
-import type { SeriesDataPoint, BareDataPoint, TooltipDataPoint } from './types';
+import type { SeriesDataPoint, BareDataPoint, PlotDataPoint } from './types';
 import { useChartColors } from './chart-colors';
 import { determineChartDomain, formatCountForChart, getSeriesName, mapSeriesToColor, orderSeries, type SeriesInfoMap } from './chart-functions';
 
@@ -51,7 +51,7 @@ function renderChart() {
   const colorOrder = mapSeriesToColor(props.seriesInfo, seriesOrder, chartColors.value);
 
   // we will need to add anything that needs a tooltip to this
-  const tooltipData: TooltipDataPoint[] = [];
+  const tooltipData: PlotDataPoint[] = [];
 
   const marks: Plot.Markish[] = [];
 
