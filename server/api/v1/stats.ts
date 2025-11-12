@@ -28,7 +28,9 @@ const zDaysQuery = z.object({
 export type DaysQuery = z.infer<typeof zDaysQuery>;
 
 export async function handleGetDays(req: RequestWithUser, res: ApiResponse<DayCount[]>) {
-  const dayCounts = await getDayCounts(req.user.id);
+  const query = req.query as DaysQuery;
+
+  const dayCounts = await getDayCounts(req.user.id, query.startDate, query.endDate);
 
   return res.status(200).send(success(dayCounts));
 }
