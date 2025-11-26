@@ -121,16 +121,31 @@ async function handleSubmit() {
   errorMessage.value = null;
 
   try {
-    const data = formData();
-    const payload: LeaderboardParticipationPayload = {
-      isParticipant: data.isParticipant,
-      displayName: data.displayName,
-      teamId: data.teamId,
-      color: data.color,
-      goal: data.isParticipant ? props.leaderboard.individualGoalMode ? { measure: data.measure, count: data.count ?? 0 } : null : null,
-      workIds: data.isParticipant ? data.works : [],
-      tagIds: data.isParticipant ? data.tags : [],
+    // formData() will throw if isParticipant is false, because the other fields
+    // tehcnically don't pass validation because the user can't pick a goal
+    // TODO: rework the validation above
+    let payload: LeaderboardParticipationPayload = {
+      isParticipant: false,
+      displayName: formModel.displayName,
+      teamId: null,
+      color: '',
+      goal: null,
+      workIds: [],
+      tagIds: [],
     };
+
+    if(formModel.isParticipant) {
+      const data = formData();
+      payload = {
+        isParticipant: data.isParticipant,
+        displayName: data.displayName,
+        teamId: data.teamId,
+        color: data.color,
+        goal: props.leaderboard.individualGoalMode ? { measure: data.measure, count: data.count ?? 0 } : null,
+        workIds: data.works,
+        tagIds: data.tags,
+      };
+    }
 
     const joinedMember = await joinLeaderboard(props.leaderboard.uuid, payload);
 

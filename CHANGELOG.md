@@ -13,6 +13,7 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - FIXED: The API documentation now accurately shows the shape of an error response. This is not a change in API behavior but a correction to the API docs. (h/t Preocts)
+- FIXED: You can now join a leaderboard in individual goal mode as a spectator without first having to join as a participant. (h/t cdrch)
 
 ## 1.4.7
 
