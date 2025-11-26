@@ -316,12 +316,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        false
-                      ]
-                    },
                     "code": {
                       "type": "string",
                       "enum": [
@@ -333,7 +327,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "code",
                     "message"
                   ]
@@ -507,12 +500,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        false
-                      ]
-                    },
                     "code": {
                       "type": "string",
                       "enum": [
@@ -525,7 +512,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "code",
                     "message"
                   ]
@@ -618,12 +604,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        false
-                      ]
-                    },
                     "code": {
                       "type": "string",
                       "enum": [
@@ -635,7 +615,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "code",
                     "message"
                   ]
@@ -771,12 +750,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        false
-                      ]
-                    },
                     "code": {
                       "type": "string",
                       "enum": [
@@ -788,7 +761,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "code",
                     "message"
                   ]
@@ -1473,12 +1445,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        false
-                      ]
-                    },
                     "code": {
                       "type": "string",
                       "enum": [
@@ -1490,7 +1456,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "code",
                     "message"
                   ]
@@ -1575,12 +1540,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [
-                        false
-                      ]
-                    },
                     "code": {
                       "type": "string",
                       "enum": [
@@ -1592,7 +1551,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "code",
                     "message"
                   ]
@@ -2534,6 +2492,12 @@
         },
         "description": ""
       },
+      "Leaderboards.GetByJoinCodeFailureCode": {
+        "type": "string",
+        "enum": [
+          "CANNOT_JOIN"
+        ]
+      },
       "Leaderboards.Leaderboard": {
         "type": "object",
         "required": [
@@ -3315,12 +3279,6 @@
           "body": {
             "type": "object",
             "properties": {
-              "success": {
-                "type": "boolean",
-                "enum": [
-                  false
-                ]
-              },
               "code": {
                 "type": "string",
                 "enum": [
@@ -3332,7 +3290,6 @@
               }
             },
             "required": [
-              "success",
               "code",
               "message"
             ],
@@ -3582,12 +3539,6 @@
           "body": {
             "type": "object",
             "properties": {
-              "success": {
-                "type": "boolean",
-                "enum": [
-                  false
-                ]
-              },
               "code": {
                 "type": "string",
                 "enum": [
@@ -3599,7 +3550,6 @@
               }
             },
             "required": [
-              "success",
               "code",
               "message"
             ],

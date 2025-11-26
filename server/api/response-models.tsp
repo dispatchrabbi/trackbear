@@ -6,17 +6,12 @@ namespace TrackBear;
 model Success<StatusCode, Payload> {
   ...StatusCode;
   ...Body<Payload>;
-  // ...Body<{
-  //   success: true;
-  //   data: Payload;
-  // }>;
 }
 
 @error
 model Failure<StatusCode, FailureCode> {
   ...StatusCode;
   ...Body<{
-    success: false;
     code: FailureCode;
     message: string;
   }>;

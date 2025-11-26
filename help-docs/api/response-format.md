@@ -32,8 +32,10 @@ If your call fails, the response will have this shape:
 ```json
 {
   "success": false,
-  "code": "SOME_ERROR_CODE",
-  "message": "A human-readable error message"
+  "error": {
+    "code": "SOME_ERROR_CODE",
+    "message": "A human-readable error message"
+  }
 }
 ```
 
@@ -43,8 +45,10 @@ For example, attempting join a leaderboard you are already part of via `POST /le
 // 409 Conflict
 {
   "success": false,
-  "code": "ALREADY_JOINED",
-  "message": "You are already part of this leaderboard."
+  "error": {
+    "code": "ALREADY_JOINED",
+    "message": "You are already part of this leaderboard."
+  }
 }
 ```
 

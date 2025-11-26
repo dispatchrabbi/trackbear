@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: The API documentation now accurately shows the shape of an error response. This is not a change in API behavior but a correction to the API docs. (h/t Preocts)
+
 ## 1.4.7
 
 - FIXED: Bar chart tooltips now show up where they ought to, instead of slightly above that day's bar. The tooltips are now once again at the top of the bars as well. Hopefully this is the last fix to bar charts for a while! (h/t Amaras)
