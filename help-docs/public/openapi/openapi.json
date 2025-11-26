@@ -2492,12 +2492,6 @@
         },
         "description": ""
       },
-      "Leaderboards.GetByJoinCodeFailureCode": {
-        "type": "string",
-        "enum": [
-          "CANNOT_JOIN"
-        ]
-      },
       "Leaderboards.Leaderboard": {
         "type": "object",
         "required": [
