@@ -6,7 +6,7 @@ import { success } from 'server/lib/api-response.ts';
 
 vi.mock('../../lib/models/project/project-model.ts');
 import { ProjectModel as _ProjectModel, type Project, type SummarizedProject } from '../../lib/models/project/project-model.ts';
-const ProjectModel = vi.mocked(_ProjectModel);
+const ProjectModel = vi.mocked(_ProjectModel, { deep: true });
 
 import { handleGetProjects, handleGetProject, handleCreateProject, handleUpdateProject, handleDeleteProject } from './project.ts';
 

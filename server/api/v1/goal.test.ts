@@ -14,7 +14,7 @@ import { logAuditEventMock } from '../../lib/__mocks__/audit-events.ts';
 
 vi.mock('../../lib/models/goal/goal-model.ts');
 import { GoalModel as _GoalModel, type Goal } from '../../lib/models/goal/goal-model.ts';
-const GoalModel = vi.mocked(_GoalModel);
+const GoalModel = vi.mocked(_GoalModel, { deep: true });
 
 import { handleGetGoals, handleGetGoal, handleCreateGoal, handleCreateGoals, handleUpdateGoal, handleDeleteGoal } from './goal';
 

@@ -6,7 +6,7 @@ import { success } from 'server/lib/api-response.ts';
 
 vi.mock('../../lib/models/api-key/api-key-model.ts');
 import { ApiKeyModel as _ApiKeyModel, type ApiKey } from '../../lib/models/api-key/api-key-model.ts';
-const ApiKeyModel = vi.mocked(_ApiKeyModel);
+const ApiKeyModel = vi.mocked(_ApiKeyModel, { deep: true });
 
 import { handleGetApiKeys, handleGetApiKey, handleCreateApiKey, handleDeleteApiKey } from './api-key.ts';
 import { censorApiKey } from 'server/lib/api-key.ts';

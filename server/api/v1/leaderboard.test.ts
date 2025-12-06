@@ -7,11 +7,11 @@ import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 
 vi.mock('../../lib/models/leaderboard/leaderboard-model.ts');
 import { LeaderboardModel as _LeaderboardModel } from '../../lib/models/leaderboard/leaderboard-model.ts';
-const LeaderboardModel = vi.mocked(_LeaderboardModel);
+const LeaderboardModel = vi.mocked(_LeaderboardModel, { deep: true });
 
 vi.mock('../../lib/models/leaderboard/leaderboard-member-model.ts');
 import { LeaderboardMemberModel as _LeaderboardMemberModel } from '../../lib/models/leaderboard/leaderboard-member-model.ts';
-const LeaderboardMemberModel = vi.mocked(_LeaderboardMemberModel);
+const LeaderboardMemberModel = vi.mocked(_LeaderboardMemberModel, { deep: true });
 
 import {
   handleList, handleGetByUuid, handleGetByJoinCode,

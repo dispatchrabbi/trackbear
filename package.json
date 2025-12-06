@@ -127,7 +127,7 @@
     "globals": "^16.3.0",
     "prisma": "^6.18.0",
     "rollup-plugin-visualizer": "^5.11.0",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.26.0",
     "uuid": "^11.1.0",
     "vite-tsconfig-paths": "^5.1.4",

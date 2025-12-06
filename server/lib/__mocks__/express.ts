@@ -33,7 +33,7 @@ export function getMockResponse(): MockResponse {
   const res = {
     status: vi.fn(() => res),
     send: vi.fn(() => res),
-  } as MockResponse;
+  } as unknown as MockResponse; // this is an intentional hard cast
 
   return res;
 }
