@@ -17,7 +17,7 @@
 (A) De-duplicate add/edit forms dif:3 @frontend +techdebt
 (A) Endpoints that return EmptyObject should return null instead dif:1 +techdebt
 (A) Update zod dif:3 +update
-(A) Update prisma dif:2 +update
+x (A) Update prisma dif:2 +update
 (A) Add actual page titles to the pages (h/t varve) dif:1 @ui
 (A) Add "how many words you wrote this day, week and month" to the Dashboard (h/t Sandrine) dif:2 @dashboard @stats +delight
 (B) Add writing insights to the Stats section: total words, average per session, Best session, Most productive day (h/t Sandrine) dif:3 @stats +delight
