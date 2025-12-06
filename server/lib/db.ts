@@ -4,22 +4,24 @@ import { PrismaClient } from '../../generated/prisma/client';
 let adapter: PrismaPg | null = null;
 let client: PrismaClient | null = null;
 
-export function initDbClient(
-  dbUser: string,
-  dbPassword: string,
-  dbHost: string,
-  dbName: string,
-  dbSchema: string = 'public',
-) {
-  const connectionString = makeConnectionString(
-    dbUser,
-    dbPassword,
-    dbHost,
-    dbName,
-    dbSchema,
-  );
-  adapter = new PrismaPg({ connectionString }, { schema: dbSchema });
+export function initDbClient(overrides: Partial<DbClientConnectionParams> = {}): PrismaClient {
+  if(client) {
+    throw new Error('Cannot initialize database client because it is already initialized!');
+  }
+
+  const connectionParams = validateConnectionParams(Object.assign({
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    host: process.env.DATABASE_HOST,
+    name: process.env.DATABASE_NAME,
+    schema: process.env.DATABASE_SCHEMA,
+  }, overrides));
+
+  const connectionString = makeConnectionString(connectionParams);
+  adapter = new PrismaPg({ connectionString }, { schema: connectionParams.schema });
   client = new PrismaClient({ adapter });
+
+  return client;
 }
 
 export async function disconnectDbClient() {
@@ -29,7 +31,7 @@ export async function disconnectDbClient() {
 
 export function getDbAdapter(): PrismaPg {
   if(adapter === null) {
-    throw new Error('Cannot get adapter client because it has not yet been initialized!');
+    throw new Error('Cannot get database adapter because it has not yet been initialized!');
   }
 
   return adapter;
@@ -43,45 +45,35 @@ export function getDbClient(): PrismaClient {
   return client;
 }
 
-export async function testDatabaseConnection() {
-  const db = getDbClient();
+export async function testDatabaseConnection(db: PrismaClient) {
   await db.$queryRaw`SELECT 1 + 1 AS two;`;
 }
-export async function testDatabaseConnectionSafe() {
+export async function testDatabaseConnectionSafe(db: PrismaClient) {
   try {
-    await testDatabaseConnection();
+    await testDatabaseConnection(db);
     return true;
   } catch {
     return false;
   }
 }
 
-export function makeConnectionString(
-  dbUser: string,
-  dbPassword: string,
-  dbHost: string,
-  dbName: string,
-  dbSchema: string = 'public',
-) {
-  if(dbUser.length === 0) {
-    throw new Error('Database user was not set');
+type DbClientConnectionParams = {
+  user: string;
+  password: string;
+  host: string;
+  name: string;
+  schema: string;
+};
+export function validateConnectionParams(params: Partial<DbClientConnectionParams>): DbClientConnectionParams {
+  for(const key of ['user', 'password', 'host', 'name', 'schema']) {
+    if(!params[key]) {
+      throw new Error(`${key} was not set in db connection params`);
+    }
   }
 
-  if(dbPassword.length === 0) {
-    throw new Error('Database password was not set');
-  }
+  return params as DbClientConnectionParams;
+}
 
-  if(dbHost.length === 0) {
-    throw new Error('Database host was not set');
-  }
-
-  if(dbName.length === 0) {
-    throw new Error('Database name was not set');
-  }
-
-  if(dbSchema.length === 0) {
-    throw new Error('Database schema was not set');
-  }
-
-  return `postgresql://${dbUser}:${dbPassword}@${dbHost}/${dbName}?schema=${dbSchema}`;
+export function makeConnectionString(params: DbClientConnectionParams) {
+  return `postgresql://${params.user}:${params.password}@${params.host}/${params.name}?schema=${params.schema}`;
 }

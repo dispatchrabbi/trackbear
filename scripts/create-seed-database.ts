@@ -7,7 +7,7 @@ import { v4 } from 'uuid';
 
 import { initLoggers, getLogger } from '../server/lib/logger.ts';
 import { initDbClient, getDbClient, testDatabaseConnection } from 'server/lib/db.ts';
-import { createDatabase } from 'testing-support/db-setup/db-setup.ts';
+import { createTestDatabase } from 'testing-support/db-setup/db-setup.ts';
 import { reqCtxForScript } from '../server/lib/request-context.ts';
 import { validateSeed, createSeed } from 'testing-support/seed/seed.ts';
 import { ZodError } from 'zod';
@@ -66,19 +66,20 @@ async function main() {
 
   const schemaName = dbNameArg ?? ('seed-' + v4());
   scriptLogger.info(`Creating schema ${schemaName}...`);
-  createDatabase(schemaName);
+  createTestDatabase(schemaName);
 
   scriptLogger.info(`Initializing client to point to ${schemaName}...`);
-  initDbClient(
-    process.env.DATABASE_USER!,
-    process.env.DATABASE_PASSWORD!,
-    process.env.DATABASE_HOST!,
-    process.env.DATABASE_NAME!,
-    schemaName,
-  );
-  await testDatabaseConnection();
+  initDbClient({
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    host: process.env.DATABASE_HOST,
+    name: process.env.DATABASE_NAME,
+    schema: schemaName,
+  });
 
   const db = getDbClient();
+  await testDatabaseConnection(db);
+
   const users = await db.user.findMany();
   if(users.length > 0) {
     scriptLogger.error(`Found existing users! Something isn't right. Exiting...`);

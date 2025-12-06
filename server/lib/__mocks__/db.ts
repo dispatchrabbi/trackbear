@@ -7,7 +7,7 @@ beforeEach(() => {
   mockReset(mockedDbClient);
 });
 
-export const initDbClient = vi.fn();
+export const initDbClient = vi.fn(() => mockedDbClient);
 export const disconnectDbClient = vi.fn(() => Promise.resolve());
 export const getDbClient = vi.fn(() => mockedDbClient);
 export const testDatabaseConnection = vi.fn();

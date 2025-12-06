@@ -21,7 +21,7 @@
 (A) Add actual page titles to the pages (h/t varve) dif:1 @ui
 (A) Add "how many words you wrote this day, week and month" to the Dashboard (h/t Sandrine) dif:2 @dashboard @stats +delight
 (B) Add writing insights to the Stats section: total words, average per session, Best session, Most productive day (h/t Sandrine) dif:3 @stats +delight
-(B) Improve DB env var situation +techdebt
+x (B) Improve DB env var situation +techdebt
 (B) Project progress embed (h/t Laura) dif:3 @public +embeds
 (B) Display positive (written) and negative (removed) word counts separately on the stats page dif:3 @stats +delight
 (B) Improve audit event retrieval/listings dif:2 @admin +adminconsole

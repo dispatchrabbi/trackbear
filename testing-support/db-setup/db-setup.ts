@@ -2,9 +2,9 @@ import process from 'node:process';
 import { execSync } from 'node:child_process';
 import { type PrismaClient } from 'generated/prisma/client';
 
-import { makeConnectionString } from 'server/lib/db.ts';
+import { makeConnectionString, validateConnectionParams } from 'server/lib/db.ts';
 
-export function createDatabase(schemaName: string) {
+export function createTestDatabase(schemaName: string) {
   process.env.DATABASE_SCHEMA = schemaName;
   const connectionString = makeConnectionStringFromEnv();
 
@@ -23,31 +23,22 @@ export function createDatabase(schemaName: string) {
   });
 }
 
-export async function dropDatabase(schemaName: string, db: PrismaClient) {
+export async function dropTestDatabase(schemaName: string, db: PrismaClient) {
   await db.$executeRawUnsafe(
     `DROP SCHEMA IF EXISTS "${schemaName}" CASCADE;`,
   );
   await db.$disconnect();
 }
 
-export function makeConnectionStringFromEnv() {
-  for(const envVar of [
-    'DATABASE_USER',
-    'DATABASE_PASSWORD',
-    'DATABASE_HOST',
-    'DATABASE_NAME',
-  ]) {
-    if(!process.env[envVar]) {
-      throw new Error(`${envVar} is not set; cannot create testing database`);
-    }
-  }
+function makeConnectionStringFromEnv() {
+  const connectionParams = validateConnectionParams({
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    host: process.env.DATABASE_HOST,
+    name: process.env.DATABASE_NAME,
+    schema: process.env.DATABASE_SCHEMA,
+  });
 
-  const connectionString = makeConnectionString(
-    process.env.DATABASE_USER!,
-    process.env.DATABASE_PASSWORD!,
-    process.env.DATABASE_HOST!,
-    process.env.DATABASE_NAME!,
-    process.env.DATABASE_SCHEMA ?? undefined,
-  );
+  const connectionString = makeConnectionString(connectionParams);
   return connectionString;
 }

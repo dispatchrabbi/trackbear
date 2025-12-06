@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 import { initLoggers, getLogger } from '../server/lib/logger.ts';
 
-import { initDbClient, getDbClient } from 'server/lib/db.ts';
+import { initDbClient, getDbClient, testDatabaseConnection } from 'server/lib/db.ts';
 
 import { type User } from 'generated/prisma/client';
 import { USER_STATE } from '../server/lib/models/user/consts.ts';
@@ -21,13 +21,16 @@ async function main() {
   await initLoggers();
   const scriptLogger = getLogger('default').child({ service: 'add-admin.ts' });
 
-  initDbClient(
-    process.env.DATABASE_USER!,
-    process.env.DATABASE_PASSWORD!,
-    process.env.DATABASE_HOST!,
-    process.env.DATABASE_NAME!,
-  );
+  initDbClient({
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    host: process.env.DATABASE_HOST,
+    name: process.env.DATABASE_NAME,
+    schema: process.env.DATABASE_SCHEMA,
+  });
+
   const db = getDbClient();
+  await testDatabaseConnection(db);
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 

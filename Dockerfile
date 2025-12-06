@@ -54,8 +54,7 @@ RUN --mount=type=cache,target=~/.npm npm install
 # Copy the code in
 COPY --chown=node:node . .
 
-# Regenerate db models (needs an existing but fake DB_APP_DB_URL in the env)
-ENV DB_APP_DB_URL=dummy
+# Regenerate db models
 RUN node --run compile:db
 
 # Check every 30s to ensure /api/ping returns HTTP 200
@@ -74,8 +73,7 @@ ENV NODE_ENV=production
 # Copy the code in
 COPY --chown=node:node . .
 
-# Regenerate db models (needs an existing but fake DB_APP_DB_URL in the env)
-ENV DB_APP_DB_URL=dummy
+# Regenerate db models
 RUN node --run compile:db
 
 # Compile the API

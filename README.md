@@ -2,8 +2,6 @@
 
 **TrackBear** is a writing tracker service. If you're writing, editing, or otherwise engaged in some sort of authorial project, you can track that project on TrackBear!
 
-> TrackBear is very much in beta and a bit rough around the edges UX-wise. Pleaes treat it with kindness!
-
 ## Prerequisites
 
 You'll need a Postgres database to back TrackBear up. The easiest way to make this work is by using the included docker-compose.yaml file.
@@ -77,7 +75,7 @@ Building and running the docker containers should take care of any migrations th
 To tag a new version, run:
 
 ```sh
-npm version [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease]
+npm version [major | minor | patch]
 ```
 
 This will:
@@ -98,7 +96,7 @@ Once you do this, a Github Action will build a production-ready container and up
 
 ## Deploying
 
-The app runs as a container on the server. There's no fancy remote deploy yet, so to update, you'll need to SSH into the server, change the container restart script to the latest version, and run it.
+The app runs as a container on the server. There's no fancy remote deploy yet, so to update, you'll need to SSH into the server, and run the container restart script.
 
 This should probably be made better at some point, but for now, it works fine.
 
@@ -106,4 +104,4 @@ This should probably be made better at some point, but for now, it works fine.
 
 Polar bear photo by <a href="https://unsplash.com/@hansjurgen007?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Hans-Jurgen Mager</a> on <a href="https://unsplash.com/photos/polar-bear-on-snow-covered-ground-during-daytime-qQWV91TTBrE?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>.
 
-Thank you to the Overachievers Discord Chat for alpha-testing this and providing many good suggestions. See ACKNOWLEDGEMENTS.md and CHANGELOG.md for a list!
+Thank you to the Overachievers Discord Chat for alpha-testing this and providing many good suggestions. Thank you to many, many other people for suggesting new features and finding bugs. See ACKNOWLEDGEMENTS.md and CHANGELOG.md for a list!

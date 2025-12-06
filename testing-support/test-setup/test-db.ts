@@ -2,7 +2,7 @@ import { beforeEach } from 'vitest';
 import { v4 } from 'uuid';
 
 import { loadDotEnv } from '../env.ts';
-import { createDatabase, dropDatabase } from '../db-setup/db-setup.ts';
+import { createTestDatabase, dropTestDatabase } from '../db-setup/db-setup.ts';
 import { initDbClient, getDbClient } from 'server/lib/db.ts';
 
 loadDotEnv();
@@ -13,16 +13,16 @@ beforeEach(() => {
 
   // create the database
   console.log(`Creating database ${testSchemaName}...`);
-  createDatabase(testSchemaName);
+  createTestDatabase(testSchemaName);
 
   console.log(`Initializing the db client for ${testSchemaName}...`);
-  initDbClient(
-    process.env.DATABASE_USER!,
-    process.env.DATABASE_PASSWORD!,
-    process.env.DATABASE_HOST!,
-    process.env.DATABASE_NAME!,
-    testSchemaName,
-  );
+  initDbClient({
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    host: process.env.DATABASE_HOST,
+    name: process.env.DATABASE_NAME,
+    schema: testSchemaName,
+  });
 
   const db = getDbClient();
 
@@ -30,6 +30,6 @@ beforeEach(() => {
   return async () => {
     // remove the database
     console.log(`Dropping database ${testSchemaName}...`);
-    await dropDatabase(testSchemaName, db);
+    await dropTestDatabase(testSchemaName, db);
   };
 });

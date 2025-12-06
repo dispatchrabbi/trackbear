@@ -13,7 +13,6 @@ services:
     volumes:
       - ./scripts/healthchecks:/healthchecks
       - ${DB_VOLUME_DIR}/postgres17:/var/lib/postgresql/data:rw
-      - ${DB_VOLUME_DIR}:/data:rw
       - ${DB_VOLUME_DIR}/backup:/backup:rw
     healthcheck:
       test: /healthchecks/postgres.sh

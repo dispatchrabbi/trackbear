@@ -42,10 +42,15 @@ async function main() {
   logger.info('Avatar and cover upload directories exist');
 
   // initialize the db connection
-  // TODO: add DATABASE_SCHEMA to env
-  initDbClient(env.DATABASE_USER, env.DATABASE_PASSWORD, env.DATABASE_HOST, env.DATABASE_NAME, env.DATABASE_SCHEMA);
+  const db = initDbClient({
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    host: process.env.DATABASE_HOST,
+    name: process.env.DATABASE_NAME,
+    schema: process.env.DATABASE_SCHEMA,
+  });
   try {
-    await testDatabaseConnection();
+    await testDatabaseConnection(db);
     logger.info('Database connection established');
   } catch (err) {
     console.error(`Could not connect to the database: ${err.message}`);

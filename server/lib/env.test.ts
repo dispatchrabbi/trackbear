@@ -21,10 +21,10 @@ describe.skip('getNormalizedEnv', () => {
 
       DATABASE_USER: 'fake',
       DATABASE_PASSWORD: 'fake',
-      DATABASE_NAME: 'fake',
       DATABASE_HOST: 'localhost',
+      DATABASE_NAME: 'fake',
+      DATABASE_SCHEMA: 'fake',
 
-      DB_PATH: '',
       COOKIE_SECRET: 'fake',
 
       ENABLE_EMAIL: '0',

@@ -22,11 +22,9 @@ export type TrackbearEnv = {
 
   DATABASE_USER: string;
   DATABASE_PASSWORD: string;
+  DATABASE_HOST: string;
   DATABASE_NAME: string;
   DATABASE_SCHEMA: string;
-  DATABASE_HOST: string;
-
-  DB_PATH: string;
 
   DISABLE_RATE_LIMITS: boolean;
 
@@ -102,16 +100,14 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
   if(!process.env.DATABASE_PASSWORD) { throw new Error('Missing DATABASE_PASSWORD value in .env'); }
   if(process.env.DATABASE_PASSWORD.startsWith('"') && process.env.DATABASE_PASSWORD.endsWith('"')) { console.warn('DATABASE_PASSWORD value is quoted; it probably should not be.'); }
 
-  if(!process.env.DATABASE_NAME) { throw new Error('Missing DATABASE_NAME value in .env'); }
-  if(process.env.DATABASE_NAME.startsWith('"') && process.env.DATABASE_NAME.endsWith('"')) { console.warn('DATABASE_NAME value is quoted; it probably should not be.'); }
+  if(!process.env.DATABASE_HOST) { throw new Error('Missing DATABASE_HOST value in .env'); }
+  if(process.env.DATABASE_HOST.startsWith('"') && process.env.DATABASE_HOST.endsWith('"')) { console.warn('DATABASE_HOST value is quoted; it probably should not be.'); }
 
   process.env.DATABASE_SCHEMA = process.env.DATABASE_SCHEMA || 'public';
   if(process.env.DATABASE_SCHEMA.startsWith('"') && process.env.DATABASE_SCHEMA.endsWith('"')) { console.warn('DATABASE_SCHEMA value is quoted; it probably should not be.'); }
 
-  if(!process.env.DATABASE_HOST) { throw new Error('Missing DATABASE_HOST value in .env'); }
-  if(process.env.DATABASE_HOST.startsWith('"') && process.env.DATABASE_HOST.endsWith('"')) { console.warn('DATABASE_HOST value is quoted; it probably should not be.'); }
-
-  process.env.DB_PATH = process.env.DB_PATH || '/db';
+  if(!process.env.DATABASE_NAME) { throw new Error('Missing DATABASE_NAME value in .env'); }
+  if(process.env.DATABASE_NAME.startsWith('"') && process.env.DATABASE_NAME.endsWith('"')) { console.warn('DATABASE_NAME value is quoted; it probably should not be.'); }
 
   if(!['', '0', '1'].includes(process.env.DISABLE_RATE_LIMITS ?? '')) { throw new Error('DISABLE_RATE_LIMITS should only be either `0` or `1`'); }
   process.env.DISABLE_RATE_LIMITS = process.env.DISABLE_RATE_LIMITS || '0';
@@ -156,11 +152,9 @@ async function normalizeEnv(): Promise<TrackbearEnv> {
 
     DATABASE_USER: process.env.DATABASE_USER,
     DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
+    DATABASE_HOST: process.env.DATABASE_HOST,
     DATABASE_NAME: process.env.DATABASE_NAME,
     DATABASE_SCHEMA: process.env.DATABASE_SCHEMA,
-    DATABASE_HOST: process.env.DATABASE_HOST,
-
-    DB_PATH: process.env.DB_PATH,
 
     DISABLE_RATE_LIMITS: process.env.DISABLE_RATE_LIMITS === '1',
 
