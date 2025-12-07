@@ -16,7 +16,7 @@
 (A) Improve tag inputs dif:? @boards @goals @projects @tags +taginputs
 (A) De-duplicate add/edit forms dif:3 @frontend +techdebt
 (A) Endpoints that return EmptyObject should return null instead dif:1 +techdebt
-(A) Update zod dif:3 +update
+x (A) Update zod dif:3 +update
 (A) Add `as const` to constants like `TALLY_MEASURE` dif:2 +techdebt
 x (A) Update prisma dif:2 +update
 (A) Add actual page titles to the pages (h/t varve) dif:1 @ui
