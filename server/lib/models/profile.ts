@@ -1,3 +1,6 @@
+import { compare } from 'natural-orderby';
+const cmp = compare();
+
 import { USER_STATE } from './user/consts.ts';
 import { getDbClient } from 'server/lib/db.ts';
 
@@ -248,6 +251,11 @@ async function getProfileProjectSummaries(userId: number): Promise<ProfileProjec
     };
   });
 
+  summaries.sort((a, b) => cmpByLastActivity(
+    { title: a.title, lastDate: a.recentActivity.at(-1)?.date },
+    { title: b.title, lastDate: b.recentActivity.at(-1)?.date },
+  ));
+
   return summaries;
 }
 
@@ -279,6 +287,11 @@ async function getProfileTargetSummaries(userId: number): Promise<ProfileTargetS
       endDate: target.endDate,
     });
   }
+
+  summaries.sort((a, b) => cmpByLastActivity(
+    { title: a.title, lastDate: a.dayCounts.at(-1)?.date },
+    { title: b.title, lastDate: b.dayCounts.at(-1)?.date },
+  ));
 
   return summaries;
 }
@@ -313,5 +326,28 @@ async function getProfileHabitSummaries(userId: number, weekStartDay: Day): Prom
     });
   }
 
+  summaries.sort((a, b) => cmpByLastActivity(
+    { title: a.title, lastDate: a.currentRange?.endDate },
+    { title: b.title, lastDate: b.currentRange?.endDate },
+  ));
+
   return summaries;
+}
+
+type ComparableByLastActivity = {
+  title: string;
+  lastDate: string | null | undefined;
+};
+function cmpByLastActivity(a: ComparableByLastActivity, b: ComparableByLastActivity) {
+  if(a.lastDate === b.lastDate) {
+    return cmp(a.title, b.title);
+  } else if(a.lastDate && b.lastDate) {
+    return a.lastDate > b.lastDate ? -1 : 1;
+  } else if(a.lastDate) {
+    return 1;
+  } else if(b.lastDate) {
+    return -1;
+  } else {
+    return 0;
+  }
 }
