@@ -18,6 +18,7 @@ import { logAuditEvent } from '../lib/audit-events.ts';
 import { UserModel } from 'server/lib/models/user/user-model.ts';
 import { AUDIT_EVENT_TYPE } from 'server/lib/models/audit-event/consts.ts';
 import { reqCtx } from 'server/lib/request-context.ts';
+import { FAILURE_CODES } from 'server/lib/api-response-codes.ts';
 
 export type LoginPayload = {
   username: string;
@@ -75,6 +76,7 @@ export type CreateUserPayload = {
   username: string;
   email: string;
   password: string;
+  phone: string;
 };
 const zCreateUserPayload = z.object({
   username: z.string().trim().toLowerCase()
@@ -83,10 +85,16 @@ const zCreateUserPayload = z.object({
     .regex(USERNAME_REGEX, { error: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
   password: z.string().min(8, { error: 'Password must be at least 8 characters long.' }),
   email: z.email({ error: 'Please enter a valid email address.' }),
+  phone: z.string().default('').optional(),
 });
 
 export async function handleSignup(req: Request, res: ApiResponse<User>) {
-  const { username: submittedUsername, password, email } = req.body as CreateUserPayload;
+  const { username: submittedUsername, password, email, phone } = req.body as CreateUserPayload;
+
+  // the phone field is an intentionally-misleadingly-named honeypot field intended to prevent bot signups
+  if(phone.length > 0) {
+    return res.status(500).send(failure(FAILURE_CODES.SERVER_ERROR, 'Could not sign up: something went wrong server-side.'));
+  }
 
   let created: User;
   try {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, useTemplateRef } from 'vue';
 import wait from 'src/lib/wait.ts';
 
 import * as z from 'zod';
@@ -21,6 +21,8 @@ const formModel = reactive({
   email: '',
   password: '',
 });
+// the phone field is an intentionally-misleadingly-named honeypot field intended to prevent bot signups
+const phoneRef = useTemplateRef('phone');
 
 const validations = z.object({
   username: z
@@ -43,7 +45,13 @@ async function handleSubmit() {
   errorMessage.value = null;
 
   try {
-    await signUp(formData() as CreateUserPayload);
+    const data = formData();
+    const payload: CreateUserPayload = {
+      ...data,
+      phone: phoneRef.value?.value ?? '',
+    };
+
+    await signUp(payload);
 
     successMessage.value = 'Sign up successful! Redirecting to login...';
     await wait(1 * 1000);
@@ -128,8 +136,27 @@ async function handleSubmit() {
         />
       </template>
     </FieldWrapper>
+    <FieldWrapper
+      id="signup-form-phone-wrapper"
+      for="signup-form-phone"
+      label="Phone Number"
+      required
+    >
+      <template #default>
+        <input
+          id="signup-form-phone"
+          ref="phone"
+          type="text"
+          tabindex="-1"
+          autocomplete="off"
+        >
+      </template>
+    </FieldWrapper>
   </TbForm>
 </template>
 
 <style scoped>
+#signup-form-phone-wrapper {
+  display: none;
+}
 </style>

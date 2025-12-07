@@ -14,6 +14,7 @@ Types of changes include:
 
 - CHANGED: The public profile page now lists projects, targets, and habits in a consistent order starting with the most recently updated. (h/t K. A. J. Klok)
 - CHANGED: The tab title now reflects what page you're on. (h/t varve)
+- SECURITY: I have had to implement some anti-bot measures on the signup page. Depending on how effective they are, I may need to implement further measures. I will do my best not to have these measures interrupt normal usage. If you are having difficulties using TrackBear and think it's because of these added anti-bot measures, please email me and let me know.
 
 ## 1.4.8
 

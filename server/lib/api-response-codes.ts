@@ -6,5 +6,6 @@ export const FAILURE_CODES = {
   NO_API_TOKEN: 'NO_API_TOKEN',
   NOT_FOUND: 'NOT_FOUND',
   VALIDATION_FAILED: 'VALIDATION_FAILED',
+  SERVER_ERROR: 'SERVER_ERROR',
 } as const;
 export type FailureCode = ValueEnum<typeof FAILURE_CODES>;
