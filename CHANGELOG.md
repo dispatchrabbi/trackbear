@@ -12,6 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: The public profile page now lists projects, targets, and habits in a consistent order starting with the most recently updated. (h/t K. A. J. Klok)
+- CHANGED: The tab title now reflects what page you're on. (h/t varve)
+
 ## 1.4.8
 
 - FIXED: The API documentation now accurately shows the shape of an error response. This is not a change in API behavior but a correction to the API docs. (h/t Preocts)

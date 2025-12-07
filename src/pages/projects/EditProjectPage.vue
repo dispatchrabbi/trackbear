@@ -76,7 +76,7 @@ const breadcrumbs = computed(() => {
   const crumbs: MenuItem[] = [
     { label: 'Projects', url: '/projects' },
     { label: project.value === null ? 'Loading...' : project.value.title, url: `/projects/${projectId.value}` },
-    { label: project.value === null ? 'Loading...' : 'Edit', url: `/projects/${projectId.value}/edit` },
+    { label: project.value === null ? 'Loading...' : 'Edit Project', url: `/projects/${projectId.value}/edit` },
   ];
   return crumbs;
 });

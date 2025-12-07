@@ -101,7 +101,7 @@ import { type TallyMeasure } from 'server/lib/models/tally/consts';
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Stats' },
-  { label: 'Lifetime', url: '/stats/lifetime' },
+  { label: 'Lifetime Stats', url: '/stats/lifetime' },
 ];
 
 onMounted(() => {

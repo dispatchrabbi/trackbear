@@ -11,7 +11,7 @@ import Panel from 'primevue/panel';
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Leaderboards', url: '/leaderboards' },
-  { label: 'New', url: '/leaderboards/new' },
+  { label: 'New Leaderboard', url: '/leaderboards/new' },
 ];
 
 function handleFormSuccess({ board }: { board: Leaderboard }) {

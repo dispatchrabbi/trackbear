@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { breakpointsTailwind, useBreakpoints, useLocalStorage } from '@vueuse/core';
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
@@ -23,6 +23,11 @@ const props = defineProps<{
   breadcrumbs: MenuItem[];
 }>();
 
+watch(() => props.breadcrumbs.at(-1)?.label, newLabel => {
+  const title = newLabel ? `${newLabel} | TrackBear` : `TrackBear`;
+  document.title = title;
+}, { immediate: true });
+
 const collapsed = useLocalStorage('sidebar-collapsed', false);
 function handleMenuNavigation() {
   if(breakpoints.smaller('md').value) {
@@ -45,6 +50,11 @@ async function checkForUser() {
   }
 }
 await checkForUser();
+
+// onMounted(() => {
+//   const title = props.breadcrumbs.length > 0 ? `${props.breadcrumbs.at(-1)?.label} | TrackBear` : `TrackBear`;
+//   document.title = title;
+// });
 
 </script>
 
