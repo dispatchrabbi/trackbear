@@ -36,7 +36,7 @@ const validations = z.object({
   description: z.string(),
   displayOnProfile: z.boolean(),
   phase: z.enum(Object.values(PROJECT_PHASE) as NonEmptyArray<typeof PROJECT_PHASE[keyof typeof PROJECT_PHASE]>, { error: 'Please pick a phase.' }),
-  startingBalance: z.record(
+  startingBalance: z.partialRecord(
     z.enum(Object.keys(TALLY_MEASURE_INFO) as NonEmptyArray<string>),
     z.number({ error: 'Please fill in all balances, or remove blank rows.' }).int({ error: 'Please only enter whole numbers.' }),
   ),

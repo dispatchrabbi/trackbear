@@ -29,7 +29,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  lifetimeStartingBalance: z.record(
+  lifetimeStartingBalance: z.partialRecord(
     z.enum(Object.keys(TALLY_MEASURE_INFO) as NonEmptyArray<string>),
     z.number({ error: 'Please fill in all balances, or remove blank rows.' }).int({ error: 'Please only enter whole numbers.' }),
   ),

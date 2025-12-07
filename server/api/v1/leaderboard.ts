@@ -56,7 +56,7 @@ const zLeaderboardCreatePayload = z.strictObject({
   measures: z.array(z.enum(Object.values(TALLY_MEASURE))),
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
-  goal: z.record(z.enum(Object.values(TALLY_MEASURE)), z.number().int()).nullable(),
+  goal: z.partialRecord(z.enum(Object.values(TALLY_MEASURE)), z.number().int()).nullable(),
   enableTeams: z.boolean().nullable().default(false),
   individualGoalMode: z.boolean().nullable().default(false),
   fundraiserMode: z.boolean().nullable().default(false),

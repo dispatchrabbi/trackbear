@@ -74,8 +74,8 @@ export function useValidation<M extends object>(schema: z.ZodObject, model: M) {
     }
 
     return function(v: unknown) {
-      const result = schema.shape[field].safeParse(v);
-      return (result.success === true) || result.error.errors[0].message;
+      const result = (schema.shape[field] as z.ZodType).safeParse(v);
+      return (result.success === true) || result.error.issues[0].message;
     };
   };
 

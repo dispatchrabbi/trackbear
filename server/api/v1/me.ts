@@ -258,7 +258,7 @@ export type SettingsEditPayload = Partial<{
   weekStartDay: number;
 }>;
 const zSettingsEditPayload = z.strictObject({
-  lifetimeStartingBalance: z.record(z.enum(Object.values(TALLY_MEASURE)), z.number().int()),
+  lifetimeStartingBalance: z.partialRecord(z.enum(Object.values(TALLY_MEASURE)), z.number().int()),
   enablePublicProfile: z.boolean(),
   displayCovers: z.boolean(),
   displayStreaks: z.boolean(),

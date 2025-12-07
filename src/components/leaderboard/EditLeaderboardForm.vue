@@ -65,7 +65,7 @@ const validations = z
           return arr.length >= 1;
         }
       }, { error: 'Please select at least one.' }),
-    goal: z.record(
+    goal: z.partialRecord(
       z.enum(Object.values(TALLY_MEASURE)),
       z.number({ error: 'Please fill in all balances, or remove blank rows.' }).int({ error: 'Please only enter whole numbers.' }),
     ),

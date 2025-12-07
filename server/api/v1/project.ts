@@ -49,7 +49,7 @@ const zProjectCreatePayload = z.strictObject({
   title: z.string().min(1),
   description: z.string(),
   phase: z.enum(Object.values(PROJECT_PHASE) as NonEmptyArray<string>),
-  startingBalance: z.record(z.enum(Object.values(TALLY_MEASURE)), z.number().int()),
+  startingBalance: z.partialRecord(z.enum(Object.values(TALLY_MEASURE)), z.number().int()),
   starred: z.boolean().nullable().default(false),
   displayOnProfile: z.boolean().nullable().default(false),
 });

@@ -8,7 +8,7 @@ import { GOAL_CADENCE_UNIT } from 'server/lib/models/goal/consts.ts';
 import { USER_COLOR_NAMES } from 'src/components/chart/user-colors.ts';
 
 const zTallyMeasure = () => z.enum(Object.values(TALLY_MEASURE));
-const zMeasureCounts = () => z.record(zTallyMeasure(), z.number().int());
+const zMeasureCounts = () => z.partialRecord(zTallyMeasure(), z.number().int());
 
 const zKey = () => z.string().regex(/^\w+$/);
 const zDate = () => z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -32,7 +32,7 @@ export type UserSchema = z.infer<typeof userSchema>;
 const projectSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(''),
-  phase: z.enum(Object.values(PROJECT_PHASE) as NonEmptyArray<string>).default(PROJECT_PHASE.PLANNING),
+  phase: z.enum(Object.values(PROJECT_PHASE)).default(PROJECT_PHASE.PLANNING),
   startingBalance: zMeasureCounts().default({}),
 });
 export type ProjectSchema = z.infer<typeof projectSchema>;
