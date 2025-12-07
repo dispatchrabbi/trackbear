@@ -3,7 +3,7 @@ import { type ApiResponse, success, failure } from '../../lib/api-response.ts';
 import { FAILURE_CODES } from '../../lib/api-response-codes.ts';
 import { type RequestWithUser } from '../../lib/middleware/access.ts';
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { zUuidParam, zStrInt, zUuidAndIdParams } from '../../lib/validators.ts';
 
 import type { Leaderboard, LeaderboardSummary, LeaderboardMember, JustMember, Participant, ParticipantGoal, LeaderboardTeam, Participation, Membership } from 'server/lib/models/leaderboard/types.ts';

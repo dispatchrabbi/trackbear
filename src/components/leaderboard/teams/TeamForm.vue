@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { z } from 'zod';
+import * as z from 'zod';
 
 import { USER_COLOR_NAMES, userColorOrFallback } from 'src/components/chart/user-colors';
 

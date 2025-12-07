@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import wait from 'src/lib/wait.ts';
 
-import { z } from 'zod';
+import * as z from 'zod';
 
 import { useRouter, useRoute } from 'vue-router';
 const router = useRouter();

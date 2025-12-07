@@ -9,7 +9,7 @@ await userStore.populate();
 import { useEnvStore } from 'src/stores/env';
 const envStore = useEnvStore();
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { type NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 

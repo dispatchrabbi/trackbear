@@ -5,7 +5,7 @@ import wait from 'src/lib/wait.ts';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
 import { deleteMe } from 'src/lib/api/me.ts';

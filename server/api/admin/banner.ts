@@ -2,7 +2,7 @@ import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts'
 import { type ApiResponse, success, failure } from '../../lib/api-response.ts';
 import { type RequestWithUser } from '../../lib/middleware/access.ts';
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { zIdParam } from '../../lib/validators.ts';
 
 import { reqCtx } from 'server/lib/request-context.ts';

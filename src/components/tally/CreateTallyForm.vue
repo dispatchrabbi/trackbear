@@ -17,7 +17,7 @@ import { useTagStore } from 'src/stores/tag.ts';
 const tagStore = useTagStore();
 tagStore.populate();
 
-import { z } from 'zod';
+import * as z from 'zod';
 import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';

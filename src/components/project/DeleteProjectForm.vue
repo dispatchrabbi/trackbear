@@ -3,7 +3,7 @@ import { ref, reactive } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
 import { deleteProject, type Project } from 'src/lib/api/project';

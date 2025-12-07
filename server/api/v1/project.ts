@@ -11,7 +11,7 @@ import fs from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { getCoverUploadFn, getCoverUploadPath } from 'server/lib/upload.ts';
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { zIdParam, type NonEmptyArray } from '../../lib/validators.ts';
 
 import { ProjectModel, type Project, type SummarizedProject, type ProjectWithTallies } from 'server/lib/models/project/project-model.ts';

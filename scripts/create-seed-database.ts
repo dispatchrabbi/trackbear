@@ -10,7 +10,7 @@ import { initDbClient, getDbClient, testDatabaseConnection } from 'server/lib/db
 import { createTestDatabase } from 'testing-support/db-setup/db-setup.ts';
 import { reqCtxForScript } from '../server/lib/request-context.ts';
 import { validateSeed, createSeed } from 'testing-support/seed/seed.ts';
-import z, { ZodError } from 'zod';
+import * as z from 'zod';
 
 async function main() {
   if(process.argv.includes('-h') || process.argv.includes('--help') || process.argv.length < 3 || process.argv.length > 4) {
@@ -55,7 +55,7 @@ async function main() {
   try {
     validateSeed(seedJson);
   } catch (err) {
-    if(err instanceof ZodError) {
+    if(err instanceof z.ZodError) {
       scriptLogger.error(`Seed config was not valid:`, z.prettifyError(err));
     } else {
       scriptLogger.error(`Encountered error while validating seed:`, err.message);

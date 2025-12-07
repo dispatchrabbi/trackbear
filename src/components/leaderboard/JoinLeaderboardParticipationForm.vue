@@ -11,7 +11,7 @@ import { useTagStore } from 'src/stores/tag.ts';
 const tagStore = useTagStore();
 tagStore.populate();
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally/consts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';

@@ -2,7 +2,7 @@ import { HTTP_METHODS, ACCESS_LEVEL, type RouteConfig } from 'server/lib/api.ts'
 import { type ApiResponse, success, failure } from '../../lib/api-response.ts';
 import { type RequestWithUser } from '../../lib/middleware/access.ts';
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { USERNAME_REGEX } from '../../lib/models/user/consts.ts';
 
 import { getUserProfile, type PublicProfile } from '../../lib/models/profile.ts';

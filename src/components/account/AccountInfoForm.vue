@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
 import { updateMe, type FullUser } from 'src/lib/api/me.ts';

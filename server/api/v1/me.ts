@@ -16,7 +16,7 @@ import type { FullUser, UserSettings } from 'server/lib/models/user/user-model.t
 import { TALLY_MEASURE } from '../../lib/models/tally/consts.ts';
 import CONFIG from '../../config.ts';
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { logAuditEvent, buildChangeRecord } from '../../lib/audit-events.ts';
 import { pick } from '../../lib/obj.ts';
 import { type RequestWithUser } from '../../lib/middleware/access.ts';

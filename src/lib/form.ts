@@ -1,5 +1,5 @@
 import { computed, watch, type Ref } from 'vue';
-import { type ZodObject, type ZodType } from 'zod';
+import type * as z from 'zod';
 import type { RoundTrip } from 'src/lib/api';
 import wait from './wait';
 import { mapObject } from './obj';
@@ -19,7 +19,7 @@ function useDirtyTracker<M extends object>(model: Ref<M>) {
   return dirtyFields;
 }
 
-export function useModelValidation<M extends object>(schema: ZodObject, model: Ref<M>) {
+export function useModelValidation<M extends object>(schema: z.ZodObject, model: Ref<M>) {
   const dirtyTracker = useDirtyTracker(model);
 
   const validationResults = computed(() => {
@@ -67,7 +67,7 @@ export function useModelValidation<M extends object>(schema: ZodObject, model: R
   };
 }
 
-export function useValidation<M extends object>(schema: ZodObject, model: M) {
+export function useValidation<M extends object>(schema: z.ZodObject, model: M) {
   const ruleFor = function(field: string) {
     if(!(field in schema.shape)) {
       throw new Error(`Cannot make a rule for ${field}, no matching field found in schema`);
@@ -82,7 +82,7 @@ export function useValidation<M extends object>(schema: ZodObject, model: M) {
   const rulesFor = function(fields: string[]) {
     const rules: {
       field: string;
-      test: ZodType;
+      test: z.ZodType;
     }[] = [];
 
     for(const field of fields) {

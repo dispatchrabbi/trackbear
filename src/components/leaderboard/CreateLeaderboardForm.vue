@@ -4,7 +4,7 @@ import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { formatDateSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 

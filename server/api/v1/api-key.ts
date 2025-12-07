@@ -3,7 +3,7 @@ import { type ApiResponse, success, failure } from '../../lib/api-response.ts';
 
 import { type RequestWithUser } from '../../lib/middleware/access.ts';
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { zIdParam } from '../../lib/validators.ts';
 
 import { ApiKeyModel, type ApiKey, type CreateApiKeyData } from '../../lib/models/api-key/api-key-model.ts';

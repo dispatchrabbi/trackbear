@@ -2,7 +2,7 @@
 import { ref, reactive } from 'vue';
 import wait from 'src/lib/wait.ts';
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { type NonEmptyArray } from 'server/lib/validators.ts';
 import { useValidation } from 'src/lib/form.ts';
 

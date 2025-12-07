@@ -4,7 +4,7 @@ import { ref, reactive, computed } from 'vue';
 import { isMatch, parse } from 'date-fns';
 import { formatDate } from 'src/lib/date.ts';
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
 import { useProjectStore } from 'src/stores/project';

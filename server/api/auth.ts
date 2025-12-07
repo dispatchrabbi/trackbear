@@ -1,5 +1,5 @@
 import { type Request } from 'express';
-import { z } from 'zod';
+import * as z from 'zod';
 
 import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();

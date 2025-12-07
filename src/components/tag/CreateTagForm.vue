@@ -8,7 +8,7 @@ import { useTagStore } from 'src/stores/tag.ts';
 const tagStore = useTagStore();
 tagStore.populate();
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createTag, type Tag, type TagCreatePayload } from 'src/lib/api/tag.ts';

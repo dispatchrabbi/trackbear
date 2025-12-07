@@ -1,9 +1,9 @@
-import { type ZodType } from 'zod';
+import type * as z from 'zod';
 import type { Request, Response, NextFunction } from 'express';
 import { failure } from '../../lib/api-response.ts';
 import { FAILURE_CODES } from '../../lib/api-response-codes.ts';
 
-function validateBody(schema: ZodType) {
+function validateBody(schema: z.ZodType) {
   return function validateBody(req: Request, res: Response, next: NextFunction) {
     const parsed = schema.safeParse(req.body);
     if(parsed.success === false) {
@@ -17,7 +17,7 @@ function validateBody(schema: ZodType) {
   };
 }
 
-function validateParams(schema: ZodType) {
+function validateParams(schema: z.ZodType) {
   return function validateParams(req: Request, res: Response, next: NextFunction) {
     const parsed = schema.safeParse(req.params);
     if(parsed.success === false) {
@@ -30,7 +30,7 @@ function validateParams(schema: ZodType) {
   };
 }
 
-function validateQuery(schema: ZodType) {
+function validateQuery(schema: z.ZodType) {
   return function validateQuery(req: Request, res: Response, next: NextFunction) {
     const parsed = schema.safeParse(req.query);
     if(parsed.success === false) {

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import * as z from 'zod';
 
 const stringToInt = z.codec(z.string().regex(z.regexes.integer), z.int(), {
   decode: str => Number.parseInt(str, 10),

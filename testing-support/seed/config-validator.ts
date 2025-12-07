@@ -1,4 +1,4 @@
-import z from 'zod';
+import * as z from 'zod';
 import { type NonEmptyArray } from 'server/lib/validators.ts';
 
 import { PROJECT_PHASE } from 'server/lib/models/project/consts';

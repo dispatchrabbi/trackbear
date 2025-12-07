@@ -3,7 +3,7 @@ import { type ApiResponse, success } from '../../lib/api-response.ts';
 
 import { type RequestWithUser } from '../../lib/middleware/access.ts';
 
-import { z } from 'zod';
+import * as z from 'zod';
 
 import type { Work, Tally, Tag } from 'generated/prisma/client';
 import { type TallyMeasure } from '../../lib/models/tally/consts.ts';

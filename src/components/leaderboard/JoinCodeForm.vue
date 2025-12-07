@@ -5,7 +5,7 @@ import wait from 'src/lib/wait.ts';
 import { useLeaderboardStore } from 'src/stores/leaderboard';
 const leaderboardStore = useLeaderboardStore();
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
 import { getLeaderboardByJoinCode } from 'src/lib/api/leaderboard';

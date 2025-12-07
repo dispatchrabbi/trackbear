@@ -2,7 +2,7 @@
 import { reactive } from 'vue';
 import { startOfDay, endOfDay, add } from 'date-fns';
 
-import { z } from 'zod';
+import * as z from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 
 import { createApiKey, type ApiKeyCreatePayload } from 'src/lib/api/api-key';
