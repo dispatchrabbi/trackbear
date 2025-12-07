@@ -21,7 +21,7 @@ const successMessage = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 
 function checkUuidParam() {
-  if(!z.string().uuid().safeParse(route.params.verifyUuid).success) {
+  if(!z.uuid().safeParse(route.params.verifyUuid).success) {
     router.push('/');
     return false;
   } else {

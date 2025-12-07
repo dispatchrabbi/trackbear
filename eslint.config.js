@@ -83,6 +83,7 @@ export default defineConfig(
       '@typescript-eslint/consistent-type-imports': ['error', {
         fixStyle: 'inline-type-imports',
       }],
+      '@typescript-eslint/no-deprecated': 'error',
       '@typescript-eslint/no-misused-promises': ['error', {
         // do not flag async functions being passed when a void-returning function is expected
         'checksVoidReturn': false,
@@ -113,6 +114,7 @@ export default defineConfig(
         named: 'never',
         asyncArrow: 'always',
       }],
+      'vue/no-import-compiler-macros': 'error',
     },
   },
 );

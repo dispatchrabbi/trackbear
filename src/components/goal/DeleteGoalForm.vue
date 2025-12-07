@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, defineProps, defineEmits } from 'vue';
+import { ref, reactive } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 
@@ -23,7 +23,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  deleteConfirmation: z.string().refine(val => val === props.goal.title, { message: 'You must type the title exactly.' }), // only allow exactly the goal title
+  deleteConfirmation: z.string().refine(val => val === props.goal.title, { error: 'You must type the title exactly.' }), // only allow exactly the goal title
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);

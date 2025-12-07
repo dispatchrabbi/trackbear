@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, defineProps } from 'vue';
+import { ref, computed, watch } from 'vue';
 import type { Project } from 'src/lib/api/project';
 import type { TallyWithTags } from 'src/lib/api/tally.ts';
 

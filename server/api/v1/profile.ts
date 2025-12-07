@@ -10,7 +10,7 @@ export type { PublicProfile };
 
 // GET /:username - get the public profile for a user, assuming one exists
 const zUsernameParam = z.object({
-  username: z.string().regex(USERNAME_REGEX, { message: 'username given is not a valid username' }),
+  username: z.string().regex(USERNAME_REGEX, { error: 'username given is not a valid username' }),
 });
 export async function handleGetProfile(req: RequestWithUser, res: ApiResponse<PublicProfile>) {
   const profile = await getUserProfile(req.params.username);

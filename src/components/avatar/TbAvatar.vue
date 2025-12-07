@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 
 import CLASSES from 'src/components/classes.ts';
 import { userColorLevel, userColorOrFallback } from 'src/components/chart/user-colors';

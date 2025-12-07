@@ -15,7 +15,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  username: z.string().min(1, { message: 'Please enter your username.' }),
+  username: z.string().min(1, { error: 'Please enter your username.' }),
 });
 
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);

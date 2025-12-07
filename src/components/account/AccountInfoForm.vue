@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, defineProps } from 'vue';
+import { ref, reactive } from 'vue';
 
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
@@ -26,14 +26,14 @@ const formModel = reactive({
 const validations = z.object({
   username: z
     .string()
-    .min(3, { message: 'Username must be at least 3 characters long.' })
-    .max(24, { message: 'Username may not be longer than 24 characters.' })
-    .regex(/^[a-z][a-z0-9_-]+$/i, { message: 'Username must start with a letter and only use letters, numbers, underscores, and dashes.' }),
+    .min(3, { error: 'Username must be at least 3 characters long.' })
+    .max(24, { error: 'Username may not be longer than 24 characters.' })
+    .regex(/^[a-z][a-z0-9_-]+$/i, { error: 'Username must start with a letter and only use letters, numbers, underscores, and dashes.' }),
   displayName: z
     .string()
-    .min(3, { message: 'Display name must be at least 3 characters long.' })
-    .max(24, { message: 'Display name may not be longer than 24 characters.' }),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
+    .min(3, { error: 'Display name must be at least 3 characters long.' })
+    .max(24, { error: 'Display name may not be longer than 24 characters.' }),
+  email: z.email({ error: 'Please enter a valid email address.' }),
 });
 
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);

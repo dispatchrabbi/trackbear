@@ -1,5 +1,5 @@
 import { computed, watch, type Ref } from 'vue';
-import { type ZodObject, type ZodRawShape, type ZodTypeAny } from 'zod';
+import { type ZodObject, type ZodType } from 'zod';
 import type { RoundTrip } from 'src/lib/api';
 import wait from './wait';
 import { mapObject } from './obj';
@@ -19,7 +19,7 @@ function useDirtyTracker<M extends object>(model: Ref<M>) {
   return dirtyFields;
 }
 
-export function useModelValidation<M extends object, S extends ZodObject<ZodRawShape> = ZodObject<ZodRawShape>>(schema: S, model: Ref<M>) {
+export function useModelValidation<M extends object>(schema: ZodObject, model: Ref<M>) {
   const dirtyTracker = useDirtyTracker(model);
 
   const validationResults = computed(() => {
@@ -31,8 +31,8 @@ export function useModelValidation<M extends object, S extends ZodObject<ZodRawS
   });
 
   const allValidationMessages = computed(() => {
-    const errors = validationResults.value.error?.errors ?? [];
-    const groupedByPath = Object.groupBy(errors, error => error.path.join('.'));
+    const issues = validationResults.value.error?.issues ?? [];
+    const groupedByPath = Object.groupBy(issues, issue => issue.path.join('.'));
 
     // remove any paths that aren't dirty
     // TODO: this only works down to depth 1
@@ -67,7 +67,7 @@ export function useModelValidation<M extends object, S extends ZodObject<ZodRawS
   };
 }
 
-export function useValidation<T extends object, V extends ZodObject<ZodRawShape> = ZodObject<ZodRawShape>>(schema: V, model: T) {
+export function useValidation<M extends object>(schema: ZodObject, model: M) {
   const ruleFor = function(field: string) {
     if(!(field in schema.shape)) {
       throw new Error(`Cannot make a rule for ${field}, no matching field found in schema`);
@@ -82,7 +82,7 @@ export function useValidation<T extends object, V extends ZodObject<ZodRawShape>
   const rulesFor = function(fields: string[]) {
     const rules: {
       field: string;
-      test: ZodTypeAny;
+      test: ZodType;
     }[] = [];
 
     for(const field of fields) {
@@ -101,7 +101,7 @@ export function useValidation<T extends object, V extends ZodObject<ZodRawShape>
         const result = rule.test.safeParse(v[rule.field]);
 
         if(result.success !== true) {
-          return result.error.errors[0].message;
+          return result.error.issues[0].message;
         }
       }
 
@@ -117,8 +117,8 @@ export function useValidation<T extends object, V extends ZodObject<ZodRawShape>
 
   const validationResults = computed(() => schema.safeParse(model));
 
-  const formData = function(): RoundTrip<T> {
-    return schema.parse(model) as RoundTrip<T>;
+  const formData = function(): RoundTrip<M> {
+    return schema.parse(model) as RoundTrip<M>;
   };
 
   return {

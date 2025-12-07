@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 import type { DayCount } from 'src/lib/api/stats.ts';
 
 import { parseDateString, cmpByDate, formatDate } from 'src/lib/date.ts';

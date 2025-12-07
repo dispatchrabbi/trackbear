@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 
 import { type Project } from 'src/lib/api/project';
 import { PROJECT_PHASE } from 'server/lib/models/project/consts';

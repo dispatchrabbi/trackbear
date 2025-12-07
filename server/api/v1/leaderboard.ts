@@ -4,7 +4,7 @@ import { FAILURE_CODES } from '../../lib/api-response-codes.ts';
 import { type RequestWithUser } from '../../lib/middleware/access.ts';
 
 import { z } from 'zod';
-import { zUuidParam, type NonEmptyArray, zStrInt, zUuidAndIdParams } from '../../lib/validators.ts';
+import { zUuidParam, zStrInt, zUuidAndIdParams } from '../../lib/validators.ts';
 
 import type { Leaderboard, LeaderboardSummary, LeaderboardMember, JustMember, Participant, ParticipantGoal, LeaderboardTeam, Participation, Membership } from 'server/lib/models/leaderboard/types.ts';
 import { LeaderboardModel, type CreateLeaderboardData, type UpdateLeaderboardData } from 'server/lib/models/leaderboard/leaderboard-model.ts';
@@ -34,7 +34,7 @@ export async function handleGetByUuid(req: RequestWithUser, res: ApiResponse<Lea
   return res.status(200).send(success(leaderboard));
 }
 
-const zJoinCodeParam = z.object({ joincode: z.string().uuid() });
+const zJoinCodeParam = z.object({ joincode: z.uuid() });
 export async function handleGetByJoinCode(req: RequestWithUser, res: ApiResponse<LeaderboardSummary>) {
   const joinCode = req.params.joincode;
   const leaderboard = await LeaderboardModel.getByJoinCode(joinCode);
@@ -50,19 +50,19 @@ export async function handleGetByJoinCode(req: RequestWithUser, res: ApiResponse
 }
 
 export type LeaderboardCreatePayload = CreateLeaderboardData;
-const zLeaderboardCreatePayload = z.object({
+const zLeaderboardCreatePayload = z.strictObject({
   title: z.string(),
   description: z.string().default(''),
-  measures: z.array(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>)),
+  measures: z.array(z.enum(Object.values(TALLY_MEASURE))),
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
-  goal: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()).nullable(),
+  goal: z.record(z.enum(Object.values(TALLY_MEASURE)), z.number().int()).nullable(),
   enableTeams: z.boolean().nullable().default(false),
   individualGoalMode: z.boolean().nullable().default(false),
   fundraiserMode: z.boolean().nullable().default(false),
   isJoinable: z.boolean().nullable().default(false),
   isPublic: z.boolean().nullable().default(false),
-}).strict();
+});
 export async function handleCreate(req: RequestWithUser, res: ApiResponse<Leaderboard>) {
   const user = req.user;
   const payload = req.body as LeaderboardCreatePayload;
@@ -93,9 +93,9 @@ export type LeaderboardStarPayload = {
 export type LeaderboardStarResponse = {
   starred: boolean;
 };
-const zLeaderboardStarPayload = z.object({
+const zLeaderboardStarPayload = z.strictObject({
   starred: z.boolean(),
-}).strict();
+});
 export async function handleStar(req: RequestWithUser, res: ApiResponse<LeaderboardStarResponse>) {
   const leaderboardUuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { memberUserId: req.user.id });
@@ -170,10 +170,10 @@ export async function handleGetTeam(req: RequestWithUser, res: ApiResponse<Leade
 }
 
 export type LeaderboardTeamCreatePayload = CreateLeaderboardTeamData;
-const zLeaderboardTeamCreatePayload = z.object({
+const zLeaderboardTeamCreatePayload = z.strictObject({
   name: z.string().min(1),
   color: z.string().default(''),
-}).strict();
+});
 export async function handleCreateTeam(req: RequestWithUser, res: ApiResponse<LeaderboardTeam>) {
   const leaderboardUuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { ownerUserId: req.user.id });
@@ -188,10 +188,10 @@ export async function handleCreateTeam(req: RequestWithUser, res: ApiResponse<Le
 }
 
 export type LeaderboardTeamUpdatePayload = UpdateLeaderboardTeamData;
-const zLeaderboardTeamUpdatePayload = z.object({
+const zLeaderboardTeamUpdatePayload = z.strictObject({
   name: z.string().min(1),
   color: z.string().default(''),
-}).strict().partial();
+}).partial();
 export async function handleUpdateTeam(req: RequestWithUser, res: ApiResponse<LeaderboardTeam>) {
   // we don't need the leaderboard object later but this functions as a check that the user is an owner of the leaderboard
   const leaderboardUuid = req.params.uuid;
@@ -247,10 +247,10 @@ export type LeaderboardMemberUpdatePayload = {
   isOwner?: boolean;
   teamId?: number | null;
 };
-const zLeaderboardMemberUpdatePayload = z.object({
+const zLeaderboardMemberUpdatePayload = z.strictObject({
   isOwner: z.boolean(),
   teamId: z.number().int().nullable(),
-}).strict().partial();
+}).partial();
 export async function handleUpdateMember(req: RequestWithUser, res: ApiResponse<Membership>) {
   const leaderboardUuid = req.params.uuid;
   const leaderboard = await LeaderboardModel.getByUuid(leaderboardUuid, { ownerUserId: req.user.id });
@@ -316,10 +316,10 @@ export type LeaderboardParticipationPayload = {
   teamId?: number | null;
   color?: string;
 };
-const zLeaderboardParticipationPayload = z.object({
+const zLeaderboardParticipationPayload = z.strictObject({
   isParticipant: z.boolean(),
   goal: z.object({
-    measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
+    measure: z.enum(Object.values(TALLY_MEASURE)),
     count: z.number().int(),
   }).nullable(),
   workIds: z.array(z.number().int()),
@@ -327,12 +327,12 @@ const zLeaderboardParticipationPayload = z.object({
   displayName: z.union([
     z.string().max(0),
     z.string()
-      .min(3, { message: 'Display name must be at least 3 characters long.' })
-      .max(24, { message: 'Display name may not be longer than 24 characters.' }),
+      .min(3, { error: 'Display name must be at least 3 characters long.' })
+      .max(24, { error: 'Display name may not be longer than 24 characters.' }),
   ]).optional(),
   teamId: z.number().int().optional().nullable(),
   color: z.string().optional(),
-}).strict();
+});
 
 export async function handleJoinBoard(req: RequestWithUser, res: ApiResponse<LeaderboardMember>) {
   const uuid = req.params.uuid;
@@ -560,7 +560,7 @@ const routes: RouteConfig[] = [
     handler: handleUpdateMember,
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: z.object({
-      uuid: z.string().uuid(),
+      uuid: z.uuid(),
       memberId: zStrInt(),
     }),
     bodySchema: zLeaderboardMemberUpdatePayload,
@@ -572,7 +572,7 @@ const routes: RouteConfig[] = [
     handler: handleRemoveMember,
     accessLevel: ACCESS_LEVEL.USER,
     paramsSchema: z.object({
-      uuid: z.string().uuid(),
+      uuid: z.uuid(),
       memberId: zStrInt(),
     }),
   },

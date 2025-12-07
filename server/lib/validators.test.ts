@@ -122,6 +122,13 @@ describe('zDateStr', () => {
     expect(actual).toBe(expected);
   });
 
+  it('fails an invalid date string', () => {
+    const expected = false;
+
+    const actual = zDateStr().safeParse('2024-04-31').success;
+    expect(actual).toBe(expected);
+  });
+
   it('fails a badly-formatted date string', () => {
     const expected = false;
 

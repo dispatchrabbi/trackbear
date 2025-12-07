@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
 
 import { useRouter, type RouteLocationRaw } from 'vue-router';
 const router = useRouter();

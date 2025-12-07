@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
 import wait from 'src/lib/wait.ts';
 
 import TbForm from 'src/components/form/TbForm.vue';

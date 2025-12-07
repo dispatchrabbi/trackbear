@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 
 import { type Tag } from 'src/lib/api/tag.ts';
 import { isTagColor, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts';

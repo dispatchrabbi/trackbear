@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, defineProps, defineEmits } from 'vue';
+import { ref, reactive } from 'vue';
 import wait from 'src/lib/wait.ts';
 
 import { useRouter } from 'vue-router';
@@ -28,7 +28,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  deleteConfirmation: z.string().refine(val => val === props.user.username, { message: `You must type ${props.isSelf ? 'your' : 'the'} username exactly.` }),
+  deleteConfirmation: z.string().refine(val => val === props.user.username, { error: `You must type ${props.isSelf ? 'your' : 'the'} username exactly.` }),
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);

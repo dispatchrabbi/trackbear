@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, defineEmits } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
@@ -79,29 +79,29 @@ const formModel = reactive<EditGoalFormModel>({
 
 const validations = z
   .object({
-    title: z.string().min(1, { message: 'Please enter a title.' }),
+    title: z.string().min(1, { error: 'Please enter a title.' }),
     description: z.string(),
     displayOnProfile: z.boolean(),
 
-    type: z.enum(Object.values(GOAL_TYPE) as NonEmptyArray<typeof GOAL_TYPE[keyof typeof GOAL_TYPE]>, { required_error: 'Please pick a goal type.' }),
-    measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
+    type: z.enum(Object.values(GOAL_TYPE) as NonEmptyArray<typeof GOAL_TYPE[keyof typeof GOAL_TYPE]>, { error: 'Please pick a goal type.' }),
+    measure: z.enum(Object.values(TALLY_MEASURE)),
     count: z
-      .number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }).nullable()
-      .refine(v => formModel.type === GOAL_TYPE.TARGET ? v !== null : true, { message: 'A progress threshold is required for targets.' }),
+      .number({ error: 'Please enter a value.' }).int({ error: 'Please enter a whole number.' }).nullable()
+      .refine(v => formModel.type === GOAL_TYPE.TARGET ? v !== null : true, { error: 'A progress threshold is required for targets.' }),
     unit: z.enum(Object.values(GOAL_CADENCE_UNIT) as NonEmptyArray<string>),
     period: z
-      .number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }).positive({ message: 'Please enter a positive number.' }).nullable()
-      .refine(v => formModel.type === GOAL_TYPE.HABIT ? v !== null : true, { message: 'A time period is required for habits.' }),
+      .number({ error: 'Please enter a value.' }).int({ error: 'Please enter a whole number.' }).positive({ error: 'Please enter a positive number.' }).nullable()
+      .refine(v => formModel.type === GOAL_TYPE.HABIT ? v !== null : true, { error: 'A time period is required for habits.' }),
 
     startDate: z
-      .date({ invalid_type_error: 'Please select a valid start date or clear the field.' }).nullable()
-      .refine(v => v === null || formModel.endDate === null || v <= formModel.endDate, { message: 'Start date must be before end date.' }).transform(val => formatDateSafe(val)),
+      .date({ error: 'Please select a valid start date or clear the field.' }).nullable()
+      .refine(v => v === null || formModel.endDate === null || v <= formModel.endDate, { error: 'Start date must be before end date.' }).transform(val => formatDateSafe(val)),
     endDate: z
-      .date({ invalid_type_error: 'Please select a valid end date or clear the field.' }).nullable()
-      .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.' }).transform(val => formatDateSafe(val)),
+      .date({ error: 'Please select a valid end date or clear the field.' }).nullable()
+      .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { error: 'End date must be after start date.' }).transform(val => formatDateSafe(val)),
 
-    works: z.array(z.number({ invalid_type_error: 'Please select only valid projects.' }).int({ message: 'Please select only valid projects.' }).positive({ message: 'Please select only valid projects.' })),
-    tags: z.array(z.number({ invalid_type_error: 'Please select only valid tags.' }).int({ message: 'Please select only valid tags.' }).positive({ message: 'Please select only valid tags.' })),
+    works: z.array(z.number({ error: 'Please select only valid projects.' }).int({ error: 'Please select only valid projects.' }).positive({ error: 'Please select only valid projects.' })),
+    tags: z.array(z.number({ error: 'Please select only valid tags.' }).int({ error: 'Please select only valid tags.' }).positive({ error: 'Please select only valid tags.' })),
   });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);

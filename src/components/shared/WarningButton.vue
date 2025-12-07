@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits, withDefaults } from 'vue';
+import { ref } from 'vue';
 
 import { PrimeIcons } from 'primevue/api';
 import Button from 'primevue/button';

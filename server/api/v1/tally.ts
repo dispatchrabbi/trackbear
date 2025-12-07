@@ -82,15 +82,15 @@ export type TallyCreatePayload = {
   workId: number | null;
   tags: string[];
 };
-const zTallyCreatePayload = z.object({
+const zTallyCreatePayload = z.strictObject({
   date: zDateStr(),
-  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
+  measure: z.enum(Object.values(TALLY_MEASURE)),
   count: z.number().int(),
   setTotal: z.boolean(),
   note: z.string(), // this CAN be empty
   workId: z.number().int().nullable(),
   tags: z.array(z.string().min(1)), // tags are specified by name, because you might create a new one here
-}).strict();
+});
 
 export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<TallyWithWorkAndTags>) {
   const user = req.user;
@@ -166,7 +166,7 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
 
 const zBatchTallyCreatePayload = z.array(z.object({
   date: zDateStr(),
-  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
+  measure: z.enum(Object.values(TALLY_MEASURE)),
   count: z.number().int(),
   setTotal: z.literal(false), // no submitting batch tallies that set the total... for now. // TODO: allow this in future
   note: z.string(), // this CAN be empty

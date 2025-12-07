@@ -65,15 +65,15 @@ export type UserUpdatePayload = Partial<{
   email: string;
   isEmailVerified: boolean;
 }>;
-const zUserUpdatePayload = z.object({
+const zUserUpdatePayload = z.strictObject({
   username: z.string().trim().toLowerCase()
-    .min(3, { message: 'Username must be at least 3 characters long.' })
-    .max(24, { message: 'Username may not be longer than 24 characters.' })
-    .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
+    .min(3, { error: 'Username must be at least 3 characters long.' })
+    .max(24, { error: 'Username may not be longer than 24 characters.' })
+    .regex(USERNAME_REGEX, { error: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
   displayName: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   isEmailVerified: z.boolean(),
-}).strict().partial();
+}).partial();
 
 export async function handleUpdateUser(req: RequestWithUser, res: ApiResponse<User>) {
   const user = await UserModel.getUser(+req.params.id);
@@ -100,9 +100,9 @@ export async function handleUpdateUser(req: RequestWithUser, res: ApiResponse<Us
 export type UserStatePayload = {
   state: string;
 };
-const zUserStatePayload = z.object({
+const zUserStatePayload = z.strictObject({
   state: z.enum([USER_STATE.ACTIVE, USER_STATE.SUSPENDED, USER_STATE.DELETED]),
-}).strict();
+});
 
 export async function handleUpdateUserState(req: RequestWithUser, res: ApiResponse<User>) {
   const user = await UserModel.getUser(+req.params.id);

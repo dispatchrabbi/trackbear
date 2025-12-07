@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, defineEmits } from 'vue';
+import { ref, reactive, computed } from 'vue';
 
 import { isMatch, parse } from 'date-fns';
 import { formatDate } from 'src/lib/date.ts';
@@ -53,19 +53,20 @@ const formModel = reactive<ImportNanoManuallyFormModel>({
 
 const validations = z.object({
   countsText: z.string()
-    .min(1, { message: 'Please fill in your NaNoWriMo progress updates.' })
+    .min(1, { error: 'Please fill in your NaNoWriMo progress updates.' })
     .superRefine((val, ctx) => {
       const validation = validateCountsText(val);
 
       if(!validation.valid) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+        ctx.issues.push({
+          code: 'custom',
           message: validation.messages.join(' '),
+          input: val,
         });
       }
     }),
-  workId: z.number({ message: 'Please select a project.' }).int(),
-  workTitle: z.string().refine(val => formModel.workId === -1 ? val.length > 0 : true, { message: 'Please enter a title for the new project.' }),
+  workId: z.number({ error: 'Please select a project.' }).int(),
+  workTitle: z.string().refine(val => formModel.workId === -1 ? val.length > 0 : true, { error: 'Please enter a title for the new project.' }),
 });
 
 const { ruleFor, isValid } = useValidation(validations, formModel);

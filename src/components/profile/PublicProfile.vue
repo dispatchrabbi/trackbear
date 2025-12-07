@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
 
 import type { PublicProfile } from 'src/lib/api/profile.ts';
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watchEffect, defineProps, withDefaults, onMounted, useTemplateRef } from 'vue';
+import { ref, watchEffect, onMounted, useTemplateRef } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import * as Plot from '@observablehq/plot';
 import { utcFormat } from 'd3-time-format';

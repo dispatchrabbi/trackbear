@@ -45,14 +45,14 @@ export type ProjectCreatePayload = {
   starred?: boolean;
   displayOnProfile?: boolean;
 };
-const zProjectCreatePayload = z.object({
+const zProjectCreatePayload = z.strictObject({
   title: z.string().min(1),
   description: z.string(),
   phase: z.enum(Object.values(PROJECT_PHASE) as NonEmptyArray<string>),
-  startingBalance: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()),
+  startingBalance: z.record(z.enum(Object.values(TALLY_MEASURE)), z.number().int()),
   starred: z.boolean().nullable().default(false),
   displayOnProfile: z.boolean().nullable().default(false),
-}).strict();
+});
 
 export async function handleCreateProject(req: RequestWithUser, res: ApiResponse<Project>) {
   const user = req.user;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, defineProps, defineEmits } from 'vue';
+import { ref, reactive } from 'vue';
 import wait from 'src/lib/wait.ts';
 
 import { z } from 'zod';
@@ -23,7 +23,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  restoreConfirmation: z.string().refine(val => val === props.user.username, { message: 'You must type the username exactly.' }),
+  restoreConfirmation: z.string().refine(val => val === props.user.username, { error: 'You must type the username exactly.' }),
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);

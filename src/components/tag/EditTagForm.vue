@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, defineProps, defineEmits } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
@@ -36,10 +36,10 @@ const formModel = reactive({
 
 const validations = z.object({
   name: z.string()
-    .min(1, { message: 'Please enter a tag name.' })
-    .regex(/^[^#]/, { message: 'There is no need to type the #.' }),
+    .min(1, { error: 'Please enter a tag name.' })
+    .regex(/^[^#]/, { error: 'There is no need to type the #.' }),
   // TODO: add something that disallows current tag names
-  color: z.enum(TAG_COLORS, { required_error: 'Please pick a color.' }),
+  color: z.enum(TAG_COLORS, { error: 'Please pick a color.' }),
 });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);

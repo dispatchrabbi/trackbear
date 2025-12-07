@@ -78,11 +78,11 @@ export type CreateUserPayload = {
 };
 const zCreateUserPayload = z.object({
   username: z.string().trim().toLowerCase()
-    .min(3, { message: 'Username must be at least 3 characters long.' })
-    .max(24, { message: 'Username may not be longer than 24 characters.' })
-    .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters long.' }),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
+    .min(3, { error: 'Username must be at least 3 characters long.' })
+    .max(24, { error: 'Username may not be longer than 24 characters.' })
+    .regex(USERNAME_REGEX, { error: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
+  password: z.string().min(8, { error: 'Password must be at least 8 characters long.' }),
+  email: z.email({ error: 'Please enter a valid email address.' }),
 });
 
 export async function handleSignup(req: Request, res: ApiResponse<User>) {
@@ -134,8 +134,8 @@ export type ChangePasswordPayload = {
   newPassword: string;
 };
 const zChangePasswordPayload = z.object({
-  currentPassword: z.string().min(1, { message: 'Current password is required.' }),
-  newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
+  currentPassword: z.string().min(1, { error: 'Current password is required.' }),
+  newPassword: z.string().min(8, { error: 'New password must be at least 8 characters long.' }),
 });
 
 export async function handleChangePassword(req: RequestWithUser, res: ApiResponse<EmptyObject>) {
@@ -157,9 +157,9 @@ export type RequestPasswordResetPayload = {
 };
 const zRequestPasswordResetPayload = z.object({
   username: z.string().trim().toLowerCase()
-    .min(3, { message: 'Username must be at least 3 characters long.' })
-    .max(24, { message: 'Username may not be longer than 24 characters.' })
-    .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
+    .min(3, { error: 'Username must be at least 3 characters long.' })
+    .max(24, { error: 'Username may not be longer than 24 characters.' })
+    .regex(USERNAME_REGEX, { error: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
 });
 
 export async function handleSendPasswordResetEmail(req: Request, res: ApiResponse<EmptyObject>) {
@@ -186,7 +186,7 @@ export type ResetPasswordPayload = {
   newPassword: string;
 };
 const zResetPasswordPayload = z.object({
-  newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
+  newPassword: z.string().min(8, { error: 'New password must be at least 8 characters long.' }),
 });
 
 export async function handleResetPassword(req: Request, res: ApiResponse<EmptyObject>) {

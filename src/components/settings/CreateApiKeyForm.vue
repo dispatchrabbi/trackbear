@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, defineEmits } from 'vue';
+import { reactive } from 'vue';
 import { startOfDay, endOfDay, add } from 'date-fns';
 
 import { z } from 'zod';
@@ -51,10 +51,10 @@ function handleSelectPreset(preset: ExpirationPreset) {
 }
 
 const validations = z.object({
-  name: z.string().min(1, { message: 'Please enter a title.' }),
+  name: z.string().min(1, { error: 'Please enter a title.' }),
   expirationPreset: z.enum(EXPIRATION_PRESETS.map(preset => preset.key) as NonEmptyArray<string>),
   expiresAt: z
-    .date({ invalid_type_error: 'Please select a valid expiration date.' })
+    .date({ error: 'Please select a valid expiration date.' })
     .min(START_OF_TODAY, 'The expiration date must be today or later.')
     .nullable()
     .transform(val => val === null ? null : endOfDay(val)),

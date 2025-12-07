@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 
 import { useTheme } from 'src/lib/theme';
 const theme = useTheme();

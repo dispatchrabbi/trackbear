@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, defineEmits, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import wait from 'src/lib/wait.ts';
 
 import { useLeaderboardStore } from 'src/stores/leaderboard';
@@ -25,7 +25,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  joinCode: z.string().uuid({ message: 'Please make sure the join code is formatted correctly.' }),
+  joinCode: z.uuid({ error: 'Please make sure the join code is formatted correctly.' }),
 });
 
 const { ruleFor, validate, isValid } = useValidation(validations, formModel);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, computed, defineModel, defineProps, onMounted, watch } from 'vue';
+import { reactive, computed, onMounted, watch } from 'vue';
 
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 

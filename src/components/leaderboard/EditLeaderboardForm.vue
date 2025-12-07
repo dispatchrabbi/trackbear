@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, reactive, defineEmits } from 'vue';
+import { ref, reactive } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
 
 import { z } from 'zod';
-import { type NonEmptyArray } from 'server/lib/validators.ts';
 import { formatDateSafe, parseDateStringSafe } from 'src/lib/date.ts';
 import { useValidation } from 'src/lib/form.ts';
 
@@ -48,27 +47,27 @@ const formModel = reactive({
 
 const validations = z
   .object({
-    title: z.string().min(1, { message: 'Please enter a title.' }),
+    title: z.string().min(1, { error: 'Please enter a title.' }),
     description: z.string(),
 
     startDate: z
-      .date({ invalid_type_error: 'Please select a valid start date or clear the field.' }).nullable()
-      .refine(v => v === null || formModel.endDate === null || v <= formModel.endDate, { message: 'Start date must be before end date.' }).transform(val => formatDateSafe(val)),
+      .date({ error: 'Please select a valid start date or clear the field.' }).nullable()
+      .refine(v => v === null || formModel.endDate === null || v <= formModel.endDate, { error: 'Start date must be before end date.' }).transform(val => formatDateSafe(val)),
     endDate: z
-      .date({ invalid_type_error: 'Please select a valid end date or clear the field.' }).nullable()
-      .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { message: 'End date must be after start date.' }).transform(val => formatDateSafe(val)),
+      .date({ error: 'Please select a valid end date or clear the field.' }).nullable()
+      .refine(v => v === null || formModel.startDate === null || v >= formModel.startDate, { error: 'End date must be after start date.' }).transform(val => formatDateSafe(val)),
 
-    measures: z.array(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>))
+    measures: z.array(z.enum(Object.values(TALLY_MEASURE)))
       .refine(arr => {
         if(formModel.individualGoalMode) {
           return true;
         } else {
           return arr.length >= 1;
         }
-      }, { message: 'Please select at least one.' }),
+      }, { error: 'Please select at least one.' }),
     goal: z.record(
-      z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
-      z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' }),
+      z.enum(Object.values(TALLY_MEASURE)),
+      z.number({ error: 'Please fill in all balances, or remove blank rows.' }).int({ error: 'Please only enter whole numbers.' }),
     ),
 
     enableTeams: z.boolean(),

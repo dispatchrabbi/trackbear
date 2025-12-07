@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 import { type Day } from 'date-fns';
 
 import type { HabitGoal } from 'server/lib/models/goal/types';

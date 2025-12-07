@@ -65,23 +65,23 @@ export type GoalCreatePayload = {
   workIds: number[];
   tagIds: number[];
 };
-const zTargetGoalParameters = z.object({
+const zTargetGoalParameters = z.strictObject({
   threshold: z.object({
-    measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
+    measure: z.enum(Object.values(TALLY_MEASURE)),
     count: z.number().int(),
   }),
-}).strict();
-const zHabitGoalParameters = z.object({
+});
+const zHabitGoalParameters = z.strictObject({
   cadence: z.object({
     unit: z.enum(Object.values(GOAL_CADENCE_UNIT) as NonEmptyArray<string>),
     period: z.number().int(),
   }),
   threshold: z.object({
-    measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>),
+    measure: z.enum(Object.values(TALLY_MEASURE)),
     count: z.number().int(),
   }).nullable(),
-}).strict();
-const zGoalCreatePayload = z.object({
+});
+const zGoalCreatePayload = z.strictObject({
   title: z.string().min(1),
   description: z.string(),
   type: z.enum(Object.values(GOAL_TYPE) as NonEmptyArray<string>),
@@ -92,7 +92,7 @@ const zGoalCreatePayload = z.object({
   displayOnProfile: z.boolean().nullable().default(false),
   workIds: z.array(z.number().int()),
   tagIds: z.array(z.number().int()),
-}).strict();
+});
 
 export async function handleCreateGoal(req: RequestWithUser, res: ApiResponse<Goal>) {
   const user = req.user;

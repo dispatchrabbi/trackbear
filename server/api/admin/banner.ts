@@ -22,13 +22,13 @@ export type BannerCreatePayload = {
   color?: string;
   showUntil?: string;
 };
-const zBannerCreatePayload = z.object({
+const zBannerCreatePayload = z.strictObject({
   enabled: z.boolean().nullable(),
   message: z.string().min(1),
   icon: z.string().min(1).nullable(),
   color: z.enum(['info', 'success', 'warning', 'error']).nullable(),
   showUntil: z.coerce.date().nullable(),
-}).strict();
+});
 
 export async function handleCreateBanner(req: RequestWithUser, res: ApiResponse<Banner>) {
   const payload = req.body as BannerCreatePayload;

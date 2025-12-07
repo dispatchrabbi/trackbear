@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref } from 'vue';
 import { useEventBus } from '@vueuse/core';
 
 import { uploadCover, type Project } from 'src/lib/api/project';

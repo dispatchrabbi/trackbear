@@ -16,8 +16,8 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  currentPassword: z.string().min(1, { message: 'Current password is required.' }),
-  newPassword: z.string().min(8, { message: 'New password must be at least 8 characters long.' }),
+  currentPassword: z.string().min(1, { error: 'Current password is required.' }),
+  newPassword: z.string().min(8, { error: 'New password must be at least 8 characters long.' }),
 });
 
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);

@@ -25,10 +25,10 @@ const formModel = reactive({
 const validations = z.object({
   username: z
     .string()
-    .min(3, { message: 'Username must be at least 3 characters long.' })
-    .regex(/^[a-z][a-z0-9_-]+$/i, { message: 'Username must start with a letter and only use letters, numbers, underscores, and dashes.' }),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters long.' }),
+    .min(3, { error: 'Username must be at least 3 characters long.' })
+    .regex(/^[a-z][a-z0-9_-]+$/i, { error: 'Username must start with a letter and only use letters, numbers, underscores, and dashes.' }),
+  email: z.email({ error: 'Please enter a valid email address.' }),
+  password: z.string().min(8, { error: 'Password must be at least 8 characters long.' }),
 });
 
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);

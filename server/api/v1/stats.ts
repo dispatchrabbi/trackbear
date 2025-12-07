@@ -21,8 +21,8 @@ export type DayCount = {
 
 const DATE_STRING_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 const zDaysQuery = z.object({
-  startDate: z.string().regex(DATE_STRING_REGEX, { message: 'startDate must be a date' }),
-  endDate: z.string().regex(DATE_STRING_REGEX, { message: 'endDate must be a date' }),
+  startDate: z.string().regex(DATE_STRING_REGEX, { error: 'startDate must be a date' }),
+  endDate: z.string().regex(DATE_STRING_REGEX, { error: 'endDate must be a date' }),
 }).partial();
 
 export type DaysQuery = z.infer<typeof zDaysQuery>;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 import { isWithinInterval, startOfDay, endOfDay, type Day } from 'date-fns';
 
 import { type Tally } from 'src/lib/api/tally.ts';

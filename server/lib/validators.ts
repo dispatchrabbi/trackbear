@@ -1,13 +1,12 @@
 import { z } from 'zod';
 
-function isIntStr(str: string): boolean {
-  return Number.parseInt(str, 10) === +str && Number.isInteger(+str);
-}
+const stringToInt = z.codec(z.string().regex(z.regexes.integer), z.int(), {
+  decode: str => Number.parseInt(str, 10),
+  encode: num => num.toString(),
+});
 
-export const zStrInt = function(params?: { message?: string }) {
-  return z.string()
-    .refine(isIntStr, { message: params?.message || 'Expected integer string, received non-integer string' })
-    .transform(str => Number.parseInt(str, 10));
+export const zStrInt = function() {
+  return stringToInt;
 };
 
 export const zIdParam = function() {
@@ -15,18 +14,18 @@ export const zIdParam = function() {
 };
 
 export const zUuidParam = function() {
-  return z.object({ uuid: z.string().uuid() });
+  return z.object({ uuid: z.uuid() });
 };
 
 export const zUuidAndIdParams = function() {
   return z.object({
-    uuid: z.string().uuid(),
+    uuid: z.uuid(),
     id: zStrInt(),
   });
 };
 
-export const zDateStr = function(params?: { message?: string }) {
-  return z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: params?.message || 'Expected date string (YYYY-MM-DD), received a different format' });
+export const zDateStr = function() {
+  return z.string().regex(z.regexes.date, { error: 'Expected date string (YYYY-MM-DD), received a different format' });
 };
 
 export type NonEmptyArray<T> = [T, ...T[]];

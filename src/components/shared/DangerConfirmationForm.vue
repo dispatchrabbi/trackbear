@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, defineEmits } from 'vue';
+import { ref, reactive } from 'vue';
 import wait from 'src/lib/wait.ts';
 
 import { z } from 'zod';
@@ -30,7 +30,7 @@ const formModel = reactive({
 const validations = z.object({
   // only allow exactly the confirmation code
   typedConfirmation: z.string().refine(val => val === props.confirmationCode, {
-    message: `You must type ${props.confirmationCodeDescription} exactly.`,
+    error: `You must type ${props.confirmationCodeDescription} exactly.`,
   }),
 });
 

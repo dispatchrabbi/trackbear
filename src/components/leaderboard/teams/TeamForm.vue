@@ -27,7 +27,7 @@ export type TeamFormModel = {
 const model = defineModel<TeamFormModel>({ required: true });
 
 const validations = z.object({
-  name: z.string().min(1, { message: 'Please enter a team name.' }),
+  name: z.string().min(1, { error: 'Please enter a team name.' }),
   color: z.enum(['', ...USER_COLOR_NAMES]).transform(v => userColorOrFallback(v)),
 });
 

@@ -20,7 +20,7 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  newPassword: z.string().min(8, { message: 'Password must be at least 8 characters long.' }),
+  newPassword: z.string().min(8, { error: 'Password must be at least 8 characters long.' }),
 });
 
 const { formData, validate, isValid, ruleFor } = useValidation(validations, formModel);
@@ -30,7 +30,7 @@ const successMessage = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 
 function checkUuidParam() {
-  if(!z.string().uuid().safeParse(route.params.resetUuid).success) {
+  if(!z.uuid().safeParse(route.params.resetUuid).success) {
     router.push('/');
     return;
   }

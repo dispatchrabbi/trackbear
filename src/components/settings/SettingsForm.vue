@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, defineEmits } from 'vue';
+import { ref, reactive } from 'vue';
 import wait from 'src/lib/wait.ts';
 
 import { useUserStore } from 'src/stores/user.ts';
@@ -31,7 +31,7 @@ const formModel = reactive({
 const validations = z.object({
   lifetimeStartingBalance: z.record(
     z.enum(Object.keys(TALLY_MEASURE_INFO) as NonEmptyArray<string>),
-    z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' }),
+    z.number({ error: 'Please fill in all balances, or remove blank rows.' }).int({ error: 'Please only enter whole numbers.' }),
   ),
   enablePublicProfile: z.boolean(),
   displayCovers: z.boolean(),

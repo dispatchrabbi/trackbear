@@ -7,7 +7,7 @@ import { GOAL_CADENCE_UNIT } from 'server/lib/models/goal/consts.ts';
 
 import { USER_COLOR_NAMES } from 'src/components/chart/user-colors.ts';
 
-const zTallyMeasure = () => z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>);
+const zTallyMeasure = () => z.enum(Object.values(TALLY_MEASURE));
 const zMeasureCounts = () => z.record(zTallyMeasure(), z.number().int());
 
 const zKey = () => z.string().regex(/^\w+$/);
@@ -25,7 +25,7 @@ const userSchema = z.object({
   displayName: zName().optional(),
   // if not included, password will default to the username
   password: zName().optional(),
-  email: z.string().email(),
+  email: z.email(),
 });
 export type UserSchema = z.infer<typeof userSchema>;
 
@@ -174,12 +174,12 @@ export const accountSchema = z.object({
   tallies: tallySchema.array().default([]),
 }).superRefine((account, ctx) => {
   const projectKeys = Object.keys(account.projects);
-  const addUnknownProjectKey = function(path: (string | number)[], received: string | number) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.invalid_enum_value,
-      options: projectKeys,
+  const addUnknownProjectKeyError = function(path: (string | number)[], received: string | number) {
+    ctx.issues.push({
+      code: 'invalid_value',
+      values: projectKeys,
+      input: received,
       path,
-      received,
       message: `Unknown project key.`,
     });
   };
@@ -201,14 +201,14 @@ export const accountSchema = z.object({
     if(tallyConfig.method === TALLY_CONFIG_METHOD.LIST) {
       for(const [tallyIx, tally] of Object.entries(tallyConfig.tallies)) {
         if(!projectKeys.includes(tally.project)) {
-          addUnknownProjectKey(['tallies', tallyConfigIx, 'tallies', tallyIx], tally.project);
+          addUnknownProjectKeyError(['tallies', tallyConfigIx, 'tallies', tallyIx], tally.project);
         }
       }
     }
 
     if(tallyConfig.method === TALLY_CONFIG_METHOD.GENERATE) {
       if(!projectKeys.includes(tallyConfig.config.project)) {
-        addUnknownProjectKey(['tallies', tallyConfigIx, 'config', 'project'], tallyConfig.config.project);
+        addUnknownProjectKeyError(['tallies', tallyConfigIx, 'config', 'project'], tallyConfig.config.project);
       }
     }
   }
@@ -217,7 +217,7 @@ export const accountSchema = z.object({
   for(const [key, targetConfig] of Object.entries(account.targets)) {
     for(const [ix, projectKey] of Object.entries(targetConfig.projects)) {
       if(!projectKeys.includes(projectKey)) {
-        addUnknownProjectKey(['targets', key, 'projects', ix], projectKey);
+        addUnknownProjectKeyError(['targets', key, 'projects', ix], projectKey);
       }
     }
   }
@@ -226,7 +226,7 @@ export const accountSchema = z.object({
   for(const [key, habitConfig] of Object.entries(account.habits)) {
     for(const [ix, projectKey] of Object.entries(habitConfig.projects)) {
       if(!projectKeys.includes(projectKey)) {
-        addUnknownProjectKey(['habits', key, 'projects', ix], projectKey);
+        addUnknownProjectKeyError(['habits', key, 'projects', ix], projectKey);
       }
     }
   }

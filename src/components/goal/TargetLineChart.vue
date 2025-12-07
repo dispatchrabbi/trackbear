@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 import type { Goal } from 'src/lib/api/goal.ts';
 
 import { type SeriesInfoMap, type Tallyish } from '../chart/chart-functions.ts';

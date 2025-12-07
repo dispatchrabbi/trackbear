@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 
 import type { Tally } from 'src/lib/api/tally.ts';
 import { getStreakInfo } from 'src/lib/streak.ts';

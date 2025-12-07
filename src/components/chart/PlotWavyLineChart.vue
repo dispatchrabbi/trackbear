@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect, defineProps, withDefaults, onMounted, useTemplateRef } from 'vue';
+import { ref, computed, watchEffect, onMounted, useTemplateRef } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import * as Plot from '@observablehq/plot';
 

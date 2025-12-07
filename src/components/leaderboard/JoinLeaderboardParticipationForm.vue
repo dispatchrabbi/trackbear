@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, defineProps, defineEmits } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 
@@ -14,7 +14,6 @@ tagStore.populate();
 import { z } from 'zod';
 import { useValidation } from 'src/lib/form.ts';
 import { TALLY_MEASURE, type TallyMeasure } from 'server/lib/models/tally/consts';
-import type { NonEmptyArray } from 'server/lib/validators.ts';
 import { TALLY_MEASURE_INFO } from 'src/lib/tally.ts';
 import { USER_COLOR_NAMES } from '../chart/user-colors';
 
@@ -63,21 +62,21 @@ const formModel = reactive<JoinLeaderboardParticipationFormModel>({
 });
 
 const validations = z.object({
-  isParticipant: z.boolean({ invalid_type_error: 'Please pick whether you want to be a participant or a spectator.' }),
+  isParticipant: z.boolean({ error: 'Please pick whether you want to be a participant or a spectator.' }),
   displayName: z.union([
     z.string()
-      .min(3, { message: 'Display name must be between 3 and 24 characters long.' })
-      .max(24, { message: 'Display name must be between 3 and 24 characters long.' }),
+      .min(3, { error: 'Display name must be between 3 and 24 characters long.' })
+      .max(24, { error: 'Display name must be between 3 and 24 characters long.' }),
     z.string().max(0),
   ]),
-  teamId: z.number({ invalid_type_error: 'Please select a valid team.' }).int({ message: 'Please select a valid team.' }).positive({ message: 'Please select a valid team.' }).nullable(),
+  teamId: z.number({ error: 'Please select a valid team.' }).int({ error: 'Please select a valid team.' }).positive({ error: 'Please select a valid team.' }).nullable(),
   color: z.enum(['', ...USER_COLOR_NAMES]),
-  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>).nullable(),
+  measure: z.enum(Object.values(TALLY_MEASURE)).nullable(),
   count: z
-    .number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }).nullable()
-    .refine(v => props.leaderboard.individualGoalMode ? v !== null : true, { message: 'Please input your goal for this leaderboard.' }),
-  works: z.array(z.number({ invalid_type_error: 'Please select only valid projects.' }).int({ message: 'Please select only valid projects.' }).positive({ message: 'Please select only valid projects.' })),
-  tags: z.array(z.number({ invalid_type_error: 'Please select only valid tags.' }).int({ message: 'Please select only valid tags.' }).positive({ message: 'Please select only valid tags.' })),
+    .number({ error: 'Please enter a value.' }).int({ error: 'Please enter a whole number.' }).nullable()
+    .refine(v => props.leaderboard.individualGoalMode ? v !== null : true, { error: 'Please input your goal for this leaderboard.' }),
+  works: z.array(z.number({ error: 'Please select only valid projects.' }).int({ error: 'Please select only valid projects.' }).positive({ error: 'Please select only valid projects.' })),
+  tags: z.array(z.number({ error: 'Please select only valid tags.' }).int({ error: 'Please select only valid tags.' }).positive({ error: 'Please select only valid tags.' })),
 });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);

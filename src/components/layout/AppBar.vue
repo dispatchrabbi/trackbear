@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, defineProps, defineEmits, onMounted, useTemplateRef } from 'vue';
+import { ref, computed, onMounted, useTemplateRef } from 'vue';
 
 import { RouterLink } from 'vue-router';
 

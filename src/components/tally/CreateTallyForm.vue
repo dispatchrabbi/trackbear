@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, defineProps, defineEmits } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import wait from 'src/lib/wait.ts';
 import { useEventBus, useLocalStorage } from '@vueuse/core';
 
@@ -67,13 +67,13 @@ const formModel = reactive<CreateTallyFormModel>({
 const MAXIMUM_NOTE_LENGTH = 140;
 
 const validations = z.object({
-  date: z.date({ invalid_type_error: 'Please select a date.' }).transform(val => formatDateSafe(val)),
-  workId: z.number({ invalid_type_error: 'Please select a project.' }).positive({ message: 'Please select a project.' }),
+  date: z.date({ error: 'Please select a date.' }).transform(val => formatDateSafe(val)),
+  workId: z.number({ error: 'Please select a project.' }).positive({ error: 'Please select a project.' }),
   tags: z.array(z.string()),
-  count: z.number({ invalid_type_error: 'Please enter a value.' }).int({ message: 'Please enter a whole number.' }),
-  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<TallyMeasure>, { required_error: 'Please pick a type.' }),
+  count: z.number({ error: 'Please enter a value.' }).int({ error: 'Please enter a whole number.' }),
+  measure: z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<TallyMeasure>, { error: 'Please pick a type.' }),
   setTotal: z.boolean(),
-  note: z.string().max(MAXIMUM_NOTE_LENGTH, { message: `Notes can be at most ${MAXIMUM_NOTE_LENGTH} characters.` }),
+  note: z.string().max(MAXIMUM_NOTE_LENGTH, { error: `Notes can be at most ${MAXIMUM_NOTE_LENGTH} characters.` }),
 });
 
 const { ruleFor, validate, isValid, formData } = useValidation(validations, formModel);

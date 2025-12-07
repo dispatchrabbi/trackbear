@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps } from 'vue';
+
 import { RouterLink } from 'vue-router';
 import { useTheme, LOGO } from 'src/lib/theme';
 

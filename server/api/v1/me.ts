@@ -17,7 +17,6 @@ import { TALLY_MEASURE } from '../../lib/models/tally/consts.ts';
 import CONFIG from '../../config.ts';
 
 import { z } from 'zod';
-import { type NonEmptyArray } from '../../lib/validators.ts';
 import { logAuditEvent, buildChangeRecord } from '../../lib/audit-events.ts';
 import { pick } from '../../lib/obj.ts';
 import { type RequestWithUser } from '../../lib/middleware/access.ts';
@@ -58,16 +57,16 @@ export type MeEditPayload = Partial<{
   displayName: string;
   email: string;
 }>;
-const zMeEditPayload = z.object({
+const zMeEditPayload = z.strictObject({
   username: z.string().trim().toLowerCase()
-    .min(3, { message: 'Username must be at least 3 characters long.' })
-    .max(24, { message: 'Username may not be longer than 24 characters.' })
-    .regex(USERNAME_REGEX, { message: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
+    .min(3, { error: 'Username must be at least 3 characters long.' })
+    .max(24, { error: 'Username may not be longer than 24 characters.' })
+    .regex(USERNAME_REGEX, { error: 'Username must begin with a letter and consist only of letters, numbers, dashes, and underscores.' }),
   displayName: z.string()
-    .min(3, { message: 'Display name must be at least 3 characters long.' })
-    .max(24, { message: 'Display name may not be longer than 24 characters.' }),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-}).strict().partial();
+    .min(3, { error: 'Display name must be at least 3 characters long.' })
+    .max(24, { error: 'Display name may not be longer than 24 characters.' }),
+  email: z.email({ error: 'Please enter a valid email address.' }),
+}).partial();
 
 // PATCH /me - modify your own user information
 export async function handlePatchMe(req: RequestWithUser, res: ApiResponse<FullUser>) {
@@ -258,13 +257,13 @@ export type SettingsEditPayload = Partial<{
   displayStreaks: boolean;
   weekStartDay: number;
 }>;
-const zSettingsEditPayload = z.object({
-  lifetimeStartingBalance: z.record(z.enum(Object.values(TALLY_MEASURE) as NonEmptyArray<string>), z.number().int()),
+const zSettingsEditPayload = z.strictObject({
+  lifetimeStartingBalance: z.record(z.enum(Object.values(TALLY_MEASURE)), z.number().int()),
   enablePublicProfile: z.boolean(),
   displayCovers: z.boolean(),
   displayStreaks: z.boolean(),
   weekStartDay: z.number().int().min(0).max(6),
-}).strict().partial();
+}).partial();
 
 // PATCH /me/settings - patch your settings
 export async function handleUpdateSettings(req: RequestWithUser, res: ApiResponse<UserSettings>) {

@@ -1,5 +1,5 @@
 import type { Application, IRouter, Router } from 'express';
-import type { ZodSchema } from 'zod';
+import type { ZodType } from 'zod';
 import { h, type ApiHandler } from './api-response';
 import { decorateApiCallSpan, instrumentMiddleware } from './middleware/decorate-span';
 import { requirePublic, requireApiKey, requireSession, requireUser, requireAdminUser, requirePrivate } from './middleware/access';
@@ -39,9 +39,9 @@ export type RouteConfig = {
   path: string;
   handler: ApiHandler<unknown>;
   accessLevel: AccessLevel;
-  paramsSchema?: ZodSchema;
-  querySchema?: ZodSchema;
-  bodySchema?: ZodSchema;
+  paramsSchema?: ZodType;
+  querySchema?: ZodType;
+  bodySchema?: ZodType;
 };
 
 type AllowedExpressMethods = keyof Pick<IRouter, 'get' | 'post' | 'put' | 'patch' | 'delete'>;

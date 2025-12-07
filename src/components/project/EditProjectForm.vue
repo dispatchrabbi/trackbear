@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, defineProps, defineEmits } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useEventBus } from '@vueuse/core';
 import wait from 'src/lib/wait.ts';
 import { toTitleCase } from 'src/lib/str.ts';
@@ -35,13 +35,13 @@ const formModel = reactive({
 });
 
 const validations = z.object({
-  title: z.string().min(1, { message: 'Please enter a title.' }),
+  title: z.string().min(1, { error: 'Please enter a title.' }),
   description: z.string(),
   displayOnProfile: z.boolean(),
-  phase: z.enum(Object.values(PROJECT_PHASE) as NonEmptyArray<typeof PROJECT_PHASE[keyof typeof PROJECT_PHASE]>, { required_error: 'Please pick a phase.' }),
+  phase: z.enum(Object.values(PROJECT_PHASE) as NonEmptyArray<typeof PROJECT_PHASE[keyof typeof PROJECT_PHASE]>, { error: 'Please pick a phase.' }),
   startingBalance: z.record(
     z.enum(Object.keys(TALLY_MEASURE_INFO) as NonEmptyArray<string>),
-    z.number({ invalid_type_error: 'Please fill in all balances, or remove blank rows.' }).int({ message: 'Please only enter whole numbers.' }),
+    z.number({ error: 'Please fill in all balances, or remove blank rows.' }).int({ error: 'Please only enter whole numbers.' }),
   ),
 });
 
