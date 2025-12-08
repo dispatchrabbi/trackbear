@@ -26,6 +26,7 @@ import { LeaderboardMemberModel } from 'server/lib/models/leaderboard/leaderboar
 import { eachDayOfInterval } from 'date-fns';
 import { formatDate, parseDateString } from 'src/lib/date';
 import { LeaderboardTeamModel } from 'server/lib/models/leaderboard/leaderboard-team-model';
+import { type MeasureCounts } from 'server/lib/models/tally/types';
 
 type Mapping<T> = Record<string, T>;
 
@@ -112,7 +113,7 @@ async function createProjects(user: User, projectConfigs: Mapping<ProjectSchema>
     description: config.description,
     phase: config.phase,
     cover: null,
-    startingBalance: config.startingBalance,
+    startingBalance: config.startingBalance as MeasureCounts,
     starred: false,
     displayOnProfile: false,
   }, reqCtx));
@@ -236,7 +237,7 @@ async function createLeaderboards(user: User, leaderboardConfigs: Mapping<Leader
       individualGoalMode: lbConfig.individualGoalMode,
       fundraiserMode: lbConfig.fundraiserMode,
       enableTeams: lbConfig.enableTeams,
-      goal: lbConfig.goal!,
+      goal: lbConfig.goal! as MeasureCounts,
       measures: lbConfig.measures!,
       isJoinable: true,
       isPublic: false,

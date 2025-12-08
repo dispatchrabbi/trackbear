@@ -32,7 +32,7 @@ export type UserSchema = z.infer<typeof userSchema>;
 const projectSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(''),
-  phase: z.enum(Object.values(PROJECT_PHASE)).default(PROJECT_PHASE.PLANNING),
+  phase: z.enum(Object.values(PROJECT_PHASE) as NonEmptyArray<string>).default(PROJECT_PHASE.PLANNING),
   startingBalance: zMeasureCounts().default({}),
 });
 export type ProjectSchema = z.infer<typeof projectSchema>;
