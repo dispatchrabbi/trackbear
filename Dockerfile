@@ -74,6 +74,7 @@ ENV NODE_ENV=production
 COPY --chown=node:node . .
 
 # Regenerate db models
+ARG PRISMA_GENERATE_DATABASE_URL
 RUN npm run compile:db
 
 # Compile the API

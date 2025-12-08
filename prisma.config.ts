@@ -7,7 +7,7 @@ import type { PrismaConfig } from 'prisma';
 import { makeConnectionString, validateConnectionParams } from './server/lib/db-connection.ts';
 
 dotenv.config();
-const datasourceUrl = makeConnectionString(validateConnectionParams({
+const datasourceUrl = process.env.PRISMA_GENERATE_DATABASE_URL || makeConnectionString(validateConnectionParams({
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   host: process.env.DATABASE_HOST,
