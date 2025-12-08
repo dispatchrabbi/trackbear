@@ -4,7 +4,7 @@ import process from 'node:process';
 import dotenv from 'dotenv';
 import type { PrismaConfig } from 'prisma';
 
-import { makeConnectionString, validateConnectionParams } from './server/lib/db.ts';
+import { makeConnectionString, validateConnectionParams } from './server/lib/db-connection.ts';
 
 dotenv.config();
 const datasourceUrl = makeConnectionString(validateConnectionParams({

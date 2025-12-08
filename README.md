@@ -33,17 +33,17 @@ See [the environment variable documentation](./docs/env.md) for more details on 
 To start TrackBear in development mode:
 
 ```sh
-node --run start
+npm run start
 ```
 
 You can also start TrackBear in production mode:
 
 ```sh
 # compile the app first
-node --run compile
+npm run compile
 
 # then start it up
-node --run start:prod
+npm run start:prod
 ```
 
 ### Testing
@@ -51,19 +51,19 @@ node --run start:prod
 You can run tests thus:
 
 ```sh
-node --run test
+npm run test
 ```
 
 or you can look at the results in a web-based UI:
 
 ```sh
-node --run test:webui
+npm run test:webui
 ```
 
 There is also coverage reporting available, which will deposit a coverage report in _coverage/_:
 
 ```sh
-node --run coverage
+npm run coverage
 ```
 
 ### Migrations

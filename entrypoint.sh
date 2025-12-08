@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Run DB migrations before starting
 if [ "$NODE_ENV" == 'production' ]; then
-  node --run migrate:prod
+  npm run migrate:prod
 fi
 
 # Start the server

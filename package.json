@@ -7,7 +7,7 @@
     "node": ">=22.11.0"
   },
   "scripts": {
-    "start": "node --run start:dev",
+    "start": "npm run start:dev",
     "start:dev": "NODE_ENV=development node --import tsx --import ./instrumentation.ts ./main.ts",
     "start:prod": "NODE_ENV=production node --import tsx --import ./instrumentation.ts ./main.ts",
     "help:dev": "vitepress dev help-docs",
@@ -23,18 +23,18 @@
     "lint": "npm run typecheck && npm run eslint",
     "eslint": "npx eslint --concurrency auto --fix --prune-suppressions .",
     "typecheck": "npx vue-tsc --noEmit",
-    "prebuild": "node --run compile && node --run test",
-    "build": "node --run build:prod",
+    "prebuild": "npm run compile && npm run test",
+    "build": "npm run build:prod",
     "build:prod": "docker build -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t dispatchrabbi/trackbear:latest --target prod .",
     "build:prod:progress": "docker build --progress=plain -t dispatchrabbi/trackbear:$(npm pkg get version --workspaces=false | tr -d \\\") -t dispatchrabbi/trackbear:latest --target prod .",
-    "compile": "node --run compile:db && node --run compile:client && node --run compile:api && node --run compile:help",
+    "compile": "npm run compile:db && npm run compile:client && npm run compile:api && npm run compile:help",
     "compile:db": "npx prisma generate --no-hints",
     "compile:client": "npx vue-tsc && npx vite build --emptyOutDir",
     "compile:api": "npx tsp compile .",
-    "compile:help": "node --run help:build",
+    "compile:help": "npm run help:build",
     "migrate:dev": "npx prisma migrate dev && npx prisma generate",
     "migrate:prod": "npx prisma migrate deploy",
-    "preversion": "node --run build",
+    "preversion": "npm run build",
     "version": "VERSION=$(npm pkg get version --workspaces=false | tr -d \\\"); git add .; git commit -m \"v${VERSION}\"; git tag -a \"v${VERSION}\" -m \"v${VERSION}\""
   },
   "dependencies": {

@@ -55,7 +55,7 @@ RUN --mount=type=cache,target=~/.npm npm install
 COPY --chown=node:node . .
 
 # Regenerate db models
-RUN node --run compile:db
+RUN npm run compile:db
 
 # Check every 30s to ensure /api/ping returns HTTP 200
 HEALTHCHECK --interval=30s CMD node ./scripts/healthchecks/trackbear.js
@@ -74,16 +74,16 @@ ENV NODE_ENV=production
 COPY --chown=node:node . .
 
 # Regenerate db models
-RUN node --run compile:db
+RUN npm run compile:db
 
 # Compile the API
-RUN node --run compile:api
+RUN npm run compile:api
 
 # Compile the help docs
-RUN node --run compile:help
+RUN npm run compile:help
 
 # Compile the front-end
-RUN node --run compile:client
+RUN npm run compile:client
 
 # Check every 30s to ensure /api/ping returns HTTP 200
 HEALTHCHECK --interval=30s CMD node ./scripts/healthchecks/trackbear.js

@@ -2,7 +2,7 @@ import process from 'node:process';
 import { execSync } from 'node:child_process';
 import { type PrismaClient } from 'generated/prisma/client';
 
-import { makeConnectionString, validateConnectionParams } from 'server/lib/db.ts';
+import { makeConnectionString, validateConnectionParams } from 'server/lib/db-connection.ts';
 
 export function createTestDatabase(schemaName: string) {
   process.env.DATABASE_SCHEMA = schemaName;
