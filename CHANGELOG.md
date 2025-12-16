@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Changing the configuration on a project or goal no longer unstars that project or goal. (h/t Dawn, EBWriter)
+
 ## 1.4.9
 
 - CHANGED: The public profile page now lists projects, targets, and habits in a consistent order starting with the most recently updated. (h/t K. A. J. Klok)

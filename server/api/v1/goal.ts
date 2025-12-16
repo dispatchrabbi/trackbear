@@ -88,8 +88,8 @@ const zGoalCreatePayload = z.strictObject({
   parameters: z.union([zTargetGoalParameters, zHabitGoalParameters]), // I could enforce this more strictly with a discriminated union, but it's terrible in zod
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
-  starred: z.boolean().nullable().default(false),
-  displayOnProfile: z.boolean().nullable().default(false),
+  starred: z.boolean().nullable().optional(),
+  displayOnProfile: z.boolean().nullable().optional(),
   workIds: z.array(z.number().int()),
   tagIds: z.array(z.number().int()),
 });

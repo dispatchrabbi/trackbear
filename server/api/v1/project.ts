@@ -50,8 +50,8 @@ const zProjectCreatePayload = z.strictObject({
   description: z.string(),
   phase: z.enum(Object.values(PROJECT_PHASE) as NonEmptyArray<string>),
   startingBalance: z.partialRecord(z.enum(Object.values(TALLY_MEASURE)), z.number().int()),
-  starred: z.boolean().nullable().default(false),
-  displayOnProfile: z.boolean().nullable().default(false),
+  starred: z.boolean().nullable().optional(),
+  displayOnProfile: z.boolean().nullable().optional(),
 });
 
 export async function handleCreateProject(req: RequestWithUser, res: ApiResponse<Project>) {
