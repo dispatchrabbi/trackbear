@@ -12,7 +12,9 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
-- FIXED: Changing the configuration on a project or goal no longer unstars that project or goal. (h/t Dawn, EBWriter)
+## 1.4.12
+
+- FIXED: Changing the configuration on a project or goal no longer unstars that project or goal. (h/t Dawn, GumDrop, EBWriter)
 
 ## 1.4.9
 
