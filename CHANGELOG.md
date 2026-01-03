@@ -14,7 +14,7 @@ Types of changes include:
 
 ## 1.4.12
 
-- FIXED: Changing the configuration on a project or goal no longer unstars that project or goal. (h/t Dawn, GumDrop, EBWriter)
+- FIXED: Changing the configuration on a project or goal no longer unstars that project or goal. (h/t Dawn, Gum Drop, EBWriter)
 
 ## 1.4.9
 
