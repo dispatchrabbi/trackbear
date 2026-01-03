@@ -10,7 +10,7 @@ import { USER_COLOR_NAMES } from 'src/components/chart/user-colors.ts';
 const zTallyMeasure = () => z.enum(Object.values(TALLY_MEASURE));
 const zMeasureCounts = () => z.partialRecord(zTallyMeasure(), z.number().int());
 
-const zKey = () => z.string().regex(/^\w+$/);
+const zKey = () => z.string().regex(/^[a-z0-9_-]+$/);
 const zDate = () => z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const zNullableDate = () => zDate().nullable();
 const zProjectList = () => zKey().array();

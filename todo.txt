@@ -21,6 +21,8 @@ x (A) Update zod dif:3 +update
 x (A) Update prisma dif:2 +update
 x (A) Add actual page titles to the pages (h/t varve) dif:1 @ui
 (A) Add "how many words you wrote this day, week and month" to the Dashboard (h/t Sandrine) dif:2 @dashboard @stats +delight
+(A) Load audit events on the admin user view page only on demand dif:1 @admin
+(A) Serve the fonts locally instead of from Google dif:1 @ui +privacy
 (B) Add writing insights to the Stats section: total words, average per session, Best session, Most productive day (h/t Sandrine) dif:3 @stats +delight
 x (B) Improve DB env var situation +techdebt
 (B) Project progress embed (h/t Laura) dif:3 @public +embeds
@@ -42,14 +44,16 @@ x (B) Improve DB env var situation +techdebt
 (B) Should convert text-white to text-surface-0 probably dif:1 @ui +themes
 (B) Definitely need to figure out themed chart colors somehow dif:2 @charts @ui +themes
 (B) Actually make several themes dif:5 @ui +themes
+(B) Change out the fonts for National Parks and Inter maybe dif:3 @ui +themes
 (B) Need to figure out accent vs success vs completion dif:3 @ui +themes
 (B) Add optional TOTP setup dif:8 @backend @security
-(B) Double-check [Node.js Security Checklist](https://blog.risingstack.com/node-js-security-checklist/) dif:5 @security
+(B) Double-check [Node.js Security Checklist](https://blog.risingstack.com/node-js-security-checklist/) dif:5 @stats
 (B) Don't count negative tallies in goals (should this be per-goal or per-user?) (h/t Dawn) dif:3 @goals
 (B) Add "pieces" or "works" as a measure dif:2 @progress
 (B) Link to or show associated goals and leaderboards next to projects @projects
 (B) Display what projects and tags are being considered in a goal or leaderboard @goals @leaderboards
 (B) Add a user setting to show yesterday's date in Progress Entry a few hours after midnight dif:2 @settings
+(B) Change the heatmap to display individual stats on the page instead of a tooltip (h/t Stella) dif:3 @dashboard
 (C) Increase code coverage on the back end dif:34 @backend +coverage100
 (C) Increase code coverage on the front end dif:55 @frontend +coverage100
 (C) Grand Totals embed (h/t Laura) dif:1 @public +embeds

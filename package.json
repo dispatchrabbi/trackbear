@@ -32,6 +32,7 @@
     "compile:client": "npx vue-tsc && npx vite build --emptyOutDir",
     "compile:api": "npx tsp compile .",
     "compile:help": "npm run help:build",
+    "compile:seed-schema": "./scripts/generate-seed-json-schema.ts",
     "migrate:dev": "npx prisma migrate dev && npx prisma generate",
     "migrate:prod": "npx prisma migrate deploy",
     "preversion": "npm run build",

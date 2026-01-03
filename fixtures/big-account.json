@@ -1,0 +1,209 @@
+{
+  "$schema": "../generated/seed-schema.json",
+  "accounts": {
+    "big-big-account": {
+      "user": {
+        "username": "big-big-account",
+        "email": "dispatch.rabbi+tb_big-big-account@gmail.com"
+      },
+      "projects": {
+        "all-year-2015": { "title": "All Year 2015" },
+        "all-year-2016": { "title": "All Year 2016" },
+        "all-year-2017": { "title": "All Year 2017" },
+        "all-year-2018": { "title": "All Year 2018" },
+        "all-year-2019": { "title": "All Year 2019" },
+        "all-year-2020": { "title": "All Year 2020" },
+        "all-year-2021": { "title": "All Year 2021" },
+        "all-year-2022": { "title": "All Year 2022" },
+        "all-year-2023": { "title": "All Year 2023" },
+        "all-year-2024": { "title": "All Year 2024" },
+        "all-year-2025": {
+          "title": "All Year 2025",
+          "description": "All the words, every year",
+          "phase": "drafting",
+          "startingBalance": {
+            "word": 2025,
+            "page": 20,
+            "scene": 25,
+            "time": 2520
+          }
+        }
+      },
+      "tallies": [
+        {
+          "method": "generate",
+          "config": {
+            "project": "all-year-2015",
+            "start": "2015-01-01",
+            "end": "2015-12-31",
+            "measure": "word",
+            "min": 1200,
+            "max": 2000
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "all-year-2016",
+            "start": "2016-01-01",
+            "end": "2016-12-31",
+            "measure": "word",
+            "min": 1200,
+            "max": 2000
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "all-year-2017",
+            "start": "2017-01-01",
+            "end": "2017-12-31",
+            "measure": "word",
+            "min": 1200,
+            "max": 2000
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "all-year-2018",
+            "start": "2018-01-01",
+            "end": "2018-12-31",
+            "measure": "word",
+            "min": 1200,
+            "max": 2000
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "all-year-2019",
+            "start": "2019-01-01",
+            "end": "2019-12-31",
+            "measure": "word",
+            "min": 1200,
+            "max": 2000
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "all-year-2020",
+            "start": "2020-01-01",
+            "end": "2020-12-31",
+            "measure": "time",
+            "min": 30,
+            "max": 180
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "all-year-2021",
+            "start": "2021-01-01",
+            "end": "2021-12-31",
+            "measure": "scene",
+            "min": 2,
+            "max": 10
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "all-year-2022",
+            "start": "2022-01-01",
+            "end": "2022-12-31",
+            "measure": "page",
+            "min": 3,
+            "max": 15
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "all-year-2023",
+            "start": "2023-01-01",
+            "end": "2023-12-31",
+            "measure": "time",
+            "min": 30,
+            "max": 180
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "all-year-2024",
+            "start": "2024-01-01",
+            "end": "2024-12-31",
+            "measure": "word",
+            "min": 1200,
+            "max": 2000
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "all-year-2025",
+            "start": "2025-01-01",
+            "end": "2025-12-31",
+            "measure": "word",
+            "min": 1200,
+            "max": 2000
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "all-year-2025",
+            "start": "2025-01-01",
+            "end": "2025-12-31",
+            "measure": "time",
+            "min": 30,
+            "max": 180
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "all-year-2025",
+            "start": "2025-01-01",
+            "end": "2025-12-31",
+            "measure": "page",
+            "min": 3,
+            "max": 15
+          }
+        }
+      ],
+      "targets": {
+        "everything": {
+          "title": "Everything",
+          "description": "This one has everything",
+          "measure": "word",
+          "count": 1000000
+        },
+        "twenties": {
+          "title": "2020+ Time",
+          "measure": "time",
+          "count": 525600,
+          "projects": [
+            "all-year-2020",
+            "all-year-2021",
+            "all-year-2022",
+            "all-year-2023",
+            "all-year-2024",
+            "all-year-2025"
+          ]
+        }
+      },
+      "habits": {
+        "every-day-2018": {
+          "title": "Every Day in Q2 2018",
+          "period": 1,
+          "unit": "day",
+          "start": "2018-04-01",
+          "end": "2018-06-30"
+        }
+      }
+    }
+  }
+}

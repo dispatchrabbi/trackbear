@@ -22,7 +22,7 @@ async function main() {
   dotenv.config();
   process.env.LOG_LEVEL = 'info'; // setting this higher than debug prevents a flood of audit event messages
   await initLoggers();
-  const scriptLogger = getLogger('default').child({ service: 'seed-random-users.ts' });
+  const scriptLogger = getLogger('default').child({ service: 'seed-public.ts' });
 
   scriptLogger.info(`Script initialization complete. Starting main section...`);
 
@@ -32,11 +32,8 @@ async function main() {
     process.exit(1);
   }
 
-  if(dbNameArg && !/^[a-z][a-z0-9-_]+$/.test(dbNameArg)) {
-    scriptLogger.error(`database-name must match /^[a-z][a-z0-9-_]+$/. Received: ${dbNameArg}. Exiting...`);
-    process.exit(1);
-  } else if(dbNameArg && dbNameArg === 'public') {
-    scriptLogger.error(`database-name cannot be 'public'. Exiting...`);
+  if(dbNameArg !== 'public') {
+    scriptLogger.error(`database-name must be 'public'. Exiting...`);
     process.exit(1);
   }
 
@@ -87,7 +84,7 @@ async function main() {
   }
 
   scriptLogger.info(`Seeding the database...`);
-  const reqCtx = reqCtxForScript('create-test-database.ts');
+  const reqCtx = reqCtxForScript('seed-public.ts');
   await createSeed(seedJson, reqCtx);
 
   scriptLogger.info(`Done!`);
@@ -95,13 +92,13 @@ async function main() {
 
 function printUsage() {
   console.log(`
-create-test-database.ts: create a test database
+seed-public.ts: create a test database
 
-Usage: ./scripts/create-test-database.ts <seed-file> [<database-name>]
+Usage: ./scripts/seed-public.ts <seed-file> [<database-name>]
 
 <seed-file> is the path to a JSON file with a seed config in it.
 
-<database name> is the name of the test database. It cannot be 'public' or any existing database. If not passed, a random name will be supplied.
+<database name> is the name of the public database. It must be 'public' and is included as an affirmative check.
   `.trim());
 }
 
