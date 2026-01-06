@@ -181,8 +181,8 @@ model Tally {
   count   Int
   note    String
 
-  workId Int?
-  work   Work? @relation(fields: [workId], references: [id], onDelete: Cascade)
+  workId Int
+  work   Work @relation(fields: [workId], references: [id], onDelete: Cascade)
 
   tags Tag[]
 

@@ -79,7 +79,7 @@ export type TallyCreatePayload = {
   count: number;
   setTotal: boolean;
   note: string;
-  workId: number | null;
+  workId: number;
   tags: string[];
 };
 const zTallyCreatePayload = z.strictObject({
@@ -88,7 +88,7 @@ const zTallyCreatePayload = z.strictObject({
   count: z.number().int(),
   setTotal: z.boolean(),
   note: z.string(), // this CAN be empty
-  workId: z.number().int().nullable(),
+  workId: z.number().int(),
   tags: z.array(z.string().min(1)), // tags are specified by name, because you might create a new one here
 });
 
@@ -136,7 +136,7 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
       count: count,
       note: payload.note,
 
-      workId: payload.workId, // could be null
+      workId: payload.workId,
 
       tags: {
         connectOrCreate: payload.tags.map((tagName: string) => ({
@@ -170,7 +170,7 @@ const zBatchTallyCreatePayload = z.array(z.object({
   count: z.number().int(),
   setTotal: z.literal(false), // no submitting batch tallies that set the total... for now. // TODO: allow this in future
   note: z.string(), // this CAN be empty
-  workId: z.number().int().nullable(),
+  workId: z.number().int(),
   tags: z.array(z.string()).length(0), // no tags yet either, sorry // TODO: allow this in future
 }));
 
@@ -188,7 +188,7 @@ export async function handleCreateTallies(req: RequestWithUser, res: ApiResponse
       count: tallyData.count,
       note: tallyData.note,
 
-      workId: tallyData.workId, // could be null
+      workId: tallyData.workId,
     })),
   });
 
@@ -275,7 +275,7 @@ export async function handleUpdateTally(req: RequestWithUser, res: ApiResponse<T
       count: 'count' in payload ? count : undefined,
       note: payload.note,
 
-      workId: payload.workId, // could be null
+      workId: payload.workId,
 
       tags: {
         connectOrCreate: tagNamesToConnectOrCreate.map((tagName: string) => ({

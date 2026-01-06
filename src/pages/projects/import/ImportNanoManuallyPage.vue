@@ -203,7 +203,7 @@ async function handleImportClick() {
     return;
   }
 
-  let workId = formModel.workId;
+  let workId = formModel.workId!;
 
   // create the work if needed
   if(formModel.workId === -1) {
