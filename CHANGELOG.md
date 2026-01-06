@@ -12,7 +12,11 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.5.0
+
 - NEW: Data export! You can now export all your progress data from TrackBear, which makes it easier to keep your own spreadsheets up to date, have a backup, or even move to another platform. Go to your Account page and scroll down to from the Export Data section, then click the Export Data button to download a zip file containing your data.
+- CHANGED: You can no longer create a tag with a semicolon in it. No one had any, though — I checked — so it's all good.
+- CHANGED: You can no longer create a progress entry that is not attached to a project. This wasn't possible through the UI anyway, so don't worry about it.
 
 ## 1.4.12
 
