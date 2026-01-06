@@ -15,6 +15,7 @@ import { GOAL_STATE, GOAL_TYPE } from './consts.ts';
 import { type Goal, type HabitGoal, type TargetGoal, type HabitGoalParameters, type TargetGoalParameters } from './types.ts';
 import { TALLY_STATE } from '../tally/consts.ts';
 import type { Tally } from '../tally/tally-model.wip.ts';
+import { db2tally } from '../tally/helpers.ts';
 import { omit } from 'server/lib/obj.ts';
 import { makeIncludeWorkAndTagIds, included2ids, makeSetWorksAndTagsIncluded, makeConnectWorksAndTagsIncluded, supplyDefaults } from '../helpers.ts';
 
@@ -196,7 +197,7 @@ export class GoalModel {
     const measure = this.DEPRECATED_getMeasureFromGoal(goal);
 
     const db = getDbClient();
-    return await db.tally.findMany({
+    const found = await db.tally.findMany({
       where: {
         ownerId: goal.ownerId,
         state: TALLY_STATE.ACTIVE,
@@ -213,7 +214,13 @@ export class GoalModel {
         // only include tallies of the appropriate measure, if it exists
         measure: measure ?? undefined,
       },
+      include: {
+        tags: { select: { id: true } },
+      },
     });
+
+    const tallies = found.map(db2tally) as Tally[];
+    return tallies;
   }
 
   private static DEPRECATED_getMeasureFromGoal(goal: Goal): string | null | undefined {

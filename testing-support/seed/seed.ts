@@ -18,7 +18,7 @@ import { type Tag } from 'server/lib/models/tag/tag-model.ts';
 import { ProjectModel, type Project } from 'server/lib/models/project/project-model';
 import { type TargetGoal, type HabitGoal, GoalModel, type TargetGoalParameters, type HabitGoalParameters } from 'server/lib/models/goal/goal-model.ts';
 import type { Leaderboard, LeaderboardMember } from 'server/lib/models/leaderboard/types.ts';
-import { type TallyData, TallyModel, type Tally } from 'server/lib/models/tally/tally-model.wip.ts';
+import { type TallyData, TallyModel } from 'server/lib/models/tally/tally-model.wip.ts';
 import { type RequestContext } from 'server/lib/request-context';
 import { GOAL_TYPE } from 'server/lib/models/goal/consts';
 import { LeaderboardModel } from 'server/lib/models/leaderboard/leaderboard-model';
@@ -26,7 +26,7 @@ import { LeaderboardMemberModel } from 'server/lib/models/leaderboard/leaderboar
 import { eachDayOfInterval } from 'date-fns';
 import { formatDate, parseDateString } from 'src/lib/date';
 import { LeaderboardTeamModel } from 'server/lib/models/leaderboard/leaderboard-team-model';
-import { type MeasureCounts } from 'server/lib/models/tally/types';
+import { type PlainTally, type MeasureCounts } from 'server/lib/models/tally/types';
 
 type Mapping<T> = Record<string, T>;
 
@@ -38,7 +38,7 @@ type AccountResult = {
   habits: Mapping<HabitGoal>;
   leaderboards: Mapping<Leaderboard>;
   memberships: Mapping<LeaderboardMember>;
-  tallies: Tally[];
+  tallies: PlainTally[]; // TODO: include tags in this
 };
 
 export function validateSeed(seedJson: unknown): SeedSchema {
@@ -119,7 +119,7 @@ async function createProjects(user: User, projectConfigs: Mapping<ProjectSchema>
   }, reqCtx));
 }
 
-async function createTallies(user: User, tallyConfigs: TallySchema[], projects: Mapping<Project>, tags: Mapping<Tag>, reqCtx: RequestContext): Promise<Tally[]> {
+async function createTallies(user: User, tallyConfigs: TallySchema[], projects: Mapping<Project>, tags: Mapping<Tag>, reqCtx: RequestContext): Promise<PlainTally[]> {
   const allTallies: TallyData[] = tallyConfigs.flatMap(config => {
     if(config.method === TALLY_CONFIG_METHOD.LIST) {
       return transformLiteralTallies(config.tallies, projects, tags);

@@ -48,6 +48,14 @@ To change your password:
 
 You will be sent an email confirming that your password was changed.
 
+## Export your data
+
+To export all your progress data from TrackBear:
+
+1. Scroll down to the **Export Data** section.
+1. Click the **Export your data** button.
+1. A .zip file with all your data will be downloaded.
+
 ## Deleting your account
 
 To delete your account:

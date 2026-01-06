@@ -33,7 +33,10 @@ export type TagCreatePayload = {
   color: string;
 };
 const zTagCreatePayload = z.object({
-  name: z.string().min(1),
+  name: z.string()
+    .min(1)
+    .regex(/^[^;]+$/, { error: 'Tags may not contain semicolons.' })
+    .regex(/^[^#]/, { error: 'There is no need to start your tag with #.' }),
   color: z.enum(TAG_COLORS),
 });
 

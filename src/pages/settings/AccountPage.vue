@@ -35,7 +35,7 @@ const breadcrumbs: MenuItem[] = [
 const isUploadFormVisible = ref<boolean>(false);
 const isDeleteFormVisible = ref<boolean>(false);
 
-const handleRemoveAvatar = function(ev) {
+function handleRemoveAvatar(ev) {
   confirm.require({
     target: ev.currentTarget,
     message: 'Are you sure you want to remove your current avatar?',
@@ -47,6 +47,10 @@ const handleRemoveAvatar = function(ev) {
     },
   });
 };
+
+function handleClickExport() {
+  window.open('/export/progress');
+}
 
 </script>
 
@@ -121,6 +125,30 @@ const handleRemoveAvatar = function(ev) {
       >
         <ChangePasswordForm />
       </Panel>
+      <Panel
+        header="Export Data"
+        class="m-2"
+      >
+        <div class="flex flex-col gap-4">
+          <div>
+            <p>Click the button below to download all your TrackBear data. The download is a zip file which includes:</p>
+            <ul>
+              <li>A CSV file with all your progress</li>
+              <li>One CSV file per project, listing the progress for that project</li>
+              <li>One CSV file per target goal, listing the daily progress for the target</li>
+              <li>One CSV file per habit goal, listing the progress for each habit</li>
+              <li>A JSON file that includes all the progress entries, projects, tags, targets, and habits</li>
+            </ul>
+          </div>
+          <div>
+            <Button
+              label="Export your data"
+              size="large"
+              @click="handleClickExport"
+            />
+          </div>
+        </div>
+      </Panel>
       <DangerPanel
         header="Danger Zone"
         class="m-2"
@@ -156,5 +184,10 @@ const handleRemoveAvatar = function(ev) {
 <style scoped>
 .not-verified-text {
   color: var(--va-danger);
+}
+
+ul > li {
+  list-style: disc;
+  list-style-position: inside;
 }
 </style>

@@ -187,6 +187,16 @@ export class UserModel {
   }
 
   @traced
+  static async getUserSettings(user: User): Promise<UserSettings | null> {
+    const db = getDbClient();
+    const userSettings = await db.userSettings.findUnique({
+      where: { userId: user.id },
+    }) as UserSettings;
+
+    return userSettings;
+  }
+
+  @traced
   static async signUpUser(data: SignUpUserData, reqCtx: RequestContext) {
     data.username = await this.validateUsername(data.username);
 

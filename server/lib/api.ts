@@ -1,6 +1,6 @@
 import type { Application, IRouter, Router } from 'express';
 import type * as z from 'zod';
-import { h, type ApiHandler } from './api-response';
+import { type DownloadHandler, h, type ApiHandler } from './api-response';
 import { decorateApiCallSpan, instrumentMiddleware } from './middleware/decorate-span';
 import { requirePublic, requireApiKey, requireSession, requireUser, requireAdminUser, requirePrivate } from './middleware/access';
 import { validateBody, validateParams, validateQuery } from './middleware/validate';
@@ -37,7 +37,7 @@ type AccessLevel = ValueEnum<typeof ACCESS_LEVEL>;
 export type RouteConfig = {
   method: HttpMethod;
   path: string;
-  handler: ApiHandler<unknown>;
+  handler: ApiHandler<unknown> | DownloadHandler;
   accessLevel: AccessLevel;
   paramsSchema?: z.ZodType;
   querySchema?: z.ZodType;

@@ -28,12 +28,9 @@ features:
   - title: Get started
     details: Use our Getting Started guide to jump-start your TrackBear setup.
     link: '/getting-started/introduction'
-  # - title: Leaderboards
-  #   details: Looking to set up a leaderboard for your friends or community? Look no further.
-  #   link: '/leaderboards'
-  - title: Public profile
-    details: Make a snazzy page to show off your projects and goals.
-    link: '/settings/public-profile'
+  - title: API docs
+    details: Use the TrackBear API in your own automations and workflows.
+    link: '/api'
   - title: Locked out?
     details: Get help if you can't log into your account.
     link: '/settings/account'

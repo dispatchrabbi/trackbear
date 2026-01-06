@@ -29,6 +29,8 @@ export const AUDIT_EVENT_TYPE = {
   BOARD_DELETE: 'board:delete',
   BOARD_UNDELETE: 'board:undelete',
 
+  EXPORT_REQUEST: 'export:request',
+
   GOAL_CREATE: 'goal:create',
   GOAL_UPDATE: 'goal:update',
   GOAL_DELETE: 'goal:delete',
@@ -132,6 +134,11 @@ export const AUDIT_EVENT_TYPE_ARGUMENTS: Record<AuditEventType, {
   [AUDIT_EVENT_TYPE.BOARD_UNDELETE]: {
     agent: AUDIT_EVENT_ENTITIES.USER,
     patient: AUDIT_EVENT_ENTITIES.BOARD,
+    goal: null,
+  },
+  [AUDIT_EVENT_TYPE.EXPORT_REQUEST]: {
+    agent: AUDIT_EVENT_ENTITIES.USER,
+    patient: AUDIT_EVENT_ENTITIES.USER,
     goal: null,
   },
   [AUDIT_EVENT_TYPE.GOAL_CREATE]: {

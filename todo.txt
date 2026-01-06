@@ -1,5 +1,7 @@
-(A) Implement data export dif:5 @backend @frontend +export
+x (A) Implement data export dif:5 @backend @frontend +export
 (A) Create a generic importer (h/t Trax) dif:5 @backend @frontend +import
+x (A) Do not allow creating tags with a semicolon in them dif:2 @tags
+(A) Remove the possibility of a tally with no workId dif:2 +techdebt
 (A) Redo the upload UI so it's more intuitive dif:2 @projects @settings +delight
 x (A) Ensure that projects (etc.) on public profile have a consistent order (last updated?) (h/t K. A. J. Klok) dif:2 @profile +delight
 (A) Improve the binning on the heatmaps dif:2 @ui +delight

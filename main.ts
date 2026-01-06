@@ -25,6 +25,7 @@ import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import rateLimit from 'server/lib/middleware/rate-limit.ts';
 
 import { mountApiEndpoints } from 'server/api/index.ts';
+import { mountExportEndpoint } from 'server/export/index.ts';
 import spaRoutes from 'server/lib/middleware/spa-routes.ts';
 import { createServer } from 'vite';
 
@@ -107,7 +108,7 @@ async function main() {
   // sessions
   // Allow multiple signing secrets: see using an array at https://www.npmjs.com/package/express-session#secret
   const cookieSecret = (env.COOKIE_SECRET || '').split(',');
-  // the combination of maxAge: 2 days & rolling: true means that you'll get logged out if you don't do _something_ every 2 days
+  // the combination of maxAge: 8 days & rolling: true means that you'll get logged out if you don't do _something_ every 8 days
   app.use(session({
     cookie: {
       maxAge: (7 + 1) * 24 * 60 * 60 * 1000, // 7 days + 1 grace day in ms
@@ -130,6 +131,11 @@ async function main() {
   app.use('/api', await rateLimit());
   // /api: mount the API routes
   mountApiEndpoints(app);
+
+  // /export: enable rate limiting on the export routes - 1 request per minute
+  app.use('/export', await rateLimit(60 * 1000, 1));
+  // /export: mount the API routes
+  mountExportEndpoint(app);
 
   // Serve the front-end - either statically or out of the vite server, depending
   if(env.NODE_ENV === 'production') {

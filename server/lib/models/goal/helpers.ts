@@ -1,5 +1,5 @@
 import { endOfDay, add, type Day } from 'date-fns';
-import { formatDate, parseDateString } from 'src/lib/date.ts';
+import { cmpByDate, formatDate, parseDateString } from 'src/lib/date.ts';
 
 import { type TallyMeasure } from '../tally/consts.ts';
 import type { Goal, GoalCadence, GoalThreshold, HabitGoal, TargetGoal } from './types.ts';
@@ -34,38 +34,17 @@ export function analyzeStreaksForHabit(
   const today = formatDate(new Date());
   // we will only consider tallies up to and including today
   const filteredTalles = threshold === null ? tallies : tallies.filter(tally => tally.measure === threshold.measure && tally.date <= today);
-  const sortedTallies = filteredTalles.toSorted((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
-
   // don't even bother if we don't have any tallies left
-  if(sortedTallies.length === 0) {
+  if(filteredTalles.length === 0) {
     return {
       ranges: [],
       streaks: { longest: [], current: [], all: [[]] },
     };
   }
 
-  startDate = startDate ?? sortedTallies[0].date;
-  // if endDate doesn't exist, use today; otherwise use the earlier of endDate or today
-  endDate = endDate ? endDate > today ? today : endDate : today;
-
-  // first, get all the possible date ranges for the habit
-  const dateRanges = createDateRanges(cadence.period, cadence.unit, startDate, endDate, weekStartsOn);
-
   const streaks: NonEmptyArray<HabitRange[]> = [[]];
-  const ranges: HabitRange[] = [];
-  for(const dateRange of dateRanges) {
-    const talliesInRange = sortedTallies.filter(tally => (tally.date >= dateRange.start && tally.date <= dateRange.end));
-    const total = threshold === null ? talliesInRange.length : talliesInRange.reduce((total, tally) => total + tally.count, 0);
-
-    const range = {
-      startDate: dateRange.start,
-      endDate: dateRange.end,
-      tallies: talliesInRange,
-      total: total,
-      isSuccess: threshold === null ? total > 0 : total >= threshold.count,
-    };
-    ranges.push(range);
-
+  const ranges = populateHabitRanges(filteredTalles, cadence, threshold, startDate, endDate, weekStartsOn);
+  for(const range of ranges) {
     if(range.isSuccess) {
       // if this range is a success, we add it to the current streak
       streaks.at(-1)!.push(range);
@@ -89,6 +68,43 @@ export function analyzeStreaksForHabit(
       all: streaks,
     },
   };
+}
+
+export function populateHabitRanges(
+  tallies: TallyLike[],
+  cadence: GoalCadence, threshold: GoalThreshold | null,
+  startDate: string | null, endDate: string | null, weekStartsOn: Day,
+): HabitRange[] {
+  const sortedTallies = tallies.sort(cmpByDate);
+
+  // if we have no startDate, use the earliest date we have
+  startDate = startDate ?? sortedTallies[0].date;
+  // if endDate doesn't exist, use today; otherwise use the earlier of endDate or today
+  const today = formatDate(new Date());
+  endDate = endDate ? endDate > today ? today : endDate : today;
+
+  const dateRanges = createDateRanges(
+    cadence.period, cadence.unit,
+    startDate, endDate, weekStartsOn,
+  );
+
+  const habitRanges: HabitRange[] = [];
+  for(const dateRange of dateRanges) {
+    const talliesInRange = sortedTallies.filter(tally => (tally.date >= dateRange.start && tally.date <= dateRange.end));
+    const total = threshold === null ? talliesInRange.length : talliesInRange.reduce((total, tally) => total + tally.count, 0);
+    const isSuccess = threshold === null ? total > 0 : total >= threshold.count;
+
+    const range = {
+      startDate: dateRange.start,
+      endDate: dateRange.end,
+      tallies: talliesInRange,
+      total,
+      isSuccess,
+    };
+    habitRanges.push(range);
+  }
+
+  return habitRanges;
 }
 
 function createDateRanges(period: number, unit: GoalCadenceUnit, startDate: string, endDate: string, weekStartsOn: Day) {

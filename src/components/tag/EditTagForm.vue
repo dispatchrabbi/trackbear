@@ -37,6 +37,7 @@ const formModel = reactive({
 const validations = z.object({
   name: z.string()
     .min(1, { error: 'Please enter a tag name.' })
+    .regex(/^[^;]+$/, { error: 'Tags may not contain semicolons.' })
     .regex(/^[^#]/, { error: 'There is no need to type the #.' }),
   // TODO: add something that disallows current tag names
   color: z.enum(TAG_COLORS, { error: 'Please pick a color.' }),

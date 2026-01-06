@@ -37,7 +37,8 @@ export function failure(code: FailureCode | string, message: string): ApiFailure
 }
 
 export type ApiHandler<T> = (req: Request, res: Response) => Promise<ApiResponse<T>>;
-export function h<T>(handler: ApiHandler<T>) {
+export type DownloadHandler = (req: Request, res: Response) => Promise<void>;
+export function h<T>(handler: ApiHandler<T> | DownloadHandler) {
   return async function handle(req: Request, res: Response, next: NextFunction) {
     try {
       await handler(req, res);

@@ -1,5 +1,5 @@
 import type { TallyMeasure } from './consts';
-import type { MeasureCounts } from './types';
+import type { PlainTally, Tally, MeasureCounts } from './types';
 
 type Counted = {
   measure: TallyMeasure;
@@ -12,4 +12,20 @@ export function sumTallies(tallies: Counted[], startingBalance: MeasureCounts = 
   }, { ...startingBalance });
 
   return totals;
+}
+
+export type PrismaTallyWithTagIds = PlainTally & {
+  tags: {
+    id: number;
+  }[];
+};
+export function db2tally(from: PrismaTallyWithTagIds | null): Tally | null {
+  if(from === null) {
+    return null;
+  }
+
+  return {
+    ...from,
+    tagIds: from.tags.map(tag => tag.id),
+  };
 }

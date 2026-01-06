@@ -9,7 +9,7 @@ import { GOAL_CADENCE_UNIT, GOAL_STATE, GOAL_TYPE } from './consts.ts';
 import { type User } from '../user/user-model.ts';
 import { TALLY_MEASURE, TALLY_STATE } from '../tally/consts.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
-import { type Tally } from '../tally/tally-model.wip.ts';
+import { db2tally, type PrismaTallyWithTagIds } from '../tally/helpers.ts';
 import { omit } from 'server/lib/obj.ts';
 import { PROJECT_STATE } from '../project/consts.ts';
 import { TAG_STATE } from '../tag/consts.ts';
@@ -362,12 +362,13 @@ describe(GoalModel, () => {
         startDate: '2024-06-15',
         endDate: '2024-07-15',
       });
-      const testTallies = mockObjects<Tally>(10);
+      const testTallies = mockObjects<PrismaTallyWithTagIds>(10, () => ({ tags: [] }));
       db.tally.findMany.mockResolvedValue(testTallies);
+      const expectedTallies = testTallies.map(db2tally);
 
       const tallies = await GoalModel.DEPRECATED_getTalliesForGoal(testGoal);
 
-      expect(tallies).toBe(testTallies);
+      expect(tallies).toEqual(expectedTallies);
       expect(db.tally.findMany).toBeCalledWith({
         where: {
           ownerId: testGoal.ownerId,
@@ -380,6 +381,13 @@ describe(GoalModel, () => {
             lte: '2024-07-15',
           },
           measure: TALLY_MEASURE.CHAPTER,
+        },
+        include: {
+          tags: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     });
@@ -397,12 +405,13 @@ describe(GoalModel, () => {
         startDate: null,
         endDate: null,
       });
-      const testTallies = mockObjects<Tally>(11);
+      const testTallies = mockObjects<PrismaTallyWithTagIds>(11, () => ({ tags: [] }));
       db.tally.findMany.mockResolvedValue(testTallies);
+      const expectedTallies = testTallies.map(db2tally);
 
       const tallies = await GoalModel.DEPRECATED_getTalliesForGoal(testGoal);
 
-      expect(tallies).toBe(testTallies);
+      expect(tallies).toEqual(expectedTallies);
       expect(db.tally.findMany).toBeCalledWith({
         where: {
           ownerId: testGoal.ownerId,
@@ -415,6 +424,13 @@ describe(GoalModel, () => {
             lte: undefined,
           },
           measure: undefined,
+        },
+        include: {
+          tags: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     });
@@ -432,12 +448,13 @@ describe(GoalModel, () => {
         startDate: null,
         endDate: null,
       });
-      const testTallies = mockObjects<Tally>(11);
+      const testTallies = mockObjects<PrismaTallyWithTagIds>(11, () => ({ tags: [] }));
       db.tally.findMany.mockResolvedValue(testTallies);
+      const expectedTallies = testTallies.map(db2tally);
 
       const tallies = await GoalModel.DEPRECATED_getTalliesForGoal(testGoal);
 
-      expect(tallies).toBe(testTallies);
+      expect(tallies).toEqual(expectedTallies);
       expect(db.tally.findMany).toBeCalledWith({
         where: {
           ownerId: testGoal.ownerId,
@@ -450,6 +467,13 @@ describe(GoalModel, () => {
             lte: undefined,
           },
           measure: TALLY_MEASURE.SCENE,
+        },
+        include: {
+          tags: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     });

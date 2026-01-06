@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- NEW: Data export! You can now export all your progress data from TrackBear, which makes it easier to keep your own spreadsheets up to date, have a backup, or even move to another platform. Go to your Account page and scroll down to from the Export Data section, then click the Export Data button to download a zip file containing your data.
+
 ## 1.4.12
 
 - FIXED: Changing the configuration on a project or goal no longer unstars that project or goal. (h/t Dawn, Gum Drop, EBWriter)
