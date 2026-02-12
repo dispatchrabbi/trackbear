@@ -13,6 +13,7 @@ Types of changes include:
 ## Upcoming/Unreleased
 
 - FIXED: Fixed a bug where bar charts spanning long enough periods of time (about a year) did not show data because the bars were too narrow. (h/t thatfallguy)
+- SECURITY: Fonts are now served locally instead of from Google, for increased privacy.
 
 ## 1.5.0
 

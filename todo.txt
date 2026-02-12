@@ -17,7 +17,7 @@
 (A) Add `as const` to constants like `TALLY_MEASURE` dif:2 +techdebt
 (A) Add "how many words you wrote this day, week and month" to the Dashboard (h/t Sandrine) dif:2 @dashboard @stats +delight
 (A) Load audit events on the admin user view page only on demand dif:1 @admin
-(A) Serve the fonts locally instead of from Google dif:1 @ui +privacy
+x (A) Serve the fonts locally instead of from Google dif:1 @ui +privacy
 (B) Update ESLint to v10 dif:2 +techdebt
 (B) Add writing insights to the Stats section: total words, average per session, Best session, Most productive day (h/t Sandrine) dif:3 @stats +delight
 (B) Project progress embed (h/t Laura) dif:3 @public +embeds

@@ -141,7 +141,7 @@ async function main() {
   if(env.NODE_ENV === 'production') {
     // serve the front-end statically out of dist/
     logger.info('Serving the front-end out of dist/');
-    app.use(spaRoutes(['/assets', '/images', '/uploads', '/manifest.json']));
+    app.use(spaRoutes(['/assets', '/images', '/fonts', '/uploads', '/manifest.json']));
     app.use('/uploads', express.static(env.UPLOADS_PATH));
     app.use(express.static('./dist'));
   } else {

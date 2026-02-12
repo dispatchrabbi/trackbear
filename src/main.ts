@@ -9,6 +9,8 @@ import routes from './routes.ts';
 
 // import our baseline app styles
 import 'primeicons/primeicons.css';
+import './fonts.css';
+import './icons.css';
 import './style.css';
 
 import { useEnvStore } from './stores/env.ts';
