@@ -1,9 +1,5 @@
-x (A) Implement data export dif:5 @backend @frontend +export
 (A) Create a generic importer (h/t Trax) dif:5 @backend @frontend +import
-x (A) Do not allow creating tags with a semicolon in them dif:2 @tags
-x (A) Remove the possibility of a tally with no workId dif:2 +techdebt
 (A) Redo the upload UI so it's more intuitive dif:2 @projects @settings +delight
-x (A) Ensure that projects (etc.) on public profile have a consistent order (last updated?) (h/t K. A. J. Klok) dif:2 @profile +delight
 (A) Improve the binning on the heatmaps dif:2 @ui +delight
 (A) Separate join code from UUID and allow rolling the code dif:3 @boards +boardsv2
 (A) Make the tally table (and tables in general) more mobile-friendly (h/t lailah) dif:2 @projects +delight
@@ -18,15 +14,12 @@ x (A) Ensure that projects (etc.) on public profile have a consistent order (las
 (A) Improve tag inputs dif:? @boards @goals @projects @tags +taginputs
 (A) De-duplicate add/edit forms dif:3 @frontend +techdebt
 (A) Endpoints that return EmptyObject should return null instead dif:1 +techdebt
-x (A) Update zod dif:3 +update
 (A) Add `as const` to constants like `TALLY_MEASURE` dif:2 +techdebt
-x (A) Update prisma dif:2 +update
-x (A) Add actual page titles to the pages (h/t varve) dif:1 @ui
 (A) Add "how many words you wrote this day, week and month" to the Dashboard (h/t Sandrine) dif:2 @dashboard @stats +delight
 (A) Load audit events on the admin user view page only on demand dif:1 @admin
 (A) Serve the fonts locally instead of from Google dif:1 @ui +privacy
+(B) Update ESLint to v10 dif:2 +techdebt
 (B) Add writing insights to the Stats section: total words, average per session, Best session, Most productive day (h/t Sandrine) dif:3 @stats +delight
-x (B) Improve DB env var situation +techdebt
 (B) Project progress embed (h/t Laura) dif:3 @public +embeds
 (B) Display positive (written) and negative (removed) word counts separately on the stats page dif:3 @stats +delight
 (B) Improve audit event retrieval/listings dif:2 @admin +adminconsole

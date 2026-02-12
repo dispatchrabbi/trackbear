@@ -12,11 +12,13 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- FIXED: Fixed a bug where bar charts spanning long enough periods of time (about a year) did not show data because the bars were too narrow. (h/t thatfallguy)
+
 ## 1.5.0
 
 - NEW: Data export! You can now export all your progress data from TrackBear, which makes it easier to keep your own spreadsheets up to date, have a backup, or even move to another platform. Go to your Account page and scroll down to from the Export Data section, then click the Export Data button to download a zip file containing your data.
-- CHANGED: You can no longer create a tag with a semicolon in it. No one had any, though — I checked — so it's all good.
-- CHANGED: You can no longer create a progress entry that is not attached to a project. This wasn't possible through the UI anyway, so don't worry about it.
+- REMOVED: You can no longer create a tag with a semicolon in it. No one had any, though — I checked — so it's all good.
+- REMOVED: You can no longer create a progress entry that is not attached to a project. This wasn't possible through the UI anyway, so don't worry about it.
 
 ## 1.4.12
 

@@ -130,8 +130,8 @@ function renderChart() {
         z: 'series',
         fill: 'series',
         order: seriesOrder.value,
-        insetLeft: 1,
-        insetRight: 1,
+        insetLeft: 0.5,
+        insetRight: 0.5,
       }),
       // par line
       props.par === null ?
