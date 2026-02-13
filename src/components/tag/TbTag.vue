@@ -28,6 +28,8 @@ const color = computed(() => {
 <template>
   <Chip
     :class="[ TAG_COLOR_CLASSES[color].background, TAG_COLOR_CLASSES[color].text]"
+    :pt="{ label: { class: 'whitespace-nowrap' }}"
+    :pt-options="{ mergeSections: true, mergeProps: true }"
     :icon="PrimeIcons.HASHTAG"
     :label="name"
     :removable="props.removable"

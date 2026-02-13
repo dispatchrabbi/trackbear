@@ -129,10 +129,13 @@ const isDeleteFormVisible = computed({
     <Column
       field="note"
       header="Note"
+      class="min-w-36"
     />
     <Column
       header=""
-      class="w-0 text-center"
+      class="w-0 text-center shadow-xl"
+      frozen
+      align-frozen="right"
     >
       <template #body="{ data }">
         <div

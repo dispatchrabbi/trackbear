@@ -2,7 +2,7 @@
 x (A) Redo the upload UI so it's more intuitive dif:2 @projects @settings +delight
 (A) Improve the binning on the heatmaps dif:2 @ui +delight
 (A) Separate join code from UUID and allow rolling the code dif:3 @boards +boardsv2
-(A) Make the tally table (and tables in general) more mobile-friendly (h/t lailah) dif:2 @projects +delight
+x (A) Make the tally table (and tables in general) more mobile-friendly (h/t lailah) dif:2 @projects +delight
 (A) Too many projects when making a goal scroll off the edge of the screen (h/t DarkJediQueen) dif:1 @goals +bugs
 (A) Combine delete and edit/configure into a single edit page that includes a Danger Zone for deleting dif:3 @goals @projects +editpage
 (A) Allow admins to view any project, goal, leaderboard in-situ dif:3 @admin +adminconsole
