@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.5.1
+
 - CHANGED: The avatar upload and project cover upload dialogs now immediately upload upon choosing or dropping a file, instead of waiting for you to click "Upload".
 - CHANGED: The table of progress entries on the project details page is now a little easier to read (especially on mobile), and the edit and delete buttons are now always visible. (h/t lailah)
 - FIXED: Fixed a bug where bar charts spanning long enough periods of time (about a year) did not show data because the bars were too narrow. (h/t thatfallguy)
