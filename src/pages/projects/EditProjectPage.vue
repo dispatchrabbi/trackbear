@@ -107,7 +107,7 @@ onMounted(() => loadProject());
         header="Upload a Cover"
         class="m-2"
       >
-        <div class="max-h-48 max-w-32">
+        <div class="flex items-center max-h-48 max-w-32">
           <ProjectCover :project="project" />
         </div>
         <div class="flex items-center mt-4 gap-2">

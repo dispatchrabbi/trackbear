@@ -1,5 +1,5 @@
 (A) Create a generic importer (h/t Trax) dif:5 @backend @frontend +import
-(A) Redo the upload UI so it's more intuitive dif:2 @projects @settings +delight
+x (A) Redo the upload UI so it's more intuitive dif:2 @projects @settings +delight
 (A) Improve the binning on the heatmaps dif:2 @ui +delight
 (A) Separate join code from UUID and allow rolling the code dif:3 @boards +boardsv2
 (A) Make the tally table (and tables in general) more mobile-friendly (h/t lailah) dif:2 @projects +delight

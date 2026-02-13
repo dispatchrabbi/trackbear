@@ -12,6 +12,7 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: The avatar upload and project cover upload dialogs now immediately upload upon choosing or dropping a file, instead of waiting for you to click "Upload".
 - FIXED: Fixed a bug where bar charts spanning long enough periods of time (about a year) did not show data because the bars were too narrow. (h/t thatfallguy)
 - SECURITY: Fonts are now served locally instead of from Google, for increased privacy.
 

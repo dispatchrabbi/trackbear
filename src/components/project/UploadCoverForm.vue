@@ -48,6 +48,9 @@ async function handleUpload(ev: FileUploadUploaderEvent) {
   <FileUpload
     name="cover"
     mode="advanced"
+    :auto="true"
+    :show-upload-button="false"
+    :show-cancel-button="false"
     :custom-upload="true"
     :multiple="false"
     :file-limit="1"
