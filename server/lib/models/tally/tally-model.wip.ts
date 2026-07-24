@@ -10,6 +10,7 @@ import { TALLY_STATE, type TallyMeasure } from './consts.ts';
 import { db2tally } from './helpers.ts';
 
 import { traced } from '../../metrics/tracer.ts';
+import { TagModel } from '../tag/tag-model.ts';
 
 export type {
   Tally, PlainTally,
@@ -23,7 +24,9 @@ export type TallyData = {
   workId: number;
   tags: string[];
 };
-export type BatchTallyData = Omit<TallyData, 'tags'>;
+export type BatchTallyData = Omit<TallyData, 'tags'> & {
+  tags?: string[];
+};
 
 export type TallyFilter = {
   measure?: TallyMeasure;
@@ -85,22 +88,52 @@ export class TallyModel {
   // TODO: move this to a batch creation domain
   @traced
   static async batchCreateTallies(owner: User, data: BatchTallyData[], reqCtx: RequestContext): Promise<PlainTally[]> {
+    // Create new tags first because otherwise we'd have tag creation race conditions
+    const existingTags = await TagModel.getTags(owner);
+    const existingTagNames = existingTags.map(tag => tag.name);
+
+    const includedTags = new Set(data.map(tallyData => tallyData.tags ?? []).flat());
+    const tagsToCreate = [...includedTags].filter(tagName => !existingTagNames.includes(tagName));
+
+    const createdTags = await Promise.all(tagsToCreate.map(tagName => TagModel.createTag(owner, {
+      name: tagName,
+    }, reqCtx)));
+    const allTags = [...existingTags, ...createdTags];
+    const tagMap = allTags.reduce((map, tag) => map.set(tag.name, tag.id), new Map<string, number>());
+
     const db = getDbClient();
-    const createds = await db.tally.createManyAndReturn({
-      data: data.map(tallyData => ({
-        state: TALLY_STATE.ACTIVE,
-        ownerId: owner.id,
+    const createdTallies = await db.$transaction(async tx => {
+      const createdTallies = await Promise.all(data.map(tallyData => {
+        const tagIds = (tallyData.tags ?? []).map(tagName => tagMap.get(tagName)).filter(x => x);
+        return tx.tally.create({
+          data: {
+            state: TALLY_STATE.ACTIVE,
+            ownerId: owner.id,
 
-        date: tallyData.date,
-        measure: tallyData.measure,
-        count: tallyData.count,
-        note: tallyData.note,
+            date: tallyData.date,
+            measure: tallyData.measure,
+            count: tallyData.count,
+            note: tallyData.note,
 
-        workId: tallyData.workId,
-      })),
+            workId: tallyData.workId,
+
+            tags: {
+              connect: tagIds.map(id => ({ id })),
+            },
+          },
+          include: {
+            work: true,
+            tags: true,
+          },
+        });
+      }));
+
+      return createdTallies;
+    }, {
+      timeout: 2 * 60 * 1000, // 2 minutes
     });
 
-    await Promise.all(createds.map(created => {
+    await Promise.all(createdTallies.map(created => {
       const changes = buildChangeRecord({}, created);
       return logAuditEvent(AUDIT_EVENT_TYPE.TALLY_CREATE,
         reqCtx.userId, created.id, null,
@@ -108,7 +141,7 @@ export class TallyModel {
       );
     }));
 
-    return createds;
+    return createdTallies;
   }
 
   @traced

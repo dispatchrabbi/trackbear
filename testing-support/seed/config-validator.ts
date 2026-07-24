@@ -6,6 +6,7 @@ import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 import { GOAL_CADENCE_UNIT } from 'server/lib/models/goal/consts.ts';
 
 import { USER_COLOR_NAMES } from 'src/components/chart/user-colors.ts';
+import { TAG_COLORS, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts';
 
 const zTallyMeasure = () => z.enum(Object.values(TALLY_MEASURE));
 const zMeasureCounts = () => z.partialRecord(zTallyMeasure(), z.number().int());
@@ -14,7 +15,6 @@ const zKey = () => z.string().regex(/^[a-z0-9_-]+$/);
 const zDate = () => z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const zNullableDate = () => zDate().nullable();
 const zProjectList = () => zKey().array();
-// TODO: implement tags
 const zTagList = () => zKey().array();
 const zName = () => z.string().min(3).max(24);
 const zColor = () => z.enum(['', ...USER_COLOR_NAMES]);
@@ -28,6 +28,12 @@ const userSchema = z.object({
   email: z.email(),
 });
 export type UserSchema = z.infer<typeof userSchema>;
+
+const tagSchema = z.object({
+  name: z.string().min(1),
+  color: z.enum(TAG_COLORS).default(TAG_DEFAULT_COLOR),
+});
+export type TagSchema = z.infer<typeof tagSchema>;
 
 const projectSchema = z.object({
   title: z.string().min(1),
@@ -43,7 +49,7 @@ const literalTallySchema = z.object({
   count: z.number().int(),
   measure: zTallyMeasure(),
   note: z.string().default(''),
-  tags: z.array(z.string()).default([]), // TODO: enable tags
+  tags: z.array(z.string()).default([]),
 });
 export type LiteralTallySchema = z.infer<typeof literalTallySchema>;
 
@@ -59,8 +65,8 @@ const generateTallySchema = z.object({
   // minimum and maximum count for the day
   min: z.number().int(),
   max: z.number().int(),
-  // use the key for the associated project
-  tags: z.array(z.string()).default([]), // TODO: enable tags
+  // use the key for the associated tag
+  tags: z.array(z.string()).default([]),
 });
 export type GenerateTallySchema = z.infer<typeof generateTallySchema>;
 
@@ -106,7 +112,7 @@ const habitSchema = z.object({
   // projects: [] indicates all projects
   projects: zProjectList().default([]),
   // tags: [] indicates all tags
-  tags: zTagList().default([]), // TODO: enable tags
+  tags: zTagList().default([]),
 });
 export type HabitSchema = z.infer<typeof habitSchema>;
 
@@ -122,7 +128,7 @@ const zParticipation = () => z.object({
   // projects: [] indicates all projects
   projects: zProjectList().default([]),
   // tags: [] indicates all tags
-  tags: zTagList().default([]), // TODO: enable tags
+  tags: zTagList().default([]),
   // required for individual goal mode
   measure: zTallyMeasure().optional(),
   // required for individual goal mode
@@ -142,9 +148,6 @@ const memberSchema = z.object({
 });
 export type MemberSchema = z.infer<typeof memberSchema>;
 
-// TODO: superRefine this to check:
-// - measures/goal/participation measures + goal
-// - team keys in memberships are existing teams in the leaderboard
 const leaderboardSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(''),
@@ -159,12 +162,39 @@ const leaderboardSchema = z.object({
   goal: zMeasureCounts().default({}).optional(),
   teams: z.record(zKey(), teamSchema),
   members: memberSchema.array(),
+}).superRefine((val, ctx) => {
+  if(val.individualGoalMode && val.measures) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Cannot use leaderboard measures with individualGoalMode',
+      input: val,
+    });
+  }
+
+  if(val.individualGoalMode && val.goal) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Cannot use leaderboard goal with individualGoalMode',
+      input: val,
+    });
+  }
+
+  const teamKeys = Object.keys(val.teams);
+  for(const member of val.members) {
+    if(member.participation?.team && !teamKeys.includes(member.participation.team)) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `Unknown team ${member.participation?.team} listed in member ${member.user} participation`,
+        input: member.participation,
+      });
+    }
+  }
 });
 export type LeaderboardSchema = z.infer<typeof leaderboardSchema>;
 
 export const accountSchema = z.object({
   user: userSchema,
-  tags: z.record(zKey(), z.object({})).default({}),
+  tags: z.record(zKey(), tagSchema).default({}),
   projects: z.record(zKey(), projectSchema).default({}),
   targets: z.record(zKey(), targetSchema).default({}),
   habits: z.record(zKey(), habitSchema).default({}),
@@ -184,17 +214,16 @@ export const accountSchema = z.object({
     });
   };
 
-  // TODO: implement tags
-  // const tagKeys = Object.keys(account.tags);
-  // const addUnknownTagKey = function(path: (string | number)[], received: string | number) {
-  //   ctx.addIssue({
-  //     code: z.ZodIssueCode.invalid_enum_value,
-  //     options: tagKeys,
-  //     path,
-  //     received,
-  //     message: `Unknown tag key.`,
-  //   });
-  // };
+  const tagKeys = Object.keys(account.tags);
+  const addUnknownTagKeyError = function(path: (string | number)[], received: string | number) {
+    ctx.addIssue({
+      code: 'invalid_value',
+      values: tagKeys,
+      path,
+      input: received,
+      message: `Unknown tag key.`,
+    });
+  };
 
   // ensure projects and tags in tallies and tally configs refer to existing project and tag keys
   for(const [tallyConfigIx, tallyConfig] of Object.entries(account.tallies)) {
@@ -203,6 +232,12 @@ export const accountSchema = z.object({
         if(!projectKeys.includes(tally.project)) {
           addUnknownProjectKeyError(['tallies', tallyConfigIx, 'tallies', tallyIx], tally.project);
         }
+
+        for(const tag of tally.tags) {
+          if(!tagKeys.includes(tag)) {
+            addUnknownTagKeyError(['tallies', tallyConfigIx, 'tallies', tallyIx], tally.project);
+          }
+        }
       }
     }
 
@@ -210,31 +245,83 @@ export const accountSchema = z.object({
       if(!projectKeys.includes(tallyConfig.config.project)) {
         addUnknownProjectKeyError(['tallies', tallyConfigIx, 'config', 'project'], tallyConfig.config.project);
       }
+
+      for(const tag of tallyConfig.config.tags) {
+        if(!tagKeys.includes(tag)) {
+          addUnknownTagKeyError(['tallies', tallyConfigIx, 'config', 'tags'], tag);
+        }
+      }
     }
   }
 
-  // ensure projects and tags in targets and habits refer to existing project and tag keys
+  // ensure projects and tags in targets refer to existing project and tag keys
   for(const [key, targetConfig] of Object.entries(account.targets)) {
     for(const [ix, projectKey] of Object.entries(targetConfig.projects)) {
       if(!projectKeys.includes(projectKey)) {
         addUnknownProjectKeyError(['targets', key, 'projects', ix], projectKey);
       }
     }
+
+    for(const [ix, tagKey] of Object.entries(targetConfig.tags)) {
+      if(!tagKeys.includes(tagKey)) {
+        addUnknownTagKeyError(['targets', key, 'tags', ix], tagKey);
+      }
+    }
   }
 
-  // ensure projects and tags in leaderboards refer to existing project and tag keys
+  // ensure projects and tags in habits refer to existing project and tag keys
   for(const [key, habitConfig] of Object.entries(account.habits)) {
     for(const [ix, projectKey] of Object.entries(habitConfig.projects)) {
       if(!projectKeys.includes(projectKey)) {
         addUnknownProjectKeyError(['habits', key, 'projects', ix], projectKey);
       }
     }
+
+    for(const [ix, tagKey] of Object.entries(habitConfig.tags)) {
+      if(!tagKeys.includes(tagKey)) {
+        addUnknownTagKeyError(['habits', key, 'tags', ix], tagKey);
+      }
+    }
+  }
+
+  // ensure projects and tags in leaderboards refer to existing project and tag keys
+  const allParticipations = Object.values(account.leaderboards).map(l => l.members).flat().map(member => member.participation);
+  for(const participation of allParticipations) {
+    if(participation === null) {
+      continue;
+    }
+
+    for(const [ix, projectKey] of Object.entries(participation.projects)) {
+      if(!projectKeys.includes(projectKey)) {
+        addUnknownProjectKeyError(['leaderboards', 'members', 'projects', ix], projectKey);
+      }
+    }
+
+    for(const [ix, tagKey] of Object.entries(participation.tags)) {
+      if(!tagKeys.includes(tagKey)) {
+        addUnknownTagKeyError(['leaderboards', 'members', 'tags', ix], tagKey);
+      }
+    }
   }
 });
 export type AccountSchema = z.infer<typeof accountSchema>;
 
-// TODO: use superRefine to ensure that users in leaderboard members refer to existing account keys
 export const seedSchema = z.object({
   accounts: z.record(zKey(), accountSchema),
+}).superRefine((val, ctx) => {
+  // ensure that users in leaderboard members refer to existing account keys
+  const accountKeys = Object.keys(val.accounts);
+  for(const leaderboard of Object.values(val.accounts).map(acct => Object.values(acct.leaderboards)).flat()) {
+    for(const user of leaderboard.members.map(m => m.user)) {
+      if(!accountKeys.includes(user)) {
+        ctx.addIssue({
+          code: 'invalid_value',
+          message: `Unknown account key ${user} found in leaderboard`,
+          values: accountKeys,
+          input: user,
+        });
+      }
+    }
+  }
 });
 export type SeedSchema = z.infer<typeof seedSchema>;

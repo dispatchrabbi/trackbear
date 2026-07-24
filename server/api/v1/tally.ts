@@ -164,6 +164,14 @@ export async function handleCreateTally(req: RequestWithUser, res: ApiResponse<T
   return res.status(201).send(success(tally));
 }
 
+export type BatchTallyCreatePayload = {
+  date: string;
+  measure: string;
+  count: number;
+  setTotal: boolean;
+  note: string;
+  workId: number;
+};
 const zBatchTallyCreatePayload = z.array(z.object({
   date: zDateStr(),
   measure: z.enum(Object.values(TALLY_MEASURE)),
@@ -171,15 +179,15 @@ const zBatchTallyCreatePayload = z.array(z.object({
   setTotal: z.literal(false), // no submitting batch tallies that set the total... for now. // TODO: allow this in future
   note: z.string(), // this CAN be empty
   workId: z.number().int(),
-  tags: z.array(z.string()).length(0), // no tags yet either, sorry // TODO: allow this in future
 }));
 
 export async function handleCreateTallies(req: RequestWithUser, res: ApiResponse<Tally[]>) {
   const user = req.user;
+  const payload = req.body as BatchTallyCreatePayload[];
 
   const db = getDbClient();
   const createdTallies = await db.tally.createManyAndReturn({
-    data: req.body.map(tallyData => ({
+    data: payload.map(tallyData => ({
       state: TALLY_STATE.ACTIVE,
       ownerId: user.id,
 

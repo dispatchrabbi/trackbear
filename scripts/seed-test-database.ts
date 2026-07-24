@@ -47,7 +47,7 @@ async function main() {
   try {
     seedJson = JSON.parse(seedFileContents);
   } catch (err) {
-    scriptLogger.error(`Error while parsing ${seedFileArg} as JSON: ${err.message}`);
+    scriptLogger.error(`Error while parsing ${seedFileArg} as JSON: ${(err as Error).message}`);
     process.exit(1);
   }
 
@@ -56,9 +56,9 @@ async function main() {
     validateSeed(seedJson);
   } catch (err) {
     if(err instanceof z.ZodError) {
-      scriptLogger.error(`Seed config was not valid:`, z.prettifyError(err));
+      scriptLogger.error(`Seed config was not valid:\n${z.prettifyError(err)}`);
     } else {
-      scriptLogger.error(`Encountered error while validating seed:`, err.message);
+      scriptLogger.error(`Encountered error while validating seed: ${(err as Error).message}`);
     }
 
     process.exit(1);

@@ -2,6 +2,7 @@ import {
   type SeedSchema,
   type AccountSchema,
   type UserSchema,
+  type TagSchema,
   type ProjectSchema,
   type TargetSchema,
   type HabitSchema,
@@ -14,7 +15,7 @@ import {
 } from './config-validator';
 
 import { UserModel, type User } from 'server/lib/models/user/user-model.ts';
-import { type Tag } from 'server/lib/models/tag/tag-model.ts';
+import { TagModel, type Tag } from 'server/lib/models/tag/tag-model.ts';
 import { ProjectModel, type Project } from 'server/lib/models/project/project-model';
 import { type TargetGoal, type HabitGoal, GoalModel, type TargetGoalParameters, type HabitGoalParameters } from 'server/lib/models/goal/goal-model.ts';
 import type { Leaderboard, LeaderboardMember } from 'server/lib/models/leaderboard/types.ts';
@@ -70,7 +71,7 @@ export async function createSeed(seedConfig: SeedSchema, reqCtx: RequestContext)
 
 async function createBaseAccount(accountConfig: AccountSchema, reqCtx: RequestContext): Promise<AccountResult> {
   const user = await createUser(accountConfig.user, reqCtx);
-  const tags = {};
+  const tags = await createTags(user, accountConfig.tags, reqCtx);
   const projects = await createProjects(user, accountConfig.projects, reqCtx);
   const targets = await createTargets(user, accountConfig.targets, projects, tags, reqCtx);
   const habits = await createHabits(user, accountConfig.habits, projects, tags, reqCtx);
@@ -105,6 +106,13 @@ async function createUser(userConfig: UserSchema, reqCtx: RequestContext): Promi
   }, reqCtx);
 
   return created;
+}
+
+async function createTags(user: User, tagConfigs: Mapping<TagSchema>, reqCtx: RequestContext): Promise<Mapping<Tag>> {
+  return await mapTransform(tagConfigs, async config => await TagModel.createTag(user, {
+    name: config.name,
+    color: config.color,
+  }, reqCtx));
 }
 
 async function createProjects(user: User, projectConfigs: Mapping<ProjectSchema>, reqCtx: RequestContext): Promise<Mapping<Project>> {
@@ -295,7 +303,6 @@ function projectKeysToIds(keys: string[], projects: Mapping<Project>) {
   return keys.map(key => projects[key].id);
 }
 
-// TODO: implement tags
 function tagKeysToIds(keys: string[], tags: Mapping<Tag>) {
   return keys.map(key => tags[key].id);
 }
