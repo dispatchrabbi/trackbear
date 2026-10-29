@@ -67,6 +67,10 @@ model User {
   goals                     Goal[]
   boards                    Board[]
   boardParticipants         BoardParticipant[]
+
+  futureLifeId Int?
+  futureLife User? @relation("PastLives", fields: [futureLifeId], references: [id])
+  pastLives User[] @relation("PastLives")
 }
 
 model UserAuth {

@@ -9,7 +9,6 @@ export type Leaderboard = Expand<Omit<PrismaBoard, 'goal' | 'measures'> & {
 }>;
 export type LeaderboardGoal = MeasureCounts;
 
-// Coming soon: 'team'
 export type LeaderboardMember = Expand<
   Omit<PrismaBoardParticipant, 'goal'>
   & {

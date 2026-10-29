@@ -3,6 +3,7 @@ import { type ValueEnum } from '../../obj';
 export const USER_STATE = {
   ACTIVE: 'active',
   SUSPENDED: 'suspended',
+  MERGED: 'merged', // effectively treat as deleted, but they need to stick around for audit log purposes
   DELETED: 'deleted',
 } as const;
 export type UserState = ValueEnum<typeof USER_STATE>;

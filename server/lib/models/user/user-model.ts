@@ -3,7 +3,7 @@ import { addDays, addMinutes, type Day } from 'date-fns';
 import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();
 
-import { getDbClient } from 'server/lib/db.ts';
+import { getDbClient, type TransactionClient } from 'server/lib/db.ts';
 import type { PasswordResetLink, PendingEmailVerification, User, UserAuth, UserSettings as PrismaUserSettings, Prisma } from 'generated/prisma/client';
 import { hash, verifyHash } from '../../hash.ts';
 
@@ -197,6 +197,16 @@ export class UserModel {
   }
 
   @traced
+  static async getUserPastLives(user: User): Promise<User[]> {
+    const db = getDbClient();
+    const pastLives = await db.user.findMany({
+      where: { futureLifeId: user.id },
+    }) as User[];
+
+    return pastLives;
+  }
+
+  @traced
   static async signUpUser(data: SignUpUserData, reqCtx: RequestContext) {
     data.username = await this.validateUsername(data.username);
 
@@ -288,10 +298,10 @@ export class UserModel {
   }
 
   @traced
-  static async setUserState(user: User, state: UserState, reqCtx: RequestContext): Promise<User> {
+  static async setUserState(user: User, state: UserState, reqCtx: RequestContext, db: TransactionClient | null = null): Promise<User> {
     const original = user;
 
-    const db = getDbClient();
+    db = db ?? getDbClient();
     const updated = await db.user.update({
       where: { id: user.id },
       data: {
@@ -302,6 +312,7 @@ export class UserModel {
     const event = {
       [USER_STATE.ACTIVE]: AUDIT_EVENT_TYPE.USER_ACTIVATE,
       [USER_STATE.SUSPENDED]: AUDIT_EVENT_TYPE.USER_SUSPEND,
+      [USER_STATE.MERGED]: AUDIT_EVENT_TYPE.USER_MERGE,
       [USER_STATE.DELETED]: AUDIT_EVENT_TYPE.USER_DELETE,
     }[state];
 

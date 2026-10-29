@@ -16,6 +16,7 @@ import Column from 'primevue/column';
 import Tag from 'primevue/tag';
 import { PrimeIcons } from 'primevue/api';
 import StatTile from 'src/components/goal/StatTile.vue';
+import { type UserState } from 'server/lib/models/user/consts';
 
 const breadcrumbs: MenuItem[] = [
   { label: 'Admin', url: '/admin' },
@@ -164,7 +165,7 @@ onMounted(async () => {
           <template #body="{ data }">
             <Tag
               :value="data.state"
-              :severity="USER_STATE_INFO[data.state].color"
+              :severity="USER_STATE_INFO[data.state as UserState].color"
               :pt="{ root: { class: 'font-normal uppercase' } }"
               :pt-options="{ mergeSections: true, mergeProps: true }"
             />

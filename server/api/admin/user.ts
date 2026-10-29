@@ -48,15 +48,26 @@ export async function handleGetUsers(req: RequestWithUser, res: ApiResponse<GetU
   }));
 }
 
-export async function handleGetUser(req: RequestWithUser, res: ApiResponse<{ user: User; auditEvents: AuditEvent[] }>) {
+export async function handleGetUser(req: RequestWithUser, res: ApiResponse<User>) {
   const user = await UserModel.getUser(+req.params.id);
   if(!user) {
     return res.status(404).send(failure('NOT_FOUND', `Could not find a user with id ${req.params.id}`));
   }
 
-  const auditEvents = await AuditEventModel.getAuditEvents(user.id, AUDIT_EVENT_ENTITIES.USER);
+  return res.status(200).send(success(user));
+}
 
-  return res.status(200).send(success({ user, auditEvents }));
+export async function handleGetUserAuditEvents(req: RequestWithUser, res: ApiResponse<AuditEvent[]>) {
+  const user = await UserModel.getUser(+req.params.id);
+  if(!user) {
+    return res.status(404).send(failure('NOT_FOUND', `Could not find a user with id ${req.params.id}`));
+  }
+
+  const pastLives = await UserModel.getUserPastLives(user);
+  const lifeIds = [user.id, ...pastLives.map(life => life.id)];
+  const auditEvents = await AuditEventModel.getAuditEvents(lifeIds, AUDIT_EVENT_ENTITIES.USER);
+
+  return res.status(200).send(success(auditEvents));
 }
 
 export type UserUpdatePayload = Partial<{
@@ -161,6 +172,13 @@ const routes: RouteConfig[] = [
     path: '/:id',
     method: HTTP_METHODS.GET,
     handler: handleGetUser,
+    accessLevel: ACCESS_LEVEL.ADMIN,
+    paramsSchema: zIdParam(),
+  },
+  {
+    path: '/:id/audit-events',
+    method: HTTP_METHODS.GET,
+    handler: handleGetUserAuditEvents,
     accessLevel: ACCESS_LEVEL.ADMIN,
     paramsSchema: zIdParam(),
   },

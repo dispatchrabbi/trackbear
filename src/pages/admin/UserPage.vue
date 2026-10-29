@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
+const router = useRouter();
 
 import { parseISO, format } from 'date-fns';
 
-import { getUser, updateUserState, verifyEmailByFiat, sendEmailVerificationEmail, sendResetPasswordEmail, type User, type AuditEvent } from 'src/lib/api/admin/user.ts';
+import { getUser, getUserAuditEvents, updateUserState, verifyEmailByFiat, sendEmailVerificationEmail, sendResetPasswordEmail, type User, type AuditEvent } from 'src/lib/api/admin/user.ts';
 import { USER_STATE } from 'server/lib/models/user/consts';
 import { USER_STATE_INFO } from 'src/lib/user.ts';
 
@@ -15,7 +16,7 @@ import DeleteUserForm from 'src/components/account/DeleteUserForm.vue';
 import RestoreUserForm from 'src/components/account/RestoreUserForm.vue';
 import type { MenuItem } from 'primevue/menuitem';
 import Card from 'primevue/card';
-import Panel from 'primevue/panel';
+import Panel, { type PanelToggleEvent } from 'primevue/panel';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import DataTable from 'primevue/datatable';
@@ -38,14 +39,22 @@ watch(
 );
 
 async function loadUser(id: number) {
-  const data = await getUser(id);
-  user.value = data.user;
-  auditEvents.value = data.auditEvents;
+  user.value = await getUser(id);
+}
+
+async function loadAuditEvents() {
+  if(user.value === null) {
+    auditEvents.value = [];
+    return;
+  }
+
+  auditEvents.value = await getUserAuditEvents(user.value.id);
 }
 
 const user = ref<User | null>(null);
 const auditEvents = ref<AuditEvent[]>([]);
 watch(userId, newId => {
+  auditEvents.value = [];
   loadUser(newId);
 }, { immediate: true });
 
@@ -68,6 +77,12 @@ async function handleActivateClick() {
     loadUser(userId.value);
   } catch (err) {
     toast.add({ summary: `Error activating user (${err.code})`, detail: err.message, severity: 'error', life: 3000 });
+  }
+}
+
+async function handleMergeClick() {
+  if(user.value) {
+    router.push({ name: 'admin-merge-users', query: { pastUserId: user.value.id } });
   }
 }
 
@@ -127,6 +142,13 @@ async function handleSendEmailVerificationClick() {
   }
 }
 
+async function handleAuditEventsToggle(ev: PanelToggleEvent) {
+  // .value is whether the panel is collapsed
+  if(ev.value === false && auditEvents.value.length === 0) {
+    await loadAuditEvents();
+  }
+}
+
 </script>
 
 <template>
@@ -173,6 +195,13 @@ async function handleSendEmailVerificationClick() {
           :icon="PrimeIcons.BOLT"
           severity="success"
           @click="handleActivateClick"
+        />
+        <Button
+          v-if="user.state === USER_STATE.SUSPENDED"
+          label="Merge into..."
+          :icon="PrimeIcons.EJECT"
+          severity="warning"
+          @click="handleMergeClick"
         />
         <Button
           v-if="user.state === USER_STATE.DELETED"
@@ -245,8 +274,16 @@ async function handleSendEmailVerificationClick() {
         toggleable
         collapsed
         class="mt-2"
+        @toggle="handleAuditEventsToggle"
       >
-        <DataTable :value="auditEvents">
+        <DataTable
+          :value="auditEvents"
+          paginator
+          :rows="100"
+          :rows-per-page-options="[50, 100, 250]"
+          paginator-template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
+          current-page-report-template="{first} to {last} of {totalRecords}"
+        >
           <Column
             field="id"
             header="ID"

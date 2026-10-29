@@ -29,7 +29,7 @@ import { formatDate, parseDateString } from 'src/lib/date';
 import { LeaderboardTeamModel } from 'server/lib/models/leaderboard/leaderboard-team-model';
 import { type PlainTally, type MeasureCounts } from 'server/lib/models/tally/types';
 
-type Mapping<T> = Record<string, T>;
+type Mapping<T, K extends string = string> = Record<K, T>;
 
 type AccountResult = {
   user: User;
@@ -290,8 +290,8 @@ async function createLeaderboards(user: User, leaderboardConfigs: Mapping<Leader
   });
 }
 
-async function mapTransform<T, R>(mapping: Mapping<T>, fn: (val: T, key: string) => Promise<R>): Promise<Mapping<R>> {
-  const resultEntries = await Promise.all(Object.entries(mapping).map(async function([key, val]) {
+async function mapTransform<T, R, K extends string = string>(mapping: Mapping<T, K>, fn: (val: T, key: K) => Promise<R>): Promise<Mapping<R, K>> {
+  const resultEntries = await Promise.all((Object.entries<T>(mapping) as [K, T][]).map(async function([key, val]) {
     const result = await fn(val, key);
     return [key, result];
   }));

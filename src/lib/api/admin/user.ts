@@ -16,7 +16,11 @@ export async function getUsers(query?: UserQuery) {
 }
 
 export async function getUser(id: number) {
-  return callApiV1<{ user: User; auditEvents: AuditEvent[] }>(ENDPOINT + `/${id}`, 'GET');
+  return callApiV1<User>(ENDPOINT + `/${id}`, 'GET');
+}
+
+export async function getUserAuditEvents(id: number) {
+  return callApiV1<AuditEvent[]>(ENDPOINT + `/${id}/audit-events`, 'GET');
 }
 
 export async function updateUser(id: number, data: UserUpdatePayload) {

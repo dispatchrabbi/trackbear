@@ -68,6 +68,7 @@ export const AUDIT_EVENT_TYPE = {
   USER_UPDATE: 'user:update',
   USER_ACTIVATE: 'user:activate',
   USER_SUSPEND: 'user:suspend',
+  USER_MERGE: 'user:merge',
   USER_DELETE: 'user:delete',
   USER_VERIFY_EMAIL: 'user:verifyemail',
   USER_PASSWORD_RESET: 'user:pwreset',

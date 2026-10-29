@@ -32,6 +32,7 @@ import AdminStatsPage from 'src/pages/admin/AdminStatsPage.vue';
 import AdminBannersListPage from 'src/pages/admin/BannersListPage.vue';
 import AdminUsersListPage from 'src/pages/admin/UsersListPage.vue';
 import AdminUserPage from 'src/pages/admin/UserPage.vue';
+import AdminMergeUsersPage from 'src/pages/admin/MergeUsersPage.vue';
 
 import DashboardPage from 'src/pages/DashboardPage.vue';
 
@@ -114,6 +115,10 @@ const routes: RouteRecordRaw[] = [
   { path: '/admin/banners', name: 'admin-banners', component: AdminBannersListPage },
   { path: '/admin/users', name: 'admin-users', component: AdminUsersListPage },
   { path: '/admin/users/:userId(\\d+)', name: 'admin-user', component: AdminUserPage },
+  { path: '/admin/users/merge', name: 'admin-merge-users', component: AdminMergeUsersPage, props: route => ({
+    pastUserId: route.query.pastUserId ?? null,
+    currentUserId: route.query.currentUserId ?? null,
+  }) },
 
   // catch-all
   { path: '/:catchAll(.*)', name: '404', component: PlaceholderPage, props: { title: '404' } },

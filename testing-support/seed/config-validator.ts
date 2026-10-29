@@ -1,12 +1,12 @@
 import * as z from 'zod';
 import { type NonEmptyArray } from 'server/lib/validators.ts';
 
-import { PROJECT_PHASE } from 'server/lib/models/project/consts';
+import { PROJECT_PHASE } from 'server/lib/models/project/consts.ts';
 import { TALLY_MEASURE } from 'server/lib/models/tally/consts.ts';
 import { GOAL_CADENCE_UNIT } from 'server/lib/models/goal/consts.ts';
 
 import { USER_COLOR_NAMES } from 'src/components/chart/user-colors.ts';
-import { TAG_COLORS, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts';
+import { TAG_COLORS, TAG_DEFAULT_COLOR } from 'server/lib/models/tag/consts.ts';
 
 const zTallyMeasure = () => z.enum(Object.values(TALLY_MEASURE));
 const zMeasureCounts = () => z.partialRecord(zTallyMeasure(), z.number().int());
@@ -122,7 +122,6 @@ const teamSchema = z.object({
 });
 export type TeamSchema = z.infer<typeof teamSchema>;
 
-// use null to just be a spectator
 const zParticipation = () => z.object({
   team: zKey().nullable().default(null),
   // projects: [] indicates all projects
@@ -135,7 +134,7 @@ const zParticipation = () => z.object({
   count: z.number().int().optional(),
   // you can specify a color if you want
   color: zColor().default(''),
-}).nullable();
+});
 
 const memberSchema = z.object({
   // this key refers to an account
@@ -144,7 +143,8 @@ const memberSchema = z.object({
   // if the user is the creator of the leaderboard, this will be true no matter
   // what you set it to
   isOwner: z.boolean().default(false),
-  participation: zParticipation(),
+  // use null to just be a spectator
+  participation: zParticipation().nullable(),
 });
 export type MemberSchema = z.infer<typeof memberSchema>;
 
@@ -283,43 +283,51 @@ export const accountSchema = z.object({
       }
     }
   }
-
-  // ensure projects and tags in leaderboards refer to existing project and tag keys
-  const allParticipations = Object.values(account.leaderboards).map(l => l.members).flat().map(member => member.participation);
-  for(const participation of allParticipations) {
-    if(participation === null) {
-      continue;
-    }
-
-    for(const [ix, projectKey] of Object.entries(participation.projects)) {
-      if(!projectKeys.includes(projectKey)) {
-        addUnknownProjectKeyError(['leaderboards', 'members', 'projects', ix], projectKey);
-      }
-    }
-
-    for(const [ix, tagKey] of Object.entries(participation.tags)) {
-      if(!tagKeys.includes(tagKey)) {
-        addUnknownTagKeyError(['leaderboards', 'members', 'tags', ix], tagKey);
-      }
-    }
-  }
 });
 export type AccountSchema = z.infer<typeof accountSchema>;
 
 export const seedSchema = z.object({
   accounts: z.record(zKey(), accountSchema),
 }).superRefine((val, ctx) => {
-  // ensure that users in leaderboard members refer to existing account keys
   const accountKeys = Object.keys(val.accounts);
-  for(const leaderboard of Object.values(val.accounts).map(acct => Object.values(acct.leaderboards)).flat()) {
-    for(const user of leaderboard.members.map(m => m.user)) {
-      if(!accountKeys.includes(user)) {
+  for(const [leaderboardKey, leaderboard] of Object.values(val.accounts).map(acct => Object.entries(acct.leaderboards)).flat()) {
+    for(const member of leaderboard.members) {
+      // ensure that users in leaderboard members refer to existing account keys
+      if(!accountKeys.includes(member.user)) {
         ctx.addIssue({
           code: 'invalid_value',
-          message: `Unknown account key ${user} found in leaderboard`,
+          message: `Unknown account key ${member.user} found in leaderboard ${leaderboardKey}`,
           values: accountKeys,
-          input: user,
+          input: member.user,
         });
+      }
+
+      // ensure projects and tags in leaderboards refer to existing project and tag keys
+      if(member.participation === null) {
+        continue;
+      }
+      const memberProjects = Object.keys(val.accounts[member.user].projects);
+      for(const project of member.participation.projects) {
+        if(!memberProjects.includes(project)) {
+          ctx.addIssue({
+            code: 'invalid_value',
+            message: `Unknown project key ${project} found in leaderboard ${leaderboardKey} for ${member.user}`,
+            values: memberProjects,
+            input: project,
+          });
+        }
+      }
+
+      const memberTags = Object.keys(val.accounts[member.user].tags);
+      for(const tag of member.participation.tags) {
+        if(!memberTags.includes(tag)) {
+          ctx.addIssue({
+            code: 'invalid_value',
+            message: `Unknown tag key ${tag} found in leaderboard ${leaderboardKey} for ${member.user}`,
+            values: memberTags,
+            input: tag,
+          });
+        }
       }
     }
   }

@@ -1,0 +1,413 @@
+{
+  "$schema": "../../generated/seed-schema.json",
+  "accounts": {
+    "old_and_busted": {
+      "user": {
+        "username": "old-and-busted",
+        "email": "old-and-busted@example.com"
+      },
+      "tags": {
+        "dusty": {
+          "name": "cough cough",
+          "color": "yellow"
+        },
+        "greige": {
+          "name": "cloud dancer",
+          "color": "gray"
+        }
+      },
+      "projects": {
+        "abandoned": {
+          "title": "This was abandoned",
+          "description": "I'll get back to it though",
+          "phase": "abandoned",
+          "startingBalance": {
+            "word": 4000,
+            "time": 600
+          }
+        },
+        "best_intentions": {
+          "title": "Tried to make it work",
+          "description": "A new genre for me!",
+          "phase": "revising"
+        }
+      },
+      "targets": {
+        "deluded": {
+          "title": "Definitely gonna make it",
+          "description": "Not too high a goal",
+          "measure": "word",
+          "count": 2000000,
+          "start": "2025-04-20",
+          "end": "2025-07-11",
+          "projects": ["best_intentions"]
+        },
+        "neutral": {
+          "title": "Many grey and beige things",
+          "description": "So neutral!",
+          "measure": "time",
+          "count": 60000000,
+          "end": "2025-10-31",
+          "tags": ["greige"]
+        }
+      },
+      "habits": {
+        "forced_march": {
+          "title": "Hup two three",
+          "description": "Whether I want to or not",
+          "period": 1,
+          "unit": "day",
+          "projects": ["abandoned"]
+        },
+        "clean_up": {
+          "title": "Undust! Uncrunch!",
+          "period": 1,
+          "unit": "day",
+          "measure": "scene",
+          "count": 2,
+          "tags": ["dusty"]
+        }
+      },
+      "leaderboards": {
+        "members_only": {
+          "title": "Started a community",
+          "teams": {},
+          "members": [
+            {
+              "user": "old_and_busted",
+              "isOwner": true,
+              "participation": {
+                "projects": ["abandoned"],
+                "tags": ["greige"]
+              }
+            },
+            {
+              "user": "member1",
+              "participation": null
+            },
+            {
+              "user": "member2",
+              "participation": null
+            }
+          ]
+        }
+      },
+      "tallies": [
+        {
+          "method": "generate",
+          "config": {
+            "project": "abandoned",
+            "start": "2025-04-01",
+            "end": "2025-07-31",
+            "frequency": 1,
+            "repeat": 0,
+            "measure": "word",
+            "min": 100,
+            "max": 1000
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "best_intentions",
+            "start": "2025-07-01",
+            "end": "2025-10-31",
+            "frequency": 1,
+            "repeat": 0,
+            "measure": "scene",
+            "min": 1,
+            "max": 10
+          }
+        },
+        {
+          "method": "list",
+          "tallies": [
+            {
+              "project": "best_intentions",
+              "date": "2025-12-01",
+              "measure": "scene",
+              "count": 3,
+              "tags": ["dusty"]
+            },
+            {
+              "project": "best_intentions",
+              "date": "2025-12-01",
+              "measure": "scene",
+              "count": 4,
+              "tags": ["greige"]
+            },
+            {
+              "project": "best_intentions",
+              "date": "2025-12-01",
+              "measure": "scene",
+              "count": 5,
+              "tags": ["dusty"]
+            },
+            {
+              "project": "best_intentions",
+              "date": "2025-12-01",
+              "measure": "scene",
+              "count": 6,
+              "tags": ["greige"]
+            }
+          ]
+        }
+      ]
+    },
+    "new_hotness": {
+      "user": {
+        "username": "new-hotness",
+        "email": "new-hotness@example.com"
+      },
+      "tags": {
+        "fancy": {
+          "name": "ooh la la",
+          "color": "purple"
+        },
+        "accent": {
+          "name": "wowza",
+          "color": "orange"
+        },
+        "cloudy": {
+          "name": "cloud dancer",
+          "color": "gray"
+        }
+      },
+      "projects": {
+        "inspired": {
+          "title": "This one is gonna work",
+          "description": "I can feel it",
+          "phase": "drafting"
+        },
+        "feeling_good": {
+          "title": "Feeling good about this one",
+          "description": "I can feel it in my bones",
+          "phase": "planning",
+          "startingBalance": {
+            "scene": 14
+          }
+        }
+      },
+      "targets": {
+        "high_hopes": {
+          "title": "Pushing myself",
+          "description": "But not too hard",
+          "measure": "word",
+          "count": 500000,
+          "start": "2026-03-01",
+          "end": "2026-11-15"
+        },
+        "kicking_it": {
+          "title": "Gotta get sparkly",
+          "description": "New me, new goal!",
+          "measure": "scene",
+          "count": 120,
+          "start": "2026-01-02",
+          "tags": ["accent"]
+        }
+      },
+      "habits": {
+        "reasonable_pace": {
+          "title": "Pacing myself",
+          "description": "Oregon Trail would be proud",
+          "period": 1,
+          "unit": "week",
+          "measure": "word",
+          "count": 1000,
+          "projects": ["inspired"]
+        },
+        "reminder": {
+          "title": "One thing a day",
+          "period": 1,
+          "unit": "day"
+        }
+      },
+      "leaderboards": {
+        "faceoff": {
+          "title": "Face/Off",
+          "teams": {},
+          "members": [
+            {
+              "user": "new_hotness",
+              "isOwner": true,
+              "participation": {
+                "projects": ["feeling_good"],
+                "tags": ["fancy"]
+              }
+            },
+            {
+              "user": "member3",
+              "participation": null
+            }
+          ]
+        }
+      },
+      "tallies": [
+        {
+          "method": "generate",
+          "config": {
+            "project": "inspired",
+            "start": "2026-02-01",
+            "end": "2026-04-30",
+            "frequency": 1,
+            "repeat": 0,
+            "measure": "word",
+            "min": 100,
+            "max": 1000
+          }
+        },
+        {
+          "method": "generate",
+          "config": {
+            "project": "feeling_good",
+            "start": "2026-03-01",
+            "end": "2026-06-30",
+            "frequency": 1,
+            "repeat": 0,
+            "measure": "scene",
+            "min": 1,
+            "max": 10
+          }
+        },
+        {
+          "method": "list",
+          "tallies": [
+            {
+              "project": "feeling_good",
+              "date": "2026-12-01",
+              "measure": "scene",
+              "count": 13,
+              "tags": ["fancy"]
+            },
+            {
+              "project": "feeling_good",
+              "date": "2026-12-01",
+              "measure": "scene",
+              "count": 14,
+              "tags": ["accent"]
+            },
+            {
+              "project": "feeling_good",
+              "date": "2026-12-01",
+              "measure": "scene",
+              "count": 15,
+              "tags": ["fancy"]
+            },
+            {
+              "project": "feeling_good",
+              "date": "2026-12-01",
+              "measure": "scene",
+              "count": 16,
+              "tags": ["accent"]
+            }
+          ]
+        }
+      ]
+    },
+    "third_party": {
+      "user": {
+        "username": "third-party",
+        "email": "third-party@example.com"
+      },
+      "leaderboards": {
+        "just_old": {
+          "title": "Just O&B",
+          "teams": {
+            "red_jaguars": {
+              "name": "Red Jaguars",
+              "color": "red"
+            }
+          },
+          "enableTeams": true,
+          "members": [
+            {
+              "user": "third_party",
+              "isOwner": true,
+              "participation": null
+            },
+            {
+              "user": "old_and_busted",
+              "displayName": "ODB",
+              "participation": {
+                "team": "red_jaguars",
+                "projects": ["best_intentions"]
+              }
+            }
+          ]
+        },
+        "just_new": {
+          "title": "Just NH",
+          "teams": {},
+          "members": [
+            {
+              "user": "third_party",
+              "isOwner": true,
+              "participation": null
+            },
+            {
+              "user": "new_hotness",
+              "participation": {
+                "projects": ["inspired"]
+              }
+            }
+          ]
+        },
+        "both": {
+          "title": "Old and new",
+          "description": "Something borrowed, etc.",
+          "enableTeams": true,
+          "teams": {
+            "blue_barracudas": {
+              "name": "Blue Barracudas",
+              "color": "blue"
+            },
+            "orange_iguanas": {
+              "name": "Orange Iguanas",
+              "color": "orange"
+            }
+          },
+          "members": [
+            {
+              "user": "third_party",
+              "isOwner": true,
+              "participation": null
+            },
+            {
+              "user": "old_and_busted",
+              "displayName": "Old and dusty",
+              "isOwner": true,
+              "participation": {
+                "team": "orange_iguanas"
+              }
+            },
+            {
+              "user": "new_hotness",
+              "displayName": "Fresh and new",
+              "participation": {
+                "team": "blue_barracudas"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "member1": {
+      "user": {
+        "username": "member1",
+        "email": "member1@example.com"
+      }
+    },
+    "member2": {
+      "user": {
+        "username": "member2",
+        "email": "member2@example.com"
+      }
+    },
+    "member3": {
+      "user": {
+        "username": "member3",
+        "email": "member3@example.com"
+      }
+    }
+  }
+}

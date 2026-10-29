@@ -1,12 +1,29 @@
 import { getLogger } from 'server/lib/logger.ts';
 const logger = getLogger();
 
-import { AuditEventModel } from './models/audit-event/audit-event-model.ts';
+import { AuditEventModel, type CreateAuditEventData } from './models/audit-event/audit-event-model.ts';
+import type { TransactionClient } from './db.ts';
 
 export const UNKNOWN_ACTOR_ID = 0;
 export const TRACKBEAR_SYSTEM_ID = -1;
 
-export async function logAuditEvent(eventType: string, agentId: number, patientId?: number | null, goalId?: number | null, auxInfo: Record<string, unknown> | null = {}, sessionId?: string | null) {
+type LogAuditEventOptions = {
+  db: TransactionClient | null;
+  throwOnError: boolean;
+};
+
+export async function logAuditEvent(
+  eventType: string,
+  agentId: number, patientId?: number | null, goalId?: number | null,
+  auxInfo: Record<string, unknown> | null = {}, sessionId?: string | null,
+  options: Partial<LogAuditEventOptions> = {},
+) {
+  options = {
+    db: null, // use this to pass transaction clients through
+    throwOnError: false, // by default, failure to register an audit event shouldn't tank a request
+    ...options,
+  };
+
   if(auxInfo === null) {
     auxInfo = {};
   }
@@ -19,10 +36,57 @@ export async function logAuditEvent(eventType: string, agentId: number, patientI
   });
 
   try {
-    await AuditEventModel.createAuditEvent(eventType, agentId, patientId, goalId, auxInfo, sessionId);
+    await AuditEventModel.createAuditEvent(
+      eventType,
+      agentId, patientId, goalId,
+      auxInfo, sessionId,
+      options.db,
+    );
   } catch (err) {
-    // log an error but don't do anything. failure to record an audit event shouldn't tank a request
+    // always log an error, even if we aren't going to throw
     logger.error(err);
+
+    if(options.throwOnError) {
+      throw new Error('Could not create audit event', {
+        cause: err,
+      });
+    }
+  }
+}
+
+export async function logManyAuditEvents(
+  auditEvents: CreateAuditEventData[],
+  options: Partial<LogAuditEventOptions> = {},
+) {
+  options = {
+    db: null, // use this to pass transaction clients through
+    throwOnError: false, // by default, failure to register an audit event shouldn't tank a request
+    ...options,
+  };
+
+  for(const ae of auditEvents) {
+    logger.debug(`${ae.eventType}`, {
+      agentId: ae.agentId,
+      patientId: ae.patientId,
+      goalId: ae.goalId,
+      auxInfo: JSON.stringify(ae.auxInfo),
+    });
+  }
+
+  try {
+    await AuditEventModel.batchCreateAuditEvent(
+      auditEvents,
+      options.db,
+    );
+  } catch (err) {
+    // always log an error, even if we aren't going to throw
+    logger.error(err);
+
+    if(options.throwOnError) {
+      throw new Error('Could not batch create audit events', {
+        cause: err,
+      });
+    }
   }
 }
 

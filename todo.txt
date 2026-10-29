@@ -27,7 +27,7 @@ x (A) Serve the fonts locally instead of from Google dif:1 @ui +privacy
 (B) Let admins manage goals dif:3 @admin +adminconsole
 (B) Let admins manage leaderboards dif:3 @admin +adminconsole
 (B) Allow admins to rename user/displayName dif:2 @admin +adminconsole
-(B) Allow merging two accounts dif:5 @admin +adminconsole
+x (B) Allow merging two accounts dif:5 @admin +adminconsole
 (B) Allow leaderboard owners to ban users dif:3 @boards +boardsv2
 (B) Add an error message to API token validation when the Authorization header doesn't start with 'Bearer' (h/t Mia) dif:1 @api +delight
 (B) Show starred leaderboards on dashboard dif:2 @dashboard +delight
@@ -87,7 +87,7 @@ Implement tags for projects that auto-apply to progress in that project (h/t som
 Rewrite copy on "outside" pages dif:? stage:needs-refinement @porch
 Ability to exempt tags/projects from total dif:3 stage:considering @stats
 Allow logging half-pages (but only for pages probably) (h/t Alex) stage:considering @tallies
-Consider the ability to add more than one type of progress at once (h/t Alice) stage:considering @tallies
+Consider the ability to add more than one type of progress at once (h/t Alice, Bea) stage:considering @tallies
 Allow users to configure profile ordering (h/t K. A. J. Klok) @profile @settings
 Allow users to configure Dashboard more (h/t K. A. J. Klok) @dashboard @settings
 Break down overall stat project graphs by project, or show "a leaderboard against myself" (h/t Katy F) stage:needs-refinement @stats

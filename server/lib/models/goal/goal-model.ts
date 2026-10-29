@@ -11,7 +11,7 @@ import { buildChangeRecord, logAuditEvent } from '../../audit-events.ts';
 import { AUDIT_EVENT_TYPE } from '../audit-event/consts.ts';
 
 import type { User } from '../user/user-model.ts';
-import { GOAL_STATE, GOAL_TYPE } from './consts.ts';
+import { GOAL_STATE, GOAL_TYPE, type GoalType } from './consts.ts';
 import { type Goal, type HabitGoal, type TargetGoal, type HabitGoalParameters, type TargetGoalParameters } from './types.ts';
 import { TALLY_STATE } from '../tally/consts.ts';
 import type { Tally } from '../tally/tally-model.wip.ts';
@@ -33,12 +33,13 @@ export type UpdateGoalData = Partial<CreateGoalData>;
 
 export class GoalModel {
   @traced
-  static async getGoals(owner: User): Promise<Goal[]> {
+  static async getGoals(owner: User, type: GoalType | null = null): Promise<Goal[]> {
     const db = getDbClient();
     const dbGoals = await db.goal.findMany({
       where: {
         ownerId: owner.id,
         state: GOAL_STATE.ACTIVE,
+        type: type ?? undefined,
       },
       include: makeIncludeWorkAndTagIds(owner.id),
     });

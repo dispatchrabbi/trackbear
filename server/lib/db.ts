@@ -3,6 +3,8 @@ import { PrismaClient } from '../../generated/prisma/client';
 
 import { type DbClientConnectionParams, validateConnectionParams, makeConnectionString } from './db-connection';
 
+export type TransactionClient = Parameters<Parameters<PrismaClient['$transaction']>[0]>[0];
+
 let adapter: PrismaPg | null = null;
 let client: PrismaClient | null = null;
 

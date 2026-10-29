@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 
 import { loadDotEnv } from '../env.ts';
 import { createTestDatabase, dropTestDatabase } from '../db-setup/db-setup.ts';
-import { initDbClient, getDbClient } from 'server/lib/db.ts';
+import { initDbClient, getDbClient, disconnectDbClient } from 'server/lib/db.ts';
 
 loadDotEnv();
 
@@ -31,5 +31,6 @@ beforeEach(() => {
     // remove the database
     console.log(`Dropping database ${testSchemaName}...`);
     await dropTestDatabase(testSchemaName, db);
+    await disconnectDbClient();
   };
 });
