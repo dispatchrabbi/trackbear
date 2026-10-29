@@ -12,6 +12,10 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+## 1.5.2
+
+- NEW: Admins can now merge accounts. If you have a suspended account with data in it and created a new account that you currently use, those accounts can be merged so all your data is in a single account. Send an email to the TrackBear support email address with your two accounts and which one you want to keep and I'll help you out.
+
 ## 1.5.1
 
 - CHANGED: The avatar upload and project cover upload dialogs now immediately upload upon choosing or dropping a file, instead of waiting for you to click "Upload".
