@@ -10,7 +10,7 @@ Types of changes include:
 - REMOVED, for features that have been removed
 - SECURITY, for vulnerabilities or other security updates
 
-## Upcoming/Unreleased
+## 1.5.3
 
 - CHANGED: Previously, if you had a single project, the Enter Progress dialog would helpfully select it for you. That's been tweaked slightly: now, only projects that aren't marked On Hold, Finished, or Abandoned count. So if you have one project in Drafting and a hundred that are On Hold, the dialog will pre-select the project in Drafting (unless you're on a project's page, in which case it will select that project). (h/t Lara)
 
