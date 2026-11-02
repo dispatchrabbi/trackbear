@@ -12,6 +12,8 @@ Types of changes include:
 
 ## Upcoming/Unreleased
 
+- CHANGED: Previously, if you had a single project, the Enter Progress dialog would helpfully select it for you. That's been tweaked slightly: now, only projects that aren't marked On Hold, Finished, or Abandoned count. So if you have one project in Drafting and a hundred that are On Hold, the dialog will pre-select the project in Drafting (unless you're on a project's page, in which case it will select that project). (h/t Lara)
+
 ## 1.5.2
 
 - NEW: Admins can now merge accounts. If you have a suspended account with data in it and created a new account that you currently use, those accounts can be merged so all your data is in a single account. Send an email to the TrackBear support email address with your two accounts and which one you want to keep and I'll help you out.
